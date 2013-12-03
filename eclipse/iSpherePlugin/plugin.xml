@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name=""
+            icon="icons/message_file.gif"
+            class="de.taskforce.isphere.messagefileeditor.MessageFileEditor"
+            id="de.taskforce.isphere.messagefileeditor.MessageFileEditor"/>
+      <editor
+            name=""
+            icon="icons/binding_directory.gif"
+            class="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"
+            id="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"/>
+   </extension>
+
+    <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.taskforce.isphere.preferencepages.General"
+            name="iSphere"
+            id="de.taskforce.isphere.preferencepages.General"/>
+      <page
+            class="de.taskforce.isphere.preferencepages.ISphereLibrary"
+            category="de.taskforce.isphere.preferencepages.General"
+            name="%Library"
+            id="de.taskforce.isphere.preferencepages.ISphereLibrary"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="iSphere"
+            id="de.taskforce.isphere.views.categories"/>	
+      <view
+            icon="icons/source_file_search.gif"
+            class="de.taskforce.isphere.sourcefilesearch.ViewSearchResults"
+            category="de.taskforce.isphere.views.categories"
+            name="%iSphere_Source_File_Search"
+            id="de.taskforce.isphere.sourcefilesearch.ViewSearchResults"/>
+      <view
+            icon="icons/message_file_search.png"
+            class="de.taskforce.isphere.messagefilesearch.ViewSearchResults"
+            category="de.taskforce.isphere.views.categories"
+            name="%iSphere_Message_File_Search"
+            id="de.taskforce.isphere.messagefilesearch.ViewSearchResults"/>
+   </extension>
+
+</plugin>
