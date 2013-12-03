@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    
+	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+		<dynamicPopupMenuExtension
+			name="Message File Editor"
+			class="de.taskforce.isphere.rse.actions.MessageFileEditorAction"
+			id="de.taskforce.isphere.rse.actions.MessageFileEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Compare Editor"
+			class="de.taskforce.isphere.rse.actions.CompareEditorAction"
+			id="de.taskforce.isphere.rse.actions.CompareEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Binding Directory Editor"
+			class="de.taskforce.isphere.rse.actions.BindingDirectoryEditorAction"
+			id="de.taskforce.isphere.rse.actions.BindingDirectoryEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="iSphere Source File Search"
+			class="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+			id="de.taskforce.isphere.rse.actions.SourceFileSearchAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="iSphere Message File Search"
+			class="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+			id="de.taskforce.isphere.rse.actions.MessageFileSearchAction">
+	    </dynamicPopupMenuExtension>
+	</extension>  
+
+</plugin>
