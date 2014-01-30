@@ -146,7 +146,7 @@
          point="com.ibm.etools.systems.core.propertyPages">
       <page
             subsystemfactoryid="de.taskforce.isphere.spooledfiles.subsystems.factory"
-            name="Spooled File Info"
+            name="%GeneralInformation"
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*"
