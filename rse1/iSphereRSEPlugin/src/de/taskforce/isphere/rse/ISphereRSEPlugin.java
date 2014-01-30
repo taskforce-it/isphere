@@ -14,6 +14,8 @@ package de.taskforce.isphere.rse;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -21,6 +23,8 @@ import org.osgi.framework.BundleContext;
 
 import de.taskforce.isphere.ISpherePlugin;
 import de.taskforce.isphere.rse.internal.Editor;
+import de.taskforce.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
+import de.taskforce.isphere.rse.spooledfiles.SpooledFileResource;
 
 public class ISphereRSEPlugin extends AbstractUIPlugin {
 
@@ -36,6 +40,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 		super.start(context);
 		installURL = context.getBundle().getEntry("/");
 		ISpherePlugin.setEditor(new Editor());
+		setupAdapters();	
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -58,6 +63,12 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 		} catch (MalformedURLException e) {
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
+	}
+	
+	private void setupAdapters() {
+		IAdapterManager manager = Platform.getAdapterManager();
+		SpooledFileAdapterFactory spooledFactory = new SpooledFileAdapterFactory();
+		manager.registerAdapters(spooledFactory, SpooledFileResource.class);
 	}
 
 }
