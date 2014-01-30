@@ -13,8 +13,6 @@ package de.taskforce.isphere.internal;
 
 import java.io.IOException;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
@@ -24,6 +22,7 @@ import com.ibm.as400.access.CharacterDataArea;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IllegalObjectTypeException;
+import com.ibm.as400.access.Job;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 
 import de.taskforce.isphere.ISpherePlugin;
@@ -32,16 +31,21 @@ import de.taskforce.isphere.Messages;
 public class ISphereHelper {
 
 	public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
-		
-		if (!executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)").equals("")) {
 
-			MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-			errorBox.setText(Messages.getString("E_R_R_O_R"));
+		String messageId = null;
+		try {
+			messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)");
+		} 
+		catch (Exception e) {
+		}
+		
+		if (messageId == null || !messageId.equals("")) {
+
+			String text = Messages.getString("E_R_R_O_R");
 			String message = Messages.getString("iSphere_library_&1_does_not_exist_on_system_&2._Please_transfer_iSphere_library_&1_to_system_&2.");
 			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
 			message = message.replace("&2", as400.getSystemName());
-			errorBox.setMessage(message);
-			errorBox.open();
+			new DisplayMessage(shell, text, message).start();
 			
 			return false;
 			
@@ -72,34 +76,30 @@ public class ISphereHelper {
 		}
 		if (dataAreaISphereContent == null) {
 
-			MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-			errorBox.setText(Messages.getString("E_R_R_O_R"));
+			String text = Messages.getString("E_R_R_O_R");
 			String message = Messages.getString("Specified_iSphere_library_&1_on_System_&2_is_not_a_iSphere_library.");
 			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
 			message = message.replace("&2", as400.getSystemName());
-			errorBox.setMessage(message);
-			errorBox.open();
+			new DisplayMessage(shell, text, message).start();
 			
 			return false;
 			
 		}
 		
 		String serverProvided = dataAreaISphereContent.substring(7, 13);
-		String clientProvided = "010300"; // 1.3.0
+		String clientProvided = "010400"; // 1.4.0
 		String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
-		String clientNeedsServer = "010100";
+		String clientNeedsServer = "010200";
 		
 		if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
-			MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-			errorBox.setText(Messages.getString("E_R_R_O_R"));
+			String text = Messages.getString("E_R_R_O_R");
 			String message = Messages.getString("iSphere_library_&1_on_System_&2_is_of_version_&3,_but_at_least_version_&4_is_needed._Please_transfer_the_current_iSphere_library_&1_to_system_&2.");
 			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
 			message = message.replace("&2", as400.getSystemName());
-			message = message.replace("&3", serverProvided);
-			message = message.replace("&4", clientNeedsServer);
-			errorBox.setMessage(message);
-			errorBox.open();
+			message = message.replace("&3", Integer.parseInt(serverProvided.substring(0, 2)) + "." + Integer.parseInt(serverProvided.substring(2, 4)) + "." + Integer.parseInt(serverProvided.substring(4, 6)));
+			message = message.replace("&4", Integer.parseInt(clientNeedsServer.substring(0, 2)) + "." + Integer.parseInt(clientNeedsServer.substring(2, 4)) + "." + Integer.parseInt(clientNeedsServer.substring(4, 6)));
+			new DisplayMessage(shell, text, message).start();
 			
 			return false;
 			
@@ -107,13 +107,11 @@ public class ISphereHelper {
 		
 		if (clientProvided.compareTo(serverNeedsClient) < 0) {
 
-			MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-			errorBox.setText(Messages.getString("E_R_R_O_R"));
+			String text = Messages.getString("E_R_R_O_R");
 			String message = Messages.getString("The_current_installed_iSphere_client_is_of_version_&1,_but_the_iSphere_server_needs_at_least_version_&2._Please_install_the_current_iSphere_client.");
-			message = message.replace("&1", clientProvided);
-			message = message.replace("&2", serverNeedsClient);
-			errorBox.setMessage(message);
-			errorBox.open();
+			message = message.replace("&1", Integer.parseInt(clientProvided.substring(0, 2)) + "." + Integer.parseInt(clientProvided.substring(2, 4)) + "." + Integer.parseInt(clientProvided.substring(4, 6)));
+			message = message.replace("&2", Integer.parseInt(serverNeedsClient.substring(0, 2)) + "." + Integer.parseInt(serverNeedsClient.substring(2, 4)) + "." + Integer.parseInt(serverNeedsClient.substring(4, 6)));
+			new DisplayMessage(shell, text, message).start();
 			
 			return false;
 			
@@ -123,31 +121,61 @@ public class ISphereHelper {
 		
 	}
 	
-	public static String executeCommand(AS400 as400, String command) {
+	public static String executeCommand(AS400 as400, String command) throws Exception {
 		
 		CommandCall commandCall = new CommandCall(as400);
 
 		if (commandCall != null) {
 
-			try {
-				commandCall.run(command);
-				AS400Message[] messageList = commandCall.getMessageList();
-				if (messageList.length > 0) {
-					for (int idx = 0; idx < messageList.length; idx++) {
-						if (messageList[idx].getType() == AS400Message.ESCAPE) {
-							return messageList[idx].getID();
-						}
+			commandCall.run(command);
+			AS400Message[] messageList = commandCall.getMessageList();
+			if (messageList.length > 0) {
+				for (int idx = 0; idx < messageList.length; idx++) {
+					if (messageList[idx].getType() == AS400Message.ESCAPE) {
+						return messageList[idx].getID();
 					}
 				}
-				return "";
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
 			}
+			return "";
 			
 		}
 		
 		return "CPF0000";
+		
+	}
+
+	public static String getCurrentLibrary(AS400 _as400) throws Exception {
+		
+		String currentLibrary = null;
+		
+		Job[] jobs = _as400.getJobs(AS400.COMMAND);
+		
+		if (jobs.length == 1) {
+
+			if (!jobs[0].getCurrentLibraryExistence()) {
+				currentLibrary = "*CRTDFT";
+			}
+			else {
+				currentLibrary = jobs[0].getCurrentLibrary();
+			}
+			
+		}
+		
+		return currentLibrary;
+
+	}
+
+	public static boolean setCurrentLibrary(AS400 _as400, String currentLibrary) throws Exception {
+		
+		String command = "CHGCURLIB CURLIB(" + currentLibrary + ")";
+		CommandCall commandCall = new CommandCall(_as400);
+		
+		if (commandCall.run(command)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 		
 	}
 	

@@ -11,8 +11,6 @@
 
 package de.taskforce.isphere.sourcefilesearch;
 
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,13 +23,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400SecurityException;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.Job;
-import com.ibm.as400.access.ObjectDoesNotExistException;
 
 import de.taskforce.isphere.ISpherePlugin;
+import de.taskforce.isphere.internal.ISphereHelper;
 
 public class SearchExec {
 	
@@ -66,11 +60,23 @@ public class SearchExec {
 
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			
-			String currentLibrary = getCurrentLibrary(_as400);
+			String currentLibrary = null;
+			try {
+				currentLibrary = ISphereHelper.getCurrentLibrary(_as400);
+			} 
+			catch (Exception e) {
+			}
 		
 			if (currentLibrary != null) {
 
-				if (setCurrentLibrary(_as400, iSphereLibrary)) {
+				boolean ok = false;
+				try {
+					ok = ISphereHelper.setCurrentLibrary(_as400, iSphereLibrary);
+				} 
+				catch (Exception e1) {
+				}
+				
+				if (ok) {
 					
 					_handle = new FNDSTR_getHandle().run(_as400);
 					
@@ -133,79 +139,15 @@ public class SearchExec {
 						
 					}
 					
-					setCurrentLibrary(_as400, currentLibrary);
+					try {
+						ISphereHelper.setCurrentLibrary(_as400, currentLibrary);
+					} 
+					catch (Exception e) {
+					}
 					
 				}
 				
 			}
-			
-		}
-
-		private String getCurrentLibrary(AS400 _as400) {
-			
-			String currentLibrary = null;
-			
-			Job[] jobs = _as400.getJobs(AS400.COMMAND);
-			
-			if (jobs.length == 1) {
-				
-				try {
-					if (!jobs[0].getCurrentLibraryExistence()) {
-						currentLibrary = "*CRTDFT";
-					}
-					else {
-						currentLibrary = jobs[0].getCurrentLibrary();
-					}
-				} 
-				catch (AS400SecurityException e) {
-					e.printStackTrace();
-				} 
-				catch (ErrorCompletingRequestException e) {
-					e.printStackTrace();
-				} 
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
-				catch (IOException e) {
-					e.printStackTrace();
-				} 
-				catch (ObjectDoesNotExistException e) {
-					e.printStackTrace();
-				}
-				
-			}
-			
-			return currentLibrary;
-
-		}
-
-		private boolean setCurrentLibrary(AS400 _as400, String currentLibrary) {
-			
-			String command = "CHGCURLIB CURLIB(" + currentLibrary + ")";
-			CommandCall commandCall = new CommandCall(_as400);
-			boolean ok = false;
-			try {
-				if (commandCall.run(command)) {
-					ok = true;
-				}
-			} 
-			catch (AS400SecurityException e) {
-				e.printStackTrace();
-			} 
-			catch (ErrorCompletingRequestException e) {
-				e.printStackTrace();
-			} 
-			catch (IOException e) {
-				e.printStackTrace();
-			} 
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			} 
-			catch (PropertyVetoException e) {
-				e.printStackTrace();
-			}
-
-			return ok;
 			
 		}
 		

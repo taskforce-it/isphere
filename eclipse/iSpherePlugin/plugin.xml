@@ -14,6 +14,11 @@
             icon="icons/binding_directory.gif"
             class="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"
             id="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"/>
+      <editor
+            name=""
+            icon="icons/browser.gif"
+            class="de.taskforce.isphere.internal.BrowserEditor"
+            id="de.taskforce.isphere.internal.BrowserEditor"/>
    </extension>
 
     <extension
@@ -27,6 +32,11 @@
             category="de.taskforce.isphere.preferencepages.General"
             name="%Library"
             id="de.taskforce.isphere.preferencepages.ISphereLibrary"/>
+      <page
+            class="de.taskforce.isphere.preferencepages.ISphereSpooledFiles"
+            category="de.taskforce.isphere.preferencepages.General"
+            name="%Spooled_Files"
+            id="de.taskforce.isphere.preferencepages.ISphereSpooledFiles"/>
    </extension>
 
    <extension
@@ -46,6 +56,9 @@
             category="de.taskforce.isphere.views.categories"
             name="%iSphere_Message_File_Search"
             id="de.taskforce.isphere.messagefilesearch.ViewSearchResults"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.builders">
    </extension>
 
 </plugin>

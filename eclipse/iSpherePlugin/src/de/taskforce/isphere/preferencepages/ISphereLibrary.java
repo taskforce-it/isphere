@@ -44,8 +44,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 		gridLayout.numColumns = 2;
 		container.setLayout(gridLayout);
 			
-		final Label labelWorksheetHistoryEntries = new Label(container, SWT.NONE);
-		labelWorksheetHistoryEntries.setText(Messages.getString("iSphere_library_colon"));
+		final Label labelISphereLibrary = new Label(container, SWT.NONE);
+		labelISphereLibrary.setText(Messages.getString("iSphere_library_colon"));
 
 		textISphereLibrary = new Text(container, SWT.BORDER);
 		textISphereLibrary.addKeyListener(new KeyAdapter() {
@@ -64,6 +64,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 		textISphereLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		textISphereLibrary.setTextLimit(10);
 		
+		validatorLibrary = new Validator();
+		validatorLibrary.setType("*NAME");
+		validatorLibrary.setLength(10);
+		validatorLibrary.setRestricted(false);
+		
 		Button buttonTransfer = new Button(container, SWT.NONE);
 		buttonTransfer.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -75,11 +80,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 		});
 		buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		buttonTransfer.setText(Messages.getString("Transfer_iSphere_library"));
-		
-		validatorLibrary = new Validator();
-		validatorLibrary.setType("*NAME");
-		validatorLibrary.setLength(10);
-		validatorLibrary.setRestricted(false);
 
 		setScreenToValues();
 		
@@ -88,13 +88,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
 	protected void performApply() {
 		setStoreToValues();
-		setScreenToValues();
 		super.performApply();
 	}
 
 	protected void performDefaults() {
-		setStoreToDefaults();
-		setScreenToValues();
+		setScreenToDefaultValues();
 		super.performDefaults();
 	}
 
@@ -104,16 +102,31 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 	}
 	
 	protected void setStoreToValues() {
+		
 		store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
-	}
-	
-	protected void setStoreToDefaults() {
-		store.setToDefault("DE.TASKFORCE.ISPHERE.LIBRARY");
+		
 	}
 	
 	protected void setScreenToValues() {
+		
 		iSphereLibrary = store.getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		
+		setScreenValues();
+		
+	}
+	
+	protected void setScreenToDefaultValues() {
+		
+		iSphereLibrary = store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		
+		setScreenValues();
+		
+	}
+	
+	protected void setScreenValues() {
+		
 		textISphereLibrary.setText(iSphereLibrary);
+		
 	}
 	
 	public void init(IWorkbench workbench) {

@@ -11,9 +11,14 @@
 
 package de.taskforce.isphere;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -26,6 +31,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	private static ISpherePlugin plugin;
 	private static URL installURL;
 	public static IEditor editor = null;
+	private File spooledFilesDirectory;
+	private IProject spooledFilesProject;
 	public static final String IMAGE_CMONE = "cmone.bmp";
 	public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
 	public static final String IMAGE_ERROR = "error.gif";
@@ -45,6 +52,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_SELECT_ALL = "select_all.gif";
 	public static final String IMAGE_DESELECT_ALL = "deselect_all.gif";
 	public static final String IMAGE_OPEN_EDITOR = "open_editor.gif";
+	public static final String IMAGE_SPOOLED_FILE = "spooled_file.gif";
+	public static final String IMAGE_SPOOLED_FILE_FILTER = "spooled_file_filter.gif";
 	
 	public ISpherePlugin() {
 		super();
@@ -52,13 +61,36 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	}
 
 	public void start(BundleContext context) throws Exception {
+
 		super.start(context);
+		
 		installURL = context.getBundle().getEntry("/");
+		
 		initializePreferenceStoreDefaults();
+		
+		spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
+		if (!spooledFilesDirectory.exists())
+			spooledFilesDirectory.mkdirs();
+		
+		spooledFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject("iSphereSpooledFiles");
+		if (!spooledFilesProject.exists()) {
+			IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(spooledFilesProject.getName());
+			spooledFilesProject.create(description, null);
+		}
+		
 	}
 
 	public void stop(BundleContext context) throws Exception {
+
 		super.stop(context);
+		
+		File[] files = getSpooledFilesDirectory().listFiles();
+		for (int idx = 0; idx < files.length; idx++) {
+			if (!files[idx].getName().equals(".project")) {
+				files[idx].delete();
+			}
+		} 
+		
 	}
 
 	public static ISpherePlugin getDefault() {
@@ -86,6 +118,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_SELECT_ALL, getImageDescriptor(IMAGE_SELECT_ALL));
 		reg.put(IMAGE_DESELECT_ALL, getImageDescriptor(IMAGE_DESELECT_ALL));
 		reg.put(IMAGE_OPEN_EDITOR, getImageDescriptor(IMAGE_OPEN_EDITOR));
+		reg.put(IMAGE_SPOOLED_FILE, getImageDescriptor(IMAGE_SPOOLED_FILE));
+		reg.put(IMAGE_SPOOLED_FILE_FILTER, getImageDescriptor(IMAGE_SPOOLED_FILE_FILTER));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {
@@ -99,7 +133,23 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	}
 	
 	protected void initializePreferenceStoreDefaults(){
+		
 		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
+		
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
+		
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT", "*DFT");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY", "");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND", "");
+	
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML", "*DFT");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY", "");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND", "");
+		
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
+		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
+	
 	}
 	
 	public static URL getInstallURL() {
@@ -117,5 +167,17 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static void setEditor(IEditor _editor) {
 		editor = _editor;
 	}
-	
+
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+
+	public File getSpooledFilesDirectory() {
+		return spooledFilesDirectory;
+	}
+
+	public IProject getSpooledFilesProject() {
+		return spooledFilesProject;
+	}
+
 }
