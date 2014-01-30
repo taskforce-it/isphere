@@ -37,7 +37,7 @@ public class InfoDetail {
 		
 		final Label labelISphere = new Label(container, SWT.NONE);
 		labelISphere.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-		labelISphere.setText("iSphere 1.3.0");
+		labelISphere.setText("iSphere 1.4.0");
 		
 		final Label labelTaskForceImage = new Label(container, SWT.NONE);
 		labelTaskForceImage.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
@@ -154,6 +154,22 @@ public class InfoDetail {
 		final Label labelSeparator6 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		final GridData gd_labelSeparator6 = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		labelSeparator6.setLayoutData(gd_labelSeparator6);
+		
+		final Label labelFeature61 = new Label(container, SWT.NONE);
+		labelFeature61.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+		labelFeature61.setText("Spooled Files Subsystem");
+		
+		final Label labelFeature62 = new Label(container, SWT.NONE);
+		labelFeature62.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+		labelFeature62.setText("originally developed by Softlanding Systems Inc. (RSE Extensions)");
+		
+		final Label labelFeature63 = new Label(container, SWT.NONE);
+		labelFeature63.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+		labelFeature63.setText("enhanced and integrated into iSphere by Task Force IT-Consulting GmbH");
+		
+		final Label labelSeparator7 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+		final GridData gd_labelSeparator7 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		labelSeparator7.setLayoutData(gd_labelSeparator7);
 		
 		final Label labelCMOneImage = new Label(container, SWT.NONE);
 		labelCMOneImage.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
