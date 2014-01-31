@@ -11,11 +11,21 @@
 
 package de.taskforce.isphere.messagefilesearch;
 
+import java.io.File;
+import java.io.IOException;
+
+import jxl.Workbook;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
@@ -25,15 +35,16 @@ import de.taskforce.isphere.Messages;
 
 public class ViewSearchResults extends ViewPart {
 
+	private Action actionExportToExcel;
 	private Action actionRemoveTabItem;
 	private TabFolder tabFolderSearchResults;
-//	private Shell shell;
+	private Shell shell;
 	
 	public void createPartControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new FillLayout());
 		
-	//	shell = parent.getShell();
+		shell = parent.getShell();
 
 		tabFolderSearchResults = new TabFolder(container, SWT.NONE);
 		
@@ -44,6 +55,15 @@ public class ViewSearchResults extends ViewPart {
 	}
 
 	private void createActions() {
+
+		actionExportToExcel = new Action("") {
+			public void run() {
+				exportToExcel();
+			}
+		};
+		actionExportToExcel.setToolTipText(Messages.getString("Export_to_Excel"));
+		actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
+		actionExportToExcel.setEnabled(false);
 
 		actionRemoveTabItem = new Action("") {
 			public void run() {
@@ -58,7 +78,7 @@ public class ViewSearchResults extends ViewPart {
 
 	private void initializeToolBar() {
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-
+		toolbarManager.add(actionExportToExcel);
 		toolbarManager.add(actionRemoveTabItem);
 	}
 
@@ -80,12 +100,97 @@ public class ViewSearchResults extends ViewPart {
 		 _searchResultViewer.createContents(compositeSearchResult);
 		
 		tabItemSearchResult.setControl(compositeSearchResult);
+		tabItemSearchResult.setData("Viewer", _searchResultViewer);
 		
 		TabItem[] tabItemToBeSelected = new TabItem[1];
 		tabItemToBeSelected[0] = tabItemSearchResult;
 		tabFolderSearchResults.setSelection(tabItemToBeSelected);
-		
+
+		actionExportToExcel.setEnabled(true);		
 		actionRemoveTabItem.setEnabled(true);		
+	}
+
+	public void exportToExcel() {
+
+		int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+		
+		if (selectedTabItem >= 0) {
+			
+			SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+			
+			if (_searchResultViewer != null) {
+				
+				SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
+
+				FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+				dialog.setFilterNames(new String[] {"Excel Files", "All Files"});
+				dialog.setFilterExtensions(new String[] {"*.xls", "*.*"});
+				dialog.setFilterPath("C:\\");
+				dialog.setFileName("export.xls");
+				String file = dialog.open();
+
+				if (file != null) {
+
+					try {
+						
+						WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
+						
+						WritableSheet sheet;
+						
+						sheet = workbook.createSheet(Messages.getString("Files_with_Id`s"), 0);
+						
+						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
+						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Message_file"))); 
+						sheet.addCell(new jxl.write.Label(2, 0, Messages.getString("Message-Id."))); 
+						sheet.addCell(new jxl.write.Label(3, 0, Messages.getString("Message"))); 
+						
+						int line = 1;
+						
+						for (int index1 = 0; index1 < _searchResults.length; index1++) {
+							
+							SearchResultMessageId[] _messageIds = _searchResults[index1].getMessageIds();
+							
+							for (int index2 = 0; index2 < _messageIds.length; index2++) {
+								
+								sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary())); 
+								sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getMessageFile())); 
+								sheet.addCell(new jxl.write.Label(2, line, _messageIds[index2].getMessageId())); 
+								sheet.addCell(new jxl.write.Label(3, line, _messageIds[index2].getMessage())); 
+
+								line++;
+								
+							}
+
+							line++;
+						}
+						
+						sheet = workbook.createSheet(Messages.getString("Files"), 0);
+						
+						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
+						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Message_file"))); 
+						
+						for (int index = 0; index < _searchResults.length; index++) {
+							sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary())); 
+							sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getMessageFile())); 
+						}
+						
+						workbook.write(); 
+						workbook.close(); 
+						
+					} 
+					catch (IOException e) {
+						e.printStackTrace();
+					} 
+					catch (WriteException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 	}
 	
 	public void removeTabItem() {
@@ -93,6 +198,7 @@ public class ViewSearchResults extends ViewPart {
 		if (selectedTabItem >= 0) {
 			tabFolderSearchResults.getItem(selectedTabItem).dispose();
 			if (tabFolderSearchResults.getItemCount() == 0) {
+				actionExportToExcel.setEnabled(false);
 				actionRemoveTabItem.setEnabled(false);
 			}
 		}

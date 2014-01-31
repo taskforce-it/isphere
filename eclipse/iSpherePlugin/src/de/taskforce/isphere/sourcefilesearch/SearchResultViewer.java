@@ -378,5 +378,9 @@ public class SearchResultViewer {
 		tableViewerStatements.refresh();
 		
 	}
-		
+	
+	public SearchResult[] getSearchResults() {
+		return _searchResults;
+	}
+	
 }
