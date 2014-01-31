@@ -54,6 +54,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_OPEN_EDITOR = "open_editor.gif";
 	public static final String IMAGE_SPOOLED_FILE = "spooled_file.gif";
 	public static final String IMAGE_SPOOLED_FILE_FILTER = "spooled_file_filter.gif";
+	public static final String IMAGE_EXCEL = "excel.png";
 	
 	public ISpherePlugin() {
 		super();
@@ -120,6 +121,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_OPEN_EDITOR, getImageDescriptor(IMAGE_OPEN_EDITOR));
 		reg.put(IMAGE_SPOOLED_FILE, getImageDescriptor(IMAGE_SPOOLED_FILE));
 		reg.put(IMAGE_SPOOLED_FILE_FILTER, getImageDescriptor(IMAGE_SPOOLED_FILE_FILTER));
+		reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {

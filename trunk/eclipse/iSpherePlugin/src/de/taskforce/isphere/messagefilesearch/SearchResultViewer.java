@@ -406,5 +406,9 @@ public class SearchResultViewer {
 		tableViewerMessageIds.refresh();
 		
 	}
+	
+	public SearchResult[] getSearchResults() {
+		return _searchResults;
+	}
 		
 }
