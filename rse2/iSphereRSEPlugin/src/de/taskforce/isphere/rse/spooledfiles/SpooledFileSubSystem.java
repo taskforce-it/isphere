@@ -20,7 +20,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -46,7 +45,7 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
 	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
 		SpooledFileResource[] spooledFileResources;
 		try {
-			SpooledFile[] spooledFiles = base.internalResolveFilterString(getShell(), getToolboxAS400Object(), getToolboxJDBCConnection(), filterString);
+			SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(), getToolboxJDBCConnection(), filterString);
 			spooledFileResources = new SpooledFileResource[spooledFiles.length];
 			for (int i = 0; i < spooledFileResources.length; i++) {
 				spooledFileResources[i] = new SpooledFileResource(this);
@@ -105,7 +104,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
 		}
 		return jdbcConnection;
 	}
-     
+    
+	/*
 	public void setShell(Shell shell) {
 		this.shell = shell;
 	}
@@ -117,7 +117,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
 		}
 		return super.getShell();
 	}
-
+	*/
+	
 	private void handleError(Exception e) {
 	}
 
