@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere for RDP 8.0+
 Bundle-SymbolicName: de.taskforce.isphere.rse;singleton:=true
-Bundle-Version: 1.4.0
+Bundle-Version: 1.4.1
 Bundle-Activator: de.taskforce.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: Task Force IT-Consulting GmbH
 Bundle-Localization: plugin
