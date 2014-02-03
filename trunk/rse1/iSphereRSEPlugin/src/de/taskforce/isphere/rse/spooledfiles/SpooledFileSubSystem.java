@@ -60,7 +60,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
 	{	
 		SpooledFileResource[] spooledFileResources;
 		try {
-			SpooledFile[] spooledFiles = base.internalResolveFilterString(getShell(), getToolboxAS400Object(), getToolboxJDBCConnection(), filterString);
+			SpooledFile[] spooledFiles = base.internalResolveFilterString(SystemPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(), getToolboxJDBCConnection(), filterString);
 			spooledFileResources = new SpooledFileResource[spooledFiles.length];
 			for (int i = 0; i < spooledFileResources.length; i++) {
 				spooledFileResources[i] = new SpooledFileResource(this);
