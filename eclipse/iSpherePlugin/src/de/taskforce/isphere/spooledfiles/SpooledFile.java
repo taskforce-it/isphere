@@ -596,8 +596,9 @@ public class SpooledFile {
 			do {
 				count = in.read(buffer, 0, buffer.length);
 				if (count > 0) {
-					byte[] converted = new String(buffer, 0, count, "Cp1252").getBytes();
-					out.write(converted, 0, converted.length);
+				//	byte[] converted = new String(buffer, 0, count, "Cp1252").getBytes();
+				//	out.write(converted, 0, converted.length);
+					out.write(buffer, 0, count);
 				}
 			} while (count != -1);
 			
