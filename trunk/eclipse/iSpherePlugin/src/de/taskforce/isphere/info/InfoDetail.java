@@ -37,7 +37,7 @@ public class InfoDetail {
 		
 		final Label labelISphere = new Label(container, SWT.NONE);
 		labelISphere.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-		labelISphere.setText("iSphere 1.4.1");
+		labelISphere.setText("iSphere 1.4.2");
 		
 		final Label labelTaskForceImage = new Label(container, SWT.NONE);
 		labelTaskForceImage.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));

@@ -87,7 +87,7 @@ public class ISphereHelper {
 		}
 		
 		String serverProvided = dataAreaISphereContent.substring(7, 13);
-		String clientProvided = "010401"; // 1.4.1
+		String clientProvided = "010402"; // 1.4.2
 		String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
 		String clientNeedsServer = "010200";
 		
