@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
@@ -50,6 +49,7 @@ import de.taskforce.isphere.internal.ISphereHelper;
 import de.taskforce.isphere.messagefilesearch.SearchDialog;
 import de.taskforce.isphere.messagefilesearch.SearchExec;
 import de.taskforce.isphere.messagefilesearch.SearchElement;
+import de.taskforce.isphere.messagefilesearch.SearchPostRun;
 import de.taskforce.isphere.messagefilesearch.SearchResult;
 import de.taskforce.isphere.messagefilesearch.ViewSearchResults;
 import de.taskforce.isphere.rse.Messages;
@@ -211,41 +211,24 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 					
 					SearchDialog dialog = new SearchDialog(shell, _searchElements);
 					if (dialog.open() == Dialog.OK) {
-						
-						SearchResult[] _searchResults =
-							new SearchExec().execute(
-									as400,
-									host,
-									jdbcConnection,
-									dialog.getString(),
-									dialog.getFromColumn(),
-									dialog.getToColumn(),
-									dialog.getCase(),
-									new ArrayList<SearchElement>(_searchElements.values()));
-						
-						for (int idx = 0; idx < _searchResults.length; idx++) {
 
-							String key = _searchResults[idx].getLibrary() + "-" + _searchResults[idx].getMessageFile();
-							SearchElement _searchElement = (SearchElement)_searchElements.get(key);
-							if (_searchElement != null) {
-								_searchResults[idx].setDescription(_searchElement.getDescription());
-							}
-							
-						}
+						SearchPostRun postRun = new SearchPostRun();
+						postRun.setConnection(_connection);
+						postRun.setConnectionName(_connection.getConnectionName());
+						postRun.setSearchString(dialog.getString());
+						postRun.setSearchElements(_searchElements);
+						postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 						
-						try {
-							ViewSearchResults viewSearchResults = 
-									(ViewSearchResults)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().
-											showView("de.taskforce.isphere.messagefilesearch.ViewSearchResults"));
-							viewSearchResults.addTabItem(
-									_connection,
-									_connection.getConnectionName(),
-									dialog.getString(),
-									_searchResults);
-						} 
-						catch (PartInitException e) {
-							e.printStackTrace();
-						}
+						new SearchExec().execute(
+								as400,
+								host,
+								jdbcConnection,
+								dialog.getString(),
+								dialog.getFromColumn(),
+								dialog.getToColumn(),
+								dialog.getCase(),
+								new ArrayList<SearchElement>(_searchElements.values()),
+								postRun);
 						
 					}
 					
