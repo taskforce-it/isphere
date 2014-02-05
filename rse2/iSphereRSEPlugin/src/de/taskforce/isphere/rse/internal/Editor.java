@@ -11,7 +11,9 @@
 
 package de.taskforce.isphere.rse.internal;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
@@ -20,6 +22,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.systems.editor.SystemTextEditor;
 
 import de.taskforce.isphere.internal.IEditor;
+import de.taskforce.isphere.rse.Messages;
 
 public class Editor implements IEditor {
 
@@ -29,36 +32,68 @@ public class Editor implements IEditor {
 
 			IBMiConnection _connection = (IBMiConnection)connection;
 			
-			IQSYSMember _member = null;
 			try {
-				_member = _connection.getMember(library, file, member, null);
-			} 
-			catch (SystemMessageException e) {
-				e.printStackTrace();
-			} 
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			if (member != null) {
 				
-				QSYSEditableRemoteSourceFileMember mbr = null;
-				try {
-					mbr = new QSYSEditableRemoteSourceFileMember(_member);
-				} 
-				catch (SystemMessageException e) {
-					e.printStackTrace();
-				}
+				IQSYSMember _member = _connection.getMember(library, file, member, null);
 
-				if (mbr != null) {
+				if (_member != null) {
 					
-					if (PlatformUI.getWorkbench().getEditorRegistry().findEditor("com.ibm.etools.systems.editor") != null) {
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					
+					String editor = "com.ibm.etools.systems.editor";
 
+					if (statement == 0) {
+						
+						String _editor = null;
+						if (_member.getType().equals("DSPF") ||
+								_member.getType().equals("MNUDDS")) {
+							_editor = "Screen Designer";
+						}
+						else if (_member.getType().equals("PRTF")) {
+							_editor = "Report Designer";
+						}
+
+						if (_editor != null) {
+
+							MessageDialog dialog = new MessageDialog(
+									shell,
+									Messages.getString("Choose_Editor"),
+									null,
+									Messages.getString("Please_choose_the_editor_for_the_source_member."),
+									MessageDialog.INFORMATION,
+									new String[] {
+										_editor,
+										"LPEX Editor"
+									},
+									0);
+
+							final int dialogResult = dialog.open();
+
+							if (dialogResult == 0) {
+
+								if (_member.getType().equals("DSPF") ||
+										_member.getType().equals("MNUDDS")) {
+									editor = "com.ibm.etools.iseries.dds.tui.editor.ScreenDesigner";
+								}
+								else if (_member.getType().equals("PRTF")) {
+									editor = "com.ibm.etools.iseries.dds.tui.editor.ReportDesigner";
+								}
+								
+							}
+
+						}
+						
+					}
+					
+					QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
+
+					if (mbr != null) {
+						
 						if (mode.equals("*OPEN")) {
-							mbr.open("com.ibm.etools.systems.editor", false, null);
+							mbr.open(editor, false, null);
 						}
 						else if (mode.equals("*BROWSE")) {
-							mbr.open("com.ibm.etools.systems.editor", true, null);
+							mbr.open(editor, true, null);
 						}
 						
 						if (statement != 0) {
@@ -71,9 +106,16 @@ public class Editor implements IEditor {
 						}
 						
 					}
-
+					
 				}
-				
+
+			} 
+			
+			catch (SystemMessageException e) {
+				e.printStackTrace();
+			} 
+			catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			
 		}

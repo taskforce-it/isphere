@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
@@ -52,8 +52,7 @@ import de.taskforce.isphere.rse.Messages;
 import de.taskforce.isphere.sourcefilesearch.SearchDialog;
 import de.taskforce.isphere.sourcefilesearch.SearchElement;
 import de.taskforce.isphere.sourcefilesearch.SearchExec;
-import de.taskforce.isphere.sourcefilesearch.SearchResult;
-import de.taskforce.isphere.sourcefilesearch.ViewSearchResults;
+import de.taskforce.isphere.sourcefilesearch.SearchPostRun;
 
 public class SourceFileSearchAction implements IObjectActionDelegate {
 	
@@ -63,8 +62,6 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 	private boolean _multipleConnection;
 	private ArrayList<Object> _selectedElements;
 	private HashMap<String, SearchElement> _searchElements;
-	private String _filterString;
-	private String[] _filterStrings;
 	private ISeriesObjectFilterString _objectFilterString;
 	private QSYSObjectSubSystem _fileSubSystemImpl;
 
@@ -176,7 +173,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 				else if ((_object instanceof SystemFilterReference)) {
 					
 					SystemFilterReference filterReference = (SystemFilterReference) _object;
-					_filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+					String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
 					if (!addElementsFromFilterString(_filterStrings)) {
 						break;
 					}
@@ -186,7 +183,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 				else if ((_object instanceof ISystemFilterStringReference)) {
 					
 					ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference) _object;
-					_filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
+					String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
 					if (!addElementsFromFilterString(_filterStrings)) {
 						break;
 					}
@@ -214,30 +211,23 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 					
 					SearchDialog dialog = new SearchDialog(shell, _searchElements);
 					if (dialog.open() == Dialog.OK) {
-						
-						SearchResult[] _searchResults =
-							new SearchExec().execute(
-									as400,
-									jdbcConnection,
-									dialog.getString(),
-									dialog.getFromColumn(),
-									dialog.getToColumn(),
-									dialog.getCase(),
-									new ArrayList<SearchElement>(_searchElements.values()));
+	
+						SearchPostRun postRun = new SearchPostRun();
+						postRun.setConnection(_connection);
+						postRun.setConnectionName(_connection.getConnectionName());
+						postRun.setSearchString(dialog.getString());
+						postRun.setSearchElements(_searchElements);
+						postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-						try {
-							ViewSearchResults viewSearchResults = 
-									(ViewSearchResults)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().
-											showView("de.taskforce.isphere.sourcefilesearch.ViewSearchResults"));
-							viewSearchResults.addTabItem(
-									_connection,
-									_connection.getConnectionName(),
-									dialog.getString(),
-									_searchResults);
-						} 
-						catch (PartInitException e) {
-							e.printStackTrace();
-						}
+						new SearchExec().execute(
+								as400,
+								jdbcConnection,
+								dialog.getString(),
+								dialog.getFromColumn(),
+								dialog.getToColumn(),
+								dialog.getCase(),
+								new ArrayList<SearchElement>(_searchElements.values()),
+								postRun);
 						
 					}
 					
@@ -270,6 +260,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 			_searchElement.setLibrary(element.getLibrary());
 			_searchElement.setFile(((IQSYSMember) element).getFile());
 			_searchElement.setMember(element.getName());
+			_searchElement.setDescription(((IQSYSMember) element).getDescription());
 			_searchElements.put(key, _searchElement);
 			
 		}
@@ -278,6 +269,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
 	private void addElementsFromSourceFile(String library, String sourceFile) {
 		
+		/*
 		String key = library + "-" + sourceFile + "-" + "*";
 
 		if (!_searchElements.containsKey(key)) {
@@ -289,7 +281,18 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 			_searchElements.put(key, _searchElement);
 			
 		}
+		*/
+
+		ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
+		_memberFilterString.setLibrary(library);
+		_memberFilterString.setFile(sourceFile);
+		_memberFilterString.setMember("*");
+		_memberFilterString.setMemberType("*");
 		
+		String[] _filterStrings = new String[1];
+		_filterStrings[0] = _memberFilterString.toString();
+		addElementsFromFilterString(_filterStrings);
+
 	}
 	
 	private boolean addElementsFromLibrary(IQSYSResource element) {
@@ -306,7 +309,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 		}
 
 		_objectFilterString.setLibrary(element.getName());
-		_filterString = _objectFilterString.toString();
+		String _filterString = _objectFilterString.toString();
 
 		_fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
 		try {
@@ -350,7 +353,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 		
 		for (int idx = 0; idx < filterStrings.length; idx++) {
 			
-			_filterString = filterStrings[idx];
+			String _filterString = filterStrings[idx];
 			_fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
 			
 			try {
