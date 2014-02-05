@@ -23,12 +23,14 @@ public class SearchElement {
 	private String library;
 	private String file;
 	private String member;
+	private String description;
 	private Object data;
 
 	public SearchElement() {
 		library = "";
 		file = "";
 		member = "";
+		description = "";
 		data = null;
 	}
 
@@ -54,6 +56,14 @@ public class SearchElement {
 
 	public void setMember(String member) {
 		this.member = member;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Object getData() {

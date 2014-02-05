@@ -11,7 +11,6 @@
 
 package de.taskforce.isphere.sourcefilesearch;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,8 +18,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import com.ibm.as400.access.AS400;
 
@@ -29,7 +29,7 @@ import de.taskforce.isphere.internal.ISphereHelper;
 
 public class SearchExec {
 	
-	private class Search implements IRunnableWithProgress {
+	private class Search extends Job {
 
 		private AS400 _as400;
 		private Connection _jdbcConnection;
@@ -38,8 +38,10 @@ public class SearchExec {
 		private int _toColumn;
 		private String _case;
 		private ArrayList<SearchElement> _searchElements;
+		private ISearchPostRun _searchPostRun;
 		private int _handle;
 		private int _counter;
+		private String iSphereLibrary;
 
 		public Search(
 				AS400 _as400,
@@ -48,7 +50,11 @@ public class SearchExec {
 				int _fromColumn,
 				int _toColumn,
 				String _case,
-				ArrayList<SearchElement> _searchElements) {
+				ArrayList<SearchElement> _searchElements,
+				ISearchPostRun _searchPostRun) {
+			
+			super("iSphere Source File Search");
+			
 			this._as400 = _as400;
 			this._jdbcConnection = _jdbcConnection;
 			this._string = _string;
@@ -56,9 +62,15 @@ public class SearchExec {
 			this._toColumn = _toColumn;
 			this._case = _case;
 			this._searchElements = _searchElements;
+			this._searchPostRun = _searchPostRun;
+			
+			iSphereLibrary = ISpherePlugin.getISphereLibrary();
+			
 		}
 
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		public IStatus run(IProgressMonitor monitor) {
+			
+			IStatus _status = Status.OK_STATUS;
 			
 			String currentLibrary = null;
 			try {
@@ -112,7 +124,8 @@ public class SearchExec {
 							
 							if(monitor.isCanceled()) {
 								_cancel = true;
-								cancel();
+								cancelJob();
+								_status = Status.CANCEL_STATUS;
 								break;
 							}
 
@@ -148,6 +161,12 @@ public class SearchExec {
 				}
 				
 			}
+			
+			if (_searchPostRun != null) {
+				_searchPostRun.run(_searchResults);
+			}
+			
+			return _status;
 			
 		}
 		
@@ -191,7 +210,7 @@ public class SearchExec {
 			
 		}
 		
-		private void cancel() {
+		private void cancelJob() {
 			
 			String _separator;
 			try {
@@ -252,8 +271,7 @@ public class SearchExec {
 		
 	}
 	
-	private String iSphereLibrary;
-	private SearchResult[] _searchResults;
+	private SearchResult[] _searchResults = null;
 	
 	public SearchResult[] execute(
 			AS400 _as400,
@@ -263,12 +281,8 @@ public class SearchExec {
 			int _toColumn,
 			String _case,
 			ArrayList<SearchElement> _searchElements) {
-		
-		iSphereLibrary = ISpherePlugin.getISphereLibrary();
 
-		_searchResults = null;
-
-		Search runnableWithProgress = 
+		Search search = 
 				new Search(
 						_as400,
 						_jdbcConnection,
@@ -276,11 +290,13 @@ public class SearchExec {
 						_fromColumn,
 						_toColumn,
 						_case,
-						_searchElements);
+						_searchElements,
+						null);
+		search.setUser(true);
+		search.schedule();
+		
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnableWithProgress);
-		} 
-		catch (InvocationTargetException e) {
+			search.join();
 		} 
 		catch (InterruptedException e) {
 		}
@@ -291,6 +307,31 @@ public class SearchExec {
 		else {
 			return _searchResults;
 		}
+		
+	}
+	
+	public void execute(
+			AS400 _as400,
+			Connection _jdbcConnection,
+			String _string,
+			int _fromColumn,
+			int _toColumn,
+			String _case,
+			ArrayList<SearchElement> _searchElements,
+			ISearchPostRun _searchPostRun) {
+
+		Search search = 
+				new Search(
+						_as400,
+						_jdbcConnection,
+						_string,
+						_fromColumn,
+						_toColumn,
+						_case,
+						_searchElements,
+						_searchPostRun);
+		search.setUser(true);
+		search.schedule();
 		
 	}
 	

@@ -24,12 +24,14 @@ public class SearchResult {
 	private String library;
 	private String file;
 	private String member;
+	private String description;
 	private SearchResultStatement[] statements;
 
 	public SearchResult() {
 		library = "";
 		file = "";
 		member = "";
+		description = "";
 		statements = null;
 	}
 
@@ -55,6 +57,14 @@ public class SearchResult {
 
 	public void setMember(String member) {
 		this.member = member;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public SearchResultStatement[] getStatements() {

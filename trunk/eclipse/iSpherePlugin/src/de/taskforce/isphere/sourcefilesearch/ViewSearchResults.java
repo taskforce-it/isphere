@@ -142,8 +142,9 @@ public class ViewSearchResults extends ViewPart {
 						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
 						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Source_file"))); 
 						sheet.addCell(new jxl.write.Label(2, 0, Messages.getString("Member"))); 
-						sheet.addCell(new jxl.write.Label(3, 0, Messages.getString("Line"))); 
-						sheet.addCell(new jxl.write.Label(4, 0, Messages.getString("Statement"))); 
+						sheet.addCell(new jxl.write.Label(3, 0, Messages.getString("Description"))); 
+						sheet.addCell(new jxl.write.Label(4, 0, Messages.getString("Line"))); 
+						sheet.addCell(new jxl.write.Label(5, 0, Messages.getString("Statement"))); 
 						
 						int line = 1;
 						
@@ -156,8 +157,9 @@ public class ViewSearchResults extends ViewPart {
 								sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary())); 
 								sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile())); 
 								sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember())); 
-								sheet.addCell(new jxl.write.Label(3, line, Integer.toString(_statements[index2].getStatement()))); 
-								sheet.addCell(new jxl.write.Label(4, line, _statements[index2].getLine())); 
+								sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription())); 
+								sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement()))); 
+								sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine())); 
 
 								line++;
 								
@@ -171,11 +173,13 @@ public class ViewSearchResults extends ViewPart {
 						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
 						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Source_file"))); 
 						sheet.addCell(new jxl.write.Label(2, 0, Messages.getString("Member"))); 
+						sheet.addCell(new jxl.write.Label(3, 0, Messages.getString("Description"))); 
 						
 						for (int index = 0; index < _searchResults.length; index++) {
 							sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary())); 
 							sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile())); 
 							sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember())); 
+							sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription())); 
 						}
 						
 						workbook.write(); 
