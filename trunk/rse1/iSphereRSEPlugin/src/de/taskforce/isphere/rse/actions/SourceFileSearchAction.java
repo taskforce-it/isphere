@@ -24,10 +24,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
@@ -50,8 +50,7 @@ import de.taskforce.isphere.internal.ISphereHelper;
 import de.taskforce.isphere.sourcefilesearch.SearchDialog;
 import de.taskforce.isphere.sourcefilesearch.SearchExec;
 import de.taskforce.isphere.sourcefilesearch.SearchElement;
-import de.taskforce.isphere.sourcefilesearch.SearchResult;
-import de.taskforce.isphere.sourcefilesearch.ViewSearchResults;
+import de.taskforce.isphere.sourcefilesearch.SearchPostRun;
 import de.taskforce.isphere.rse.Messages;
 
 public class SourceFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
@@ -60,8 +59,6 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 	private boolean _multipleConnection;
 	protected ArrayList _selectedElements;
 	private HashMap<String, SearchElement> _searchElements;
-	private String _filterString;
-	private String[] _filterStrings;
 	private ISeriesObjectFilterString _objectFilterString;
 	private FileSubSystemImpl _fileSubSystemImpl;
 
@@ -213,7 +210,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 			else if ((_object instanceof SystemFilterReference)) {
 				
 				SystemFilterReference filterReference = (SystemFilterReference) _object;
-				_filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+				String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
 				if (!addElementsFromFilterString(_filterStrings)) {
 					break;
 				}
@@ -223,7 +220,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 			else if ((_object instanceof SystemFilterStringReference)) {
 				
 				SystemFilterStringReference filterStringReference = (SystemFilterStringReference) _object;
-				_filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
+				String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
 				if (!addElementsFromFilterString(_filterStrings)) {
 					break;
 				}
@@ -251,30 +248,23 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 				
 				SearchDialog dialog = new SearchDialog(shell, _searchElements);
 				if (dialog.open() == Dialog.OK) {
+	
+					SearchPostRun postRun = new SearchPostRun();
+					postRun.setConnection(_connection);
+					postRun.setConnectionName(_connection.getConnectionName());
+					postRun.setSearchString(dialog.getString());
+					postRun.setSearchElements(_searchElements);
+					postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 					
-					SearchResult[] _searchResults =
-						new SearchExec().execute(
-								as400,
-								jdbcConnection,
-								dialog.getString(),
-								dialog.getFromColumn(),
-								dialog.getToColumn(),
-								dialog.getCase(),
-								new ArrayList<SearchElement>(_searchElements.values()));
-
-					try {
-						ViewSearchResults viewSearchResults = 
-								(ViewSearchResults)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().
-										showView("de.taskforce.isphere.sourcefilesearch.ViewSearchResults"));
-						viewSearchResults.addTabItem(
-								_connection,
-								_connection.getConnectionName(),
-								dialog.getString(),
-								_searchResults);
-					} 
-					catch (PartInitException e) {
-						e.printStackTrace();
-					}
+					new SearchExec().execute(
+							as400,
+							jdbcConnection,
+							dialog.getString(),
+							dialog.getFromColumn(),
+							dialog.getToColumn(),
+							dialog.getCase(),
+							new ArrayList<SearchElement>(_searchElements.values()),
+							postRun);
 					
 				}
 				
@@ -294,6 +284,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 			_searchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(element));
 			_searchElement.setFile(ISeriesDataElementHelpers.getFile(element));
 			_searchElement.setMember(ISeriesDataElementHelpers.getName(element));
+			_searchElement.setDescription(ISeriesDataElementHelpers.getDescription(element));
 			_searchElements.put(key, _searchElement);
 			
 		}
@@ -302,6 +293,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
 	private void addElementsFromSourceFile(String library, String sourceFile) {
 		
+		/*
 		String key = library + "-" + sourceFile + "-" + "*";
 
 		if (!_searchElements.containsKey(key)) {
@@ -313,6 +305,17 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 			_searchElements.put(key, _searchElement);
 			
 		}
+		*/
+		
+		ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
+		_memberFilterString.setLibrary(library);
+		_memberFilterString.setFile(sourceFile);
+		_memberFilterString.setMember("*");
+		_memberFilterString.setMemberType("*");
+		
+		String[] _filterStrings = new String[1];
+		_filterStrings[0] = _memberFilterString.toString();
+		addElementsFromFilterString(_filterStrings);
 		
 	}
 	
@@ -330,7 +333,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 		}
 
 		_objectFilterString.setLibrary(element.getName());
-		_filterString = _objectFilterString.toString();
+		String _filterString = _objectFilterString.toString();
 
 		_fileSubSystemImpl = _connection.getISeriesFileSubSystem();
 		try {
@@ -374,7 +377,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 		
 		for (int idx = 0; idx < filterStrings.length; idx++) {
 			
-			_filterString = filterStrings[idx];
+			String _filterString = filterStrings[idx];
 			_fileSubSystemImpl = _connection.getISeriesFileSubSystem();
 			
 			try {
