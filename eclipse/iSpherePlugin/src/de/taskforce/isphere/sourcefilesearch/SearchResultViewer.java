@@ -61,7 +61,8 @@ public class SearchResultViewer {
 			if (columnIndex == 0) {
 				return ((SearchResult)element).getLibrary() + "-" +
 						((SearchResult)element).getFile() + "(" +
-						((SearchResult)element).getMember() + ")";
+						((SearchResult)element).getMember() + ")" + " - \"" +
+						((SearchResult)element).getDescription() + "\"";
 			}
 			return "*UNKNOWN";
 		}

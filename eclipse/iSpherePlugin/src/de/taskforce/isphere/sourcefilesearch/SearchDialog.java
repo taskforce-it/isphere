@@ -181,7 +181,7 @@ public class SearchDialog extends Dialog {
 		while (_iterator.hasNext()) {  
 			String key = (String)_iterator.next();  
 			SearchElement value = (SearchElement)searchElements.get(key);
-			String item = value.getLibrary() + "/" + value.getFile() + "(" + value.getMember() + ")";
+			String item = value.getLibrary() + "/" + value.getFile() + "(" + value.getMember() + ")" + " - \"" + value.getDescription() + "\"";
 			items.add(item);
 		}  
 		String[] _items = new String[items.size()];
