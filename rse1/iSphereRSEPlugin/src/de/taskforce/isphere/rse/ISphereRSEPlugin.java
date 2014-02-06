@@ -23,6 +23,8 @@ import org.osgi.framework.BundleContext;
 
 import de.taskforce.isphere.ISpherePlugin;
 import de.taskforce.isphere.rse.internal.Editor;
+import de.taskforce.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
+import de.taskforce.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
 import de.taskforce.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
 import de.taskforce.isphere.rse.spooledfiles.SpooledFileResource;
 
@@ -40,6 +42,8 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 		super.start(context);
 		installURL = context.getBundle().getEntry("/");
 		ISpherePlugin.setEditor(new Editor());
+		ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
+		ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
 		setupAdapters();	
 	}
 
