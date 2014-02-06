@@ -21,10 +21,12 @@ import jxl.write.WriteException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -32,9 +34,12 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.taskforce.isphere.ISpherePlugin;
 import de.taskforce.isphere.Messages;
+import de.taskforce.isphere.internal.FilterDialog;
+import de.taskforce.isphere.internal.IMessageFileSearchObjectFilterCreator;
 
 public class ViewSearchResults extends ViewPart {
 
+	private Action actionExportToObjectFilter;
 	private Action actionExportToExcel;
 	private Action actionRemoveTabItem;
 	private TabFolder tabFolderSearchResults;
@@ -55,6 +60,15 @@ public class ViewSearchResults extends ViewPart {
 	}
 
 	private void createActions() {
+
+		actionExportToObjectFilter = new Action("") {
+			public void run() {
+				exportToObjectFilter();
+			}
+		};
+		actionExportToObjectFilter.setToolTipText(Messages.getString("Export_to_Object_Filter"));
+		actionExportToObjectFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OBJECT_FILTER));
+		actionExportToObjectFilter.setEnabled(false);
 
 		actionExportToExcel = new Action("") {
 			public void run() {
@@ -78,6 +92,7 @@ public class ViewSearchResults extends ViewPart {
 
 	private void initializeToolBar() {
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+		toolbarManager.add(actionExportToObjectFilter);
 		toolbarManager.add(actionExportToExcel);
 		toolbarManager.add(actionRemoveTabItem);
 	}
@@ -106,8 +121,44 @@ public class ViewSearchResults extends ViewPart {
 		tabItemToBeSelected[0] = tabItemSearchResult;
 		tabFolderSearchResults.setSelection(tabItemToBeSelected);
 
+		actionExportToObjectFilter.setEnabled(true);		
 		actionExportToExcel.setEnabled(true);		
 		actionRemoveTabItem.setEnabled(true);		
+	}
+
+	public void exportToObjectFilter() {
+		
+		IMessageFileSearchObjectFilterCreator creator = ISpherePlugin.getMessageFileSearchObjectFilterCreator();
+		
+		if (creator != null) {
+			
+			int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+			
+			if (selectedTabItem >= 0) {
+				
+				SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+				
+				if (_searchResultViewer != null) {
+					
+					FilterDialog dialog = new FilterDialog(shell);
+					if (dialog.open() == Dialog.OK) {
+						if (!creator.createObjectFilter(_searchResultViewer.getConnection(), dialog.getFilter(), _searchResultViewer.getSearchResults())) {
+							
+							MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+							errorBox.setText(Messages.getString("E_R_R_O_R"));
+							errorBox.setMessage(Messages.getString("The_filter_could_not_be_created."));
+							errorBox.open();
+							
+							
+						}
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 	}
 
 	public void exportToExcel() {
@@ -202,6 +253,7 @@ public class ViewSearchResults extends ViewPart {
 		if (selectedTabItem >= 0) {
 			tabFolderSearchResults.getItem(selectedTabItem).dispose();
 			if (tabFolderSearchResults.getItemCount() == 0) {
+				actionExportToObjectFilter.setEnabled(false);
 				actionExportToExcel.setEnabled(false);
 				actionRemoveTabItem.setEnabled(false);
 			}

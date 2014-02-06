@@ -50,7 +50,7 @@ import de.taskforce.isphere.messagefileeditor.QMHRTVM;
 
 public class SearchResultViewer {
 
-//	private Object connection;
+	private Object connection;
 //	private String searchString;
 	private SearchResult[] _searchResults; 
 	private TableViewer tableViewerMessageFiles;
@@ -139,7 +139,7 @@ public class SearchResultViewer {
 	}
 	
 	public SearchResultViewer(Object connection, String searchString, SearchResult[] _searchResults) {
-	//	this.connection = connection;
+		this.connection = connection;
 	//	this.searchString = searchString;
 		this._searchResults = _searchResults;
 	}
@@ -405,6 +405,10 @@ public class SearchResultViewer {
 		}
 		tableViewerMessageIds.refresh();
 		
+	}
+
+	public Object getConnection() {
+		return connection;
 	}
 	
 	public SearchResult[] getSearchResults() {

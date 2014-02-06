@@ -379,6 +379,10 @@ public class SearchResultViewer {
 		tableViewerStatements.refresh();
 		
 	}
+
+	public Object getConnection() {
+		return connection;
+	}
 	
 	public SearchResult[] getSearchResults() {
 		return _searchResults;
