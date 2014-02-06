@@ -25,12 +25,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.taskforce.isphere.internal.IEditor;
+import de.taskforce.isphere.internal.IMessageFileSearchObjectFilterCreator;
+import de.taskforce.isphere.internal.ISourceFileSearchMemberFilterCreator;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
 	private static ISpherePlugin plugin;
 	private static URL installURL;
 	public static IEditor editor = null;
+	public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
+	public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
 	private File spooledFilesDirectory;
 	private IProject spooledFilesProject;
 	public static final String IMAGE_CMONE = "cmone.bmp";
@@ -55,6 +59,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_SPOOLED_FILE = "spooled_file.gif";
 	public static final String IMAGE_SPOOLED_FILE_FILTER = "spooled_file_filter.gif";
 	public static final String IMAGE_EXCEL = "excel.png";
+	public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
+	public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
 	
 	public ISpherePlugin() {
 		super();
@@ -122,6 +128,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_SPOOLED_FILE, getImageDescriptor(IMAGE_SPOOLED_FILE));
 		reg.put(IMAGE_SPOOLED_FILE_FILTER, getImageDescriptor(IMAGE_SPOOLED_FILE_FILTER));
 		reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
+		reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
+		reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {
@@ -170,6 +178,22 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		editor = _editor;
 	}
 
+	public static ISourceFileSearchMemberFilterCreator getSourceFileSearchMemberFilterCreator() {
+		return sourceFileSearchMemberFilterCreator;
+	}
+
+	public static void setSourceFileSearchMemberFilterCreator(ISourceFileSearchMemberFilterCreator _sourceFileSearchMemberFilterCreator) {
+		sourceFileSearchMemberFilterCreator = _sourceFileSearchMemberFilterCreator;
+	}
+
+	public static IMessageFileSearchObjectFilterCreator getMessageFileSearchObjectFilterCreator() {
+		return messageFileSearchObjectFilterCreator;
+	}
+
+	public static void setMessageFileSearchObjectFilterCreator(IMessageFileSearchObjectFilterCreator _messageFileSearchObjectFilterCreator) {
+		messageFileSearchObjectFilterCreator = _messageFileSearchObjectFilterCreator;
+	}
+	
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
