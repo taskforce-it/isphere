@@ -1,0 +1,58 @@
+      //*------------------------------------------------------------------------------------------*
+      //*                                                                                          *
+      //* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.               *
+      //* All rights reserved. This program and the accompanying materials                         *
+      //* are made available under the terms of the Common Public License v1.0                     *
+      //* which accompanies this distribution, and is available at                                 *
+      //* http://www.eclipse.org/legal/cpl-v10.html                                                *
+      //*                                                                                          *
+      //* Contributors:                                                                            *
+      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
+      //*                                                                                          *
+      //*------------------------------------------------------------------------------------------*
+      //*                                                                                          *
+      //* Wrapper (XFNDSTR - search)                                                               *
+      //*                                                                                          *
+      //*------------------------------------------------------------------------------------------*
+ 
+      // Procedure prototyp for procedure 'W002002'
+ 
+     dW002002          PR
+     d                               10S 0 Const                                --> Handle
+     d                               40A   Const                                --> String
+     d                                3S 0 Const                                --> From column
+     d                                3S 0 Const                                --> To column
+     d                               10A   Const                                --> Case
+ 
+      // Procedure interface for procedure 'W002002'
+ 
+     dW002002          PI
+     d LPHDL                         10S 0 Const                                --> Handle
+     d LPSTG                         40A   Const                                --> String
+     d LPFCOL                         3S 0 Const                                --> From column
+     d LPTCOL                         3S 0 Const                                --> To column
+     d LPCASE                        10A   Const                                --> Case
+ 
+      //*------------------------------------------------------------------------------------------*
+ 
+      // Procedure Prototypes for Modul 'XFNDSTR'
+ 
+     d/Copy QCPYSRC,XFNDSTR
+ 
+      //*------------------------------------------------------------------------------------------*
+ 
+      /Free
+ 
+       // Call service program
+       XFNDSTR_search(
+        LPHDL :  // --> Handle
+        LPSTG :  // --> String
+        LPFCOL : // --> From column
+        LPTCOL : // --> To column
+        LPCASE   // --> Case
+       );
+ 
+       // Leave procedure
+       Return;
+ 
+      /End-Free

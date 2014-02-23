@@ -1,0 +1,31 @@
+      //*------------------------------------------------------------------------------------------*
+      //*                                                                                          *
+      //* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.               *
+      //* All rights reserved. This program and the accompanying materials                         *
+      //* are made available under the terms of the Common Public License v1.0                     *
+      //* which accompanies this distribution, and is available at                                 *
+      //* http://www.eclipse.org/legal/cpl-v10.html                                                *
+      //*                                                                                          *
+      //* Contributors:                                                                            *
+      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
+      //*                                                                                          *
+      //*------------------------------------------------------------------------------------------*
+ 
+     dXFNDSTR_getHandle...
+     d                 PR            10S 0                                      <-- Handle
+ 
+     dXFNDSTR_getNumberOfSearchElements...
+     d                 PR             6S 0                                      <-- Number of elem.
+     d                               10S 0 Const                                --> Handle
+ 
+     dXFNDSTR_search...
+     d                 PR
+     d                               10S 0 Const                                --> Handle
+     d                               40A   Const                                --> String
+     d                                3S 0 Const                                --> From column
+     d                                3S 0 Const                                --> To column
+     d                               10A   Const                                --> Case
+ 
+     dXFNDSTR_clear...
+     d                 PR
+     d                               10S 0 Const                                --> Handle
