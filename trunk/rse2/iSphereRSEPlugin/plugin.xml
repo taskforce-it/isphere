@@ -6,15 +6,15 @@
          point="org.eclipse.ui.popupMenus">
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="de.taskforce.isphere.menu.msgf"
+            id="biz.isphere.menu.msgf"
             namefilter="*.msgf">
 	         <visibility> 
 	          	<objectState name="type" value="*MSGF"/>
 	         </visibility>	         
 	         <action
-                class="de.taskforce.isphere.rse.actions.MessageFileEditorAction"
+                class="biz.isphere.rse.actions.MessageFileEditorAction"
                 enablesFor="1"
-                id="de.taskforce.isphere.rse.actions.MessageFileEditorAction"
+                id="biz.isphere.rse.actions.MessageFileEditorAction"
                 label="%iSphere_Message_File_Editor"
                 icon="icons/message_file.gif"
                 menubarPath="additions">
@@ -22,11 +22,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
-            id="de.taskforce.isphere.menu.member">
+            id="biz.isphere.menu.member">
 	         <action
-                class="de.taskforce.isphere.rse.actions.CompareEditorAction"
+                class="biz.isphere.rse.actions.CompareEditorAction"
                 enablesFor="1"
-                id="de.taskforce.isphere.rse.actions.CompareEditorAction"
+                id="biz.isphere.rse.actions.CompareEditorAction"
                 label="%iSphere_Compare_Editor"
                 icon="icons/compare.gif"
                 menubarPath="additions">
@@ -34,15 +34,15 @@
       	</objectContribution>
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="de.taskforce.isphere.menu.bnddir"
+            id="biz.isphere.menu.bnddir"
             namefilter="*.bnddir">
 	         <visibility> 
 	          	<objectState name="type" value="*BNDDIR"/>
 	         </visibility>	         
 	         <action
-                class="de.taskforce.isphere.rse.actions.BindingDirectoryEditorAction"
+                class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
                 enablesFor="1"
-                id="de.taskforce.isphere.rse.actions.BindingDirectoryEditorAction"
+                id="biz.isphere.rse.actions.BindingDirectoryEditorAction"
                 label="%iSphere_Binding_Directory_Editor"
                 icon="icons/binding_directory.gif"
                 menubarPath="additions">
@@ -50,11 +50,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
-            id="de.taskforce.isphere.menu.sourcefilesearch.member">
+            id="biz.isphere.menu.sourcefilesearch.member">
 	         <action
-                class="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                id="biz.isphere.rse.actions.SourceFileSearchAction"
                 label="%iSphere_Source_File_Search"
                 icon="icons/source_file_search.gif"
                 menubarPath="additions">
@@ -62,11 +62,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
-            id="de.taskforce.isphere.menu.sourcefilesearch.filter">
+            id="biz.isphere.menu.sourcefilesearch.filter">
 	         <action
-                class="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                id="biz.isphere.rse.actions.SourceFileSearchAction"
                 label="%iSphere_Source_File_Search"
                 icon="icons/source_file_search.gif"
                 menubarPath="additions">
@@ -74,11 +74,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
-            id="de.taskforce.isphere.menu.sourcefilesearch.filter">
+            id="biz.isphere.menu.sourcefilesearch.filter">
 	         <action
-                class="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.SourceFileSearchAction"
+                id="biz.isphere.rse.actions.SourceFileSearchAction"
                 label="%iSphere_Source_File_Search"
                 icon="icons/source_file_search.gif"
                 menubarPath="additions">
@@ -86,11 +86,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
-            id="de.taskforce.isphere.menu.messagefilesearch.member">
+            id="biz.isphere.menu.messagefilesearch.member">
 	         <action
-                class="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                id="biz.isphere.rse.actions.MessageFileSearchAction"
                 label="%iSphere_Message_File_Search"
                 icon="icons/message_file_search.png"
                 menubarPath="additions">
@@ -98,11 +98,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
-            id="de.taskforce.isphere.menu.messagefilesearch.filter">
+            id="biz.isphere.menu.messagefilesearch.filter">
 	         <action
-                class="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                id="biz.isphere.rse.actions.MessageFileSearchAction"
                 label="%iSphere_Message_File_Search"
                 icon="icons/message_file_search.png"
                 menubarPath="additions">
@@ -110,11 +110,11 @@
       	</objectContribution>
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
-            id="de.taskforce.isphere.menu.messagefilesearch.filter">
+            id="biz.isphere.menu.messagefilesearch.filter">
 	         <action
-                class="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
-                id="de.taskforce.isphere.rse.actions.MessageFileSearchAction"
+                id="biz.isphere.rse.actions.MessageFileSearchAction"
                 label="%iSphere_Message_File_Search"
                 icon="icons/message_file_search.png"
                 menubarPath="additions">
@@ -130,107 +130,107 @@
             iconlive="icons/spooled_files_connected.gif"
             icon="icons/spooled_files.gif"
             category="spooled files"
-            class="de.taskforce.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
+            class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
             vendor="Task Force IT-Consulting GmbH"
-            id="de.taskforce.isphere.spooledfiles.subsystems.factory">
+            id="biz.isphere.spooledfiles.subsystems.factory">
       </configuration>
    </extension>
 
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            subsystemfactoryid="de.taskforce.isphere.spooledfiles.subsystems.factory"
-            objectClass="de.taskforce.isphere.rse.spooledfiles.SpooledFileResource"
+            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
+            objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*"
             namefilter="*"
-            id="de.taskforce.isphere.rse.spooledfiles.actions">
+            id="biz.isphere.rse.spooledfiles.actions">
          <menu
                label="%SaveAs"
-               id="de.taskforce.isphere.menu.save">             
+               id="biz.isphere.menu.save">             
             <separator
                   name="main">
             </separator>
          </menu> 
          <menu
                label="%OpenAs"
-               id="de.taskforce.isphere.menu.open">             
+               id="biz.isphere.menu.open">             
             <separator
                   name="main">
             </separator>
          </menu> 
          <action
                label="%Messages"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileMessageAction"
+               class="biz.isphere.rse.spooledfiles.SpooledFileMessageAction"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileMessageAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileMessageAction">
          </action>
          <action
                label="%Release"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileReleaseAction"
+               class="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileReleaseAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction">
          </action>
          <action
                label="%Hold"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileHoldAction"
+               class="biz.isphere.rse.spooledfiles.SpooledFileHoldAction"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileHoldAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileHoldAction">
          </action>
          <action
                label="%Delete"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileDeleteAction"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileDeleteAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction">
          </action>
          <action
                label="%Change"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileChangeAction"
+               class="biz.isphere.rse.spooledfiles.SpooledFileChangeAction"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileChangeAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileChangeAction">
          </action>
          <action
                label="%SaveAsPDF"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
-               menubarPath="de.taskforce.isphere.menu.save/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
+               menubarPath="biz.isphere.menu.save/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
          </action>
          <action
                label="%SaveAsHTML"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
-               menubarPath="de.taskforce.isphere.menu.save/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
+               menubarPath="biz.isphere.menu.save/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
          </action>
          <action
                label="%SaveAsText"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
-               menubarPath="de.taskforce.isphere.menu.save/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
+               menubarPath="biz.isphere.menu.save/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
          </action>
          <action
                label="%OpenAsPDF"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
-               menubarPath="de.taskforce.isphere.menu.open/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
+               menubarPath="biz.isphere.menu.open/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
          </action>
          <action
                label="%OpenAsHTML"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
-               menubarPath="de.taskforce.isphere.menu.open/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
+               menubarPath="biz.isphere.menu.open/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
          </action>
          <action
                label="%OpenAsText"
-               class="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
-               menubarPath="de.taskforce.isphere.menu.open/main"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
+               menubarPath="biz.isphere.menu.open/main"
                enablesFor="+"
-               id="de.taskforce.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
          </action>
       </objectContribution>
    </extension>
@@ -238,12 +238,12 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="de.taskforce.isphere.rse.spooledfiles.SpooledFileProperties"
-            id="de.taskforce.isphere.rse.spooledfiles.SpooledFileProperties"
+            class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
+            id="biz.isphere.rse.spooledfiles.SpooledFileProperties"
             name="%GeneralInformation"
             namefilter="*"
-            objectClass="de.taskforce.isphere.rse.spooledfiles.SpooledFileResource"
-            subsystemfactoryid="de.taskforce.isphere.spooledfiles.subsystems.factory"
+            objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
+            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*">

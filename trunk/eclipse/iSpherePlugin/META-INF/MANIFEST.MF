@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere
-Bundle-SymbolicName: de.taskforce.isphere;singleton:=true
+Bundle-SymbolicName: biz.isphere;singleton:=true
 Bundle-Version: 1.4.2
-Bundle-Activator: de.taskforce.isphere.ISpherePlugin
+Bundle-Activator: biz.isphere.ISpherePlugin
 Bundle-Vendor: Task Force IT-Consulting GmbH
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -16,13 +16,13 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/jxl.jar
-Export-Package: de.taskforce.isphere,
- de.taskforce.isphere.bindingdirectoryeditor,
- de.taskforce.isphere.compareeditor,
- de.taskforce.isphere.info,
- de.taskforce.isphere.internal,
- de.taskforce.isphere.messagefileeditor,
- de.taskforce.isphere.messagefilesearch,
- de.taskforce.isphere.preferencepages,
- de.taskforce.isphere.sourcefilesearch,
- de.taskforce.isphere.spooledfiles
+Export-Package: biz.isphere,
+ biz.isphere.bindingdirectoryeditor,
+ biz.isphere.compareeditor,
+ biz.isphere.info,
+ biz.isphere.internal,
+ biz.isphere.messagefileeditor,
+ biz.isphere.messagefilesearch,
+ biz.isphere.preferencepages,
+ biz.isphere.sourcefilesearch,
+ biz.isphere.spooledfiles
