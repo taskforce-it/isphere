@@ -7,55 +7,55 @@
       <editor
             name=""
             icon="icons/message_file.gif"
-            class="de.taskforce.isphere.messagefileeditor.MessageFileEditor"
-            id="de.taskforce.isphere.messagefileeditor.MessageFileEditor"/>
+            class="biz.isphere.messagefileeditor.MessageFileEditor"
+            id="biz.isphere.messagefileeditor.MessageFileEditor"/>
       <editor
             name=""
             icon="icons/binding_directory.gif"
-            class="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"
-            id="de.taskforce.isphere.bindingdirectoryeditor.BindingDirectoryEditor"/>
+            class="biz.isphere.bindingdirectoryeditor.BindingDirectoryEditor"
+            id="biz.isphere.bindingdirectoryeditor.BindingDirectoryEditor"/>
       <editor
             name=""
             icon="icons/browser.gif"
-            class="de.taskforce.isphere.internal.BrowserEditor"
-            id="de.taskforce.isphere.internal.BrowserEditor"/>
+            class="biz.isphere.internal.BrowserEditor"
+            id="biz.isphere.internal.BrowserEditor"/>
    </extension>
 
     <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="de.taskforce.isphere.preferencepages.General"
+            class="biz.isphere.preferencepages.General"
             name="iSphere"
-            id="de.taskforce.isphere.preferencepages.General"/>
+            id="biz.isphere.preferencepages.General"/>
       <page
-            class="de.taskforce.isphere.preferencepages.ISphereLibrary"
-            category="de.taskforce.isphere.preferencepages.General"
+            class="biz.isphere.preferencepages.ISphereLibrary"
+            category="biz.isphere.preferencepages.General"
             name="%Library"
-            id="de.taskforce.isphere.preferencepages.ISphereLibrary"/>
+            id="biz.isphere.preferencepages.ISphereLibrary"/>
       <page
-            class="de.taskforce.isphere.preferencepages.ISphereSpooledFiles"
-            category="de.taskforce.isphere.preferencepages.General"
+            class="biz.isphere.preferencepages.ISphereSpooledFiles"
+            category="biz.isphere.preferencepages.General"
             name="%Spooled_Files"
-            id="de.taskforce.isphere.preferencepages.ISphereSpooledFiles"/>
+            id="biz.isphere.preferencepages.ISphereSpooledFiles"/>
    </extension>
 
    <extension
          point="org.eclipse.ui.views">
       <category
             name="iSphere"
-            id="de.taskforce.isphere.views.categories"/>	
+            id="biz.isphere.views.categories"/>	
       <view
             icon="icons/source_file_search.gif"
-            class="de.taskforce.isphere.sourcefilesearch.ViewSearchResults"
-            category="de.taskforce.isphere.views.categories"
+            class="biz.isphere.sourcefilesearch.ViewSearchResults"
+            category="biz.isphere.views.categories"
             name="%iSphere_Source_File_Search"
-            id="de.taskforce.isphere.sourcefilesearch.ViewSearchResults"/>
+            id="biz.isphere.sourcefilesearch.ViewSearchResults"/>
       <view
             icon="icons/message_file_search.png"
-            class="de.taskforce.isphere.messagefilesearch.ViewSearchResults"
-            category="de.taskforce.isphere.views.categories"
+            class="biz.isphere.messagefilesearch.ViewSearchResults"
+            category="biz.isphere.views.categories"
             name="%iSphere_Message_File_Search"
-            id="de.taskforce.isphere.messagefilesearch.ViewSearchResults"/>
+            id="biz.isphere.messagefilesearch.ViewSearchResults"/>
    </extension>
    <extension
          point="org.eclipse.core.resources.builders">
