@@ -1,0 +1,29 @@
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /* Contributors:                                                         */
+     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Find String in Source File                                            */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+ 
+     /* Start Export */
+             STRPGMEXP
+ 
+     /* Export */
+             EXPORT     SYMBOL('FNDSTR_GETHANDLE')
+             EXPORT     SYMBOL('FNDSTR_RESOLVEGENERICSEARCHELEMENTS')
+             EXPORT     SYMBOL('FNDSTR_GETNUMBEROFSEARCHELEMENTS')
+             EXPORT     SYMBOL('FNDSTR_SEARCH')
+             EXPORT     SYMBOL('FNDSTR_CLEAR')
+ 
+     /* End Export */
+             ENDPGMEXP
