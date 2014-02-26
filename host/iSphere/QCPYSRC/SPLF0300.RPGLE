@@ -10,7 +10,7 @@
       //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       * Data structure for format 'SPLF0300' for procedure 'QUSLSPL'
      dSPLF0300         DS                  Based(SPLF0300Ptr)
      d SPLFJobName                   10A                                        <-- Job name
@@ -19,8 +19,8 @@
      d SPLFSplF                      10A                                        <-- Spooled file
      d SPLFSplFNbr                   10I 0                                      <-- Spooled file nbr
      d SPLFSts                       10I 0                                      <-- Status
-     d SPLFCrtDate                    7S 0                                      <-- Creation date
-     d SPLFCrtTime                    6S 0                                      <-- Creation time
+     d SPLFCrtDate                    7A                                        <-- Creation date
+     d SPLFCrtTime                    6A                                        <-- Creation time
      d SPLFScd                        1A                                        <-- Schedule
      d SPLFSys                       10A                                        <-- System name
      d SPLFUsrDta                    10A                                        <-- User data

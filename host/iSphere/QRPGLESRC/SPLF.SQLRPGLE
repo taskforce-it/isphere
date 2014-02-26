@@ -14,51 +14,51 @@
       //* Spooled Files                                                                            *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
      hNoMain
-     hDatFmt(*ISO) TimFmt(*ISO) DecEdit('0,')
-     hCopyright('(C) Copyright Task Force IT-Consulting GmbH')
- 
+      /copy qcpysrc,h_spec
+      /copy qcpysrc,copyright
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure prototypes for modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       // Procedure prototypes for modul 'NBRRNG'
- 
+
      d/Copy QCPYSRC,NBRRNG
- 
+
       // Procedure prototype for procedure 'QUSCRTUS'
- 
+
      d/Copy QCPYSRC,QUSCRTUS
- 
+
       // Procedure prototype for procedure 'QUSDLTUS'
- 
+
      d/Copy QCPYSRC,QUSDLTUS
- 
+
       // Procedure prototype for procedure 'QUSPTRUS'
- 
+
      d/Copy QCPYSRC,QUSPTRUS
- 
+
       // Procedure prototype for procedure 'QUSLSPL'
- 
+
      d/Copy QCPYSRC,QUSLSPL
- 
+
       // Data structure for format 'ERRC0100' for error code
- 
+
      d/Copy QCPYSRC,ERRC0100
- 
+
       // Data structure for format 'GHDR0300' for generic header
- 
+
      d/Copy QCPYSRC,GHDR0300
- 
+
       // Data structure for format 'SPLF0300' for procedure 'QUSLSPL'
- 
+
      d/Copy QCPYSRC,SPLF0300
- 
+
       // Global field declarations
- 
+
      dGILoop           S              1N   Inz(*On)                             Loop
      dGISlcJob         S              1A                                        Selec. by job
      dGIJobName        S             10A                                        Job name
@@ -78,64 +78,64 @@
      dGIStrTime        S              8T   TimFmt(*ISO)                         Start time
      dGIEndDate        S             10D   DatFmt(*ISO)                         End date
      dGIEndTime        S              8T   TimFmt(*ISO)                         End time
- 
+
       //*==========================================================================================*
       //* Prepare                                                                                  *
       //*==========================================================================================*
- 
+
      pSPLF_prepare...
      p                 B                   Export
      dSPLF_prepare...
      d                 PI
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by job
        GISlcJob = *Blank;
        GIJobName = *Blanks;
        GIJobUsr = *Blanks;
        GIJobNbr = *Blanks;
- 
+
        // Selection by user
        GISlcUsr = *Blank;
        GIUsr = *Blanks;
- 
+
        // Selection by form type
        GISlcFormType = *Blank;
        GIFormType = *Blanks;
- 
+
        // Selection by output queue
        GISlcOutQ = *Blank;
        GIOutQ = *Blanks;
        GIOutQLib = *Blanks;
- 
+
        // Selection by user data
        GISlcUsrDta = *Blank;
        GIUsrDta = *Blanks;
- 
+
        // Selection by date/time
        GISlcDateTime = *Blank;
        GIStrDate = *LoVal;
        GIStrTime = *LoVal;
        GIEndDate = *LoVal;
        GIEndTime = *LoVal;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_prepare...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set Job                                                                                  *
       //*==========================================================================================*
- 
+
      pSPLF_setJob...
      p                 B                   Export
      dSPLF_setJob...
@@ -143,145 +143,145 @@
      d LPJobName                     10A   Const                                --> Job name
      d LPJobUsr                      10A   Const                                --> User name
      d LPJobNbr                       6A   Const                                --> Job number
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by job
        GISlcJob = 'X';
        GIJobName = LPJobName;
        GIJobUsr = LPJobUsr;
        GIJobNbr = LPJobNbr;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setJob...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set User                                                                                 *
       //*==========================================================================================*
- 
+
      pSPLF_setUser...
      p                 B                   Export
      dSPLF_setUser...
      d                 PI
      d LPUsr                         10A   Const                                --> User
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by user
        GISlcUsr = 'X';
        GIUsr = LPUsr;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setUser...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set Form Type                                                                            *
       //*==========================================================================================*
- 
+
      pSPLF_setFormType...
      p                 B                   Export
      dSPLF_setFormType...
      d                 PI
      d LPFormType                    10A   Const                                --> Form type
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by form type
        GISlcFormType = 'X';
        GIFormType = LPFormType;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setFormType...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set Output Queue                                                                         *
       //*==========================================================================================*
- 
+
      pSPLF_setOutputQueue...
      p                 B                   Export
      dSPLF_setOutputQueue...
      d                 PI
      d LPOutQ                        10A   Const                                --> Output queue
      d LPOutQLib                     10A   Const                                --> Output queue lib
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by output queue
        GISlcOutQ = 'X';
        GIOutQ = LPOutQ;
        GIOutQLib = LPOutQLib;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setOutputQueue...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set User Data                                                                            *
       //*==========================================================================================*
- 
+
      pSPLF_setUserData...
      p                 B                   Export
      dSPLF_setUserData...
      d                 PI
      d LPUsrDta                      10A   Const                                --> User data
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by user data
        GISlcUsrDta = 'X';
        GIUsrDta = LPUsrDta;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setUserData...
      p                 E
- 
+
       //*==========================================================================================*
       //* Set Date Time                                                                            *
       //*==========================================================================================*
- 
+
      pSPLF_setDateTime...
      p                 B                   Export
      dSPLF_setDateTime...
@@ -290,41 +290,41 @@
      d LPStrTime                      8T   TimFmt(*ISO) Const                   --> Start time
      d LPEndDate                     10D   DatFmt(*ISO) Const                   --> End date
      d LPEndTime                      8T   TimFmt(*ISO) Const                   --> End time
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Selection by date/time
        GISlcDateTime = 'X';
        GIStrDate = LPStrDate;
        GIStrTime = LPStrTime;
        GIEndDate = LPEndDate;
        GIEndTime = LPEndTime;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_setDateTime...
      p                 E
- 
+
       //*==========================================================================================*
       //* Build                                                                                    *
       //*==========================================================================================*
- 
+
      pSPLF_build...
      p                 B                   Export
      dSPLF_build...
      d                 PI            10S 0                                      <-- Handle
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Locale field declarations
- 
+
      dLIHDL            S             10S 0                                      Handle
      dLICNT            S             10I 0                                      Counter
      dLIUsrSpc         S               *                                        User space
@@ -342,17 +342,17 @@
      dLICrtDate        S             10D   DatFmt(*ISO)                         Creation date
      dLICrtTime        S              8T   TimFmt(*ISO)                         Creation time
      dLISts            S             10A                                        Status
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Set handle
        LIHDL =
        NBRRNG_getNumber(
         'HANDLE' // --> Number range
        );
- 
+
        // Create user space
        Reset ERRC0100;
        QUSCRTUS(
@@ -366,9 +366,9 @@
         '*YES' :       // --> Replace
         ERRC0100       // <-> Error code
        );
- 
+
        If ERRCExcId = *Blanks;
- 
+
          // Retrieve pointer to user space
          Reset ERRC0100;
          QUSPTRUS(
@@ -377,26 +377,26 @@
           LIUsrSpc :     // <-- Return pointer
           ERRC0100       // <-> Error code
          );
- 
+
          If ERRCExcId = *Blanks;
- 
+
            // Fields
            LIFld(*) = *Zero;
- 
+
            // ASP Number
            If GISlcJob = 'X';
              LIASPNbr = -1;
            Else;
              LIASPNbr = 0;
            EndIf;
- 
+
            // Job
            If GISlcJob = 'X';
              LIJob = GIJobName + GIJobUsr + GIJobNbr;
            Else;
              LIJob = *Blanks;
            EndIf;
- 
+
            // User
            Select;
            When GISlcJob = 'X';
@@ -406,7 +406,7 @@
            Other;
              LIUsr = '*ALL' ;
            EndSl;
- 
+
            // Form type
            Select;
            When GISlcJob = 'X';
@@ -416,7 +416,7 @@
            Other;
              LIFormType = '*ALL' ;
            EndSl;
- 
+
            // Output queue
            Select;
            When GISlcJob = 'X';
@@ -426,7 +426,7 @@
            Other;
              LIOutQ = '*ALL' ;
            EndSl;
- 
+
            // User data
            Select;
            When GISlcJob = 'X';
@@ -436,7 +436,7 @@
            Other;
              LIUsrDta = '*ALL' ;
            EndSl;
- 
+
            // Date/Time
            If GISlcDateTime = 'X' And
               (GIStrDate = *LoVal Or
@@ -475,7 +475,7 @@
              LIEndDate = *Blanks;
              LIEndTime = *Blanks;
            EndIf;
- 
+
            // List Spooled Files
            Reset ERRC0100;
            QUSLSPL(
@@ -498,26 +498,26 @@
             LIEndTime :    // --> End time
             '*'            // --> ASP Device
            );
- 
+
            If ERRCExcId = *Blanks;
- 
+
              // Set pointer of generic header
              GHDR0300Ptr = LIUsrSpc;
- 
+
              For LICNT = 1 To GHDRNbrEtry;
- 
+
                // Set pointer of list area
                SPLF0300Ptr =
                LIUsrSpc +                    // Addr. user space
                GHDROffLstSct +               // Offset to list area
                ((LICNT - 1) * GHDRSizeEtry); // Offset to record
- 
+
                // Convert creation date
-               LICrtDate = %Date(SPLFCrtDate : *CYMD);
- 
+               LICrtDate = %Date(SPLFCrtDate : *CYMD0);
+
                // Convert creation time
-               LICrtTime = %Time(SPLFCrtTime : *HMS);
- 
+               LICrtTime = %Time(SPLFCrtTime : *HMS0);
+
                // Status
                Select;
                When SPLFSts = 1;
@@ -547,7 +547,7 @@
                Other;
                  LISts = '*UNKNOWN';
                EndSl;
- 
+
                // Write file 'Spooled Files'
                Exec SQL
                   INSERT
@@ -598,13 +598,13 @@
                       :SPLFCopies,
                       :SPLFFormType
                      );
- 
+
              EndFor;
- 
+
            EndIf;
- 
+
          EndIf;
- 
+
          // Delete user space
          Reset ERRC0100;
          QUSDLTUS(
@@ -612,46 +612,46 @@
           'QTEMP     ' : // --> Qual. user space
           ERRC0100       // <-> Error code
          );
- 
+
        EndIf;
- 
+
        // Leave procedure
        Return LIHDL;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_build...
      p                 E
- 
+
       //*==========================================================================================*
       //* Clear                                                                                    *
       //*==========================================================================================*
- 
+
      pSPLF_clear...
      p                 B                   Export
      dSPLF_clear...
      d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Clear file 'Spooled Files'
        Exec SQL
           DELETE FROM
              SPLF
           WHERE
              SFHDL = :LPHDL;
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pSPLF_clear...
      p                 E
