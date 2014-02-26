@@ -153,10 +153,6 @@ public class SpooledFile {
 	}
 	
 	public void setCreationTime(String creationTime) {
-        // Ensure we set a 6-digit time 
-        while (creationTime.length() < 6) { 
-             creationTime = "0" + creationTime; 
-        } 
         this.creationTime = creationTime; 
 	}
 	
