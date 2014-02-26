@@ -14,12 +14,27 @@
      /* Number Range                                                          */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
- 
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
+     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
+     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
+     /*         >>PARM<<  TGTRLS(V5R3M0);                                     */
+     /*         >>PARM<<  MODULE(NBRRNG);                                     */
+     /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TEXT('Number Range');                               */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+
      /* Start Export */
              STRPGMEXP
- 
+
      /* Export */
              EXPORT     SYMBOL('NBRRNG_GETNUMBER')
- 
+
      /* End Export */
              ENDPGMEXP

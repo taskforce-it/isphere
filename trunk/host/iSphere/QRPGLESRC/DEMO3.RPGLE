@@ -14,40 +14,54 @@
       //* Demo of iSphere Spooled Files API                                                        *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
-     hBNDDIR('SPLF')
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
- 
+
+     hBNDDIR('ISPHERE')
+
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototypes for modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       // Global field declarations
- 
+
      dGIHDL            S             10S 0                                      Handle
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
         // Prepare search criteria
         SPLF_prepare();
- 
+
         // Set search criteria "User"
         SPLF_setUser(
          'CMONE' // --> User
         );
- 
+
         // Build results
         GIHDL = SPLF_build();
- 
+
         // Clear files
         SPLF_clear(
          GIHDL // --> Handle
         );
- 
+
         // Finish
         *INLR = *On;
- 
+
       /End-Free

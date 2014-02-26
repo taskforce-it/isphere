@@ -14,6 +14,15 @@
 -- * Find String in Source File (Status)                                    *
 -- *                                                                        *
 -- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
  
 CREATE UNIQUE INDEX FNDSTRS01
 ON FNDSTRS

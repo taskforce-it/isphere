@@ -14,39 +14,53 @@
       //* Number Range                                                                             *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
-     hNoMain
-     hDatFmt(*Eur) TimFmt(*Eur) DecEdit('0,')
-     hCopyright('(C) Copyright Task Force IT-Consulting GmbH')
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<< CRTSQLRPGI   OBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);                   *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  OBJTYPE(*MODULE);                                                      *
+      //*         >>PARM<<  COMMIT(*NONE);                                                         *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
- 
+
+     hNoMain
+      /copy qcpysrc,h_spec
+      /copy qcpysrc,copyright
+
+      //*------------------------------------------------------------------------------------------*
+
      fNBRRNG01  UF A E           K Disk    Rename(NBRRNG : NBRRNGRF01)
      f                                     UsrOpn
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure prototypes for modul 'NBRRNG'
- 
+
      d/Copy QCPYSRC,NBRRNG
- 
+
       //*==========================================================================================*
       //* Get Number                                                                               *
       //*==========================================================================================*
- 
+
      pNBRRNG_getNumber...
      p                 B                   Export
      dNBRRNG_getNumber...
      d                 PI            10S 0                                      <-- Number
      d LPRNG                         10A   Const                                --> Number range
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Open file
        Open NBRRNG01;
- 
+
        // Get handle
        DoU Not %Error;
          Chain(E) (LPRNG) NBRRNGRF01;
@@ -63,16 +77,16 @@
          NRNBR = NRNBR + 1;
          Update NBRRNGRF01;
        EndIf;
- 
+
        // Close file
        Close NBRRNG01;
- 
+
        // Leave procedure
        Return NRNBR;
- 
+
       /End-Free
- 
+
        //*------------------------------------------------------------------------------------------
- 
+
      pNBRRNG_getNumber...
      p                 E

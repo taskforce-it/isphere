@@ -14,6 +14,20 @@
       //* Spooled Files                                                                            *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<< CRTSQLRPGI   OBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);                   *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  OBJTYPE(*MODULE);                                                      *
+      //*         >>PARM<<  COMMIT(*NONE);                                                         *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
 
      hNoMain
       /copy qcpysrc,h_spec

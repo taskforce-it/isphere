@@ -14,36 +14,51 @@
       //* Wrapper (SPLF - setOutputQueue)                                                          *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W003007'
- 
+
      dW003007          PR
      d                               10A   Const                                --> Output queue
      d                               10A   Const                                --> Output queue lib
- 
+
       // Procedure interface for procedure 'W003007'
- 
+
      dW003007          PI
      d LPOUTQ                        10A   Const                                --> Output queue
      d LPOUTQLIB                     10A   Const                                --> Output queue lib
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        SPLF_setOutputQueue(
         LPOUTQ :  // --> Output queue
         LPOUTQLIB // --> Output queue lib
        );
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

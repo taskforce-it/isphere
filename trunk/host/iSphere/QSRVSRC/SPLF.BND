@@ -14,10 +14,26 @@
      /* Spooled Files                                                         */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
- 
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
+     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
+     /*         >>PARM<<  BNDSRVPGM((NBRRNG *IMMED));                         */
+     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
+     /*         >>PARM<<  TGTRLS(V5R3M0);                                     */
+     /*         >>PARM<<  MODULE(SPLF);                                       */
+     /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TEXT('Spooled Files');                              */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+
      /* Start Export */
              STRPGMEXP
- 
+
      /* Export */
              EXPORT     SYMBOL('SPLF_PREPARE')
              EXPORT     SYMBOL('SPLF_SETJOB')
@@ -28,6 +44,6 @@
              EXPORT     SYMBOL('SPLF_SETDATETIME')
              EXPORT     SYMBOL('SPLF_BUILD')
              EXPORT     SYMBOL('SPLF_CLEAR')
- 
+
      /* End Export */
              ENDPGMEXP

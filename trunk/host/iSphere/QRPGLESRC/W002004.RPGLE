@@ -14,35 +14,50 @@
       //* Wrapper (XFNDSTR - getNumberOfSearchElements)                                            *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W002004'
- 
+
      dW002004          PR
      d                               10S 0 Const                                --> Handle
      d                                6S 0                                      <-- Number of elem.
- 
+
       // Procedure interface for procedure 'W002004'
- 
+
      dW002004          PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LPELEM                         6S 0                                      <-- Number of elem.
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'XFNDSTR'
- 
+
      d/Copy QCPYSRC,XFNDSTR
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        LPELEM = XFNDSTR_getNumberOfSearchElements(
         LPHDL // --> Handle
        );
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

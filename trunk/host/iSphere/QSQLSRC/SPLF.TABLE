@@ -14,6 +14,15 @@
 -- * Spooled Files                                                          *
 -- *                                                                        *
 -- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
  
 CREATE TABLE SPLF
 (
