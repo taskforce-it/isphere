@@ -11,36 +11,51 @@
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Wrapper (SPLF - clear)                                                                 *
+      //* Wrapper (SPLF - clear)                                                                   *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W003004'
- 
+
      dW003004          PR
      d                               10S 0 Const                                --> Handle
- 
+
       // Procedure interface for procedure 'W003004'
- 
+
      dW003004          PI
      d LPHDL                         10S 0 Const                                --> Handle
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        SPLF_clear(
         LPHDL // --> Handle
        );
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

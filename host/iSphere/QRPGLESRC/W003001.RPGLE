@@ -14,29 +14,44 @@
       //* Wrapper (SPLF - prepare)                                                                 *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W003001'
- 
+
      dW003001          PR
- 
+
       // Procedure interface for procedure 'W003001'
- 
+
      dW003001          PI
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        SPLF_prepare();
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

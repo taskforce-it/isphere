@@ -14,33 +14,48 @@
       //* Wrapper (SPLF - setUser)                                                                 *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W003002'
- 
+
      dW003002          PR
      d                               10A   Const                                --> User
- 
+
       // Procedure interface for procedure 'W003002'
- 
+
      dW003002          PI
      d LPUSR                         10A   Const                                --> User
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'SPLF'
- 
+
      d/Copy QCPYSRC,SPLF
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        SPLF_setUser(
         LPUSR // --> User
        );
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

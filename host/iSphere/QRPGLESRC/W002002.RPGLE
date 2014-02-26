@@ -14,35 +14,50 @@
       //* Wrapper (XFNDSTR - search)                                                               *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W002002'
- 
+
      dW002002          PR
      d                               10S 0 Const                                --> Handle
      d                               40A   Const                                --> String
      d                                3S 0 Const                                --> From column
      d                                3S 0 Const                                --> To column
      d                               10A   Const                                --> Case
- 
+
       // Procedure interface for procedure 'W002002'
- 
+
      dW002002          PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LPSTG                         40A   Const                                --> String
      d LPFCOL                         3S 0 Const                                --> From column
      d LPTCOL                         3S 0 Const                                --> To column
      d LPCASE                        10A   Const                                --> Case
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'XFNDSTR'
- 
+
      d/Copy QCPYSRC,XFNDSTR
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        XFNDSTR_search(
         LPHDL :  // --> Handle
@@ -51,8 +66,8 @@
         LPTCOL : // --> To column
         LPCASE   // --> Case
        );
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free

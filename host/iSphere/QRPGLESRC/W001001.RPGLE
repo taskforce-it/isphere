@@ -14,31 +14,46 @@
       //* Wrapper (FNDSTR - getHandle)                                                             *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+      //* STRPREPRC Compile Options:                                                               *
+      //*   >>PRE-COMPILER<<                                                                       *
+      //*     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                              *
+      //*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      //*       >>COMPILE<<                                                                        *
+      //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
+      //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
+      //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*       >>END-COMPILE<<                                                                    *
+      //*       >>EXECUTE<<                                                                        *
+      //*   >>END-PRE-COMPILER<<                                                                   *
+      //*------------------------------------------------------------------------------------------*
+
       // Procedure prototyp for procedure 'W001001'
- 
+
      dW001001          PR
      d                               10S 0                                      <-- Handle
- 
+
       // Procedure interface for procedure 'W001001'
- 
+
      dW001001          PI
      d LPHDL                         10S 0                                      <-- Handle
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure Prototypes for Modul 'FNDSTR'
- 
+
      d/Copy QCPYSRC,FNDSTR
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call service program
        LPHDL = FNDSTR_getHandle();
- 
+
        // Leave procedure
        Return;
- 
+
       /End-Free
