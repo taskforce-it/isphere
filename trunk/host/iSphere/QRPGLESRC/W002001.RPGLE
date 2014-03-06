@@ -24,7 +24,7 @@
       //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
-      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*         >>PARM<<  TGTRLS(V5R4M0);                                                        *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *

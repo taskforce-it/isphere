@@ -20,7 +20,7 @@
       //*       >>COMPILE<<                                                                        *
       //*         >>PARM<<  OBJTYPE(*MODULE);                                                      *
       //*         >>PARM<<  COMMIT(*NONE);                                                         *
-      //*         >>PARM<<  TGTRLS(V5R3M0);                                                        *
+      //*         >>PARM<<  TGTRLS(V5R4M0);                                                        *
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
