@@ -21,7 +21,7 @@
      /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-     /*         >>PARM<<  TGTRLS(V5R3M0);                                     */
+     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
      /*         >>PARM<<  MODULE(NBRRNG);                                     */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
      /*         >>PARM<<  TEXT('Number Range');                               */

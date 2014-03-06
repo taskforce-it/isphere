@@ -24,7 +24,7 @@
       ***   >>PRE-COMPILER<<                                                         ***
       ***     >>CRTCMD<< CRTRPGMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);    ***
       ***       >>COMPILE<<                                                          ***
-      ***         >>PARM<<  TGTRLS(V5R3M0);                                          ***
+      ***         >>PARM<<  TGTRLS(V5R4M0);                                          ***
       ***         >>PARM<<  DBGVIEW(*NONE);                                          ***
       ***         >>PARM<<  OPTIMIZE(*FULL);                                         ***
       ***       >>END-COMPILE<<                                                      ***

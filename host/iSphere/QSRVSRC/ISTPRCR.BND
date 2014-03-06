@@ -21,7 +21,7 @@
 002100140224     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
 002200140224     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
 002300140224     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-002400140224     /*         >>PARM<<  TGTRLS(V5R3M0);                                     */
+002400140224     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
 002500140224     /*         >>PARM<<  MODULE(ISTPRCR);                                    */
 002600140224     /*         >>PARM<<  DETAIL(*BASIC);                                     */
 002700140224     /*         >>PARM<<  TEXT('Free RPG/i5 Tools Service Procedures');       */
