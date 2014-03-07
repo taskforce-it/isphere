@@ -40,6 +40,7 @@
              DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
              DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
              DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+             DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
              DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
              DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
 
@@ -312,6 +313,20 @@
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
+             /* ----------------------------------------------- */
+             /* Create workstation customization objects        */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFHTML') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFPDF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFTXT') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             
              /* ----------------------------------------------- */
              /* Create utility: CVTSPLF                         */
              /* ----------------------------------------------- */
