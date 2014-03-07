@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
- lib/jxl.jar
+ lib/jxl.jar,
+ lib/itextpdf-5.5.0.jar
 Export-Package: biz.isphere,
  biz.isphere.bindingdirectoryeditor,
  biz.isphere.compareeditor,

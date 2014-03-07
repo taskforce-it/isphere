@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 import biz.isphere.internal.IEditor;
 import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
@@ -103,6 +104,35 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
 	public static ISpherePlugin getDefault() {
 		return plugin;
+	}
+	
+    /**
+     * Returns the name of the plugin, as assigned to "Bundle-Name" in
+     * "MANIFEST.MF".
+     * 
+     * @return Name of the plugin.
+     */
+	public String getName() {
+        String name = (String)getBundle().getHeaders().get(
+            Constants.BUNDLE_NAME);
+        if (name == null) {
+            name = "";
+        }
+        return name;
+	}
+
+    /**
+     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * "MANIFEST.MF".
+     * 
+     * @return Version of the plugin.
+     */
+	public String getVersion() {
+	    String version = (String)getBundle().getVersion().toString();
+	    if (version == null) {
+	        version = "0";
+	    }
+	    return version;
 	}
 	
 	protected void initializeImageRegistry(ImageRegistry reg) {
