@@ -39,50 +39,64 @@
       ***   I     InputFile     Input File                                           ***
       ***                                                                            ***
       **********************************************************************************
+      *** STRPREPRC Compile Options:                                                 ***
+      ***   >>PRE-COMPILER<<                                                         ***
+      ***     >>CRTCMD<<    CRTBNDRPG  PGM(&LI/&OB) +                                ***
+      ***                              SRCFILE(&SL/&SF) SRCMBR(&SM);                 ***
+      ***       >>COMPILE<<                                                          ***
+      ***         >>PARM<<  DFTACTGRP(*NO);                                          ***
+      ***         >>PARM<<  ACTGRP(*CALLER);                                         ***
+      ***         >>PARM<<  DBGVIEW(*NONE);                                          ***
+      ***         >>PARM<<  OPTIMIZE(*FULL);                                         ***
+      ***         >>PARM<<  TGTRLS(V5R4M0);                                          ***
+      ***       >>END-COMPILE<<                                                      ***
+      ***       >>EXECUTE<<                                                          ***
+      ***   >>END-PRE-COMPILER<<                                                     ***
+      **********************************************************************************
       /Title  Control Specifications
-     H BNDDIR('ISTBDIR')
+     H BNDDIR('ISPHERE')
      /Define FRT_Header
      /COPY SRCTOOLS,ISTPRCR
      /Undefine FRT_Header
- 
+
       /Title  File definition section
       ***?Primary Work File
      Fcvtwork02 IF   F  382        DISK
- 
+
       ***?Secondary Work File
      Fcvtwork01 UF A F  378        DISK
- 
+
       /Title  Proto-Type definition section
       ***?Program Entry Parameters
      DConvertHTML      PR                  ExtPgm('CVTSPLFRH')
      D paTitle                       50A                                        Page Title
      D piPageLen                     10I 0                                      Page Length
- 
+
       ***?Program Interface Parameters
      DConvertHTML      PI
      D paTitle                       50A                                        Page Title
      D piPageLen                     10I 0                                      Page Length
- 
+
      D HTMLHeader      PR
- 
+
      D HTMLFooter      PR
- 
+
      D Convert         PR
- 
+
      D Merge           PR                  LIKE(zaOutput)
      D    iaOutput                         LIKE(zaOutput)
      D    iaInput                          LIKE(zaInput)
- 
+
      D SpceLines       PR
      D    isSpceLine                       LIKE(zzSpceLine)
- 
+
      D SkipLines       PR
      D    isSkipLine                       LIKE(zzSkipLine)
- 
+
      /Define Prototypes
      /COPY SRCTOOLS,ISTPRCR
      /Undefine Prototypes
- 
+
       /Title  Data definition section
       ***?Define Program Standalone Fields
      DCurrDate         S               D   INZ(*JOB)
@@ -95,12 +109,12 @@
      D aaHeader        S             80A   DIM(2) CTDATA PERRCD(1)              Std Hdr Lines
      D aaFooter        S             80A   DIM(1) CTDATA PERRCD(1)              Std Ftr Lines
      D wiLine          S             10I 0                                      Line Counter
- 
+
       ***?Compile-Time Arrays
- 
+
       ***?Default Field Overlay Data Structure
      DOverlays         DS
- 
+
       ***?Input spooled file data including control characters
      D InputData       DS
      D   zaSkipLine                   3A
@@ -108,11 +122,11 @@
      D   zaSpceLine                   1A
      D   zzSpceLine                   1S 0 OVERLAY(zaSpceLine:1)
      D   zaInput                    378A
- 
+
       ***?Output HTML-format data
      D OutputData      DS
      D   zaOutput                   378A
- 
+
       ***?Program Status Data Structure
      DProgramStatus   SDS
      D Program                       10A   Overlay(ProgramStatus:1)             Current Program
@@ -121,7 +135,7 @@
      D JobName                       10A   Overlay(ProgramStatus:244)           Job Name
      D JobNumber                      6S 0 Overlay(ProgramStatus:264)           Job Number
      D CurrUser                      10A   Overlay(ProgramStatus:358)           Current User
- 
+
       ***?Standard API Error Code Data-Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(0)
@@ -129,7 +143,7 @@
      D  apiMsgID                      7A
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrText                   24A
- 
+
      ?/Eject
       /Title  M A I N  L I N E
       **********************************************************************************
@@ -138,9 +152,9 @@
      C/Free
        // ***?Output HTML header lines
        HTMLHeader();
- 
+
        wiLine = 1;
- 
+
        // ***?Convert spool file lines to HTML
        READ cvtwork02 InputData;
        *INLR = %EOF;
@@ -149,14 +163,14 @@
          READ cvtwork02 InputData;
          *INLR = %EOF;
        EndDo;
- 
+
        // ***?Output HTML footer lines
        HTMLFooter();
- 
+
        // ***?Exit program
         Exsr EndProgram;
        // **********************************************************************************
- 
+
      ?/Eject
       /Title  Controlled Program has Been Requested
        // **********************************************************************************
@@ -164,14 +178,14 @@
        // *****     Purpose : Controlled Program has Been Requested.                   *****
        // **********************************************************************************
         Begsr EndProgram;
- 
+
        // ***?Exit program
         *INLR = *ON;
         Return;
- 
+
         EndSR;
        // **********************************************************************************
- 
+
      ?/Eject
       /Title  Process all one time functions
        // **********************************************************************************
@@ -179,12 +193,12 @@
        // *****     Purpose : Process all one time functions.                          *****
        // **********************************************************************************
         Begsr *INZSR;
- 
+
         EndSR;
        // **********************************************************************************
- 
+
       /End-free
- 
+
       **********************************************************************************
       *****  Procedure:?HTMLHeader                               Date:?2006-01-05  *****
       **********************************************************************************
@@ -198,10 +212,10 @@
       *****                                                                        *****
       **********************************************************************************
      P HTMLHeader      B
- 
+
       /Title  Proto-Type definition section
      D HTMLHeader      PI
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -210,19 +224,19 @@
      C/Free
        zaOutput = aaHeader(1);
        WRITE cvtwork01 OutputData;
- 
+
        IF paTitle <> '*NONE';
          zaOutput   = '';
          WRITE cvtwork01 OutputData;
        EndIf;
- 
+
        zaOutput = aaHeader(2);
        WRITE cvtwork01 OutputData;
- 
+
       /END-FREE
      P HTMLHeader      E
       **********************************************************************************
- 
+
       **********************************************************************************
       *****  Procedure:?HTMLFooter                               Date:?2006-01-05  *****
       **********************************************************************************
@@ -236,10 +250,10 @@
       *****                                                                        *****
       **********************************************************************************
      P HTMLFooter      B
- 
+
       /Title  Proto-Type definition section
      D HTMLFooter      PI
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -248,11 +262,11 @@
      C/Free
        zaOutput = aaFooter(1);
        WRITE cvtwork01 OutputData;
- 
+
       /END-FREE
      P HTMLFooter      E
       **********************************************************************************
- 
+
       **********************************************************************************
       *****  Procedure:?Convert                                  Date:?2006-01-05  *****
       **********************************************************************************
@@ -266,10 +280,10 @@
       *****                                                                        *****
       **********************************************************************************
      P Convert         B
- 
+
       /Title  Proto-Type definition section
      D Convert         PI
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -278,37 +292,37 @@
      C/Free
        // ***?If 'space' position is zero, 'overprint' previous line
        IF zaSpceLine = '0';
- 
+
          SETGT *HIVAL cvtwork01;
          READP cvtwork01 OutputData;
          *IN99 = %EOF;
          zaOutput = Merge(zaOutput:zaInput);
          UPDATE cvtwork01 OutputData;
- 
+
        ELSE;
- 
+
        // ***?Skip to a line if specified
          IF zaSkipLine <> *Blanks;
            SkipLines(zzSkipLine);
          EndIf;
- 
+
        // ***?Space a number of lines if specified
          IF zaSpceLine <> *Blanks;
            SpceLines(zzSpceLine);
          EndIf;
- 
+
        // ***?'Print' line
          zaOutput   = zaInput;
          WRITE cvtwork01 OutputData;
- 
+
        EndIf;
- 
+
        RETURN;
- 
+
       /END-FREE
      P Convert         E
       **********************************************************************************
- 
+
       **********************************************************************************
       *****  Procedure:?Merge                                    Date:?2006-01-05  *****
       **********************************************************************************
@@ -323,17 +337,17 @@
       *****                                                                        *****
       **********************************************************************************
      P Merge           B
- 
+
       /Title  Proto-Type definition section
      D Merge           PI                  LIKE(zaOutput)
      D    iaOutput                         LIKE(zaOutput)
      D    iaInput                          LIKE(zaInput)
- 
+
       /Title  Data definition section
       ***?Procedure Work Variables
      D laOutput        S                   LIKE(zaOutput)
      D i               S              5I 0
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -351,13 +365,13 @@
          EndIf;
          i = i + 1;
        EndDo;
- 
+
        RETURN laOutput;
- 
+
       /END-FREE
      P Merge           E
       **********************************************************************************
- 
+
       **********************************************************************************
       *****  Procedure:?SkipLines                                Date:?2006-01-05  *****
       **********************************************************************************
@@ -371,11 +385,11 @@
       *****                                                                        *****
       **********************************************************************************
      P SkipLines       B
- 
+
       /Title  Proto-Type definition section
      D SkipLines       PI
      D    isSkipLine                       LIKE(zzSkipLine)
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -383,33 +397,33 @@
       **********************************************************************************
      C/Free
        zaOutput = *Blanks;
- 
+
        IF wiLine > isSkipLine;
- 
+
          DOW wiLine < piPageLen;
            WRITE cvtwork01 OutputData;
            wiLine = wiLine + 1;
          EndDo;
- 
+
          // zaOutput   = '-------------------------';
          // WRITE cvtwork01 OutputData;
- 
+
          zaOutput = *Blanks;
          wiLine = 1;
- 
+
        EndIf;
- 
+
        DOW wiLine < isSkipLine - 1;
          WRITE cvtwork01 OutputData;
          wiLine = wiLine + 1;
        EndDo;
- 
+
        RETURN;
- 
+
       /END-FREE
      P SkipLines       E
       **********************************************************************************
- 
+
       **********************************************************************************
       *****  Procedure:?SpceLines                                Date:?2006-01-05  *****
       **********************************************************************************
@@ -423,15 +437,15 @@
       *****                                                                        *****
       **********************************************************************************
      P SpceLines       B
- 
+
       /Title  Proto-Type definition section
      D SpceLines       PI
      D    isSpceLine                       LIKE(zzSpceLine)
- 
+
       /Title  Data definition section
       ***?Procedure Work Variables
      D liCount         S              5I 0
- 
+
      ?/Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
@@ -445,9 +459,9 @@
          wiLine  = wiLine  + 1;
          liCount = liCount + 1;
        EndDo;
- 
+
        RETURN;
- 
+
       /END-FREE
      P SpceLines       E
       **********************************************************************************
