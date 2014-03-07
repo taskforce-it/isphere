@@ -1,349 +1,349 @@
-000100140307     /*-----------------------------------------------------------------------*/
-000101140307     /* CRTBNDCL PGM(QTEMP/BUILD) SRCFILE(ISPHERE/QBUILD) SRCMBR(*PGM)        */
-000115140307     /*-----------------------------------------------------------------------*/
-000116140307     /*                                                                       */
-000117140307     /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
-000118140307     /* All rights reserved. This program and the accompanying materials      */
-000119140307     /* are made available under the terms of the Common Public License v1.0  */
-000120140307     /* which accompanies this distribution, and is available at              */
-000121140307     /* http://www.eclipse.org/legal/cpl-v10.html                             */
-000122140307     /*                                                                       */
-000123140307     /* Contributors:                                                         */
-000124140307     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
-000125140307     /*                                                                       */
-000126140307     /*-----------------------------------------------------------------------*/
-000127140307     /*                                                                       */
-000128140307     /* Erstellen iSphere Bibliothek                                          */
-000129140307     /*                                                                       */
-000130140307     /*-----------------------------------------------------------------------*/
-000131140307     /* STRPREPRC Compile Options:                                            */
-000132140307     /*   >>PRE-COMPILER<<                                                    */
-000133140307     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
-000134140307     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
-000135140307     /*       >>COMPILE<<                                                     */
-000136140307     /*         >>PARM<<  TEXT('Erstellen iSphere Bibliothek      ');         */
-000137140307     /*       >>END-COMPILE<<                                                 */
-000138140307     /*       >>EXECUTE<<                                                     */
-000139140307     /*   >>END-PRE-COMPILER<<                                                */
-000141140307     /*-----------------------------------------------------------------------*/
-000142140307             PGM        PARM(&I_PRDLIB)
-000143140307
-000144140307             DCL        VAR(&I_PRDLIB ) TYPE(*CHAR) LEN(10)
-000145140307
-000146140307             DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
-000147140307
-000148140307             DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
-000149140307             DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
-000150140307
-000151140307             DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
-000152140307             DCL        VAR(&DTAARASRC) TYPE(*CHAR) LEN(10) VALUE('QDTAARASRC')
-000153140307             DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
-000155140307             DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
-000156140307             DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
-000157140307             DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
-000158140307             DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
-000159140307
-000160140307             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
-000161140307
-000162140307             CHGVAR     VAR(&PRDLIB) VALUE(&I_PRDLIB)
-000163140307             MONMSG     MSGID(MCH3601) EXEC(DO)
-000164140307                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
-000165140307             ENDDO
-000166140307
-000167140307             /* Create XML installer */
-000168140307             CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/QBUILD) SRCMBR(*PGM)
-000169140307
-000170140307             /* Create STRPREPRC utility */
-000171140307             CALL       PGM(&TMPLIB/XMLINST) PARM('STRPREPRC' 'QBUILD' &PRDLIB '' 'ENG;NO')
-000172140307
-000173140307             /* Create iSphere binding directory */
-000174140307             STRPREPRC  USESRCFILE(&PRDLIB/&BNDSRC) USESRCMBR('ISPHERE') +
-000175140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000176140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
-000177140307
-000178140307             /* ----------------------------------------------- */
-000179140307             /* Delete old objects                              */
-000180140307             /* ----------------------------------------------- */
-000181140307             DLTF       FILE(&TMPLIB/&SAVF)
-000182140307             MONMSG     MSGID(CPF2105)
-000183140307
-000186140307             DLTF       FILE(&PRDLIB/&SAVF)
-000187140307             MONMSG     MSGID(CPF2105)
-000188140307
-000189140307             DLTDTAARA  DTAARA(&PRDLIB/ISPHERE)
-000190140307             MONMSG     MSGID(CPF2105)
-000191140307
-000192140307             DLTF       FILE(&PRDLIB/FNDSTRI01)
-000193140307             MONMSG     MSGID(CPF2105)
-000194140307             DLTF       FILE(&PRDLIB/FNDSTRO01)
-000195140307             MONMSG     MSGID(CPF2105)
-000196140307             DLTF       FILE(&PRDLIB/FNDSTRS01)
-000197140307             MONMSG     MSGID(CPF2105)
-000198140307             DLTF       FILE(&PRDLIB/NBRRNG01)
-000199140307             MONMSG     MSGID(CPF2105)
-000200140307             DLTF       FILE(&PRDLIB/SPLF01)
-000201140307             MONMSG     MSGID(CPF2105)
-000202140307             DLTF       FILE(&PRDLIB/XFNDSTRI01)
-000203140307             MONMSG     MSGID(CPF2105)
-000204140307             DLTF       FILE(&PRDLIB/XFNDSTRO01)
-000205140307             MONMSG     MSGID(CPF2105)
-000206140307             DLTF       FILE(&PRDLIB/XFNDSTRS01)
-000207140307             MONMSG     MSGID(CPF2105)
-000208140307
-000209140307             DLTF       FILE(&PRDLIB/FNDSTRI)
-000210140307             MONMSG     MSGID(CPF2105)
-000211140307             DLTF       FILE(&PRDLIB/FNDSTRO)
-000212140307             MONMSG     MSGID(CPF2105)
-000213140307             DLTF       FILE(&PRDLIB/FNDSTRS)
-000214140307             MONMSG     MSGID(CPF2105)
-000215140307
-000216140307             DLTF       FILE(&PRDLIB/NBRRNG)
-000217140307             MONMSG     MSGID(CPF2105)
-000218140307             DLTF       FILE(&PRDLIB/SPLF)
-000219140307             MONMSG     MSGID(CPF2105)
-000220140307             DLTF       FILE(&PRDLIB/XFNDSTRI)
-000221140307             MONMSG     MSGID(CPF2105)
-000222140307             DLTF       FILE(&PRDLIB/XFNDSTRO)
-000223140307             MONMSG     MSGID(CPF2105)
-000224140307             DLTF       FILE(&PRDLIB/XFNDSTRS)
-000225140307             MONMSG     MSGID(CPF2105)
-000226140307
-000227140307             RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
-000228140307
-000229140307             /* ----------------------------------------------- */
-000230140307             /* Create data areas                               */
-000231140307             /* ----------------------------------------------- */
-000232140307
-000233140307             /* Create iSphere version data area */
-000234140307             STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
-000235140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000236140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
-000237140307
-000238140307             /* ----------------------------------------------- */
-000239140307             /* Create SQL tables and indexes                   */
-000240140307             /* ----------------------------------------------- */
-000241140307
-000242140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI') +
-000243140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000244140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000245140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI01') +
-000246140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000247140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000248140307
-000249140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO') +
-000250140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000251140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000252140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO01') +
-000253140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000254140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000255140307
-000256140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS') +
-000257140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000258140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000259140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS01') +
-000260140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000261140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000262140307
-000263140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG') +
-000264140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000265140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000266140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG01') +
-000267140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000268140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000269140307
-000270140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF') +
-000271140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000272140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000273140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF01') +
-000274140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000275140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000276140307
-000277140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI') +
-000278140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000279140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000280140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI01') +
-000281140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000282140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000283140307
-000284140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO') +
-000285140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000286140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000287140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO01') +
-000288140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000289140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000290140307
-000291140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS') +
-000292140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000293140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000294140307             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS01') +
-000295140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000296140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000297140307
-000298140307
-000299140307             /* ----------------------------------------------- */
-000300140307             /* Create service programs                         */
-000301140307             /* ----------------------------------------------- */
-000302140307
-000303140307             /* Create service program: Free RPG/i5 Tools */
-000304140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('ISTPRCR') +
-000305140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000306140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000307140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('ISTPRCR') +
-000308140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000309140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000310140307             DLTMOD     MODULE(&PRDLIB/ISTPRCR)
-000311140307
-000312140307             /* Create service program: Number Range */
-000313140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('NBRRNG') +
-000314140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000315140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000316140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('NBRRNG') +
-000317140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000318140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000319140307             DLTMOD     MODULE(&PRDLIB/NBRRNG)
-000320140307
-000321140307             /* Create service program: Find String in Source File */
-000322140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('FNDSTR') +
-000323140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000324140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000325140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('FNDSTR') +
-000326140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000327140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000328140307             DLTMOD     MODULE(&PRDLIB/FNDSTR)
-000329140307
-000330140307             /* Create service program: Find String in Message File */
-000331140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('XFNDSTR') +
-000332140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000333140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000334140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('XFNDSTR') +
-000335140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000336140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000337140307             DLTMOD     MODULE(&PRDLIB/XFNDSTR)
-000338140307
-000339140307             /* Create service program: Spooled File */
-000340140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('SPLF') +
-000341140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000342140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000343140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('SPLF') +
-000344140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000345140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000346140307             DLTMOD     MODULE(&PRDLIB/SPLF)
-000347140307
-000348140307             /* ----------------------------------------------- */
-000349140307             /* Create programs: Demo                           */
-000350140307             /* ----------------------------------------------- */
-000351140307
-000352140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO1') +
-000353140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000354140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000355140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO2') +
-000356140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000357140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000358140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO3') +
-000359140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000360140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000361140307
-000362140307             /* ----------------------------------------------- */
-000363140307             /* Create programs: Wrapper FNDSTR                 */
-000364140307             /* ----------------------------------------------- */
-000365140307
-000366140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001001') +
-000367140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000368140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000369140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001002') +
-000370140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000371140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000372140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001003') +
-000373140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000374140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000375140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001004') +
-000376140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000377140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000378140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001005') +
-000379140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000380140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000381140307
-000382140307             /* ----------------------------------------------- */
-000383140307             /* Create programs: Wrapper XFNDSTR                */
-000384140307             /* ----------------------------------------------- */
-000385140307
-000386140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002001') +
-000387140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000388140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000389140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002002') +
-000390140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000391140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000392140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002003') +
-000393140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000394140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000395140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002004') +
-000396140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000397140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000398140307
-000399140307             /* ----------------------------------------------- */
-000400140307             /* Create programs: Wrapper SPLF                   */
-000401140307             /* ----------------------------------------------- */
-000402140307
-000403140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003001') +
-000404140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000405140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000406140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003002') +
-000407140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000408140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000409140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003003') +
-000410140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000411140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000412140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003004') +
-000413140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000414140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000415140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003005') +
-000416140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000417140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000418140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003006') +
-000419140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000420140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000421140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003007') +
-000422140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000423140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000424140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003008') +
-000425140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000426140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000427140307             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003009') +
-000428140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000429140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000430140307
-000431140307             /* ----------------------------------------------- */
-000432140307             /* Create utility: CVTSPLF                         */
-000433140307             /* ----------------------------------------------- */
-000434140307
-000435140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFC') +
-000436140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000437140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000438140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRH') +
-000439140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000440140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000441140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRP') +
-000442140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000443140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000444140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRT') +
-000445140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000446140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000447140307             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLF') +
-000448140307                          LIB(&PRDLIB) OBJ(*DFT) +
-000449140307                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
-000450140307
-000451140307             /* ----------------------------------------------- */
-000452140307             /* Save library ISPHERE                            */
-000453140307             /* ----------------------------------------------- */
-000454140307
-000455140307             CRTSAVF    FILE(&TMPLIB/ISPHERE) +
-000456140307                          TEXT('iSphere System i COMPONENT')
-000457140307
-000458140307             SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
-000459140307                          OMITOBJ((&PRDLIB/BUILD    *PGM) +
-000460140307                                  (&PRDLIB/XMLINST  *PGM) +
-000461140307                                  (&PRDLIB/EVFEVENT *FILE))
-000462140307
-000463140307             MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
-000464140307
-000465140307             ENDPGM
+     /*-----------------------------------------------------------------------*/
+     /* CRTBNDCL PGM(QTEMP/BUILD) SRCFILE(ISPHERE/QBUILD) SRCMBR(*PGM)        */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /* Contributors:                                                         */
+     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Erstellen iSphere Bibliothek                                          */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  TEXT('Erstellen iSphere Bibliothek      ');         */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+             PGM        PARM(&I_PRDLIB)
+
+             DCL        VAR(&I_PRDLIB ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+
+             DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+             DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
+
+             DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
+             DCL        VAR(&DTAARASRC) TYPE(*CHAR) LEN(10) VALUE('QDTAARASRC')
+             DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
+             DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
+             DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+             DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
+             DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
+
+             CHGVAR     VAR(&PRDLIB) VALUE(&I_PRDLIB)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             /* Create XML installer */
+             CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/QBUILD) SRCMBR(*PGM)
+
+             /* Create STRPREPRC utility */
+             CALL       PGM(&TMPLIB/XMLINST) PARM('STRPREPRC' 'QBUILD' &PRDLIB '' 'ENG;NO')
+
+             /* Create iSphere binding directory */
+             STRPREPRC  USESRCFILE(&PRDLIB/&BNDSRC) USESRCMBR('ISPHERE') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             /* ----------------------------------------------- */
+             /* Delete old objects                              */
+             /* ----------------------------------------------- */
+             DLTF       FILE(&TMPLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTDTAARA  DTAARA(&PRDLIB/ISPHERE)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/NBRRNG01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/NBRRNG)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+
+             /* ----------------------------------------------- */
+             /* Create data areas                               */
+             /* ----------------------------------------------- */
+
+             /* Create iSphere version data area */
+             STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             /* ----------------------------------------------- */
+             /* Create SQL tables and indexes                   */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS01') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+
+             /* ----------------------------------------------- */
+             /* Create service programs                         */
+             /* ----------------------------------------------- */
+
+             /* Create service program: Free RPG/i5 Tools */
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('ISTPRCR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('ISTPRCR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/ISTPRCR)
+
+             /* Create service program: Number Range */
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('NBRRNG') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('NBRRNG') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/NBRRNG)
+
+             /* Create service program: Find String in Source File */
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('FNDSTR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('FNDSTR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/FNDSTR)
+
+             /* Create service program: Find String in Message File */
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('XFNDSTR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('XFNDSTR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/XFNDSTR)
+
+             /* Create service program: Spooled File */
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('SPLF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('SPLF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/SPLF)
+
+             /* ----------------------------------------------- */
+             /* Create programs: Demo                           */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO1') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO2') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO3') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create programs: Wrapper FNDSTR                 */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001001') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001002') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001003') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001004') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001005') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create programs: Wrapper XFNDSTR                */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002001') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002002') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002003') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002004') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create programs: Wrapper SPLF                   */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003001') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003002') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003003') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003004') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003005') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003006') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003007') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003008') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003009') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create utility: CVTSPLF                         */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFC') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRH') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRP') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRT') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Save library ISPHERE                            */
+             /* ----------------------------------------------- */
+
+             CRTSAVF    FILE(&TMPLIB/ISPHERE) +
+                          TEXT('iSphere System i COMPONENT')
+
+             SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
+                          OMITOBJ((&PRDLIB/BUILD    *PGM) +
+                                  (&PRDLIB/XMLINST  *PGM) +
+                                  (&PRDLIB/EVFEVENT *FILE))
+
+             MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
+
+             ENDPGM 
