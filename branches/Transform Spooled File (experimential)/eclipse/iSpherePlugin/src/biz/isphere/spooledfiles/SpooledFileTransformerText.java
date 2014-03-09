@@ -39,6 +39,7 @@ public class SpooledFileTransformerText extends AbstractSpooledFileTransformer {
 
     protected void formfeed() throws IOException {
         writer.write("- New Page -");
+        newLine();
     }
 
     protected void newLine() throws IOException {

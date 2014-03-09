@@ -1,6 +1,6 @@
 package biz.isphere.spooledfiles;
 
-public interface SpooledFileTransformer {
+public interface ISpooledFileTransformer {
 
     public boolean transformSpooledFile(String target) throws Exception;
 

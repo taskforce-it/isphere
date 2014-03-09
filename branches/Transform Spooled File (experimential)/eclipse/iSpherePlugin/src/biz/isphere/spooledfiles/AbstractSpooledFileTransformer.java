@@ -16,7 +16,7 @@ import com.ibm.as400.access.PrintParameterList;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.SpooledFile;
 
-public abstract class AbstractSpooledFileTransformer implements SpooledFileTransformer {
+public abstract class AbstractSpooledFileTransformer implements ISpooledFileTransformer {
 
     protected static final String CR_LF = "\r\n";
 
