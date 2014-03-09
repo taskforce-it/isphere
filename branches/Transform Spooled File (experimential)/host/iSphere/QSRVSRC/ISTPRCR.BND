@@ -1,54 +1,54 @@
-000100140224     /*-----------------------------------------------------------------------*/
-000200140224     /*                                                                       */
-000300140224     /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
-000400140224     /* All rights reserved. This program and the accompanying materials      */
-000500140224     /* are made available under the terms of the Common Public License v1.0  */
-000600140224     /* which accompanies this distribution, and is available at              */
-000700140224     /* http://www.eclipse.org/legal/cpl-v10.html                             */
-000800140224     /*                                                                       */
-000900140224     /* Contributors:                                                         */
-001000140224     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
-001100140224     /*                                                                       */
-001200140224     /*-----------------------------------------------------------------------*/
-001300140224     /*                                                                       */
-001400140224     /* Number Range                                                          */
-001500140224     /*                                                                       */
-001600140224     /*-----------------------------------------------------------------------*/
-001700140224     /* STRPREPRC Compile Options:                                            */
-001800140224     /*   >>PRE-COMPILER<<                                                    */
-001900140224     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
-002000140224     /*       >>COMPILE<<                                                     */
-002100140224     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
-002200140224     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
-002300140224     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-002400140224     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
-002500140224     /*         >>PARM<<  MODULE(ISTPRCR);                                    */
-002600140224     /*         >>PARM<<  DETAIL(*BASIC);                                     */
-002700140224     /*         >>PARM<<  TEXT('Free RPG/i5 Tools Service Procedures');       */
-002800140224     /*       >>END-COMPILE<<                                                 */
-002900140224     /*       >>EXECUTE<<                                                     */
-003000140224     /*   >>END-PRE-COMPILER<<                                                */
-003100140224     /*-----------------------------------------------------------------------*/
-003200140224
-003300140224     /* Start Export */
-003400140224             STRPGMEXP
-003500140224
-003600140224     /* Export */
-003700140224             EXPORT     SYMBOL('CENTER')
-003800140224             EXPORT     SYMBOL('CHECKCOMMAND')
-003900140224             EXPORT     SYMBOL('EXECUTECOMMAND')
-004000140224             EXPORT     SYMBOL('FILEFORMATNAME')
-004100140224             EXPORT     SYMBOL('FILEINFO')
-004200140224             EXPORT     SYMBOL('IN')
-004300140224             EXPORT     SYMBOL('INTERACTIVEJOB')
-004400140224             EXPORT     SYMBOL('LCASE')
-004500140224             EXPORT     SYMBOL('MBRTEXT')
-004600140224             EXPORT     SYMBOL('OBJTEXT')
-004700140224             EXPORT     SYMBOL('RTVSYSNAME')
-004800140224             EXPORT     SYMBOL('SNDPGMMSG')
-004900140224             EXPORT     SYMBOL('SNDUSRMSG')
-005000140224             EXPORT     SYMBOL('SYSTEMVALUE')
-005100140224             EXPORT     SYMBOL('UCASE')
-005200140224
-005300140224     /* End Export */
-005400140224             ENDPGMEXP
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /* Contributors:                                                         */
+     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Number Range                                                          */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
+     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
+     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
+     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
+     /*         >>PARM<<  MODULE(ISTPRCR);                                    */
+     /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TEXT('Free RPG/i5 Tools Service Procedures');       */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+
+     /* Start Export */
+             STRPGMEXP
+
+     /* Export */
+             EXPORT     SYMBOL('CENTER')
+             EXPORT     SYMBOL('CHECKCOMMAND')
+             EXPORT     SYMBOL('EXECUTECOMMAND')
+             EXPORT     SYMBOL('FILEFORMATNAME')
+             EXPORT     SYMBOL('FILEINFO')
+             EXPORT     SYMBOL('IN')
+             EXPORT     SYMBOL('INTERACTIVEJOB')
+             EXPORT     SYMBOL('LCASE')
+             EXPORT     SYMBOL('MBRTEXT')
+             EXPORT     SYMBOL('OBJTEXT')
+             EXPORT     SYMBOL('RTVSYSNAME')
+             EXPORT     SYMBOL('SNDPGMMSG')
+             EXPORT     SYMBOL('SNDUSRMSG')
+             EXPORT     SYMBOL('SYSTEMVALUE')
+             EXPORT     SYMBOL('UCASE')
+
+     /* End Export */
+             ENDPGMEXP
