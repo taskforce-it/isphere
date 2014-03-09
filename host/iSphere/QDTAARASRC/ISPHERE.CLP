@@ -30,8 +30,8 @@
              DCL        VAR(&LIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&OBJ ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&VER_SERVER ) TYPE(*CHAR) LEN(6) VALUE('000000')
-             DCL        VAR(&VER_CLIENT ) TYPE(*CHAR) LEN(6) VALUE('000000')
+             DCL        VAR(&VER_SERVER ) TYPE(*CHAR) LEN(6) VALUE('010200')
+             DCL        VAR(&VER_CLIENT ) TYPE(*CHAR) LEN(6) VALUE('010200')
 
 
              /* ------------------------- Error handler ------------------------- */
