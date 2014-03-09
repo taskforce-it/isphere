@@ -11,10 +11,12 @@
 
 package de.taskforce.isphere.rse.spooledfiles;
 
+import biz.isphere.preferencepages.IPreferences;
+
 public class SpooledFileSaveAsTextAction extends AbstractSpooledFileAction {
 
 	public String execute(SpooledFileResource spooledFileResource) {
-		return spooledFileResource.getSpooledFile().save(getShell(), "*TEXT");
+		return spooledFileResource.getSpooledFile().save(getShell(), IPreferences.OUTPUT_FORMAT_TEXT);
 	}
 
 }

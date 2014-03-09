@@ -11,10 +11,12 @@
 
 package de.taskforce.isphere.rse.spooledfiles;
 
+import biz.isphere.preferencepages.IPreferences;
+
 public class SpooledFileOpenAsPDFAction extends AbstractSpooledFileAction {
 
 	public String execute(SpooledFileResource spooledFileResource) {
-		return spooledFileResource.getSpooledFile().open("*PDF");
+		return spooledFileResource.getSpooledFile().open(IPreferences.OUTPUT_FORMAT_PDF);
 	}
 
 }
