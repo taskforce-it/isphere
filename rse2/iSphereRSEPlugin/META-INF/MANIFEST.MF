@@ -4,7 +4,7 @@ Bundle-Name: iSphere for RDP 8.0+
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
 Bundle-Version: 1.4.2
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
-Bundle-Vendor: Task Force IT-Consulting GmbH
+Bundle-Vendor: iSphere Project Owners
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
