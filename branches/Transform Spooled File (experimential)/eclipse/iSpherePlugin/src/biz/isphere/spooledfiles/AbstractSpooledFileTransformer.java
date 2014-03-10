@@ -149,11 +149,11 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
             initPrinter();
 
             String line;
-            int count = 0;
+            boolean isDelayedFormfeed = false;
             while ((line = reader.readLine()) != null) {
-                count ++;
-                if (count == 1 && line.startsWith("<INIT_PRINTER/></b></u></b></u>")) {
-                    line = line.substring("<INIT_PRINTER/></b></u></b></u>".length());
+                if (isDelayedFormfeed) {
+                    formfeed();
+                    isDelayedFormfeed = false;
                 }
                 if (line.startsWith(FF)) {
                     formfeed();
@@ -161,6 +161,13 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
                         print(line.substring(1));
                         newLine();
                     }
+                } else if (line.endsWith(FF)) {
+                    if (line.length() > 1) {
+                        print(line.substring(0, line.length() - 1));
+                        newLine();
+                    }
+                    // Delay FF unitl the next line printed.
+                    isDelayedFormfeed = true;
                 } else {
                     print(line);
                     newLine();
