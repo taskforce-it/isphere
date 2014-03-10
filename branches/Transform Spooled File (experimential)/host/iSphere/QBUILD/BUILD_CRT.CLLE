@@ -19,8 +19,7 @@
      /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
-     /*         >>PARM<<  TEXT('Erstellen iSphere Bibliothek +                */
-     /*                         - Erstellen Objekte');                        */
+     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -58,16 +57,12 @@
              ENDDO
 
              /* ----------------------------------------------- */
-             /* Create build programs                           */
+             /* Delete old objects                              */
              /* ----------------------------------------------- */
-
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_CLR') +
                           LIB(&TMPLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
-             /* ----------------------------------------------- */
-             /* Delete old objects                              */
-             /* ----------------------------------------------- */
 
              CALL       PGM(&TMPLIB/BUILD_CLR) PARM(&PRDLIB &TMPLIB &SAVF)
 
@@ -87,6 +82,15 @@
              STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             /* ----------------------------------------------- */
+             /* Update data area iSphere                        */
+             /* ----------------------------------------------- */
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_VER') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_VER) PARM(&PRDLIB)
 
              /* ----------------------------------------------- */
              /* Create SQL tables and indexes                   */
@@ -314,6 +318,26 @@
              STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLF') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Change object owner to QPGMR                    */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_OWN') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB 'QPGMR')
+
+             /* ----------------------------------------------- */
+             /* Remove debug information                        */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_DBG') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_DBG) PARM(&PRDLIB &TMPLIB)
 
              /* ----------------------------------------------- */
              /* Save library ISPHERE                            */

@@ -11,7 +11,7 @@
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Erstellen iSphere Bibliothek - Löschen Objekte                        */
+     /* Erstellen iSphere Bibliothek - Ändern Eigner                          */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /* STRPREPRC Compile Options:                                            */
@@ -24,56 +24,40 @@
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
      /*-----------------------------------------------------------------------*/
-             PGM        PARM(&PRDLIB &TMPLIB &SAVF)
+             PGM        PARM(&PRDLIB &TMPLIB &OWNER)
 
-             DCL        VAR(&PRDLIB ) TYPE(*CHAR) LEN(10)
-             DCL        VAR(&TMPLIB ) TYPE(*CHAR) LEN(10)
-             DCL        VAR(&SAVF   ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&PRDLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TMPLIB  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&OWNER   ) TYPE(*CHAR) LEN(10)
 
-             DLTF       FILE(&TMPLIB/&SAVF)
-             MONMSG     MSGID(CPF2105)
+             DCL        VAR(&TMPFILE ) TYPE(*CHAR) LEN(10) VALUE('BUILD_OWN')
+             DCL        VAR(&NUM_RCDS) TYPE(*DEC)  LEN(10 0)
 
-             DLTF       FILE(&PRDLIB/&SAVF)
-             MONMSG     MSGID(CPF2105)
+             DCLF       FILE(QADSPOBJ) OPNID(OBJ)
 
-             DLTDTAARA  DTAARA(&PRDLIB/ISPHERE)
-             MONMSG     MSGID(CPF2105)
+             OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/BUILD_OWN) OVRSCOPE(*CALLLVL)
 
-             DLTF       FILE(&PRDLIB/FNDSTRI01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/FNDSTRO01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/FNDSTRS01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/NBRRNG01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/SPLF01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRI01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRO01)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRS01)
-             MONMSG     MSGID(CPF2105)
+             DSPOBJD    OBJ(&PRDLIB/*ALL) OBJTYPE(*ALL) DETAIL(*BASIC) +
+                          OUTPUT(*OUTFILE) OUTFILE(&TMPLIB/&TMPFILE) OUTMBR(*FIRST +
+                          *REPLACE)
+             RTVMBRD    FILE(&TMPLIB/&TMPFILE) NBRCURRCD(&NUM_RCDS)
 
-             DLTF       FILE(&PRDLIB/FNDSTRI)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/FNDSTRO)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/FNDSTRS)
-             MONMSG     MSGID(CPF2105)
+             OPNDBF     FILE(&TMPLIB/&TMPFILE) OPTION(*INP) +
+                          OPNID(OBJ)
 
-             DLTF       FILE(&PRDLIB/NBRRNG)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/SPLF)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRI)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRO)
-             MONMSG     MSGID(CPF2105)
-             DLTF       FILE(&PRDLIB/XFNDSTRS)
-             MONMSG     MSGID(CPF2105)
+             IF         COND(&NUM_RCDS > 0) THEN(DO)
+ LOOP:          RCVF       OPNID(OBJ)
 
-             RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+                CHGOBJOWN  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) NEWOWN(&OWNER) +
+                             CUROWNAUT(*REVOKE)
+
+                CHGVAR     VAR(&NUM_RCDS) VALUE(&NUM_RCDS - 1)
+                IF         COND(&NUM_RCDS > 0) THEN(DO)
+                   GOTO       CMDLBL(LOOP)
+                ENDDO
+             ENDDO
+
+             CLOF       OPNID(OBJ)
 
              ENDPGM

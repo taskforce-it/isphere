@@ -1,6 +1,4 @@
      /*-----------------------------------------------------------------------*/
-     /* CRTBNDCL PGM(QTEMP/BUILD) SRCFILE(ISPHERE/QBUILD) SRCMBR(*PGM)        */
-     /*-----------------------------------------------------------------------*/
      /*                                                                       */
      /* Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and ot.*/
      /* All rights reserved. This program and the accompanying materials      */
@@ -14,6 +12,25 @@
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
      /* Erstellen iSphere Bibliothek                                          */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* This CL program compiles all System i hosted objects of the           */
+     /* iSphere plugin into library ISPHERE.                                  */
+     /* Before the script is executed, library ISPHERE should be cleared      */
+     /* and the source code must have been pushed to the System i.            */
+     /* Library ISPHERE must be part of your library list.                    */
+     /* When these prerequisites are met, you can compile and run program     */
+     /* BUILD.CLLE.                                                           */
+     /*                                                                       */
+     /*        CRTBNDCL   PGM(ISPHERE/BUILD) +                                */
+     /*                   SRCFILE(ISPHERE/QBUILD) SRCMBR(*PGM) +              */
+     /*                   DFTACTGRP(*YES)                                     */
+     /*                                                                       */
+     /*        CALL       PGM(ISPHERE/BUILD)                                  */
+     /*                                                                       */
+     /* The program will compile BUILD_CLR.CLLE and BUILD_CRT.CLLE to delete  */
+     /* and recreate the objects.                                             */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
              PGM        PARM(&I_PRDLIB)
