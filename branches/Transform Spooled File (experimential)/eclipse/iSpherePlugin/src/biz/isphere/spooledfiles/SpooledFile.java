@@ -464,35 +464,32 @@ public class SpooledFile {
                 }
             }
             
-            if (hasSpooledFile) {
-
-                if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
-                    ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
-                }
-                
-                IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
-                file.refreshLocal(1, null);
-
-                if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-
-                    IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    org.eclipse.ui.ide.IDE.openEditor(page, file);
-
-                } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-
-					BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.internal.BrowserEditor");
-
-                } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-
-					BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.internal.BrowserEditor");
-
-                }
-
+            if (!hasSpooledFile) {
+                return Messages.getString("Could_not_create_stream_file_for_spooled_file_on_host.");
             } 
-            else {
-                return "Could not create stream file for spooled file on host.";
+
+            if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
+                ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
+            }
+            
+            IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
+            file.refreshLocal(1, null);
+
+            if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
+
+                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                org.eclipse.ui.ide.IDE.openEditor(page, file);
+
+            } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
+
+				BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.internal.BrowserEditor");
+
+            } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
+
+				BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.internal.BrowserEditor");
+
             }
 
         } 
@@ -745,7 +742,7 @@ public class SpooledFile {
                 }
 
                 if (!hasSpooledFile) {
-                    return "Could not create stream file for spooled file on host.";
+                    return Messages.getString("Could_not_create_stream_file_for_spooled_file_on_host.");
                 }
 
             } 
