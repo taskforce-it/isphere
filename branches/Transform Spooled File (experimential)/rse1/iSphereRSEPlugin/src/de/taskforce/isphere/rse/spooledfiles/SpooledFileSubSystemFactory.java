@@ -27,8 +27,8 @@ import com.ibm.etools.systems.filters.ui.actions.SystemNewFilterAction;
 import com.ibm.etools.systems.model.SystemConnection;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-import de.taskforce.isphere.ISpherePlugin;
-import de.taskforce.isphere.Messages;
+import biz.isphere.ISpherePlugin;
+import biz.isphere.Messages;
 
 public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 

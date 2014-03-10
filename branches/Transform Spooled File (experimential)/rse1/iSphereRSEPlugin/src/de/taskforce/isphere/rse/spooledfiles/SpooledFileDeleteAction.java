@@ -20,8 +20,8 @@ import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.model.ISystemRemoteChangeEvents;
 import com.ibm.etools.systems.model.SystemRegistry;
 
-import de.taskforce.isphere.spooledfiles.ConfirmDeletionSpooledFiles;
-import de.taskforce.isphere.spooledfiles.SpooledFile;
+import biz.isphere.spooledfiles.ConfirmDeletionSpooledFiles;
+import biz.isphere.spooledfiles.SpooledFile;
 
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
 

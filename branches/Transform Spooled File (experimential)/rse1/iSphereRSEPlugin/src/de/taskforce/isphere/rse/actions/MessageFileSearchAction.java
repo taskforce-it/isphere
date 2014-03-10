@@ -24,8 +24,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+
+import biz.isphere.ISpherePlugin;
+import biz.isphere.internal.ISphereHelper;
+import biz.isphere.messagefilesearch.SearchDialog;
+import biz.isphere.messagefilesearch.SearchElement;
+import biz.isphere.messagefilesearch.SearchExec;
+import biz.isphere.messagefilesearch.SearchPostRun;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -45,14 +51,6 @@ import com.ibm.etools.systems.filters.SystemFilterStringReference;
 import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-import de.taskforce.isphere.ISpherePlugin;
-import de.taskforce.isphere.internal.ISphereHelper;
-import de.taskforce.isphere.messagefilesearch.SearchDialog;
-import de.taskforce.isphere.messagefilesearch.SearchExec;
-import de.taskforce.isphere.messagefilesearch.SearchElement;
-import de.taskforce.isphere.messagefilesearch.SearchPostRun;
-import de.taskforce.isphere.messagefilesearch.SearchResult;
-import de.taskforce.isphere.messagefilesearch.ViewSearchResults;
 import de.taskforce.isphere.rse.Messages;
 
 public class MessageFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {

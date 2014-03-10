@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.core,
  com.ibm.etools.systems.dstore.core,
  com.ibm.etools.iseries.toolbox,
- de.taskforce.isphere,
+ biz.isphere,
  org.eclipse.core.resources,
  com.ibm.etools.systems.editor,
  org.eclipse.ui.views

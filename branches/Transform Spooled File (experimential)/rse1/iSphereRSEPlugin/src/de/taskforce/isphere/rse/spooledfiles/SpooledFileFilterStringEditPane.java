@@ -22,7 +22,7 @@ import com.ibm.etools.systems.core.messages.SystemMessage;
 import com.ibm.etools.systems.core.ui.SystemWidgetHelpers;
 import com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane;
 
-import de.taskforce.isphere.spooledfiles.SpooledFileBaseFilterStringEditPane;
+import biz.isphere.spooledfiles.SpooledFileBaseFilterStringEditPane;
 
 public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane {
 		

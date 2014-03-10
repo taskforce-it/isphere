@@ -14,7 +14,7 @@ package de.taskforce.isphere.rse.spooledfiles;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractResource;
 
-import de.taskforce.isphere.spooledfiles.SpooledFile;
+import biz.isphere.spooledfiles.SpooledFile;
 
 public class SpooledFileResource extends AbstractResource {
 	

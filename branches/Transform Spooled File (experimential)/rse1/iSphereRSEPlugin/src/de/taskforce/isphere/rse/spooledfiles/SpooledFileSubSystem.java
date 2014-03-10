@@ -39,8 +39,8 @@ import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
 
-import de.taskforce.isphere.spooledfiles.SpooledFile;
-import de.taskforce.isphere.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.spooledfiles.SpooledFile;
+import biz.isphere.spooledfiles.SpooledFileBaseSubSystem;
 
 public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, ISpooledFileSubSystem {
 

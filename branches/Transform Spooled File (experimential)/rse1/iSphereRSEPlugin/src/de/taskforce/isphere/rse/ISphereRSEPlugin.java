@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.taskforce.isphere.ISpherePlugin;
+import biz.isphere.ISpherePlugin;
 import de.taskforce.isphere.rse.internal.Editor;
 import de.taskforce.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import de.taskforce.isphere.rse.internal.SourceFileSearchMemberFilterCreator;

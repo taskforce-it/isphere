@@ -132,7 +132,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
      * @return Version of the plugin.
      */
 	public String getVersion() {
-	    String version = (String)getBundle().getVersion().toString();
+	    String version = (String)getBundle().getEntry("Bundle-Version").toString();
 	    if (version == null) {
 	        version = "0.0.0";
 	    }

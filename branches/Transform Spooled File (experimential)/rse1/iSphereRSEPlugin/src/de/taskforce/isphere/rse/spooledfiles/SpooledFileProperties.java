@@ -11,8 +11,8 @@
 
 package de.taskforce.isphere.rse.spooledfiles;
 
-import de.taskforce.isphere.spooledfiles.AbstractSpooledFileProperties;
-import de.taskforce.isphere.spooledfiles.SpooledFile;
+import biz.isphere.spooledfiles.AbstractSpooledFileProperties;
+import biz.isphere.spooledfiles.SpooledFile;
 
 public class SpooledFileProperties extends AbstractSpooledFileProperties {
 

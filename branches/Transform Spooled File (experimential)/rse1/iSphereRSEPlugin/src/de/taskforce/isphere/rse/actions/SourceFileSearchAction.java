@@ -45,12 +45,12 @@ import com.ibm.etools.systems.filters.SystemFilterStringReference;
 import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-import de.taskforce.isphere.ISpherePlugin;
-import de.taskforce.isphere.internal.ISphereHelper;
-import de.taskforce.isphere.sourcefilesearch.SearchDialog;
-import de.taskforce.isphere.sourcefilesearch.SearchExec;
-import de.taskforce.isphere.sourcefilesearch.SearchElement;
-import de.taskforce.isphere.sourcefilesearch.SearchPostRun;
+import biz.isphere.ISpherePlugin;
+import biz.isphere.internal.ISphereHelper;
+import biz.isphere.sourcefilesearch.SearchDialog;
+import biz.isphere.sourcefilesearch.SearchExec;
+import biz.isphere.sourcefilesearch.SearchElement;
+import biz.isphere.sourcefilesearch.SearchPostRun;
 import de.taskforce.isphere.rse.Messages;
 
 public class SourceFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {

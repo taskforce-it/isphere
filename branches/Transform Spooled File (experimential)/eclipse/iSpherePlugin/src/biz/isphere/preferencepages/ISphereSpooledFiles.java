@@ -22,70 +22,44 @@ import biz.isphere.ISpherePlugin;
 import biz.isphere.Messages;
 import biz.isphere.internal.Validator;
 
+
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
 
     private IPreferenceStore store;
 
     private Button buttonDefaultFormatText;
-
     private Button buttonDefaultFormatHTML;
-
     private Button buttonDefaultFormatPDF;
-
     private String defaultFormat;
-
+    
     private Button buttonConversionTextDefault;
-
     private Button buttonConversionTextUserDefined;
-
     private Button buttonConversionTextTransform;
-
     private String conversionText;
-
     private Text textConversionTextLibrary;
-
     private Validator validatorConversionTextLibrary;
-
     private String conversionTextLibrary;
 
     private Text textConversionTextCommand;
-
     private String conversionTextCommand;
-
     private Button buttonConversionHTMLDefault;
-
     private Button buttonConversionHTMLUserDefined;
-
     private Button buttonConversionHTMLTransform;
-
     private String conversionHTML;
-
     private Text textConversionHTMLLibrary;
-
     private Validator validatorConversionHTMLLibrary;
-
     private String conversionHTMLLibrary;
-
     private Text textConversionHTMLCommand;
-
     private String conversionHTMLCommand;
 
     private Button buttonConversionPDFDefault;
-
     private Button buttonConversionPDFUserDefined;
-
     private Button buttonConversionPDFTransform;
-
     private String conversionPDF;
-
     private Text textConversionPDFLibrary;
-
     private Validator validatorConversionPDFLibrary;
-
     private String conversionPDFLibrary;
-
     private Text textConversionPDFCommand;
-
     private String conversionPDFCommand;
 
     public ISphereSpooledFiles() {
@@ -94,7 +68,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         store = getPreferenceStore();
     }
 
-    @Override
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NULL);
@@ -112,7 +85,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonDefaultFormatText = new Button(groupDefaultFormat, SWT.RADIO);
         buttonDefaultFormatText.setText("*TEXT");
         buttonDefaultFormatText.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 defaultFormat = IPreferences.OUTPUT_FORMAT_TEXT;
             }
@@ -121,7 +93,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonDefaultFormatHTML = new Button(groupDefaultFormat, SWT.RADIO);
         buttonDefaultFormatHTML.setText("*HTML");
         buttonDefaultFormatHTML.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 defaultFormat = IPreferences.OUTPUT_FORMAT_HTML;
             }
@@ -130,7 +101,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonDefaultFormatPDF = new Button(groupDefaultFormat, SWT.RADIO);
         buttonDefaultFormatPDF.setText("*PDF");
         buttonDefaultFormatPDF.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 defaultFormat = IPreferences.OUTPUT_FORMAT_PDF;
             }
@@ -146,7 +116,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionTextDefault = new Button(groupConversionText, SWT.RADIO);
         buttonConversionTextDefault.setText(Messages.getString("Default"));
         buttonConversionTextDefault.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_DEFAULT;
                 textConversionTextLibrary.setEnabled(false);
@@ -158,7 +127,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionTextUserDefined = new Button(groupConversionText, SWT.RADIO);
         buttonConversionTextUserDefined.setText(Messages.getString("User_defined"));
         buttonConversionTextUserDefined.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_USER_DEFINED;
                 textConversionTextLibrary.setEnabled(true);
@@ -170,7 +138,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionTextTransform = new Button(groupConversionText, SWT.RADIO);
         buttonConversionTextTransform.setText(Messages.getString("Transform"));
         buttonConversionTextTransform.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_TRANSFORM;
                 textConversionTextLibrary.setEnabled(false);
@@ -184,7 +151,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionTextLibrary = new Text(groupConversionText, SWT.BORDER);
         textConversionTextLibrary.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -202,7 +168,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionTextCommand = new Text(groupConversionText, SWT.BORDER);
         textConversionTextCommand.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -220,7 +185,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionHTMLDefault = new Button(groupConversionHTML, SWT.RADIO);
         buttonConversionHTMLDefault.setText(Messages.getString("Default"));
         buttonConversionHTMLDefault.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_DEFAULT;
                 textConversionHTMLLibrary.setEnabled(false);
@@ -232,7 +196,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionHTMLUserDefined = new Button(groupConversionHTML, SWT.RADIO);
         buttonConversionHTMLUserDefined.setText(Messages.getString("User_defined"));
         buttonConversionHTMLUserDefined.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_USER_DEFINED;
                 textConversionHTMLLibrary.setEnabled(true);
@@ -244,7 +207,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionHTMLTransform = new Button(groupConversionHTML, SWT.RADIO);
         buttonConversionHTMLTransform.setText(Messages.getString("Transform"));
         buttonConversionHTMLTransform.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_TRANSFORM;
                 textConversionHTMLLibrary.setEnabled(false);
@@ -258,7 +220,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionHTMLLibrary = new Text(groupConversionHTML, SWT.BORDER);
         textConversionHTMLLibrary.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -276,7 +237,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionHTMLCommand = new Text(groupConversionHTML, SWT.BORDER);
         textConversionHTMLCommand.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -294,7 +254,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionPDFDefault = new Button(groupConversionPDF, SWT.RADIO);
         buttonConversionPDFDefault.setText(Messages.getString("Default"));
         buttonConversionPDFDefault.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_DEFAULT;
                 textConversionPDFLibrary.setEnabled(false);
@@ -306,7 +265,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionPDFUserDefined = new Button(groupConversionPDF, SWT.RADIO);
         buttonConversionPDFUserDefined.setText(Messages.getString("User_defined"));
         buttonConversionPDFUserDefined.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_USER_DEFINED;
                 textConversionPDFLibrary.setEnabled(true);
@@ -318,7 +276,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         buttonConversionPDFTransform = new Button(groupConversionPDF, SWT.RADIO);
         buttonConversionPDFTransform.setText(Messages.getString("Transform"));
         buttonConversionPDFTransform.addSelectionListener(new SelectionAdapter() {
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_TRANSFORM;
                 textConversionPDFLibrary.setEnabled(false);
@@ -332,7 +289,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionPDFLibrary = new Text(groupConversionPDF, SWT.BORDER);
         textConversionPDFLibrary.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -350,7 +306,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         textConversionPDFCommand = new Text(groupConversionPDF, SWT.BORDER);
         textConversionPDFCommand.addKeyListener(new KeyAdapter() {
-            @Override
             public void keyReleased(KeyEvent e) {
                 checkError();
             }
@@ -522,19 +477,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     }
 
-    @Override
     protected void performApply() {
         setStoreToValues();
         super.performApply();
     }
 
-    @Override
     protected void performDefaults() {
         setScreenToDefaultValues();
         super.performDefaults();
     }
 
-    @Override
     public boolean performOk() {
         setStoreToValues();
         return super.performOk();
@@ -692,7 +644,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     }
 
-    @Override
     public void init(IWorkbench workbench) {
     }
 

@@ -19,7 +19,7 @@ import com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMembe
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.editor.SystemTextEditor;
 
-import de.taskforce.isphere.internal.IEditor;
+import biz.isphere.internal.IEditor;
 
 public class Editor implements IEditor {
 

@@ -20,7 +20,7 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter;
 import com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter;
 
-import de.taskforce.isphere.spooledfiles.SpooledFileBaseResourceAdapter;
+import biz.isphere.spooledfiles.SpooledFileBaseResourceAdapter;
 
 public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
 

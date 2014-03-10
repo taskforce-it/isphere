@@ -25,8 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
-
-import de.taskforce.isphere.compareeditor.CompareDialog;
+import biz.isphere.compareeditor.CompareDialog;
 import de.taskforce.isphere.rse.Messages;
 import de.taskforce.isphere.rse.internal.RSEMember;
 

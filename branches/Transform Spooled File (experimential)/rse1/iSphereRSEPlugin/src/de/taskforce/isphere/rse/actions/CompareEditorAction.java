@@ -18,8 +18,8 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-import de.taskforce.isphere.ISpherePlugin;
-import de.taskforce.isphere.compareeditor.CompareAction;
+import biz.isphere.ISpherePlugin;
+import biz.isphere.compareeditor.CompareAction;
 import de.taskforce.isphere.rse.Messages;
 import de.taskforce.isphere.rse.compareeditor.RSECompareDialog;
 import de.taskforce.isphere.rse.internal.RSEMember;

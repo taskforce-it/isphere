@@ -3,8 +3,8 @@ package de.taskforce.isphere.rse.internal;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
-import de.taskforce.isphere.internal.IMessageFileSearchObjectFilterCreator;
-import de.taskforce.isphere.messagefilesearch.SearchResult;
+import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
+import biz.isphere.messagefilesearch.SearchResult;
 
 public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchObjectFilterCreator {
 

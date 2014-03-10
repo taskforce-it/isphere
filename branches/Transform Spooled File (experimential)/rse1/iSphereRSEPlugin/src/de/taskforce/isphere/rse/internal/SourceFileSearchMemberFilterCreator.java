@@ -3,8 +3,8 @@ package de.taskforce.isphere.rse.internal;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
-import de.taskforce.isphere.internal.ISourceFileSearchMemberFilterCreator;
-import de.taskforce.isphere.sourcefilesearch.SearchResult;
+import biz.isphere.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.sourcefilesearch.SearchResult;
 
 public class SourceFileSearchMemberFilterCreator implements ISourceFileSearchMemberFilterCreator {
 
