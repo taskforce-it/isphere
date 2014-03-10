@@ -88,9 +88,9 @@ public class ISphereHelper {
 		}
 		
 		String serverProvided = dataAreaISphereContent.substring(7, 13);
-		String clientProvided = "010402"; // 1.4.2
+		String clientProvided = ISpherePlugin.getDefault().getClientVersion();
 		String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
-		String clientNeedsServer = "010200";
+		String clientNeedsServer = ISpherePlugin.getDefault().getMinServerVersion();
 		
 		if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
@@ -180,4 +180,28 @@ public class ISphereHelper {
 		
 	}
 	
+    public static Integer tryParseInt(String someText) {
+        try {
+            return Integer.parseInt(someText);
+        } 
+        catch (NumberFormatException ex) {
+            return null;
+        }
+    }	
+    
+    public static Integer tryParseInt(String someText, Integer defaultValue) {
+        Integer integer = tryParseInt(someText);
+        if (integer == null) {
+            return defaultValue;
+        }
+        return integer;
+    }   
+    
+    public static Integer tryParseInt(String someText, int defaultValue) {
+        Integer integer = tryParseInt(someText);
+        if (integer == null) {
+            return new Integer(defaultValue);
+        }
+        return integer;
+    }   
 }

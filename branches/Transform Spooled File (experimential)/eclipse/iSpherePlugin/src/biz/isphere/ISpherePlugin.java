@@ -14,6 +14,7 @@ package biz.isphere;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -28,11 +29,14 @@ import org.osgi.framework.Constants;
 import biz.isphere.internal.IEditor;
 import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.internal.ISphereHelper;
 
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
-	private static ISpherePlugin plugin;
+	private static final String MIN_SERVER_VERSION = "1.2.0";
+	
+    private static ISpherePlugin plugin;
 	private static URL installURL;
 	public static IEditor editor = null;
 	public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
@@ -130,10 +134,57 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public String getVersion() {
 	    String version = (String)getBundle().getVersion().toString();
 	    if (version == null) {
-	        version = "0";
+	        version = "0.0.0";
 	    }
 	    return version;
 	}
+
+    /**
+     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * "MANIFEST.MF" formatted as "vvrrmm".
+     * 
+     * @return Version of the plugin.
+     */
+    public String getClientVersion() {
+        return comparableVersion(getVersion());
+    }
+
+    /**
+     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * "MANIFEST.MF" formatted as "vvrrmm".
+     * 
+     * @return Version of the plugin.
+     */
+    public String getMinServerVersion() {
+        return comparableVersion(MIN_SERVER_VERSION);
+    }
+    
+    /**
+     * Changes a given version string of type "v.r.m" to a comparable version
+     * string of type "VVRRMM".
+     * 
+     * @param version Version String of type "v.r.m".
+     * @return Comparable version String.
+     */
+    private String comparableVersion(String version) {
+        String comparableVersion = version;
+        String[] parts = new String[3];
+        parts = comparableVersion.split("\\.");
+        DecimalFormat formatter = new DecimalFormat("00");
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i] == null) {
+                parts[i] = formatter.format(0L);
+            } else {
+                parts[i] = formatter.format(ISphereHelper.tryParseInt(parts[i], 0));
+            }
+            if (i == 0) {
+                comparableVersion = parts[i];
+            } else {
+                comparableVersion = comparableVersion + parts[i];
+            }
+        }
+        return comparableVersion;
+    }
 	
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
