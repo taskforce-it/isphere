@@ -131,7 +131,7 @@
             icon="icons/spooled_files.gif"
             category="spooled files"
             class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
-            vendor="Task Force IT-Consulting GmbH"
+            vendor="iSphere Project Owners"
             id="biz.isphere.spooledfiles.subsystems.factory">
       </configuration>
    </extension>
