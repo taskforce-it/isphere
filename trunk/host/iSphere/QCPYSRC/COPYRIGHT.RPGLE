@@ -1,1 +1,1 @@
-     hCopyright('(C) Copyright Task Force IT-Consulting GmbH')
+     hCopyright('(C) Copyright iSphere Project Owners')
