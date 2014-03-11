@@ -6,5 +6,8 @@
    <feature url="features/biz.isphere.rse_1.4.2.jar" id="biz.isphere.rse" version="1.4.2">
       <category name="iSphere for RDP 8.0+"/>
    </feature>
+   <feature url="features/biz.isphere.lpex.tasks_1.0.0.jar" id="biz.isphere.lpex.tasks" version="1.0.0">
+      <category name="iSphere for RDP 8.0+"/>
+   </feature>
    <category-def name="iSphere for RDP 8.0+" label="iSphere for RDP 8.0+"/>
 </site>
