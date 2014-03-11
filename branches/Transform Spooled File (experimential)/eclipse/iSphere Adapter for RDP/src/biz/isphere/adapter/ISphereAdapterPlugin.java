@@ -1,7 +1,5 @@
 package biz.isphere.adapter;
 
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -53,25 +51,6 @@ public class ISphereAdapterPlugin extends AbstractUIPlugin {
      */
     public static ISphereAdapterPlugin getDefault() {
         return plugin;
-    }
-
-    /**
-     * Return the preferences store of this plugin.
-     * 
-     * @return Preferences store of the plugin.
-     */
-    public static IPreferenceStore getPreferencesStore() {
-        return getDefault().getPreferenceStore();
-    }
-
-    /**
-     * Convenience method to log error messages to the application log.
-     * 
-     * @param message Message
-     * @param e The exception that has produced the error
-     */
-    public static void logError(String message, Exception e) {
-        plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 
 }
