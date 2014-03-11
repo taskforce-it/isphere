@@ -74,7 +74,6 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
      * @see
      * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
-    @Override
     public void init(IWorkbench workbench) {
         return;
     }
@@ -116,12 +115,10 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         tblFileExtensions.setHeaderVisible(true);
         tblFileExtensions.setLinesVisible(true);
         tblFileExtensions.addSelectionListener(new SelectionListener() {
-            @Override
             public void widgetSelected(SelectionEvent anEvent) {
                 updateControlsEnablement();
             }
 
-            @Override
             public void widgetDefaultSelected(SelectionEvent anEvent) {
                 performEdit(anEvent);
             }

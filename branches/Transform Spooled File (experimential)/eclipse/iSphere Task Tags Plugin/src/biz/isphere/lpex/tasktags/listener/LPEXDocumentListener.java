@@ -39,7 +39,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      * 
      * @see LPEXDocumentSetupParticipant#setup(IDocument)
      */
-    @Override
     public void documentAboutToBeChanged(DocumentEvent anEvent) {
     }
 
@@ -49,7 +48,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      * 
      * @see LPEXDocumentSetupParticipant#setup(IDocument)
      */
-    @Override
     public void documentChanged(DocumentEvent anEvent) {
     }
 
@@ -58,7 +56,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      * document is loaded into the editor. Used to get the resource the marker
      * tags belong to.
      */
-    @Override
     public void bufferCreated(IFileBuffer aBuffer) {
         if (isFileBufferValid(aBuffer)) {
             resource = FileBuffers.getWorkspaceFileAtLocation(aBuffer.getLocation());
@@ -71,7 +68,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      * buffer is disposed. used to clear the reference to the document and the
      * resource, as the owner, of the marker tags.
      */
-    @Override
     public void bufferDisposed(IFileBuffer aBuffer) {
         if (isFileBufferValid(aBuffer)) {
             FileBuffers.getTextFileBufferManager().removeFileBufferListener(this);
@@ -85,7 +81,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      * changes. Used to scan the document for marker tags after the document has
      * been saved (dirty flag changed to false).
      */
-    @Override
     public void dirtyStateChanged(IFileBuffer aBuffer, boolean isDirty) {
         if (!isDirty) {
             if (isFileBufferValid(aBuffer)) {
@@ -114,31 +109,24 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
         return ((ITextFileBuffer)aBuffer).getDocument() == document;
     }
 
-    @Override
     public void bufferContentAboutToBeReplaced(IFileBuffer aBuffer) {
     }
 
-    @Override
     public void bufferContentReplaced(IFileBuffer aBuffer) {
     }
 
-    @Override
     public void stateChanging(IFileBuffer aBuffer) {
     }
 
-    @Override
     public void stateValidationChanged(IFileBuffer aBuffer, boolean anIsStateValidated) {
     }
 
-    @Override
     public void underlyingFileMoved(IFileBuffer aBuffer, IPath aPath) {
     }
 
-    @Override
     public void underlyingFileDeleted(IFileBuffer aBuffer) {
     }
 
-    @Override
     public void stateChangeFailed(IFileBuffer aBuffer) {
     }
 }

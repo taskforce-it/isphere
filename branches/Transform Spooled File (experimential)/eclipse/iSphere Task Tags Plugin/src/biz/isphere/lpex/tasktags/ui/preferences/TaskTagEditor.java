@@ -133,7 +133,6 @@ public class TaskTagEditor extends Dialog {
 
         decTxtFileExtension = new XDecoratedText(shell, SWT.BORDER);
         decTxtFileExtension.addModifyListener(new ModifyListener() {
-            @Override
             public void modifyText(ModifyEvent anEvent) {
                 performCheckFileExtensions((Text)anEvent.getSource());
             }

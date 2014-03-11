@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class LPEXTaskComparator implements Comparator<TableItem> {
 
-    @Override
     public int compare(TableItem b1, TableItem b2) {
         if (b1 == null && b2 == null) {
             return 0;

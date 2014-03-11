@@ -18,7 +18,6 @@ public class LPEXDocumentSetupParticipant implements IDocumentSetupParticipant {
      * Buffer Listener, which is responsible to scan the document for LPEX task
      * tags.
      */
-    @Override
     public void setup(IDocument document) {
         LPEXDocumentListener tListener = new LPEXDocumentListener();
         tListener.setDocument(document);
