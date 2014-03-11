@@ -49,8 +49,16 @@
  LOOP:          RCVF       OPNID(OBJ)
 
                 CHGOBJOWN  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
-                             OBJTYPE(&OBJ_ODOBTP) NEWOWN(&OWNER) +
+                             OBJTYPE(&OBJ_ODOBTP) +
+                             NEWOWN(&OWNER) +
                              CUROWNAUT(*REVOKE)
+
+                RVKOBJAUT  OBJ(ISPHERE/BUILD) +
+                             OBJTYPE(*PGM) USER(*ALL)
+
+                GRTOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) +
+                             USER(*PUBLIC) AUT(*CHANGE)
 
                 CHGVAR     VAR(&NUM_RCDS) VALUE(&NUM_RCDS - 1)
                 IF         COND(&NUM_RCDS > 0) THEN(DO)
