@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Lpex Task Tags
+Bundle-Name: iSphere Task Tags
 Bundle-SymbolicName: biz.isphere.lpex.tasks;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin
