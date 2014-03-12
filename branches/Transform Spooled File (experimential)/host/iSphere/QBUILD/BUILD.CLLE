@@ -6,9 +6,6 @@
      /* which accompanies this distribution, and is available at              */
      /* http://www.eclipse.org/legal/cpl-v10.html                             */
      /*                                                                       */
-     /* Contributors:                                                         */
-     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
-     /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
      /* Erstellen iSphere Bibliothek                                          */
@@ -35,7 +32,7 @@
      /*-----------------------------------------------------------------------*/
              PGM        PARM(&I_LIB)
 
-             DCL        VAR(&I_LIB    ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&I_LIB ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
              DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')

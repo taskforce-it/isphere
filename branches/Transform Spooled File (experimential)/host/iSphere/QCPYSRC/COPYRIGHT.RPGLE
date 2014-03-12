@@ -1,4 +1,4 @@
-     hCopyright('(C) Copyright Task Force IT-Consulting GmbH')
+     hCopyright('(C) Copyright iSphere Project Owners')
 
       /if defined(VERSION_INFO)
      D ISPHERE_SERVER_VERSION...
