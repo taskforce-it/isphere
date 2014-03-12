@@ -41,6 +41,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	private File spooledFilesDirectory;
 	private IProject spooledFilesProject;
 	public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
+    public static final String IMAGE_TOOLS400 = "Tools400.bmp";
 	public static final String IMAGE_ERROR = "error.gif";
 	public static final String IMAGE_NEW = "new.gif";
 	public static final String IMAGE_CHANGE = "change.gif";
@@ -186,6 +187,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
 		reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
+        reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
 		reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
 		reg.put(IMAGE_NEW, getImageDescriptor(IMAGE_NEW));
 		reg.put(IMAGE_CHANGE, getImageDescriptor(IMAGE_CHANGE));

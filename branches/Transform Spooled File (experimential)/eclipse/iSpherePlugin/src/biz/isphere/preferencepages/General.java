@@ -83,6 +83,10 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 		final Label labelFeature6 = new Label(container, SWT.NONE);
 		labelFeature6.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 		labelFeature6.setText("Spooled Files Subsystem");
+        
+        final Label labelFeature7 = new Label(container, SWT.NONE);
+        labelFeature7.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        labelFeature7.setText("Lpex Task Tags");
 		
 		// Compute size
 		Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);

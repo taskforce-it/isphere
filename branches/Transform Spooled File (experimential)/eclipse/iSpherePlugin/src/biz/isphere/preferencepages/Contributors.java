@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -86,17 +87,35 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
 		cI1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 		cI1.setText(Messages.getString("E-Mail") + ": info@taskforce-it.de");
 
-		final Label cI2 = new Label(compositeInternet, SWT.NONE);
+		final Link cI2 = new Link(compositeInternet, SWT.NONE);
 		cI2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-		cI2.setText(Messages.getString("Internet") + ": www.taskforce-it.de");
+		cI2.setText(Messages.getString("Internet") + ": <a href=\"www.taskforce-it.de\">www.taskforce-it.de</a>");
+		cI2.addSelectionListener(new LinkSelectionListener());
 
 		final Label labelSeparator1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		final GridData gd_labelSeparator1 = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		labelSeparator1.setLayoutData(gd_labelSeparator1);
+        
+        final Label labelTools400Image = new Label(container, SWT.NONE);
+        labelTools400Image.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        labelTools400Image.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_TOOLS400));
 		
-		final Label labelXYZ = new Label(container, SWT.NONE);
-		labelXYZ.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-		labelXYZ.setText("Thomas Raddatz");
+		final Label labelTools400Name = new Label(container, SWT.NONE);
+		labelTools400Name.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+		labelTools400Name.setText("Thomas Raddatz");
+
+        final Composite compositeInternetTools400 = new Composite(container, SWT.NONE);
+        compositeInternetTools400.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        compositeInternetTools400.setLayout(new GridLayout());
+
+        final Label labelTools400Email = new Label(compositeInternetTools400, SWT.NONE);
+        labelTools400Email.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        labelTools400Email.setText(Messages.getString("E-Mail") + ": thomas.raddatz@tools400.de");
+
+        final Link labelTools400Internet = new Link(compositeInternetTools400, SWT.NONE);
+        labelTools400Internet.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        labelTools400Internet.setText(Messages.getString("Internet") + ": <a href=\"www.tools400.de\">www.tools400.de</a>");
+        labelTools400Internet.addSelectionListener(new LinkSelectionListener());
 		
 		// Compute size
 		Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
