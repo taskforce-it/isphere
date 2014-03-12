@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       * Data structure for format 'MBRL0330' for procedure 'QUSLMBR'
      dMBRL0330         DS                  Based(MBRL0330Ptr)
      d MBRLMbr                       10A                                        <-- Member name used

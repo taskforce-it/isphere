@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       * Procedure prototype for procedure 'QMHRTVM'
      dQMHRTVM          PR                  ExtPgm('QMHRTVM')
      d                            32767A   Options(*VarSize)                    <-- Message informat

@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       // Data structure for format 'ERRC0100' for error code
      dERRC0100         DS
      d ERRCBytePrv                   10I 0 Inz(272)                             --> Bytes provided

@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       * Data structure for format 'RTVM0300' for procedure 'QMHRTVM'
      dRTVM0300         DS
      d RTVMByteRtn                   10I 0                                      <-- Bytes returned
