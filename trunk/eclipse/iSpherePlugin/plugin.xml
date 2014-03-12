@@ -28,6 +28,11 @@
             name="iSphere"
             id="biz.isphere.preferencepages.General"/>
       <page
+            class="biz.isphere.preferencepages.Contributors"
+            category="biz.isphere.preferencepages.General"
+            name="%Contributors"
+            id="biz.isphere.preferencepages.Contributors"/>
+      <page
             class="biz.isphere.preferencepages.ISphereLibrary"
             category="biz.isphere.preferencepages.General"
             name="%Library"
