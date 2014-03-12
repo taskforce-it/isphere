@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2014 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     Task Force IT-Consulting GmbH - initial API and implementation
  *******************************************************************************/
 
 package biz.isphere;
@@ -43,7 +40,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
 	private File spooledFilesDirectory;
 	private IProject spooledFilesProject;
-	public static final String IMAGE_CMONE = "cmone.bmp";
 	public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
 	public static final String IMAGE_ERROR = "error.gif";
 	public static final String IMAGE_NEW = "new.gif";
@@ -67,6 +63,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_EXCEL = "excel.png";
 	public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
 	public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
+	public static final String IMAGE_ISPHERE = "isphere.gif";
 	
 	public ISpherePlugin() {
 		super();
@@ -188,7 +185,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
-		reg.put(IMAGE_CMONE, getImageDescriptor(IMAGE_CMONE));
 		reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
 		reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
 		reg.put(IMAGE_NEW, getImageDescriptor(IMAGE_NEW));
@@ -212,6 +208,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
 		reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
 		reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
+		reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {
