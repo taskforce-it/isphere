@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
      dNBRRNG_getNumber...
      d                 PR            10S 0                                      <-- Number
      d                               10A   Const                                --> Number range

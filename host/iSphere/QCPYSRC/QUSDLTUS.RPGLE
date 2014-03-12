@@ -6,11 +6,8 @@
       //* which accompanies this distribution, and is available at                                 *
       //* http://www.eclipse.org/legal/cpl-v10.html                                                *
       //*                                                                                          *
-      //* Contributors:                                                                            *
-      //*     Task Force IT-Consulting GmbH - initial API and implementation                       *
-      //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
- 
+
       * Procedure prototype for procedure 'QUSDLTUS'
      dQUSDLTUS         PR                  ExtPgm('QUSDLTUS')
      d                               20A   Const                                --> Qualified user s
