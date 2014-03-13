@@ -40,8 +40,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
 	private File spooledFilesDirectory;
 	private IProject spooledFilesProject;
-	public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
-    public static final String IMAGE_TOOLS400 = "Tools400.bmp";
 	public static final String IMAGE_ERROR = "error.gif";
 	public static final String IMAGE_NEW = "new.gif";
 	public static final String IMAGE_CHANGE = "change.gif";
@@ -64,7 +62,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_EXCEL = "excel.png";
 	public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
 	public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
-	public static final String IMAGE_ISPHERE = "isphere.gif";
 	
 	public ISpherePlugin() {
 		super();
@@ -143,51 +140,12 @@ public class ISpherePlugin extends AbstractUIPlugin {
      * 
      * @return Version of the plugin.
      */
-    public String getClientVersion() {
-        return comparableVersion(getVersion());
-    }
-
-    /**
-     * Returns the version of the plugin, as assigned to "Bundle-Version" in
-     * "MANIFEST.MF" formatted as "vvrrmm".
-     * 
-     * @return Version of the plugin.
-     */
     public String getMinServerVersion() {
-        return comparableVersion(MIN_SERVER_VERSION);
-    }
-    
-    /**
-     * Changes a given version string of type "v.r.m" to a comparable version
-     * string of type "VVRRMM".
-     * 
-     * @param version Version String of type "v.r.m".
-     * @return Comparable version String.
-     */
-    private String comparableVersion(String version) {
-        String comparableVersion = version;
-        String[] parts = new String[3];
-        parts = comparableVersion.split("\\.");
-        DecimalFormat formatter = new DecimalFormat("00");
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i] == null) {
-                parts[i] = formatter.format(0L);
-            } else {
-                parts[i] = formatter.format(ISphereHelper.tryParseInt(parts[i], 0));
-            }
-            if (i == 0) {
-                comparableVersion = parts[i];
-            } else {
-                comparableVersion = comparableVersion + parts[i];
-            }
-        }
-        return comparableVersion;
+        return MIN_SERVER_VERSION;
     }
 	
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
-		reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
-        reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
 		reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
 		reg.put(IMAGE_NEW, getImageDescriptor(IMAGE_NEW));
 		reg.put(IMAGE_CHANGE, getImageDescriptor(IMAGE_CHANGE));
@@ -210,7 +168,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
 		reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
 		reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
-		reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {

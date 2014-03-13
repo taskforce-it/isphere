@@ -9,11 +9,13 @@
 package biz.isphere.internal;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.ISpherePlugin;
 import biz.isphere.Messages;
+import biz.isphere.base.internal.IntHelper;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -85,9 +87,9 @@ public class ISphereHelper {
 		}
 		
 		String serverProvided = dataAreaISphereContent.substring(7, 13);
-		String clientProvided = ISpherePlugin.getDefault().getClientVersion();
+		String clientProvided = comparableVersion(ISpherePlugin.getDefault().getVersion());
 		String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
-		String clientNeedsServer = ISpherePlugin.getDefault().getMinServerVersion();
+		String clientNeedsServer = comparableVersion(ISpherePlugin.getDefault().getMinServerVersion());
 		
 		if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
@@ -176,29 +178,31 @@ public class ISphereHelper {
 		}
 		
 	}
-	
-    public static Integer tryParseInt(String someText) {
-        try {
-            return Integer.parseInt(someText);
-        } 
-        catch (NumberFormatException ex) {
-            return null;
-        }
-    }	
     
-    public static Integer tryParseInt(String someText, Integer defaultValue) {
-        Integer integer = tryParseInt(someText);
-        if (integer == null) {
-            return defaultValue;
+    /**
+     * Changes a given version string of type "v.r.m" to a comparable version
+     * string of type "VVRRMM".
+     * 
+     * @param version Version String of type "v.r.m".
+     * @return Comparable version String.
+     */
+    private static String comparableVersion(String version) {
+        String comparableVersion = version;
+        String[] parts = new String[3];
+        parts = comparableVersion.split("\\.");
+        DecimalFormat formatter = new DecimalFormat("00");
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i] == null) {
+                parts[i] = formatter.format(0L);
+            } else {
+                parts[i] = formatter.format(IntHelper.tryParseInt(parts[i], 0));
+            }
+            if (i == 0) {
+                comparableVersion = parts[i];
+            } else {
+                comparableVersion = comparableVersion + parts[i];
+            }
         }
-        return integer;
-    }   
-    
-    public static Integer tryParseInt(String someText, int defaultValue) {
-        Integer integer = tryParseInt(someText);
-        if (integer == null) {
-            return new Integer(defaultValue);
-        }
-        return integer;
-    }   
+        return comparableVersion;
+    }
 }
