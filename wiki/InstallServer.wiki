@@ -1,6 +1,6 @@
 #summary Install iSphere (Server Part)
 
-  * Start WDSCi 7.0 / RDP 8.0+.
+  * Start WDSCi 7.0 / RDi 8.0+.
 
   * Click on “Windows / Preferences”.
 
