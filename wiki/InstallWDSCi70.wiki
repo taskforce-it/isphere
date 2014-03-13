@@ -1,6 +1,6 @@
 #summary Install iSphere for WDSCi 7.0 (Client Part)
 
-  * Start WDSCi 7.0. (On Windows Vista or Windows 7 WDSCi has to be started with “Run as administrator”).
+  * Start WDSCi 7.0. <font color="red">(On Windows Vista, Windows 7 or Windows 8 WDSCi has to be started with “Run as administrator”)</font>.
 
   * Select menu item „Help/Software Updates/Find and Install“.
 
