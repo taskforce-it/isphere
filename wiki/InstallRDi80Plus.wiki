@@ -8,7 +8,7 @@
 
   * Click “Local”. The window “File Chooser” appears.
 
-  * Select the downloaded folder „iSphere for RDP 8.0+ (Update Site)“ in the target directory.
+  * Select the downloaded folder „iSphere for RDi 8.0+ (Update Site)“ in the target directory.
 
   * Click „OK“. The iSphere update site appears in window “Available Software”.
 
