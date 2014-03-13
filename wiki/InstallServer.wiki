@@ -1,0 +1,25 @@
+#summary Install iSphere (Server Part)
+
+  * Start WDSCi 7.0 / RDP 8.0+.
+
+  * Click on “Windows / Preferences”.
+
+  * Expand the item “iSphere”.
+
+  * Click on “Library”.
+
+  * Click on “Transfer iSphere Library”.
+
+  * The following window appears.
+
+ 
+
+  * Enter host, user, password and click “OK”.
+
+  * The following window appears. 
+
+ 
+
+  * Click “Start Transfer”. The library ISPHERE will be transferred to the host.
+
+  * Close the window.
