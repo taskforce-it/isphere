@@ -12,13 +12,13 @@
 
   * The following window appears.
 
- 
+http://isphere.googlecode.com/svn/wiki/images/image001.png
 
   * Enter host, user, password and click “OK”.
 
   * The following window appears. 
 
- 
+http://isphere.googlecode.com/svn/wiki/images/image003.png 
 
   * Click “Start Transfer”. The library ISPHERE will be transferred to the host.
 
