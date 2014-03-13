@@ -1,0 +1,15 @@
+#summary Uninstall iSphere for RDi 8.0+ (Client Part)
+
+  * Start RDP 8.0+. (On Windows Vista or Windows 7 RDP has to be started with “Run as administrator”).
+
+  * Select menu item „Help/Install New Software“.
+
+  * Click “What is already installed”.
+
+  * Tick all entries “iSphere” and click “Uninstall”. The window “Uninstall Details” appears.
+
+  * Click “Finish”.
+
+  * The window „Software Updates” with the message „You will need to restart …” appears. Click „Restart Now”.
+
+  * After restart the window “Problems” can appear with the message “Could not restore workbench layout”. You can ignore the message. Click OK. For future starts of the IDE, the message will not occur again.
