@@ -14,10 +14,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin;
 import biz.isphere.lpex.tasktags.preferences.Preferences;
 import biz.isphere.lpex.tasktags.utils.JDTCoreUtils;
-import biz.isphere.lpex.tasktags.utils.StringUtils;
 
 /**
  * This class is used to hold all the procedures used to manage the LPEX task
@@ -124,8 +124,8 @@ public class LPEXTaskManager {
     private Map<String, Integer> loadJavaTasks() {
         String tJavaTaskTags = getValue(JavaCore.COMPILER_TASK_TAGS);
         String tJavaTaskPrios = getValue(JavaCore.COMPILER_TASK_PRIORITIES);
-        String[] tTags = StringUtils.getTokens(tJavaTaskTags, ","); //$NON-NLS-1$
-        String[] tPrios = StringUtils.getTokens(tJavaTaskPrios, ","); //$NON-NLS-1$
+        String[] tTags = StringHelper.getTokens(tJavaTaskTags, ","); //$NON-NLS-1$
+        String[] tPrios = StringHelper.getTokens(tJavaTaskPrios, ","); //$NON-NLS-1$
         Map<String, Integer> tJavaTasks = new HashMap<String, Integer>(tTags.length);
         for (int i = 0; i < tTags.length; i++) {
             tJavaTasks.put(tTags[i], getPriority(tPrios[i]));

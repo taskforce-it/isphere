@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.adapter.swt.widgets.XDecoratedText;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.tasktags.Messages;
-import biz.isphere.lpex.tasktags.utils.StringUtils;
 
 /**
  * Simple editor to create or change a LPEX task tag.
@@ -191,7 +191,7 @@ public class TaskTagEditor extends Dialog {
     private void performCheckFileExtensions(Text aTextControl) {
         boolean isError = false;
         String tFileExtension = aTextControl.getText();
-        if (StringUtils.isNullOrEmpty(tFileExtension)) {
+        if (StringHelper.isNullOrEmpty(tFileExtension)) {
             decTxtFileExtension.showDecoration(Messages.TaskTag_empty);
             isError = true;
         } else if (fileExtensionExists(tFileExtension)) {

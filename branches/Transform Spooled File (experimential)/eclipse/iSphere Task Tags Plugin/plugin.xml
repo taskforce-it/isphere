@@ -21,7 +21,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-			category="biz.isphere.preferencepages.General"
+			category="biz.isphere.base.preferencepages.General"
             class="biz.isphere.lpex.tasktags.ui.preferences.PreferencesPage"
             id="biz.isphere.lpex.tasktags.ui.preferences.PreferencesPage"
             name="LPEX Task Tags">

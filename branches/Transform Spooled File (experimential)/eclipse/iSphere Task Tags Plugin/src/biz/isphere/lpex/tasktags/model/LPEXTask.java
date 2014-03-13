@@ -2,7 +2,7 @@ package biz.isphere.lpex.tasktags.model;
 
 public class LPEXTask {
 
-    public static final String ID = "de.tools400.ide.lpex.tasktags.model.LPEXTask";
+    public static final String ID = "biz.isphere.lpex.tasktags.model.LPEXTask";
 
     private String tag;
 

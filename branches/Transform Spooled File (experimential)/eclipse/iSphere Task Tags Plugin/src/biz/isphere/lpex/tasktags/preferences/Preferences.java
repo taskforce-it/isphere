@@ -7,8 +7,8 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin;
-import biz.isphere.lpex.tasktags.utils.StringUtils;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -73,7 +73,7 @@ public final class Preferences {
 
     public String[] getDefaultFileExtensions() {
         String tList = getDefaultFileExtensionsAsString();
-        return StringUtils.getTokens(tList, TOKEN_SEPARATOR);
+        return StringHelper.getTokens(tList, TOKEN_SEPARATOR);
     }
 
     public boolean supportsResource(IResource resource) {
@@ -138,7 +138,7 @@ public final class Preferences {
     }
 
     private void saveFileExtensions(String[] anExtensions) {
-        preferenceStore.setValue(LPEX_TASK_TAGS_FILE_EXTENSIONS, StringUtils.concatTokens(anExtensions, TOKEN_SEPARATOR));
+        preferenceStore.setValue(LPEX_TASK_TAGS_FILE_EXTENSIONS, StringHelper.concatTokens(anExtensions, TOKEN_SEPARATOR));
         fileExtensionsSet = null;
     }
 
@@ -162,9 +162,9 @@ public final class Preferences {
     private String[] getFileExtensions(boolean anUpperCase) {
         String tList = preferenceStore.getString(LPEX_TASK_TAGS_FILE_EXTENSIONS);
         if (anUpperCase) {
-            return StringUtils.getTokens(tList.toUpperCase(), TOKEN_SEPARATOR);
+            return StringHelper.getTokens(tList.toUpperCase(), TOKEN_SEPARATOR);
         } else {
-            return StringUtils.getTokens(tList, TOKEN_SEPARATOR);
+            return StringHelper.getTokens(tList, TOKEN_SEPARATOR);
         }
     }
 }
