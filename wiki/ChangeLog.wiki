@@ -1,0 +1,39 @@
+= Version 1.4.2 =
+
+  * When opening a spooled file it can occur that the contents of the spooled file will not be displayed. This error has fixed.
+
+= Version 1.4.1 =
+
+  * For the iSphere client the right iSphere library has to be installed on the host. If not, then a window should pop up with a specific message. This window doesn`t pop up. This error has now fixed. 
+
+= Version 1.4.0 =
+
+  * A new spooled file subsystem with the ability to open spooled files in Text, HTML and PDF format.
+  * The search results of iSphere Source File Search and iSphere Message File Search can be exported now to Excel.
+
+= Version 1.3.0 =
+
+  * A new extremely fast search feature for searching message files.
+
+= Version 1.2.2 =
+
+  * When comparing two members with the Compare/Merge Editor and trying to save the left member after changing it an error occurs in RDP 8.5 and RDi 9.0 that the save operation has failed. This has fixed.
+
+= Version 1.2.0 =
+
+  * An new extremely fast search feature for searching source files.
+
+= Version 1.1.1 =
+
+  * Making the Binding Directory Editor work for servers which are not running at least V6R1M0.
+
+= Version 1.1.0 =
+
+  * For the Message File Editor you now can specify to search by the filter case sensitive or not.
+  * A new Binding Directory Editor for editing binding directory entries within a binding directory is provided.
+
+= Version 1.0.0 =
+
+  * Message File Editor for editing message file descriptions within a message file.
+  * Compare/Merge Editor for comparing/merging source physical file members.
+ 
