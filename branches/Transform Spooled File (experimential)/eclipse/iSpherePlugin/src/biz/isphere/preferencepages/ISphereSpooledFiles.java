@@ -425,16 +425,21 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     public void checkError() {
 
+        conversionTextLibrary = textConversionTextLibrary.getText().toUpperCase().trim();
+        conversionTextCommand = textConversionTextCommand.getText().toUpperCase().trim();
+        conversionHTMLLibrary = textConversionHTMLLibrary.getText().toUpperCase().trim();
+        conversionHTMLCommand = textConversionHTMLCommand.getText().toUpperCase().trim();
+        conversionPDFLibrary = textConversionPDFLibrary.getText().toUpperCase().trim();
+        conversionPDFCommand = textConversionPDFCommand.getText().toUpperCase().trim();
+    	
         if (conversionText.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
-            conversionTextLibrary = textConversionTextLibrary.getText().toUpperCase().trim();
             if (conversionTextLibrary.equals("") || !validatorConversionTextLibrary.validate(conversionTextLibrary)) {
                 setErrorMessage("*TEXT - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
                 setValid(false);
                 return;
             }
 
-            conversionTextCommand = textConversionTextCommand.getText().toUpperCase().trim();
             if (conversionTextCommand.equals("")) {
                 setErrorMessage("*TEXT - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
                 setValid(false);
@@ -445,14 +450,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         if (conversionHTML.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
-            conversionHTMLLibrary = textConversionHTMLLibrary.getText().toUpperCase().trim();
             if (conversionHTMLLibrary.equals("") || !validatorConversionHTMLLibrary.validate(conversionHTMLLibrary)) {
                 setErrorMessage("*HTML - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
                 setValid(false);
                 return;
             }
 
-            conversionHTMLCommand = textConversionHTMLCommand.getText().toUpperCase().trim();
             if (conversionHTMLCommand.equals("")) {
                 setErrorMessage("*HTML - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
                 setValid(false);
@@ -463,14 +466,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         if (conversionPDF.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
-            conversionPDFLibrary = textConversionPDFLibrary.getText().toUpperCase().trim();
             if (conversionPDFLibrary.equals("") || !validatorConversionPDFLibrary.validate(conversionPDFLibrary)) {
                 setErrorMessage("*PDF - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
                 setValid(false);
                 return;
             }
 
-            conversionPDFCommand = textConversionPDFCommand.getText().toUpperCase().trim();
             if (conversionPDFCommand.equals("")) {
                 setErrorMessage("*PDF - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
                 setValid(false);
@@ -586,6 +587,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             textConversionTextLibrary.setEnabled(false);
         } else if (conversionText.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
             textConversionTextLibrary.setEnabled(true);
+        } else if (conversionText.equals(IPreferences.SPLF_CONVERSION_TRANSFORM)) {
+            textConversionTextLibrary.setEnabled(false);
         }
         textConversionTextCommand.setText(conversionTextCommand);
         if (conversionText.equals(IPreferences.SPLF_CONVERSION_DEFAULT)) {
