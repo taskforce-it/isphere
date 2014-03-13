@@ -1,0 +1,15 @@
+#summary Uninstall iSphere for WDSCi 7.0 (Client Part)
+
+  * Start WDSCi 7.0. (On Windows Vista or Windows 7 WDSCi has to be started with “Run as administrator”).
+
+  * Select menu item „Help/Software Updates/Manage Configuration“.
+
+  * Expand the tree on the left side.
+
+  * Right-click all entries “iSphere” and select “Uninstall”
+
+  * The window „Uninstall” with the message „Do you want to …” appears. Click „OK”.
+
+  * The window „Install/Update” with the message „You will need to restart …” appears. Click „Yes”.
+
+  * After restart the window “Problems” can appear with the message “Could not restore workbench layout”. You can ignore the message. Click OK. For future starts of the IDE, the message will not occur again.
