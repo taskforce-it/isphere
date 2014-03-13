@@ -1,3 +1,0 @@
-#summary Table of Contents
-
-<wiki:toc max_depth="1" />
