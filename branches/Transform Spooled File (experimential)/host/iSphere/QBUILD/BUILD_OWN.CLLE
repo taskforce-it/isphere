@@ -53,8 +53,7 @@
                              NEWOWN(&OWNER) +
                              CUROWNAUT(*REVOKE)
 
-                RVKOBJAUT  OBJ(ISPHERE/BUILD) +
-                             OBJTYPE(*PGM) USER(*ALL)
+                RVKOBJAUT  OBJ(&PRDLIB/BUILD) OBJTYPE(*PGM) USER(*ALL)
 
                 GRTOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
                              OBJTYPE(&OBJ_ODOBTP) +
