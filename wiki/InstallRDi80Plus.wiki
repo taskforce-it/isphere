@@ -1,4 +1,4 @@
-#summary Install iSphere for RDi 8.0 (Client Part)
+#summary Install iSphere for RDi 8.0+ (Client Part)
 
   * Start RDP 8.0+. (On Windows Vista or Windows 7 RDP has to be started with “Run as administrator”).
 
