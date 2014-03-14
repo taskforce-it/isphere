@@ -4,5 +4,5 @@ Bundle-Name: iSphere Help Core
 Bundle-SymbolicName: biz.isphere.core.help;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Vendor: iSphere Team Owners
-Require-Bundle: org.eclipse.help;bundle-version="3.5.0",
- biz.isphere.base.help;bundle-version="1.0.0"
+Require-Bundle: org.eclipse.help,
+ biz.isphere.base.help
