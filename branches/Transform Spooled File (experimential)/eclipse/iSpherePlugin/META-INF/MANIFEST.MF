@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere
-Bundle-SymbolicName: biz.isphere;singleton:=true
+Bundle-Name: iSphere Core
+Bundle-SymbolicName: biz.isphere.core;singleton:=true
 Bundle-Version: 1.4.2
 Bundle-Activator: biz.isphere.ISpherePlugin
 Bundle-Vendor: iSphere Project Owners

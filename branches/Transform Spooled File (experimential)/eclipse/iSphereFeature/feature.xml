@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="biz.isphere"
+      id="biz.isphere.core"
       label="iSphere"
       version="1.4.2"
       provider-name="iSphere Project Owners">
