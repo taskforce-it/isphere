@@ -73,11 +73,11 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
 
         final Label cN1 = new Label(compositeNumbers, SWT.NONE);
         cN1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN1.setText(Messages.getString("Telefon") + ": +49 23 09-60 93 01");
+        cN1.setText(Messages.getString("Phone") + ": +49 23 09-60 93 01");
 
         final Label cN2 = new Label(compositeNumbers, SWT.NONE);
         cN2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN2.setText(Messages.getString("Telefax") + ": +49 23 09-40 97 68");
+        cN2.setText(Messages.getString("Fax") + ": +49 23 09-40 97 68");
 
         final Composite compositeInternet = new Composite(container, SWT.NONE);
         compositeInternet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
