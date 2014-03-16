@@ -19,10 +19,29 @@ reserved.
    </license>
 
    <plugin
-         id="biz.isphere"
+         id="biz.isphere.base"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="biz.isphere.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="biz.isphere.core.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.base.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
