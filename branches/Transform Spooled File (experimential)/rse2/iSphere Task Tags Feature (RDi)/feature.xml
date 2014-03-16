@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.tasks"
       label="iSphere Task Tags for RDP 8.0+"
-      version="1.0.0"
+      version="1.4.2"
       provider-name="iSphere Project">
 
    <description url="http://www.example.com/description">
@@ -16,6 +16,10 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <requires>
+      <import feature="biz.isphere.core" version="1.4.2" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="biz.isphere.adapter"
