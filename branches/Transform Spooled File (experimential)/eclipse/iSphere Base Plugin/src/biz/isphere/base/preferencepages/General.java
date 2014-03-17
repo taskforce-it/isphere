@@ -50,7 +50,7 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 		
 		final Label labelISphere = new Label(container, SWT.NONE);
 		labelISphere.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-		labelISphere.setText("iSphere Version 1.4.2");
+		labelISphere.setText("iSphere Version " + ISphereBasePlugin.getDefault().getVersion());
 
 		final Label labelSeparator2 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		final GridData gd_labelSeparator2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
