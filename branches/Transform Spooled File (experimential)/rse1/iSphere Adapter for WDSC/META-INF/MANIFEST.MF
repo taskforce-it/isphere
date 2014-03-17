@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Adapter for WDSC 7.0
 Bundle-SymbolicName: biz.isphere.adapter
-Bundle-Version: 1.0.0
+Bundle-Version: 1.4.2
 Bundle-Activator: biz.isphere.adapter.ISphereAdapterPlugin
 Bundle-Vendor: iSphere Project
 Bundle-Localization: plugin
