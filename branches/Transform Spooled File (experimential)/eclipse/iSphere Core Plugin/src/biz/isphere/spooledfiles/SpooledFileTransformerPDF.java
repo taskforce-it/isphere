@@ -181,7 +181,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             i++;
             PdfContentByte cb = writer.getDirectContent();
             PdfDestination destination = new PdfDestination(PdfDestination.FITH);
-            new PdfOutline(cb.getRootOutline(), destination, Messages.getString("Page") + i);
+            new PdfOutline(cb.getRootOutline(), destination, Messages.getString("Page") + " " + i);
         }
     }
 
