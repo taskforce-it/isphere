@@ -14,10 +14,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
+import biz.isphere.base.internal.JDTCoreUtils;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin;
 import biz.isphere.lpex.tasktags.preferences.Preferences;
-import biz.isphere.lpex.tasktags.utils.JDTCoreUtils;
 
 /**
  * This class is used to hold all the procedures used to manage the LPEX task
