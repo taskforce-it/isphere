@@ -7,15 +7,15 @@ Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: Task Force IT-Consulting GmbH
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
  org.eclipse.core.runtime,
- com.ibm.etools.systems.core,
+ org.eclipse.core.resources,
  com.ibm.etools.iseries.core,
+ com.ibm.etools.systems.core,
  com.ibm.etools.systems.dstore.core,
  com.ibm.etools.iseries.toolbox,
- biz.isphere.core,
- org.eclipse.core.resources,
  com.ibm.etools.systems.editor,
- org.eclipse.ui.views
+ biz.isphere.core
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,

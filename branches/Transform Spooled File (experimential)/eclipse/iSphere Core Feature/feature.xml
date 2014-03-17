@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.core"
-      label="iSphere"
+      label="iSphere Core"
       version="1.4.2"
       provider-name="iSphere Project Owners">
 
@@ -10,8 +10,7 @@
    </description>
 
    <copyright>
-      (c) Copyright iSphere Project Owners 2012, 2014. All rights
-reserved.
+      (c) Copyright iSphere Project Owners 2012, 2014. All rights reserved.
    </copyright>
 
    <license>
@@ -26,6 +25,12 @@ reserved.
          unpack="false"/>
 
    <plugin
+         id="biz.isphere.base.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
          id="biz.isphere.core"
          download-size="0"
          install-size="0"
@@ -34,12 +39,6 @@ reserved.
 
    <plugin
          id="biz.isphere.core.help"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="biz.isphere.base.help"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
