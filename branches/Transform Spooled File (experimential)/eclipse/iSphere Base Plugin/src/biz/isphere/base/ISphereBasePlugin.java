@@ -17,9 +17,6 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.base"; //$NON-NLS-1$
 
-    // Minimum server version required
-    private static final String MIN_SERVER_VERSION = "1.2.0";
-
     // Contributor logos
     public static final String IMAGE_ISPHERE = "isphere.gif";
 
@@ -86,16 +83,6 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
             version = "0.0.0";
         }
         return version;
-    }
-
-    /**
-     * Returns the version of the plugin, as assigned to "Bundle-Version" in
-     * "MANIFEST.MF" formatted as "vvrrmm".
-     * 
-     * @return Version of the plugin.
-     */
-    public String getMinServerVersion() {
-        return MIN_SERVER_VERSION;
     }
     
     protected void initializeImageRegistry(ImageRegistry reg) {
