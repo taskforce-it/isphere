@@ -16,6 +16,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import biz.isphere.ISpherePlugin;
 import biz.isphere.Messages;
+import biz.isphere.preferences.Preferences;
 
 
 public class SpooledFileBaseResourceAdapter {
@@ -26,7 +27,9 @@ public class SpooledFileBaseResourceAdapter {
 	
 	public boolean handleDoubleClick(SpooledFile splf) {
 		
-		String defaultFormat = ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT");
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// String defaultFormat = ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT");
+	    String defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 		
 		String message = splf.open(defaultFormat);
 		if (message == null) {

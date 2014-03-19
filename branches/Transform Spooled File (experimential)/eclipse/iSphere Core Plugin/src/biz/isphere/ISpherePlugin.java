@@ -11,7 +11,6 @@ package biz.isphere;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -26,10 +25,13 @@ import org.osgi.framework.Constants;
 import biz.isphere.internal.IEditor;
 import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.internal.ISourceFileSearchMemberFilterCreator;
-import biz.isphere.internal.ISphereHelper;
+import biz.isphere.preferences.Preferences;
 
 
 public class ISpherePlugin extends AbstractUIPlugin {
+
+    // The plug-in ID
+    public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
 
 	private static final String MIN_SERVER_VERSION = "1.2.0";
 	
@@ -97,7 +99,9 @@ public class ISpherePlugin extends AbstractUIPlugin {
 			if (!files[idx].getName().equals(".project")) {
 				files[idx].delete();
 			}
-		} 
+		}
+		
+        Preferences.dispose();
 		
 	}
 
@@ -182,22 +186,25 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	
 	protected void initializePreferenceStoreDefaults(){
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
+	    // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
+	    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND", "");
 	
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND", "");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
 	
+	    Preferences.getInstance().initializeDefaultPreferences();
+	    
 	}
 	
 	public static URL getInstallURL() {
@@ -205,7 +212,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getISphereLibrary() {
-		return ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		// return ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		return Preferences.getInstance().getISphereLibrary();
 	}
 
 	public static IEditor getEditor() {

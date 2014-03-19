@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -27,6 +26,7 @@ import biz.isphere.Messages;
 import biz.isphere.internal.BrowserEditorInput;
 import biz.isphere.internal.ISphereHelper;
 import biz.isphere.preferencepages.IPreferences;
+import biz.isphere.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -511,43 +511,58 @@ public class SpooledFile {
     }
 
     private boolean doTransformSpooledFile(String format) {
-        IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        Preferences store = Preferences.getInstance();
 
         boolean doTransformSpooledFile = false;
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-            doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            doTransformSpooledFile = store.getSpooledFileConversionText().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-            doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            doTransformSpooledFile = store.getSpooledFileConversionHTML().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-            doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            doTransformSpooledFile = store.getSpooledFileConversionPDF().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         }
         return doTransformSpooledFile;
     }
 
     private boolean createStreamFile(String format) throws Exception {
-
-        IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        Preferences store = Preferences.getInstance();
 
         boolean _default = true;
         String conversionCommand = "";
         String conversionCommandLibrary = "";
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-            if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            if (store.getSpooledFileConversionText().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
-                conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
+                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
+                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
+                conversionCommand = store.getSpooledFileConversionTextCommand();
+                conversionCommandLibrary = store.getSpooledFileConversionTextLibrary();
             }
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-            if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            if (store.getSpooledFileConversionHTML().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
-                conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
+                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
+                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
+                conversionCommand = store.getSpooledFileConversionHTMLCommand();
+                conversionCommandLibrary = store.getSpooledFileConversionHTMLLibrary();
             }
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-            if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            if (store.getSpooledFileConversionPDF().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
-                conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
+                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
+                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
+                conversionCommand = store.getSpooledFileConversionPDFCommand();
+                conversionCommandLibrary = store.getSpooledFileConversionPDFLibrary();
             }
         }
 
@@ -766,18 +781,21 @@ public class SpooledFile {
     }
 
     private String getSaveDirectory() {
-        IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
-        String file = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY");
-        if (file == null || file.length() == 0) {
-            return "C:\\";
-        }
-        return file;
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // String file = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY");
+        // if (file == null || file.length() == 0) {
+        //     return "C:\\";
+        // }
+        return Preferences.getInstance().getSpooledFileSaveDirectory();
     }
 
     private void storeSaveDirectory(String file) {
         String directory = new File(file).getParent();
-        IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
-        store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY", directory);
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY", directory);
+        Preferences.getInstance().setSpooledFileSaveDirectory(directory);
     }
 
 }

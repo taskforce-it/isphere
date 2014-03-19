@@ -16,27 +16,25 @@ import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-
-
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.ISpherePlugin;
 import biz.isphere.Messages;
+import biz.isphere.preferences.Preferences;
 
 public class SearchDialog extends Dialog {
 	
@@ -48,7 +46,6 @@ public class SearchDialog extends Dialog {
 	private Button buttonCaseNo;
 	private Button buttonCaseYes;
 	private Button okButton;
-	private IPreferenceStore store;
 	private String _string;
 	private int _fromColumn = 1;
 	private int _toColumn = 132;
@@ -58,8 +55,10 @@ public class SearchDialog extends Dialog {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.searchElements = searchElements;
-		store = ISpherePlugin.getDefault().getPreferenceStore();
-		searchString = store.getString("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING");
+		ISpherePlugin.getDefault().getPreferenceStore();
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// searchString = store.getString("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING");
+		searchString = Preferences.getInstance().getMessageFileSearchString();
 	}
 	
 	protected Control createDialogArea(Composite parent) {
@@ -177,7 +176,9 @@ public class SearchDialog extends Dialog {
 	}
 	
 	protected void okPressed() {
-		store.setValue("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING", textString.getText().trim());
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// store.setValue("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING", textString.getText().trim());
+	    Preferences.getInstance().setMessageFileSearchString(textString.getText());
 		_string = textString.getText().trim();
 		if (buttonCaseNo.getSelection()) {
 			_case = "*IGNORE";

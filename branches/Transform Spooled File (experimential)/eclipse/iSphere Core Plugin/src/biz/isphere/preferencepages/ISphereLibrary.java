@@ -8,13 +8,15 @@
 
 package biz.isphere.preferencepages;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -23,27 +25,22 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-
 import biz.isphere.ISpherePlugin;
 import biz.isphere.Messages;
 import biz.isphere.internal.TransferISphereLibrary;
 import biz.isphere.internal.Validator;
+import biz.isphere.preferences.Preferences;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private Text textISphereLibrary;
-	private IPreferenceStore store;
 	private String iSphereLibrary;
 	private Validator validatorLibrary;
 
 	public ISphereLibrary() {
 		super();
 		setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
-		store = getPreferenceStore();
+		getPreferenceStore();
 	}
 	
 	public Control createContents(Composite parent) {
@@ -112,13 +109,18 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 	
 	protected void setStoreToValues() {
 		
-		store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
+	    Preferences.getInstance().setISphereLibrary(iSphereLibrary);
 		
 	}
 	
 	protected void setScreenToValues() {
 		
-		iSphereLibrary = store.getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		ISpherePlugin.getDefault();
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // iSphereLibrary = store.getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+	    iSphereLibrary = ISpherePlugin.getISphereLibrary();
 		
 		setScreenValues();
 		
@@ -126,8 +128,10 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 	
 	protected void setScreenToDefaultValues() {
 		
-		iSphereLibrary = store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
-		
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+		// iSphereLibrary = store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
+	    iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
+	    
 		setScreenValues();
 		
 	}
