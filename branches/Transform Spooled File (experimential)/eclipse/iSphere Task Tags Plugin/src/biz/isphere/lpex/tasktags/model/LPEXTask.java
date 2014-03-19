@@ -4,6 +4,7 @@ public class LPEXTask {
 
     public static final String ID = "biz.isphere.lpex.tasktags.model.LPEXTask";
 
+    @SuppressWarnings("unused")
     private String tag;
 
     private String message;
