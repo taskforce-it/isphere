@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.compareeditor.CompareDialog;
+import biz.isphere.core.compareeditor.CompareDialog;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;

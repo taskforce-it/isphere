@@ -8,7 +8,7 @@
 
 package biz.isphere.rse.spooledfiles;
 
-import biz.isphere.preferencepages.IPreferences;
+import biz.isphere.core.preferencepages.IPreferences;
 
 public class SpooledFileSaveAsTextAction extends AbstractSpooledFileAction {
 

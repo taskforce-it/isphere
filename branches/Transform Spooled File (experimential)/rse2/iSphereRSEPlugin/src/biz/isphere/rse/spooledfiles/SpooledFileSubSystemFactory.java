@@ -18,7 +18,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
-import biz.isphere.Messages;
+import biz.isphere.core.Messages;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
