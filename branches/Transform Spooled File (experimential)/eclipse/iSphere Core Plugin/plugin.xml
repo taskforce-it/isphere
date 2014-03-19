@@ -7,51 +7,51 @@
       <editor
             name=""
             icon="icons/message_file.gif"
-            class="biz.isphere.messagefileeditor.MessageFileEditor"
-            id="biz.isphere.messagefileeditor.MessageFileEditor"/>
+            class="biz.isphere.core.messagefileeditor.MessageFileEditor"
+            id="biz.isphere.core.messagefileeditor.MessageFileEditor"/>
       <editor
             name=""
             icon="icons/binding_directory.gif"
-            class="biz.isphere.bindingdirectoryeditor.BindingDirectoryEditor"
-            id="biz.isphere.bindingdirectoryeditor.BindingDirectoryEditor"/>
+            class="biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor"
+            id="biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor"/>
       <editor
             name=""
             icon="icons/browser.gif"
-            class="biz.isphere.internal.BrowserEditor"
-            id="biz.isphere.internal.BrowserEditor"/>
+            class="biz.isphere.core.internal.BrowserEditor"
+            id="biz.isphere.core.internal.BrowserEditor"/>
    </extension>
 
     <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="biz.isphere.preferencepages.ISphereLibrary"
-            category="biz.isphere.base.preferencepages.General"
+            class="biz.isphere.core.preferencepages.ISphereLibrary"
+            category="biz.isphere.core.base.preferencepages.General"
             name="%Library"
-            id="biz.isphere.preferencepages.ISphereLibrary"/>
+            id="biz.isphere.core.preferencepages.ISphereLibrary"/>
       <page
-            class="biz.isphere.preferencepages.ISphereSpooledFiles"
-            category="biz.isphere.base.preferencepages.General"
+            class="biz.isphere.core.preferencepages.ISphereSpooledFiles"
+            category="biz.isphere.core.base.preferencepages.General"
             name="%Spooled_Files"
-            id="biz.isphere.preferencepages.ISphereSpooledFiles"/>
+            id="biz.isphere.core.preferencepages.ISphereSpooledFiles"/>
    </extension>
 
    <extension
          point="org.eclipse.ui.views">
       <category
             name="iSphere"
-            id="biz.isphere.views.categories"/>	
+            id="biz.isphere.core.views.categories"/>	
       <view
             icon="icons/source_file_search.gif"
-            class="biz.isphere.sourcefilesearch.ViewSearchResults"
-            category="biz.isphere.views.categories"
+            class="biz.isphere.core.sourcefilesearch.ViewSearchResults"
+            category="biz.isphere.core.views.categories"
             name="%iSphere_Source_File_Search"
-            id="biz.isphere.sourcefilesearch.ViewSearchResults"/>
+            id="biz.isphere.core.sourcefilesearch.ViewSearchResults"/>
       <view
             icon="icons/message_file_search.png"
-            class="biz.isphere.messagefilesearch.ViewSearchResults"
-            category="biz.isphere.views.categories"
+            class="biz.isphere.core.messagefilesearch.ViewSearchResults"
+            category="biz.isphere.core.views.categories"
             name="%iSphere_Message_File_Search"
-            id="biz.isphere.messagefilesearch.ViewSearchResults"/>
+            id="biz.isphere.core.messagefilesearch.ViewSearchResults"/>
    </extension>
    <extension
          point="org.eclipse.core.resources.builders">
