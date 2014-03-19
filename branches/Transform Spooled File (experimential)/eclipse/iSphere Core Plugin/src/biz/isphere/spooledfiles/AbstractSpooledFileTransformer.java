@@ -1,14 +1,10 @@
 package biz.isphere.spooledfiles;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
-import biz.isphere.ISpherePlugin;
 import biz.isphere.ccsid.CcsidUtil;
 
 import com.ibm.as400.access.PrintObject;
