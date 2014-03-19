@@ -5,6 +5,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.lpex.tasktags.preferences.Preferences;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -42,6 +44,7 @@ public class ISphereLpexTasksPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(BundleContext context) throws Exception {
+        Preferences.dispose();
         plugin = null;
         super.stop(context);
     }

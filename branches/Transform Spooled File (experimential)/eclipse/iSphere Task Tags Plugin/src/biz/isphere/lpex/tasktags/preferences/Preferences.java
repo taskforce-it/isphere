@@ -27,20 +27,20 @@ public final class Preferences {
     /**
      * Global preferences of the LPEX Task-Tags plugin.
      */
-    private static IPreferenceStore preferenceStore;
+    private IPreferenceStore preferenceStore;
 
-    HashSet<String> fileExtensionsSet;
+    private HashSet<String> fileExtensionsSet;
 
     /**
      * Base configuration key:
      */
-    private static final String LPEX_TASK_TAGS = "lpextasktags"; //$NON-NLS-1$
+    private static final String DOMAIN = ISphereLpexTasksPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
-    public static final String LPEX_TASK_TAGS_ENABLED = LPEX_TASK_TAGS + ".enabled"; //$NON-NLS-1$
+    public static final String LPEX_TASK_TAGS_ENABLED = DOMAIN + "enabled"; //$NON-NLS-1$
 
-    public static final String LPEX_TASK_TAGS_FILE_EXTENSIONS = LPEX_TASK_TAGS + ".fileextensions"; //$NON-NLS-1$
+    public static final String LPEX_TASK_TAGS_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
 
-    public static final String LPEX_IMPORT_EXPORT_LOCATION = LPEX_TASK_TAGS + ".importexportlocation"; //$NON-NLS-1$
+    public static final String LPEX_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -54,9 +54,22 @@ public final class Preferences {
     public synchronized static Preferences getInstance() {
         if (instance == null) {
             instance = new Preferences();
-            preferenceStore = ISphereLpexTasksPlugin.getDefault().getPreferenceStore();
+            instance.preferenceStore = ISphereLpexTasksPlugin.getDefault().getPreferenceStore();
         }
         return instance;
+    }
+
+    /**
+     * Thread-safe method that disposes the instance of this Singleton class.
+     * <p>
+     * This method is intended to be call from
+     * {@link org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)}
+     * to free the reference to itself.
+     */
+    public static void dispose() {
+        if (instance != null) {
+            instance = null;
+        }
     }
 
     /*
