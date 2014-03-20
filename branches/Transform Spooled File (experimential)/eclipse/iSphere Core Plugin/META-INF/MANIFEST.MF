@@ -13,7 +13,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
  org.eclipse.ui.views,
- biz.isphere.base
+ biz.isphere.base,
+ org.eclipse.core.expressions;bundle-version="3.4.200",
+ com.ibm.etools.iseries.subsystems.qsys;bundle-version="8.0.5",
+ com.ibm.etools.iseries.services.qsys;bundle-version="8.0.5"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/jxl.jar,
@@ -25,5 +28,6 @@ Export-Package: biz.isphere.core,
  biz.isphere.core.messagefileeditor,
  biz.isphere.core.messagefilesearch,
  biz.isphere.core.preferencepages,
+ biz.isphere.core.propertytester,
  biz.isphere.core.sourcefilesearch,
  biz.isphere.core.spooledfiles
