@@ -40,12 +40,11 @@ public class XFileDialog {
      * 
      * @return a string describing the absolute path of the first selected file,
      *         or null if the dialog was cancelled or an error occurred
-     * @throws SWTException
-     *             <ul>
-     *             <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
-     *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-     *             thread that created the dialog</li>
-     *             </ul>
+     * @throws SWTException <ul>
+     *         <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
+     *         <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread
+     *         that created the dialog</li>
+     *         </ul>
      */
     public String open() throws SWTException {
         return fileDialog.open();
@@ -108,6 +107,21 @@ public class XFileDialog {
      */
     public void setFilterPath(String aFilterPath) {
         fileDialog.setFilterPath(aFilterPath);
+    }
+
+    /**
+     * Sets the names that describe the filter extensions which the dialog will
+     * use to filter the files it shows to the argument, which may be null.
+     * <p>
+     * Each name is a user-friendly short description shown for its
+     * corresponding filter. The names array must be the same length as the
+     * <code>extensions</code> array.
+     * 
+     * @param aFilterNames - the list of filter names, or null for no filter
+     *        names
+     */
+    public void setFilterNames(String[] aFilterNames) {
+        fileDialog.setFilterNames(aFilterNames);
     }
 
     /**

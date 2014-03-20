@@ -11,9 +11,9 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       	<propertyTester
-            class="biz.isphere.core.propertytester.QSYSRemoteObjectPropertyTester"
-            id="biz.isphere.core.propertytester.QSYSRemoteObjectPropertyTester"
-            namespace="biz.isphere.core.propertytester.hostobjectbrief"
+            class="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
+            id="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
+            namespace="biz.isphere.adapter.propertytester.hostobjectbrief"
             properties="type,subtype"
             type="java.lang.Object">
 		</propertyTester>
@@ -34,7 +34,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
             
@@ -60,7 +60,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*BNDDIR"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*BNDDIR"/>
             	</and>
          	</enablement>
             
@@ -107,17 +107,17 @@
             <enablement>
             	<or>
             		<!-- Rules to detect source members -->
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="SRC"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="SRC"/>
             		<!--  or'd with                     -->
             		<!-- rules to detect source files   -->
 					<or>
 		            	<and>
 		            		<!-- a file -->
-		            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*FILE"/>
+		            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*FILE"/>
 		            		<!-- must be of one of the following sub types -->
 		            		<or>
-		            			<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
-		            			<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
 		            		</or>
 		            	</and>
 					</or>
@@ -172,7 +172,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	
@@ -192,7 +192,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	
@@ -212,7 +212,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	

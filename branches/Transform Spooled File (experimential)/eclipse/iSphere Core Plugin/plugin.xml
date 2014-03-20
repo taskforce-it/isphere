@@ -25,12 +25,12 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="biz.isphere.core.preferencepages.ISphereLibrary"
-            category="biz.isphere.core.base.preferencepages.General"
+            category="biz.isphere.base.preferencepages.General"
             name="%Library"
             id="biz.isphere.core.preferencepages.ISphereLibrary"/>
       <page
             class="biz.isphere.core.preferencepages.ISphereSpooledFiles"
-            category="biz.isphere.core.base.preferencepages.General"
+            category="biz.isphere.base.preferencepages.General"
             name="%Spooled_Files"
             id="biz.isphere.core.preferencepages.ISphereSpooledFiles"/>
    </extension>

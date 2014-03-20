@@ -22,13 +22,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FilterDialog;
@@ -171,11 +171,12 @@ public class ViewSearchResults extends ViewPart {
 				
 				SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
 
-				FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+				XFileDialog dialog = new XFileDialog(shell, SWT.SAVE);
 				dialog.setFilterNames(new String[] {"Excel Files", "All Files"});
 				dialog.setFilterExtensions(new String[] {"*.xls", "*.*"});
 				dialog.setFilterPath("C:\\");
 				dialog.setFileName("export.xls");
+                dialog.setOverwrite(true);
 				String file = dialog.open();
 
 				if (file != null) {

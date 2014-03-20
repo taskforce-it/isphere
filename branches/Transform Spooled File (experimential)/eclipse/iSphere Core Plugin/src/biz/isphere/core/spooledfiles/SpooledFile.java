@@ -16,11 +16,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditorInput;
@@ -727,11 +727,12 @@ public class SpooledFile {
             fileExtension = ".pdf";
         }
 
-        FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+        XFileDialog dialog = new XFileDialog(shell, SWT.SAVE);
         dialog.setFilterNames(new String[] { fileDescription, "All Files" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
         dialog.setFileName("spooled_file" + fileExtension);
+        dialog.setOverwrite(true);
         String file = dialog.open();
 
         if (file != null) {

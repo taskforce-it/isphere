@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.services.qsys,
  com.ibm.etools.iseries.toolbox,
  com.ibm.etools.systems.editor,
- biz.isphere.core
+ biz.isphere.core,
+ biz.isphere.adapter
 Bundle-ActivationPolicy: lazy
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,

@@ -6,6 +6,11 @@ Bundle-Version: 1.5.0
 Bundle-Activator: biz.isphere.adapter.ISphereAdapterPlugin
 Bundle-Vendor: iSphere Project
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.services.qsys
 Bundle-ActivationPolicy: lazy
-Export-Package: biz.isphere.adapter.swt.widgets
+Export-Package: biz.isphere.adapter.propertytester,
+ biz.isphere.adapter.swt.widgets
