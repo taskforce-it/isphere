@@ -3,8 +3,8 @@ package biz.isphere.rse.internal;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
-import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
-import biz.isphere.messagefilesearch.SearchResult;
+import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
+import biz.isphere.core.messagefilesearch.SearchResult;
 
 public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchObjectFilterCreator {
 

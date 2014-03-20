@@ -18,11 +18,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.spooledfiles.SpooledFileBaseFilterStringEditPane;
+
 import com.ibm.etools.systems.core.messages.SystemMessage;
 import com.ibm.etools.systems.core.ui.SystemWidgetHelpers;
 import com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane;
-
-import biz.isphere.spooledfiles.SpooledFileBaseFilterStringEditPane;
 
 public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane {
 		

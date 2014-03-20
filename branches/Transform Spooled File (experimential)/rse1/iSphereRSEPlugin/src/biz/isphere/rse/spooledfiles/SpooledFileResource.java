@@ -11,10 +11,10 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import biz.isphere.core.spooledfiles.SpooledFile;
+
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractResource;
-
-import biz.isphere.spooledfiles.SpooledFile;
 
 public class SpooledFileResource extends AbstractResource {
 	

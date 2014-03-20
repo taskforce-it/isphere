@@ -22,12 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.compareeditor.CompareDialog;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.internal.RSEMember;
+
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
-import biz.isphere.compareeditor.CompareDialog;
-import biz.isphere.rse.Messages;
-import biz.isphere.rse.internal.RSEMember;
 
 public class RSECompareDialog extends CompareDialog {
 

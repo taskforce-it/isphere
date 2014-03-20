@@ -26,6 +26,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.sourcefilesearch.SearchDialog;
+import biz.isphere.core.sourcefilesearch.SearchElement;
+import biz.isphere.core.sourcefilesearch.SearchExec;
+import biz.isphere.core.sourcefilesearch.SearchPostRun;
+import biz.isphere.rse.Messages;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -44,14 +52,6 @@ import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.filters.SystemFilterStringReference;
 import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
-
-import biz.isphere.ISpherePlugin;
-import biz.isphere.internal.ISphereHelper;
-import biz.isphere.rse.Messages;
-import biz.isphere.sourcefilesearch.SearchDialog;
-import biz.isphere.sourcefilesearch.SearchExec;
-import biz.isphere.sourcefilesearch.SearchElement;
-import biz.isphere.sourcefilesearch.SearchPostRun;
 
 public class SourceFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 

@@ -16,12 +16,12 @@ import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 
+import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
+import biz.isphere.core.spooledfiles.SpooledFile;
+
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.model.ISystemRemoteChangeEvents;
 import com.ibm.etools.systems.model.SystemRegistry;
-
-import biz.isphere.spooledfiles.ConfirmDeletionSpooledFiles;
-import biz.isphere.spooledfiles.SpooledFile;
 
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
 

@@ -26,12 +26,12 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.ISpherePlugin;
-import biz.isphere.internal.ISphereHelper;
-import biz.isphere.messagefilesearch.SearchDialog;
-import biz.isphere.messagefilesearch.SearchElement;
-import biz.isphere.messagefilesearch.SearchExec;
-import biz.isphere.messagefilesearch.SearchPostRun;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.messagefilesearch.SearchDialog;
+import biz.isphere.core.messagefilesearch.SearchElement;
+import biz.isphere.core.messagefilesearch.SearchExec;
+import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;

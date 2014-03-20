@@ -17,6 +17,9 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.IISeriesSubSystem;
 import com.ibm.etools.iseries.core.IISeriesSubSystemCommandExecutionProperties;
@@ -38,9 +41,6 @@ import com.ibm.etools.systems.model.SystemRegistry;
 import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
-
-import biz.isphere.spooledfiles.SpooledFile;
-import biz.isphere.spooledfiles.SpooledFileBaseSubSystem;
 
 public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, ISpooledFileSubSystem {
 

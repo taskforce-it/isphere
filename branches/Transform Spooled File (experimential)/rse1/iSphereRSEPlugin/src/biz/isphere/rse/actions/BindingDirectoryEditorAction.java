@@ -30,8 +30,8 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-import biz.isphere.ISpherePlugin;
-import biz.isphere.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.rse.Messages;
 
 public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {

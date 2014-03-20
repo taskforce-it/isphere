@@ -28,8 +28,8 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-import biz.isphere.ISpherePlugin;
-import biz.isphere.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
 
 public class MessageFileEditorAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {

@@ -13,10 +13,12 @@ package biz.isphere.rse.spooledfiles;
 
 import java.util.Vector;
 
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
@@ -26,9 +28,6 @@ import com.ibm.etools.systems.filters.ui.actions.SystemChangeFilterAction;
 import com.ibm.etools.systems.filters.ui.actions.SystemNewFilterAction;
 import com.ibm.etools.systems.model.SystemConnection;
 import com.ibm.etools.systems.subsystems.SubSystem;
-
-import biz.isphere.ISpherePlugin;
-import biz.isphere.Messages;
 
 public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 

@@ -19,7 +19,7 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember;
 
-import biz.isphere.internal.Member;
+import biz.isphere.core.internal.Member;
 
 public class RSEMember extends Member {
 

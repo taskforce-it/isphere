@@ -40,14 +40,14 @@
             category="spooled files"
             class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
             vendor="Task Force IT-Consulting GmbH"
-            id="biz.isphere.spooledfiles.subsystems.factory">
+            id="biz.isphere.core.spooledfiles.subsystems.factory">
       </factory>
    </extension>
 
    <extension
          point="com.ibm.etools.systems.core.popupMenus">
       <objectContribution
-            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*"
@@ -55,14 +55,14 @@
             id="biz.isphere.rse.spooledfiles.actions">
          <menu
                label="%SaveAs"
-               id="biz.isphere.menu.save">             
+               id="biz.isphere.core.menu.save">             
             <separator
                   name="main">
             </separator>
          </menu> 
          <menu
                label="%OpenAs"
-               id="biz.isphere.menu.open">             
+               id="biz.isphere.core.menu.open">             
             <separator
                   name="main">
             </separator>
@@ -100,42 +100,42 @@
          <action
                label="%SaveAsPDF"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
          </action>
          <action
                label="%SaveAsHTML"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
          </action>
          <action
                label="%SaveAsText"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
          </action>
          <action
                label="%OpenAsPDF"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
          </action>
          <action
                label="%OpenAsHTML"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
          </action>
          <action
                label="%OpenAsText"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
          </action>
@@ -145,7 +145,7 @@
    <extension
          point="com.ibm.etools.systems.core.propertyPages">
       <page
-            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
             name="%GeneralInformation"
             subtypefilter="*"
             typecategoryfilter="*"

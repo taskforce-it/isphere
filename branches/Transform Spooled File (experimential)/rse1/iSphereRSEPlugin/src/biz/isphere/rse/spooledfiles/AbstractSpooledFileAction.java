@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
 
-import biz.isphere.Messages;
+import biz.isphere.core.Messages;
 
 public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopupMenuExtensionAction {
 

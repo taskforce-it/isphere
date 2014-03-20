@@ -16,11 +16,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
+
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter;
 import com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter;
-
-import biz.isphere.spooledfiles.SpooledFileBaseResourceAdapter;
 
 public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
 
