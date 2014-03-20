@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    Property-Tester
+      	  ==========================================
+      	-->
 
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       	<propertyTester
             class="biz.isphere.core.propertytester.QSYSRemoteObjectPropertyTester"
             id="biz.isphere.core.propertytester.QSYSRemoteObjectPropertyTester"
-            namespace="biz.isphere.core.propertytester.qsysremoteobject"
+            namespace="biz.isphere.core.propertytester.hostobjectbrief"
             properties="type,subtype"
             type="java.lang.Object">
 		</propertyTester>
@@ -15,6 +21,12 @@
    
    <extension
          point="org.eclipse.ui.popupMenus">
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Editor Contributions
+      	  ==========================================
+      	-->
          
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
@@ -22,7 +34,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*MSGF"/>
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
             
@@ -35,6 +47,38 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Binding Directory Editor Contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="biz.isphere.core.menu.bnddir">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*BNDDIR"/>
+            	</and>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.BindingDirectoryEditorAction"
+                label="%iSphere_Binding_Directory_Editor"
+                icon="icons/binding_directory.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Source Member Compare Contributions
+      	  ==========================================
+      	-->
       	
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
@@ -49,38 +93,35 @@
 	         </action>
       	</objectContribution>
       	
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="biz.isphere.core.menu.bnddir">
-            
-            <enablement>
-            	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*BNDDIR"/>
-            	</and>
-         	</enablement>
-            
-	         <action
-                class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
-                enablesFor="1"
-                id="biz.isphere.rse.actions.BindingDirectoryEditorAction"
-                label="%iSphere_Binding_Directory_Editor"
-                icon="icons/binding_directory.gif"
-                menubarPath="additions">
-	         </action>
-      	</objectContribution>
+      	<!--
+      	  ==========================================
+      	    Source File/Member Search Contributions
+            objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
+      	  ==========================================
+      	-->
       	
       	<objectContribution
-            objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
+            objectClass="com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief"
             id="biz.isphere.core.menu.sourcefilesearch.member">
             
             <enablement>
-            	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*FILE"/>
-            		<or>
-            			<test property="biz.isphere.core.propertytester.qsysremoteobject.subtype" value="PF-SRC"/>
-            			<test property="biz.isphere.core.propertytester.qsysremoteobject.subtype" value="PF38-SRC"/>
-            		</or>
-            	</and>
+            	<or>
+            		<!-- Rules to detect source members -->
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="SRC"/>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect source files   -->
+					<or>
+		            	<and>
+		            		<!-- a file -->
+		            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*FILE"/>
+		            		<!-- must be of one of the following sub types -->
+		            		<or>
+		            			<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
+		            			<test property="biz.isphere.core.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
+		            		</or>
+		            	</and>
+					</or>
+				</or>
          	</enablement>
             
 	         <action
@@ -119,13 +160,19 @@
 	         </action>
       	</objectContribution>
       	
+      	<!--
+      	  ==========================================
+      	    Message File Search Contributions
+      	  ==========================================
+      	-->
+      	
       	<objectContribution
              objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
              id="biz.isphere.core.menu.messagefilesearch.member">
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*MSGF"/>
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	
@@ -145,7 +192,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*MSGF"/>
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	
@@ -165,7 +212,7 @@
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.core.propertytester.qsysremoteobject.type" value="*MSGF"/>
+            		<test property="biz.isphere.core.propertytester.hostobjectbrief.type" value="*MSGF"/>
             	</and>
          	</enablement>
          	
@@ -180,6 +227,12 @@
       	</objectContribution>
       	
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Others
+      	  ==========================================
+      	-->
 
    <extension
          point="org.eclipse.rse.core.subsystemConfigurations">

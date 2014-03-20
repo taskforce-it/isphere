@@ -2,11 +2,12 @@ package biz.isphere.core.propertytester;
 
 import org.eclipse.core.expressions.PropertyTester;
 
+import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class QSYSRemoteObjectPropertyTester extends PropertyTester {
 
-    public static final String PROPERTY_NAMESPACE = "biz.isphere.core.propertytester.qsysremoteobject";
+    public static final String PROPERTY_NAMESPACE = "biz.isphere.core.propertytester.hostobjectbrief";
 
     public static final String PROPERTY_TYPE = "type";
 
@@ -14,18 +15,20 @@ public class QSYSRemoteObjectPropertyTester extends PropertyTester {
 
     public boolean test(Object aReceiver, String aProperty, Object[] anArgs, Object anExpectedValue) {
 
-        if (!(aReceiver instanceof QSYSRemoteObject)) {
+        if (!(aReceiver instanceof ISeriesHostObjectBrief)) {
             return false;
         }
 
-        QSYSRemoteObject sourceFile = (QSYSRemoteObject)aReceiver;
-
+        ISeriesHostObjectBrief remoteObject = (ISeriesHostObjectBrief)aReceiver;
+        
         if (anExpectedValue instanceof String) {
             String expectedValue = (String)anExpectedValue;
             if (PROPERTY_TYPE.equals(aProperty)) {
-                return sourceFile.getType().equalsIgnoreCase(expectedValue);
+                System.out.println("Property-Tester (type): " + remoteObject.getType() + "=" + expectedValue);
+                return remoteObject.getType().equalsIgnoreCase(expectedValue);
             } else if (PROPERTY_SUBTYPE.equals(aProperty)) {
-                return sourceFile.getSubType().equalsIgnoreCase(expectedValue);
+                System.out.println("Property-Tester (subtype): " + remoteObject.getSubType() + "=" + expectedValue);
+                return remoteObject.getSubType().equalsIgnoreCase(expectedValue);
             }
         }
 
