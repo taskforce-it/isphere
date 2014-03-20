@@ -157,6 +157,21 @@ public class XFileDialog {
     }
 
     /**
+     * Sets the names that describe the filter extensions which the dialog will
+     * use to filter the files it shows to the argument, which may be null.
+     * <p>
+     * Each name is a user-friendly short description shown for its
+     * corresponding filter. The names array must be the same length as the
+     * <code>extensions</code> array.
+     * 
+     * @param aFilterNames - the list of filter names, or null for no filter
+     *        names
+     */
+    public void setFilterNames(String[] aFilterNames) {
+        fileDialog.setFilterNames(aFilterNames);
+    }
+
+    /**
      * Set the file extensions which the dialog will use to filter the files it
      * shows to the argument, which may be null.
      * <p>
