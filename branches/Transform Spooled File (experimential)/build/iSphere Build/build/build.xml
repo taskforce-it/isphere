@@ -32,6 +32,7 @@
     *     - update version number
     * ===================================================================== -->
 	<target name="build" depends="updateVersionNumber, refreshProjects" description="build iSphere update site">
+		<echo>Finished iSphere build ${build.version}</echo>
 		<echo>Open site.xml and press [Build All] to build the iSphere update site.</echo>
 		<echo>*** Finished ***</echo>
 	</target>
