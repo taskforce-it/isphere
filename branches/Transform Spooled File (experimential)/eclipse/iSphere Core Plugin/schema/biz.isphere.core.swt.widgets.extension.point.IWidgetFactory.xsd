@@ -6,7 +6,7 @@
          <meta.schema plugin="biz.isphere.core" id="biz.isphere.core.swt.widget.extension.point.IWidgetFactory" name="SWT Widget Extensions: IWidgetFactory"/>
       </appInfo>
       <documentation>
-         This extension point allows plugins to contribute enhanced versions of swt widgets. It has been introduced at the time plugin &apos;iSphere Adapter&apos; was added in order to conribute XFileDialog.
+         This extension point allows plugins to contribute enhanced versions of swt widgets. It has been introduced at the time plugin &apos;iSphere Adapter&apos; was added in order to contribute XFileDialog.
       </documentation>
    </annotation>
 
