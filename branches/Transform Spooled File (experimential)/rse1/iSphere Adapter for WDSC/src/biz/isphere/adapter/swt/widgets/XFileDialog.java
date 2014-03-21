@@ -9,8 +9,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.adapter.Messages;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
-public class XFileDialog {
+public class XFileDialog implements IFileDialog {
 
 	private FileDialog fileDialog;
 
