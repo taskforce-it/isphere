@@ -24,7 +24,7 @@ public final class CcsidUtil {
 
         try {
             map = new Properties();
-            reader = getClass().getClassLoader().getResourceAsStream("biz/isphere/ccsid/ebcdicAsciiMapping.txt");
+            reader = getClass().getClassLoader().getResourceAsStream("biz/isphere/core/ccsid/ebcdicAsciiMapping.txt");
             map.load(reader);
         } catch (IOException e) {
             e.printStackTrace();
