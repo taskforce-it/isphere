@@ -76,7 +76,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		
 		installURL = context.getBundle().getEntry("/");
 		
-		initializePreferenceStoreDefaults();
+        // TODO: Remove procedure
+		// initializePreferenceStoreDefaults();
 		
 		spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
 		if (!spooledFilesDirectory.exists())
@@ -184,9 +185,12 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	protected void initializePreferenceStoreDefaults(){
-		
-	    // TODO: Remove disabled statements 'DE.TASKFORCE'
+    // TODO: Remove procedure
+	// protected void initializePreferenceStoreDefaults(){
+
+	    // Delegated to PreferencesInitializer
+	    // See also: plugin.xml
+	    
 		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
 		
 	    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
@@ -202,10 +206,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
 		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
 		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
-	
-	    Preferences.getInstance().initializeDefaultPreferences();
 	    
-	}
+	//}
 	
 	public static URL getInstallURL() {
 		return installURL;

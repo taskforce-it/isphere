@@ -4,7 +4,9 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class XFileDialog {
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
+
+public class XFileDialog implements IFileDialog {
 
     private FileDialog fileDialog;
 

@@ -28,11 +28,12 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 
 public class ViewSearchResults extends ViewPart {
@@ -171,7 +172,9 @@ public class ViewSearchResults extends ViewPart {
 				
 				SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
 
-				XFileDialog dialog = new XFileDialog(shell, SWT.SAVE);
+                WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+                IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
+                
 				dialog.setFilterNames(new String[] {"Excel Files", "All Files"});
 				dialog.setFilterExtensions(new String[] {"*.xls", "*.*"});
 				dialog.setFilterPath("C:\\");

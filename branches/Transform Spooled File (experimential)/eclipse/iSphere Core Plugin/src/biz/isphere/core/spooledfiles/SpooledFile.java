@@ -20,13 +20,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditorInput;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -727,7 +728,9 @@ public class SpooledFile {
             fileExtension = ".pdf";
         }
 
-        XFileDialog dialog = new XFileDialog(shell, SWT.SAVE);
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
+        
         dialog.setFilterNames(new String[] { fileDescription, "All Files" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
