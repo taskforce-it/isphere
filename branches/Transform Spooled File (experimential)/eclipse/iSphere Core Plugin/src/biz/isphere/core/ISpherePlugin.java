@@ -33,7 +33,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
 
-	private static final String MIN_SERVER_VERSION = "1.2.0";
+	private static final String MIN_SERVER_VERSION = "2.0.0";
 	
     private static ISpherePlugin plugin;
 	private static URL installURL;
