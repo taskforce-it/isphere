@@ -109,23 +109,27 @@ public class XDialog extends Dialog {
         return result;
     }
 
-    /**
-     * A plugin that wants to use this XDialog class must override
-     * {@link Dialog#getDialogBoundsSettings()} as shown in the example below.
-     * Otherwise all dialogs share section <i>Workbench</i> and hence overwrite
-     * their settings.
-     * <p>
-     * Example:
-     * 
-     * <pre>
-     * protected IDialogSettings getDialogBoundsSettings() {
-     *     return super.getDialogBoundsSettings(Activator.getDefault().getDialogSettings());
-     * }
-     * </pre>
-     * 
-     * @param workbenchSettings
-     * @return
-     */
+	/**
+	 * A plugin that wants to use the XDialog class must override
+	 * {@link Dialog#getDialogBoundsSettings()} as shown in the example below.
+	 * Otherwise all dialogs share section <i>Workbench</i> and hence overwrite
+	 * their settings.
+	 * <p>
+	 * Example:
+	 * 
+	 * <pre>
+	 * protected IDialogSettings getDialogBoundsSettings() {
+	 * 	return super.getDialogBoundsSettings(Activator.getDefault()
+	 * 			.getDialogSettings());
+	 * }
+	 * </pre>
+	 * 
+	 * @param - workbenchSettings
+	 *            the <i>Workbench</i> section of the dialog settings.
+	 * @return settings the dialog settings used to store the dialog's location
+	 *         and/or size, or null if the dialog's bounds should never be
+	 *         stored.
+	 */
     protected IDialogSettings getDialogBoundsSettings(IDialogSettings workbenchSettings) {
         if (workbenchSettings == null) {
             throw new IllegalArgumentException("Parameter 'workbenchSettings' must not be null.");
