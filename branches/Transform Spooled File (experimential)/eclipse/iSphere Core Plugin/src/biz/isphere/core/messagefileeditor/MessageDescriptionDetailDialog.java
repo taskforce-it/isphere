@@ -10,6 +10,7 @@ package biz.isphere.core.messagefileeditor;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,13 +18,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
 
 
-public class MessageDescriptionDetailDialog extends Dialog {
+public class MessageDescriptionDetailDialog extends XDialog {
 
 	private AS400 as400;
 	private int actionType;
@@ -64,11 +67,22 @@ public class MessageDescriptionDetailDialog extends Dialog {
 		newShell.setText(Messages.getString("Message_description"));
 	}
 	
-	protected Point getInitialSize() {
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+	protected Point getDefaultSize() {
 		Point point = getShell().computeSize(Size.getSize(600), SWT.DEFAULT, true);	
 		point.y = point.y + _messageDescriptionDetail.getFieldFormatViewer().getTableHeight(4);
 		return point;
 
 	}
+
+    /**
+     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
 	
 }
