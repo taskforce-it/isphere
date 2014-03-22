@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -27,15 +29,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-
-import org.eclipse.swt.widgets.Button;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -137,7 +137,30 @@ public class BindingDirectoryEntryViewer {
 		_tableViewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.BORDER);
 		_tableViewer.setLabelProvider(new LabelProviderTableViewer());
 		_tableViewer.setContentProvider(new ContentProviderTableViewer());
+		_tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                if(_tableViewer.getSelection() instanceof IStructuredSelection) {
 
+                    IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
+                    if (structuredSelection.getFirstElement() instanceof BindingDirectoryEntry) {
+
+                        BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)structuredSelection.getFirstElement();
+                        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = 
+                            new BindingDirectoryEntryDetailDialog(
+                                    shell, 
+                                    level,
+                                    DialogActionTypes.CHANGE, 
+                                    bindingDirectoryEntry,
+                                    _bindingDirectoryEntries);
+                        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+                            uploadEntries();
+                            _tableViewer.refresh();
+                        }
+                    
+                    }
+                }
+            }
+        });
 		_table = _tableViewer.getTable();	
 		_table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
