@@ -8,6 +8,10 @@ import biz.isphere.core.preferencepages.IPreferences;
 
 /**
  * Class to manage access to the preferences of the plugin.
+ * <p>
+ * Eclipse stores the preferences as <i>diffs</i> to their default values in
+ * directory
+ * <code>[workspace]\.metadata\.plugins\org.eclipse.core.runtime\.settings\</code>.
  * 
  * @author Thomas Raddatz
  */
@@ -19,14 +23,14 @@ public final class Preferences {
     private static Preferences instance;
 
     /**
-     * Global preferences of the LPEX Task-Tags plugin.
+     * Global preferences of the plugin.
      */
     private IPreferenceStore preferenceStore;
 
-    /**
+    /*
      * Preferences keys:
      */
-    
+
     private static final String DOMAIN = ISpherePlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_SAVE_DIRECTORY = DOMAIN + "SPOOLED_FILES.SAVE.DIRECTORY"; //$NON-NLS-1$
@@ -102,47 +106,47 @@ public final class Preferences {
     public String getSourceFileSearchString() {
         return preferenceStore.getString(SOURCEFILESEARCH_SEARCHSTRING);
     }
-    
+
     public String getSpooledFileConversionDefaultFormat() {
         return preferenceStore.getString(SPOOLED_FILES_DEFAULT_FORMAT);
     }
-    
+
     public String getSpooledFileConversionText() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT);
     }
-    
+
     public String getSpooledFileConversionTextLibrary() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT_LIBRARY);
     }
-    
+
     public String getSpooledFileConversionTextCommand() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT_COMMAND);
     }
-    
+
     public String getSpooledFileConversionHTML() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_HTML);
     }
-    
+
     public String getSpooledFileConversionHTMLLibrary() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_HTML_LIBRARY);
     }
-    
+
     public String getSpooledFileConversionHTMLCommand() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_HTML_COMMAND);
     }
-    
+
     public String getSpooledFileConversionPDF() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_PDF);
     }
-    
+
     public String getSpooledFileConversionPDFLibrary() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_PDF_LIBRARY);
     }
-    
+
     public String getSpooledFileConversionPDFCommand() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_PDF_COMMAND);
     }
-    
+
     public String getSpooledFileSaveDirectory() {
         String directory = preferenceStore.getString(SPOOLED_FILES_SAVE_DIRECTORY);
         if (StringHelper.isNullOrEmpty(directory)) {
@@ -166,47 +170,47 @@ public final class Preferences {
     public void setSourceFileSearchString(String aSearchString) {
         preferenceStore.setValue(SOURCEFILESEARCH_SEARCHSTRING, aSearchString.trim());
     }
-    
+
     public void setSpooledFileDefaultFormat(String aFormat) {
         preferenceStore.setValue(SPOOLED_FILES_DEFAULT_FORMAT, aFormat);
     }
-    
+
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
-    
+
     public void setSpooledFileConversionLibraryText(String aLibrary) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT_LIBRARY, aLibrary);
     }
-    
+
     public void setSpooledFileConversionCommandText(String aCommand) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, aCommand);
     }
-    
+
     public void setSpooledFileConversionHTML(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML, aConversionType);
     }
-    
+
     public void setSpooledFileConversionLibraryHTML(String aLibrary) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML_LIBRARY, aLibrary);
     }
-    
+
     public void setSpooledFileConversionCommandHTML(String aCommand) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML_COMMAND, aCommand);
     }
-    
+
     public void setSpooledFileConversionPDF(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_PDF, aConversionType);
     }
-    
+
     public void setSpooledFileConversionLibraryPDF(String aLibrary) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_PDF_LIBRARY, aLibrary);
     }
-    
+
     public void setSpooledFileConversionCommandPDF(String aCommand) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_PDF_COMMAND, aCommand);
     }
-    
+
     public void setSpooledFileSaveDirectory(String aDirectory) {
         preferenceStore.setValue(SPOOLED_FILES_SAVE_DIRECTORY, aDirectory);
     }
@@ -217,17 +221,17 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
-        
+
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
-        
+
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, getDefaultSpooledFileConversionTextCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_LIBRARY, getDefaultSpooledFileConversionTextLibrary());
-        
+
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML, getDefaultSpooledFileConversionHTML());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML_COMMAND, getDefaultSpooledFileConversionHTMLCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML_LIBRARY, getDefaultSpooledFileConversionHTMLLibrary());
-        
+
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF, getDefaultSpooledFileConversionPDF());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_COMMAND, getDefaultSpooledFileConversionPDFCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_LIBRARY, getDefaultSpooledFileConversionPDFLibrary());
@@ -237,10 +241,15 @@ public final class Preferences {
      * Preferences: Default Values
      */
 
+    /**
+     * Returns the default iSphere library name.
+     * 
+     * @return default iSphere library name
+     */
     public String getDefaultISphereLibrary() {
         return "ISPHERE";
     }
-    
+
     /**
      * Returns the default format for spooled file conversion on double-click on
      * a spooled file.
@@ -250,39 +259,90 @@ public final class Preferences {
     public String getDefaultSpooledFileConversionDefaultFormat() {
         return IPreferences.OUTPUT_FORMAT_TEXT;
     }
-    
+
+    /**
+     * Returns the default conversion type for spooled file to text conversion.
+     * 
+     * @return default spooled file to TEXT conversion type
+     */
     public String getDefaultSpooledFileConversionText() {
-        return IPreferences.SPLF_CONVERSION_DEFAULT;
+        return IPreferences.SPLF_CONVERSION_TRANSFORM;
     }
-    
+
+    /**
+     * Return the default library name for user defined spooled file to text
+     * conversion.
+     * 
+     * @return library name for user defined spooled file to text conversion
+     */
     public String getDefaultSpooledFileConversionTextLibrary() {
         return "";
     }
-    
+
+    /**
+     * Return the default command for user defined spooled file to text
+     * conversion.
+     * 
+     * @return command for user defined spooled file to text conversion
+     */
     public String getDefaultSpooledFileConversionTextCommand() {
         return "";
     }
-    
+
+    /**
+     * Returns the default conversion type for spooled file to HTML conversion.
+     * 
+     * @return default spooled file to HTML conversion type
+     */
     public String getDefaultSpooledFileConversionHTML() {
-        return IPreferences.SPLF_CONVERSION_DEFAULT;
+        return IPreferences.SPLF_CONVERSION_TRANSFORM;
     }
-    
+
+    /**
+     * Return the default library name for user defined spooled file to HTML
+     * conversion.
+     * 
+     * @return library name for user defined spooled file to HTML conversion
+     */
     public String getDefaultSpooledFileConversionHTMLLibrary() {
         return "";
     }
-    
+
+    /**
+     * Return the default command for user defined spooled file to HTML
+     * conversion.
+     * 
+     * @return command for user defined spooled file to HTML conversion
+     */
     public String getDefaultSpooledFileConversionHTMLCommand() {
         return "";
     }
-    
+
+    /**
+     * Returns the default conversion type for spooled file to PDF conversion.
+     * 
+     * @return default spooled file to PDF conversion type
+     */
     public String getDefaultSpooledFileConversionPDF() {
-        return IPreferences.SPLF_CONVERSION_DEFAULT;
+        return IPreferences.SPLF_CONVERSION_TRANSFORM;
     }
-    
+
+    /**
+     * Return the default library name for user defined spooled file to PDF
+     * conversion.
+     * 
+     * @return library name for user defined spooled file to PDF conversion
+     */
     public String getDefaultSpooledFileConversionPDFLibrary() {
         return "";
     }
-    
+
+    /**
+     * Return the default command for user defined spooled file to PDF
+     * conversion.
+     * 
+     * @return command for user defined spooled file to PDF conversion
+     */
     public String getDefaultSpooledFileConversionPDFCommand() {
         return "";
     }
