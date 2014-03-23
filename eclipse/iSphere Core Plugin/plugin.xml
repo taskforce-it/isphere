@@ -30,7 +30,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="biz.isphere.core.preferencepages.ISphereLibrary"
-            category="biz.isphere.preferencepages.General"
+            category="biz.isphere.base.preferencepages.General"
             name="%Library"
             id="biz.isphere.core.preferencepages.ISphereLibrary"/>
       <page
