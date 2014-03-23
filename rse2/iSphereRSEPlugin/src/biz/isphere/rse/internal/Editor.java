@@ -13,7 +13,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.internal.IEditor;
+import biz.isphere.core.internal.IEditor;
 
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;

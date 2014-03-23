@@ -1,16 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    Property-Tester
+      	  ==========================================
+      	-->
 
    <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      	<propertyTester
+            class="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
+            id="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
+            namespace="biz.isphere.adapter.propertytester.hostobjectbrief"
+            properties="type,subtype"
+            type="java.lang.Object">
+		</propertyTester>
+   </extension>
+   
+   <extension
          point="org.eclipse.ui.popupMenus">
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Editor Contributions
+      	  ==========================================
+      	-->
+         
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="biz.isphere.menu.msgf"
-            namefilter="*.msgf">
-	         <visibility> 
-	          	<objectState name="type" value="*MSGF"/>
-	         </visibility>	         
+            id="biz.isphere.core.menu.msgf">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            	</and>
+         	</enablement>
+            
 	         <action
                 class="biz.isphere.rse.actions.MessageFileEditorAction"
                 enablesFor="1"
@@ -20,25 +47,23 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
-            id="biz.isphere.menu.member">
-	         <action
-                class="biz.isphere.rse.actions.CompareEditorAction"
-                enablesFor="1"
-                id="biz.isphere.rse.actions.CompareEditorAction"
-                label="%iSphere_Compare_Editor"
-                icon="icons/compare.gif"
-                menubarPath="additions">
-	         </action>
-      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Binding Directory Editor Contributions
+      	  ==========================================
+      	-->
+      	
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="biz.isphere.menu.bnddir"
-            namefilter="*.bnddir">
-	         <visibility> 
-	          	<objectState name="type" value="*BNDDIR"/>
-	         </visibility>	         
+            id="biz.isphere.core.menu.bnddir">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*BNDDIR"/>
+            	</and>
+         	</enablement>
+            
 	         <action
                 class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
                 enablesFor="1"
@@ -48,9 +73,57 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Source Member Compare Contributions
+      	  ==========================================
+      	-->
+      	
       	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
+            id="biz.isphere.core.menu.member">
+	         <action
+                class="biz.isphere.rse.actions.CompareEditorAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.CompareEditorAction"
+                label="%iSphere_Compare_Editor"
+                icon="icons/compare.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Source File/Member Search Contributions
             objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
-            id="biz.isphere.menu.sourcefilesearch.member">
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief"
+            id="biz.isphere.core.menu.sourcefilesearch.member">
+            
+            <enablement>
+            	<or>
+            		<!-- Rules to detect source members -->
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="SRC"/>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect source files   -->
+					<or>
+		            	<and>
+		            		<!-- a file -->
+		            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*FILE"/>
+		            		<!-- must be of one of the following sub types -->
+		            		<or>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
+		            		</or>
+		            	</and>
+					</or>
+				</or>
+         	</enablement>
+            
 	         <action
                 class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
@@ -60,9 +133,10 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
-            id="biz.isphere.menu.sourcefilesearch.filter">
+            id="biz.isphere.core.menu.sourcefilesearch.filter">
 	         <action
                 class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
@@ -72,9 +146,10 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
-            id="biz.isphere.menu.sourcefilesearch.filter">
+            id="biz.isphere.core.menu.sourcefilesearch.filter">
 	         <action
                 class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
@@ -84,9 +159,23 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Search Contributions
+      	  ==========================================
+      	-->
+      	
       	<objectContribution
-            objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
-            id="biz.isphere.menu.messagefilesearch.member">
+             objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
+             id="biz.isphere.core.menu.messagefilesearch.member">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            	</and>
+         	</enablement>
+         	
 	         <action
                 class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
@@ -96,9 +185,17 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
       	<objectContribution
-            objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
-            id="biz.isphere.menu.messagefilesearch.filter">
+             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
+             id="biz.isphere.core.menu.messagefilesearch.filter">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            	</and>
+         	</enablement>
+         	
 	         <action
                 class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
@@ -108,9 +205,17 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
       	<objectContribution
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
-            id="biz.isphere.menu.messagefilesearch.filter">
+             objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
+             id="biz.isphere.core.menu.messagefilesearch.filter">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
+            	</and>
+         	</enablement>
+         	
 	         <action
                 class="biz.isphere.rse.actions.MessageFileSearchAction"
                 enablesFor="*"
@@ -120,7 +225,14 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Others
+      	  ==========================================
+      	-->
 
    <extension
          point="org.eclipse.rse.core.subsystemConfigurations">
@@ -132,14 +244,14 @@
             category="spooled files"
             class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
             vendor="iSphere Project Owners"
-            id="biz.isphere.spooledfiles.subsystems.factory">
+            id="biz.isphere.core.spooledfiles.subsystems.factory">
       </configuration>
    </extension>
 
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
             objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
             subtypefilter="*"
             typecategoryfilter="*"
@@ -148,14 +260,14 @@
             id="biz.isphere.rse.spooledfiles.actions">
          <menu
                label="%SaveAs"
-               id="biz.isphere.menu.save">             
+               id="biz.isphere.core.menu.save">             
             <separator
                   name="main">
             </separator>
          </menu> 
          <menu
                label="%OpenAs"
-               id="biz.isphere.menu.open">             
+               id="biz.isphere.core.menu.open">             
             <separator
                   name="main">
             </separator>
@@ -193,42 +305,42 @@
          <action
                label="%SaveAsPDF"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
          </action>
          <action
                label="%SaveAsHTML"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
          </action>
          <action
                label="%SaveAsText"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
-               menubarPath="biz.isphere.menu.save/main"
+               menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
          </action>
          <action
                label="%OpenAsPDF"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
          </action>
          <action
                label="%OpenAsHTML"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
          </action>
          <action
                label="%OpenAsText"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
-               menubarPath="biz.isphere.menu.open/main"
+               menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
                id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
          </action>
@@ -243,7 +355,7 @@
             name="%GeneralInformation"
             namefilter="*"
             objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
-            subsystemfactoryid="biz.isphere.spooledfiles.subsystems.factory"
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*">

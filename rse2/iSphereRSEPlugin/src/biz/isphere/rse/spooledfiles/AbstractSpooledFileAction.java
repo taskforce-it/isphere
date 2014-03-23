@@ -11,7 +11,7 @@ package biz.isphere.rse.spooledfiles;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.Messages;
+import biz.isphere.core.Messages;
 
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
 

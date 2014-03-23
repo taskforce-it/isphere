@@ -16,8 +16,8 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 
-import biz.isphere.spooledfiles.ConfirmDeletionSpooledFiles;
-import biz.isphere.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
+import biz.isphere.core.spooledfiles.SpooledFile;
 
 
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
