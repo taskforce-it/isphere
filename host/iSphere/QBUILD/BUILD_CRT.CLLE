@@ -1,10 +1,13 @@
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
+     /* Copyright (c) 2012-2014 iSphere Project Owners.                       */
      /* All rights reserved. This program and the accompanying materials      */
      /* are made available under the terms of the Common Public License v1.0  */
      /* which accompanies this distribution, and is available at              */
      /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /* Contributors:                                                         */
+     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
@@ -16,8 +19,7 @@
      /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
-     /*         >>PARM<<  TEXT('Erstellen iSphere Bibliothek +                */
-     /*                         - Erstellen Objekte');                        */
+     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -38,8 +40,14 @@
              DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
              DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
              DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+             DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
              DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
              DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+             DCL        VAR(&DTACPR   ) TYPE(*CHAR) LEN(10) VALUE('*HIGH')
+             DCL        VAR(&V_VER    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&V_RLS    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&V_MOD    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&VERSION  ) TYPE(*CHAR) LEN( 8)
 
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
 
@@ -54,16 +62,12 @@
              ENDDO
 
              /* ----------------------------------------------- */
-             /* Create build programs                           */
+             /* Delete old objects                              */
              /* ----------------------------------------------- */
-
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_CLR') +
                           LIB(&TMPLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
-             /* ----------------------------------------------- */
-             /* Delete old objects                              */
-             /* ----------------------------------------------- */
 
              CALL       PGM(&TMPLIB/BUILD_CLR) PARM(&PRDLIB &TMPLIB &SAVF)
 
@@ -83,6 +87,22 @@
              STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             /* ----------------------------------------------- */
+             /* Update data area iSphere                        */
+             /* ----------------------------------------------- */
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_VER') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_VER) PARM(&PRDLIB)
+
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE ( 8 2)) RTNVAR(&V_VER)
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (10 2)) RTNVAR(&V_RLS)
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (12 2)) RTNVAR(&V_MOD)
+
+             CHGVAR     VAR(&VERSION) +
+                        VALUE(&V_VER *TCAT '.' *CAT &V_RLS *TCAT '.' *CAT &V_MOD)
 
              /* ----------------------------------------------- */
              /* Create SQL tables and indexes                   */
@@ -278,6 +298,20 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
+             /* Create workstation customization objects        */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFHTML') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFPDF') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFTXT') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
              /* Create utility: CVTSPLF                         */
              /* ----------------------------------------------- */
 
@@ -298,16 +332,37 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
+             /* Change object owner to QPGMR                    */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_OWN') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB 'QPGMR')
+
+             /* ----------------------------------------------- */
+             /* Remove debug information                        */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_DBG') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_DBG) PARM(&PRDLIB &TMPLIB)
+
+             /* ----------------------------------------------- */
              /* Save library ISPHERE                            */
              /* ----------------------------------------------- */
 
              CRTSAVF    FILE(&TMPLIB/ISPHERE) +
-                          TEXT('iSphere System i part - ')
+                          TEXT('iSphere Plugin v' *CAT &VERSION)
 
              SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
                                   (&PRDLIB/XMLINST  *PGM) +
-                                  (&PRDLIB/EVFEVENT *FILE))
+                                  (&PRDLIB/EVFEVENT *FILE)) +
+                          DTACPR(&DTACPR)
 
              MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
 
