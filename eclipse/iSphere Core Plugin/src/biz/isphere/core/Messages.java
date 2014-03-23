@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere;
+package biz.isphere.core;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Messages {
 
-	private static final String BUNDLE_NAME = "biz.isphere.messages";
+	private static final String BUNDLE_NAME = "biz.isphere.core.messages";
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	
 	private Messages() {
