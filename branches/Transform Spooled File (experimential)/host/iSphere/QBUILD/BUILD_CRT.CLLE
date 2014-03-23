@@ -43,6 +43,10 @@
              DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
              DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
              DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+             DCL        VAR(&V_VER    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&V_RLS    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&V_MOD    ) TYPE(*CHAR) LEN( 2)
+             DCL        VAR(&VERSION  ) TYPE(*CHAR) LEN( 8)
 
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
 
@@ -91,6 +95,13 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
              CALL       PGM(&TMPLIB/BUILD_VER) PARM(&PRDLIB)
+
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE ( 8 2)) RTNVAR(&V_VER)
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (10 2)) RTNVAR(&V_RLS)
+             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (12 2)) RTNVAR(&V_MOD)
+
+             CHGVAR     VAR(&VERSION) +
+                        VALUE(&V_VER *TCAT '.' *CAT &V_RLS *TCAT '.' *CAT &V_MOD)
 
              /* ----------------------------------------------- */
              /* Create SQL tables and indexes                   */
@@ -344,7 +355,7 @@
              /* ----------------------------------------------- */
 
              CRTSAVF    FILE(&TMPLIB/ISPHERE) +
-                          TEXT('iSphere System i part - ')
+                          TEXT('iSphere Plugin v' *CAT &VERSION)
 
              SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
