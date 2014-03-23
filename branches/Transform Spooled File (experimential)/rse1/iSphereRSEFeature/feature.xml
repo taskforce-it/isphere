@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.rse"
-      label="iSphere for WDSCi 7.0"
+      label="iSphere for WDSCi 7.0 (recommended)"
       version="2.0.0"
       provider-name="iSphere Project Owners">
 
