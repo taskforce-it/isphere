@@ -33,11 +33,11 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.internal.ISphereHelper;
-import biz.isphere.sourcefilesearch.SearchDialog;
-import biz.isphere.sourcefilesearch.SearchElement;
-import biz.isphere.sourcefilesearch.SearchExec;
-import biz.isphere.sourcefilesearch.SearchPostRun;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.sourcefilesearch.SearchDialog;
+import biz.isphere.core.sourcefilesearch.SearchElement;
+import biz.isphere.core.sourcefilesearch.SearchExec;
+import biz.isphere.core.sourcefilesearch.SearchPostRun;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
-import biz.isphere.spooledfiles.SpooledFileBaseResourceAdapter;
+import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
 
 
 public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
@@ -145,7 +145,7 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 	}
 
 	public String getSubSystemConfigurationId(Object object) {
-		return "biz.isphere.spooledfiles.subsystems.factory";
+		return "biz.isphere.core.spooledfiles.subsystems.factory";
 	}
 	
 }

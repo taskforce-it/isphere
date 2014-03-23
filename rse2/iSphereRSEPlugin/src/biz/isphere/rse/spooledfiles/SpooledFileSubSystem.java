@@ -22,8 +22,8 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
-import biz.isphere.spooledfiles.SpooledFile;
-import biz.isphere.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
