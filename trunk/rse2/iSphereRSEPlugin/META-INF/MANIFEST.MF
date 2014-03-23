@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere for RDP 8.0+
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
-Bundle-Version: 1.4.2
+Bundle-Version: 2.0.0
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: iSphere Project Owners
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.rse.ui,
@@ -18,12 +19,11 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.services.qsys,
  com.ibm.etools.iseries.toolbox,
  com.ibm.etools.systems.editor,
- org.eclipse.ui.views,
- biz.isphere
+ biz.isphere.core,
+ biz.isphere.adapter
 Bundle-ActivationPolicy: lazy
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
  biz.isphere.rse.compareeditor,
  biz.isphere.rse.internal,
  biz.isphere.rse.spooledfiles
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6

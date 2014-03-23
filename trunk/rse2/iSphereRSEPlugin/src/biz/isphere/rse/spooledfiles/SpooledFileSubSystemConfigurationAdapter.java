@@ -23,8 +23,8 @@ import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.ISpherePlugin;
-import biz.isphere.Messages;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 
 public class SpooledFileSubSystemConfigurationAdapter extends SubSystemConfigurationAdapter {
 	

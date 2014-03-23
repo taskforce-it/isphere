@@ -8,8 +8,8 @@
 
 package biz.isphere.rse.spooledfiles;
 
-import biz.isphere.spooledfiles.AbstractSpooledFileProperties;
-import biz.isphere.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.AbstractSpooledFileProperties;
+import biz.isphere.core.spooledfiles.SpooledFile;
 
 public class SpooledFileProperties extends AbstractSpooledFileProperties {
 

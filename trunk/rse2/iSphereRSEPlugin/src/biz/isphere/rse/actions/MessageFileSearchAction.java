@@ -33,13 +33,13 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.internal.ISphereHelper;
-import biz.isphere.messagefilesearch.SearchDialog;
-import biz.isphere.messagefilesearch.SearchElement;
-import biz.isphere.messagefilesearch.SearchExec;
-import biz.isphere.messagefilesearch.SearchPostRun;
-import biz.isphere.messagefilesearch.SearchResult;
-import biz.isphere.messagefilesearch.ViewSearchResults;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.messagefilesearch.SearchDialog;
+import biz.isphere.core.messagefilesearch.SearchElement;
+import biz.isphere.core.messagefilesearch.SearchExec;
+import biz.isphere.core.messagefilesearch.SearchPostRun;
+import biz.isphere.core.messagefilesearch.SearchResult;
+import biz.isphere.core.messagefilesearch.ViewSearchResults;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;

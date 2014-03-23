@@ -11,7 +11,7 @@ package biz.isphere.rse.spooledfiles;
 import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
-import biz.isphere.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.SpooledFile;
 
 
 public class SpooledFileResource extends AbstractResource {
