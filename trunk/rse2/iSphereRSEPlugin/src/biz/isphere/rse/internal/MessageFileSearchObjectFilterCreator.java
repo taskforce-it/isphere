@@ -8,8 +8,8 @@
 
 package biz.isphere.rse.internal;
 
-import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
-import biz.isphere.messagefilesearch.SearchResult;
+import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
+import biz.isphere.core.messagefilesearch.SearchResult;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;

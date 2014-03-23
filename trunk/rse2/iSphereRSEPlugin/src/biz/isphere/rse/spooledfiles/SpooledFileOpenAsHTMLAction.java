@@ -8,10 +8,12 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import biz.isphere.core.preferencepages.IPreferences;
+
 public class SpooledFileOpenAsHTMLAction extends AbstractSpooledFileAction {
 
 	public String execute(SpooledFileResource spooledFileResource) {
-		return spooledFileResource.getSpooledFile().open("*HTML");
+		return spooledFileResource.getSpooledFile().open(IPreferences.OUTPUT_FORMAT_HTML);
 	}
 
 }

@@ -14,7 +14,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.internal.Member;
+import biz.isphere.core.internal.Member;
 
 import com.ibm.etools.iseries.rse.ui.IBMiRSEPlugin;
 import com.ibm.etools.iseries.rse.ui.resources.QSYSTempFileListener;
