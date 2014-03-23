@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere;
+package biz.isphere.core;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -16,27 +16,33 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
-import biz.isphere.internal.IEditor;
-import biz.isphere.internal.IMessageFileSearchObjectFilterCreator;
-import biz.isphere.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
+import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.preferences.Preferences;
 
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
-	private static ISpherePlugin plugin;
+    // The plug-in ID
+    public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
+
+	private static final String MIN_SERVER_VERSION = "2.0.0";
+	
+    private static ISpherePlugin plugin;
 	private static URL installURL;
 	public static IEditor editor = null;
 	public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
 	public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
 	private File spooledFilesDirectory;
 	private IProject spooledFilesProject;
-	public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
-    public static final String IMAGE_TOOLS400 = "Tools400.bmp";
 	public static final String IMAGE_ERROR = "error.gif";
 	public static final String IMAGE_NEW = "new.gif";
 	public static final String IMAGE_CHANGE = "change.gif";
@@ -59,7 +65,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 	public static final String IMAGE_EXCEL = "excel.png";
 	public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
 	public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
-	public static final String IMAGE_ISPHERE = "isphere.gif";
 	
 	public ISpherePlugin() {
 		super();
@@ -72,7 +77,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		
 		installURL = context.getBundle().getEntry("/");
 		
-		initializePreferenceStoreDefaults();
+        // TODO: Remove procedure
+		// initializePreferenceStoreDefaults();
 		
 		spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
 		if (!spooledFilesDirectory.exists())
@@ -95,7 +101,9 @@ public class ISpherePlugin extends AbstractUIPlugin {
 			if (!files[idx].getName().equals(".project")) {
 				files[idx].delete();
 			}
-		} 
+		}
+		
+        Preferences.dispose();
 		
 	}
 
@@ -103,10 +111,47 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 	
+    /**
+     * Returns the name of the plugin, as assigned to "Bundle-Name" in
+     * "MANIFEST.MF".
+     * 
+     * @return Name of the plugin.
+     */
+	public String getName() {
+        String name = (String)getBundle().getHeaders().get(
+            Constants.BUNDLE_NAME);
+        if (name == null) {
+            name = "";
+        }
+        return name;
+	}
+
+    /**
+     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * "MANIFEST.MF".
+     * 
+     * @return Version of the plugin.
+     */
+	public String getVersion() {
+	    String version = (String)getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
+	    if (version == null) {
+	        version = "0.0.0";
+	    }
+	    return version;
+	}
+
+    /**
+     * Returns the version of the plugin, as assigned to "Bundle-Version" in
+     * "MANIFEST.MF" formatted as "vvrrmm".
+     * 
+     * @return Version of the plugin.
+     */
+    public String getMinServerVersion() {
+        return MIN_SERVER_VERSION;
+    }
+	
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
-		reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
-        reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
 		reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
 		reg.put(IMAGE_NEW, getImageDescriptor(IMAGE_NEW));
 		reg.put(IMAGE_CHANGE, getImageDescriptor(IMAGE_CHANGE));
@@ -129,7 +174,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
 		reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
 		reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
-		reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String name) {
@@ -142,32 +186,37 @@ public class ISpherePlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	protected void initializePreferenceStoreDefaults(){
+    // TODO: Remove procedure
+	// protected void initializePreferenceStoreDefaults(){
+
+	    // Delegated to PreferencesInitializer
+	    // See also: plugin.xml
+	    
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY", "ISPHERE");
+	    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT", "*TEXT");
-		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND", "");
 	
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND", "");
 		
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
-	
-	}
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF", "*DFT");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY", "");
+		// getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND", "");
+	    
+	//}
 	
 	public static URL getInstallURL() {
 		return installURL;
 	}
 	
 	public static String getISphereLibrary() {
-		return ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		// return ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.LIBRARY");
+		return Preferences.getInstance().getISphereLibrary();
 	}
 
 	public static IEditor getEditor() {
