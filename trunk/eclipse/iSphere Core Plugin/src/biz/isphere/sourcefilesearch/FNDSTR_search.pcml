@@ -1,9 +1,0 @@
-<pcml version="4.0">
-   <program name="FNDSTR_search" path="/QSYS.LIB/%LIBL%.LIB/W001002.PGM">
-      <data name="handle" type="zoned" length="10" precision="0" usage="input" />
-      <data name="string" type="char" length="40" usage="input" />
-      <data name="fromColumn" type="zoned" length="3" precision="0" usage="input" />
-      <data name="toColumn" type="zoned" length="3" precision="0" usage="input" />
-      <data name="case" type="char" length="10" usage="input" />
-   </program>
-</pcml>
