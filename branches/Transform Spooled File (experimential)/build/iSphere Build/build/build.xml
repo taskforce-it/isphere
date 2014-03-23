@@ -1,3 +1,17 @@
+<!--
+ * =====================================================================
+ *   This Ant script helps you preparing for building the iSphere
+ *   update site. Before you can run the script, you need to copy
+ *   'template_ftp.properties' to 'ftp.properties' and change the
+ *   properties to meet your needs.
+ *
+ *   Here are the steps to create an iSphere update site:
+ *     - On the AS/400 run BUILD.
+ *     - On the PC run target 'download'
+ *     - On the PC run target 'build' using lauch for RDP or WDSC
+ *     - On the PC right click 'site.xml', 
+ *       select 'PDE Tools' -> 'Build Site' 
+ * ===================================================================== -->
 <project basedir="." default="build" name="iSphere_Build">
 	
 	<!-- Include Ant Contrib tasks -->
@@ -6,9 +20,19 @@
 	    <pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar"/>
 	  </classpath>
 	</taskdef>
+
+	<property name="build.project.home" location="${basedir}/.." />
 	
 	<!-- Load project names and new version number -->
 	<property file="build.properties" />
+	
+	<!-- Load ftp user name and password -->
+	<property file="ftp.properties" />
+	
+	<!-- Set local FTP download directory -->
+	<property name="ftp.download.directory" location="${basedir}/temp-downloads" />
+	<property name="local.savefile.name" value="ISPHERE" />
+	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere}/Server" />
 	
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
@@ -74,11 +98,57 @@
 	        	    <fileset dir="${workspace.home}\@{project}" includes="site.xml"/>
 	        	</replaceregexp>
 	        	
-	        	<eclipse.refreshLocal resource="@{project}" depth="infinite" />	        	
 	        </sequential>
 	    </for>		
 
 		<echo>Done.</echo>
+		
+	</target>
+
+    <!--
+    * =====================================================================
+    *   Downloads library ISPHERE from the System i.
+    *   This target requires a patched version of commons-net-3.3.jar
+    *   where bug NET-512 has been fixed.
+    *   (https://issues.apache.org/jira/browse/NET-512)
+    * ===================================================================== -->
+	<target name="download" depends="ftpCredentials" description="Downloads the iSphere save file">
+		
+		<echo>Downloading save file ${ftp.savefile.name} ...</echo>
+		
+		<ftp action="get"
+			 server="${ftp.server}"
+		     userid="${ftp.user}"
+		     password="${ftp.password}"
+			 binary="true" 
+		     verbose="true" 
+			 remotedir="${ftp.savefile.library}"
+			 systemTypeKey="OS/400"
+			 >
+			<fileset dir="${ftp.download.directory}" casesensitive="false">
+		    	<include name="${ftp.savefile.name}" />
+		    </fileset>
+	  	</ftp>
+		
+		<move file="${ftp.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true"/>
+		
+		<eclipse.refreshLocal resource="${build.project.home}" depth="infinite" />
+		<eclipse.refreshLocal resource="${local.savefile.directory}" depth="infinite" />
+
+	</target>
+
+    <!--
+    * =====================================================================
+    *   Asks for FTP credentials: username and password.
+    *   Properties 'ftp.user' and 'ftp.password' are loaded 
+    *   from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="ftpCredentials" unless="ftp.password">
+
+		<input
+	    	message="Please enter FTP password:"
+	    	addproperty="ftp.password"
+	    	defaultvalue="" />
 		
 	</target>
 	
@@ -96,6 +166,7 @@
 	    <for list="${build.projects},${build.updatesite}" delimiter="," param="project">
 	        <sequential>
 	        	<eclipse.refreshLocal resource="@{project}" depth="infinite" />
+	        	<echo>* @{project}</echo>
 	        </sequential>
 	    </for>		
 
