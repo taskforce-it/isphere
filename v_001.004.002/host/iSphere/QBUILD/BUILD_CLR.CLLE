@@ -1,0 +1,77 @@
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Erstellen iSphere Bibliothek - Löschen Objekte                        */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  TEXT('Erstellen iSphere Bibliothek +                */
+     /*                         - Löschen Objekte');                          */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+             PGM        PARM(&PRDLIB &TMPLIB &SAVF)
+
+             DCL        VAR(&PRDLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TMPLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SAVF   ) TYPE(*CHAR) LEN(10)
+
+             DLTF       FILE(&TMPLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTDTAARA  DTAARA(&PRDLIB/ISPHERE)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/NBRRNG01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/NBRRNG)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+
+             ENDPGM
