@@ -12,7 +12,7 @@
  *     - On the PC right click 'site.xml', 
  *       select 'PDE Tools' -> 'Build Site' 
  * ===================================================================== -->
-<project basedir="." default="build" name="iSphere_Build">
+<project basedir="." default="build" >
 	
 	<!-- Include Ant Contrib tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -20,8 +20,6 @@
 	    <pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar"/>
 	  </classpath>
 	</taskdef>
-
-	<property name="build.project.home" location="${basedir}/.." />
 	
 	<!-- Load project names and new version number -->
 	<property file="build.properties" />
@@ -32,7 +30,7 @@
 	<!-- Set local FTP download directory -->
 	<property name="ftp.download.directory" location="${basedir}/temp-downloads" />
 	<property name="local.savefile.name" value="ISPHERE" />
-	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere}/Server" />
+	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
 	
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
@@ -132,8 +130,8 @@
 		
 		<move file="${ftp.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true"/>
 		
-		<eclipse.refreshLocal resource="${build.project.home}" depth="infinite" />
-		<eclipse.refreshLocal resource="${local.savefile.directory}" depth="infinite" />
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
 
 	</target>
 
