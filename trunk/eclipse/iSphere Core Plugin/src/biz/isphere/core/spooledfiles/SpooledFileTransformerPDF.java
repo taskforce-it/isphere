@@ -29,33 +29,33 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private Document document = null;
 
     private Font font = null;
-    
+
     private Set<PageSize> pageSizes = null;
-    
-    private boolean fitToPage = true;
+
+    private boolean fitToPage = false;
 
     public SpooledFileTransformerPDF(SpooledFile spooledFile) {
         super(spooledFile);
-        pageSizes = getPageSizes_DIN_A4();
+        pageSizes = getPageSizes_DIN_A4_Portrait();
     }
-    
-    private Set<PageSize> getPageSizes_DIN_A4() {
+
+    private Set<PageSize> getPageSizes_DIN_A4_Portrait() {
         TreeSet<PageSize> pageSizes_DIN_A4 = new TreeSet<PageSize>();
         if (fitToPage) {
-            return pageSizes_DIN_A4; 
+            return pageSizes_DIN_A4;
         }
-        pageSizes_DIN_A4.add(new PageSize(1.02F, 1.46F)); // A10
-        pageSizes_DIN_A4.add(new PageSize(1.46F, 2.05F)); // A9
-        pageSizes_DIN_A4.add(new PageSize(2.05F, 2.91F)); // A8
-        pageSizes_DIN_A4.add(new PageSize(2.91F, 4.13F)); // A7
-        pageSizes_DIN_A4.add(new PageSize(4.13F, 5.83F)); // A6
-        pageSizes_DIN_A4.add(new PageSize(5.83F, 8.27F)); // A5
-        pageSizes_DIN_A4.add(new PageSize(8.27F, 11.69F)); // A4
-        pageSizes_DIN_A4.add(new PageSize(11.69F, 16.54F)); // A3
-        pageSizes_DIN_A4.add(new PageSize(16.54F, 23.39F)); // A2
-        pageSizes_DIN_A4.add(new PageSize(23.39F, 33.11F)); // A1
-        pageSizes_DIN_A4.add(new PageSize(33.11F, 46.81F)); // A0
-        return pageSizes_DIN_A4; 
+        pageSizes_DIN_A4.add(new PageSize(1.02F, 1.46F, "A10")); // A10
+        pageSizes_DIN_A4.add(new PageSize(1.46F, 2.05F, "A9")); // A9
+        pageSizes_DIN_A4.add(new PageSize(2.05F, 2.91F, "A8")); // A8
+        pageSizes_DIN_A4.add(new PageSize(2.91F, 4.13F, "A7")); // A7
+        pageSizes_DIN_A4.add(new PageSize(4.13F, 5.83F, "A6")); // A6
+        pageSizes_DIN_A4.add(new PageSize(5.83F, 8.27F, "A5")); // A5
+        pageSizes_DIN_A4.add(new PageSize(8.27F, 11.69F, "A4")); // A4
+        pageSizes_DIN_A4.add(new PageSize(11.69F, 16.54F, "A3")); // A3
+        pageSizes_DIN_A4.add(new PageSize(16.54F, 23.39F, "A2")); // A2
+        pageSizes_DIN_A4.add(new PageSize(23.39F, 33.11F, "A1")); // A1
+        pageSizes_DIN_A4.add(new PageSize(33.11F, 46.81F, "A0")); // A0
+        return pageSizes_DIN_A4;
     }
 
     protected QSYSObjectPathName getWorkstationCustomizationObject() {
@@ -80,12 +80,12 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     }
 
     private Document createPFD(String aPath) throws FileNotFoundException, DocumentException {
-        
+
         font = new Font(Font.FontFamily.COURIER, getFontSize(), Font.NORMAL, BaseColor.BLACK);
-        
+
         Rectangle pageSize = selectRequiredPageSize(getPageWidthInInches(), getPageHeightInInches());
         Document pdf = new Document(pageSize, 0, 0, 0, 0);
-        
+
         PdfWriter writer = PdfWriter.getInstance(pdf, new FileOutputStream(aPath));
         writer.setInitialLeading(72 / getLPI());
         writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
@@ -94,50 +94,50 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         pdf.open();
         return pdf;
     }
-    
+
     private float getFontSize() {
         return 120 / getCPI();
     }
-    
+
     private Rectangle selectRequiredPageSize(float pageWidth, float pageHeight) {
-        float x;
-        float y;
-        boolean isLandscape;
+        float width;
+        float height;
+        boolean isLandscape = false;
         if (pageWidth > pageHeight) {
             // Landscape
-            y = pageWidth;
-            x = pageHeight;
+            height = pageWidth;
+            width = pageHeight;
             isLandscape = true;
         } else {
             // Portrait
-            x = pageHeight;
-            y = pageWidth;
+            height = pageHeight;
+            width = pageWidth;
             isLandscape = false;
         }
         PageSize pageSize = null;
         for (Iterator<PageSize> iterator = pageSizes.iterator(); iterator.hasNext();) {
             PageSize curentPageSize = iterator.next();
-            if (curentPageSize.getWidth() >= x && curentPageSize.getHeight() >= y) {
+            if (curentPageSize.getWidth() >= width && curentPageSize.getHeight() >= height) {
                 pageSize = curentPageSize;
                 break;
             }
         }
-        
+
         if (pageSize == null) {
-            pageSize =  new PageSize(x, y);
-        }
-        
-        if (isLandscape) {
-            return new PageSize(pageSize.getHeight(), pageSize.getWidth()).getDimension();
+            return new PageSize(pageWidth, pageHeight, "*USRDEF").getDimension();
         } else {
-            return new PageSize(pageSize.getWidth(), pageSize.getHeight()).getDimension();
+            if (isLandscape) {
+                return new PageSize(pageSize.getHeight(), pageSize.getWidth(), pageSize.getFormat()).getDimension();
+            } else {
+                return new PageSize(pageSize.getWidth(), pageSize.getHeight(), pageSize.getFormat()).getDimension();
+            }
         }
     }
-    
+
     private float getPageWidthInInches() {
         return super.getPageWidth() / getCPI();
     }
-    
+
     private float getPageHeightInInches() {
         return super.getPageHeight() / getLPI();
     }
@@ -150,7 +150,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     }
 
     private String getCreator() {
-        return ISpherePlugin.getDefault().getName() + " v" + ISpherePlugin.getDefault().getVersion(); 
+        return ISpherePlugin.getDefault().getName() + " v" + ISpherePlugin.getDefault().getVersion();
     }
 
     private void startNewPage(Document aPDF) throws DocumentException {
@@ -171,7 +171,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     protected void print(String text) throws DocumentException {
         document.add(new Chunk(text, font));
     }
-    
+
     private class PageEventHandler extends PdfPageEventHelper {
         private int i;
 
@@ -185,35 +185,49 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         }
     }
 
-    private class PageSize implements Comparable<PageSize>{
-        
+    private class PageSize implements Comparable<PageSize> {
+
+        private String format;
+
         private Rectangle pageSize;
-       
+
         private int DOTS_PER_INCH = 72;
-        
-        public PageSize(float width, float height) {
-            pageSize = new Rectangle(width, height);
+
+        public PageSize(float aWidth, float aHeight, String aFormat) {
+            format = aFormat;
+            pageSize = new Rectangle(aWidth, aHeight);
         }
-        
+
         /**
          * Return the page width measured in inches.
+         * 
          * @return Page width in inches.
          */
         protected float getWidth() {
             return pageSize.getRight() - pageSize.getLeft();
         }
-        
+
         /**
          * Return the page height measured in inches.
+         * 
          * @return Page height in inches.
          */
         protected float getHeight() {
             return pageSize.getTop() - pageSize.getBottom();
         }
-        
-        
+
+        /**
+         * Return the format of the page.
+         * 
+         * @return format of the page.
+         */
+        protected String getFormat() {
+            return format;
+        }
+
         /**
          * Return the page dimension measured in dots.
+         * 
          * @return Page dimension in dots.
          */
         protected Rectangle getDimension() {
@@ -239,6 +253,11 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
                 return 0;
             }
         }
+
+        public String toString() {
+            return format + " (" + pageSize.getWidth() + " x " + pageSize.getHeight() + ")";
+        }
+
     }
-    
+
 }
