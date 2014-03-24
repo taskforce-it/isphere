@@ -74,6 +74,11 @@
              DLTF       FILE(&PRDLIB/XFNDSTRS)
              MONMSG     MSGID(CPF2105)
 
+             DLTF       FILE(&PRDLIB/DEMO4P)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/DEMO4L)
+             MONMSG     MSGID(CPF2105)
+
              RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
 
              ENDPGM

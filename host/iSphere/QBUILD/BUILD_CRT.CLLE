@@ -228,6 +228,16 @@
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4P') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4L') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
              /* ----------------------------------------------- */
              /* Create programs: Wrapper FNDSTR                 */
              /* ----------------------------------------------- */
@@ -362,7 +372,7 @@
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
                                   (&PRDLIB/XMLINST  *PGM) +
                                   (&PRDLIB/EVFEVENT *FILE)) +
-                          DTACPR(&DTACPR)
+                          DTACPR(&DTACPR) OUTPUT(*PRINT)
 
              MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
 
