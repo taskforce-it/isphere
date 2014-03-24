@@ -24,18 +24,22 @@
     :RASTERMODE
       SCS = NO
       AFP = NO.
-        
+
+    /* BOLD is emulated via double printing  */
+    /* for *SCS printer files.               */
     :STRBOLD
-      DATA =''X.        
-        
+      DATA = ''X.
+
     :ENDBOLD
-      DATA =''X.
-      
-    :STRUS        
-      DATA =''X.
-      
-    :ENDUS        
-      DATA =''X.
+      DATA = ''X.
+
+    /* UNDERLINE is emulated with underscore */
+    /* for *SCS printer files.               */
+    :STRUS
+      DATA = ''X.
+
+    :ENDUS
+      DATA = ''X.
 
     :EBCASCTBL.
     :EBCASCTBLE
@@ -151,7 +155,7 @@
       DATA =''X.
                                                                     
     :CARRTN                 /* Carrier Return */                              
-      DATA =''X.
+      DATA ='11'x.          /* transformed to DC1 */
                                                                     
     :SPACE                  /* Space */                                       
       DATA ='20'X.

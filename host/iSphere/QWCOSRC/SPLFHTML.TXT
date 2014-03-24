@@ -25,17 +25,25 @@
       SCS = NO
       AFP = NO.
 
+    /* BOLD is emulated via double printing  */
+    /* for *SCS printer files.               */
     :STRBOLD
-      DATA ='3C623E'X.
+      /* DATA ='3C623E'X. */     /* <b>      */
+      DATA = ''X.
 
     :ENDBOLD
-      DATA ='3C2F623E'X.
+      /* DATA ='3C2F623E'X. */   /* </b>     */
+      DATA = ''X.
 
+    /* UNDERLINE is emulated with underscore */
+    /* for *SCS printer files.               */
     :STRUS
-      DATA ='3C753E'X.
+      /* DATA ='3C753E'X. */     /* <u>      */
+      DATA = ''X.
 
     :ENDUS
-      DATA ='3C2F753E'X.
+      /* DATA ='3C2F753E'X. */   /* </u>     */
+      DATA = ''X.
 
     :EBCASCTBL.
     :EBCASCTBLE
@@ -151,7 +159,7 @@
       DATA =''X.
 
     :CARRTN                 /* Carrier Return */
-      DATA =''X.
+      DATA ='11'x.          /* transformed to DC1 */
 
     :SPACE                  /* Space */
       DATA ='20'X.
