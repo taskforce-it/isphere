@@ -39,6 +39,79 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         pageSizes = getPageSizes_DIN_A4_Portrait();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Returns the workstation customization object that is used for spooled
+     * file conversion to PDF.
+     */
+    protected QSYSObjectPathName getWorkstationCustomizationObject() {
+        return new QSYSObjectPathName(ISpherePlugin.getISphereLibrary(), "SPLFPDF", "WSCST");
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Produces an empty PDF document.
+     */
+    protected void openPrinter(String target) throws FileNotFoundException, DocumentException {
+        document = createPFD(target);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Closes the PDF document.
+     */
+    protected void closePrinter() throws IOException {
+        if (document != null) {
+            document.close();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Adds the PDF meta data.
+     */
+    protected void initPrinter() throws IOException {
+        addMetaData(document);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void resetPrinter() throws IOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void formfeed() throws DocumentException {
+        document.newPage();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void newLine() throws DocumentException {
+        document.add(Chunk.NEWLINE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void print(String text) throws DocumentException {
+        document.add(new Chunk(text, font));
+    }
+
+    /**
+     * Returns a list of DIN A4 page sizes.
+     * <p>
+     * The list is empty for <code>fitToPage</code> set to <code>false</code>.
+     * 
+     * @return
+     */
     private Set<PageSize> getPageSizes_DIN_A4_Portrait() {
         TreeSet<PageSize> pageSizes_DIN_A4 = new TreeSet<PageSize>();
         if (fitToPage) {
@@ -58,27 +131,14 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         return pageSizes_DIN_A4;
     }
 
-    protected QSYSObjectPathName getWorkstationCustomizationObject() {
-        return new QSYSObjectPathName(ISpherePlugin.getISphereLibrary(), "SPLFPDF", "WSCST");
-    }
-
-    protected void openPrinter(String target) throws FileNotFoundException, DocumentException {
-        document = createPFD(target);
-    }
-
-    protected void closePrinter() throws IOException {
-        if (document != null) {
-            document.close();
-        }
-    }
-
     /**
-     * Adds the document meta data.
+     * Produces an empty PDF document when printing starts.
+     * 
+     * @param aPath - path to the PDF file
+     * @return empty PDF document.
+     * @throws FileNotFoundException
+     * @throws DocumentException
      */
-    protected void initPrinter() throws IOException {
-        addMetaData(document);
-    }
-
     private Document createPFD(String aPath) throws FileNotFoundException, DocumentException {
 
         font = new Font(Font.FontFamily.COURIER, getFontSize(), Font.NORMAL, BaseColor.BLACK);
@@ -95,10 +155,23 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         return pdf;
     }
 
+    /**
+     * Returns the font size measured in dots for a given CPI valie.
+     * 
+     * @return fonst size
+     */
     private float getFontSize() {
         return 120 / getCPI();
     }
 
+    /**
+     * Computes the page size for a given page dimension. Height and width must
+     * be passed in inches.
+     * 
+     * @param pageWidth - page width
+     * @param pageHeight - page height
+     * @return page dimension
+     */
     private Rectangle selectRequiredPageSize(float pageWidth, float pageHeight) {
         float width;
         float height;
@@ -134,14 +207,37 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         }
     }
 
+    /**
+     * Returns the page width in inches for the actual CPI value of the
+     * document.
+     * <p>
+     * This method sould possibly moved to
+     * {@link AbstractSpooledFileTransformer}.
+     * 
+     * @return page width in inches
+     */
     private float getPageWidthInInches() {
         return super.getPageWidth() / getCPI();
     }
 
+    /**
+     * Returns the page height in inches for the actual CPI value of the
+     * document.
+     * <p>
+     * This method sould possibly moved to
+     * {@link AbstractSpooledFileTransformer}.
+     * 
+     * @return page width in inches
+     */
     private float getPageHeightInInches() {
         return super.getPageHeight() / getLPI();
     }
 
+    /**
+     * Adds some PDF meta data to the document.
+     * 
+     * @param aPDF - PDF document
+     */
     private void addMetaData(Document aPDF) {
         aPDF.addTitle("Spooled file: " + getName());
         aPDF.addAuthor("Job: " + getJob());
@@ -149,28 +245,21 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         aPDF.addCreator(getCreator());
     }
 
+    /**
+     * Returns the creator of the document. For now the creator is the
+     * combination of the name and version number of this plugin.
+     * <p>
+     * (Could be safely changed)
+     * 
+     * @return
+     */
     private String getCreator() {
         return ISpherePlugin.getDefault().getName() + " v" + ISpherePlugin.getDefault().getVersion();
     }
 
-    private void startNewPage(Document aPDF) throws DocumentException {
-        aPDF.newPage();
-    }
-
-    protected void resetPrinter() throws IOException {
-    }
-
-    protected void formfeed() throws DocumentException {
-        startNewPage(document);
-    }
-
-    protected void newLine() throws DocumentException {
-        document.add(Chunk.NEWLINE);
-    }
-
-    protected void print(String text) throws DocumentException {
-        document.add(new Chunk(text, font));
-    }
+    // -----------------------------------
+    // Private internal classes
+    // -----------------------------------
 
     private class PageEventHandler extends PdfPageEventHelper {
         private int i;
