@@ -164,13 +164,13 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
                 if (line.startsWith(FF)) {
                     formfeed();
-                    line = handleDC1(line); 
+                    line = handleDC1(line);
                     if (line.length() > 1) {
                         print(line.substring(1));
                         newLine();
                     }
                 } else if (line.endsWith(FF)) {
-                    line = handleDC1(line); 
+                    line = handleDC1(line);
                     if (line.length() > 1) {
                         print(line.substring(0, line.length() - 1));
                         newLine();
@@ -178,7 +178,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
                     // Delay FF unitl the next line printed.
                     isDelayedFormfeed = true;
                 } else {
-                    line = handleDC1(line); 
+                    line = handleDC1(line);
                     print(line);
                     newLine();
                 }
@@ -215,19 +215,69 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return line;
     }
 
+    /**
+     * This method returns the workstation customization object that is used by
+     * this transformer for spooled file conversion.
+     * 
+     * @return workstation customization object
+     */
     abstract protected QSYSObjectPathName getWorkstationCustomizationObject();
 
+    /**
+     * Opens the printer for writing.
+     * <p>
+     * This method should be used to open your virtual printer and to set up
+     * basic requirements, such as creating an empty PDF document.
+     * 
+     * @param target - path name of the output file
+     * @throws Exception
+     */
     abstract protected void openPrinter(String target) throws Exception;
 
+    /**
+     * Closes the printer at the end of the task.
+     * <p>
+     * Used to close the printer and free resources.
+     * 
+     * @throws Exception
+     */
     abstract protected void closePrinter() throws Exception;
 
+    /**
+     * Used to initialize the printer before the actual data stream is send to
+     * it.
+     * 
+     * @throws Exception
+     */
     abstract protected void initPrinter() throws Exception;
 
+    /**
+     * Resets the printer to its initial state.
+     * 
+     * @throws Exception
+     */
     abstract protected void resetPrinter() throws Exception;
 
+    /**
+     * Starts a new page.
+     * <p>
+     * Is not used for the first page.
+     * 
+     * @throws Exception
+     */
     abstract protected void formfeed() throws Exception;
 
+    /**
+     * Starts a new line.
+     * 
+     * @throws Exception
+     */
     abstract protected void newLine() throws Exception;
 
+    /**
+     * Prints the actual print data.
+     * 
+     * @throws Exception
+     */
     abstract protected void print(String text) throws Exception;
 }
