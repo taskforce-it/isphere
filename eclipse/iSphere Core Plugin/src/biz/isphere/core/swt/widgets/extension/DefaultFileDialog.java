@@ -10,7 +10,7 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 /**
  * Basic FileDialog, which is used, when no other plugin contributes a better
  * one. This dialog gracefully ignores the 'overwrite' attribut that is not
- * available for WDSC.
+ * available for WDSCi.
  * 
  * @author traddatz
  */
