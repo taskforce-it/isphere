@@ -1,3 +1,0 @@
-#summary Uninstall iSphere (Server Part)
-
-  * Delete manually library ISPHERE on the server. That`s all.
