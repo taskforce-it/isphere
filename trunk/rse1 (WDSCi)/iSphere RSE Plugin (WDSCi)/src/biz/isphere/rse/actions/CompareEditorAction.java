@@ -36,7 +36,7 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
 	protected ArrayList arrayListSelection;
 
 	public CompareEditorAction() {
-		super(Messages.getString("iSphere_Compare_Editor"), "", null);
+		super(Messages.iSphere_Compare_Editor, "", null);
 		arrayListSelection = new ArrayList();
 		setContextMenuGroup("additions");
 		allowOnMultipleSelection(true);
@@ -126,7 +126,7 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
 			}
 		}
 		
-		if (arrayListSelection.isEmpty()) {
+		if (arrayListSelection.isEmpty() || arrayListSelection.size() != 1) {
 			return false;
 		}
 		
