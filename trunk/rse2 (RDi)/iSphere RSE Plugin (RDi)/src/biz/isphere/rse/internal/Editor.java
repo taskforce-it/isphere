@@ -55,9 +55,9 @@ public class Editor implements IEditor {
 
 							MessageDialog dialog = new MessageDialog(
 									shell,
-									Messages.getString("Choose_Editor"),
+									Messages.Choose_Editor,
 									null,
-									Messages.getString("Please_choose_the_editor_for_the_source_member."),
+									Messages.Please_choose_the_editor_for_the_source_member,
 									MessageDialog.INFORMATION,
 									new String[] {
 										_editor,

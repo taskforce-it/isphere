@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
       	
       	<!--
       	  ==========================================
@@ -8,13 +11,19 @@
       	  ==========================================
       	-->
 
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
       	<propertyTester
             class="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
             id="biz.isphere.adapter.propertytester.QSYSRemoteObjectPropertyTester"
             namespace="biz.isphere.adapter.propertytester.hostobjectbrief"
             properties="type,subtype"
+            type="java.lang.Object">
+		</propertyTester>
+
+      	<propertyTester
+            class="biz.isphere.adapter.propertytester.SystemFilterReferencesPropertyTester"
+            id="biz.isphere.adapter.propertytester.SystemFilterReferencesPropertyTester"
+            namespace="biz.isphere.adapter.propertytester.systemfilterreference"
+            properties="subsystem"
             type="java.lang.Object">
 		</propertyTester>
    </extension>
@@ -96,10 +105,10 @@
       	<!--
       	  ==========================================
       	    Source File/Member Search Contributions
-            objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
       	  ==========================================
       	-->
       	
+      	<!-- Right-click: source file or source member -->
       	<objectContribution
             objectClass="com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief"
             id="biz.isphere.core.menu.sourcefilesearch.member">
@@ -134,9 +143,18 @@
 	         </action>
       	</objectContribution>
       	
+      	<!-- Right-click: RSE object filter for QSYS filters -->
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
             id="biz.isphere.core.menu.sourcefilesearch.filter">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
+            		      value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem"/>
+				</and>
+         	</enablement>
+         	
 	         <action
                 class="biz.isphere.rse.actions.SourceFileSearchAction"
                 enablesFor="*"
@@ -147,6 +165,7 @@
 	         </action>
       	</objectContribution>
       	
+      	<!--
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
             id="biz.isphere.core.menu.sourcefilesearch.filter">
@@ -159,6 +178,7 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	-->
       	
       	<!--
       	  ==========================================
@@ -166,6 +186,7 @@
       	  ==========================================
       	-->
       	
+      	<!-- Right-click: message file -->
       	<objectContribution
              objectClass="com.ibm.etools.iseries.services.qsys.api.IQSYSResource"
              id="biz.isphere.core.menu.messagefilesearch.member">
@@ -186,14 +207,16 @@
 	         </action>
       	</objectContribution>
       	
+      	<!-- Right-click: RSE object filter for QSYS filters -->
       	<objectContribution
              objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
              id="biz.isphere.core.menu.messagefilesearch.filter">
             
             <enablement>
             	<and>
-            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
-            	</and>
+            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
+            		      value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem"/>
+				</and>
          	</enablement>
          	
 	         <action
