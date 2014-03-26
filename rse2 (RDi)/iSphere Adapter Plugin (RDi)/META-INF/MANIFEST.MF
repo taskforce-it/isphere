@@ -8,6 +8,7 @@ Bundle-Vendor: iSphere Project
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.expressions,
+ org.eclipse.rse.core,
  com.ibm.etools.iseries.toolbox,
  com.ibm.etools.iseries.subsystems.qsys,
  com.ibm.etools.iseries.services.qsys,

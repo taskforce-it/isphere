@@ -127,8 +127,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
 			if (_multipleConnection) {
 				MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-				errorBox.setText(Messages.getString("E_R_R_O_R"));
-				errorBox.setMessage(Messages.getString("Resources_with_different_connections_have_been_selected."));
+				errorBox.setText(Messages.E_R_R_O_R);
+				errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
 				errorBox.open();
 				return;
 			}
