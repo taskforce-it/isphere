@@ -37,7 +37,7 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 	protected ArrayList arrayListSelection;
 
 	public MessageFileEditorAction() {
-		super(Messages.getString("iSphere_Message_File_Editor"), "", null);
+		super(Messages.iSphere_Message_File_Editor, "", null);
 		arrayListSelection = new ArrayList();
 		setContextMenuGroup("additions");
 		allowOnMultipleSelection(true);

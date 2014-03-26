@@ -39,7 +39,7 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
 	protected ArrayList arrayListSelection;
 
 	public BindingDirectoryEditorAction() {
-		super(Messages.getString("iSphere_Binding_Directory_Editor"), "", null);
+		super(Messages.iSphere_Binding_Directory_Editor, "", null);
 		arrayListSelection = new ArrayList();
 		setContextMenuGroup("additions");
 		allowOnMultipleSelection(true);

@@ -16,6 +16,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -30,7 +31,12 @@ import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
 public class ISphereRSEPlugin extends AbstractUIPlugin {
 
+	// The plug-in ID
+    public static final String PLUGIN_ID = "biz.isphere.rse"; //$NON-NLS-1$
+
+    // The shared instance
 	private static ISphereRSEPlugin plugin;
+	
 	private static URL installURL;
 	
 	public ISphereRSEPlugin() {
@@ -74,5 +80,15 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 		SpooledFileAdapterFactory spooledFactory = new SpooledFileAdapterFactory();
 		manager.registerAdapters(spooledFactory, SpooledFileResource.class);
 	}
+
+    /**
+     * Convenience method to log error messages to the application log.
+     * 
+     * @param message Message
+     * @param e The exception that has produced the error
+     */
+    public static void logError(String message, Exception e) {
+        plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
+    }
 
 }

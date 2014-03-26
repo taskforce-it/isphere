@@ -31,6 +31,8 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
+	public static final String TYPE = "spooled file";
+
 	public SpooledFileSubSystemFactory() {
 		super();
 	}
@@ -49,7 +51,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 		strings.add("*CURRENT/*/*/*/*/");
 		try {
 		  SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.getString("My_spooled_files"), strings);
-		  filter.setType("spooled file");
+		  filter.setType(TYPE);
 		} catch (Exception exc) {}
 		return defaultPool;
 	}

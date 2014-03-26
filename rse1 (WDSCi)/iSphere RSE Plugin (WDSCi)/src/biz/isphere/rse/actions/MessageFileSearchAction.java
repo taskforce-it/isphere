@@ -33,6 +33,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -65,7 +66,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 	private FileSubSystemImpl _fileSubSystemImpl;
 
 	public MessageFileSearchAction() {
-		super(Messages.getString("iSphere_Message_File_Search"), "", null);
+		super(Messages.iSphere_Message_File_Search, "", null);
 		_selectedElements = new ArrayList();
 		setContextMenuGroup("additions");
 		allowOnMultipleSelection(true);
@@ -112,14 +113,16 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 				
 				SystemFilterReference element = (SystemFilterReference) _object;
 
-				_selectedElements.add(element);
-				
-				checkIfMultipleConnections(ISeriesConnection
-						.getConnection(((SubSystem)element
-								.getFilterPoolReferenceManager()
-								.getProvider())
-								.getSystemConnection()
-								.getAliasName()));
+				if (!SpooledFileSubSystemFactory.TYPE.equals(element.getReferencedFilter().getType())) {
+					_selectedElements.add(element);
+					
+					checkIfMultipleConnections(ISeriesConnection
+							.getConnection(((SubSystem)element
+									.getFilterPoolReferenceManager()
+									.getProvider())
+									.getSystemConnection()
+									.getAliasName()));
+				}
 				
 			} 
 			else if ((_object instanceof SystemFilterStringReference)) {
@@ -163,8 +166,8 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
 		if (_multipleConnection) {
 			MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-			errorBox.setText(Messages.getString("E_R_R_O_R"));
-			errorBox.setMessage(Messages.getString("Resources_with_different_connections_have_been_selected."));
+			errorBox.setText(Messages.E_R_R_O_R);
+			errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
 			errorBox.open();
 			return;
 		}

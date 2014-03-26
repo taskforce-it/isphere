@@ -77,7 +77,7 @@ public class RSECompareDialog extends CompareDialog {
 	public void createRightArea(Composite parent) {
 		
 		Group rightGroup = new Group(parent, SWT.NONE);
-		rightGroup.setText(Messages.getString("Right"));
+		rightGroup.setText(Messages.Right);
 		GridLayout rightLayout = new GridLayout();
 		rightLayout.numColumns = 1;
 		rightGroup.setLayout(rightLayout);
@@ -118,7 +118,7 @@ public class RSECompareDialog extends CompareDialog {
 	public void createAncestorArea(Composite parent) {
 		
 		ancestorGroup = new Group(parent, SWT.NONE);
-		ancestorGroup.setText(Messages.getString("Ancestor"));
+		ancestorGroup.setText(Messages.Ancestor);
 		GridLayout ancestorLayout = new GridLayout();
 		ancestorLayout.numColumns = 1;
 		ancestorGroup.setLayout(ancestorLayout);
