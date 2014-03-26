@@ -371,7 +371,8 @@
              SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
                                   (&PRDLIB/XMLINST  *PGM) +
-                                  (&PRDLIB/EVFEVENT *FILE)) +
+                                  (&PRDLIB/EVFEVENT *FILE) +
+                                  (&PRDLIB/QPF38SRC *FILE)) +
                           DTACPR(&DTACPR) OUTPUT(*PRINT)
 
              MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
