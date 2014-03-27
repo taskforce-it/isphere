@@ -25,9 +25,9 @@ public class SpooledFileHoldAction extends AbstractSpooledFileAction {
 			Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
 			spooledFileVector.addElement(spooledFileResource);
 			sr.fireRemoteResourceChangeEvent(
-					ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
+					ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, 
 					spooledFileVector, 
-					null, 
+					spooledFileResource.getSubSystem(), 
 					null, 
 					null, 
 					null);

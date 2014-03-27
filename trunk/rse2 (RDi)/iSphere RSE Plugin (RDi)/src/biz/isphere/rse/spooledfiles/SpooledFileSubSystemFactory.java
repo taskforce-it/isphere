@@ -58,7 +58,7 @@ public class SpooledFileSubSystemFactory extends SubSystemConfiguration {
 	}
 
 	public boolean showGenericShowInTableOnFilter() {
-		return false;
+		return true;
 	}
 	
 }
