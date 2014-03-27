@@ -20,6 +20,7 @@
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -53,7 +54,8 @@
                              NEWOWN(&OWNER) +
                              CUROWNAUT(*REVOKE)
 
-                RVKOBJAUT  OBJ(&PRDLIB/BUILD) OBJTYPE(*PGM) USER(*ALL)
+                RVKOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
+                             OBJTYPE(&OBJ_ODOBTP) USER(*ALL)
 
                 GRTOBJAUT  OBJ(&OBJ_ODLBNM/&OBJ_ODOBNM) +
                              OBJTYPE(&OBJ_ODOBTP) +
