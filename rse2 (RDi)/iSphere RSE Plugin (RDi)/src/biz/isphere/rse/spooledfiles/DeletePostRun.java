@@ -38,7 +38,13 @@ public class DeletePostRun implements IDeletePostRun {
             ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
             Vector<SpooledFileResource> spooledFileVector = deleteResult.getDeletedSpooledFiles();
             if (!spooledFileVector.isEmpty()) {
-                sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, spooledFileVector, null, null, null, null);
+                sr.fireRemoteResourceChangeEvent(
+                        ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
+                        spooledFileVector, 
+                        null, 
+                        null, 
+                        null, 
+                        null);
             }
             return Status.OK_STATUS;
         }
