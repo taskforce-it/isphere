@@ -20,6 +20,7 @@
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */

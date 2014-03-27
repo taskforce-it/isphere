@@ -22,6 +22,7 @@
       //*         >>PARM<<   DFTACTGRP(*NO);                                                       *
       //*         >>PARM<<   ACTGRP(*CALLER);                                                      *
       //*         >>PARM<<   TRUNCNBR(*NO);                                                        *
+      //*         >>PARM<<   DBGVIEW(*LIST);                                                       *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *

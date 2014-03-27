@@ -30,12 +30,23 @@
      /* and recreate the objects.                                             */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
              PGM        PARM(&I_LIB)
 
              DCL        VAR(&I_LIB ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
-             DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+             DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHEREDVP')
              DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
 
              CHGVAR     VAR(&PRDLIB) VALUE(&I_LIB)
@@ -49,25 +60,17 @@
              ENDDO
 
              /* ----------------------------------------------- */
-             /* Create STRPREPRC utility                        */
-             /* ----------------------------------------------- */
-
-             /* Create XML installer */
-             CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/QBUILD) SRCMBR(*PGM)
-
-             /* Create STRPREPRC utility */
-             CALL       PGM(&TMPLIB/XMLINST) PARM('STRPREPRC' 'QBUILD' &PRDLIB '' 'ENG;NO')
-
-             /* ----------------------------------------------- */
              /* Create build programs                           */
              /* ----------------------------------------------- */
 
-             CRTBNDCL   PGM(&TMPLIB/BUILD_CRT) SRCFILE(&DEVLIB/QBUILD) SRCMBR(*PGM)
+             CRTBNDCL   PGM(&TMPLIB/BUILD_CRT) +
+                          SRCFILE(&DEVLIB/QBUILD) SRCMBR(*PGM) +
+                          DBGVIEW(*LIST)
 
              /* ----------------------------------------------- */
              /* Create objects                                  */
              /* ----------------------------------------------- */
 
-             CALL       PGM(&TMPLIB/BUILD_CRT) PARM(&PRDLIB &TMPLIB)
+             CALL       PGM(&TMPLIB/BUILD_CRT) PARM(&PRDLIB &DEVLIB &TMPLIB)
 
              ENDPGM

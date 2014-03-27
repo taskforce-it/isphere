@@ -20,15 +20,27 @@
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
      /*-----------------------------------------------------------------------*/
-             PGM        PARM(&PRDLIB &TMPLIB &SAVF)
+             PGM        PARM(&PRDLIB &DEVLIB &TMPLIB &SAVF)
 
              DCL        VAR(&PRDLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&DEVLIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&TMPLIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&SAVF   ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
+             DCL        VAR(&BUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
+             DCL        VAR(&CPYSRC   ) TYPE(*CHAR) LEN(10) VALUE('QCPYSRC')
+             DCL        VAR(&DTAARASRC) TYPE(*CHAR) LEN(10) VALUE('QDTAARASRC')
+             DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
+             DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+             DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
+             DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
+             DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
 
              DLTF       FILE(&TMPLIB/&SAVF)
              MONMSG     MSGID(CPF2105)
@@ -78,6 +90,27 @@
              MONMSG     MSGID(CPF2105)
              DLTF       FILE(&PRDLIB/DEMO4L)
              MONMSG     MSGID(CPF2105)
+
+             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+                DLTF       FILE(&PRDLIB/&BNDSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&BUILD)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&CPYSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&DTAARASRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&RPGLESRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SQLSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SRVSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&WCOSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SRCTOOLS)
+                MONMSG     MSGID(CPF2105)
+             ENDDO
 
              RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
 
