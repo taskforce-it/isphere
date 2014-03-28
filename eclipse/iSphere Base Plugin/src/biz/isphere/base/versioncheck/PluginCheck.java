@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -44,9 +45,10 @@ public final class PluginCheck {
                     for (Bundle tBundle : anIllegalBundles) {
                         tList.append("\n");
                         tList.append(tBundle.getSymbolicName());
-                        tList.append(" (");
-                        tList.append(tBundle.getVersion());
-                        tList.append(")");
+// TODO: get version for Eclipse 3.2 
+//                        tList.append(" (");
+//                        tList.append(tBundle.getVersion());
+//                        tList.append(")");
                     }
                     return tList.toString();
                 }
@@ -58,17 +60,27 @@ public final class PluginCheck {
     private List<Bundle> verifyInstalledBundles() {
         List<Bundle> tIllegalBundles = new ArrayList<Bundle>();
         
-        BundleContext tContext = FrameworkUtil.getBundle(ISphereBasePlugin.class).getBundleContext();
-        String tName;
-        for (Bundle tBundle : tContext.getBundles()) {
-            tName = tBundle.getSymbolicName();
-            if (null != tName && tName.toLowerCase().startsWith("de.taskforce")) {
-                // System.out.println("Bundled: " + tName + " | Version: " + tBundle.getVersion());
-                tIllegalBundles.add(tBundle);
-            }
-        }
+        checkAndAddIllegalBundle(tIllegalBundles, "de.taskforce.isphere");
+        checkAndAddIllegalBundle(tIllegalBundles, "de.taskforce.isphere.rse");
+   
+// Does not work for Eclipse 3.2
+//        BundleContext tContext = FrameworkUtil.getBundle(ISphereBasePlugin.class).getBundleContext();
+//        String tName;
+//        for (Bundle tBundle : tContext.getBundles()) {
+//            tName = tBundle.getSymbolicName();
+//            if (null != tName && tName.toLowerCase().startsWith("de.taskforce")) {
+//                tIllegalBundles.add(tBundle);
+//            }
+//        }
 
         return tIllegalBundles;
     }
+
+	private void checkAndAddIllegalBundle(List<Bundle> anIllegalBundles, String aBundleID) {
+		Bundle bundle = Platform.getBundle(aBundleID);
+		if (bundle != null) {
+			anIllegalBundles.add(bundle);
+		}
+	}
     
 }
