@@ -9,6 +9,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import biz.isphere.base.versioncheck.PluginCheck;
+
 /**
  * The activator class controls the plug-in life cycle
  */
