@@ -10,10 +10,13 @@ package biz.isphere.core.internal;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 
@@ -29,97 +32,129 @@ import com.ibm.as400.access.ObjectDoesNotExistException;
 
 
 public class ISphereHelper {
+    
+    private static Map<Class<?>, Boolean> warningSent = new HashMap<Class<?>, Boolean>();
 
-	public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
+    public static boolean checkISphereLibrary(Shell shell, AS400 as400, Class<?> aClazz) {
 
-		String messageId = null;
-		try {
-			messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)");
-		} 
-		catch (Exception e) {
-		}
-		
-		if (messageId == null || !messageId.equals("")) {
+        Boolean isValidLibrary = null;
 
-			String text = Messages.getString("E_R_R_O_R");
-			String message = Messages.getString("iSphere_library_&1_does_not_exist_on_system_&2._Please_transfer_iSphere_library_&1_to_system_&2.");
-			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-			message = message.replace("&2", as400.getSystemName());
-			new DisplayMessage(shell, text, message).start();
-			
-			return false;
-			
-		}
-		
-		String dataAreaISphereContent = null;
-		CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + ISpherePlugin.getISphereLibrary() + ".LIB/ISPHERE.DTAARA");
-		try {
-			dataAreaISphereContent = dataAreaISphere.read();
-		} 
-		catch (AS400SecurityException e) {
-			e.printStackTrace();
-		} 
-		catch (ErrorCompletingRequestException e) {
-			e.printStackTrace();
-		} 
-		catch (IllegalObjectTypeException e) {
-			e.printStackTrace();
-		} 
-		catch (InterruptedException e) {
-			e.printStackTrace();
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		} 
-		catch (ObjectDoesNotExistException e) {
-			e.printStackTrace();
-		}
-		if (dataAreaISphereContent == null) {
+        try {
+            
+            // Send warning only once per affected class.
+            if (warningSent.containsKey(aClazz.getClass())) {
+                return warningSent.get(aClazz.getClass());
+            }
 
-			String text = Messages.getString("E_R_R_O_R");
-			String message = Messages.getString("Specified_iSphere_library_&1_on_System_&2_is_not_a_iSphere_library.");
-			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-			message = message.replace("&2", as400.getSystemName());
-			new DisplayMessage(shell, text, message).start();
-			
-			return false;
-			
-		}
-		
-		String serverProvided = dataAreaISphereContent.substring(7, 13);
-		String clientProvided = comparableVersion(ISpherePlugin.getDefault().getVersion());
-		String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
-		String clientNeedsServer = comparableVersion(ISpherePlugin.getDefault().getMinServerVersion());
-		
-		if (serverProvided.compareTo(clientNeedsServer) < 0) {
+            PluginCheck.check();
 
-			String text = Messages.getString("E_R_R_O_R");
-			String message = Messages.getString("iSphere_library_&1_on_System_&2_is_of_version_&3,_but_at_least_version_&4_is_needed._Please_transfer_the_current_iSphere_library_&1_to_system_&2.");
-			message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-			message = message.replace("&2", as400.getSystemName());
-			message = message.replace("&3", Integer.parseInt(serverProvided.substring(0, 2)) + "." + Integer.parseInt(serverProvided.substring(2, 4)) + "." + Integer.parseInt(serverProvided.substring(4, 6)));
-			message = message.replace("&4", Integer.parseInt(clientNeedsServer.substring(0, 2)) + "." + Integer.parseInt(clientNeedsServer.substring(2, 4)) + "." + Integer.parseInt(clientNeedsServer.substring(4, 6)));
-			new DisplayMessage(shell, text, message).start();
-			
-			return false;
-			
-		}
-		
-		if (clientProvided.compareTo(serverNeedsClient) < 0) {
+            String messageId = null;
+            try {
+                messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)");
+            } catch (Exception e) {
+            }
 
-			String text = Messages.getString("E_R_R_O_R");
-			String message = Messages.getString("The_current_installed_iSphere_client_is_of_version_&1,_but_the_iSphere_server_needs_at_least_version_&2._Please_install_the_current_iSphere_client.");
-			message = message.replace("&1", Integer.parseInt(clientProvided.substring(0, 2)) + "." + Integer.parseInt(clientProvided.substring(2, 4)) + "." + Integer.parseInt(clientProvided.substring(4, 6)));
-			message = message.replace("&2", Integer.parseInt(serverNeedsClient.substring(0, 2)) + "." + Integer.parseInt(serverNeedsClient.substring(2, 4)) + "." + Integer.parseInt(serverNeedsClient.substring(4, 6)));
-			new DisplayMessage(shell, text, message).start();
-			
-			return false;
-			
-		}
-		
-		return true;
-		
-	}
+            if (messageId == null || !messageId.equals("")) {
+
+                String text = Messages.getString("E_R_R_O_R");
+                String message = Messages
+                    .getString("iSphere_library_&1_does_not_exist_on_system_&2._Please_transfer_iSphere_library_&1_to_system_&2.");
+                message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+                message = message.replace("&2", as400.getSystemName());
+                new DisplayMessage(shell, text, message).start();
+
+                isValidLibrary = Boolean.FALSE;
+                return isValidLibrary.booleanValue();
+
+            }
+
+            String dataAreaISphereContent = null;
+            CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + ISpherePlugin.getISphereLibrary() + ".LIB/ISPHERE.DTAARA");
+            try {
+                dataAreaISphereContent = dataAreaISphere.read();
+            } catch (AS400SecurityException e) {
+                e.printStackTrace();
+            } catch (ErrorCompletingRequestException e) {
+                e.printStackTrace();
+            } catch (IllegalObjectTypeException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ObjectDoesNotExistException e) {
+                e.printStackTrace();
+            }
+            if (dataAreaISphereContent == null) {
+
+                String text = Messages.getString("E_R_R_O_R");
+                String message = Messages.getString("Specified_iSphere_library_&1_on_System_&2_is_not_a_iSphere_library.");
+                message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+                message = message.replace("&2", as400.getSystemName());
+                new DisplayMessage(shell, text, message).start();
+
+                isValidLibrary = Boolean.FALSE;
+                return isValidLibrary.booleanValue();
+
+            }
+
+            String serverProvided = dataAreaISphereContent.substring(7, 13);
+            String clientProvided = comparableVersion(ISpherePlugin.getDefault().getVersion());
+            String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
+            String clientNeedsServer = comparableVersion(ISpherePlugin.getDefault().getMinServerVersion());
+
+            if (serverProvided.compareTo(clientNeedsServer) < 0) {
+
+                String text = Messages.getString("E_R_R_O_R");
+                String message = Messages
+                    .getString("iSphere_library_&1_on_System_&2_is_of_version_&3,_but_at_least_version_&4_is_needed._Please_transfer_the_current_iSphere_library_&1_to_system_&2.");
+                message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+                message = message.replace("&2", as400.getSystemName());
+                message = message.replace(
+                    "&3",
+                    Integer.parseInt(serverProvided.substring(0, 2)) + "." + Integer.parseInt(serverProvided.substring(2, 4)) + "."
+                        + Integer.parseInt(serverProvided.substring(4, 6)));
+                message = message.replace(
+                    "&4",
+                    Integer.parseInt(clientNeedsServer.substring(0, 2)) + "." + Integer.parseInt(clientNeedsServer.substring(2, 4)) + "."
+                        + Integer.parseInt(clientNeedsServer.substring(4, 6)));
+                new DisplayMessage(shell, text, message).start();
+
+                isValidLibrary = Boolean.FALSE;
+                return isValidLibrary.booleanValue();
+
+            }
+
+            if (clientProvided.compareTo(serverNeedsClient) < 0) {
+
+                String text = Messages.getString("E_R_R_O_R");
+                String message = Messages
+                    .getString("The_current_installed_iSphere_client_is_of_version_&1,_but_the_iSphere_server_needs_at_least_version_&2._Please_install_the_current_iSphere_client.");
+                message = message.replace(
+                    "&1",
+                    Integer.parseInt(clientProvided.substring(0, 2)) + "." + Integer.parseInt(clientProvided.substring(2, 4)) + "."
+                        + Integer.parseInt(clientProvided.substring(4, 6)));
+                message = message.replace(
+                    "&2",
+                    Integer.parseInt(serverNeedsClient.substring(0, 2)) + "." + Integer.parseInt(serverNeedsClient.substring(2, 4)) + "."
+                        + Integer.parseInt(serverNeedsClient.substring(4, 6)));
+                new DisplayMessage(shell, text, message).start();
+
+                isValidLibrary = Boolean.FALSE;
+                return isValidLibrary.booleanValue();
+
+            }
+
+            isValidLibrary = Boolean.FALSE;
+            return isValidLibrary.booleanValue();
+
+        } finally {
+            if (!(isValidLibrary == null)) {
+                warningSent.put(aClazz.getClass(), isValidLibrary);
+            }
+        }
+
+    }
 	
 	public static String executeCommand(AS400 as400, String command) throws Exception {
 		

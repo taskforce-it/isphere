@@ -38,8 +38,7 @@ import biz.isphere.core.messagefilesearch.SearchDialog;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
-import biz.isphere.core.messagefilesearch.SearchResult;
-import biz.isphere.core.messagefilesearch.ViewSearchResults;
+import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -49,8 +48,6 @@ import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
-
-import biz.isphere.rse.Messages;
 
 public class MessageFileSearchAction implements IObjectActionDelegate {
 	
@@ -204,8 +201,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 			}
 
 			if (as400 != null && host != null && jdbcConnection != null) {
-
-				if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+		        
+				if (ISphereHelper.checkISphereLibrary(shell, as400, this.getClass())) {
 					
 					SearchDialog dialog = new SearchDialog(shell, _searchElements);
 					if (dialog.open() == Dialog.OK) {

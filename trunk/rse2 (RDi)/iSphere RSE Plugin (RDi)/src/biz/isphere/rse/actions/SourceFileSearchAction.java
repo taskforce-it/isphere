@@ -38,19 +38,18 @@ import biz.isphere.core.sourcefilesearch.SearchDialog;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
+import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-
-import biz.isphere.rse.Messages;
 
 public class SourceFileSearchAction implements IObjectActionDelegate {
 	
@@ -205,7 +204,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
 			if (as400 != null && jdbcConnection != null) {
 
-				if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+				if (ISphereHelper.checkISphereLibrary(shell, as400, this.getClass())) {
 					
 					SearchDialog dialog = new SearchDialog(shell, _searchElements);
 					if (dialog.open() == Dialog.OK) {

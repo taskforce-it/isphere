@@ -10,14 +10,21 @@ package biz.isphere.base;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS{
+public class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "biz.isphere.base.messages";
+    private static final String BUNDLE_NAME = "biz.isphere.base.messages";
 
-	public static final String E_Mail = "E-Mail";
-    public static final String Internet = "Internet";
-    public static final String Telefax = "Telefax";
-    public static final String Telefon = "Telefon";
+    public static String E_Mail;
+
+    public static String Internet;
+
+    public static String Telefax;
+
+    public static String Telefon;
+
+    public static String Illegal_Bundles_Warning_Message_Text;
+
+    public static String Illegal_Bundles_Warning_Message_Message;
 
     static {
         // initialize resource bundle
@@ -26,5 +33,5 @@ public class Messages extends NLS{
 
     private Messages() {
     }
-	
+
 }

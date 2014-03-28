@@ -22,12 +22,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import biz.isphere.base.ISphereBasePlugin;
+import biz.isphere.base.versioncheck.PluginCheck;
 
 public class General extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public General() {
 		super();
 		noDefaultAndApplyButton();
+		
 	}
 	
 	public Control createContents(Composite parent) {
@@ -105,6 +107,8 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 	}
 
 	public void init(IWorkbench workbench) {
+        PluginCheck.check();
+	    return;
 	}
 
 }
