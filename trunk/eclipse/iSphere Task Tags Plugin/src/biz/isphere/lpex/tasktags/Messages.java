@@ -10,6 +10,10 @@ public class Messages extends NLS {
 
     public static String PreferencesPage_headline;
 
+    public static String PreferencesPage_help;
+
+    public static String PreferencesPage_configureTaskTags;
+
     public static String PreferencesPage_tableHeadline;
 
     public static String PreferencesPage_btnNew;

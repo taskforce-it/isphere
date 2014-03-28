@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.adapter.swt.widgets.XFileDialog;
@@ -90,19 +91,35 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         gl_mainPanel.marginBottom = 10;
         gl_mainPanel.marginWidth = 0;
         gl_mainPanel.horizontalSpacing = 2;
-        gl_mainPanel.verticalSpacing = 10;
+        gl_mainPanel.verticalSpacing = 4;
         mainPanel.setLayout(gl_mainPanel);
 
-        String headline = Messages.PreferencesPage_headline + " <a href=\"org.eclipse.jdt.ui.preferences.TodoTaskPreferencePage\">'Task Tags'</a>.";
-        Link link = new Link(mainPanel, SWT.WRAP);
-        link.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-        link.setText(headline);
-        link.addSelectionListener(new SelectionAdapter() {
+        String headline = " <a href=\"org.eclipse.jdt.ui.preferences.TodoTaskPreferencePage\">" + Messages.PreferencesPage_configureTaskTags + "</a>";
+        Link lnkJavaTaskTags = new Link(mainPanel, SWT.NONE);
+        lnkJavaTaskTags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
+        lnkJavaTaskTags.setText(headline);
+        lnkJavaTaskTags.pack();
+        lnkJavaTaskTags.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
             }
         });
+        
+        Link lnkHelp = new Link(mainPanel, SWT.NONE);
+        lnkHelp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
+        lnkHelp.setText("<a>" + Messages.PreferencesPage_help + "</a>");
+        lnkHelp.pack();
+        lnkHelp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.lpex.tasks.help/html/tasktags/tasktags.html");
+            }
+        });
+
+        Label lnkHeadline = new Label(mainPanel, SWT.WRAP);
+        lnkHeadline.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+        lnkHeadline.setText(Messages.PreferencesPage_headline);
 
         Composite tblComposite = new Composite(mainPanel, SWT.NONE);
         tblComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -189,6 +206,10 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         chkEnableLPEXTaskTags = new Button(mainPanel, SWT.CHECK);
         chkEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnEnableTaskTags);
+        new Label(mainPanel, SWT.NONE);
+        new Label(mainPanel, SWT.NONE);
+        new Label(mainPanel, SWT.NONE);
+        new Label(mainPanel, SWT.NONE);
         new Label(mainPanel, SWT.NONE);
 
         initializeValues();
