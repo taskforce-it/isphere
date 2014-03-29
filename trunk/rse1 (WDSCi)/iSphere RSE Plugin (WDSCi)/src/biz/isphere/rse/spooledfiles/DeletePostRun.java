@@ -43,7 +43,7 @@ public class DeletePostRun implements IDeletePostRun {
             Vector<SpooledFileResource> spooledFileVector = deleteResult.getDeletedSpooledFiles();
             if (!spooledFileVector.isEmpty()) {
 				sr.fireRemoteResourceChangeEvent(
-						ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, 
+						ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
 						spooledFileVector, 
 						null, 
 						null, 

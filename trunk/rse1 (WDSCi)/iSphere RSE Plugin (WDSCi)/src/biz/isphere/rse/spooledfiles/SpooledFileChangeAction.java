@@ -40,7 +40,7 @@ public class SpooledFileChangeAction extends AbstractSpooledFileAction {
 					sr.fireRemoteResourceChangeEvent(
 							ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, 
 							spooledFileVector, 
-							null, 
+							spooledFileVector.firstElement().getSubSystem(), 
 							null, 
 							null, 
 							null);
