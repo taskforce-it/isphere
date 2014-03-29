@@ -22,9 +22,9 @@ public class Messages extends NLS {
 
     public static String Telefon;
 
-    public static String Illegal_Bundles_Warning_Message_Text;
+    public static String Obsolete_Bundles_Warning_Message_Text;
 
-    public static String Illegal_Bundles_Warning_Message_Message;
+    public static String Obsolete_Bundles_Warning_Message_Message;
 
     static {
         // initialize resource bundle
