@@ -145,7 +145,7 @@ public class ISphereHelper {
 
             }
 
-            isValidLibrary = Boolean.FALSE;
+            isValidLibrary = Boolean.TRUE;
             return isValidLibrary.booleanValue();
 
         } finally {
