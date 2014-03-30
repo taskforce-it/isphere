@@ -4,6 +4,12 @@
 
 * { font-family: Verdana, Arial, sans-serif; font-size: 1.0em; font-weight: normal; font-style: normal; }
 
+i { font-style: italic; }
+
+b { font-weight: bold; }
+
+u { text-decoration: underline; }
+
 /*
  *  Headline of a topic.
  */
