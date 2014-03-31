@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 
@@ -29,7 +28,6 @@ import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.Job;
 import com.ibm.as400.access.ObjectDoesNotExistException;
-
 
 public class ISphereHelper {
     
@@ -45,8 +43,6 @@ public class ISphereHelper {
             if (warningSent.containsKey(aClazz.getClass())) {
                 return warningSent.get(aClazz.getClass());
             }
-
-            PluginCheck.check();
 
             String messageId = null;
             try {

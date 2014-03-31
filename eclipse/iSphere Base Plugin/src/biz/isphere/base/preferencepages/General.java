@@ -107,7 +107,6 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 	}
 
 	public void init(IWorkbench workbench) {
-        PluginCheck.check();
 	    return;
 	}
 
