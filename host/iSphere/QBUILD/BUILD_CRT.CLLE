@@ -78,7 +78,7 @@
                 CRTLIB LIB(&PRDLIB)
              ENDDO
 
-             CHGLIB     LIB(&PRDLIB) TYPE(*TEST) +
+             CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
                           TEXT('*BUILD_IN_PROGRESS')
 
              /* ----------------------------------------------- */
@@ -435,7 +435,6 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
              CALL       PGM(&TMPLIB/BUILD_DBG) PARM(&PRDLIB &TMPLIB)
-             CHGLIB     LIB(&PRDLIB) TYPE(*TEST) +
 
              /* ----------------------------------------------- */
              /* Change description of library ISPHERE           */
