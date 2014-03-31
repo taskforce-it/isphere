@@ -186,6 +186,8 @@
 		<delete includeemptydirs="true">
 		    <fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*"/>
 		    <fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*"/>
+		    <fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar"/>
+		    <fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar"/>
 		</delete>
 		
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
