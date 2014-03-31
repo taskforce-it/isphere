@@ -446,7 +446,7 @@
              /* Save library ISPHERE                            */
              /* ----------------------------------------------- */
 
-             CRTSAVF    FILE(&TMPLIB/ISPHERE) TEXT(&PRDTEXT)
+             CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
 
              SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
@@ -455,6 +455,10 @@
                                   (&PRDLIB/QPF38SRC *FILE)) +
                           DTACPR(&DTACPR) OUTPUT(*PRINT)
 
-             MOVOBJ     OBJ(&TMPLIB/ISPHERE) OBJTYPE(*FILE) TOLIB(&PRDLIB)
+             MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&PRDLIB)
+
+             SNDPGMMSG  MSG('Created iSphere save file' *BCAT &SAVF *BCAT 'in +
+                          library' *BCAT &PRDLIB *TCAT '.') TOPGMQ(*PRV (*CTLBDY)) +
+                          MSGTYPE(*INFO)
 
              ENDPGM

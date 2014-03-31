@@ -49,6 +49,13 @@
              DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHEREDVP')
              DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
 
+             DCL        VAR(&MSGKEY   ) TYPE(*CHAR) LEN(4)
+             DCL        VAR(&MSGTYP   ) TYPE(*CHAR) LEN(10) VALUE('*INFO     ')
+             DCL        VAR(&NBRTYP   ) TYPE(*CHAR) LEN(4) VALUE(X'00000001')
+             DCL        VAR(&PGMMSGQ  ) TYPE(*CHAR) LEN(10) VALUE('*PGMBDY')
+             DCL        VAR(&STKCTR   ) TYPE(*CHAR) LEN(4) VALUE(X'00000001')
+             DCL        VAR(&ERRCODE  ) TYPE(*CHAR) LEN(4) VALUE(X'00000000')
+
              CHGVAR     VAR(&PRDLIB) VALUE(&I_LIB)
              MONMSG     MSGID(MCH3601) EXEC(DO)
                 RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
@@ -72,5 +79,12 @@
              /* ----------------------------------------------- */
 
              CALL       PGM(&TMPLIB/BUILD_CRT) PARM(&PRDLIB &DEVLIB &TMPLIB)
+
+             /* ----------------------------------------------- */
+             /* Move information messages to command line       */
+             /* ----------------------------------------------- */
+
+             CALL       PGM(QMHMOVPM) PARM(&MSGKEY &MSGTYP &NBRTYP &PGMMSGQ +
+                          &STKCTR &ERRCODE)
 
              ENDPGM
