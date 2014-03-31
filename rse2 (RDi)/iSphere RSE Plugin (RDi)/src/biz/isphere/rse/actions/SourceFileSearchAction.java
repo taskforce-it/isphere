@@ -204,7 +204,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
 			if (as400 != null && jdbcConnection != null) {
 
-				if (ISphereHelper.checkISphereLibrary(shell, as400, this.getClass())) {
+				if (ISphereHelper.checkISphereLibrary(shell, as400)) {
 					
 					SearchDialog dialog = new SearchDialog(shell, _searchElements);
 					if (dialog.open() == Dialog.OK) {
