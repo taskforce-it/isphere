@@ -26,7 +26,7 @@ public class SpooledFileFactory {
 
 	public static SpooledFile[] getSpooledFiles(Shell shell, AS400 as400, Connection jdbcConnection, SpooledFileFilter filter) {
 		
-		if (ISphereHelper.checkISphereLibrary(shell, as400, SpooledFileFactory.class)) {
+		if (ISphereHelper.checkISphereLibrary(shell, as400)) {
 		
 			String iSphereLibrary = ISpherePlugin.getISphereLibrary();
 			
