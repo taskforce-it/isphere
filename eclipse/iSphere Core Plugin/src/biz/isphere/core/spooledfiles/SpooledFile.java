@@ -10,6 +10,7 @@ package biz.isphere.core.spooledfiles;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
@@ -30,11 +31,15 @@ import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributions
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IFSFile;
 import com.ibm.as400.access.IFSFileInputStream;
 import com.ibm.as400.access.PrintObject;
+import com.ibm.as400.access.RequestNotSupportedException;
 
 public class SpooledFile {
 
@@ -359,6 +364,17 @@ public class SpooledFile {
     private void refreshSpooledFile() {
         if (toolboxSpooledFile == null) {
             toolboxSpooledFile = getToolboxSpooledFile();
+        }
+        else {
+        	try {
+				toolboxSpooledFile.update();
+			} catch (AS400Exception e) {
+			} catch (AS400SecurityException e) {
+			} catch (ErrorCompletingRequestException e) {
+			} catch (IOException e) {
+			} catch (InterruptedException e) {
+			} catch (RequestNotSupportedException e) {
+			}
         }
         try {
             status = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_SPLFSTATUS);
