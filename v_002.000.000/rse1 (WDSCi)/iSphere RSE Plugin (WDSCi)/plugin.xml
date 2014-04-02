@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    
+	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+		<dynamicPopupMenuExtension
+			name="Message File Editor"
+			class="biz.isphere.rse.actions.MessageFileEditorAction"
+			id="biz.isphere.rse.actions.MessageFileEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Compare Editor"
+			class="biz.isphere.rse.actions.CompareEditorAction"
+			id="biz.isphere.rse.actions.CompareEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Binding Directory Editor"
+			class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
+			id="biz.isphere.rse.actions.BindingDirectoryEditorAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="iSphere Source File Search"
+			class="biz.isphere.rse.actions.SourceFileSearchAction"
+			id="biz.isphere.rse.actions.SourceFileSearchAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="iSphere Message File Search"
+			class="biz.isphere.rse.actions.MessageFileSearchAction"
+			id="biz.isphere.rse.actions.MessageFileSearchAction">
+	    </dynamicPopupMenuExtension>
+	</extension>  
+
+   <extension
+         point="com.ibm.etools.systems.core.subsystemfactory">
+      <factory
+            systemtypes="iSeries"
+            name="%SubsystemName"
+            iconlive="icons/spooled_files_connected.gif"
+            icon="icons/spooled_files.gif"
+            category="spooled files"
+            class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
+            vendor="Task Force IT-Consulting GmbH"
+            id="biz.isphere.core.spooledfiles.subsystems.factory">
+      </factory>
+   </extension>
+
+   <extension
+         point="com.ibm.etools.systems.core.popupMenus">
+      <objectContribution
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.rse.spooledfiles.actions">
+         <menu
+               label="%SaveAs"
+               id="biz.isphere.core.menu.save">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <menu
+               label="%OpenAs"
+               id="biz.isphere.core.menu.open">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <action
+               label="%Messages"
+               class="biz.isphere.rse.spooledfiles.SpooledFileMessageAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileMessageAction">
+         </action>
+         <action
+               label="%Release"
+               class="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction">
+         </action>
+         <action
+               label="%Hold"
+               class="biz.isphere.rse.spooledfiles.SpooledFileHoldAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileHoldAction">
+         </action>
+         <action
+               label="%Delete"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction">
+         </action>
+         <action
+               label="%Change"
+               class="biz.isphere.rse.spooledfiles.SpooledFileChangeAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileChangeAction">
+         </action>
+         <action
+               label="%SaveAsPDF"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
+         </action>
+         <action
+               label="%SaveAsHTML"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
+         </action>
+         <action
+               label="%SaveAsText"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
+         </action>
+         <action
+               label="%OpenAsPDF"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
+         </action>
+         <action
+               label="%OpenAsHTML"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
+         </action>
+         <action
+               label="%OpenAsText"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="com.ibm.etools.systems.core.propertyPages">
+      <page
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            name="%GeneralInformation"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
+            namefilter="*"
+            id="biz.isphere.rse.spooledfiles.SpooledFileProperties">
+      </page>
+   </extension>
+
+</plugin>
