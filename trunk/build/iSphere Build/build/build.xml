@@ -14,10 +14,15 @@
  *     - On the PC print iSphere.doc to 'iSphere for WDSCi 7.0-RDi 8.0+.pdf'
  *     - On the PC set version number (build.version) in build.properties
  *     - On the PC run target 'download'
+ *
+ *   Repeat for RDi and WDSC:
  *     - On the PC run target 'build' using lauch for RDP or WDSC
  *     - On the PC right click 'site.xml', 
  *       select 'PDE Tools' -> 'Build Site' 
  *     - On the PC run target 'createSourceForgeFiles'
+ *
+ *     - Upload files to SourceForge.
+ *     - Create SVN tag.
  *
  * ===================================================================== -->
 <project basedir="." default="build" >
