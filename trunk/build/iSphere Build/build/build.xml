@@ -63,7 +63,7 @@
 	
 	<!-- Set zip file and directory names -->
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
-	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
+	<property name="zip.base.directory" location="${workspace.home}" />
 	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (Update Site).zip" />
 	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (Update Site).zip" />
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
@@ -239,7 +239,8 @@
     	</if>	
 
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
-			<exclude name=".project" />
+			<include name="${build.updatesite}/**/*"/>
+			<exclude name="**/.project" />
 		</zip>
 		
 		<copy file="${isphere.pdf}" todir="${build.upload.dir}" />
