@@ -19,7 +19,7 @@
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
      /*         >>PARM<<  BNDSRVPGM((NBRRNG *IMMED));                         */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
      /*         >>PARM<<  MODULE(XFNDSTR);                                    */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
      /*         >>PARM<<  TEXT('Find String in Message File');                */
