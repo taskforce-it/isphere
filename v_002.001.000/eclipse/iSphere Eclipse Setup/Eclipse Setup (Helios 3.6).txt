@@ -1,0 +1,58 @@
+Setup Eclipse (Helios) für iSphere
+==================================
+
+
+Voraussetzungen:
+----------------
+
+Installierter IBM Rational Developer for Power Systems Software (RDP 8.0).
+
+		
+Repository Location:
+--------------------
+
+   https://isphere.googlecode.com/svn
+   
+   Passwort: https://code.google.com/hosting/settings
+
+	
+Erforderliche Einstellungen für Eclipse:
+----------------------------------------
+
+a) Preferences -> Java -> Installed JREs (
+
+   JRE home:   C:\Programme_x86\IBM\SDP_080\jdk
+   JRE name:   JRE 1.6.0 IBM J9
+   
+   Markieren als "Default JRE".
+
+b) Preferences - Java -> Code Style -> Clean Up
+   
+   Importieren: Preferences_Java_CodeStyle_CleanUp (iSphere)_3.6.xml
+
+c) Preferences - Java -> Code Style -> Formatter
+
+   Importieren Preferences_Java_CodeStyle_Formatter (iSphere)_3.6.xml
+
+d) Preferences - Java -> Editor -> Save Actions:
+
+   Einschalten: Perform the selected actions on save
+   Einschalten: Format source code
+                Format all lines
+   Einschalten: Organize imports
+
+   Ainschalten: Additional actions
+
+Nützliche Einstellungen für Eclipse:
+------------------------------------
+
+a) Preferences -> General -> Show heap status (einschalten)
+
+b) Preferences -> General -> Editors -> Text Editors -> Spelling (ausschalten)
+
+c) Preferences -> General -> Keys:
+
+   Filtern nach UNDO und kopieren Eintrag mit "Ctrl+Z" nach "Ctrl+Backspace".
+   
+   Filtern nach GRAPH und entfernen Eintrag für "Show Revision graph" der Kategorie "SVN" [Unbind Command].
+   (Sonst funktioniert CTRL-ALT-Q für '@' nicht mehr.)
