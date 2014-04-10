@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.tasks"
       label="iSphere Task Tags for WDSCi 7.0 (optional)"
-      version="2.0.0"
+      version="2.1.0"
       provider-name="iSphere Project Owners">
 
    <description url="http://code.google.com/p/isphere">
