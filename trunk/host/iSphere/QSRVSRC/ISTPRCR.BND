@@ -18,7 +18,7 @@
      /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-     /*         >>PARM<<  TGTRLS(V5R4M0);                                     */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
      /*         >>PARM<<  MODULE(ISTPRCR);                                    */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
      /*         >>PARM<<  TEXT('Free RPG/i5 Tools Service Procedures');       */

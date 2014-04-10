@@ -100,7 +100,8 @@
              CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/&BUILD) SRCMBR(*PGM)
 
              /* Create STRPREPRC utility */
-             CALL       PGM(&TMPLIB/XMLINST) PARM('STRPREPRC' &BUILD &PRDLIB '' 'ENG;NO')
+             CALL       PGM(&TMPLIB/XMLINST) +
+                          PARM('STRPREPRC' &BUILD &PRDLIB '' 'ENG;NO' &TGTRLS)
 
              /* ----------------------------------------------- */
              /* Delete old objects                              */
@@ -452,7 +453,7 @@
                                   (&PRDLIB/XMLINST  *PGM) +
                                   (&PRDLIB/EVFEVENT *FILE) +
                                   (&PRDLIB/QPF38SRC *FILE)) +
-                          DTACPR(&DTACPR) OUTPUT(*PRINT)
+                          DTACPR(&DTACPR) TGTRLS(&TGTRLS) OUTPUT(*PRINT)
 
              MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&PRDLIB)
 
