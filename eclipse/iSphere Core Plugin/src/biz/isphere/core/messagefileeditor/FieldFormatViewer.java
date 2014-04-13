@@ -133,7 +133,7 @@ public class FieldFormatViewer {
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		Group groupFieldFormats = new Group(container, SWT.NONE);
-		groupFieldFormats.setText(Messages.getString("Field_formats"));
+		groupFieldFormats.setText(Messages.Field_formats);
 		groupFieldFormats.setLayout(new GridLayout(2, false));
 		groupFieldFormats.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
@@ -153,19 +153,19 @@ public class FieldFormatViewer {
 
 		final TableColumn columnField = new TableColumn(_table, SWT.NONE);
 		columnField.setWidth(Size.getSize(100));
-		columnField.setText(Messages.getString("Field"));
+		columnField.setText(Messages.Field);
 
 		final TableColumn columnType = new TableColumn(_table, SWT.NONE);
 		columnType.setWidth(Size.getSize(100));
-		columnType.setText(Messages.getString("Type"));
+		columnType.setText(Messages.Type);
 
 		final TableColumn columnLength = new TableColumn(_table, SWT.NONE);
 		columnLength.setWidth(Size.getSize(100));
-		columnLength.setText(Messages.getString("Length"));
+		columnLength.setText(Messages.Length);
 
 		final TableColumn columnDecimalPositionsBytes = new TableColumn(_table, SWT.NONE);
 		columnDecimalPositionsBytes.setWidth(Size.getSize(100));
-		columnDecimalPositionsBytes.setText(Messages.getString("Decimal_positions_/_Bytes"));
+		columnDecimalPositionsBytes.setText(Messages.Decimal_positions_Bytes);
 		
 		Composite compositeUpDown = new Composite(groupFieldFormats, SWT.NONE);
 		compositeUpDown.setLayout(new GridLayout(1, false));
@@ -178,7 +178,7 @@ public class FieldFormatViewer {
 			}
 		});
 		buttonUp.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1, 1));
-		buttonUp.setText(Messages.getString("Up"));
+		buttonUp.setText(Messages.Up);
 		buttonUp.setEnabled(false);
 		
 		buttonDown = new Button(compositeUpDown, SWT.NONE);
@@ -188,7 +188,7 @@ public class FieldFormatViewer {
 			}
 		});
 		buttonDown.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false, true, 1, 1));
-		buttonDown.setText(Messages.getString("Down"));
+		buttonDown.setText(Messages.Down);
 		buttonDown.setEnabled(false);
 		
 		final Menu menuTableFieldFormats = new Menu(_table);
@@ -246,7 +246,7 @@ public class FieldFormatViewer {
 			}
 			public void createMenuItemNew() {
 				menuItemNew = new MenuItem(menuTableFieldFormats, SWT.NONE);
-				menuItemNew.setText(Messages.getString("New"));
+				menuItemNew.setText(Messages.New);
 				menuItemNew.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_NEW));
 				menuItemNew.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -266,7 +266,7 @@ public class FieldFormatViewer {
 			}
 			public void createMenuItemChange() {
 				menuItemChange = new MenuItem(menuTableFieldFormats, SWT.NONE);
-				menuItemChange.setText(Messages.getString("Change"));
+				menuItemChange.setText(Messages.Change);
 				menuItemChange.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));
 				menuItemChange.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -284,7 +284,7 @@ public class FieldFormatViewer {
 			}			
 			public void createMenuItemCopy() {
 				menuItemCopy = new MenuItem(menuTableFieldFormats, SWT.NONE);
-				menuItemCopy.setText(Messages.getString("Copy"));
+				menuItemCopy.setText(Messages.Copy);
 				menuItemCopy.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY));
 				menuItemCopy.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -309,7 +309,7 @@ public class FieldFormatViewer {
 			}			
 			public void createMenuItemDelete() {
 				menuItemDelete = new MenuItem(menuTableFieldFormats, SWT.NONE);
-				menuItemDelete.setText(Messages.getString("Delete"));
+				menuItemDelete.setText(Messages.Delete);
 				menuItemDelete.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
 				menuItemDelete.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -331,7 +331,7 @@ public class FieldFormatViewer {
 			}
 			public void createMenuItemDisplay() {
 				menuItemDisplay = new MenuItem(menuTableFieldFormats, SWT.NONE);
-				menuItemDisplay.setText(Messages.getString("Display"));
+				menuItemDisplay.setText(Messages.Display);
 				menuItemDisplay.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DISPLAY));
 				menuItemDisplay.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {

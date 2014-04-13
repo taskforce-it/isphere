@@ -41,11 +41,11 @@ public class ISphereHelper {
 
         if (messageId == null || !messageId.equals("")) {
 
-            String text = Messages.getString("E_R_R_O_R");
-            String message = Messages
-                .getString("iSphere_library_&1_does_not_exist_on_system_&2._Please_transfer_iSphere_library_&1_to_system_&2.");
-            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-            message = message.replace("&2", as400.getSystemName());
+            String text = Messages.E_R_R_O_R;
+            String message = Messages.bind(Messages.iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B, new String[]{ISpherePlugin.getISphereLibrary(), as400.getSystemName()});
+//                .iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B;
+//            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+//            message = message.replace("&2", as400.getSystemName());
             new DisplayMessage(shell, text, message).start();
 
             isValidLibrary = Boolean.FALSE;
@@ -72,10 +72,11 @@ public class ISphereHelper {
         }
         if (dataAreaISphereContent == null) {
 
-            String text = Messages.getString("E_R_R_O_R");
-            String message = Messages.getString("Specified_iSphere_library_&1_on_System_&2_is_not_a_iSphere_library.");
-            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-            message = message.replace("&2", as400.getSystemName());
+            String text = Messages.E_R_R_O_R;
+            String message = Messages.bind( Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library, new String[]{ISpherePlugin.getISphereLibrary(), as400.getSystemName()});
+//            String message = Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
+//            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+//            message = message.replace("&2", as400.getSystemName());
             new DisplayMessage(shell, text, message).start();
 
             isValidLibrary = Boolean.FALSE;
@@ -90,19 +91,13 @@ public class ISphereHelper {
 
         if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
-            String text = Messages.getString("E_R_R_O_R");
-            String message = Messages
-                .getString("iSphere_library_&1_on_System_&2_is_of_version_&3,_but_at_least_version_&4_is_needed._Please_transfer_the_current_iSphere_library_&1_to_system_&2.");
-            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
-            message = message.replace("&2", as400.getSystemName());
-            message = message.replace(
-                "&3",
-                Integer.parseInt(serverProvided.substring(0, 2)) + "." + Integer.parseInt(serverProvided.substring(2, 4)) + "."
-                    + Integer.parseInt(serverProvided.substring(4, 6)));
-            message = message.replace(
-                "&4",
-                Integer.parseInt(clientNeedsServer.substring(0, 2)) + "." + Integer.parseInt(clientNeedsServer.substring(2, 4)) + "."
-                    + Integer.parseInt(clientNeedsServer.substring(4, 6)));
+            String text = Messages.E_R_R_O_R;
+            String message = Messages.bind(Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B, new String[]{ISpherePlugin.getISphereLibrary(), as400.getSystemName(), getVersionFormatted(serverProvided), getVersionFormatted(clientNeedsServer)});
+//            String message = Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B;
+//            message = message.replace("&1", ISpherePlugin.getISphereLibrary());
+//            message = message.replace("&2", as400.getSystemName());
+//            message = message.replace("&3", getVersionFormatted(serverProvided));
+//            message = message.replace("&4", getVersionFormatted(clientNeedsServer));
             new DisplayMessage(shell, text, message).start();
 
             isValidLibrary = Boolean.FALSE;
@@ -112,17 +107,11 @@ public class ISphereHelper {
 
         if (clientProvided.compareTo(serverNeedsClient) < 0) {
 
-            String text = Messages.getString("E_R_R_O_R");
-            String message = Messages
-                .getString("The_current_installed_iSphere_client_is_of_version_&1,_but_the_iSphere_server_needs_at_least_version_&2._Please_install_the_current_iSphere_client.");
-            message = message.replace(
-                "&1",
-                Integer.parseInt(clientProvided.substring(0, 2)) + "." + Integer.parseInt(clientProvided.substring(2, 4)) + "."
-                    + Integer.parseInt(clientProvided.substring(4, 6)));
-            message = message.replace(
-                "&2",
-                Integer.parseInt(serverNeedsClient.substring(0, 2)) + "." + Integer.parseInt(serverNeedsClient.substring(2, 4)) + "."
-                    + Integer.parseInt(serverNeedsClient.substring(4, 6)));
+            String text = Messages.E_R_R_O_R;
+            String message = Messages.bind(Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client, new String[]{getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient)}); 
+//            String message = Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client;
+//            message = message.replace("&1", getVersionFormatted(clientProvided));
+//            message = message.replace("&2", getVersionFormatted(serverNeedsClient));
             new DisplayMessage(shell, text, message).start();
 
             isValidLibrary = Boolean.FALSE;
@@ -133,6 +122,11 @@ public class ISphereHelper {
         isValidLibrary = Boolean.TRUE;
         return isValidLibrary.booleanValue();
 
+    }
+
+    private static String getVersionFormatted(String aVersionNumber) {
+        return Integer.parseInt(aVersionNumber.substring(0, 2)) + "." + Integer.parseInt(aVersionNumber.substring(2, 4)) + "."
+            + Integer.parseInt(aVersionNumber.substring(4, 6));
     }
 	
 	public static String executeCommand(AS400 as400, String command) throws Exception {

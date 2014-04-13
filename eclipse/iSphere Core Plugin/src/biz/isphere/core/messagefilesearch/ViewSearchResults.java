@@ -65,7 +65,7 @@ public class ViewSearchResults extends ViewPart {
 				exportToObjectFilter();
 			}
 		};
-		actionExportToObjectFilter.setToolTipText(Messages.getString("Export_to_Object_Filter"));
+		actionExportToObjectFilter.setToolTipText(Messages.Export_to_Object_Filter);
 		actionExportToObjectFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OBJECT_FILTER));
 		actionExportToObjectFilter.setEnabled(false);
 
@@ -74,7 +74,7 @@ public class ViewSearchResults extends ViewPart {
 				exportToExcel();
 			}
 		};
-		actionExportToExcel.setToolTipText(Messages.getString("Export_to_Excel"));
+		actionExportToExcel.setToolTipText(Messages.Export_to_Excel);
 		actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
 		actionExportToExcel.setEnabled(false);
 
@@ -83,7 +83,7 @@ public class ViewSearchResults extends ViewPart {
 				removeTabItem();
 			}
 		};
-		actionRemoveTabItem.setToolTipText(Messages.getString("Remove_tab_item"));
+		actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
 		actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
 		actionRemoveTabItem.setEnabled(false);
 		
@@ -144,8 +144,8 @@ public class ViewSearchResults extends ViewPart {
 						if (!creator.createObjectFilter(_searchResultViewer.getConnection(), dialog.getFilter(), _searchResultViewer.getSearchResults())) {
 							
 							MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-							errorBox.setText(Messages.getString("E_R_R_O_R"));
-							errorBox.setMessage(Messages.getString("The_filter_could_not_be_created."));
+							errorBox.setText(Messages.E_R_R_O_R);
+							errorBox.setMessage(Messages.The_filter_could_not_be_created);
 							errorBox.open();
 							
 							
@@ -190,13 +190,13 @@ public class ViewSearchResults extends ViewPart {
 						
 						WritableSheet sheet;
 						
-						sheet = workbook.createSheet(Messages.getString("Files_with_Id`s"), 0);
+						sheet = workbook.createSheet(Messages.Files_with_Id_s, 0);
 						
-						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
-						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Message_file"))); 
-						sheet.addCell(new jxl.write.Label(2, 0, Messages.getString("Description"))); 
-						sheet.addCell(new jxl.write.Label(3, 0, Messages.getString("Message-Id."))); 
-						sheet.addCell(new jxl.write.Label(4, 0, Messages.getString("Message"))); 
+						sheet.addCell(new jxl.write.Label(0, 0, Messages.Library)); 
+						sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file)); 
+						sheet.addCell(new jxl.write.Label(2, 0, Messages.Description)); 
+						sheet.addCell(new jxl.write.Label(3, 0, Messages.Message_Id)); 
+						sheet.addCell(new jxl.write.Label(4, 0, Messages.Message)); 
 						
 						int line = 1;
 						
@@ -219,11 +219,11 @@ public class ViewSearchResults extends ViewPart {
 							line++;
 						}
 						
-						sheet = workbook.createSheet(Messages.getString("Files"), 0);
+						sheet = workbook.createSheet(Messages.Files, 0);
 						
-						sheet.addCell(new jxl.write.Label(0, 0, Messages.getString("Library"))); 
-						sheet.addCell(new jxl.write.Label(1, 0, Messages.getString("Message_file"))); 
-						sheet.addCell(new jxl.write.Label(2, 0, Messages.getString("Description"))); 
+						sheet.addCell(new jxl.write.Label(0, 0, Messages.Library)); 
+						sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file)); 
+						sheet.addCell(new jxl.write.Label(2, 0, Messages.Description)); 
 						
 						for (int index = 0; index < _searchResults.length; index++) {
 							sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary())); 

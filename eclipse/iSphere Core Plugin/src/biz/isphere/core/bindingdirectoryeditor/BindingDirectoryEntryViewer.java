@@ -173,20 +173,20 @@ public class BindingDirectoryEntryViewer {
 
 		final TableColumn columnLibrary = new TableColumn(_table, SWT.NONE);
 		columnLibrary.setWidth(Size.getSize(100));
-		columnLibrary.setText(Messages.getString("Library"));
+		columnLibrary.setText(Messages.Library);
 
 		final TableColumn columnObject = new TableColumn(_table, SWT.NONE);
 		columnObject.setWidth(Size.getSize(100));
-		columnObject.setText(Messages.getString("Object"));
+		columnObject.setText(Messages.Object);
 
 		final TableColumn columnObjectType = new TableColumn(_table, SWT.NONE);
 		columnObjectType.setWidth(Size.getSize(100));
-		columnObjectType.setText(Messages.getString("Object_type"));
+		columnObjectType.setText(Messages.Object_type);
 		
 		if (level.compareTo("V6R1M0") >= 0) {
 			final TableColumn columnActivation = new TableColumn(_table, SWT.NONE);
 			columnActivation.setWidth(Size.getSize(100));
-			columnActivation.setText(Messages.getString("Activation"));
+			columnActivation.setText(Messages.Activation);
 		}
 		
 		Composite compositeUpDown = new Composite(container, SWT.NONE);
@@ -200,7 +200,7 @@ public class BindingDirectoryEntryViewer {
 			}
 		});
 		buttonUp.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1, 1));
-		buttonUp.setText(Messages.getString("Up"));
+		buttonUp.setText(Messages.Up);
 		buttonUp.setEnabled(false);
 		
 		buttonDown = new Button(compositeUpDown, SWT.NONE);
@@ -210,7 +210,7 @@ public class BindingDirectoryEntryViewer {
 			}
 		});
 		buttonDown.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false, true, 1, 1));
-		buttonDown.setText(Messages.getString("Down"));
+		buttonDown.setText(Messages.Down);
 		buttonDown.setEnabled(false);
 		
 		final Menu menuTableBindingDirectoryEntries = new Menu(_table);
@@ -284,7 +284,7 @@ public class BindingDirectoryEntryViewer {
 			}
 			public void createMenuItemNew() {
 				menuItemNew = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemNew.setText(Messages.getString("New"));
+				menuItemNew.setText(Messages.New);
 				menuItemNew.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_NEW));
 				menuItemNew.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -311,7 +311,7 @@ public class BindingDirectoryEntryViewer {
 			}
 			public void createMenuItemChange() {
 				menuItemChange = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemChange.setText(Messages.getString("Change"));
+				menuItemChange.setText(Messages.Change);
 				menuItemChange.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));
 				menuItemChange.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -338,7 +338,7 @@ public class BindingDirectoryEntryViewer {
 			}			
 			public void createMenuItemCopy() {
 				menuItemCopy = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemCopy.setText(Messages.getString("Copy"));
+				menuItemCopy.setText(Messages.Copy);
 				menuItemCopy.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY));
 				menuItemCopy.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -375,7 +375,7 @@ public class BindingDirectoryEntryViewer {
 			}			
 			public void createMenuItemDelete() {
 				menuItemDelete = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemDelete.setText(Messages.getString("Delete"));
+				menuItemDelete.setText(Messages.Delete);
 				menuItemDelete.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
 				menuItemDelete.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -403,7 +403,7 @@ public class BindingDirectoryEntryViewer {
 			}
 			public void createMenuItemDisplay() {
 				menuItemDisplay = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemDisplay.setText(Messages.getString("Display"));
+				menuItemDisplay.setText(Messages.Display);
 				menuItemDisplay.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DISPLAY));
 				menuItemDisplay.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -428,7 +428,7 @@ public class BindingDirectoryEntryViewer {
 			}
 			public void createMenuItemRefresh() {
 				menuItemRefresh = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-				menuItemRefresh.setText(Messages.getString("Refresh"));
+				menuItemRefresh.setText(Messages.Refresh);
 				menuItemRefresh.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REFRESH));
 				menuItemRefresh.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {

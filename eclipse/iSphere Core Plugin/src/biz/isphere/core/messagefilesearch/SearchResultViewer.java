@@ -196,7 +196,7 @@ public class SearchResultViewer {
 
 		final TableColumn tableColumnMessageFile = new TableColumn(tableMessageFiles, SWT.NONE);
 		tableColumnMessageFile.setWidth(800);
-		tableColumnMessageFile.setText(Messages.getString("Message_file"));
+		tableColumnMessageFile.setText(Messages.Message_file);
 	
 		final Menu menuTableMessageFiles = new Menu(tableMessageFiles);
 		menuTableMessageFiles.addMenuListener(new MenuAdapter() {
@@ -225,7 +225,7 @@ public class SearchResultViewer {
 				if (!(selectedItemsMessageFiles == null || selectedItemsMessageFiles.length == 0)) {
 					
 					menuItemOpenEditor = new MenuItem(menuTableMessageFiles, SWT.NONE);
-					menuItemOpenEditor.setText(Messages.getString("Open_editor"));
+					menuItemOpenEditor.setText(Messages.Open_editor);
 					menuItemOpenEditor.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN_EDITOR));
 					menuItemOpenEditor.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -236,7 +236,7 @@ public class SearchResultViewer {
 				}
 				
 				menuItemSelectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
-				menuItemSelectAll.setText(Messages.getString("Select_all"));
+				menuItemSelectAll.setText(Messages.Select_all);
 				menuItemSelectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SELECT_ALL));
 				menuItemSelectAll.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -245,7 +245,7 @@ public class SearchResultViewer {
 				}); 	
 
 				menuItemDeselectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
-				menuItemDeselectAll.setText(Messages.getString("Deselect_all"));
+				menuItemDeselectAll.setText(Messages.Deselect_all);
 				menuItemDeselectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DESELECT_ALL));
 				menuItemDeselectAll.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -307,11 +307,11 @@ public class SearchResultViewer {
 
 		final TableColumn tableColumnMessageId = new TableColumn(tableMessageIds, SWT.NONE);
 		tableColumnMessageId.setWidth(125);
-		tableColumnMessageId.setText(Messages.getString("Message-Id."));
+		tableColumnMessageId.setText(Messages.Message_Id);
 
 		final TableColumn tableColumnMessage = new TableColumn(tableMessageIds, SWT.NONE);
 		tableColumnMessage.setWidth(700);
-		tableColumnMessage.setText(Messages.getString("Message"));
+		tableColumnMessage.setText(Messages.Message);
 
 		setMessageIds();
 		tableViewerMessageIds.setInput(new Object());
@@ -381,7 +381,7 @@ public class SearchResultViewer {
 			
 			SearchResultMessageId messageId = new SearchResultMessageId();
 			messageId.setMessageId("./.");
-			messageId.setMessage(Messages.getString("No_selection."));
+			messageId.setMessage(Messages.No_selection);
 			
 			messageIds = new SearchResultMessageId[1];
 			messageIds[0] = messageId;
@@ -395,7 +395,7 @@ public class SearchResultViewer {
 			
 			SearchResultMessageId messageId = new SearchResultMessageId();
 			messageId.setMessageId("./.");
-			messageId.setMessage(Messages.getString("Multiple_selection."));
+			messageId.setMessage(Messages.Multiple_selection);
 			
 			messageIds = new SearchResultMessageId[1];
 			messageIds[0] = messageId;

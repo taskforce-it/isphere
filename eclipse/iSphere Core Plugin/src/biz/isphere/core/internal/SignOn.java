@@ -19,15 +19,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 
 public class SignOn {
-
+    
 	private Text textHost;
 	private Text textUser;
 	private Text textPassword;
@@ -38,7 +41,7 @@ public class SignOn {
 		as400 = null;
 	}
 	
-	public void createContents(Composite parent) {
+	public void createContents(Composite parent, String aHostName) {
 		
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
@@ -50,21 +53,21 @@ public class SignOn {
 		compositeGeneral.setLayout(gridLayoutCompositeGeneral);
 		
 		final Label labelHost = new Label(compositeGeneral, SWT.NONE);
-		labelHost.setText(Messages.getString("Host_colon"));
+		labelHost.setText(Messages.Host_colon);
 
 		textHost = new Text(compositeGeneral, SWT.BORDER);
 		textHost.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		textHost.setText("");
+		textHost.setText(aHostName);
 		
 		final Label labelUser = new Label(compositeGeneral, SWT.NONE);
-		labelUser.setText(Messages.getString("User_colon"));
+		labelUser.setText(Messages.User_colon);
 
 		textUser = new Text(compositeGeneral, SWT.BORDER);
 		textUser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		textUser.setText("");
 		
 		final Label labelPassword = new Label(compositeGeneral, SWT.NONE);
-		labelPassword.setText(Messages.getString("Password_colon"));
+		labelPassword.setText(Messages.Password_colon);
 
 		textPassword = new Text(compositeGeneral, SWT.PASSWORD | SWT.BORDER);
 		textPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -76,7 +79,13 @@ public class SignOn {
 		final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		statusLine.setLayoutData(gridDataStatusLine);
         
-		textHost.setFocus();
+		if (StringHelper.isNullOrEmpty(textHost.getText())) {
+		    textHost.setFocus();
+		} else if (StringHelper.isNullOrEmpty(textUser.getText())) {
+            textUser.setFocus();
+        } else if (StringHelper.isNullOrEmpty(textPassword.getText())) {
+            textPassword.setFocus();
+        }
 
 	}
 
@@ -96,19 +105,19 @@ public class SignOn {
 		textPassword.getText().trim();
 		
 		if (textHost.getText().equals("")) {
-			setErrorMessage(Messages.getString("Enter_a_host."));
+			setErrorMessage(Messages.Enter_a_host);
 			textHost.setFocus();
 			return false;
 		}
 		
 		if (textUser.getText().equals("")) {
-			setErrorMessage(Messages.getString("Enter_a_user."));
+			setErrorMessage(Messages.Enter_a_user);
 			textUser.setFocus();
 			return false;
 		}
 		
 		if (textPassword.getText().equals("")) {
-			setErrorMessage(Messages.getString("Enter_a_password."));
+			setErrorMessage(Messages.Enter_a_password);
 			textPassword.setFocus();
 			return false;
 		}

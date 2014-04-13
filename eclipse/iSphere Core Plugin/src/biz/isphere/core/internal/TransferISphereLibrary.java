@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400FTP;
@@ -45,38 +47,50 @@ public class TransferISphereLibrary extends Shell {
 	private Table tableStatus;
 	private Button buttonStart;
 	private String iSphereLibrary;
+	private int ftpPort;
+	private String hostName;
 	
-	public TransferISphereLibrary(Display display, int style) {
+	public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aHostName, int aFtpPort) {
 		super(display, style);
 		createContents();
 		setLayout(new GridLayout());
 		
-		iSphereLibrary = ISpherePlugin.getISphereLibrary();
+		iSphereLibrary = anISphereLibrary;
+		hostName = aHostName;
+		setFtpPort(aFtpPort);
 
+	}
+	
+	private void setFtpPort(int aFtpPort) {
+	    if (aFtpPort <= 0) {
+	        ftpPort = 21;
+	    } else {
+	        ftpPort = aFtpPort;
+	    }
 	}
 
 	protected void createContents() {
 		
-		setText(Messages.getString("Transfer_iSphere_library"));
+		setText(Messages.Transfer_iSphere_library);
 		setSize(500, 250);
 
 		buttonStart = new Button(this, SWT.NONE);
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent event) {
 				buttonStart.setEnabled(false);
-				setStatus(Messages.getString("Checking_library_&1_for_existence").replace("&1", iSphereLibrary));
+                setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
 				if (!executeCommand("CHKOBJ OBJ(QSYS/" + iSphereLibrary + ") OBJTYPE(*LIB)").equals("CPF9801")) {
-					setStatus("!!!   " + Messages.getString("Library_&1_does_already_exist").replace("&1", iSphereLibrary) + "   !!!");
+					setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
 				}
 				else {
-					setStatus(Messages.getString("Checking_file_&1_in_library_QGPL_for_existence").replace("&1", iSphereLibrary));
+					setStatus(Messages.bind(Messages.Checking_file_A_in_library_QGPL_for_existence, iSphereLibrary));
 					if (!executeCommand("CHKOBJ OBJ(QGPL/" + iSphereLibrary + ") OBJTYPE(*FILE)").equals("CPF9801")) {
-						setStatus("!!!   " + Messages.getString("File_&1_in_library_QGPL_does_already_exist").replace("&1", iSphereLibrary) + "   !!!");
+						setStatus("!!!   " + Messages.bind(Messages.File_A_in_library_QGPL_does_already_exist, iSphereLibrary) + "   !!!");
 					}
 					else {
-						setStatus(Messages.getString("Creating_save_file_&1_in_library_QGPL").replace("&1", iSphereLibrary));
+						setStatus(Messages.bind(Messages.Creating_save_file_A_in_library_QGPL, iSphereLibrary));
 						if (!executeCommand("CRTSAVF FILE(QGPL/" + iSphereLibrary + ") TEXT('iSphere')").equals("")) {
-							setStatus("!!!   " + Messages.getString("Could_not_create_save_file_&1_in_library_QGPL").replace("&1", iSphereLibrary) + "   !!!");
+							setStatus("!!!   " + Messages.bind(Messages.Could_not_create_save_file_A_in_library_QGPL, iSphereLibrary) + "   !!!");
 						}
 						else {
 						    URL fileUrl;
@@ -89,10 +103,12 @@ public class TransferISphereLibrary extends Shell {
 							}
 							if (fileUrl != null) {
 								File file = new File(fileUrl.getPath() + "Server\\ISPHERE");
-								setStatus(Messages.getString("Sending_save_file_to_host"));
+								setStatus(Messages.Sending_save_file_to_host);
+                                setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
 								boolean ok = false;
 								AS400FTP client = new AS400FTP(as400);
 								try {
+								    client.setPort(ftpPort);
 									client.setDataTransferType(FTP.BINARY);
 									if (client.connect()) {
 										client.put(file, "/QSYS.LIB/QGPL.LIB/" + iSphereLibrary + ".FILE");
@@ -101,17 +117,19 @@ public class TransferISphereLibrary extends Shell {
 									}
 								} 
 								catch (IOException e) {
-								}
+								} catch (PropertyVetoException e) {
+                                    e.printStackTrace();
+                                }
 								if (!ok) {
-									setStatus("!!!   " + Messages.getString("Could_not_send_save_file_to_host") + "   !!!");
+									setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
 								}
 								else {
-									setStatus(Messages.getString("Restoring_library_&1").replace("&1", iSphereLibrary));
+									setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
 									if (!executeCommand("RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/" + iSphereLibrary + ") RSTLIB(" + iSphereLibrary + ")").equals("")) {
-										setStatus("!!!   " + Messages.getString("Could_not_restore_library_&1").replace("&1", iSphereLibrary) + "   !!!");
+										setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
 									}
 									else {
-										setStatus("!!!   " + Messages.getString("Library_&1_successfull_transfered").replace("&1", iSphereLibrary) + "   !!!");
+										setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
 									}
 								}
 							}
@@ -122,7 +140,7 @@ public class TransferISphereLibrary extends Shell {
 			}
 		});
 		buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		buttonStart.setText(Messages.getString("Start_Transfer"));
+		buttonStart.setText(Messages.Start_Transfer);
 
 		tableStatus = new Table(this, SWT.BORDER);
 		final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -162,7 +180,7 @@ public class TransferISphereLibrary extends Shell {
 	
 	public boolean connect() {
 		buttonStart.setEnabled(false);
-		SignOnDialog signOnDialog = new SignOnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		SignOnDialog signOnDialog = new SignOnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), hostName);
 		if (signOnDialog.open() == Dialog.OK) {
 			as400 = signOnDialog.getAS400();
 			if (as400 != null) {

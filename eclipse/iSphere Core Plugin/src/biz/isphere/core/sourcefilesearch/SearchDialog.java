@@ -67,11 +67,11 @@ public class SearchDialog extends Dialog {
 		
 		Group groupAttributes = new Group(container, SWT.NONE);
 		groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		groupAttributes.setText(Messages.getString("Attributes"));
+		groupAttributes.setText(Messages.Attributes);
 		groupAttributes.setLayout(new GridLayout(2, false));
 		
 		Label labelString = new Label(groupAttributes, SWT.NONE);
-		labelString.setText(Messages.getString("String_colon"));
+		labelString.setText(Messages.String_colon);
 		
 		textString = new Text(groupAttributes, SWT.BORDER);
 		textString.setText(searchString);
@@ -89,7 +89,7 @@ public class SearchDialog extends Dialog {
 		});
 		
 		Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
-		labelFromColumn.setText(Messages.getString("From_column_colon"));
+		labelFromColumn.setText(Messages.From_column_colon);
 		
 		textFromColumn = new Text(groupAttributes, SWT.BORDER);
 		textFromColumn.setText("*START");
@@ -118,7 +118,7 @@ public class SearchDialog extends Dialog {
 		});
 		
 		Label labelToColumn = new Label(groupAttributes, SWT.NONE);
-		labelToColumn.setText(Messages.getString("To_column_colon"));
+		labelToColumn.setText(Messages.To_column_colon);
 		
 		textToColumn = new Text(groupAttributes, SWT.BORDER);
 		textToColumn.setText("*END");
@@ -150,7 +150,7 @@ public class SearchDialog extends Dialog {
 		});
 		
 		Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
-		labelCaseSensitive.setText(Messages.getString("Case_sensitive_colon"));
+		labelCaseSensitive.setText(Messages.Case_sensitive_colon);
 		
 		Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
 		GridLayout editableLayout = new GridLayout();
@@ -158,16 +158,16 @@ public class SearchDialog extends Dialog {
 		groupCaseSensitive.setLayout(editableLayout);
 		
 		buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
-		buttonCaseNo.setText(Messages.getString("No"));
+		buttonCaseNo.setText(Messages.No);
 		buttonCaseNo.setSelection(true);
 		
 		buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
-		buttonCaseYes.setText(Messages.getString("Yes"));
+		buttonCaseYes.setText(Messages.Yes);
 		buttonCaseYes.setSelection(false);
 		
 		Group groupArea = new Group(container, SWT.NONE);
 		groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		groupArea.setText(Messages.getString("Area"));
+		groupArea.setText(Messages.Area);
 		groupArea.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		List listArea = new List(groupArea, SWT.BORDER| SWT.V_SCROLL | SWT.H_SCROLL);
@@ -203,8 +203,8 @@ public class SearchDialog extends Dialog {
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("Cancel"), false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
 		if (searchString.equals("")) {
 			okButton.setEnabled(false);
 		}
@@ -215,7 +215,7 @@ public class SearchDialog extends Dialog {
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.getString("iSphere_Source_File_Search"));
+		newShell.setText(Messages.iSphere_Source_File_Search);
 	}
 	
 	protected Point getInitialSize() {

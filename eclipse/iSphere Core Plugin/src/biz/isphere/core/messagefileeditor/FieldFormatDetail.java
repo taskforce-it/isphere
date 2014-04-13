@@ -85,7 +85,7 @@ public class FieldFormatDetail {
 		// Type
 		
 		final Label labelType = new Label(compositeHeader, SWT.NONE);
-		labelType.setText(Messages.getString("Type_colon"));
+		labelType.setText(Messages.Type_colon);
 
 		comboType = new CCombo(compositeHeader, SWT.BORDER);
 		comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -130,7 +130,7 @@ public class FieldFormatDetail {
 		// Variable length
 		
 		final Label labelVary = new Label(compositeHeader, SWT.NONE);
-		labelVary.setText(Messages.getString("Variable_length_colon"));
+		labelVary.setText(Messages.Variable_length_colon);
 		
 		Composite compositeVary = new Composite(compositeHeader, SWT.NONE);
 		compositeVary.setLayout(new GridLayout(2, false));
@@ -142,7 +142,7 @@ public class FieldFormatDetail {
 				setVisible(false);
 			}
 		});
-		buttonVLNo.setText(Messages.getString("No"));
+		buttonVLNo.setText(Messages.No);
 		
 		buttonVLYes = new Button(compositeVary, SWT.RADIO);
 		buttonVLYes.addSelectionListener(new SelectionAdapter() {
@@ -150,7 +150,7 @@ public class FieldFormatDetail {
 				setVisible(true);
 			}
 		});
-		buttonVLYes.setText(Messages.getString("Yes"));
+		buttonVLYes.setText(Messages.Yes);
 		
 		if (actionType == DialogActionTypes.CREATE) {
 			buttonVLNo.setSelection(true);
@@ -174,7 +174,7 @@ public class FieldFormatDetail {
 		// Length
 		
 		labelLength = new Label(compositeHeader, SWT.NONE);
-		labelLength.setText(Messages.getString("Length_colon"));
+		labelLength.setText(Messages.Length_colon);
 
 		textLength = new Text(compositeHeader, SWT.BORDER);
 		textLength.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -197,7 +197,7 @@ public class FieldFormatDetail {
 		// Decimal positions
 		
 		labelDecimalPositions = new Label(compositeHeader, SWT.NONE);
-		labelDecimalPositions.setText(Messages.getString("Decimal_positions_colon"));
+		labelDecimalPositions.setText(Messages.Decimal_positions_colon);
 
 		textDecimalPositions = new Text(compositeHeader, SWT.BORDER);
 		textDecimalPositions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -225,7 +225,7 @@ public class FieldFormatDetail {
 		// Bytes
 		
 		labelBytes = new Label(compositeHeader, SWT.NONE);
-		labelBytes.setText(Messages.getString("Bytes_colon"));
+		labelBytes.setText(Messages.Bytes_colon);
 
 		textBytes = new Text(compositeHeader, SWT.BORDER);
 		textBytes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -352,7 +352,7 @@ public class FieldFormatDetail {
 		// The value in field 'Type' is not valid.
 		
 		if (!validatorType.validate(comboType.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Type'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Type_is_not_valid);
 			comboType.setFocus();
 			return false;
 		}
@@ -362,7 +362,7 @@ public class FieldFormatDetail {
 			// The value in field 'Length' is not valid.
 			
 			if (!validatorLength.validate(textLength.getText()) || validatorLength.getIntegerValue() == 0) {
-				setErrorMessage(Messages.getString("The_value_in_field_'Length'_is_not_valid."));
+				setErrorMessage(Messages.The_value_in_field_Length_is_not_valid);
 				textLength.setFocus();
 				return false;
 			}
@@ -374,7 +374,7 @@ public class FieldFormatDetail {
 				// The value in field 'Decimal positions' is not valid.
 				
 				if (!validatorDecimalPositions.validate(textDecimalPositions.getText())) {
-					setErrorMessage(Messages.getString("The_value_in_field_'Decimal_positions'_is_not_valid."));
+					setErrorMessage(Messages.The_value_in_field_Decimal_positions_is_not_valid);
 					textDecimalPositions.setFocus();
 					return false;
 				}
@@ -385,7 +385,7 @@ public class FieldFormatDetail {
 				// Decimal positions may only be specified, if type is *DEC.
 				
 				if (!textDecimalPositions.getText().equals("")) {
-					setErrorMessage(Messages.getString("Decimal_positions_may_only_be_specified,_if_type_is_*DEC."));
+					setErrorMessage(Messages.Decimal_positions_may_only_be_specified_if_type_is_DEC);
 					textDecimalPositions.setFocus();
 					return false;
 				}
@@ -399,7 +399,7 @@ public class FieldFormatDetail {
 			// The value in field 'Bytes' is not valid.
 			
 			if (!validatorBytes.validate(textBytes.getText())) {
-				setErrorMessage(Messages.getString("The_value_in_field_'Bytes'_is_not_valid."));
+				setErrorMessage(Messages.The_value_in_field_Bytes_is_not_valid);
 				textBytes.setFocus();
 				return false;
 			}
@@ -407,7 +407,7 @@ public class FieldFormatDetail {
 			// Bytes have to be 2 or 4.
 			
 			if (validatorBytes.getIntegerValue() != 2 && validatorBytes.getIntegerValue() != 4) {
-				setErrorMessage(Messages.getString("Bytes_have_to_be_2_or_4."));
+				setErrorMessage(Messages.Bytes_have_to_be_2_or_4);
 				textBytes.setFocus();
 				return false;
 			}

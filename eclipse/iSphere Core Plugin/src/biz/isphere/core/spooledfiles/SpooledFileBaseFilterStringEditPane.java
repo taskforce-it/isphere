@@ -31,7 +31,7 @@ public class SpooledFileBaseFilterStringEditPane {
 	public void createContents(Composite composite_prompts, ModifyListener keyListener, String inputFilterString) {
 		
 		Label userLabel = new Label(composite_prompts, SWT.NONE);
-		userLabel.setText(Messages.getString("User") + ":");
+		userLabel.setText(Messages.User + ":");
 		userText = new Text(composite_prompts, SWT.BORDER);
 		GridData gd = new GridData();
 		gd.widthHint = 75;
@@ -39,7 +39,7 @@ public class SpooledFileBaseFilterStringEditPane {
 		userText.setTextLimit(10);
 		
 		Label outqLabel = new Label(composite_prompts, SWT.NONE);
-		outqLabel.setText(Messages.getString("Output_queue") + ":");
+		outqLabel.setText(Messages.Output_queue + ":");
 		outqText = new Text(composite_prompts, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 75;
@@ -47,7 +47,7 @@ public class SpooledFileBaseFilterStringEditPane {
 		outqText.setTextLimit(10);
 		
 		Label outqLibLabel = new Label(composite_prompts, SWT.NONE);
-		outqLibLabel.setText(Messages.getString("___Library") + ":");
+		outqLibLabel.setText(Messages.___Library + ":");
 		outqLibText = new Text(composite_prompts, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 75;
@@ -55,7 +55,7 @@ public class SpooledFileBaseFilterStringEditPane {
 		outqLibText.setTextLimit(10);
 		
 		Label dtaLabel = new Label(composite_prompts, SWT.NONE);
-		dtaLabel.setText(Messages.getString("User_data") + ":");
+		dtaLabel.setText(Messages.User_data + ":");
 		userDataText = new Text(composite_prompts, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 75;
@@ -63,7 +63,7 @@ public class SpooledFileBaseFilterStringEditPane {
 		userDataText.setTextLimit(10);
 		
 		Label typeLabel = new Label(composite_prompts, SWT.NONE);
-		typeLabel.setText(Messages.getString("Form_type") + ":");
+		typeLabel.setText(Messages.Form_type + ":");
 		formTypeText = new Text(composite_prompts, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 75;

@@ -92,7 +92,7 @@ public class MessageDescriptionDetail {
 		// Connection		
 
 		final Label labelConnection = new Label(compositeHeader, SWT.NONE);
-		labelConnection.setText(Messages.getString("Connection_colon"));
+		labelConnection.setText(Messages.Connection_colon);
 		
 		final Text textConnection = new Text(compositeHeader, SWT.BORDER);
 		textConnection.setText(_messageDescription.getConnection());
@@ -102,7 +102,7 @@ public class MessageDescriptionDetail {
 		// Library		
 
 		final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
-		labelLibrary.setText(Messages.getString("Library_colon"));
+		labelLibrary.setText(Messages.Library_colon);
 		
 		final Text textLibrary = new Text(compositeHeader, SWT.BORDER);
 		textLibrary.setText(_messageDescription.getLibrary());
@@ -112,7 +112,7 @@ public class MessageDescriptionDetail {
 		// Message file		
 
 		final Label labelMessageFile = new Label(compositeHeader, SWT.NONE);
-		labelMessageFile.setText(Messages.getString("Message_file_colon"));
+		labelMessageFile.setText(Messages.Message_file_colon);
 		
 		final Text textMessageFile = new Text(compositeHeader, SWT.BORDER);
 		textMessageFile.setText(_messageDescription.getMessageFile());
@@ -122,7 +122,7 @@ public class MessageDescriptionDetail {
 		// Message-Id.
 		
 		final Label labelMessageId = new Label(compositeHeader, SWT.NONE);
-		labelMessageId.setText(Messages.getString("Message-Id._colon"));
+		labelMessageId.setText(Messages.Message_Id_colon);
 
 		textMessageId = new Text(compositeHeader, SWT.BORDER);
 		textMessageId.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -144,7 +144,7 @@ public class MessageDescriptionDetail {
 		// Message
 		
 		final Label labelMessage = new Label(compositeHeader, SWT.NONE);
-		labelMessage.setText(Messages.getString("Message_colon"));
+		labelMessage.setText(Messages.Message_colon);
 
 		textMessage = new Text(compositeHeader, SWT.BORDER);
 		textMessage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -166,7 +166,7 @@ public class MessageDescriptionDetail {
 		// Helptext
 		
 		final Label labelHelpText = new Label(compositeHeader, SWT.NONE);
-		labelHelpText.setText(Messages.getString("Helptext_colon"));
+		labelHelpText.setText(Messages.Helptext_colon);
 
 		comboHelpText = new CCombo(compositeHeader, SWT.BORDER);
 		comboHelpText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -269,7 +269,7 @@ public class MessageDescriptionDetail {
 			// The value in field 'Message-Id.' is not valid.
 			
 			if (!validatorMessageId.validate(textMessageId.getText())) {
-				setErrorMessage(Messages.getString("The_value_in_field_'Message-Id.'_is_not_valid."));
+				setErrorMessage(Messages.The_value_in_field_Message_Id_is_not_valid);
 				textMessageId.setFocus();
 				return false;
 			}
@@ -277,7 +277,7 @@ public class MessageDescriptionDetail {
 			// The value in field 'Message' is not valid.
 			
 			if (!validatorMessage.validate(textMessage.getText())) {
-				setErrorMessage(Messages.getString("The_value_in_field_'Message'_is_not_valid."));
+				setErrorMessage(Messages.The_value_in_field_Message_is_not_valid);
 				textMessage.setFocus();
 				return false;
 			}
@@ -285,7 +285,7 @@ public class MessageDescriptionDetail {
 			// The value in field 'Helptext' is not valid.
 			
 			if (!validatorHelpText.validate(comboHelpText.getText())) {
-				setErrorMessage(Messages.getString("The_value_in_field_'Helptext'_is_not_valid."));
+				setErrorMessage(Messages.The_value_in_field_Helptext_is_not_valid);
 				comboHelpText.setFocus();
 				return false;
 			}
@@ -371,29 +371,29 @@ public class MessageDescriptionDetail {
 					return false;
 				}
 				else {
-					setErrorMessage(Messages.getString("Unknown_error_occured."));
+					setErrorMessage(Messages.Unknown_error_occured);
 					return false;
 				}
 			}
 		}
 		catch (AS400SecurityException e) {
-			setErrorMessage(Messages.getString("Unknown_error_occured."));
+			setErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (ErrorCompletingRequestException e) {
-			setErrorMessage(Messages.getString("Unknown_error_occured."));
+			setErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (IOException e) {
-			setErrorMessage(Messages.getString("Unknown_error_occured."));
+			setErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (InterruptedException e) {
-			setErrorMessage(Messages.getString("Unknown_error_occured."));
+			setErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (PropertyVetoException e) {
-			setErrorMessage(Messages.getString("Unknown_error_occured."));
+			setErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		}
 		

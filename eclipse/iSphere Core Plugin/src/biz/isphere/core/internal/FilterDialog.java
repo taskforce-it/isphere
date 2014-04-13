@@ -47,7 +47,7 @@ public class FilterDialog extends Dialog {
 		
 		Label labelFilter = new Label(compositeFilter, SWT.NONE);
 		labelFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-		labelFilter.setText(Messages.getString("Filter_colon"));
+		labelFilter.setText(Messages.Filter_colon);
 		
 		textFilter = new Text(compositeFilter, SWT.BORDER);
 		textFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -72,13 +72,13 @@ public class FilterDialog extends Dialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("Cancel"), false);
+		createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
 	}
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.getString("Specify_a_filter"));
+		newShell.setText(Messages.Specify_a_filter);
 	}
 
 	protected void okPressed() {
@@ -86,7 +86,7 @@ public class FilterDialog extends Dialog {
 		textFilter.setText(textFilter.getText().trim());
 
 		if (!Validator.validateFile(textFilter.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Filter'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Filter_is_not_valid);
 			textFilter.setFocus();
 			return;
 		}

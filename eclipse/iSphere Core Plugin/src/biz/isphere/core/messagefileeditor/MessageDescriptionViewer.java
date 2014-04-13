@@ -158,7 +158,7 @@ public class MessageDescriptionViewer {
 		compositeHeader.setLayout(gridLayoutCompositeHeader);
 
 		Label labelFilter = new Label(compositeHeader, SWT.NONE);
-		labelFilter.setText(Messages.getString("Filter_colon"));
+		labelFilter.setText(Messages.Filter_colon);
 
 		textFilter = new Text(compositeHeader, SWT.BORDER);
 		textFilter.addKeyListener(new KeyAdapter() {
@@ -175,7 +175,7 @@ public class MessageDescriptionViewer {
 		textFilter.setLayoutData(new GridData(Size.getSize(100), SWT.DEFAULT));
 
 		Label labelCaseSensitive = new Label(compositeHeader, SWT.NONE);
-		labelCaseSensitive.setText(Messages.getString("Case_sensitive_colon"));
+		labelCaseSensitive.setText(Messages.Case_sensitive_colon);
 		
 		Composite groupCaseSensitive = new Composite(compositeHeader, SWT.NONE);
 		GridLayout editableLayout = new GridLayout();
@@ -188,7 +188,7 @@ public class MessageDescriptionViewer {
 				_tableViewer.addFilter(_filterTableViewer);
 			}
 		});
-		buttonNo.setText(Messages.getString("No"));
+		buttonNo.setText(Messages.No);
 		buttonNo.setSelection(true);
 		
 		buttonYes = new Button(groupCaseSensitive, SWT.RADIO);
@@ -197,7 +197,7 @@ public class MessageDescriptionViewer {
 				_tableViewer.addFilter(_filterTableViewer);
 			}
 		});
-		buttonYes.setText(Messages.getString("Yes"));
+		buttonYes.setText(Messages.Yes);
 		buttonYes.setSelection(false);
 		
 		_tableViewer = new TableViewer(container, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
@@ -241,11 +241,11 @@ public class MessageDescriptionViewer {
 
 		final TableColumn columnMessageId = new TableColumn(_table, SWT.NONE);
 		columnMessageId.setWidth(Size.getSize(100));
-		columnMessageId.setText(Messages.getString("Message-Id."));
+		columnMessageId.setText(Messages.Message_Id);
 
 		final TableColumn columnMessage = new TableColumn(_table, SWT.NONE);
 		columnMessage.setWidth(Size.getSize(900));
-		columnMessage.setText(Messages.getString("Message"));
+		columnMessage.setText(Messages.Message);
 	
 		final Menu menuTableMessageDescriptions = new Menu(_table);
 		menuTableMessageDescriptions.addMenuListener(new MenuAdapter() {
@@ -329,7 +329,7 @@ public class MessageDescriptionViewer {
 				
 				if (isNew) {
 					menuItemNew = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemNew.setText(Messages.getString("New"));
+					menuItemNew.setText(Messages.New);
 					menuItemNew.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_NEW));
 					menuItemNew.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -340,7 +340,7 @@ public class MessageDescriptionViewer {
 
 				if (isChange) {
 					menuItemChange = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemChange.setText(Messages.getString("Change"));
+					menuItemChange.setText(Messages.Change);
 					menuItemChange.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));
 					menuItemChange.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -351,7 +351,7 @@ public class MessageDescriptionViewer {
 
 				if (isCopy) {
 					menuItemCopy = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemCopy.setText(Messages.getString("Copy"));
+					menuItemCopy.setText(Messages.Copy);
 					menuItemCopy.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY));
 					menuItemCopy.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -362,7 +362,7 @@ public class MessageDescriptionViewer {
 
 				if (isDelete) {
 					menuItemDelete = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemDelete.setText(Messages.getString("Delete"));
+					menuItemDelete.setText(Messages.Delete);
 					menuItemDelete.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
 					menuItemDelete.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -373,7 +373,7 @@ public class MessageDescriptionViewer {
 				
 				if (isDisplay) {
 					menuItemDisplay = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemDisplay.setText(Messages.getString("Display"));
+					menuItemDisplay.setText(Messages.Display);
 					menuItemDisplay.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DISPLAY));
 					menuItemDisplay.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
@@ -388,7 +388,7 @@ public class MessageDescriptionViewer {
 
 				if (isRefresh) {
 					menuItemRefresh = new MenuItem(menuTableMessageDescriptions, SWT.NONE);
-					menuItemRefresh.setText(Messages.getString("Refresh"));
+					menuItemRefresh.setText(Messages.Refresh);
 					menuItemRefresh.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REFRESH));
 					menuItemRefresh.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
