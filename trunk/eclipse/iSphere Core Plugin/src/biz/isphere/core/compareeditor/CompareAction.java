@@ -92,11 +92,10 @@ public class CompareAction {
 					
 					IEditorPart editor = findMemberInEditor(leftMember);
 					if (editor != null) {
-			            // FIXME: Define missing constant
-//						MessageDialog.openError(
-//								Display.getCurrent().getActiveShell(), 
-//								Messages.Compare_source_members, 
-//								Messages.getString("Member_is_already_open_in_an_editor."));
+						MessageDialog.openError(
+								Display.getCurrent().getActiveShell(), 
+								Messages.Compare_source_members, 
+								Messages.Member_is_already_open_in_an_editor);
 						return;
 					}
 
