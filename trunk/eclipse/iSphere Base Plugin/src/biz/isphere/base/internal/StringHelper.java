@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 public final class StringHelper {
 
     /**
-     * Splitts a given string of tokens into pieces using a given seperator.
+     * Splits a given string of tokens into pieces using a given separator.
      * 
      * @param aText String of tokens, separated by a separator value.
      * @param aSeparator Separator value.
