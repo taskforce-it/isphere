@@ -60,6 +60,10 @@ public final class Preferences {
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
+    
+    private static final String HOST_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
+    
+    private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -97,6 +101,14 @@ public final class Preferences {
 
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
+    }
+    
+    public String getHostName() {
+        return preferenceStore.getString(HOST_NAME);
+    }
+    
+    public int getFtpPortNumber() {
+        return preferenceStore.getInt(FTP_PORT_NUMBER);
     }
 
     public String getMessageFileSearchString() {
@@ -162,6 +174,14 @@ public final class Preferences {
     public void setISphereLibrary(String aLibrary) {
         preferenceStore.setValue(ISPHERE_LIBRARY, aLibrary.trim());
     }
+    
+    public void setHostName(String aHostName) {
+        preferenceStore.setValue(HOST_NAME, aHostName);
+    }
+    
+    public void setFtpPortNumber(int aPortNumber) {
+        preferenceStore.setValue(FTP_PORT_NUMBER, aPortNumber);
+    }
 
     public void setMessageFileSearchString(String aSearchString) {
         preferenceStore.setValue(MESSAGEFILESEARCH_SEARCHSTRING, aSearchString.trim());
@@ -221,6 +241,8 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
+        preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
+        preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
 
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
 
@@ -250,6 +272,24 @@ public final class Preferences {
         return "ISPHERE";
     }
 
+    /**
+     * Returns the default host name where to upload the iSphere library.
+     * 
+     * @return default host name
+     */
+    public String getDefaultHostName() {
+        return "";
+    }
+    
+    /**
+     * Returns the default FTP port number.
+     * 
+     * @return default FTPport number
+     */
+    public int getDefaultFtpPortNumber() {
+        return 21;
+    }
+    
     /**
      * Returns the default format for spooled file conversion on double-click on
      * a spooled file.

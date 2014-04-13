@@ -351,8 +351,9 @@ public class SpooledFile {
         if (message == null) {
 			MessageDialog.openError(
 					Display.getCurrent().getActiveShell(),
-					Messages.getString("Error"), 
-                Messages.getString("No_Messages").replaceAll("&1", file).replaceAll("&2", Integer.toString(fileNumber)));
+					Messages.Error,
+					Messages.bind(Messages.No_Messages, new String[]{file, Integer.toString(fileNumber)}));
+                // Messages.getString("No_Messages").replaceAll("&1", file).replaceAll("&2", Integer.toString(fileNumber)));
         } 
         else {
             SpooledFileMessageDialog dialog = new SpooledFileMessageDialog(Display.getCurrent().getActiveShell(), this);
@@ -479,7 +480,7 @@ public class SpooledFile {
             }
             
             if (!hasSpooledFile) {
-                return Messages.getString("Could_not_create_stream_file_for_spooled_file_on_host.");
+                return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
             } 
 
             if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
@@ -774,7 +775,7 @@ public class SpooledFile {
                 }
 
                 if (!hasSpooledFile) {
-                    return Messages.getString("Could_not_create_stream_file_for_spooled_file_on_host.");
+                    return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
                 }
 
             } 

@@ -88,7 +88,7 @@ public class BindingDirectoryEntryDetail {
 		// Library
 		
 		final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
-		labelLibrary.setText(Messages.getString("Library_colon"));
+		labelLibrary.setText(Messages.Library_colon);
 
 		comboLibrary = new CCombo(compositeHeader, SWT.BORDER);
 		comboLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -113,7 +113,7 @@ public class BindingDirectoryEntryDetail {
 		// Object
 		
 		final Label labelObject = new Label(compositeHeader, SWT.NONE);
-		labelObject.setText(Messages.getString("Object_colon"));
+		labelObject.setText(Messages.Object_colon);
 
 		textObject = new Text(compositeHeader, SWT.BORDER);
 		textObject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -135,7 +135,7 @@ public class BindingDirectoryEntryDetail {
 		// Object type
 		
 		final Label labelObjectType = new Label(compositeHeader, SWT.NONE);
-		labelObjectType.setText(Messages.getString("Object_type_colon"));
+		labelObjectType.setText(Messages.Object_type_colon);
 
 		comboObjectType = new CCombo(compositeHeader, SWT.BORDER);
 		comboObjectType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -177,7 +177,7 @@ public class BindingDirectoryEntryDetail {
 		if (level.compareTo("V6R1M0") >= 0) {
 
 			final Label labelActivation = new Label(compositeHeader, SWT.NONE);
-			labelActivation.setText(Messages.getString("Activation_colon"));
+			labelActivation.setText(Messages.Activation_colon);
 
 			comboActivation = new CCombo(compositeHeader, SWT.BORDER);
 			comboActivation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -283,7 +283,7 @@ public class BindingDirectoryEntryDetail {
 		// The value in field 'Library' is not valid.
 		
 		if (!validatorLibrary.validate(comboLibrary.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Library'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Library_is_not_valid);
 			comboLibrary.setFocus();
 			return false;
 		}
@@ -291,7 +291,7 @@ public class BindingDirectoryEntryDetail {
 		// The value in field 'Object' is not valid.
 		
 		if (!validatorObject.validate(textObject.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Object'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Object_is_not_valid);
 			textObject.setFocus();
 			return false;
 		}
@@ -299,7 +299,7 @@ public class BindingDirectoryEntryDetail {
 		// The value in field 'Object type' is not valid.
 		
 		if (!validatorObjectType.validate(comboObjectType.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Object_type'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Object_type_is_not_valid);
 			comboObjectType.setFocus();
 			return false;
 		}
@@ -307,7 +307,7 @@ public class BindingDirectoryEntryDetail {
 		// The value in field 'Activation' is not valid.
 		
 		if (level.compareTo("V6R1M0") >= 0 && comboObjectType.getText().equals("*SRVPGM") && !validatorActivation.validate(comboActivation.getText())) {
-			setErrorMessage(Messages.getString("The_value_in_field_'Activation'_is_not_valid."));
+			setErrorMessage(Messages.The_value_in_field_Activation_is_not_valid);
 			comboActivation.setFocus();
 			return false;
 		}
@@ -325,7 +325,7 @@ public class BindingDirectoryEntryDetail {
 				if (entry.getLibrary().equals(comboLibrary.getText()) &&
 						entry.getObject().equals(textObject.getText()) &&
 						entry.getObjectType().equals(comboObjectType.getText())) {
-					setErrorMessage(Messages.getString("The_entry_does_already_exist."));
+					setErrorMessage(Messages.The_entry_does_already_exist);
 					comboLibrary.setFocus();
 					return false;
 				}

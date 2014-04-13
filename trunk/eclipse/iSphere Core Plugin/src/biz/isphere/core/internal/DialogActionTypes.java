@@ -21,19 +21,19 @@ public class DialogActionTypes {
 	public static String getText(int actionType) {
 		switch (actionType) {
 			case CREATE: {
-				return Messages.getString("CREATEX");
+				return Messages.CREATEX;
 			}
 			case CHANGE: {
-				return Messages.getString("CHANGEX");
+				return Messages.CHANGEX;
 			}
 			case COPY: {
-				return Messages.getString("COPYX");
+				return Messages.COPYX;
 			}
 			case DELETE: {
-				return Messages.getString("DELETEX");
+				return Messages.DELETEX;
 			}
 			case DISPLAY: {
-				return Messages.getString("DISPLAYX");
+				return Messages.DISPLAYX;
 			}
 		}
 		return "";

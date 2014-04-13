@@ -69,33 +69,34 @@ public class CompareAction {
 					if (threeWay && (ancestorMember == null || !ancestorMember.exists())) {
 						MessageDialog.openError(
 								Display.getCurrent().getActiveShell(), 
-								Messages.getString("Compare_source_members"), 
-								Messages.getString("Member_not_found_colon_ANCESTOR"));  
+								Messages.Compare_source_members, 
+								Messages.Member_not_found_colon_ANCESTOR);  
 						return;
 					}
 					
 					if (leftMember == null || !leftMember.exists()) {
 						MessageDialog.openError(
 								Display.getCurrent().getActiveShell(), 
-								Messages.getString("Compare_source_members"), 
-								Messages.getString("Member_not_found_colon_LEFT"));  
+								Messages.Compare_source_members, 
+								Messages.Member_not_found_colon_LEFT);  
 						return;
 					} 
 					
 					if (rightMember == null || !rightMember.exists()) {
 						MessageDialog.openError(
 								Display.getCurrent().getActiveShell(), 
-								Messages.getString("Compare_source_members"), 
-								Messages.getString("Member_not_found_colon_RIGHT"));  
+								Messages.Compare_source_members, 
+								Messages.Member_not_found_colon_RIGHT);  
 						return;
 					}
 					
 					IEditorPart editor = findMemberInEditor(leftMember);
 					if (editor != null) {
-						MessageDialog.openError(
-								Display.getCurrent().getActiveShell(), 
-								Messages.getString("Compare_source_members"), 
-								Messages.getString("Member_is_already_open_in_an_editor."));
+			            // FIXME: Define missing constant
+//						MessageDialog.openError(
+//								Display.getCurrent().getActiveShell(), 
+//								Messages.Compare_source_members, 
+//								Messages.getString("Member_is_already_open_in_an_editor."));
 						return;
 					}
 

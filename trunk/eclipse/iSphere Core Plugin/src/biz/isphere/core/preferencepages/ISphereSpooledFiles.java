@@ -82,7 +82,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         container.setLayout(gridLayout);
 
         Group groupDefaultFormat = new Group(container, SWT.NONE);
-        groupDefaultFormat.setText(Messages.getString("When_double_clicking_on_a_spooled_file_open_it_as"));
+        groupDefaultFormat.setText(Messages.When_double_clicking_on_a_spooled_file_open_it_as);
         GridLayout gridLayoutDefaultFormat = new GridLayout();
         gridLayoutDefaultFormat.numColumns = 3;
         groupDefaultFormat.setLayout(gridLayoutDefaultFormat);
@@ -113,14 +113,14 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         Group groupConversionText = new Group(container, SWT.NONE);
-        groupConversionText.setText(Messages.getString("Conversion_to_format") + " *TEXT");
+        groupConversionText.setText(Messages.Conversion_to_format + " *TEXT");
         GridLayout gridLayoutConversionText = new GridLayout();
         gridLayoutConversionText.numColumns = 3;
         groupConversionText.setLayout(gridLayoutConversionText);
         groupConversionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         buttonConversionTextDefault = new Button(groupConversionText, SWT.RADIO);
-        buttonConversionTextDefault.setText(Messages.getString("Default"));
+        buttonConversionTextDefault.setText(Messages.Default);
         buttonConversionTextDefault.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_DEFAULT;
@@ -131,7 +131,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionTextUserDefined = new Button(groupConversionText, SWT.RADIO);
-        buttonConversionTextUserDefined.setText(Messages.getString("User_defined"));
+        buttonConversionTextUserDefined.setText(Messages.User_defined);
         buttonConversionTextUserDefined.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_USER_DEFINED;
@@ -142,7 +142,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionTextTransform = new Button(groupConversionText, SWT.RADIO);
-        buttonConversionTextTransform.setText(Messages.getString("Transform"));
+        buttonConversionTextTransform.setText(Messages.Transform);
         buttonConversionTextTransform.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionText = IPreferences.SPLF_CONVERSION_TRANSFORM;
@@ -153,7 +153,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         Label labelConversionTextLibrary = new Label(groupConversionText, SWT.NONE);
-        labelConversionTextLibrary.setText(Messages.getString("Library_colon"));
+        labelConversionTextLibrary.setText(Messages.Library_colon);
 
         textConversionTextLibrary = new Text(groupConversionText, SWT.BORDER);
         textConversionTextLibrary.addKeyListener(new KeyAdapter() {
@@ -170,7 +170,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         validatorConversionTextLibrary.setRestricted(false);
 
         Label labelConversionTextCommand = new Label(groupConversionText, SWT.NONE);
-        labelConversionTextCommand.setText(Messages.getString("Command_colon"));
+        labelConversionTextCommand.setText(Messages.Command_colon);
 
         textConversionTextCommand = new Text(groupConversionText, SWT.BORDER);
         textConversionTextCommand.addKeyListener(new KeyAdapter() {
@@ -182,14 +182,14 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextCommand.setTextLimit(256);
 
         Group groupConversionHTML = new Group(container, SWT.NONE);
-        groupConversionHTML.setText(Messages.getString("Conversion_to_format") + " *HTML");
+        groupConversionHTML.setText(Messages.Conversion_to_format + " *HTML");
         GridLayout gridLayoutConversionHTML = new GridLayout();
         gridLayoutConversionHTML.numColumns = 3;
         groupConversionHTML.setLayout(gridLayoutConversionHTML);
         groupConversionHTML.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         buttonConversionHTMLDefault = new Button(groupConversionHTML, SWT.RADIO);
-        buttonConversionHTMLDefault.setText(Messages.getString("Default"));
+        buttonConversionHTMLDefault.setText(Messages.Default);
         buttonConversionHTMLDefault.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_DEFAULT;
@@ -200,7 +200,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionHTMLUserDefined = new Button(groupConversionHTML, SWT.RADIO);
-        buttonConversionHTMLUserDefined.setText(Messages.getString("User_defined"));
+        buttonConversionHTMLUserDefined.setText(Messages.User_defined);
         buttonConversionHTMLUserDefined.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_USER_DEFINED;
@@ -211,7 +211,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionHTMLTransform = new Button(groupConversionHTML, SWT.RADIO);
-        buttonConversionHTMLTransform.setText(Messages.getString("Transform"));
+        buttonConversionHTMLTransform.setText(Messages.Transform);
         buttonConversionHTMLTransform.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionHTML = IPreferences.SPLF_CONVERSION_TRANSFORM;
@@ -222,7 +222,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         Label labelConversionHTMLLibrary = new Label(groupConversionHTML, SWT.NONE);
-        labelConversionHTMLLibrary.setText(Messages.getString("Library_colon"));
+        labelConversionHTMLLibrary.setText(Messages.Library_colon);
 
         textConversionHTMLLibrary = new Text(groupConversionHTML, SWT.BORDER);
         textConversionHTMLLibrary.addKeyListener(new KeyAdapter() {
@@ -239,7 +239,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         validatorConversionHTMLLibrary.setRestricted(false);
 
         Label labelConversionHTMLCommand = new Label(groupConversionHTML, SWT.NONE);
-        labelConversionHTMLCommand.setText(Messages.getString("Command_colon"));
+        labelConversionHTMLCommand.setText(Messages.Command_colon);
 
         textConversionHTMLCommand = new Text(groupConversionHTML, SWT.BORDER);
         textConversionHTMLCommand.addKeyListener(new KeyAdapter() {
@@ -251,14 +251,14 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLCommand.setTextLimit(256);
 
         Group groupConversionPDF = new Group(container, SWT.NONE);
-        groupConversionPDF.setText(Messages.getString("Conversion_to_format") + " *PDF");
+        groupConversionPDF.setText(Messages.Conversion_to_format + " *PDF");
         GridLayout gridLayoutConversionPDF = new GridLayout();
         gridLayoutConversionPDF.numColumns = 3;
         groupConversionPDF.setLayout(gridLayoutConversionPDF);
         groupConversionPDF.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         buttonConversionPDFDefault = new Button(groupConversionPDF, SWT.RADIO);
-        buttonConversionPDFDefault.setText(Messages.getString("Default"));
+        buttonConversionPDFDefault.setText(Messages.Default);
         buttonConversionPDFDefault.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_DEFAULT;
@@ -269,7 +269,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionPDFUserDefined = new Button(groupConversionPDF, SWT.RADIO);
-        buttonConversionPDFUserDefined.setText(Messages.getString("User_defined"));
+        buttonConversionPDFUserDefined.setText(Messages.User_defined);
         buttonConversionPDFUserDefined.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_USER_DEFINED;
@@ -280,7 +280,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         buttonConversionPDFTransform = new Button(groupConversionPDF, SWT.RADIO);
-        buttonConversionPDFTransform.setText(Messages.getString("Transform"));
+        buttonConversionPDFTransform.setText(Messages.Transform);
         buttonConversionPDFTransform.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 conversionPDF = IPreferences.SPLF_CONVERSION_TRANSFORM;
@@ -291,7 +291,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
 
         Label labelConversionPDFLibrary = new Label(groupConversionPDF, SWT.NONE);
-        labelConversionPDFLibrary.setText(Messages.getString("Library_colon"));
+        labelConversionPDFLibrary.setText(Messages.Library_colon);
 
         textConversionPDFLibrary = new Text(groupConversionPDF, SWT.BORDER);
         textConversionPDFLibrary.addKeyListener(new KeyAdapter() {
@@ -308,7 +308,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         validatorConversionPDFLibrary.setRestricted(false);
 
         Label labelConversionPDFCommand = new Label(groupConversionPDF, SWT.NONE);
-        labelConversionPDFCommand.setText(Messages.getString("Command_colon"));
+        labelConversionPDFCommand.setText(Messages.Command_colon);
 
         textConversionPDFCommand = new Text(groupConversionPDF, SWT.BORDER);
         textConversionPDFCommand.addKeyListener(new KeyAdapter() {
@@ -320,7 +320,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFCommand.setTextLimit(256);
 
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
-        groupSubstitutionVariables.setText(Messages.getString("Substitution_variables_for_conversion_commands"));
+        groupSubstitutionVariables.setText(Messages.Substitution_variables_for_conversion_commands);
         GridLayout gridLayoutSubstitutionVariables = new GridLayout();
         gridLayoutSubstitutionVariables.numColumns = 3;
         groupSubstitutionVariables.setLayout(gridLayoutSubstitutionVariables);
@@ -334,7 +334,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable12.setText(":");
 
         Label labelSubstitutionVariable13 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable13.setText(Messages.getString("File"));
+        labelSubstitutionVariable13.setText(Messages.File);
 
         Text labelSubstitutionVariable21 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable21.setText("&SPLFNBR");
@@ -344,7 +344,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable22.setText(":");
 
         Label labelSubstitutionVariable23 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable23.setText(Messages.getString("File_number"));
+        labelSubstitutionVariable23.setText(Messages.File_number);
 
         Text labelSubstitutionVariable31 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable31.setText("&JOBNAME");
@@ -354,7 +354,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable32.setText(":");
 
         Label labelSubstitutionVariable33 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable33.setText(Messages.getString("Job_name"));
+        labelSubstitutionVariable33.setText(Messages.Job_name);
 
         Text labelSubstitutionVariable41 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable41.setText("&JOBUSR");
@@ -364,7 +364,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable42.setText(":");
 
         Label labelSubstitutionVariable43 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable43.setText(Messages.getString("Job_user"));
+        labelSubstitutionVariable43.setText(Messages.Job_user);
 
         Text labelSubstitutionVariable51 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable51.setText("&JOBNBR");
@@ -374,7 +374,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable52.setText(":");
 
         Label labelSubstitutionVariable53 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable53.setText(Messages.getString("Job_number"));
+        labelSubstitutionVariable53.setText(Messages.Job_number);
 
         Text labelSubstitutionVariable61 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable61.setText("&STMFDIR");
@@ -384,7 +384,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable62.setText(":");
 
         Label labelSubstitutionVariable63 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable63.setText(Messages.getString("Directory"));
+        labelSubstitutionVariable63.setText(Messages.Directory);
 
         Text labelSubstitutionVariable71 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable71.setText("&STMF");
@@ -394,7 +394,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable72.setText(":");
 
         Label labelSubstitutionVariable73 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable73.setText(Messages.getString("Stream_file"));
+        labelSubstitutionVariable73.setText(Messages.Stream_file);
 
         Text labelSubstitutionVariable81 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable81.setText("&CODPAG");
@@ -404,7 +404,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable82.setText(":");
 
         Label labelSubstitutionVariable83 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable83.setText(Messages.getString("Code_page"));
+        labelSubstitutionVariable83.setText(Messages.Code_page);
 
         Text labelSubstitutionVariable91 = new Text(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable91.setText("&FMT");
@@ -414,7 +414,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelSubstitutionVariable92.setText(":");
 
         Label labelSubstitutionVariable93 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable93.setText(Messages.getString("Format"));
+        labelSubstitutionVariable93.setText(Messages.Format);
 
         setScreenToValues();
 
@@ -433,13 +433,13 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         if (conversionText.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
             if (conversionTextLibrary.equals("") || !validatorConversionTextLibrary.validate(conversionTextLibrary)) {
-                setErrorMessage("*TEXT - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
+                setErrorMessage("*TEXT - " + Messages.The_value_in_field_Library_is_not_valid);
                 setValid(false);
                 return;
             }
 
             if (conversionTextCommand.equals("")) {
-                setErrorMessage("*TEXT - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
+                setErrorMessage("*TEXT - " + Messages.The_value_in_field_Command_is_not_valid);
                 setValid(false);
                 return;
             }
@@ -449,13 +449,13 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         if (conversionHTML.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
             if (conversionHTMLLibrary.equals("") || !validatorConversionHTMLLibrary.validate(conversionHTMLLibrary)) {
-                setErrorMessage("*HTML - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
+                setErrorMessage("*HTML - " + Messages.The_value_in_field_Library_is_not_valid);
                 setValid(false);
                 return;
             }
 
             if (conversionHTMLCommand.equals("")) {
-                setErrorMessage("*HTML - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
+                setErrorMessage("*HTML - " + Messages.The_value_in_field_Command_is_not_valid);
                 setValid(false);
                 return;
             }
@@ -465,13 +465,13 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         if (conversionPDF.equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
 
             if (conversionPDFLibrary.equals("") || !validatorConversionPDFLibrary.validate(conversionPDFLibrary)) {
-                setErrorMessage("*PDF - " + Messages.getString("The_value_in_field_'Library'_is_not_valid."));
+                setErrorMessage("*PDF - " + Messages.The_value_in_field_Library_is_not_valid);
                 setValid(false);
                 return;
             }
 
             if (conversionPDFCommand.equals("")) {
-                setErrorMessage("*PDF - " + Messages.getString("The_value_in_field_'Command'_is_not_valid."));
+                setErrorMessage("*PDF - " + Messages.The_value_in_field_Command_is_not_valid);
                 setValid(false);
                 return;
             }

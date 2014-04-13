@@ -51,13 +51,13 @@ public class FieldFormatDetailDialog extends Dialog {
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("Cancel"), false);
+		createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
 	}
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.getString("Field_format"));
+		newShell.setText(Messages.Field_format);
 	}
 	
 	protected Point getInitialSize() {

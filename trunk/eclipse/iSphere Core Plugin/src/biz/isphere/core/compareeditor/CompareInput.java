@@ -71,7 +71,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 	protected Object prepareInput(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			try {
-				monitor.beginTask(Messages.getString("Downloading_source_members"), IProgressMonitor.UNKNOWN);
+				monitor.beginTask(Messages.Downloading_source_members, IProgressMonitor.UNKNOWN);
 				if (threeWay) {
 					ancestorMember.download(monitor);
 					IResource fAncestorResource = ancestorMember.getLocalResource();
@@ -86,7 +86,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 				IResource fRightResource = rightMember.getLocalResource();
 				fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				fRight = new CompareNode(fRightResource, considerDate);
-				monitor.beginTask(Messages.getString("Comparing_source_members"), IProgressMonitor.UNKNOWN);
+				monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
 				CompareDifferencer d;
 				if (editable) {
 					d = new CompareDifferencer() {

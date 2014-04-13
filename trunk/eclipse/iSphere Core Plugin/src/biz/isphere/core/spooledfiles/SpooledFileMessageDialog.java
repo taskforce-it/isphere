@@ -38,7 +38,7 @@ public class SpooledFileMessageDialog extends Dialog {
 	
 	public Control createDialogArea(Composite parent) {
 		Composite rtnGroup = (Composite)super.createDialogArea(parent);
-		parent.getShell().setText(Messages.getString("Spooled_File_Message"));
+		parent.getShell().setText(Messages.Spooled_File_Message);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		rtnGroup.setLayout(layout);
@@ -55,31 +55,31 @@ public class SpooledFileMessageDialog extends Dialog {
 		try {	
 			message = spooledFile.getMessage();
 			Label msgidLabel = new Label(headerGroup, SWT.NONE);
-			msgidLabel.setText(Messages.getString("Message_Id.") + ":");
+			msgidLabel.setText(Messages.Message_Id + ":");
 			Text msgidText = new Text(headerGroup, SWT.BORDER);
 			msgidText.setEnabled(false);
 			msgidText.setText(message.getID());
 			Label sevLabel = new Label(headerGroup, SWT.NONE);
-			sevLabel.setText(Messages.getString("Severity") + ":");
+			sevLabel.setText(Messages.Severity + ":");
 			Text sevText = new Text(headerGroup, SWT.BORDER);
 			sevText.setEnabled(false);
 			sevText.setText(new Integer(message.getSeverity()).toString());
 			Label typeLabel = new Label(headerGroup, SWT.NONE);
-			typeLabel.setText(Messages.getString("Message_type") + ":");
+			typeLabel.setText(Messages.Message_type + ":");
 			Text typeText = new Text(headerGroup, SWT.BORDER);
 			typeText.setEnabled(false);
 			switch (message.getType()) {
-				case AS400Message.COMPLETION: 		typeText.setText(Messages.getString("Completion")); break;
-				case AS400Message.DIAGNOSTIC:		typeText.setText(Messages.getString("Diagnostic")); break; 
-				case AS400Message.ESCAPE:			typeText.setText(Messages.getString("Escape")); break;
-				case AS400Message.INFORMATIONAL:	typeText.setText(Messages.getString("Informational")); break;
-				case AS400Message.INQUIRY:			typeText.setText(Messages.getString("Inquiry")); break;
-				case AS400Message.NOTIFY:			typeText.setText(Messages.getString("Notify")); break; 
-				case AS400Message.REQUEST:			typeText.setText(Messages.getString("Request")); break; 
+				case AS400Message.COMPLETION: 		typeText.setText(Messages.Completion); break;
+				case AS400Message.DIAGNOSTIC:		typeText.setText(Messages.Diagnostic); break; 
+				case AS400Message.ESCAPE:			typeText.setText(Messages.Escape); break;
+				case AS400Message.INFORMATIONAL:	typeText.setText(Messages.Informational); break;
+				case AS400Message.INQUIRY:			typeText.setText(Messages.Inquiry); break;
+				case AS400Message.NOTIFY:			typeText.setText(Messages.Notify); break; 
+				case AS400Message.REQUEST:			typeText.setText(Messages.Request); break; 
 				default:
 			}
 			Label sentLabel = new Label(headerGroup, SWT.NONE);
-			sentLabel.setText(Messages.getString("Sent") + ":");
+			sentLabel.setText(Messages.Sent + ":");
 			Text sentText = new Text(headerGroup, SWT.BORDER);
 			sentText.setEnabled(false);
 			sentText.setText(message.getDate().getTime().toString());
@@ -108,7 +108,7 @@ public class SpooledFileMessageDialog extends Dialog {
 			new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 			
 			Label replyLabel = new Label(replyGroup, SWT.NONE);
-			replyLabel.setText(Messages.getString("Reply") + ":");
+			replyLabel.setText(Messages.Reply + ":");
 			replyText = new Text(replyGroup, SWT.BORDER);
 			gd = new GridData();
 			gd.widthHint = 300;
@@ -151,7 +151,7 @@ public class SpooledFileMessageDialog extends Dialog {
 	}
 	
 	private void handleError(Exception e) {
-		MessageDialog.openError(getShell(), Messages.getString("Error"), e.getMessage());
+		MessageDialog.openError(getShell(), Messages.Error, e.getMessage());
 	}
 
 }

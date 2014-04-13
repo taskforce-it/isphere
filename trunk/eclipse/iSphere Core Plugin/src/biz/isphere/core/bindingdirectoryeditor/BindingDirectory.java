@@ -179,29 +179,29 @@ public class BindingDirectory {
 					return false;
 				}
 				else {
-					showErrorMessage(Messages.getString("Unknown_error_occured."));
+					showErrorMessage(Messages.Unknown_error_occured);
 					return false;
 				}
 			}
 		}
 		catch (AS400SecurityException e) {
-			showErrorMessage(Messages.getString("Unknown_error_occured."));
+			showErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (ErrorCompletingRequestException e) {
-			showErrorMessage(Messages.getString("Unknown_error_occured."));
+			showErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (IOException e) {
-			showErrorMessage(Messages.getString("Unknown_error_occured."));
+			showErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (InterruptedException e) {
-			showErrorMessage(Messages.getString("Unknown_error_occured."));
+			showErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		} 
 		catch (PropertyVetoException e) {
-			showErrorMessage(Messages.getString("Unknown_error_occured."));
+			showErrorMessage(Messages.Unknown_error_occured);
 			return false;
 		}
 	
@@ -212,7 +212,7 @@ public class BindingDirectory {
 	public static void showErrorMessage(String message) {
 	
 		MessageBox errorBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR);
-		errorBox.setText(Messages.getString("E_R_R_O_R"));
+		errorBox.setText(Messages.E_R_R_O_R);
 		errorBox.setMessage(message);
 		errorBox.open();
 		

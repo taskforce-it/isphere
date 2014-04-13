@@ -36,7 +36,7 @@ public class SpooledFileBaseResourceAdapter {
 			return true;
 		}
 		else {
-			MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.getString("Error"), message);
+			MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
 			return false;
 		}
 		
@@ -51,60 +51,60 @@ public class SpooledFileBaseResourceAdapter {
 	}
 	
 	public String getType(SpooledFile splf) {
-		return Messages.getString("Spooled_file_resource");
+		return Messages.Spooled_file_resource;
 	}
 	
 	public IPropertyDescriptor[] internalGetPropertyDescriptors() {
 		
 		PropertyDescriptor[] ourPDs = new PropertyDescriptor[16];
 		
-		ourPDs[0] = new PropertyDescriptor("File", Messages.getString("File"));
-		ourPDs[0].setDescription(Messages.getString("File"));
+		ourPDs[0] = new PropertyDescriptor("File", Messages.File);
+		ourPDs[0].setDescription(Messages.File);
 		
-		ourPDs[1] = new PropertyDescriptor("File_number", Messages.getString("File_number"));
-		ourPDs[1].setDescription(Messages.getString("File_number"));
+		ourPDs[1] = new PropertyDescriptor("File_number", Messages.File_number);
+		ourPDs[1].setDescription(Messages.File_number);
 
-		ourPDs[2] = new PropertyDescriptor("Job_name", Messages.getString("Job_name"));
-		ourPDs[2].setDescription(Messages.getString("Job_name"));
+		ourPDs[2] = new PropertyDescriptor("Job_name", Messages.Job_name);
+		ourPDs[2].setDescription(Messages.Job_name);
 
-		ourPDs[3] = new PropertyDescriptor("Job_user", Messages.getString("Job_user"));
-		ourPDs[3].setDescription(Messages.getString("Job_user"));
+		ourPDs[3] = new PropertyDescriptor("Job_user", Messages.Job_user);
+		ourPDs[3].setDescription(Messages.Job_user);
 		
-		ourPDs[4] = new PropertyDescriptor("Job_number", Messages.getString("Job_number"));
-		ourPDs[4].setDescription(Messages.getString("Job_number"));
+		ourPDs[4] = new PropertyDescriptor("Job_number", Messages.Job_number);
+		ourPDs[4].setDescription(Messages.Job_number);
 
-		ourPDs[5] = new PropertyDescriptor("Job_system", Messages.getString("Job_system"));
-		ourPDs[5].setDescription(Messages.getString("Job_system"));
+		ourPDs[5] = new PropertyDescriptor("Job_system", Messages.Job_system);
+		ourPDs[5].setDescription(Messages.Job_system);
 
-		ourPDs[6] = new PropertyDescriptor("Creation_date", Messages.getString("Creation_date"));
-		ourPDs[6].setDescription(Messages.getString("Creation_date"));
+		ourPDs[6] = new PropertyDescriptor("Creation_date", Messages.Creation_date);
+		ourPDs[6].setDescription(Messages.Creation_date);
 
-		ourPDs[7] = new PropertyDescriptor("Creation_time", Messages.getString("Creation_time"));
-		ourPDs[7].setDescription(Messages.getString("Creation_time"));
+		ourPDs[7] = new PropertyDescriptor("Creation_time", Messages.Creation_time);
+		ourPDs[7].setDescription(Messages.Creation_time);
 
-		ourPDs[8] = new PropertyDescriptor("Status", Messages.getString("Status"));
-		ourPDs[8].setDescription(Messages.getString("Status"));
+		ourPDs[8] = new PropertyDescriptor("Status", Messages.Status);
+		ourPDs[8].setDescription(Messages.Status);
 		
-		ourPDs[9] = new PropertyDescriptor("Output_queue", Messages.getString("Output_queue"));
-		ourPDs[9].setDescription(Messages.getString("Output_queue"));
+		ourPDs[9] = new PropertyDescriptor("Output_queue", Messages.Output_queue);
+		ourPDs[9].setDescription(Messages.Output_queue);
 		
-		ourPDs[10] = new PropertyDescriptor("Output_priority", Messages.getString("Output_priority"));
-		ourPDs[10].setDescription(Messages.getString("Output_priority")); 
+		ourPDs[10] = new PropertyDescriptor("Output_priority", Messages.Output_priority);
+		ourPDs[10].setDescription(Messages.Output_priority); 
 		
-		ourPDs[11] = new PropertyDescriptor("User_data", Messages.getString("User_data"));
-		ourPDs[11].setDescription(Messages.getString("User_data"));
+		ourPDs[11] = new PropertyDescriptor("User_data", Messages.User_data);
+		ourPDs[11].setDescription(Messages.User_data);
 
-		ourPDs[12] = new PropertyDescriptor("Form_type", Messages.getString("Form_type"));
-		ourPDs[12].setDescription(Messages.getString("Form_type"));
+		ourPDs[12] = new PropertyDescriptor("Form_type", Messages.Form_type);
+		ourPDs[12].setDescription(Messages.Form_type);
 
-		ourPDs[13] = new PropertyDescriptor("Copies", Messages.getString("Copies"));
-		ourPDs[13].setDescription(Messages.getString("Copies"));
+		ourPDs[13] = new PropertyDescriptor("Copies", Messages.Copies);
+		ourPDs[13].setDescription(Messages.Copies);
 		
-		ourPDs[14] = new PropertyDescriptor("pages", Messages.getString("Pages"));
-		ourPDs[14].setDescription(Messages.getString("Pages"));
+		ourPDs[14] = new PropertyDescriptor("pages", Messages.Pages);
+		ourPDs[14].setDescription(Messages.Pages);
 
-		ourPDs[15] = new PropertyDescriptor("Current_page", Messages.getString("Current_page"));
-		ourPDs[15].setDescription(Messages.getString("Current_page"));
+		ourPDs[15] = new PropertyDescriptor("Current_page", Messages.Current_page);
+		ourPDs[15].setDescription(Messages.Current_page);
 		
 		return ourPDs;
 		

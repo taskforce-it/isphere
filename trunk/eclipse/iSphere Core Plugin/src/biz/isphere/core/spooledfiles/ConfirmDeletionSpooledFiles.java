@@ -104,35 +104,35 @@ public class ConfirmDeletionSpooledFiles extends Dialog {
 
 		final TableColumn tableColumnFile = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnFile.setWidth(Size.getSize(100));
-		tableColumnFile.setText(Messages.getString("File"));
+		tableColumnFile.setText(Messages.File);
 
 		final TableColumn tableColumnFileNumber = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnFileNumber.setWidth(Size.getSize(100));
-		tableColumnFileNumber.setText(Messages.getString("File_number"));
+		tableColumnFileNumber.setText(Messages.File_number);
 
 		final TableColumn tableColumnJobName = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnJobName.setWidth(Size.getSize(100));
-		tableColumnJobName.setText(Messages.getString("Job_name"));
+		tableColumnJobName.setText(Messages.Job_name);
 
 		final TableColumn tableJobUser = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableJobUser.setWidth(Size.getSize(100));
-		tableJobUser.setText(Messages.getString("Job_user"));
+		tableJobUser.setText(Messages.Job_user);
 
 		final TableColumn tableColumnJobNumber = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnJobNumber.setWidth(Size.getSize(100));
-		tableColumnJobNumber.setText(Messages.getString("Job_number"));
+		tableColumnJobNumber.setText(Messages.Job_number);
 
 		final TableColumn tableColumnJobSystem = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnJobSystem.setWidth(Size.getSize(100));
-		tableColumnJobSystem.setText(Messages.getString("Job_system"));
+		tableColumnJobSystem.setText(Messages.Job_system);
 
 		final TableColumn tableColumnCreationDate = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnCreationDate.setWidth(Size.getSize(100));
-		tableColumnCreationDate.setText(Messages.getString("Creation_date"));
+		tableColumnCreationDate.setText(Messages.Creation_date);
 
 		final TableColumn tableColumnCreationTime = new TableColumn(tableSpooledFiles, SWT.NONE);
 		tableColumnCreationTime.setWidth(Size.getSize(100));
-		tableColumnCreationTime.setText(Messages.getString("Creation_time"));
+		tableColumnCreationTime.setText(Messages.Creation_time);
 		
 		tableHeight = tableSpooledFiles.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 		tableViewerSpooledFiles.setInput(new Object());
@@ -145,13 +145,13 @@ public class ConfirmDeletionSpooledFiles extends Dialog {
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.getString("Delete_Spooled_Files"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("Cancel"), false);
+		createButton(parent, IDialogConstants.OK_ID, Messages.Delete_Spooled_Files, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
 	}
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Messages.getString("Confirm_Deletion_Spooled_Files"));
+		newShell.setText(Messages.Confirm_Deletion_Spooled_Files);
 	}
 	
 	protected Point getInitialSize() {
