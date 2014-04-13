@@ -42,7 +42,7 @@ public class SpooledFileSubSystemFactory extends SubSystemConfiguration {
 	}
 	
 	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter) {
-		return Messages.getString("Spooled_File_Filter");
+		return Messages.Spooled_File_Filter;
 	}
 	
 	protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr) {
@@ -50,7 +50,7 @@ public class SpooledFileSubSystemFactory extends SubSystemConfiguration {
 		Vector<String> strings = new Vector<String>();
 		strings.add("*CURRENT/*/*/*/*/");
 		try {
-			ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.getString("My_spooled_files"), strings);
+			ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
 			filter.setType("spooled file"); } 
 		catch (Exception localException) {
 		}

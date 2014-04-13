@@ -31,10 +31,10 @@ public class SpooledFileSubSystemConfigurationAdapter extends SubSystemConfigura
 	protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPool selectedPool) {
 		
 		SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(config, selectedPool, shell);
-	  	filterAction.setWizardPageTitle(Messages.getString("Spooled_File_Filter"));
-	  	filterAction.setPage1Description(Messages.getString("Create_a_new_spooled_file_filter"));
-	  	filterAction.setType(Messages.getString("Spooled_File_Filter"));
-	  	filterAction.setText(Messages.getString("Spooled_file_filter") + "...");
+	  	filterAction.setWizardPageTitle(Messages.Spooled_File_Filter);
+	  	filterAction.setPage1Description(Messages.Create_a_new_spooled_file_filter);
+	  	filterAction.setType(Messages.Spooled_File_Filter);
+	  	filterAction.setText(Messages.Spooled_file_filter + "...");
 		filterAction.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));
 
 		ISystemFilterPoolManager[] filterPoolManager = config.getSystemFilterPoolManagers();
@@ -55,7 +55,7 @@ public class SpooledFileSubSystemConfigurationAdapter extends SubSystemConfigura
 	
 	protected IAction getChangeFilterAction(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell) {
 		SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(factory, selectedFilter, shell);
-	  	action.setDialogTitle(Messages.getString("Change_Spooled_File_Filter"));
+	  	action.setDialogTitle(Messages.Change_Spooled_File_Filter);
 		action.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));
 		return action;
 	}
