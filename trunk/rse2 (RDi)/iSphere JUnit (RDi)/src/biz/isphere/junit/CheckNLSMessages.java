@@ -19,15 +19,15 @@ import org.junit.Test;
 /**
  * <b>JUnit 4 Test Case</b>
  * <p>
- * Veryfies that all message constants of the iSphere <i>Messages</i> objects
+ * Verifies that all message constants of the iSphere <i>Messages</i> objects
  * have a corresponding message text entry. Also ensure that there are no dead
  * text entries in the property files.
  * <p>
  * This class uses reflection to get the list of message constants. It
- * instantiates a new dedicated classloader to ensure that the static message
+ * instantiates a new dedicated class loader to ensure that the static message
  * constants are properly initialized for each locale.
  * 
- * @author Thomas raddatz
+ * @author Thomas Raddatz
  */
 public class CheckNLSMessages {
 
