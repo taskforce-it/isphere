@@ -42,7 +42,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 	}
 	
 	public String getTranslatedFilterTypeProperty(SystemFilter selectedFilter) {
-	   	return Messages.getString("Spooled_File_Filter");
+	   	return Messages.Spooled_File_Filter;
 	}
 	
 	protected SystemFilterPool createDefaultFilterPool(SystemFilterPoolManager mgr) {
@@ -50,7 +50,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 		Vector<String> strings = new Vector<String>();
 		strings.add("*CURRENT/*/*/*/*/");
 		try {
-		  SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.getString("My_spooled_files"), strings);
+		  SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
 		  filter.setType(TYPE);
 		} catch (Exception exc) {}
 		return defaultPool;
@@ -59,10 +59,10 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 	protected IAction[] getNewFilterPoolFilterActions(SystemFilterPool selectedPool, Shell shell)
 	{
 	  	SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);
-	  	filterAction.setWizardPageTitle(Messages.getString("Spooled_File_Filter"));
-	  	filterAction.setPage1Description(Messages.getString("Create_a_new_spooled_file_filter"));
-	  	filterAction.setType(Messages.getString("Spooled_File_Filter"));
-	  	filterAction.setText(Messages.getString("Spooled_file_filter") + "...");
+	  	filterAction.setWizardPageTitle(Messages.Spooled_File_Filter);
+	  	filterAction.setPage1Description(Messages.Create_a_new_spooled_file_filter);
+	  	filterAction.setType(Messages.Spooled_File_Filter);
+	  	filterAction.setText(Messages.Spooled_file_filter + "...");
 	  	filterAction.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));       		  	
 	  	IAction[] actions = new IAction[1];
 	  	actions[0] = filterAction;
@@ -72,7 +72,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 	protected IAction getChangeFilterAction(SystemFilter selectedFilter, Shell shell)
 	{
 	  	SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(selectedFilter, shell);
-	  	action.setDialogTitle(Messages.getString("Change_Spooled_File_Filter"));
+	  	action.setDialogTitle(Messages.Change_Spooled_File_Filter);
 	  	action.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));
 	  	return action;
 	} 
