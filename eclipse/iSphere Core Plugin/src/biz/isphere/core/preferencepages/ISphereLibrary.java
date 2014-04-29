@@ -76,7 +76,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textFtpPortNumber.addVerifyListener(new VerifyListener() {
             private Pattern pattern = Pattern.compile("[0-9]{0,5}");
 
-            @Override
             public void verifyText(VerifyEvent e) {
                 Matcher m = pattern.matcher(e.text);
                 if (!m.matches()) {
