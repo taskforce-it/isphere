@@ -22,12 +22,9 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
-import com.sun.xml.internal.ws.util.StringUtils;
-
 
 public class SignOn {
     
