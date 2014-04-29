@@ -36,7 +36,7 @@ public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopup
 				SpooledFileResource spooledFileResource = (SpooledFileResource)selection[i];
 				message = execute(spooledFileResource);
 				if (message != null) {
-					MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.getString("Error"), message);
+					MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
 					break;
 				}
 			}
@@ -45,7 +45,7 @@ public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopup
 		if (message == null) {
 			message = finish();
 			if (message != null) {
-				MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.getString("Error"), message);
+				MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
 			}
 		}
 		
