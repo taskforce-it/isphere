@@ -13,23 +13,23 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 public class SpooledFileSubSystemConfigurationAdapterFactory implements IAdapterFactory {
-	
-	private ISubSystemConfigurationAdapter ssConfigAdapter = new SpooledFileSubSystemConfigurationAdapter();
 
-	public Class[] getAdapterList() {
-		return new Class[] { ISubSystemConfigurationAdapter.class };
-	}
+    private ISubSystemConfigurationAdapter ssConfigAdapter = new SpooledFileSubSystemConfigurationAdapter();
 
-	public void registerWithManager(IAdapterManager manager) {
-		manager.registerAdapters(this, SpooledFileSubSystemFactory.class);
-	}
+    public Class[] getAdapterList() {
+        return new Class[] { ISubSystemConfigurationAdapter.class };
+    }
 
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		Object adapter = null;
-		if ((adaptableObject instanceof SpooledFileSubSystemFactory)) {
-			adapter = this.ssConfigAdapter;
-		}
-		return adapter;
-	}
-	
+    public void registerWithManager(IAdapterManager manager) {
+        manager.registerAdapters(this, SpooledFileSubSystemFactory.class);
+    }
+
+    public Object getAdapter(Object adaptableObject, Class adapterType) {
+        Object adapter = null;
+        if ((adaptableObject instanceof SpooledFileSubSystemFactory)) {
+            adapter = this.ssConfigAdapter;
+        }
+        return adapter;
+    }
+
 }

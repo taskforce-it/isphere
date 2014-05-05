@@ -23,56 +23,60 @@ import biz.isphere.core.Messages;
 
 import com.ibm.as400.access.AS400;
 
-
 public class SignOnDialog extends XDialog {
 
-	private SignOn signOn;
-	private String hostName;
-	
-	public SignOnDialog(Shell parentShell, String aHostName) {
-		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		hostName = aHostName;
-	}
-	
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new FillLayout(SWT.VERTICAL));
-        	
-		signOn = new SignOn();
-		signOn.createContents(container, hostName);
-				
-		return container;
-	}
-	
-	protected void okPressed() {
-		if (signOn.processButtonPressed()) {
-			super.okPressed();
-		}
-	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-	}
+    private SignOn signOn;
+    private String hostName;
 
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(Messages.Sign_On);
-	}
-	
-	protected Point getDefaultSize() {
-		Point point = getShell().computeSize(250, SWT.DEFAULT, true);	
-		return point;
-	}
-	
-	public AS400 getAS400() {
-		return signOn.getAS400();
-	}
-	
-	protected IDialogSettings getDialogBoundsSettings() {
-	     return super.getDialogBoundsSettings(ISpherePlugin.getDefault()
-	             .getDialogSettings());
-	  }
+    public SignOnDialog(Shell parentShell, String aHostName) {
+        super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        hostName = aHostName;
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new FillLayout(SWT.VERTICAL));
+
+        signOn = new SignOn();
+        signOn.createContents(container, hostName);
+
+        return container;
+    }
+
+    @Override
+    protected void okPressed() {
+        if (signOn.processButtonPressed()) {
+            super.okPressed();
+        }
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Sign_On);
+    }
+
+    @Override
+    protected Point getDefaultSize() {
+        Point point = getShell().computeSize(250, SWT.DEFAULT, true);
+        return point;
+    }
+
+    public AS400 getAS400() {
+        return signOn.getAS400();
+    }
+
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
 
 }

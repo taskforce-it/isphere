@@ -22,55 +22,60 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
 public class BrowserEditor extends EditorPart {
-  
-	private BrowserEditor editor;
-	private BrowserEditorInput input;
-	private Browser browser;
-	
-	public void createPartControl(Composite parent) {
-		
-		parent.setLayout(new FillLayout());
-		
-		try {
-			browser = new Browser(parent, SWT.NONE);
-			browser.setUrl(input.getUrl());
-			browser.addCloseWindowListener(new CloseWindowListener() {
-				public void close(WindowEvent event) {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editor, false);
-				}
-			});
-		} 
-		catch (SWTError e) {
-		}
-		
-	}
-    
-	public void init(IEditorSite site, IEditorInput input) {
-       setSite(site);
-       setInput(input);
-       setPartName(input.getName());
-       setTitleImage(((BrowserEditorInput)input).getImage());
-       this.editor = this;
-       this.input = (BrowserEditorInput)input;
-    }
-    
-	public void setFocus() {
-       if (browser != null)
-          browser.setFocus();
+
+    private BrowserEditor editor;
+    private BrowserEditorInput input;
+    private Browser browser;
+
+    @Override
+    public void createPartControl(Composite parent) {
+
+        parent.setLayout(new FillLayout());
+
+        try {
+            browser = new Browser(parent, SWT.NONE);
+            browser.setUrl(input.getUrl());
+            browser.addCloseWindowListener(new CloseWindowListener() {
+                public void close(WindowEvent event) {
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editor, false);
+                }
+            });
+        } catch (SWTError e) {
+        }
+
     }
 
-	public void doSave(IProgressMonitor monitor) {
-	}
-	
-	public void doSaveAs() {
-	}
+    @Override
+    public void init(IEditorSite site, IEditorInput input) {
+        setSite(site);
+        setInput(input);
+        setPartName(input.getName());
+        setTitleImage(((BrowserEditorInput)input).getImage());
+        this.editor = this;
+        this.input = (BrowserEditorInput)input;
+    }
 
-	public boolean isDirty() {
-		return false;
-	}
+    @Override
+    public void setFocus() {
+        if (browser != null) browser.setFocus();
+    }
 
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	
- }
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+    }
+
+    @Override
+    public void doSaveAs() {
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
+
+}

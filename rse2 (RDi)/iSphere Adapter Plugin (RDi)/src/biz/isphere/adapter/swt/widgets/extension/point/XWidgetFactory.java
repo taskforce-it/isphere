@@ -8,12 +8,10 @@ import biz.isphere.core.swt.widgets.extension.point.IWidgetFactory;
 
 public class XWidgetFactory implements IWidgetFactory {
 
-    @Override
     public IFileDialog getDialog(Shell aParent, int aStyle) {
         return new XFileDialog(aParent, aStyle);
     }
 
-    @Override
     public IFileDialog getDialog(Shell aParent) {
         return new XFileDialog(aParent);
     }

@@ -21,8 +21,8 @@ Eclipse Settings:
 
 a) Preferences -> Java -> Installed JREs (
 
-   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk
-   JRE name:   JRE 1.5.0 IBM J9
+   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
+   JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
    
    Flagged as "Default JRE".
 

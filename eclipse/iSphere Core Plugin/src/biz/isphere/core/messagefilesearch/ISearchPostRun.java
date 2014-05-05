@@ -10,6 +10,6 @@ package biz.isphere.core.messagefilesearch;
 
 public interface ISearchPostRun {
 
-	public void run(SearchResult[] _searchResults);
-	
+    public void run(SearchResult[] _searchResults);
+
 }

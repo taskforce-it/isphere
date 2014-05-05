@@ -25,83 +25,72 @@ import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
-
 public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
-	protected IStructuredSelection structuredSelection;
-	protected Shell shell;
-	
-	public void run(IAction arg0) {
-		
-		if (structuredSelection != null && 
-				!structuredSelection.isEmpty()) {
-			
-			Object object = structuredSelection.getFirstElement();
+    protected IStructuredSelection structuredSelection;
+    protected Shell shell;
 
-			if (object instanceof QSYSRemoteObject) {
+    public void run(IAction arg0) {
 
-				QSYSRemoteObject remoteObject = (QSYSRemoteObject)object;
-				
-				String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-				String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-				String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
-				
-				if (remoteObject.getType().equals("*BNDDIR")) {
-					
-					String library = remoteObject.getLibrary();
-					String bindingDirectory = remoteObject.getName();
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-					IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
-					
-					if (ibmiConnection != null) {
-						
-						AS400 as400 = null;
-						try {
-							as400 = ibmiConnection.getAS400ToolboxObject();
-						} 
-						catch (SystemMessageException e) {
-						}
-						
-						Connection jdbcConnection = null;
-						try {
-							jdbcConnection = ibmiConnection.getJDBCConnection(null, false);
-						} 
-						catch (SQLException e1) {
-						}
-						
-						if (as400 != null && jdbcConnection != null) {
+            Object object = structuredSelection.getFirstElement();
 
-							BindingDirectoryEditor.openEditor(
-									as400, 
-									jdbcConnection, 
-									host, 
-									library, 
-									bindingDirectory,
-									"*EDIT");
-							
-						}
-						
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-	}
+            if (object instanceof QSYSRemoteObject) {
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			structuredSelection = ((IStructuredSelection)selection);
-		}
-		else {
-			structuredSelection = null;	
-		}
-	}
+                QSYSRemoteObject remoteObject = (QSYSRemoteObject)object;
 
-	public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-		shell = workbenchPart.getSite().getShell();		
-	}
+                String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+                String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+
+                if (remoteObject.getType().equals("*BNDDIR")) {
+
+                    String library = remoteObject.getLibrary();
+                    String bindingDirectory = remoteObject.getName();
+
+                    IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
+
+                    if (ibmiConnection != null) {
+
+                        AS400 as400 = null;
+                        try {
+                            as400 = ibmiConnection.getAS400ToolboxObject();
+                        } catch (SystemMessageException e) {
+                        }
+
+                        Connection jdbcConnection = null;
+                        try {
+                            jdbcConnection = ibmiConnection.getJDBCConnection(null, false);
+                        } catch (SQLException e1) {
+                        }
+
+                        if (as400 != null && jdbcConnection != null) {
+
+                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, "*EDIT");
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public void selectionChanged(IAction action, ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
+            structuredSelection = ((IStructuredSelection)selection);
+        } else {
+            structuredSelection = null;
+        }
+    }
+
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+        shell = workbenchPart.getSite().getShell();
+    }
 
 }

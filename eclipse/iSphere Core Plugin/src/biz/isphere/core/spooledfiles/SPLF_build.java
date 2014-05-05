@@ -8,59 +8,52 @@
 
 package biz.isphere.core.spooledfiles;
 
-import com.ibm.as400.data.ProgramCallDocument;
-import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.data.PcmlException;
+import com.ibm.as400.data.ProgramCallDocument;
 
 public class SPLF_build {
 
-	public int run(
-			AS400 _as400) {
+    public int run(AS400 _as400) {
 
-		int handle = 0;
-		
-		try {
-			
-			ProgramCallDocument pcml = 
-				new ProgramCallDocument(
-						_as400, 
-						"biz.isphere.core.spooledfiles.SPLF_build", 
-						this.getClass().getClassLoader());
+        int handle = 0;
 
-			boolean rc = pcml.callProgram("SPLF_build");
+        try {
 
-			if (rc == false) {
-				
-				AS400Message[] msgs = pcml.getMessageList("SPLF_build");
-				for (int idx = 0; idx < msgs.length; idx++) {
-					System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
-				}
-				System.out.println("*** Call to SPLF_build failed. See messages above ***");
-				
-				handle = -1;
-				
-			}
-			else {
-				
-				handle = pcml.getIntValue("SPLF_build.handle");
-				
-			}
-			
-		}
-		catch (PcmlException e) {
-		
-			handle = -1;
-			
-		//	System.out.println(e.getLocalizedMessage());    
-		//	e.printStackTrace();
-		//	System.out.println("*** Call to SPLF_build failed. ***");
-		//	return null;
-			
-		}
-		
-		return handle;
-		
-	} 
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.spooledfiles.SPLF_build", this.getClass().getClassLoader());
+
+            boolean rc = pcml.callProgram("SPLF_build");
+
+            if (rc == false) {
+
+                AS400Message[] msgs = pcml.getMessageList("SPLF_build");
+                for (int idx = 0; idx < msgs.length; idx++) {
+                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                }
+                System.out.println("*** Call to SPLF_build failed. See messages above ***");
+
+                handle = -1;
+
+            } else {
+
+                handle = pcml.getIntValue("SPLF_build.handle");
+
+            }
+
+        } catch (PcmlException e) {
+
+            handle = -1;
+
+            // System.out.println(e.getLocalizedMessage());
+            // e.printStackTrace();
+            // System.out.println("*** Call to SPLF_build failed. ***");
+            // return null;
+
+        }
+
+        return handle;
+
+    }
 
 }

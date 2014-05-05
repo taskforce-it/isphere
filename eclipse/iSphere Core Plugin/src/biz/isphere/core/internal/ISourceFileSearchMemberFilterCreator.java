@@ -12,6 +12,6 @@ import biz.isphere.core.sourcefilesearch.SearchResult;
 
 public interface ISourceFileSearchMemberFilterCreator {
 
-	public boolean createMemberFilter(Object connection, String filterName, SearchResult[] searchResults);
-	
+    public boolean createMemberFilter(Object connection, String filterName, SearchResult[] searchResults);
+
 }

@@ -37,192 +37,192 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 
 public class SearchDialog extends Dialog {
-	
-	private HashMap<String, SearchElement> searchElements;
-	private String searchString;
-	private Text textString;
-	private Text textFromColumn;
-	private Text textToColumn;
-	private Button buttonCaseNo;
-	private Button buttonCaseYes;
-	private Button okButton;
-	private String _string;
-	private int _fromColumn = 1;
-	private int _toColumn = 132;
-	private String _case;
-	
-	public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
-		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		this.searchElements = searchElements;
-		ISpherePlugin.getDefault().getPreferenceStore();
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-		// searchString = store.getString("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING");
-		searchString = Preferences.getInstance().getMessageFileSearchString();
-	}
-	
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new GridLayout(1, false));
-		
-		Group groupAttributes = new Group(container, SWT.NONE);
-		groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		groupAttributes.setText(Messages.Attributes);
-		groupAttributes.setLayout(new GridLayout(2, false));
-		
-		Label labelString = new Label(groupAttributes, SWT.NONE);
-		labelString.setText(Messages.String_colon);
-		
-		textString = new Text(groupAttributes, SWT.BORDER);
-		textString.setText(searchString);
-		textString.setTextLimit(40);
-		textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		textString.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				if (textString.getText().trim().equals("")) {
-					okButton.setEnabled(false);
-				}
-				else {
-					okButton.setEnabled(true);
-				}
-			}
-		});
-		
-		Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
-		labelFromColumn.setText(Messages.From_column_colon);
-		
-		textFromColumn = new Text(groupAttributes, SWT.BORDER);
-		textFromColumn.setText("1");
-		textFromColumn.setTextLimit(3);
-		textFromColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
-		textFromColumn.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				_fromColumn = 0;
-				try {
-					_fromColumn = Integer.parseInt(textFromColumn.getText().trim());
-				} 
-				catch (NumberFormatException e1) {
-				}
-				if (_fromColumn != 0 && _toColumn != 0 && _fromColumn <= _toColumn && _toColumn <= 132) {
-					okButton.setEnabled(true);
-				}
-				else {
-					okButton.setEnabled(false);
-				}
-			}
-		});
-		
-		Label labelToColumn = new Label(groupAttributes, SWT.NONE);
-		labelToColumn.setText(Messages.To_column_colon);
-		
-		textToColumn = new Text(groupAttributes, SWT.BORDER);
-		textToColumn.setText("132");
-		textToColumn.setTextLimit(3);
-		textToColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
-		textToColumn.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				_toColumn = 0;
-				try {
-					_toColumn = Integer.parseInt(textToColumn.getText().trim());
-				} 
-				catch (NumberFormatException e1) {
-				}
-				if (_fromColumn != 0 && _toColumn != 0 && _fromColumn <= _toColumn && _toColumn <= 132) {
-					okButton.setEnabled(true);
-				}
-				else {
-					okButton.setEnabled(false);
-				}
-			}
-		});
-		
-		Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
-		labelCaseSensitive.setText(Messages.Case_sensitive_colon);
-		
-		Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
-		GridLayout editableLayout = new GridLayout();
-		editableLayout.numColumns = 2;
-		groupCaseSensitive.setLayout(editableLayout);
-		
-		buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
-		buttonCaseNo.setText(Messages.No);
-		buttonCaseNo.setSelection(true);
-		
-		buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
-		buttonCaseYes.setText(Messages.Yes);
-		buttonCaseYes.setSelection(false);
-		
-		Group groupArea = new Group(container, SWT.NONE);
-		groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		groupArea.setText(Messages.Area);
-		groupArea.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		List listArea = new List(groupArea, SWT.BORDER| SWT.V_SCROLL | SWT.H_SCROLL);
-		
-		ArrayList<String> items = new ArrayList<String>();
-		SortedSet<String> keys = new TreeSet<String>(searchElements.keySet());
-		Iterator<String> _iterator = keys.iterator();  
-		while (_iterator.hasNext()) {  
-			String key = (String)_iterator.next();  
-			SearchElement value = (SearchElement)searchElements.get(key);
-			String item = value.getLibrary() + "/" + value.getMessageFile() + " - \"" + value.getDescription() + "\"";
-			items.add(item);
-		}  
-		String[] _items = new String[items.size()];
-		items.toArray(_items);
-		listArea.setItems(_items);
-				
-		return container;
-	}
-	
-	protected void okPressed() {
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-		// store.setValue("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING", textString.getText().trim());
-	    Preferences.getInstance().setMessageFileSearchString(textString.getText());
-		_string = textString.getText().trim();
-		if (buttonCaseNo.getSelection()) {
-			_case = "*IGNORE";
-		}
-		else {
-			_case = "*MATCH";
-		}
-		super.okPressed();
-	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-		if (searchString.equals("")) {
-			okButton.setEnabled(false);
-		}
-		else {
-			okButton.setEnabled(true);
-		}
-	}
+    private HashMap<String, SearchElement> searchElements;
+    private String searchString;
+    private Text textString;
+    private Text textFromColumn;
+    private Text textToColumn;
+    private Button buttonCaseNo;
+    private Button buttonCaseYes;
+    private Button okButton;
+    private String _string;
+    private int _fromColumn = 1;
+    private int _toColumn = 132;
+    private String _case;
 
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(Messages.iSphere_Message_File_Search);
-	}
-	
-	protected Point getInitialSize() {
-		return getShell().computeSize(400, 600, true);
-	}
-	
-	public String getString() {
-		return _string;
-	}
-	
-	public int getFromColumn() {
-		return _fromColumn;
-	}
-	
-	public int getToColumn() {
-		return _toColumn;
-	}
-	
-	public String getCase() {
-		return _case;
-	}
-	
+    public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
+        super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        this.searchElements = searchElements;
+        ISpherePlugin.getDefault().getPreferenceStore();
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // searchString =
+        // store.getString("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING");
+        searchString = Preferences.getInstance().getMessageFileSearchString();
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new GridLayout(1, false));
+
+        Group groupAttributes = new Group(container, SWT.NONE);
+        groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        groupAttributes.setText(Messages.Attributes);
+        groupAttributes.setLayout(new GridLayout(2, false));
+
+        Label labelString = new Label(groupAttributes, SWT.NONE);
+        labelString.setText(Messages.String_colon);
+
+        textString = new Text(groupAttributes, SWT.BORDER);
+        textString.setText(searchString);
+        textString.setTextLimit(40);
+        textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textString.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                if (textString.getText().trim().equals("")) {
+                    okButton.setEnabled(false);
+                } else {
+                    okButton.setEnabled(true);
+                }
+            }
+        });
+
+        Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
+        labelFromColumn.setText(Messages.From_column_colon);
+
+        textFromColumn = new Text(groupAttributes, SWT.BORDER);
+        textFromColumn.setText("1");
+        textFromColumn.setTextLimit(3);
+        textFromColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
+        textFromColumn.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                _fromColumn = 0;
+                try {
+                    _fromColumn = Integer.parseInt(textFromColumn.getText().trim());
+                } catch (NumberFormatException e1) {
+                }
+                if (_fromColumn != 0 && _toColumn != 0 && _fromColumn <= _toColumn && _toColumn <= 132) {
+                    okButton.setEnabled(true);
+                } else {
+                    okButton.setEnabled(false);
+                }
+            }
+        });
+
+        Label labelToColumn = new Label(groupAttributes, SWT.NONE);
+        labelToColumn.setText(Messages.To_column_colon);
+
+        textToColumn = new Text(groupAttributes, SWT.BORDER);
+        textToColumn.setText("132");
+        textToColumn.setTextLimit(3);
+        textToColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
+        textToColumn.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                _toColumn = 0;
+                try {
+                    _toColumn = Integer.parseInt(textToColumn.getText().trim());
+                } catch (NumberFormatException e1) {
+                }
+                if (_fromColumn != 0 && _toColumn != 0 && _fromColumn <= _toColumn && _toColumn <= 132) {
+                    okButton.setEnabled(true);
+                } else {
+                    okButton.setEnabled(false);
+                }
+            }
+        });
+
+        Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
+        labelCaseSensitive.setText(Messages.Case_sensitive_colon);
+
+        Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
+        GridLayout editableLayout = new GridLayout();
+        editableLayout.numColumns = 2;
+        groupCaseSensitive.setLayout(editableLayout);
+
+        buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
+        buttonCaseNo.setText(Messages.No);
+        buttonCaseNo.setSelection(true);
+
+        buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
+        buttonCaseYes.setText(Messages.Yes);
+        buttonCaseYes.setSelection(false);
+
+        Group groupArea = new Group(container, SWT.NONE);
+        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        groupArea.setText(Messages.Area);
+        groupArea.setLayout(new FillLayout(SWT.HORIZONTAL));
+
+        List listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+        ArrayList<String> items = new ArrayList<String>();
+        SortedSet<String> keys = new TreeSet<String>(searchElements.keySet());
+        Iterator<String> _iterator = keys.iterator();
+        while (_iterator.hasNext()) {
+            String key = _iterator.next();
+            SearchElement value = searchElements.get(key);
+            String item = value.getLibrary() + "/" + value.getMessageFile() + " - \"" + value.getDescription() + "\"";
+            items.add(item);
+        }
+        String[] _items = new String[items.size()];
+        items.toArray(_items);
+        listArea.setItems(_items);
+
+        return container;
+    }
+
+    @Override
+    protected void okPressed() {
+        // TODO: Remove disabled statements 'DE.TASKFORCE'
+        // store.setValue("DE.TASKFORCE.ISPHERE.MESSAGEFILESEARCH.SEARCHSTRING",
+        // textString.getText().trim());
+        Preferences.getInstance().setMessageFileSearchString(textString.getText());
+        _string = textString.getText().trim();
+        if (buttonCaseNo.getSelection()) {
+            _case = "*IGNORE";
+        } else {
+            _case = "*MATCH";
+        }
+        super.okPressed();
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        okButton = createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+        if (searchString.equals("")) {
+            okButton.setEnabled(false);
+        } else {
+            okButton.setEnabled(true);
+        }
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.iSphere_Message_File_Search);
+    }
+
+    @Override
+    protected Point getInitialSize() {
+        return getShell().computeSize(400, 600, true);
+    }
+
+    public String getString() {
+        return _string;
+    }
+
+    public int getFromColumn() {
+        return _fromColumn;
+    }
+
+    public int getToColumn() {
+        return _toColumn;
+    }
+
+    public String getCase() {
+        return _case;
+    }
+
 }

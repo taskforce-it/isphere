@@ -8,7 +8,6 @@
 
 package biz.isphere.core.messagefileeditor;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -25,64 +24,69 @@ import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
 
-
 public class MessageDescriptionDetailDialog extends XDialog {
 
-	private AS400 as400;
-	private int actionType;
-	private MessageDescription _messageDescription;
-	private MessageDescriptionDetail _messageDescriptionDetail;
-	
-	public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
-		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		this.as400 = as400;
-		this.actionType = actionType;
-		this._messageDescription = _messageDescription;
-	}
-	
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new FillLayout());
-        	
-		_messageDescriptionDetail = new MessageDescriptionDetail(as400, actionType, _messageDescription);
-		_messageDescriptionDetail.createContents(container);
-		
-		return container;
-	}
-	
-	protected void okPressed() {
-		if (_messageDescriptionDetail.processButtonPressed()) {
-			super.okPressed();
-		}
-	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-	}
+    private AS400 as400;
+    private int actionType;
+    private MessageDescription _messageDescription;
+    private MessageDescriptionDetail _messageDescriptionDetail;
 
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(Messages.Message_description);
-	}
-	
+    public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
+        super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        this.as400 = as400;
+        this.actionType = actionType;
+        this._messageDescription = _messageDescription;
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new FillLayout());
+
+        _messageDescriptionDetail = new MessageDescriptionDetail(as400, actionType, _messageDescription);
+        _messageDescriptionDetail.createContents(container);
+
+        return container;
+    }
+
+    @Override
+    protected void okPressed() {
+        if (_messageDescriptionDetail.processButtonPressed()) {
+            super.okPressed();
+        }
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Message_description);
+    }
+
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */
-	protected Point getDefaultSize() {
-		Point point = getShell().computeSize(Size.getSize(600), SWT.DEFAULT, true);	
-		point.y = point.y + _messageDescriptionDetail.getFieldFormatViewer().getTableHeight(4);
-		return point;
+    @Override
+    protected Point getDefaultSize() {
+        Point point = getShell().computeSize(Size.getSize(600), SWT.DEFAULT, true);
+        point.y = point.y + _messageDescriptionDetail.getFieldFormatViewer().getTableHeight(4);
+        return point;
 
-	}
+    }
 
     /**
      * Overriden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
+    @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
-	
+
 }

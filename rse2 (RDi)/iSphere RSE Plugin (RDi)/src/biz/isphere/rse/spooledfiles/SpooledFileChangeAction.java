@@ -20,39 +20,33 @@ import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 
 public class SpooledFileChangeAction extends AbstractSpooledFileAction {
 
-	public String execute(SpooledFileResource spooledFileResource) {
-		try {
-			CLPrompter command = new CLPrompter();
-			command.setCommandString(spooledFileResource.getSpooledFile().getCommandChangeAttribute());
-			command.setConnection(getISeriesConnection());
-			command.setParent(Display.getCurrent().getActiveShell());
-			if (command.showDialog() == CommandPrompter.OK) {
-				
-				String message = spooledFileResource.getSpooledFile().changeAttribute(command.getCommandString());
-				
-				if (message == null) {
-					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-					Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
-					spooledFileVector.addElement(spooledFileResource);
-					sr.fireRemoteResourceChangeEvent(
-							ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, 
-							spooledFileVector, 
-                            spooledFileResource.getSubSystem(), 
-                            null, 
-							null, 
-							null);
-				}
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
+        try {
+            CLPrompter command = new CLPrompter();
+            command.setCommandString(spooledFileResource.getSpooledFile().getCommandChangeAttribute());
+            command.setConnection(getISeriesConnection());
+            command.setParent(Display.getCurrent().getActiveShell());
+            if (command.showDialog() == CommandPrompter.OK) {
 
-				return message;
-				
-			}
-			else {
-				return null;
-			}
-		} 
-		catch (Exception e) {
-			return e.getMessage();
-		}
-	}
-	
+                String message = spooledFileResource.getSpooledFile().changeAttribute(command.getCommandString());
+
+                if (message == null) {
+                    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+                    Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
+                    spooledFileVector.addElement(spooledFileResource);
+                    sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, spooledFileVector,
+                        spooledFileResource.getSubSystem(), null, null, null);
+                }
+
+                return message;
+
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+
 }

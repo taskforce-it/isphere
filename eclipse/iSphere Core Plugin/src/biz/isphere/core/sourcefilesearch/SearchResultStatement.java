@@ -10,28 +10,28 @@ package biz.isphere.core.sourcefilesearch;
 
 public class SearchResultStatement {
 
-	private int statement;
-	private String line;
+    private int statement;
+    private String line;
 
-	public SearchResultStatement() {
-		statement = 0;
-		line = "";
-	}
+    public SearchResultStatement() {
+        statement = 0;
+        line = "";
+    }
 
-	public int getStatement() {
-		return statement;
-	}
+    public int getStatement() {
+        return statement;
+    }
 
-	public void setStatement(int statement) {
-		this.statement = statement;
-	}
+    public void setStatement(int statement) {
+        this.statement = statement;
+    }
 
-	public String getLine() {
-		return line;
-	}
+    public String getLine() {
+        return line;
+    }
 
-	public void setLine(String line) {
-		this.line = line;
-	}
-	
+    public void setLine(String line) {
+        this.line = line;
+    }
+
 }

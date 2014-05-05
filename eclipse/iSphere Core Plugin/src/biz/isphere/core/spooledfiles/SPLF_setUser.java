@@ -8,62 +8,54 @@
 
 package biz.isphere.core.spooledfiles;
 
-import com.ibm.as400.data.ProgramCallDocument;
-import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.data.PcmlException;
+import com.ibm.as400.data.ProgramCallDocument;
 
 public class SPLF_setUser {
 
-	public int run(
-			AS400 _as400,
-			String _user) {
+    public int run(AS400 _as400, String _user) {
 
-		int errno = 0;
-		
-		try {
-			
-			ProgramCallDocument pcml = 
-				new ProgramCallDocument(
-						_as400, 
-						"biz.isphere.core.spooledfiles.SPLF_setUser", 
-						this.getClass().getClassLoader());
+        int errno = 0;
 
-			pcml.setValue("SPLF_setUser.user", _user);
-			
-			boolean rc = pcml.callProgram("SPLF_setUser");
+        try {
 
-			if (rc == false) {
-				
-				AS400Message[] msgs = pcml.getMessageList("SPLF_setUser");
-				for (int idx = 0; idx < msgs.length; idx++) {
-					System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
-				}
-				System.out.println("*** Call to SPLF_setUser failed. See messages above ***");
-				
-				errno = -1;
-				
-			}
-			else {
-				
-				errno = 1;
-				
-			}
-			
-		}
-		catch (PcmlException e) {
-		
-			errno = -1;
-			
-		//	System.out.println(e.getLocalizedMessage());    
-		//	e.printStackTrace();
-		//	System.out.println("*** Call to SPLF_setUser failed. ***");
-		//	return null;
-			
-		}
-		
-		return errno;
-		
-	} 
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.spooledfiles.SPLF_setUser", this.getClass().getClassLoader());
+
+            pcml.setValue("SPLF_setUser.user", _user);
+
+            boolean rc = pcml.callProgram("SPLF_setUser");
+
+            if (rc == false) {
+
+                AS400Message[] msgs = pcml.getMessageList("SPLF_setUser");
+                for (int idx = 0; idx < msgs.length; idx++) {
+                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                }
+                System.out.println("*** Call to SPLF_setUser failed. See messages above ***");
+
+                errno = -1;
+
+            } else {
+
+                errno = 1;
+
+            }
+
+        } catch (PcmlException e) {
+
+            errno = -1;
+
+            // System.out.println(e.getLocalizedMessage());
+            // e.printStackTrace();
+            // System.out.println("*** Call to SPLF_setUser failed. ***");
+            // return null;
+
+        }
+
+        return errno;
+
+    }
 
 }

@@ -22,43 +22,47 @@ import biz.isphere.core.Messages;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
-
 public class SpooledFileSubSystemFactory extends SubSystemConfiguration {
 
-	public ISubSystem createSubSystemInternal(IHost host) {
-		return new SpooledFileSubSystem(host, getConnectorService(host));
-	}
+    @Override
+    public ISubSystem createSubSystemInternal(IHost host) {
+        return new SpooledFileSubSystem(host, getConnectorService(host));
+    }
 
-	public IConnectorService getConnectorService(IHost host) {
-		ISubSystem[] subSystems = host.getSubSystems();
-		for (int i = 0; i < subSystems.length; i++) {
-			ISubSystem subSystem = subSystems[i];
-			if ((subSystem instanceof QSYSObjectSubSystem)) {
-				return subSystem.getConnectorService();
-			}
-		}
+    @Override
+    public IConnectorService getConnectorService(IHost host) {
+        ISubSystem[] subSystems = host.getSubSystems();
+        for (int i = 0; i < subSystems.length; i++) {
+            ISubSystem subSystem = subSystems[i];
+            if ((subSystem instanceof QSYSObjectSubSystem)) {
+                return subSystem.getConnectorService();
+            }
+        }
 
-		return null;
-	}
-	
-	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter) {
-		return Messages.Spooled_File_Filter;
-	}
-	
-	protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr) {
-		ISystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
-		Vector<String> strings = new Vector<String>();
-		strings.add("*CURRENT/*/*/*/*/");
-		try {
-			ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
-			filter.setType("spooled file"); } 
-		catch (Exception localException) {
-		}
-		return defaultPool;
-	}
+        return null;
+    }
 
-	public boolean showGenericShowInTableOnFilter() {
-		return true;
-	}
-	
+    @Override
+    public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter) {
+        return Messages.Spooled_File_Filter;
+    }
+
+    @Override
+    protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr) {
+        ISystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
+        Vector<String> strings = new Vector<String>();
+        strings.add("*CURRENT/*/*/*/*/");
+        try {
+            ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
+            filter.setType("spooled file");
+        } catch (Exception localException) {
+        }
+        return defaultPool;
+    }
+
+    @Override
+    public boolean showGenericShowInTableOnFilter() {
+        return true;
+    }
+
 }

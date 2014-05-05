@@ -46,6 +46,7 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
         this._bindingDirectoryEntries = _bindingDirectoryEntries;
     }
 
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout());
@@ -56,17 +57,20 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
         return container;
     }
 
+    @Override
     protected void okPressed() {
         if (_bindingDirectoryEntryDetail.processButtonPressed()) {
             super.okPressed();
         }
     }
 
+    @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
         createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
     }
 
+    @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.Binding_Directory_Entry);
@@ -75,6 +79,7 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */
+    @Override
     protected Point getDefaultSize() {
         return getShell().computeSize(Size.getSize(450), SWT.DEFAULT, true);
     }
@@ -83,6 +88,7 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
      * Overriden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
+    @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }

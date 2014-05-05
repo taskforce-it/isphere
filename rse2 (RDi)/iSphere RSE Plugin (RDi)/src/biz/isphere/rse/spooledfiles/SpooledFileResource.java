@@ -13,25 +13,24 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 
-
 public class SpooledFileResource extends AbstractResource {
-	
-	private SpooledFile spooledFile;
 
-	public SpooledFileResource() {
-		super();
-	}
+    private SpooledFile spooledFile;
 
-	public SpooledFileResource(ISubSystem subSystem) {
-		super(subSystem);
-	}
+    public SpooledFileResource() {
+        super();
+    }
 
-	public SpooledFile getSpooledFile() {
-		return spooledFile;
-	}
+    public SpooledFileResource(ISubSystem subSystem) {
+        super(subSystem);
+    }
 
-	public void setSpooledFile(SpooledFile spooledFile) {
-		this.spooledFile = spooledFile;
-	}
+    public SpooledFile getSpooledFile() {
+        return spooledFile;
+    }
+
+    public void setSpooledFile(SpooledFile spooledFile) {
+        this.spooledFile = spooledFile;
+    }
 
 }

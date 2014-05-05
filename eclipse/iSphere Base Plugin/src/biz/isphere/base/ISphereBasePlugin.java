@@ -9,8 +9,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-import biz.isphere.base.versioncheck.PluginCheck;
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -28,15 +26,14 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
 
     // The shared instance
     private static ISphereBasePlugin plugin;
-    
+
     private static URL installURL;
 
     /**
      * The constructor
      */
     public ISphereBasePlugin() {
-        
-        
+
     }
 
     /*
@@ -45,12 +42,13 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
      * )
      */
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
+
         installURL = context.getBundle().getEntry("/");
-        
+
     }
 
     /*
@@ -59,6 +57,7 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
      * )
      */
+    @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
@@ -86,16 +85,17 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
         }
         return version;
     }
-    
+
+    @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
         reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
         reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
         reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
     }
-    
+
     public static ImageDescriptor getImageDescriptor(String name) {
-        String iconPath = "icons/"; 
+        String iconPath = "icons/";
         try {
             URL url = new URL(installURL, iconPath + name);
             return ImageDescriptor.createFromURL(url);

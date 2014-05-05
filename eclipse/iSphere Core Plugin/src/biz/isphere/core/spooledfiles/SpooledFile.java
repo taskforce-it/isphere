@@ -259,16 +259,7 @@ public class SpooledFile {
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
-		return new com.ibm.as400.access.SpooledFile(
-				as400,
-				file,
-				fileNumber,
-				jobName,
-				jobUser,
-				jobNumber,
-				jobSystem,
-				creationDate,
-				creationTime);
+        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, creationDate, creationTime);
     }
 
     public String hold() {
@@ -279,8 +270,7 @@ public class SpooledFile {
             toolboxSpooledFile.hold(null);
             refreshSpooledFile();
             return null;
-		} 
-		catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -293,8 +283,7 @@ public class SpooledFile {
             toolboxSpooledFile.release();
             refreshSpooledFile();
             return null;
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -306,8 +295,7 @@ public class SpooledFile {
         try {
             toolboxSpooledFile.delete();
             return null;
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -318,8 +306,7 @@ public class SpooledFile {
         }
         try {
             return toolboxSpooledFile.getMessage();
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -332,8 +319,7 @@ public class SpooledFile {
             toolboxSpooledFile.answerMessage(reply);
             refreshSpooledFile();
             return null;
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -345,17 +331,14 @@ public class SpooledFile {
         AS400Message message = null;
         try {
             message = toolboxSpooledFile.getMessage();
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
         }
         if (message == null) {
-			MessageDialog.openError(
-					Display.getCurrent().getActiveShell(),
-					Messages.Error,
-					Messages.bind(Messages.No_Messages, new String[]{file, Integer.toString(fileNumber)}));
-                // Messages.getString("No_Messages").replaceAll("&1", file).replaceAll("&2", Integer.toString(fileNumber)));
-        } 
-        else {
+            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error,
+                Messages.bind(Messages.No_Messages, new String[] { file, Integer.toString(fileNumber) }));
+            // Messages.getString("No_Messages").replaceAll("&1",
+            // file).replaceAll("&2", Integer.toString(fileNumber)));
+        } else {
             SpooledFileMessageDialog dialog = new SpooledFileMessageDialog(Display.getCurrent().getActiveShell(), this);
             dialog.open();
         }
@@ -365,21 +348,21 @@ public class SpooledFile {
     private void refreshSpooledFile() {
         if (toolboxSpooledFile == null) {
             toolboxSpooledFile = getToolboxSpooledFile();
-        }
-        else {
-        	try {
-				toolboxSpooledFile.update();
-			} catch (AS400Exception e) {
-			} catch (AS400SecurityException e) {
-			} catch (ErrorCompletingRequestException e) {
-			} catch (IOException e) {
-			} catch (InterruptedException e) {
-			} catch (RequestNotSupportedException e) {
-			}
+        } else {
+            try {
+                toolboxSpooledFile.update();
+            } catch (AS400Exception e) {
+            } catch (AS400SecurityException e) {
+            } catch (ErrorCompletingRequestException e) {
+            } catch (IOException e) {
+            } catch (InterruptedException e) {
+            } catch (RequestNotSupportedException e) {
+            }
         }
         try {
             status = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_SPLFSTATUS);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             String outqdev = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_OUTPUT_QUEUE);
             if (outqdev.endsWith(".OUTQ")) {
@@ -389,30 +372,36 @@ public class SpooledFile {
                 String outq = outqdev.substring(slash + 1);
                 outputQueue = outq.substring(0, outq.indexOf(".OUTQ"));
                 outputQueueLibrary = library;
-            } 
-            else {
+            } else {
                 outputQueue = outqdev;
                 outputQueueLibrary = "*LIBL";
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             outputPriority = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_OUTPTY);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             userData = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_USERDATA);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             formType = toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_FORMTYPE);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             copies = toolboxSpooledFile.getIntegerAttribute(PrintObject.ATTR_COPIES);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             pages = toolboxSpooledFile.getIntegerAttribute(PrintObject.ATTR_PAGES);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             currentPage = toolboxSpooledFile.getIntegerAttribute(PrintObject.ATTR_CURPAGE);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     public String getCommandChangeAttribute() {
@@ -436,8 +425,7 @@ public class SpooledFile {
                     return message.getText();
                 }
             }
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
         return null;
@@ -449,15 +437,13 @@ public class SpooledFile {
 
     public String getCreationDateFormated() {
         String date = creationDate;
-		if (date.length() == 7)
-			date = date.substring(5, 7) + "." + date.substring(3, 5) + "." + date.substring(1, 3);
+        if (date.length() == 7) date = date.substring(5, 7) + "." + date.substring(3, 5) + "." + date.substring(1, 3);
         return date;
     }
 
     public String getCreationTimeFormated() {
         String time = creationTime;
-		if (time.length() == 6)
-			time = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
+        if (time.length() == 6) time = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
         return time;
     }
 
@@ -478,15 +464,15 @@ public class SpooledFile {
                     hasSpooledFile = uploadStreamFile(source, target);
                 }
             }
-            
+
             if (!hasSpooledFile) {
                 return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
-            } 
+            }
 
             if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
                 ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
             }
-            
+
             IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
             file.refreshLocal(1, null);
 
@@ -497,27 +483,28 @@ public class SpooledFile {
 
             } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
-				BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+                BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
+                    + getTemporaryName(format), null, target);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
 
             } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
 
-				BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/" + getTemporaryName(format), null, target);
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+                BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
+                    + getTemporaryName(format), null, target);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
 
             }
 
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
-        } 
-        finally {
+        } finally {
 
             if (hasSpooledFile) {
                 try {
                     deleteStreamFile(source);
-                } 
-                catch (Exception e) {
+                } catch (Exception e) {
                     return e.getMessage();
                 }
             }
@@ -530,18 +517,22 @@ public class SpooledFile {
 
     private boolean doTransformSpooledFile(String format) {
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // IPreferenceStore store =
+        // ISpherePlugin.getDefault().getPreferenceStore();
         Preferences store = Preferences.getInstance();
 
         boolean doTransformSpooledFile = false;
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile =
+            // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
             doTransformSpooledFile = store.getSpooledFileConversionText().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile =
+            // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
             doTransformSpooledFile = store.getSpooledFileConversionHTML().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-            // doTransformSpooledFile = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
+            // doTransformSpooledFile =
+            // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
             doTransformSpooledFile = store.getSpooledFileConversionPDF().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         }
         return doTransformSpooledFile;
@@ -549,36 +540,49 @@ public class SpooledFile {
 
     private boolean createStreamFile(String format) throws Exception {
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
+        // IPreferenceStore store =
+        // ISpherePlugin.getDefault().getPreferenceStore();
         Preferences store = Preferences.getInstance();
 
         boolean _default = true;
         String conversionCommand = "";
         String conversionCommandLibrary = "";
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if
+            // (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED))
+            // {
             if (store.getSpooledFileConversionText().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
-                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
+                // conversionCommand =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
+                // conversionCommandLibrary =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
                 conversionCommand = store.getSpooledFileConversionTextCommand();
                 conversionCommandLibrary = store.getSpooledFileConversionTextLibrary();
             }
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if
+            // (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED))
+            // {
             if (store.getSpooledFileConversionHTML().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
-                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
+                // conversionCommand =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
+                // conversionCommandLibrary =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
                 conversionCommand = store.getSpooledFileConversionHTMLCommand();
                 conversionCommandLibrary = store.getSpooledFileConversionHTMLLibrary();
             }
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-            // if (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
+            // if
+            // (store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF").equals(IPreferences.SPLF_CONVERSION_USER_DEFINED))
+            // {
             if (store.getSpooledFileConversionPDF().equals(IPreferences.SPLF_CONVERSION_USER_DEFINED)) {
                 _default = false;
-                // conversionCommand = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
-                // conversionCommandLibrary = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
+                // conversionCommand =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
+                // conversionCommandLibrary =
+                // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
                 conversionCommand = store.getSpooledFileConversionPDFCommand();
                 conversionCommandLibrary = store.getSpooledFileConversionPDFLibrary();
             }
@@ -591,8 +595,7 @@ public class SpooledFile {
             command = "CVTSPLF FROMFILE(&SPLF) SPLNBR(&SPLFNBR) JOB(&JOBNBR/&JOBUSR/&JOBNAME) TOSTREAM('&STMF') TODIR('&STMFDIR') STCODPAG(&CODPAG) TOFMT(&FMT) STOPT(*REPLACE)";
             library = ISpherePlugin.getISphereLibrary();
 
-        } 
-        else {
+        } else {
             command = conversionCommand;
             library = conversionCommandLibrary;
         }
@@ -631,8 +634,7 @@ public class SpooledFile {
 
             }
 
-        } 
-        finally {
+        } finally {
 
             if (cleanUp) {
 
@@ -649,7 +651,7 @@ public class SpooledFile {
     private boolean transformSpooledFile(String format, String target) throws Exception {
 
         ISpooledFileTransformer transformer = null;
-        
+
         if (IPreferences.OUTPUT_FORMAT_TEXT.equals(format)) {
             transformer = new SpooledFileTransformerText(getToolboxSpooledFile());
         } else if (IPreferences.OUTPUT_FORMAT_HTML.equals(format)) {
@@ -659,9 +661,9 @@ public class SpooledFile {
         } else {
             return false;
         }
-        
+
         return transformer.transformSpooledFile(target);
-        
+
     }
 
     private boolean uploadStreamFile(String source, String target) throws Exception {
@@ -689,8 +691,7 @@ public class SpooledFile {
             } while (count != -1);
 
             cleanUp = true;
-        } 
-        finally {
+        } finally {
 
             if (in != null) {
                 in.close();
@@ -747,7 +748,7 @@ public class SpooledFile {
 
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
-        
+
         dialog.setFilterNames(new String[] { fileDescription, "All Files" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
@@ -757,7 +758,7 @@ public class SpooledFile {
 
         if (file != null) {
             storeSaveDirectory(file);
-            
+
             String source = "/tmp/" + getTemporaryName(format);
             String target = file;
 
@@ -765,7 +766,7 @@ public class SpooledFile {
             boolean hasSpooledFile = false;
 
             try {
-                
+
                 if (doTransformSpooledFile) {
                     hasSpooledFile = transformSpooledFile(format, target);
                 } else {
@@ -778,17 +779,14 @@ public class SpooledFile {
                     return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
                 }
 
-            } 
-            catch (Exception e) {
+            } catch (Exception e) {
                 return e.getMessage();
-            } 
-            finally {
+            } finally {
 
                 if (hasSpooledFile) {
                     try {
                         deleteStreamFile(source);
-                    } 
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         return e.getMessage();
                     }
                 }
@@ -803,10 +801,12 @@ public class SpooledFile {
 
     private String getSaveDirectory() {
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
-        // String file = store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY");
+        // IPreferenceStore store =
+        // ISpherePlugin.getDefault().getPreferenceStore();
+        // String file =
+        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY");
         // if (file == null || file.length() == 0) {
-        //     return "C:\\";
+        // return "C:\\";
         // }
         return Preferences.getInstance().getSpooledFileSaveDirectory();
     }
@@ -814,8 +814,10 @@ public class SpooledFile {
     private void storeSaveDirectory(String file) {
         String directory = new File(file).getParent();
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // IPreferenceStore store = ISpherePlugin.getDefault().getPreferenceStore();
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY", directory);
+        // IPreferenceStore store =
+        // ISpherePlugin.getDefault().getPreferenceStore();
+        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.SAVE.DIRECTORY",
+        // directory);
         Preferences.getInstance().setSpooledFileSaveDirectory(directory);
     }
 

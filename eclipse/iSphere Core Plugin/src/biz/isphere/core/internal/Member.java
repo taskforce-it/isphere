@@ -13,56 +13,60 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class Member {
 
-	public abstract String getConnection();
-	
-	public abstract String getLibrary();
-	
-	public abstract String getSourceFile();
+    public abstract String getConnection();
 
-	public abstract String getMember();
+    public abstract String getLibrary();
 
-	public abstract boolean exists() throws Exception;
+    public abstract String getSourceFile();
 
-	public abstract void download(IProgressMonitor monitor) throws Exception;
+    public abstract String getMember();
 
-	public abstract void upload(IProgressMonitor monitor) throws Exception;
+    public abstract boolean exists() throws Exception;
 
-	public abstract IFile getLocalResource();
+    public abstract void download(IProgressMonitor monitor) throws Exception;
 
-	public abstract String getLabel();
+    public abstract void upload(IProgressMonitor monitor) throws Exception;
 
-	public abstract void setLabel(String label);
+    public abstract IFile getLocalResource();
 
-	public abstract boolean isArchive();
+    public abstract String getLabel();
 
-	public abstract void setArchive(boolean archive);
-	
-	public abstract String getArchiveLibrary();
+    public abstract void setLabel(String label);
 
-	public abstract void setArchiveLibrary(String archiveLibrary);
+    public abstract boolean isArchive();
 
-	public abstract String getArchiveFile();
+    public abstract void setArchive(boolean archive);
 
-	public abstract void setArchiveFile(String archiveFile);
-	
-	public abstract String getArchiveMember();
+    public abstract String getArchiveLibrary();
 
-	public abstract void setArchiveMember(String archiveMember);
-	
-	public abstract String getArchiveDate();
-	
-	public abstract void setArchiveDate(String archiveDate);
-	
-	public abstract String getArchiveTime();
-	
-	public abstract void setArchiveTime(String archiveTime);
-	
-	public void openStream() throws Exception {}
+    public abstract void setArchiveLibrary(String archiveLibrary);
 
-	public void closeStream() throws Exception {}
+    public abstract String getArchiveFile();
 
-	public void addIgnoreFile() {}
+    public abstract void setArchiveFile(String archiveFile);
 
-	public void removeIgnoreFile() {}
-	
+    public abstract String getArchiveMember();
+
+    public abstract void setArchiveMember(String archiveMember);
+
+    public abstract String getArchiveDate();
+
+    public abstract void setArchiveDate(String archiveDate);
+
+    public abstract String getArchiveTime();
+
+    public abstract void setArchiveTime(String archiveTime);
+
+    public void openStream() throws Exception {
+    }
+
+    public void closeStream() throws Exception {
+    }
+
+    public void addIgnoreFile() {
+    }
+
+    public void removeIgnoreFile() {
+    }
+
 }

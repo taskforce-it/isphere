@@ -12,78 +12,78 @@ import java.util.ArrayList;
 
 public class MessageDescription {
 
-	private String connection;
-	private String library;
-	private String messageFile;
-	private String messageId;
-	private String message;
-	private String helpText;
-	private ArrayList fieldFormats;
-	
-	public MessageDescription() {
-		connection = "";
-		library = "";
-		messageFile = "";
-		messageId = "";
-		message = "";
-		helpText = "";
-		fieldFormats = new ArrayList();
-	}
+    private String connection;
+    private String library;
+    private String messageFile;
+    private String messageId;
+    private String message;
+    private String helpText;
+    private ArrayList fieldFormats;
 
-	public String getConnection() {
-		return connection;
-	}
+    public MessageDescription() {
+        connection = "";
+        library = "";
+        messageFile = "";
+        messageId = "";
+        message = "";
+        helpText = "";
+        fieldFormats = new ArrayList();
+    }
 
-	public void setConnection(String connection) {
-		this.connection = connection;
-	}
+    public String getConnection() {
+        return connection;
+    }
 
-	public String getLibrary() {
-		return library;
-	}
+    public void setConnection(String connection) {
+        this.connection = connection;
+    }
 
-	public void setLibrary(String library) {
-		this.library = library;
-	}
+    public String getLibrary() {
+        return library;
+    }
 
-	public String getMessageFile() {
-		return messageFile;
-	}
+    public void setLibrary(String library) {
+        this.library = library;
+    }
 
-	public void setMessageFile(String messageFile) {
-		this.messageFile = messageFile;
-	}
+    public String getMessageFile() {
+        return messageFile;
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public void setMessageFile(String messageFile) {
+        this.messageFile = messageFile;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
-	
-	public String getMessage() {
-		return message;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String getHelpText() {
-		return helpText;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setHelpText(String helpText) {
-		this.helpText = helpText;
-	}
-	
-	public ArrayList getFieldFormats() {
-		return fieldFormats;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public void setFieldFormats(ArrayList fieldFormats) {
-		this.fieldFormats = fieldFormats;
-	}
+    public String getHelpText() {
+        return helpText;
+    }
+
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
+    }
+
+    public ArrayList getFieldFormats() {
+        return fieldFormats;
+    }
+
+    public void setFieldFormats(ArrayList fieldFormats) {
+        this.fieldFormats = fieldFormats;
+    }
 
 }

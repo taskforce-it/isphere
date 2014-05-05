@@ -119,7 +119,7 @@ public class Messages extends NLS {
     public static String Member_not_found_colon_LEFT;
 
     public static String Member_not_found_colon_RIGHT;
-    
+
     public static String Member_is_already_open_in_an_editor;
 
     public static String Menu_item_colon;

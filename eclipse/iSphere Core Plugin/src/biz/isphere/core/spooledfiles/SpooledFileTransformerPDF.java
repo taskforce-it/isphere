@@ -45,6 +45,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * Returns the workstation customization object that is used for spooled
      * file conversion to PDF.
      */
+    @Override
     protected QSYSObjectPathName getWorkstationCustomizationObject() {
         return new QSYSObjectPathName(ISpherePlugin.getISphereLibrary(), "SPLFPDF", "WSCST");
     }
@@ -54,6 +55,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * <p>
      * Produces an empty PDF document.
      */
+    @Override
     protected void openPrinter(String target) throws FileNotFoundException, DocumentException {
         document = createPFD(target);
     }
@@ -63,6 +65,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * <p>
      * Closes the PDF document.
      */
+    @Override
     protected void closePrinter() throws IOException {
         if (document != null) {
             document.close();
@@ -74,6 +77,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * <p>
      * Adds the PDF meta data.
      */
+    @Override
     protected void initPrinter() throws IOException {
         addMetaData(document);
     }
@@ -81,12 +85,14 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void resetPrinter() throws IOException {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void formfeed() throws DocumentException {
         document.newPage();
     }
@@ -94,6 +100,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void newLine() throws DocumentException {
         document.add(Chunk.NEWLINE);
     }
@@ -101,6 +108,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void print(String text) throws DocumentException {
         document.add(new Chunk(text, font));
     }
@@ -343,6 +351,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             }
         }
 
+        @Override
         public String toString() {
             return format + " (" + pageSize.getWidth() + " x " + pageSize.getHeight() + ")";
         }
