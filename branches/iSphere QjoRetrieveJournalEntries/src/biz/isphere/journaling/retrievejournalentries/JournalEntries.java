@@ -936,15 +936,16 @@ public class JournalEntries {
 
     private AS400Structure getHeaderStructure() {
         if (this.headerStructure == null) {
-            // @formatter:off
-            AS400DataType[] structure = { new AS400Bin4(), // 0 Bytes returned 
-                new AS400Bin4(),                           // 1 Offset to first journal entry header 
-                new AS400Bin4(),                           // 2 Number of entries retrieved
-                new AS400Text(1),                          // 3 Continuation indicator
-                new AS400Text(10),                         // 4 Continuation starting receiver
-                new AS400Text(10),                         // 5 Continuation starting receiver library
-                new AS400Text(20),                         // 6 Continuation starting sequence number
-                new AS400Text(11)                          // 7 Reserved
+            // @formatter:off formatter intentionally disabled 
+            AS400DataType[] structure = { 
+                new AS400Bin4(),              // 0 Bytes returned 
+                new AS400Bin4(),              // 1 Offset to first journal entry header 
+                new AS400Bin4(),              // 2 Number of entries retrieved
+                new AS400Text(1),             // 3 Continuation indicator
+                new AS400Text(10),            // 4 Continuation starting receiver
+                new AS400Text(10),            // 5 Continuation starting receiver library
+                new AS400Text(20),            // 6 Continuation starting sequence number
+                new AS400Text(11)             // 7 Reserved
             };
             // @formatter:on
             this.headerStructure = new AS400Structure(structure);
@@ -954,44 +955,44 @@ public class JournalEntries {
 
     private AS400Structure getEntryHeaderStructure() {
         if (entryHeaderStructure == null) {
-            // @formatter:off
+            // @formatter:off formatter intentionally disabled 
             AS400DataType[] tStructure = { 
-                new AS400Bin4(),                           // 0 Displacement to next journal entry's header
-                new AS400Bin4(),                           // 1 Displacement to this journal entry's null value indicators
-                new AS400Bin4(),                           // 2 Displacement to this journal entry's entry specific data
-                new AS400Bin4(),                           // 3 Displacement to this journal entry's transaction identifier
-                new AS400Bin4(),                           // 4 Displacement to this journal entry's logical unit of work
-                new AS400Bin4(),                           // 5 Displacement to this journal entry's receiver information
-                new AS400Bin8(),                           // 6 Sequence number
-                new AS400ByteArray(8),                     // 7 Unformatted Time stamp
-                new AS400Bin8(),                           // 8 Thread identifier
-                new AS400Bin8(),                           // 9 System sequence number
-                new AS400Bin8(),                           // 10 Count/relative record number
-                new AS400Bin8(),                           // 11 Commit cycle identifier
-                new AS400Bin4(),                           // 12 Pointer handle
-                new AS400Bin2(),                           // 13 Remote port
-                new AS400Bin2(),                           // 14 Arm number
-                new AS400Bin2(),                           // 15 Program library ASP number
-                new AS400Text(16),                         // 16 Remote Address
-                new AS400Text(1),                          // 17 Journal code
-                new AS400Text(2),                          // 18 Entry type
-                new AS400Text(10),                         // 19 Job name
-                new AS400Text(10),                         // 20 User name
-                new AS400Text(6),                          // 21 Job number
-                new AS400Text(10),                         // 22 Program name
-                new AS400Text(10),                         // 23 Program library name
-                new AS400Text(10),                         // 24 Program library ASP device name
-                new AS400Text(30),                         // 25 Object ()
-                new AS400Text(10),                         // 26 User profile
-                new AS400Text(10),                         // 27 Journal identifier
-                new AS400Text(1),                          // 28 Address family
-                new AS400Text(8),                          // 29 System name
-                new AS400Text(1),                          // 30 Indicator flag
-                new AS400Text(1),                          // 31 Object name indicator
-                new AS400ByteArray(1),                     // 32 Flags
-                new AS400Text(10),                         // 33 Object type
-                new AS400Text(3),                          // 34 Reserved
-                new AS400Bin4(),                           // 35 Nested commit level
+                new AS400Bin4(),              // 0 Displacement to next journal entry's header
+                new AS400Bin4(),              // 1 Displacement to this journal entry's null value indicators
+                new AS400Bin4(),              // 2 Displacement to this journal entry's entry specific data
+                new AS400Bin4(),              // 3 Displacement to this journal entry's transaction identifier
+                new AS400Bin4(),              // 4 Displacement to this journal entry's logical unit of work
+                new AS400Bin4(),              // 5 Displacement to this journal entry's receiver information
+                new AS400Bin8(),              // 6 Sequence number
+                new AS400ByteArray(8),        // 7 Unformatted Time stamp
+                new AS400Bin8(),              // 8 Thread identifier
+                new AS400Bin8(),              // 9 System sequence number
+                new AS400Bin8(),              // 10 Count/relative record number
+                new AS400Bin8(),              // 11 Commit cycle identifier
+                new AS400Bin4(),              // 12 Pointer handle
+                new AS400Bin2(),              // 13 Remote port
+                new AS400Bin2(),              // 14 Arm number
+                new AS400Bin2(),              // 15 Program library ASP number
+                new AS400Text(16),            // 16 Remote Address
+                new AS400Text(1),             // 17 Journal code
+                new AS400Text(2),             // 18 Entry type
+                new AS400Text(10),            // 19 Job name
+                new AS400Text(10),            // 20 User name
+                new AS400Text(6),             // 21 Job number
+                new AS400Text(10),            // 22 Program name
+                new AS400Text(10),            // 23 Program library name
+                new AS400Text(10),            // 24 Program library ASP device name
+                new AS400Text(30),            // 25 Object ()
+                new AS400Text(10),            // 26 User profile
+                new AS400Text(10),            // 27 Journal identifier
+                new AS400Text(1),             // 28 Address family
+                new AS400Text(8),             // 29 System name
+                new AS400Text(1),             // 30 Indicator flag
+                new AS400Text(1),             // 31 Object name indicator
+                new AS400ByteArray(1),        // 32 Flags
+                new AS400Text(10),            // 33 Object type
+                new AS400Text(3),             // 34 Reserved
+                new AS400Bin4()               // 35 Nested commit level
             };
             // @formatter:on
             entryHeaderStructure = new AS400Structure(tStructure);
@@ -1041,7 +1042,7 @@ public class JournalEntries {
      */
     private List<AS400DataType> getEntrySpecificDataStructureHeaderEntries() {
         if (entrySpecificDataStructureHeader == null) {
-            // @formatter:off
+            // @formatter:off formatter intentionally disabled 
             entrySpecificDataStructureHeader = new ArrayList<AS400DataType>();
             entrySpecificDataStructureHeader.add(new AS400Text(5));  // Length of entry specific data
             entrySpecificDataStructureHeader.add(new AS400Text(11)); // Reserved
