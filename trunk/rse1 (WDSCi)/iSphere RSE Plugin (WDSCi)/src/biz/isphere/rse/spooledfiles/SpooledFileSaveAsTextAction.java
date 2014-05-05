@@ -15,8 +15,9 @@ import biz.isphere.core.preferencepages.IPreferences;
 
 public class SpooledFileSaveAsTextAction extends AbstractSpooledFileAction {
 
-	public String execute(SpooledFileResource spooledFileResource) {
-		return spooledFileResource.getSpooledFile().save(getShell(), IPreferences.OUTPUT_FORMAT_TEXT);
-	}
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
+        return spooledFileResource.getSpooledFile().save(getShell(), IPreferences.OUTPUT_FORMAT_TEXT);
+    }
 
 }

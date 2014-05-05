@@ -1,35 +1,34 @@
 package biz.isphere.rse.internal;
 
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.core.api.ISeriesConnection;
-
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.messagefilesearch.SearchResult;
 
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
+import com.ibm.etools.iseries.core.api.ISeriesConnection;
+
 public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchObjectFilterCreator {
 
-	public boolean createObjectFilter(Object connection, String filterName, SearchResult[] searchResults) {
-		
-		ISeriesObjectFilterString[] filterStrings = new ISeriesObjectFilterString[searchResults.length];
+    public boolean createObjectFilter(Object connection, String filterName, SearchResult[] searchResults) {
 
-		for (int idx = 0; idx < searchResults.length; idx++) {
-			
-			ISeriesObjectFilterString filterString = new ISeriesObjectFilterString();
-			filterString.setLibrary(searchResults[idx].getLibrary());
-			filterString.setObject(searchResults[idx].getMessageFile());
-			filterString.setObjectType("*MSGF");
+        ISeriesObjectFilterString[] filterStrings = new ISeriesObjectFilterString[searchResults.length];
 
-			filterStrings[idx] = filterString;
-			
-		}
-		
-		if (RSEHelper.createObjectFilter((ISeriesConnection)connection, filterName, filterStrings) == null) {
-			return false;
-		}
-		else {
-			return true;
-		}
-		
-	}
+        for (int idx = 0; idx < searchResults.length; idx++) {
+
+            ISeriesObjectFilterString filterString = new ISeriesObjectFilterString();
+            filterString.setLibrary(searchResults[idx].getLibrary());
+            filterString.setObject(searchResults[idx].getMessageFile());
+            filterString.setObjectType("*MSGF");
+
+            filterStrings[idx] = filterString;
+
+        }
+
+        if (RSEHelper.createObjectFilter((ISeriesConnection)connection, filterName, filterStrings) == null) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 
 }

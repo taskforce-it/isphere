@@ -13,90 +13,81 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class XFileDialog implements IFileDialog {
 
-	private FileDialog fileDialog;
+    private FileDialog fileDialog;
 
-	private boolean overwrite;
+    private boolean overwrite;
 
-	/**
-	 * Constructs a new instance of this class given its parent and a style
-	 * value describing its behavior and appearance.
-	 * <p>
-	 * The style value is either one of the style constants defined in class SWT
-	 * which is applicable to instances of this class, or must be built by
-	 * bitwise OR'ing together (that is, using the int "|" operator) two or more
-	 * of those SWT style constants. The class description lists the style
-	 * constants that are applicable to the class. Style bits are also inherited
-	 * from superclasses.
-	 * 
-	 * @param aParent -
-	 *            a shell which will be the parent of the new instance
-	 * @param aStyle -
-	 *            the style of dialog to construct
-	 */
-	public XFileDialog(Shell aParent, int aStyle) {
-		fileDialog = new FileDialog(aParent, aStyle);
-	}
+    /**
+     * Constructs a new instance of this class given its parent and a style
+     * value describing its behavior and appearance.
+     * <p>
+     * The style value is either one of the style constants defined in class SWT
+     * which is applicable to instances of this class, or must be built by
+     * bitwise OR'ing together (that is, using the int "|" operator) two or more
+     * of those SWT style constants. The class description lists the style
+     * constants that are applicable to the class. Style bits are also inherited
+     * from superclasses.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @param aStyle - the style of dialog to construct
+     */
+    public XFileDialog(Shell aParent, int aStyle) {
+        fileDialog = new FileDialog(aParent, aStyle);
+    }
 
-	/**
-	 * Constructs a new instance of this class given only its parent.
-	 * 
-	 * @param aParent -
-	 *            a shell which will be the parent of the new instance
-	 */
-	public XFileDialog(Shell aParent) {
-		fileDialog = new FileDialog(aParent);
-	}
+    /**
+     * Constructs a new instance of this class given only its parent.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     */
+    public XFileDialog(Shell aParent) {
+        fileDialog = new FileDialog(aParent);
+    }
 
-	/**
-	 * Makes the dialog visible and brings it to the front of the display.
-	 * 
-	 * @return a string describing the absolute path of the first selected file,
-	 *         or null if the dialog was cancelled or an error occurred
-	 * @throws SWTException
-	 *             <ul>
-	 *             <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
-	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *             thread that created the dialog</li>
-	 *             </ul>
-	 */
-	public String open() throws SWTException {
-		String tFileName = null;
-		boolean tCanOverwrite = false;
-		while (!tCanOverwrite) {
-			tFileName = fileDialog.open();
-			if (tFileName == null) {
-				return null;
-			}
+    /**
+     * Makes the dialog visible and brings it to the front of the display.
+     * 
+     * @return a string describing the absolute path of the first selected file,
+     *         or null if the dialog was cancelled or an error occurred
+     * @throws SWTException
+     *         <ul>
+     *         <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
+     *         <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread
+     *         that created the dialog</li>
+     *         </ul>
+     */
+    public String open() throws SWTException {
+        String tFileName = null;
+        boolean tCanOverwrite = false;
+        while (!tCanOverwrite) {
+            tFileName = fileDialog.open();
+            if (tFileName == null) {
+                return null;
+            }
 
-			File tFile = new File(tFileName);
-			if (tFile.exists() && overwrite) {
-				String tQuestion = Messages.bind(
-						Messages.XFileDialog_OverwriteDialog_question,
-						tFileName);
-				MessageDialog tOverwriteDialog = new MessageDialog(fileDialog
-						.getParent(),
-						Messages.XFileDialog_OverwriteDialog_headline, null,
-						tQuestion, MessageDialog.QUESTION, new String[] {
-								IDialogConstants.YES_LABEL,
-								IDialogConstants.NO_LABEL,
-								IDialogConstants.CANCEL_LABEL }, 0);
-				int tOverwrite = tOverwriteDialog.open();
-				switch (tOverwrite) {
-				case 0: // Yes
-					tCanOverwrite = true;
-					break;
-				case 1: // No
-					break;
-				case 2: // Cancel
-				default:
-					return null;
-				}
-			} else {
-				tCanOverwrite = true;
-			}
-		}
-		return tFileName;
-	}
+            File tFile = new File(tFileName);
+            if (tFile.exists() && overwrite) {
+                String tQuestion = Messages.bind(Messages.XFileDialog_OverwriteDialog_question, tFileName);
+                MessageDialog tOverwriteDialog = new MessageDialog(fileDialog.getParent(), Messages.XFileDialog_OverwriteDialog_headline, null,
+                    tQuestion, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
+                        IDialogConstants.CANCEL_LABEL }, 0);
+                int tOverwrite = tOverwriteDialog.open();
+                switch (tOverwrite) {
+                case 0: // Yes
+                    tCanOverwrite = true;
+                    break;
+                case 1: // No
+                    break;
+                case 2: // Cancel
+                default:
+                    return null;
+                }
+            } else {
+                tCanOverwrite = true;
+            }
+        }
+        return tFileName;
+    }
 
     /**
      * Sets the flag that the dialog will use to determine whether to prompt the

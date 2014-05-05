@@ -19,25 +19,20 @@ import com.ibm.etools.systems.model.SystemRegistry;
 
 public class SpooledFileReleaseAction extends AbstractSpooledFileAction {
 
-	public String execute(SpooledFileResource spooledFileResource) {
-		
-		String message = spooledFileResource.getSpooledFile().release();
-		
-		if (message == null) {
-			SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
-			Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
-			spooledFileVector.addElement(spooledFileResource);
-			sr.fireRemoteResourceChangeEvent(
-					ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, 
-					spooledFileVector, 
-					null, 
-					null, 
-					null, 
-					null);
-		}
-		
-		return message;
-		
-	}
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
+
+        String message = spooledFileResource.getSpooledFile().release();
+
+        if (message == null) {
+            SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+            Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
+            spooledFileVector.addElement(spooledFileResource);
+            sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, spooledFileVector, null, null, null, null);
+        }
+
+        return message;
+
+    }
 
 }

@@ -17,23 +17,23 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractResource;
 
 public class SpooledFileResource extends AbstractResource {
-	
-	private SpooledFile spooledFile;
 
-	public SpooledFileResource(SubSystem subSystem) {
-		super(subSystem);
-	}
+    private SpooledFile spooledFile;
 
-	public SpooledFileResource() {
-		super();
-	}
+    public SpooledFileResource(SubSystem subSystem) {
+        super(subSystem);
+    }
 
-	public SpooledFile getSpooledFile() {
-		return spooledFile;
-	}
+    public SpooledFileResource() {
+        super();
+    }
 
-	public void setSpooledFile(SpooledFile spooledFile) {
-		this.spooledFile = spooledFile;
-	}
+    public SpooledFile getSpooledFile() {
+        return spooledFile;
+    }
+
+    public void setSpooledFile(SpooledFile spooledFile) {
+        this.spooledFile = spooledFile;
+    }
 
 }

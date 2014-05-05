@@ -31,55 +31,58 @@ import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
 public class ISphereRSEPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
+    // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.rse"; //$NON-NLS-1$
 
     // The shared instance
-	private static ISphereRSEPlugin plugin;
-	
-	private static URL installURL;
-	
-	public ISphereRSEPlugin() {
-		super();
-		plugin = this;
-	}
+    private static ISphereRSEPlugin plugin;
 
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		installURL = context.getBundle().getEntry("/");
-		ISpherePlugin.setEditor(new Editor());
-		ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
-		ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
-		setupAdapters();	
-	}
+    private static URL installURL;
 
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-	}
+    public ISphereRSEPlugin() {
+        super();
+        plugin = this;
+    }
 
-	public static ISphereRSEPlugin getDefault() {
-		return plugin;
-	}
-	
-	protected void initializeImageRegistry(ImageRegistry reg) {
-		super.initializeImageRegistry(reg);
-	}
-	
-	public static ImageDescriptor getImageDescriptor(String name) {
-		String iconPath = "icons/"; 
-		try {
-			URL url = new URL(installURL, iconPath + name);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
-	}
-	
-	private void setupAdapters() {
-		IAdapterManager manager = Platform.getAdapterManager();
-		SpooledFileAdapterFactory spooledFactory = new SpooledFileAdapterFactory();
-		manager.registerAdapters(spooledFactory, SpooledFileResource.class);
-	}
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        installURL = context.getBundle().getEntry("/");
+        ISpherePlugin.setEditor(new Editor());
+        ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
+        ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
+        setupAdapters();
+    }
+
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
+    }
+
+    public static ISphereRSEPlugin getDefault() {
+        return plugin;
+    }
+
+    @Override
+    protected void initializeImageRegistry(ImageRegistry reg) {
+        super.initializeImageRegistry(reg);
+    }
+
+    public static ImageDescriptor getImageDescriptor(String name) {
+        String iconPath = "icons/";
+        try {
+            URL url = new URL(installURL, iconPath + name);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            return ImageDescriptor.getMissingImageDescriptor();
+        }
+    }
+
+    private void setupAdapters() {
+        IAdapterManager manager = Platform.getAdapterManager();
+        SpooledFileAdapterFactory spooledFactory = new SpooledFileAdapterFactory();
+        manager.registerAdapters(spooledFactory, SpooledFileResource.class);
+    }
 
     /**
      * Convenience method to log error messages to the application log.

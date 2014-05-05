@@ -14,49 +14,51 @@ package biz.isphere.rse.spooledfiles;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
-import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
-
 import biz.isphere.core.Messages;
+
+import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
 
 public abstract class AbstractSpooledFileAction extends ISeriesAbstractQSYSPopupMenuExtensionAction {
 
-	public AbstractSpooledFileAction() {
-		super();
-	}
-	
-	public void run() {
-		
-		init();
-		
-		String message = null;
-		
-		Object[] selection = getSelectedRemoteObjects();
-		for (int i = 0; i < selection.length; i++) {
-			if (selection[i] instanceof SpooledFileResource) {
-				SpooledFileResource spooledFileResource = (SpooledFileResource)selection[i];
-				message = execute(spooledFileResource);
-				if (message != null) {
-					MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
-					break;
-				}
-			}
-		}
-		
-		if (message == null) {
-			message = finish();
-			if (message != null) {
-				MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
-			}
-		}
-		
-	}
+    public AbstractSpooledFileAction() {
+        super();
+    }
 
-	public void init() {}
+    @Override
+    public void run() {
 
-	public abstract String execute(SpooledFileResource spooledFileResource);
-	
-	public String finish() {
-		return null;
-	}
-	
+        init();
+
+        String message = null;
+
+        Object[] selection = getSelectedRemoteObjects();
+        for (int i = 0; i < selection.length; i++) {
+            if (selection[i] instanceof SpooledFileResource) {
+                SpooledFileResource spooledFileResource = (SpooledFileResource)selection[i];
+                message = execute(spooledFileResource);
+                if (message != null) {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
+                    break;
+                }
+            }
+        }
+
+        if (message == null) {
+            message = finish();
+            if (message != null) {
+                MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, message);
+            }
+        }
+
+    }
+
+    public void init() {
+    }
+
+    public abstract String execute(SpooledFileResource spooledFileResource);
+
+    public String finish() {
+        return null;
+    }
+
 }

@@ -16,9 +16,10 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 
 public class SpooledFileProperties extends AbstractSpooledFileProperties {
 
-	public SpooledFile getSpooledFile() {
-		SpooledFileResource spooledFileResource = (SpooledFileResource)getElement();
-		return spooledFileResource.getSpooledFile();
-	}
+    @Override
+    public SpooledFile getSpooledFile() {
+        SpooledFileResource spooledFileResource = (SpooledFileResource)getElement();
+        return spooledFileResource.getSpooledFile();
+    }
 
 }

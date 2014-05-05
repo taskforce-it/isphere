@@ -15,36 +15,36 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
+    private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
 
-	public static String iSphere_Message_File_Editor;
+    public static String iSphere_Message_File_Editor;
 
-	public static String iSphere_Compare_Editor;
+    public static String iSphere_Compare_Editor;
 
-	public static String iSphere_Binding_Directory_Editor;
+    public static String iSphere_Binding_Directory_Editor;
 
-	public static String iSphere_Source_File_Search;
+    public static String iSphere_Source_File_Search;
 
-	public static String Right;
+    public static String Right;
 
-	public static String Ancestor;
+    public static String Ancestor;
 
-	public static String E_R_R_O_R;
+    public static String E_R_R_O_R;
 
-	public static String Resources_with_different_connections_have_been_selected;
+    public static String Resources_with_different_connections_have_been_selected;
 
-	public static String iSphere_Message_File_Search;
+    public static String iSphere_Message_File_Search;
 
-	public static String Deleting_spooled_files;
+    public static String Deleting_spooled_files;
 
-	public static String Deleting;
+    public static String Deleting;
 
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
+    static {
+        // initialize resource bundle
+        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+    }
 
-	private Messages() {
-	}
+    private Messages() {
+    }
 
 }
