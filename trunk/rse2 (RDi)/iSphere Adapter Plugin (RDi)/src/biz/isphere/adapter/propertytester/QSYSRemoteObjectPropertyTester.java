@@ -19,16 +19,18 @@ public class QSYSRemoteObjectPropertyTester extends PropertyTester {
         }
 
         ISeriesHostObjectBrief remoteObject = (ISeriesHostObjectBrief)aReceiver;
-        
+
         if (anExpectedValue instanceof String) {
             String expectedValue = (String)anExpectedValue;
             if (PROPERTY_TYPE.equals(aProperty)) {
                 // TODO: remove me, needed only for debugging
-                // System.out.println("Property-Tester (type): " + remoteObject.getType() + "=" + expectedValue);
+                // System.out.println("Property-Tester (type): " +
+                // remoteObject.getType() + "=" + expectedValue);
                 return expectedValue.equalsIgnoreCase(remoteObject.getType());
             } else if (PROPERTY_SUBTYPE.equals(aProperty)) {
                 // TODO: remove me, needed only for debugging
-                // System.out.println("Property-Tester (subtype): " + remoteObject.getSubType() + "=" + expectedValue);
+                // System.out.println("Property-Tester (subtype): " +
+                // remoteObject.getSubType() + "=" + expectedValue);
                 return expectedValue.equalsIgnoreCase(remoteObject.getSubType());
             }
         }

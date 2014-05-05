@@ -105,7 +105,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
                 PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
             }
         });
-        
+
         Link lnkHelp = new Link(mainPanel, SWT.NONE);
         lnkHelp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
         lnkHelp.setText("<a>" + Messages.PreferencesPage_help + "</a>");

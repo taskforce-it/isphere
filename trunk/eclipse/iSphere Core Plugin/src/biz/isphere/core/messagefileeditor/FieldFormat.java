@@ -10,58 +10,58 @@ package biz.isphere.core.messagefileeditor;
 
 public class FieldFormat {
 
-	private String type;
-	private boolean vary;
-	private int bytes;
-	private int length;
-	private int decimalPositions;
-	
-	public FieldFormat() {
-		type = "";
-		vary = false;
-		bytes = 0;
-		length = 0;
-		decimalPositions = 0;
-	}
+    private String type;
+    private boolean vary;
+    private int bytes;
+    private int length;
+    private int decimalPositions;
 
-	public String getType() {
-		return type;
-	}
+    public FieldFormat() {
+        type = "";
+        vary = false;
+        bytes = 0;
+        length = 0;
+        decimalPositions = 0;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public boolean isVary() {
-		return vary;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setVary(boolean vary) {
-		this.vary = vary;
-	}
+    public boolean isVary() {
+        return vary;
+    }
 
-	public int getBytes() {
-		return bytes;
-	}
+    public void setVary(boolean vary) {
+        this.vary = vary;
+    }
 
-	public void setBytes(int bytes) {
-		this.bytes = bytes;
-	}
+    public int getBytes() {
+        return bytes;
+    }
 
-	public int getLength() {
-		return length;
-	}
+    public void setBytes(int bytes) {
+        this.bytes = bytes;
+    }
 
-	public void setLength(int length) {
-		this.length = length;
-	}
+    public int getLength() {
+        return length;
+    }
 
-	public int getDecimalPositions() {
-		return decimalPositions;
-	}
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-	public void setDecimalPositions(int decimalPositions) {
-		this.decimalPositions = decimalPositions;
-	}
-	
+    public int getDecimalPositions() {
+        return decimalPositions;
+    }
+
+    public void setDecimalPositions(int decimalPositions) {
+        this.decimalPositions = decimalPositions;
+    }
+
 }

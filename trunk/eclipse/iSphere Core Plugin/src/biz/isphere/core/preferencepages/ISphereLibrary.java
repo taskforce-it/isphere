@@ -38,41 +38,42 @@ import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	private Text textISphereLibrary;
-	private String iSphereLibrary;
-	private Validator validatorLibrary;
-	private Text textHostName;
-	private Text textFtpPortNumber;
 
-	public ISphereLibrary() {
-		super();
-		setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
-		getPreferenceStore();
-	}
-	
-	public Control createContents(Composite parent) {
+    private Text textISphereLibrary;
+    private String iSphereLibrary;
+    private Validator validatorLibrary;
+    private Text textHostName;
+    private Text textFtpPortNumber;
 
-		Composite container = new Composite(parent, SWT.NULL);
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		container.setLayout(gridLayout);
-		
-		Label labelHostName = new Label(container, SWT.NONE);
-		labelHostName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		labelHostName.setText(Messages.Host_name_colon);
-		
-		textHostName = new Text(container, SWT.BORDER);
-		textHostName.setText(Messages.Host_name_colon);
-		textHostName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-		Label labelFtpPortNumber = new Label(container, SWT.NONE);
-		labelFtpPortNumber.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    public ISphereLibrary() {
+        super();
+        setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
+        getPreferenceStore();
+    }
+
+    @Override
+    public Control createContents(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NULL);
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+        container.setLayout(gridLayout);
+
+        Label labelHostName = new Label(container, SWT.NONE);
+        labelHostName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        labelHostName.setText(Messages.Host_name_colon);
+
+        textHostName = new Text(container, SWT.BORDER);
+        textHostName.setText(Messages.Host_name_colon);
+        textHostName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        Label labelFtpPortNumber = new Label(container, SWT.NONE);
+        labelFtpPortNumber.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         labelFtpPortNumber.setText(Messages.FTP_port_number_colon);
-		
-		textFtpPortNumber = new Text(container, SWT.BORDER);
-		textFtpPortNumber.setText("21");
-		textFtpPortNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        textFtpPortNumber = new Text(container, SWT.BORDER);
+        textFtpPortNumber.setText("21");
+        textFtpPortNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         textFtpPortNumber.addVerifyListener(new VerifyListener() {
             private Pattern pattern = Pattern.compile("[0-9]{0,5}");
 
@@ -86,108 +87,114 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
                 }
             }
         });
-			
-		final Label labelISphereLibrary = new Label(container, SWT.NONE);
-		labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
-		textISphereLibrary = new Text(container, SWT.BORDER);
-		textISphereLibrary.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
-				if (iSphereLibrary.equals("") || !validatorLibrary.validate(iSphereLibrary)) {
-					setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
-					setValid(false);
-				}
-				else {
-					setErrorMessage(null);
-					setValid(true);
-				}
-			}
-		});
-		textISphereLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		textISphereLibrary.setTextLimit(10);
-		
-		validatorLibrary = new Validator();
-		validatorLibrary.setType("*NAME");
-		validatorLibrary.setLength(10);
-		validatorLibrary.setRestricted(false);
-		
-		Button buttonTransfer = new Button(container, SWT.NONE);
-		buttonTransfer.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-			    String hostName = textHostName.getText();
-			    int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-				TransferISphereLibrary statusDialog = new TransferISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM, iSphereLibrary, hostName, ftpPort);
-				if (statusDialog.connect()) {
-					statusDialog.open();
-				}
-			}
-		});
-		buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		buttonTransfer.setText(Messages.Transfer_iSphere_library);
+        final Label labelISphereLibrary = new Label(container, SWT.NONE);
+        labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
-		setScreenToValues();
-		
-		return container;
-	}
+        textISphereLibrary = new Text(container, SWT.BORDER);
+        textISphereLibrary.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
+                if (iSphereLibrary.equals("") || !validatorLibrary.validate(iSphereLibrary)) {
+                    setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
+                    setValid(false);
+                } else {
+                    setErrorMessage(null);
+                    setValid(true);
+                }
+            }
+        });
+        textISphereLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textISphereLibrary.setTextLimit(10);
 
-	protected void performApply() {
-		setStoreToValues();
-		super.performApply();
-	}
+        validatorLibrary = new Validator();
+        validatorLibrary.setType("*NAME");
+        validatorLibrary.setLength(10);
+        validatorLibrary.setRestricted(false);
 
-	protected void performDefaults() {
-		setScreenToDefaultValues();
-		super.performDefaults();
-	}
+        Button buttonTransfer = new Button(container, SWT.NONE);
+        buttonTransfer.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                String hostName = textHostName.getText();
+                int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
+                TransferISphereLibrary statusDialog = new TransferISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+                    .getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM, iSphereLibrary, hostName, ftpPort);
+                if (statusDialog.connect()) {
+                    statusDialog.open();
+                }
+            }
+        });
+        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
-	public boolean performOk() {
-		setStoreToValues();
-		return super.performOk();
-	}
-	
-	protected void setStoreToValues() {
-		
+        setScreenToValues();
+
+        return container;
+    }
+
+    @Override
+    protected void performApply() {
+        setStoreToValues();
+        super.performApply();
+    }
+
+    @Override
+    protected void performDefaults() {
+        setScreenToDefaultValues();
+        super.performDefaults();
+    }
+
+    @Override
+    public boolean performOk() {
+        setStoreToValues();
+        return super.performOk();
+    }
+
+    protected void setStoreToValues() {
+
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-		// store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
-	    Preferences.getInstance().setISphereLibrary(iSphereLibrary);
+        // store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
+        Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
         Preferences.getInstance().setFtpPortNumber(textFtpPortNumber.getTextLimit());
-		
-	}
-	
-	protected void setScreenToValues() {
-		
-		ISpherePlugin.getDefault();
+
+    }
+
+    protected void setScreenToValues() {
+
+        ISpherePlugin.getDefault();
         // TODO: Remove disabled statements 'DE.TASKFORCE'
         // iSphereLibrary = store.getString("DE.TASKFORCE.ISPHERE.LIBRARY");
-	    iSphereLibrary = Preferences.getInstance().getISphereLibrary();
+        iSphereLibrary = Preferences.getInstance().getISphereLibrary();
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getFtpPortNumber());
-		
-		setScreenValues();
-		
-	}
-	
-	protected void setScreenToDefaultValues() {
-		
+
+        setScreenValues();
+
+    }
+
+    protected void setScreenToDefaultValues() {
+
         // TODO: Remove disabled statements 'DE.TASKFORCE'
-		// iSphereLibrary = store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
-	    iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
+        // iSphereLibrary =
+        // store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
+        iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getDefaultFtpPortNumber());
-	    
-		setScreenValues();
-		
-	}
-	
-	protected void setScreenValues() {
-		
-		textISphereLibrary.setText(iSphereLibrary);
-		
-	}
-	
-	public void init(IWorkbench workbench) {
-	}
+
+        setScreenValues();
+
+    }
+
+    protected void setScreenValues() {
+
+        textISphereLibrary.setText(iSphereLibrary);
+
+    }
+
+    public void init(IWorkbench workbench) {
+    }
 
 }

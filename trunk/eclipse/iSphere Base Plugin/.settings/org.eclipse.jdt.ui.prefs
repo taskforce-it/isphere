@@ -10,7 +10,6 @@ cleanup.add_generated_serial_version_id=false
 cleanup.make_variable_declarations_final=false
 cleanup.add_missing_methods=false
 cleanup.always_use_this_for_non_static_field_access=false
-internal.default.compliance=default
 cleanup.remove_trailing_whitespaces_ignore_empty=false
 cleanup.correct_indentation=false
 cleanup.never_use_parentheses_in_expressions=true

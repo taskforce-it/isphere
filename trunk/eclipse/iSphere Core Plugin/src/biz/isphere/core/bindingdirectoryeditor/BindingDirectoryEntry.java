@@ -10,58 +10,58 @@ package biz.isphere.core.bindingdirectoryeditor;
 
 public class BindingDirectoryEntry {
 
-	private String connection;
-	private String library;
-	private String object;
-	private String objectType;
-	private String activation;
-	
-	public BindingDirectoryEntry() {
-		connection = "";
-		library = "";
-		object = "";
-		objectType = "";
-		activation = "";
-	}
+    private String connection;
+    private String library;
+    private String object;
+    private String objectType;
+    private String activation;
 
-	public String getConnection() {
-		return connection;
-	}
+    public BindingDirectoryEntry() {
+        connection = "";
+        library = "";
+        object = "";
+        objectType = "";
+        activation = "";
+    }
 
-	public void setConnection(String connection) {
-		this.connection = connection;
-	}
+    public String getConnection() {
+        return connection;
+    }
 
-	public String getLibrary() {
-		return library;
-	}
+    public void setConnection(String connection) {
+        this.connection = connection;
+    }
 
-	public void setLibrary(String library) {
-		this.library = library;
-	}
+    public String getLibrary() {
+        return library;
+    }
 
-	public String getObject() {
-		return object;
-	}
+    public void setLibrary(String library) {
+        this.library = library;
+    }
 
-	public void setObject(String object) {
-		this.object = object;
-	}
+    public String getObject() {
+        return object;
+    }
 
-	public String getObjectType() {
-		return objectType;
-	}
+    public void setObject(String object) {
+        this.object = object;
+    }
 
-	public void setObjectType(String objectType) {
-		this.objectType = objectType;
-	}
+    public String getObjectType() {
+        return objectType;
+    }
 
-	public String getActivation() {
-		return activation;
-	}
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
 
-	public void setActivation(String activation) {
-		this.activation = activation;
-	}
-	
+    public String getActivation() {
+        return activation;
+    }
+
+    public void setActivation(String activation) {
+        this.activation = activation;
+    }
+
 }

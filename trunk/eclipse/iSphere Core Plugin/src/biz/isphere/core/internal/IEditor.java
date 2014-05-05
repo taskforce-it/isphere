@@ -10,6 +10,6 @@ package biz.isphere.core.internal;
 
 public interface IEditor {
 
-	public void openEditor(Object connection, String library, String file, String member, int statement, String mode);
-	
+    public void openEditor(Object connection, String library, String file, String member, int statement, String mode);
+
 }

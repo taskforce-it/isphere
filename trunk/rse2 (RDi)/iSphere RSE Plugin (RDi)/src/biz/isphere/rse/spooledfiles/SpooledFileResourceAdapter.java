@@ -14,138 +14,148 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
 import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
 
-
 public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
 
-	private SpooledFileBaseResourceAdapter base = new SpooledFileBaseResourceAdapter();
+    private SpooledFileBaseResourceAdapter base = new SpooledFileBaseResourceAdapter();
 
-	
-	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup) {
-	}
+    @Override
+    public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup) {
+    }
 
-	public ImageDescriptor getImageDescriptor(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getImageDescriptor(((SpooledFileResource)object).getSpooledFile());
-		}
-		return null;
-	}
-	
-	public boolean handleDoubleClick(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.handleDoubleClick(((SpooledFileResource)object).getSpooledFile());
-		}
-		return false;
-	}
+    @Override
+    public ImageDescriptor getImageDescriptor(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getImageDescriptor(((SpooledFileResource)object).getSpooledFile());
+        }
+        return null;
+    }
 
-	public String getText(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getText(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    @Override
+    public boolean handleDoubleClick(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.handleDoubleClick(((SpooledFileResource)object).getSpooledFile());
+        }
+        return false;
+    }
 
-	public String getAbsoluteName(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getAbsoluteName(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    public String getText(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getText(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public String getType(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getType(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    public String getAbsoluteName(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getAbsoluteName(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public Object getParent(Object object) {
-		return null;
-	}
+    @Override
+    public String getType(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getType(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public boolean hasChildren(IAdaptable adaptable) {
-		return false;
-	}
-	
-	public boolean showRename(Object object) {
-		return false;
-	}
-	
-	public boolean showDelete(Object object) {
-		return false;
-	}
+    @Override
+    public Object getParent(Object object) {
+        return null;
+    }
 
-	public boolean showRefresh(Object object) {
-		return false;
-	}
+    @Override
+    public boolean hasChildren(IAdaptable adaptable) {
+        return false;
+    }
 
-	public Object[] getChildren(IAdaptable adaptable, IProgressMonitor monitor) {
-		return new Object[0];
-	}
+    @Override
+    public boolean showRename(Object object) {
+        return false;
+    }
 
-	protected IPropertyDescriptor[] internalGetPropertyDescriptors() {
-		return base.internalGetPropertyDescriptors();
-	}
+    @Override
+    public boolean showDelete(Object object) {
+        return false;
+    }
 
-	public Object internalGetPropertyValue(Object propKey) {
-		return base.internalGetPropertyValue(((SpooledFileResource)propertySourceInput).getSpooledFile(), propKey);
-	}
+    @Override
+    public boolean showRefresh(Object object) {
+        return false;
+    }
 
-	public String getAbsoluteParentName(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getAbsoluteParentName(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    @Override
+    public Object[] getChildren(IAdaptable adaptable, IProgressMonitor monitor) {
+        return new Object[0];
+    }
 
-	public String getSubSystemFactoryId(Object object) {
-		return base.getSubSystemFactoryId();
-	}
+    @Override
+    protected IPropertyDescriptor[] internalGetPropertyDescriptors() {
+        return base.internalGetPropertyDescriptors();
+    }
 
-	public String getRemoteTypeCategory(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getRemoteTypeCategory(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    @Override
+    public Object internalGetPropertyValue(Object propKey) {
+        return base.internalGetPropertyValue(((SpooledFileResource)propertySourceInput).getSpooledFile(), propKey);
+    }
 
-	public String getRemoteType(Object object) {
-		if (object instanceof SpooledFileResource) {
-			return base.getRemoteType(((SpooledFileResource)object).getSpooledFile());
-		}
-		return "";
-	}
+    public String getAbsoluteParentName(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getAbsoluteParentName(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public String getRemoteSubType(Object object) {
-		return null;
-	}
+    public String getSubSystemFactoryId(Object object) {
+        return base.getSubSystemFactoryId();
+    }
 
-	public boolean refreshRemoteObject(Object oldElement, Object newElement) {
-		SpooledFileResource oldSpooledFile = (SpooledFileResource)oldElement;
-		SpooledFileResource newSpooledFile = (SpooledFileResource)newElement;
-		newSpooledFile.setSpooledFile(oldSpooledFile.getSpooledFile());
-		return false;
-	}
-	
-	public Object getRemoteParent(Object object, IProgressMonitor monitor) throws Exception {
-		return null;
-	}
+    public String getRemoteTypeCategory(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getRemoteTypeCategory(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public String[] getRemoteParentNamesInUse(Object object, IProgressMonitor monitor) throws Exception {
-		return null;	
-	}
+    public String getRemoteType(Object object) {
+        if (object instanceof SpooledFileResource) {
+            return base.getRemoteType(((SpooledFileResource)object).getSpooledFile());
+        }
+        return "";
+    }
 
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
-	}
+    public String getRemoteSubType(Object object) {
+        return null;
+    }
 
-	public String getSubSystemConfigurationId(Object object) {
-		return "biz.isphere.core.spooledfiles.subsystems.factory";
-	}
-	
+    public boolean refreshRemoteObject(Object oldElement, Object newElement) {
+        SpooledFileResource oldSpooledFile = (SpooledFileResource)oldElement;
+        SpooledFileResource newSpooledFile = (SpooledFileResource)newElement;
+        newSpooledFile.setSpooledFile(oldSpooledFile.getSpooledFile());
+        return false;
+    }
+
+    public Object getRemoteParent(Object object, IProgressMonitor monitor) throws Exception {
+        return null;
+    }
+
+    public String[] getRemoteParentNamesInUse(Object object, IProgressMonitor monitor) throws Exception {
+        return null;
+    }
+
+    public boolean supportsUserDefinedActions(Object object) {
+        return false;
+    }
+
+    public String getSubSystemConfigurationId(Object object) {
+        return "biz.isphere.core.spooledfiles.subsystems.factory";
+    }
+
 }

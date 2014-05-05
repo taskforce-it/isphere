@@ -16,32 +16,34 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
 import biz.isphere.core.spooledfiles.SpooledFile;
 
-
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
 
-	private ArrayList<SpooledFileResource> spooledFileResources;
-	
-	public void init() {
-		spooledFileResources = new ArrayList<SpooledFileResource>();
-	}
+    private ArrayList<SpooledFileResource> spooledFileResources;
 
-	public String execute(SpooledFileResource spooledFileResource) {
+    @Override
+    public void init() {
+        spooledFileResources = new ArrayList<SpooledFileResource>();
+    }
 
-		spooledFileResource.getSpooledFile().setData(spooledFileResource);
-		
-		spooledFileResources.add(spooledFileResource);
-		
-		return null;
-		
-	}
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
 
-	public String finish() {
-	    
-	    ArrayList<SpooledFile> spooledFiles = new ArrayList<SpooledFile>();
-	    for (SpooledFileResource resource : spooledFileResources) {
+        spooledFileResource.getSpooledFile().setData(spooledFileResource);
+
+        spooledFileResources.add(spooledFileResource);
+
+        return null;
+
+    }
+
+    @Override
+    public String finish() {
+
+        ArrayList<SpooledFile> spooledFiles = new ArrayList<SpooledFile>();
+        for (SpooledFileResource resource : spooledFileResources) {
             spooledFiles.add(resource.getSpooledFile());
         }
-	    
+
         ConfirmDeletionSpooledFiles dialog = new ConfirmDeletionSpooledFiles(getShell(), spooledFiles.toArray(new SpooledFile[spooledFiles.size()]));
         if (dialog.open() == Dialog.OK) {
 
@@ -50,42 +52,44 @@ public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
 
             new DeleteExec().execute(spooledFileResources, postRun);
         }
-		
-// TODO: Remove disabled statements 
-//		SpooledFile[] _spooledFiles = new SpooledFile[spooledFiles.size()];
-//		spooledFiles.toArray(_spooledFiles);
-//		
-//		ConfirmDeletionSpooledFiles dialog = new ConfirmDeletionSpooledFiles(getShell(), _spooledFiles);
-//		if (dialog.open() == Dialog.OK) {
-//			
-//			for (int index = 0; index < _spooledFiles.length; index++) {
-//				
-//				String message = _spooledFiles[index].delete();
-//				
-//				if (message == null) {
-//					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-//					Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
-//					spooledFileVector.addElement((SpooledFileResource)_spooledFiles[index].getData());
-//					sr.fireRemoteResourceChangeEvent(
-//							ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
-//							spooledFileVector, 
-//							null, 
-//							null, 
-//							null, 
-//							null);
-//				}
-//				else {
-//
-//					return message;
-//					
-//				}
-//				
-//			}
-//			
-//		}
-		
-		return null;
-		
-	}
+
+        // TODO: Remove disabled statements
+        // SpooledFile[] _spooledFiles = new SpooledFile[spooledFiles.size()];
+        // spooledFiles.toArray(_spooledFiles);
+        //
+        // ConfirmDeletionSpooledFiles dialog = new
+        // ConfirmDeletionSpooledFiles(getShell(), _spooledFiles);
+        // if (dialog.open() == Dialog.OK) {
+        //
+        // for (int index = 0; index < _spooledFiles.length; index++) {
+        //
+        // String message = _spooledFiles[index].delete();
+        //
+        // if (message == null) {
+        // ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+        // Vector<SpooledFileResource> spooledFileVector = new
+        // Vector<SpooledFileResource>();
+        // spooledFileVector.addElement((SpooledFileResource)_spooledFiles[index].getData());
+        // sr.fireRemoteResourceChangeEvent(
+        // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED,
+        // spooledFileVector,
+        // null,
+        // null,
+        // null,
+        // null);
+        // }
+        // else {
+        //
+        // return message;
+        //
+        // }
+        //
+        // }
+        //
+        // }
+
+        return null;
+
+    }
 
 }

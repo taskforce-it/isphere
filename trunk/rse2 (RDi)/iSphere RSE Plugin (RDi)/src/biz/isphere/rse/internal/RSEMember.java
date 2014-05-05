@@ -17,162 +17,186 @@ import org.eclipse.swt.widgets.Display;
 import biz.isphere.core.internal.Member;
 
 import com.ibm.etools.iseries.rse.ui.IBMiRSEPlugin;
+import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.rse.ui.resources.QSYSTempFileListener;
 import com.ibm.etools.iseries.rse.ui.resources.TemporaryQSYSMember;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.resources.IQSYSTemporaryStorage;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
-
 
 public class RSEMember extends Member {
 
-	private IQSYSMember _member;
-	private QSYSEditableRemoteSourceFileMember _editableMember;
-	private String label;
-	private boolean archive;
-	private String archiveLibrary; 
-	private String archiveFile; 
-	private String archiveMember;
-	private String archiveDate;
-	private String archiveTime;
-	
-	public RSEMember(IQSYSMember _member) throws Exception {
-		super();
-		this._member = _member;
-		if (_member != null) {
-			_editableMember = new QSYSEditableRemoteSourceFileMember(_member);
-		}
-		label = null;
-		archive = false;
-		archiveLibrary = null; 
-		archiveFile = null; 
-		archiveMember = null;
-		archiveDate = null;
-		archiveTime = null;
-	}
+    private IQSYSMember _member;
+    private QSYSEditableRemoteSourceFileMember _editableMember;
+    private String label;
+    private boolean archive;
+    private String archiveLibrary;
+    private String archiveFile;
+    private String archiveMember;
+    private String archiveDate;
+    private String archiveTime;
 
-	public IBMiConnection getRSEConnection() {
-		return _editableMember.getISeriesConnection();
-	}
-	
-	public String getConnection() {
-		return _editableMember.getISeriesConnection().getConnectionName();
-	}
+    public RSEMember(IQSYSMember _member) throws Exception {
+        super();
+        this._member = _member;
+        if (_member != null) {
+            _editableMember = new QSYSEditableRemoteSourceFileMember(_member);
+        }
+        label = null;
+        archive = false;
+        archiveLibrary = null;
+        archiveFile = null;
+        archiveMember = null;
+        archiveDate = null;
+        archiveTime = null;
+    }
 
-	public String getLibrary() {
-		return _member.getLibrary();
-	}
+    public IBMiConnection getRSEConnection() {
+        return _editableMember.getISeriesConnection();
+    }
 
-	public String getSourceFile() {
-		return _member.getFile();
-	}
+    @Override
+    public String getConnection() {
+        return _editableMember.getISeriesConnection().getConnectionName();
+    }
 
-	public String getMember() {
-		return _member.getName();
-	}
+    @Override
+    public String getLibrary() {
+        return _member.getLibrary();
+    }
 
-	public boolean exists() throws Exception {
-		return _editableMember.exists();
-	}
+    @Override
+    public String getSourceFile() {
+        return _member.getFile();
+    }
 
-	public void download(IProgressMonitor monitor) throws Exception {
-		_editableMember.download(monitor);		
-	}
+    @Override
+    public String getMember() {
+        return _member.getName();
+    }
 
-	public void upload(IProgressMonitor monitor) throws Exception {
-		// _editableMember.upload(monitor);
-		IQSYSTemporaryStorage storage = new TemporaryQSYSMember(_editableMember);
-		try {
-			if (storage.create()) {
-				if (storage.uploadToISeries(monitor)) {
-					if (storage.copyToMember(_editableMember.getMember().getName())) {
-					}
-				}
-				storage.delete();
-			}
-		}
-		catch (SystemMessageException sme) {
-			IBMiRSEPlugin.logError("Error uploading member", sme);
-			DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(sme.getSystemMessage());
-			Display.getDefault().syncExec(msgAction);
-		}
-	}
+    @Override
+    public boolean exists() throws Exception {
+        return _editableMember.exists();
+    }
 
-	public IFile getLocalResource() {
-		return _editableMember.getLocalResource();
-	}
+    @Override
+    public void download(IProgressMonitor monitor) throws Exception {
+        _editableMember.download(monitor);
+    }
 
-	public void openStream() throws Exception {
-		_editableMember.openStream();
-	}
+    @Override
+    public void upload(IProgressMonitor monitor) throws Exception {
+        // _editableMember.upload(monitor);
+        IQSYSTemporaryStorage storage = new TemporaryQSYSMember(_editableMember);
+        try {
+            if (storage.create()) {
+                if (storage.uploadToISeries(monitor)) {
+                    if (storage.copyToMember(_editableMember.getMember().getName())) {
+                    }
+                }
+                storage.delete();
+            }
+        } catch (SystemMessageException sme) {
+            IBMiRSEPlugin.logError("Error uploading member", sme);
+            DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(sme.getSystemMessage());
+            Display.getDefault().syncExec(msgAction);
+        }
+    }
 
-	public void closeStream() throws Exception {
-		_editableMember.closeStream();
-	}
+    @Override
+    public IFile getLocalResource() {
+        return _editableMember.getLocalResource();
+    }
 
-	public void addIgnoreFile() {
-		QSYSTempFileListener.getListener().addIgnoreFile(_editableMember.getLocalResource());
-	}
+    @Override
+    public void openStream() throws Exception {
+        _editableMember.openStream();
+    }
 
-	public void removeIgnoreFile() {
-		QSYSTempFileListener.getListener().removeIgnoreFile(_editableMember.getLocalResource());
-	}
+    @Override
+    public void closeStream() throws Exception {
+        _editableMember.closeStream();
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    @Override
+    public void addIgnoreFile() {
+        QSYSTempFileListener.getListener().addIgnoreFile(_editableMember.getLocalResource());
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    @Override
+    public void removeIgnoreFile() {
+        QSYSTempFileListener.getListener().removeIgnoreFile(_editableMember.getLocalResource());
+    }
 
-	public boolean isArchive() {
-		return archive;
-	}
+    @Override
+    public String getLabel() {
+        return label;
+    }
 
-	public void setArchive(boolean archive) {
-		this.archive = archive;
-	}
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public String getArchiveLibrary() {
-		return archiveLibrary;
-	}
+    @Override
+    public boolean isArchive() {
+        return archive;
+    }
 
-	public void setArchiveLibrary(String archiveLibrary) {
-		this.archiveLibrary = archiveLibrary;
-	}
+    @Override
+    public void setArchive(boolean archive) {
+        this.archive = archive;
+    }
 
-	public String getArchiveFile() {
-		return archiveFile;
-	}
+    @Override
+    public String getArchiveLibrary() {
+        return archiveLibrary;
+    }
 
-	public void setArchiveFile(String archiveFile) {
-		this.archiveFile = archiveFile;
-	}
+    @Override
+    public void setArchiveLibrary(String archiveLibrary) {
+        this.archiveLibrary = archiveLibrary;
+    }
 
-	public String getArchiveMember() {
-		return archiveMember;
-	}
+    @Override
+    public String getArchiveFile() {
+        return archiveFile;
+    }
 
-	public void setArchiveMember(String archiveMember) {
-		this.archiveMember = archiveMember;
-	}
+    @Override
+    public void setArchiveFile(String archiveFile) {
+        this.archiveFile = archiveFile;
+    }
 
-	public String getArchiveDate() {
-		return archiveDate;
-	}
+    @Override
+    public String getArchiveMember() {
+        return archiveMember;
+    }
 
-	public void setArchiveDate(String archiveDate) {
-		this.archiveDate = archiveDate;
-	}
+    @Override
+    public void setArchiveMember(String archiveMember) {
+        this.archiveMember = archiveMember;
+    }
 
-	public String getArchiveTime() {
-		return archiveTime;
-	}
+    @Override
+    public String getArchiveDate() {
+        return archiveDate;
+    }
 
-	public void setArchiveTime(String archiveTime) {
-		this.archiveTime = archiveTime;
-	}
-	
+    @Override
+    public void setArchiveDate(String archiveDate) {
+        this.archiveDate = archiveDate;
+    }
+
+    @Override
+    public String getArchiveTime() {
+        return archiveTime;
+    }
+
+    @Override
+    public void setArchiveTime(String archiveTime) {
+        this.archiveTime = archiveTime;
+    }
+
 }

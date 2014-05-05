@@ -22,10 +22,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSEHelper {
 
-	public static ISystemFilter createMemberFilter(
-			IBMiConnection connection, 
-			String filterName,
-			ISeriesMemberFilterString[] filterStrings) {
+    public static ISystemFilter createMemberFilter(IBMiConnection connection, String filterName, ISeriesMemberFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -33,13 +30,10 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Member", filterName, _filterStrings);
-		
-	}
 
-	public static ISystemFilter createObjectFilter(
-			IBMiConnection connection, 
-			String filterName,
-			ISeriesObjectFilterString[] filterStrings) {
+    }
+
+    public static ISystemFilter createObjectFilter(IBMiConnection connection, String filterName, ISeriesObjectFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -47,13 +41,10 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Object", filterName, _filterStrings);
-		
-	}
 
-	public static ISystemFilter createLibraryFilter(
-			IBMiConnection connection, 
-			String filterName,
-			ISeriesLibraryFilterString[] filterStrings) {
+    }
+
+    public static ISystemFilter createLibraryFilter(IBMiConnection connection, String filterName, ISeriesLibraryFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -61,56 +52,51 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Library", filterName, _filterStrings);
-		
-	}
-	
-	public static ISystemFilter createFilter(
-			IBMiConnection connection, 
-			String filterType, 
-			String filterName, 
-			Vector<String> filterStrings) {
-		
+
+    }
+
+    public static ISystemFilter createFilter(IBMiConnection connection, String filterType, String filterName, Vector<String> filterStrings) {
+
         ISubSystem subsystem = connection.getQSYSObjectSubSystem();
-        
+
         if (subsystem != null) {
-        	
+
             ISystemFilterPool pools[] = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
-            
+
             if (pools != null) {
-            	
-            	ISystemFilterPool defaultPool = null;
+
+                ISystemFilterPool defaultPool = null;
                 for (int idx = 0; idx < pools.length; idx++) {
                     if (pools[idx].isDefault()) {
                         defaultPool = pools[idx];
                         break;
                     }
                 }
-            	
+
                 if (defaultPool != null) {
-                    
+
                     String[] filterNames = defaultPool.getSystemFilterNames();
                     for (int idx = 0; idx < filterNames.length; idx++) {
-                    	if (filterNames[idx].equals(filterName)) {
-                    		return null;
-                    	}
+                        if (filterNames[idx].equals(filterName)) {
+                            return null;
+                        }
                     }
-                	
+
                     ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-                    
+
                     try {
                         return dftPoolMgr.createSystemFilter(defaultPool, filterName, filterStrings, filterType);
+                    } catch (Exception e) {
                     }
-                    catch(Exception e) {
-                    }
-                	
+
                 }
-                
+
             }
-        	
+
         }
-        
+
         return null;
-        
-	}
-	
+
+    }
+
 }

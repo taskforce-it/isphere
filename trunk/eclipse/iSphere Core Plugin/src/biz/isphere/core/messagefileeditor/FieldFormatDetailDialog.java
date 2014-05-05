@@ -20,48 +20,52 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 
-
 public class FieldFormatDetailDialog extends Dialog {
 
-	private int actionType;
-	private FieldFormat _fieldFormat;
-	private FieldFormatDetail _fieldFormatDetail;
-	
-	public FieldFormatDetailDialog(Shell parentShell, int actionType, FieldFormat _fieldFormat) {
-		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		this.actionType = actionType;
-		this._fieldFormat = _fieldFormat;
-	}
-	
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new FillLayout());
-        	
-		_fieldFormatDetail = new FieldFormatDetail(actionType, _fieldFormat);
-		_fieldFormatDetail.createContents(container);
-		
-		return container;
-	}
-	
-	protected void okPressed() {
-		if (_fieldFormatDetail.processButtonPressed()) {
-			super.okPressed();
-		}
-	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-	}
+    private int actionType;
+    private FieldFormat _fieldFormat;
+    private FieldFormatDetail _fieldFormatDetail;
 
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(Messages.Field_format);
-	}
-	
-	protected Point getInitialSize() {
-		return getShell().computeSize(Size.getSize(450), SWT.DEFAULT, true);
-	}
-	
+    public FieldFormatDetailDialog(Shell parentShell, int actionType, FieldFormat _fieldFormat) {
+        super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        this.actionType = actionType;
+        this._fieldFormat = _fieldFormat;
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new FillLayout());
+
+        _fieldFormatDetail = new FieldFormatDetail(actionType, _fieldFormat);
+        _fieldFormatDetail.createContents(container);
+
+        return container;
+    }
+
+    @Override
+    protected void okPressed() {
+        if (_fieldFormatDetail.processButtonPressed()) {
+            super.okPressed();
+        }
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Field_format);
+    }
+
+    @Override
+    protected Point getInitialSize() {
+        return getShell().computeSize(Size.getSize(450), SWT.DEFAULT, true);
+    }
+
 }

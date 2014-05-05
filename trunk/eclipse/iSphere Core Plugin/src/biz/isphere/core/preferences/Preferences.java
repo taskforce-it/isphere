@@ -60,9 +60,9 @@ public final class Preferences {
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
-    
+
     private static final String HOST_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
-    
+
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
     /**
@@ -102,11 +102,11 @@ public final class Preferences {
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
     }
-    
+
     public String getHostName() {
         return preferenceStore.getString(HOST_NAME);
     }
-    
+
     public int getFtpPortNumber() {
         return preferenceStore.getInt(FTP_PORT_NUMBER);
     }
@@ -174,11 +174,11 @@ public final class Preferences {
     public void setISphereLibrary(String aLibrary) {
         preferenceStore.setValue(ISPHERE_LIBRARY, aLibrary.trim());
     }
-    
+
     public void setHostName(String aHostName) {
         preferenceStore.setValue(HOST_NAME, aHostName);
     }
-    
+
     public void setFtpPortNumber(int aPortNumber) {
         preferenceStore.setValue(FTP_PORT_NUMBER, aPortNumber);
     }
@@ -280,7 +280,7 @@ public final class Preferences {
     public String getDefaultHostName() {
         return "";
     }
-    
+
     /**
      * Returns the default FTP port number.
      * 
@@ -289,7 +289,7 @@ public final class Preferences {
     public int getDefaultFtpPortNumber() {
         return 21;
     }
-    
+
     /**
      * Returns the default format for spooled file conversion on double-click on
      * a spooled file.

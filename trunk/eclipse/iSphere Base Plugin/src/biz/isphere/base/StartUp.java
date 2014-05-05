@@ -6,11 +6,10 @@ import biz.isphere.base.versioncheck.PluginCheck;
 
 public class StartUp implements IStartup {
 
-	public void earlyStartup() {
+    public void earlyStartup() {
 
         PluginCheck.check();
-		
-	}
-	
-}
 
+    }
+
+}

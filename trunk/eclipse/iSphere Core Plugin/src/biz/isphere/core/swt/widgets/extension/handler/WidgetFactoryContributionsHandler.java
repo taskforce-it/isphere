@@ -10,7 +10,6 @@ import biz.isphere.core.swt.widgets.extension.DefaultFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.IWidgetFactory;
 
-
 public class WidgetFactoryContributionsHandler {
 
     private static final String EXTENSION_ID = "biz.isphere.core.swt.widgets.extension.point.IWidgetFactory";
@@ -32,7 +31,7 @@ public class WidgetFactoryContributionsHandler {
     public IFileDialog getFileDialog(Shell aParent, int aStyle) {
 
         IWidgetFactory factory = getWidgetFactory();
-        
+
         if (factory == null) {
             return new DefaultFileDialog(aParent, aStyle);
         }
@@ -61,7 +60,7 @@ public class WidgetFactoryContributionsHandler {
 
         IExtensionRegistry tRegistry = Platform.getExtensionRegistry();
         IConfigurationElement[] configElements = tRegistry.getConfigurationElementsFor(EXTENSION_ID);
-        
+
         if (configElements != null && configElements.length > 0) {
             try {
                 final Object tempDialog = configElements[0].createExecutableExtension("class");

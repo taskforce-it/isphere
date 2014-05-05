@@ -16,25 +16,20 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 
 public class SpooledFileMessageAction extends AbstractSpooledFileAction {
 
-	public String execute(SpooledFileResource spooledFileResource) {
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
 
-		String message = spooledFileResource.getSpooledFile().replyMessage();
-		
-		if (message == null) {
-			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-			Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
-			spooledFileVector.addElement(spooledFileResource);
-			sr.fireRemoteResourceChangeEvent(
-					ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
-					spooledFileVector, 
-					null, 
-					null, 
-					null, 
-					null);
-		}
-		
-		return message;
-		
-	}
+        String message = spooledFileResource.getSpooledFile().replyMessage();
+
+        if (message == null) {
+            ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+            Vector<SpooledFileResource> spooledFileVector = new Vector<SpooledFileResource>();
+            spooledFileVector.addElement(spooledFileResource);
+            sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, spooledFileVector, null, null, null, null);
+        }
+
+        return message;
+
+    }
 
 }

@@ -31,93 +31,87 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
-
 public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem, ISpooledFileSubSystem {
 
-	private SpooledFileBaseSubSystem base = new SpooledFileBaseSubSystem();
-	
-	public SpooledFileSubSystem(IHost host, IConnectorService connectorService) {
-		super(host, connectorService);
-	}
-	
-	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
-		SpooledFileResource[] spooledFileResources;
-		try {
-			SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(), getToolboxJDBCConnection(), filterString);
-			spooledFileResources = new SpooledFileResource[spooledFiles.length];
-			for (int i = 0; i < spooledFileResources.length; i++) {
-				spooledFileResources[i] = new SpooledFileResource(this);
-				spooledFileResources[i].setSpooledFile(spooledFiles[i]);
-			}			
-		} catch (Exception e) {
-		      handleError(e);
-		      SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
-		      msg.makeSubstitution(e.getMessage());
-		      SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
-		      return new Object[] { msgObj };		}
-		return spooledFileResources;
-	}  
-	
-	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		return internalResolveFilterString(filterString, monitor);
-	}
-	
-	public QSYSCommandSubSystem getCmdSubSystem() {
-		IHost iHost = getHost();
-		ISubSystem[] iSubSystems = iHost.getSubSystems();
+    private SpooledFileBaseSubSystem base = new SpooledFileBaseSubSystem();
 
-		for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
-			ISubSystem iSubSystem = iSubSystems[ssIndx];
-			if ((iSubSystem instanceof QSYSCommandSubSystem))
-				return (QSYSCommandSubSystem)iSubSystem;
-		}
-		
-		return null;
-	}
-      
-	public QSYSObjectSubSystem getCommandExecutionProperties() {
-		return getObjectSubSystem();
-	}
-     
-	public QSYSObjectSubSystem getObjectSubSystem() {
-		return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
-	}
-     
-	public AS400 getToolboxAS400Object() {
-		AS400 as400 = null;
-		try {
-			as400 = IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
-		} 
-		catch (SystemMessageException e) {
-		}
-		return as400;
-	}
-     
-	public Connection getToolboxJDBCConnection() {
-		Connection jdbcConnection = null;
-		try {
-			jdbcConnection = IBMiConnection.getConnection(getHost()).getJDBCConnection(null, false);
-		} 
-		catch (SQLException e) {
-		}
-		return jdbcConnection;
-	}
-    
-	/*
-	public void setShell(Shell shell) {
-		this.shell = shell;
-	}
+    public SpooledFileSubSystem(IHost host, IConnectorService connectorService) {
+        super(host, connectorService);
+    }
 
-	public Shell getShell()
-	{
-		if (this.shell != null) {
-			return this.shell;
-		}
-		return super.getShell();
-	}
-	*/
-	
-	private void handleError(Exception e) {
-	}
+    @Override
+    protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+        SpooledFileResource[] spooledFileResources;
+        try {
+            SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(),
+                getToolboxJDBCConnection(), filterString);
+            spooledFileResources = new SpooledFileResource[spooledFiles.length];
+            for (int i = 0; i < spooledFileResources.length; i++) {
+                spooledFileResources[i] = new SpooledFileResource(this);
+                spooledFileResources[i].setSpooledFile(spooledFiles[i]);
+            }
+        } catch (Exception e) {
+            handleError(e);
+            SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
+            msg.makeSubstitution(e.getMessage());
+            SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
+            return new Object[] { msgObj };
+        }
+        return spooledFileResources;
+    }
+
+    @Override
+    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+        return internalResolveFilterString(filterString, monitor);
+    }
+
+    public QSYSCommandSubSystem getCmdSubSystem() {
+        IHost iHost = getHost();
+        ISubSystem[] iSubSystems = iHost.getSubSystems();
+
+        for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
+            ISubSystem iSubSystem = iSubSystems[ssIndx];
+            if ((iSubSystem instanceof QSYSCommandSubSystem)) return (QSYSCommandSubSystem)iSubSystem;
+        }
+
+        return null;
+    }
+
+    public QSYSObjectSubSystem getCommandExecutionProperties() {
+        return getObjectSubSystem();
+    }
+
+    public QSYSObjectSubSystem getObjectSubSystem() {
+        return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
+    }
+
+    public AS400 getToolboxAS400Object() {
+        AS400 as400 = null;
+        try {
+            as400 = IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
+        } catch (SystemMessageException e) {
+        }
+        return as400;
+    }
+
+    public Connection getToolboxJDBCConnection() {
+        Connection jdbcConnection = null;
+        try {
+            jdbcConnection = IBMiConnection.getConnection(getHost()).getJDBCConnection(null, false);
+        } catch (SQLException e) {
+        }
+        return jdbcConnection;
+    }
+
+    /*
+     * public void setShell(Shell shell) { this.shell = shell; } public Shell
+     * getShell() { if (this.shell != null) { return this.shell; } return
+     * super.getShell(); }
+     */
+
+    private void handleError(Exception e) {
+    }
 
 }

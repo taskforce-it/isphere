@@ -1,8 +1,6 @@
 package biz.isphere.core.versionupdate;
 
-import biz.isphere.base.versioncheck.IObsoleteBundles;
-
-public interface IObsoletePreferences  {
+public interface IObsoletePreferences {
 
     public static final String DE_TASKFORCE_ISPHERE_LIBRARY = "DE.TASKFORCE.ISPHERE.LIBRARY";
 

@@ -7,6 +7,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.ui.PlatformUI;
 
 public class LinkSelectionListener extends SelectionAdapter {
+    @Override
     public void widgetSelected(SelectionEvent event) {
         try {
             // Open default external browser

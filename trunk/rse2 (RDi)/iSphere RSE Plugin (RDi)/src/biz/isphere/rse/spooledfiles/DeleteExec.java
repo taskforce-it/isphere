@@ -39,6 +39,7 @@ public class DeleteExec {
          * Deletes spooled files while displaying a progress monitor to keep the
          * user up to date.
          */
+        @Override
         public IStatus run(IProgressMonitor aMonitor) {
 
             IStatus status = Status.OK_STATUS;

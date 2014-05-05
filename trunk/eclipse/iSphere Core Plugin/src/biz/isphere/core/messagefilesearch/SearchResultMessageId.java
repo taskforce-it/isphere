@@ -10,28 +10,28 @@ package biz.isphere.core.messagefilesearch;
 
 public class SearchResultMessageId {
 
-	private String messageId;
-	private String message;
+    private String messageId;
+    private String message;
 
-	public SearchResultMessageId() {
-		messageId = "";
-		message = "";
-	}
+    public SearchResultMessageId() {
+        messageId = "";
+        message = "";
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

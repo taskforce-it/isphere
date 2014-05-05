@@ -13,18 +13,16 @@ import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class SpooledFileAdapterFactory extends AbstractSystemRemoteAdapterFactory implements IAdapterFactory {		
-	
-	private SpooledFileResourceAdapter spooledFileAdapter = new SpooledFileResourceAdapter();
-	
-	public Object getAdapter(Object adaptableObject, Class adapterType)
-	{
-		ISystemViewElementAdapter adapter = null;
-		if ((adaptableObject instanceof SpooledFileResource))
-			adapter = spooledFileAdapter;
-		if ((adapter != null) && (adapterType == IPropertySource.class))
-			adapter.setPropertySourceInput(adaptableObject);
-		return adapter;
-	}
+public class SpooledFileAdapterFactory extends AbstractSystemRemoteAdapterFactory implements IAdapterFactory {
+
+    private SpooledFileResourceAdapter spooledFileAdapter = new SpooledFileResourceAdapter();
+
+    @Override
+    public Object getAdapter(Object adaptableObject, Class adapterType) {
+        ISystemViewElementAdapter adapter = null;
+        if ((adaptableObject instanceof SpooledFileResource)) adapter = spooledFileAdapter;
+        if ((adapter != null) && (adapterType == IPropertySource.class)) adapter.setPropertySourceInput(adaptableObject);
+        return adapter;
+    }
 
 }

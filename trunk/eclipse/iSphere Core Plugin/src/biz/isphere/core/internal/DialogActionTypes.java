@@ -11,32 +11,32 @@ package biz.isphere.core.internal;
 import biz.isphere.core.Messages;
 
 public class DialogActionTypes {
-	
-	public static final int CREATE = 1;
-	public static final int CHANGE = 2;
-	public static final int COPY = 3;
-	public static final int DELETE = 4;
-	public static final int DISPLAY = 5;
-	
-	public static String getText(int actionType) {
-		switch (actionType) {
-			case CREATE: {
-				return Messages.CREATEX;
-			}
-			case CHANGE: {
-				return Messages.CHANGEX;
-			}
-			case COPY: {
-				return Messages.COPYX;
-			}
-			case DELETE: {
-				return Messages.DELETEX;
-			}
-			case DISPLAY: {
-				return Messages.DISPLAYX;
-			}
-		}
-		return "";
-	}
-	
+
+    public static final int CREATE = 1;
+    public static final int CHANGE = 2;
+    public static final int COPY = 3;
+    public static final int DELETE = 4;
+    public static final int DISPLAY = 5;
+
+    public static String getText(int actionType) {
+        switch (actionType) {
+        case CREATE: {
+            return Messages.CREATEX;
+        }
+        case CHANGE: {
+            return Messages.CHANGEX;
+        }
+        case COPY: {
+            return Messages.COPYX;
+        }
+        case DELETE: {
+            return Messages.DELETEX;
+        }
+        case DISPLAY: {
+            return Messages.DISPLAYX;
+        }
+        }
+        return "";
+    }
+
 }

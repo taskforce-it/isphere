@@ -26,7 +26,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
      * The spooled file transformer needs to know about CR to strip the
      * additional "bold" and "underline" lines of *SCS sppoled files.
      */
-    protected static final byte DC1 = 0x11; //$NON-NLS-1$
+    protected static final byte DC1 = 0x11;
 
     private SpooledFile spooledFile;
 

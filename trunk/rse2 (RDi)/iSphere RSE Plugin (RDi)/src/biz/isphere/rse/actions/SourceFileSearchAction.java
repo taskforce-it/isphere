@@ -52,372 +52,330 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvid
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class SourceFileSearchAction implements IObjectActionDelegate {
-	
-	protected IStructuredSelection structuredSelection;
-	protected Shell shell;
-	private IBMiConnection _connection;
-	private boolean _multipleConnection;
-	private ArrayList<Object> _selectedElements;
-	private HashMap<String, SearchElement> _searchElements;
-	private ISeriesObjectFilterString _objectFilterString;
-	private QSYSObjectSubSystem _fileSubSystemImpl;
 
-	public void run(IAction action) {
+    protected IStructuredSelection structuredSelection;
+    protected Shell shell;
+    private IBMiConnection _connection;
+    private boolean _multipleConnection;
+    private ArrayList<Object> _selectedElements;
+    private HashMap<String, SearchElement> _searchElements;
+    private ISeriesObjectFilterString _objectFilterString;
+    private QSYSObjectSubSystem _fileSubSystemImpl;
 
-		if (structuredSelection != null && !structuredSelection.isEmpty()) {
+    public void run(IAction action) {
 
-			_objectFilterString = null;
-			_connection = null;
-			_multipleConnection = false;
-			_selectedElements = new ArrayList<Object>();
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-			Iterator<?> iterator = structuredSelection.iterator();
+            _objectFilterString = null;
+            _connection = null;
+            _multipleConnection = false;
+            _selectedElements = new ArrayList<Object>();
 
-			while (iterator.hasNext()) {
+            Iterator<?> iterator = structuredSelection.iterator();
 
-				Object _object = iterator.next();
+            while (iterator.hasNext()) {
 
-				if ((_object instanceof IQSYSResource)) {
+                Object _object = iterator.next();
 
-					IQSYSResource element = (IQSYSResource) _object;
-					
-					if (ResourceTypeUtil.isLibrary(element) ||
-							ResourceTypeUtil.isSourceFile(element) ||
-							ResourceTypeUtil.isMember(element)) {
+                if ((_object instanceof IQSYSResource)) {
 
-						_selectedElements.add(element);
+                    IQSYSResource element = (IQSYSResource)_object;
 
-						checkIfMultipleConnections(IBMiConnection
-								.getConnection(((IRemoteObjectContextProvider)element)
-										.getRemoteObjectContext()
-										.getObjectSubsystem().getHost()));
-						
-					}
+                    if (ResourceTypeUtil.isLibrary(element) || ResourceTypeUtil.isSourceFile(element) || ResourceTypeUtil.isMember(element)) {
 
-				} 
-				else if ((_object instanceof SystemFilterReference)) {
-					
-					SystemFilterReference element = (SystemFilterReference) _object;
+                        _selectedElements.add(element);
 
-					_selectedElements.add(element);
+                        checkIfMultipleConnections(IBMiConnection.getConnection(((IRemoteObjectContextProvider)element).getRemoteObjectContext()
+                            .getObjectSubsystem().getHost()));
 
-					checkIfMultipleConnections(IBMiConnection
-							.getConnection(((SubSystem)element
-									.getFilterPoolReferenceManager()
-									.getProvider())
-									.getHost()));
-					
-				} 
-				else if ((_object instanceof ISystemFilterStringReference)) {
-					
-					ISystemFilterStringReference element = (ISystemFilterStringReference) _object;
+                    }
 
-					_selectedElements.add(element);
+                } else if ((_object instanceof SystemFilterReference)) {
 
-					checkIfMultipleConnections(IBMiConnection
-							.getConnection(((SubSystem)element
-									.getFilterPoolReferenceManager()
-									.getProvider())
-									.getHost()));
-					
-				}
+                    SystemFilterReference element = (SystemFilterReference)_object;
 
-			}
+                    _selectedElements.add(element);
 
-			if (_multipleConnection) {
-				MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-				errorBox.setText(Messages.E_R_R_O_R);
-				errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
-				errorBox.open();
-				return;
-			}
-			
-			if (!_connection.isConnected()) {
-				try {
-					_connection.connect();
-				} 
-				catch (SystemMessageException e) {
-					return;
-				}
-			}
-			
-			_searchElements = new HashMap<String, SearchElement>();
-			
-			boolean _continue = true;
-			
-			for (int idx = 0; idx < _selectedElements.size(); idx++) {
-				
-				Object _object = _selectedElements.get(idx);
-				
-				if ((_object instanceof IQSYSResource)) {
-					
-					IQSYSResource element = (IQSYSResource) _object;
+                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
+                        .getHost()));
 
-					if (ResourceTypeUtil.isLibrary(element)) {
-						_continue = addElementsFromLibrary(element);
-					} 
-					else if ((ResourceTypeUtil.isSourceFile(element))) {
-						addElementsFromSourceFile(element.getLibrary(), element.getName());
-					}
-					else if (ResourceTypeUtil.isMember(element)) {
-						addElement(element);
-					} 
-					if (!_continue) {
-						break;
-					}
+                } else if ((_object instanceof ISystemFilterStringReference)) {
 
-				} 
-				else if ((_object instanceof SystemFilterReference)) {
-					
-					SystemFilterReference filterReference = (SystemFilterReference) _object;
-					String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-					if (!addElementsFromFilterString(_filterStrings)) {
-						break;
-					}
-					
+                    ISystemFilterStringReference element = (ISystemFilterStringReference)_object;
 
-				} 
-				else if ((_object instanceof ISystemFilterStringReference)) {
-					
-					ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference) _object;
-					String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
-					if (!addElementsFromFilterString(_filterStrings)) {
-						break;
-					}
-					
-				}
-				
-			}
+                    _selectedElements.add(element);
 
-			AS400 as400 = null;
-			Connection jdbcConnection = null;
-			try {
-				as400 = _connection.getAS400ToolboxObject();
-				jdbcConnection = _connection.getJDBCConnection(null, false);
-			} 
-			catch (SystemMessageException e) {
-				e.printStackTrace();
-			} 
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
+                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
+                        .getHost()));
 
-			if (as400 != null && jdbcConnection != null) {
+                }
 
-				if (ISphereHelper.checkISphereLibrary(shell, as400)) {
-					
-					SearchDialog dialog = new SearchDialog(shell, _searchElements);
-					if (dialog.open() == Dialog.OK) {
-	
-						SearchPostRun postRun = new SearchPostRun();
-						postRun.setConnection(_connection);
-						postRun.setConnectionName(_connection.getConnectionName());
-						postRun.setSearchString(dialog.getString());
-						postRun.setSearchElements(_searchElements);
-						postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+            }
 
-						new SearchExec().execute(
-								as400,
-								jdbcConnection,
-								dialog.getString(),
-								dialog.getFromColumn(),
-								dialog.getToColumn(),
-								dialog.getCase(),
-								new ArrayList<SearchElement>(_searchElements.values()),
-								postRun);
-						
-					}
-					
-				}
-				
-			}
-			
-		}
+            if (_multipleConnection) {
+                MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                errorBox.setText(Messages.E_R_R_O_R);
+                errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
+                errorBox.open();
+                return;
+            }
 
-	}
+            if (!_connection.isConnected()) {
+                try {
+                    _connection.connect();
+                } catch (SystemMessageException e) {
+                    return;
+                }
+            }
 
-	private void checkIfMultipleConnections(IBMiConnection connection) {
-		if (!_multipleConnection) {
-			if (this._connection == null) {
-				this._connection = connection;
-			} 
-			else if (connection != this._connection) {
-				_multipleConnection = true;
-			}
-		}
-	}
+            _searchElements = new HashMap<String, SearchElement>();
 
-	private void addElement(IQSYSResource element) {
-		
-		String key = element.getLibrary() + "-" + ((IQSYSMember) element).getFile() + "-" + element.getName();
+            boolean _continue = true;
 
-		if (!_searchElements.containsKey(key)) {
+            for (int idx = 0; idx < _selectedElements.size(); idx++) {
 
-			SearchElement _searchElement = new SearchElement();
-			_searchElement.setLibrary(element.getLibrary());
-			_searchElement.setFile(((IQSYSMember) element).getFile());
-			_searchElement.setMember(element.getName());
-			_searchElement.setDescription(((IQSYSMember) element).getDescription());
-			_searchElements.put(key, _searchElement);
-			
-		}
-		
-	}
+                Object _object = _selectedElements.get(idx);
 
-	private void addElementsFromSourceFile(String library, String sourceFile) {
-		
-		/*
-		String key = library + "-" + sourceFile + "-" + "*";
+                if ((_object instanceof IQSYSResource)) {
 
-		if (!_searchElements.containsKey(key)) {
+                    IQSYSResource element = (IQSYSResource)_object;
 
-			SearchElement _searchElement = new SearchElement();
-			_searchElement.setLibrary(library);
-			_searchElement.setFile(sourceFile);
-			_searchElement.setMember("*");
-			_searchElements.put(key, _searchElement);
-			
-		}
-		*/
+                    if (ResourceTypeUtil.isLibrary(element)) {
+                        _continue = addElementsFromLibrary(element);
+                    } else if ((ResourceTypeUtil.isSourceFile(element))) {
+                        addElementsFromSourceFile(element.getLibrary(), element.getName());
+                    } else if (ResourceTypeUtil.isMember(element)) {
+                        addElement(element);
+                    }
+                    if (!_continue) {
+                        break;
+                    }
 
-		ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
-		_memberFilterString.setLibrary(library);
-		_memberFilterString.setFile(sourceFile);
-		_memberFilterString.setMember("*");
-		_memberFilterString.setMemberType("*");
-		
-		String[] _filterStrings = new String[1];
-		_filterStrings[0] = _memberFilterString.toString();
-		addElementsFromFilterString(_filterStrings);
+                } else if ((_object instanceof SystemFilterReference)) {
 
-	}
-	
-	private boolean addElementsFromLibrary(IQSYSResource element) {
+                    SystemFilterReference filterReference = (SystemFilterReference)_object;
+                    String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                    if (!addElementsFromFilterString(_filterStrings)) {
+                        break;
+                    }
 
-		Vector<IQSYSResource> libElements = new Vector<IQSYSResource>();
-		Object[] children = (Object[]) null;
+                } else if ((_object instanceof ISystemFilterStringReference)) {
 
-		if (_objectFilterString == null) {
-			_objectFilterString = new ISeriesObjectFilterString();
-			_objectFilterString.setObject("*");
-			_objectFilterString.setObjectType("*FILE");
-			String attributes = "*FILE:PF-SRC *FILE:PF38-SRC";
-			_objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
-		}
+                    ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference)_object;
+                    String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
+                    if (!addElementsFromFilterString(_filterStrings)) {
+                        break;
+                    }
 
-		_objectFilterString.setLibrary(element.getName());
-		String _filterString = _objectFilterString.toString();
+                }
 
-		_fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
-		try {
-			children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
-		} 
-		catch (InterruptedException localInterruptedException) {
-			return false;
-		} 
-		catch (Exception e) {
-			SystemMessageDialog.displayExceptionMessage(shell, e);
-			return false;
-		}
+            }
 
-		if ((children == null) || (children.length == 0)) {
-			return true;
-		}
-		
-		Object firstObject = children[0];
-		if ((firstObject instanceof SystemMessageObject)) {
-			SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject) firstObject).getMessage());
-			return true;
-		}
+            AS400 as400 = null;
+            Connection jdbcConnection = null;
+            try {
+                as400 = _connection.getAS400ToolboxObject();
+                jdbcConnection = _connection.getJDBCConnection(null, false);
+            } catch (SystemMessageException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-		for (int idx2 = 0; idx2 < children.length; idx2++) {
-			libElements.addElement((IQSYSResource) children[idx2]);
-		}
+            if (as400 != null && jdbcConnection != null) {
 
-		for (Enumeration<IQSYSResource> enumeration = libElements.elements(); enumeration.hasMoreElements();) {
-			element = (IQSYSResource) enumeration.nextElement();
-			addElementsFromSourceFile(element.getLibrary(), element.getName());
-		}
-		
-		return true;
-		
-	}
+                if (ISphereHelper.checkISphereLibrary(shell, as400)) {
 
-	private boolean addElementsFromFilterString(String[] filterStrings) {
-		
-		boolean _continue = true;
-		Object[] children = (Object[]) null;
-		
-		for (int idx = 0; idx < filterStrings.length; idx++) {
-			
-			String _filterString = filterStrings[idx];
-			_fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
-			
-			try {
-				children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
-			} 
-			catch (InterruptedException localInterruptedException) {
-				return false;
-			} 
-			catch (Exception e) {
-				SystemMessageDialog.displayExceptionMessage(shell, e);
-				return false;
-			}
-			
-			if ((children != null) && (children.length != 0)) {
-				
-				Object firstObject = children[0];
-				
-				if ((firstObject instanceof SystemMessageObject)) {
-					
-					SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject) firstObject).getMessage());
-					
-				} 
-				else {
-					
-					for (int idx2 = 0; idx2 < children.length; idx2++) {
-						
-						IQSYSResource element = (IQSYSResource) children[idx2];
-						
-						if (ResourceTypeUtil.isLibrary(element)) {
-							_continue = addElementsFromLibrary(element);
-						} 
-						else if (ResourceTypeUtil.isSourceFile(element)) {
-							addElementsFromSourceFile(element.getLibrary(), element.getName());
-						} 
-						else if (ResourceTypeUtil.isMember(element)) {
-							addElement(element);
-						} 
-						
-						if (!_continue)
-							break;
-						
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-		return true;
-		
-	}
+                    SearchDialog dialog = new SearchDialog(shell, _searchElements);
+                    if (dialog.open() == Dialog.OK) {
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		
-		if (selection instanceof IStructuredSelection) {
-			structuredSelection = ((IStructuredSelection) selection);
-		} else {
-			structuredSelection = null;
-		}
-		
-	}
+                        SearchPostRun postRun = new SearchPostRun();
+                        postRun.setConnection(_connection);
+                        postRun.setConnectionName(_connection.getConnectionName());
+                        postRun.setSearchString(dialog.getString());
+                        postRun.setSearchElements(_searchElements);
+                        postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-	public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-		
-		shell = workbenchPart.getSite().getShell();
-		
-	}
-	
+                        new SearchExec().execute(as400, jdbcConnection, dialog.getString(), dialog.getFromColumn(), dialog.getToColumn(),
+                            dialog.getCase(), new ArrayList<SearchElement>(_searchElements.values()), postRun);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private void checkIfMultipleConnections(IBMiConnection connection) {
+        if (!_multipleConnection) {
+            if (this._connection == null) {
+                this._connection = connection;
+            } else if (connection != this._connection) {
+                _multipleConnection = true;
+            }
+        }
+    }
+
+    private void addElement(IQSYSResource element) {
+
+        String key = element.getLibrary() + "-" + ((IQSYSMember)element).getFile() + "-" + element.getName();
+
+        if (!_searchElements.containsKey(key)) {
+
+            SearchElement _searchElement = new SearchElement();
+            _searchElement.setLibrary(element.getLibrary());
+            _searchElement.setFile(((IQSYSMember)element).getFile());
+            _searchElement.setMember(element.getName());
+            _searchElement.setDescription(((IQSYSMember)element).getDescription());
+            _searchElements.put(key, _searchElement);
+
+        }
+
+    }
+
+    private void addElementsFromSourceFile(String library, String sourceFile) {
+
+        /*
+         * String key = library + "-" + sourceFile + "-" + "*"; if
+         * (!_searchElements.containsKey(key)) { SearchElement _searchElement =
+         * new SearchElement(); _searchElement.setLibrary(library);
+         * _searchElement.setFile(sourceFile); _searchElement.setMember("*");
+         * _searchElements.put(key, _searchElement); }
+         */
+
+        ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
+        _memberFilterString.setLibrary(library);
+        _memberFilterString.setFile(sourceFile);
+        _memberFilterString.setMember("*");
+        _memberFilterString.setMemberType("*");
+
+        String[] _filterStrings = new String[1];
+        _filterStrings[0] = _memberFilterString.toString();
+        addElementsFromFilterString(_filterStrings);
+
+    }
+
+    private boolean addElementsFromLibrary(IQSYSResource element) {
+
+        Vector<IQSYSResource> libElements = new Vector<IQSYSResource>();
+        Object[] children = null;
+
+        if (_objectFilterString == null) {
+            _objectFilterString = new ISeriesObjectFilterString();
+            _objectFilterString.setObject("*");
+            _objectFilterString.setObjectType("*FILE");
+            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC";
+            _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
+        }
+
+        _objectFilterString.setLibrary(element.getName());
+        String _filterString = _objectFilterString.toString();
+
+        _fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
+        try {
+            children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
+        } catch (InterruptedException localInterruptedException) {
+            return false;
+        } catch (Exception e) {
+            SystemMessageDialog.displayExceptionMessage(shell, e);
+            return false;
+        }
+
+        if ((children == null) || (children.length == 0)) {
+            return true;
+        }
+
+        Object firstObject = children[0];
+        if ((firstObject instanceof SystemMessageObject)) {
+            SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
+            return true;
+        }
+
+        for (int idx2 = 0; idx2 < children.length; idx2++) {
+            libElements.addElement((IQSYSResource)children[idx2]);
+        }
+
+        for (Enumeration<IQSYSResource> enumeration = libElements.elements(); enumeration.hasMoreElements();) {
+            element = enumeration.nextElement();
+            addElementsFromSourceFile(element.getLibrary(), element.getName());
+        }
+
+        return true;
+
+    }
+
+    private boolean addElementsFromFilterString(String[] filterStrings) {
+
+        boolean _continue = true;
+        Object[] children = null;
+
+        for (int idx = 0; idx < filterStrings.length; idx++) {
+
+            String _filterString = filterStrings[idx];
+            _fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
+
+            try {
+                children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
+            } catch (InterruptedException localInterruptedException) {
+                return false;
+            } catch (Exception e) {
+                SystemMessageDialog.displayExceptionMessage(shell, e);
+                return false;
+            }
+
+            if ((children != null) && (children.length != 0)) {
+
+                Object firstObject = children[0];
+
+                if ((firstObject instanceof SystemMessageObject)) {
+
+                    SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
+
+                } else {
+
+                    for (int idx2 = 0; idx2 < children.length; idx2++) {
+
+                        IQSYSResource element = (IQSYSResource)children[idx2];
+
+                        if (ResourceTypeUtil.isLibrary(element)) {
+                            _continue = addElementsFromLibrary(element);
+                        } else if (ResourceTypeUtil.isSourceFile(element)) {
+                            addElementsFromSourceFile(element.getLibrary(), element.getName());
+                        } else if (ResourceTypeUtil.isMember(element)) {
+                            addElement(element);
+                        }
+
+                        if (!_continue) break;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+    public void selectionChanged(IAction action, ISelection selection) {
+
+        if (selection instanceof IStructuredSelection) {
+            structuredSelection = ((IStructuredSelection)selection);
+        } else {
+            structuredSelection = null;
+        }
+
+    }
+
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+
+        shell = workbenchPart.getSite().getShell();
+
+    }
+
 }

@@ -35,235 +35,238 @@ import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
-
 public class ViewSearchResults extends ViewPart {
 
-	private Action actionExportToMemberFilter;
-	private Action actionExportToExcel;
-	private Action actionRemoveTabItem;
-	private TabFolder tabFolderSearchResults;
-	private Shell shell;
-	
-	public void createPartControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new FillLayout());
-		
-		shell = parent.getShell();
+    private Action actionExportToMemberFilter;
+    private Action actionExportToExcel;
+    private Action actionRemoveTabItem;
+    private TabFolder tabFolderSearchResults;
+    private Shell shell;
 
-		tabFolderSearchResults = new TabFolder(container, SWT.NONE);
-		
-		createActions();
-		initializeToolBar();
-		initializeMenu();
-		
-	}
+    @Override
+    public void createPartControl(Composite parent) {
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new FillLayout());
 
-	private void createActions() {
+        shell = parent.getShell();
 
-		actionExportToMemberFilter = new Action("") {
-			public void run() {
-				exportToMemberFilter();
-			}
-		};
-		actionExportToMemberFilter.setToolTipText(Messages.Export_to_Member_Filter);
-		actionExportToMemberFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MEMBER_FILTER));
-		actionExportToMemberFilter.setEnabled(false);
-		
-		actionExportToExcel = new Action("") {
-			public void run() {
-				exportToExcel();
-			}
-		};
-		actionExportToExcel.setToolTipText(Messages.Export_to_Excel);
-		actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
-		actionExportToExcel.setEnabled(false);
+        tabFolderSearchResults = new TabFolder(container, SWT.NONE);
 
-		actionRemoveTabItem = new Action("") {
-			public void run() {
-				removeTabItem();
-			}
-		};
-		actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
-		actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
-		actionRemoveTabItem.setEnabled(false);
+        createActions();
+        initializeToolBar();
+        initializeMenu();
 
-	}
+    }
 
-	private void initializeToolBar() {
-		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-		toolbarManager.add(actionExportToMemberFilter);
-		toolbarManager.add(actionExportToExcel);
-		toolbarManager.add(actionRemoveTabItem);
-	}
+    private void createActions() {
 
-	private void initializeMenu() {
-		// IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
-	}
+        actionExportToMemberFilter = new Action("") {
+            @Override
+            public void run() {
+                exportToMemberFilter();
+            }
+        };
+        actionExportToMemberFilter.setToolTipText(Messages.Export_to_Member_Filter);
+        actionExportToMemberFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MEMBER_FILTER));
+        actionExportToMemberFilter.setEnabled(false);
 
-	public void setFocus() {
-	}
-	
-	public void addTabItem(Object connection, String connectionName, String searchString, SearchResult[] searchResults) {
-		Composite compositeSearchResult = new Composite(tabFolderSearchResults, SWT.NONE);
-		compositeSearchResult.setLayout(new FillLayout());
+        actionExportToExcel = new Action("") {
+            @Override
+            public void run() {
+                exportToExcel();
+            }
+        };
+        actionExportToExcel.setToolTipText(Messages.Export_to_Excel);
+        actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
+        actionExportToExcel.setEnabled(false);
 
-		TabItem tabItemSearchResult = new TabItem(tabFolderSearchResults, SWT.NONE);
-		tabItemSearchResult.setText(connectionName + "/" + searchString);
-		
-		 SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
-		 _searchResultViewer.createContents(compositeSearchResult);
-		
-		tabItemSearchResult.setControl(compositeSearchResult);
-		tabItemSearchResult.setData("Viewer", _searchResultViewer);
-		
-		TabItem[] tabItemToBeSelected = new TabItem[1];
-		tabItemToBeSelected[0] = tabItemSearchResult;
-		tabFolderSearchResults.setSelection(tabItemToBeSelected);
-		
-		actionExportToMemberFilter.setEnabled(true);		
-		actionExportToExcel.setEnabled(true);		
-		actionRemoveTabItem.setEnabled(true);		
-	}
+        actionRemoveTabItem = new Action("") {
+            @Override
+            public void run() {
+                removeTabItem();
+            }
+        };
+        actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
+        actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
+        actionRemoveTabItem.setEnabled(false);
 
-	public void exportToMemberFilter() {
-		
-		ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
-		
-		if (creator != null) {
-			
-			int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-			
-			if (selectedTabItem >= 0) {
-				
-				SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
-				
-				if (_searchResultViewer != null) {
-					
-					FilterDialog dialog = new FilterDialog(shell);
-					if (dialog.open() == Dialog.OK) {
-						if (!creator.createMemberFilter(_searchResultViewer.getConnection(), dialog.getFilter(), _searchResultViewer.getSearchResults())) {
-							
-							MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-							errorBox.setText(Messages.E_R_R_O_R);
-							errorBox.setMessage(Messages.The_filter_could_not_be_created);
-							errorBox.open();
-							
-							
-						}
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-	}
+    }
 
-	public void exportToExcel() {
+    private void initializeToolBar() {
+        IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(actionExportToMemberFilter);
+        toolbarManager.add(actionExportToExcel);
+        toolbarManager.add(actionRemoveTabItem);
+    }
 
-		int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-		
-		if (selectedTabItem >= 0) {
-			
-			SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
-			
-			if (_searchResultViewer != null) {
-				
-				SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
+    private void initializeMenu() {
+        // IMenuManager menuManager =
+        // getViewSite().getActionBars().getMenuManager();
+    }
+
+    @Override
+    public void setFocus() {
+    }
+
+    public void addTabItem(Object connection, String connectionName, String searchString, SearchResult[] searchResults) {
+        Composite compositeSearchResult = new Composite(tabFolderSearchResults, SWT.NONE);
+        compositeSearchResult.setLayout(new FillLayout());
+
+        TabItem tabItemSearchResult = new TabItem(tabFolderSearchResults, SWT.NONE);
+        tabItemSearchResult.setText(connectionName + "/" + searchString);
+
+        SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
+        _searchResultViewer.createContents(compositeSearchResult);
+
+        tabItemSearchResult.setControl(compositeSearchResult);
+        tabItemSearchResult.setData("Viewer", _searchResultViewer);
+
+        TabItem[] tabItemToBeSelected = new TabItem[1];
+        tabItemToBeSelected[0] = tabItemSearchResult;
+        tabFolderSearchResults.setSelection(tabItemToBeSelected);
+
+        actionExportToMemberFilter.setEnabled(true);
+        actionExportToExcel.setEnabled(true);
+        actionRemoveTabItem.setEnabled(true);
+    }
+
+    public void exportToMemberFilter() {
+
+        ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
+
+        if (creator != null) {
+
+            int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+
+            if (selectedTabItem >= 0) {
+
+                SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+
+                if (_searchResultViewer != null) {
+
+                    FilterDialog dialog = new FilterDialog(shell);
+                    if (dialog.open() == Dialog.OK) {
+                        if (!creator.createMemberFilter(_searchResultViewer.getConnection(), dialog.getFilter(),
+                            _searchResultViewer.getSearchResults())) {
+
+                            MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                            errorBox.setText(Messages.E_R_R_O_R);
+                            errorBox.setMessage(Messages.The_filter_could_not_be_created);
+                            errorBox.open();
+
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public void exportToExcel() {
+
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+
+        if (selectedTabItem >= 0) {
+
+            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+
+            if (_searchResultViewer != null) {
+
+                SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
 
                 WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
                 IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
-                
-				dialog.setFilterNames(new String[] {"Excel Files", "All Files"});
-				dialog.setFilterExtensions(new String[] {"*.xls", "*.*"});
-				dialog.setFilterPath("C:\\");
-				dialog.setFileName("export.xls");
+
+                dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
+                dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
+                dialog.setFilterPath("C:\\");
+                dialog.setFileName("export.xls");
                 dialog.setOverwrite(true);
-				String file = dialog.open();
+                String file = dialog.open();
 
-				if (file != null) {
+                if (file != null) {
 
-					try {
-						
-						WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
-						
-						WritableSheet sheet;
-						
-						sheet = workbook.createSheet(Messages.Members_with_statements, 0);
-						
-						sheet.addCell(new jxl.write.Label(0, 0, Messages.Library)); 
-						sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file)); 
-						sheet.addCell(new jxl.write.Label(2, 0, Messages.Member)); 
-						sheet.addCell(new jxl.write.Label(3, 0, Messages.Description)); 
-						sheet.addCell(new jxl.write.Label(4, 0, Messages.Line)); 
-						sheet.addCell(new jxl.write.Label(5, 0, Messages.Statement)); 
-						
-						int line = 1;
-						
-						for (int index1 = 0; index1 < _searchResults.length; index1++) {
-							
-							SearchResultStatement[] _statements = _searchResults[index1].getStatements();
-							
-							for (int index2 = 0; index2 < _statements.length; index2++) {
-								
-								sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary())); 
-								sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile())); 
-								sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember())); 
-								sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription())); 
-								sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement()))); 
-								sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine())); 
+                    try {
 
-								line++;
-								
-							}
+                        WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
 
-							line++;
-						}
-						
-						sheet = workbook.createSheet(Messages.Members, 0);
-						
-						sheet.addCell(new jxl.write.Label(0, 0, Messages.Library)); 
-						sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file)); 
-						sheet.addCell(new jxl.write.Label(2, 0, Messages.Member)); 
-						sheet.addCell(new jxl.write.Label(3, 0, Messages.Description)); 
-						
-						for (int index = 0; index < _searchResults.length; index++) {
-							sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary())); 
-							sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile())); 
-							sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember())); 
-							sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription())); 
-						}
-						
-						workbook.write(); 
-						workbook.close(); 
-						
-					} 
-					catch (IOException e) {
-						e.printStackTrace();
-					} 
-					catch (WriteException e) {
-						e.printStackTrace();
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-	}
-	
-	public void removeTabItem() {
-		int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-		if (selectedTabItem >= 0) {
-			tabFolderSearchResults.getItem(selectedTabItem).dispose();
-			if (tabFolderSearchResults.getItemCount() == 0) {
-				actionExportToMemberFilter.setEnabled(false);
-				actionExportToExcel.setEnabled(false);
-				actionRemoveTabItem.setEnabled(false);
-			}
-		}
-	}
+                        WritableSheet sheet;
+
+                        sheet = workbook.createSheet(Messages.Members_with_statements, 0);
+
+                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
+                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
+                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
+                        sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
+                        sheet.addCell(new jxl.write.Label(4, 0, Messages.Line));
+                        sheet.addCell(new jxl.write.Label(5, 0, Messages.Statement));
+
+                        int line = 1;
+
+                        for (int index1 = 0; index1 < _searchResults.length; index1++) {
+
+                            SearchResultStatement[] _statements = _searchResults[index1].getStatements();
+
+                            for (int index2 = 0; index2 < _statements.length; index2++) {
+
+                                sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
+                                sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile()));
+                                sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember()));
+                                sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription()));
+                                sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement())));
+                                sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine()));
+
+                                line++;
+
+                            }
+
+                            line++;
+                        }
+
+                        sheet = workbook.createSheet(Messages.Members, 0);
+
+                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
+                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
+                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
+                        sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
+
+                        for (int index = 0; index < _searchResults.length; index++) {
+                            sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
+                            sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile()));
+                            sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember()));
+                            sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription()));
+                        }
+
+                        workbook.write();
+                        workbook.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (WriteException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public void removeTabItem() {
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+        if (selectedTabItem >= 0) {
+            tabFolderSearchResults.getItem(selectedTabItem).dispose();
+            if (tabFolderSearchResults.getItemCount() == 0) {
+                actionExportToMemberFilter.setEnabled(false);
+                actionExportToExcel.setEnabled(false);
+                actionRemoveTabItem.setEnabled(false);
+            }
+        }
+    }
 
 }

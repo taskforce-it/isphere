@@ -3,7 +3,6 @@ package biz.isphere.core.ccsid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.Formatter;
 import java.util.Properties;
 
 public final class CcsidUtil {
@@ -14,7 +13,7 @@ public final class CcsidUtil {
     public String getAsciiCodepage(int ebcdic) {
         return getEbcdicAsciiMap().getProperty(ccsidFormat.format(ebcdic));
     }
-    
+
     private Properties getEbcdicAsciiMap() {
         if (map != null) {
             return map;

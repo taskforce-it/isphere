@@ -10,6 +10,6 @@ package biz.isphere.core.compareeditor;
 
 public abstract class CleanupListener {
 
-	public abstract void cleanup();
-	
+    public abstract void cleanup();
+
 }

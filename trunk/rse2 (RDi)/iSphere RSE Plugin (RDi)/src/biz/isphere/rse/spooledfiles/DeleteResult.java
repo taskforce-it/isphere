@@ -37,7 +37,7 @@ public class DeleteResult {
         public boolean isError() {
             return message != null;
         }
-        
+
         public SpooledFileResource getSpooledFileResource() {
             return spooledfileResource;
         }
@@ -47,7 +47,7 @@ public class DeleteResult {
     /*
      * Implementation of DeleteResult
      */
-    
+
     private ArrayList<Entry> deleteResults;
 
     public DeleteResult() {

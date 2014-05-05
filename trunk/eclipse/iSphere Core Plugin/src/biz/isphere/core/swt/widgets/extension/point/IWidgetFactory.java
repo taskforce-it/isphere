@@ -26,5 +26,5 @@ public interface IWidgetFactory {
      * @param aParent - a shell which will be the parent of the new instance
      */
     public IFileDialog getDialog(Shell aParent);
-    
+
 }

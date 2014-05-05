@@ -22,84 +22,73 @@ import biz.isphere.core.ISpherePlugin;
 
 import com.ibm.as400.access.AS400;
 
-
 public class MessageFileEditor extends EditorPart {
 
-	MessageFileEditorInput input;
-	
-	public void createPartControl(Composite parent) {
-		
-		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new FillLayout());
-	
-		MessageDescriptionViewer _messageDescriptionViewer = 
-			new MessageDescriptionViewer(
-					input.getAS400(), 
-					input.getConnection(), 
-					input.getLibrary(), 
-					input.getMessageFile(), 
-					input.getMode());
+    MessageFileEditorInput input;
 
-		_messageDescriptionViewer.createContents(container);
-		
-	}
-	
-	public void init(IEditorSite site, IEditorInput input) {
-       setSite(site);
-       setInput(input);
-       setPartName(input.getName());
-       setTitleImage(((MessageFileEditorInput)input).getImage());
-       this.input = (MessageFileEditorInput)input;
-    }
-    
-	public void setFocus() {
+    @Override
+    public void createPartControl(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NULL);
+        container.setLayout(new FillLayout());
+
+        MessageDescriptionViewer _messageDescriptionViewer = new MessageDescriptionViewer(input.getAS400(), input.getConnection(),
+            input.getLibrary(), input.getMessageFile(), input.getMode());
+
+        _messageDescriptionViewer.createContents(container);
+
     }
 
-	public void doSave(IProgressMonitor monitor) {
-	}
-	
-	public void doSaveAs() {
-	}
+    @Override
+    public void init(IEditorSite site, IEditorInput input) {
+        setSite(site);
+        setInput(input);
+        setPartName(input.getName());
+        setTitleImage(((MessageFileEditorInput)input).getImage());
+        this.input = (MessageFileEditorInput)input;
+    }
 
-	public boolean isDirty() {
-		return false;
-	}
+    @Override
+    public void setFocus() {
+    }
 
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+    }
 
-	public boolean isSaveOnCloseNeeded() {
-		return false;
-	}
-	
-	public static void openEditor(
-			AS400 as400,
-			String host,
-			String library,
-			String messageFile,
-			String mode) {
-		
-		try {
-			 
-			MessageFileEditorInput editorInput = 
-				new MessageFileEditorInput(
-						"biz.isphere.core.messagefileeditor.MessageFileEditor",
-						as400,
-						host,
-						library,
-						messageFile,
-						mode,
-						messageFile + ".MSGF", 
-						"\\\\" + host + "\\QSYS.LIB\\" + library + ".LIB\\" + messageFile + ".MSGF", 
-						ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MESSAGE_FILE));
-			
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.messagefileeditor.MessageFileEditor");
-		
-		} 
-		catch (PartInitException e) {
-		}
-	
-	}
-	
- }
+    @Override
+    public void doSaveAs() {
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
+
+    @Override
+    public boolean isSaveOnCloseNeeded() {
+        return false;
+    }
+
+    public static void openEditor(AS400 as400, String host, String library, String messageFile, String mode) {
+
+        try {
+
+            MessageFileEditorInput editorInput = new MessageFileEditorInput("biz.isphere.core.messagefileeditor.MessageFileEditor", as400, host,
+                library, messageFile, mode, messageFile + ".MSGF", "\\\\" + host + "\\QSYS.LIB\\" + library + ".LIB\\" + messageFile + ".MSGF",
+                ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MESSAGE_FILE));
+
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                .openEditor(editorInput, "biz.isphere.core.messagefileeditor.MessageFileEditor");
+
+        } catch (PartInitException e) {
+        }
+
+    }
+
+}

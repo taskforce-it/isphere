@@ -24,89 +24,74 @@ import biz.isphere.core.ISpherePlugin;
 
 import com.ibm.as400.access.AS400;
 
-
 public class BindingDirectoryEditor extends EditorPart {
 
-	BindingDirectoryEditorInput input;
-	
-	public void createPartControl(Composite parent) {
-		
-		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new FillLayout());
-		
-		BindingDirectoryEntryViewer _bindingDirectoryEntryViewer = 
-			new BindingDirectoryEntryViewer(
-					input.getLevel(),
-					input.getAS400(), 
-					input.getJDBCConnection(),
-					input.getConnection(), 
-					input.getLibrary(), 
-					input.getBindingDirectory(), 
-					input.getMode());
+    BindingDirectoryEditorInput input;
 
-		_bindingDirectoryEntryViewer.createContents(container);
-		
-	}
-	
-	public void init(IEditorSite site, IEditorInput input) {
-       setSite(site);
-       setInput(input);
-       setPartName(input.getName());
-       setTitleImage(((BindingDirectoryEditorInput)input).getImage());
-       this.input = (BindingDirectoryEditorInput)input;
-    }
-    
-	public void setFocus() {
+    @Override
+    public void createPartControl(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NULL);
+        container.setLayout(new FillLayout());
+
+        BindingDirectoryEntryViewer _bindingDirectoryEntryViewer = new BindingDirectoryEntryViewer(input.getLevel(), input.getAS400(),
+            input.getJDBCConnection(), input.getConnection(), input.getLibrary(), input.getBindingDirectory(), input.getMode());
+
+        _bindingDirectoryEntryViewer.createContents(container);
+
     }
 
-	public void doSave(IProgressMonitor monitor) {
-	}
-	
-	public void doSaveAs() {
-	}
+    @Override
+    public void init(IEditorSite site, IEditorInput input) {
+        setSite(site);
+        setInput(input);
+        setPartName(input.getName());
+        setTitleImage(((BindingDirectoryEditorInput)input).getImage());
+        this.input = (BindingDirectoryEditorInput)input;
+    }
 
-	public boolean isDirty() {
-		return false;
-	}
+    @Override
+    public void setFocus() {
+    }
 
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+    }
 
-	public boolean isSaveOnCloseNeeded() {
-		return false;
-	}
+    @Override
+    public void doSaveAs() {
+    }
 
-	public static void openEditor(
-			AS400 as400, 
-			Connection jdbcConnection,
-			String host,
-			String library,
-			String bindingDirectory,
-			String mode
-			) {
-		
-		try {
-			
-			BindingDirectoryEditorInput editorInput = 
-				new BindingDirectoryEditorInput(
-						"biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor",
-						as400,
-						jdbcConnection,
-						host,
-						library,
-						bindingDirectory,
-						mode,
-						bindingDirectory + ".BNDDIR", 
-						"\\\\" + host + "\\QSYS.LIB\\" + library + ".LIB\\" + bindingDirectory + ".BNDDIR", 
-						ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_BINDING_DIRECTORY));
-			
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor");
-			
-		} 
-		catch (PartInitException e) {
-		}
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
 
-	}
-	
- }
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
+
+    @Override
+    public boolean isSaveOnCloseNeeded() {
+        return false;
+    }
+
+    public static void openEditor(AS400 as400, Connection jdbcConnection, String host, String library, String bindingDirectory, String mode) {
+
+        try {
+
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(
+                "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor", as400, jdbcConnection, host, library, bindingDirectory, mode,
+                bindingDirectory + ".BNDDIR", "\\\\" + host + "\\QSYS.LIB\\" + library + ".LIB\\" + bindingDirectory + ".BNDDIR", ISpherePlugin
+                    .getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_BINDING_DIRECTORY));
+
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                .openEditor(editorInput, "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor");
+
+        } catch (PartInitException e) {
+        }
+
+    }
+
+}
