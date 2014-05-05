@@ -14,146 +14,172 @@ package biz.isphere.rse.internal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import biz.isphere.core.internal.Member;
+
 import com.ibm.etools.iseries.core.ISeriesTempFileListener;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember;
 
-import biz.isphere.core.internal.Member;
-
 public class RSEMember extends Member {
 
-	private ISeriesMember _member;
-	private ISeriesEditableSrcPhysicalFileMember _editableMember;
-	private String label;
-	private boolean archive;
-	private String archiveLibrary; 
-	private String archiveFile; 
-	private String archiveMember;
-	private String archiveDate;
-	private String archiveTime;
-	
-	public RSEMember(ISeriesMember _member) throws Exception {
-		super();
-		this._member = _member;
-		if (_member != null) {
-			_editableMember = new ISeriesEditableSrcPhysicalFileMember(_member);
-		}
-		label = null;
-		archive = false;
-		archiveLibrary = null; 
-		archiveFile = null; 
-		archiveMember = null;
-		archiveDate = null;
-		archiveTime = null;
-	}
+    private ISeriesMember _member;
+    private ISeriesEditableSrcPhysicalFileMember _editableMember;
+    private String label;
+    private boolean archive;
+    private String archiveLibrary;
+    private String archiveFile;
+    private String archiveMember;
+    private String archiveDate;
+    private String archiveTime;
 
-	public ISeriesConnection getRSEConnection() {
-		return _member.getISeriesConnection();
-	}
-	
-	public String getConnection() {
-		return _member.getISeriesConnection().getConnectionName();
-	}
+    public RSEMember(ISeriesMember _member) throws Exception {
+        super();
+        this._member = _member;
+        if (_member != null) {
+            _editableMember = new ISeriesEditableSrcPhysicalFileMember(_member);
+        }
+        label = null;
+        archive = false;
+        archiveLibrary = null;
+        archiveFile = null;
+        archiveMember = null;
+        archiveDate = null;
+        archiveTime = null;
+    }
 
-	public String getLibrary() {
-		return _member.getLibrary();
-	}
+    public ISeriesConnection getRSEConnection() {
+        return _member.getISeriesConnection();
+    }
 
-	public String getSourceFile() {
-		return _member.getFile();
-	}
+    @Override
+    public String getConnection() {
+        return _member.getISeriesConnection().getConnectionName();
+    }
 
-	public String getMember() {
-		return _member.getName();
-	}
+    @Override
+    public String getLibrary() {
+        return _member.getLibrary();
+    }
 
-	public boolean exists() throws Exception {
-		return _editableMember.exists();
-	}
+    @Override
+    public String getSourceFile() {
+        return _member.getFile();
+    }
 
-	public void download(IProgressMonitor monitor) throws Exception {
-		_editableMember.download(monitor);		
-	}
+    @Override
+    public String getMember() {
+        return _member.getName();
+    }
 
-	public void upload(IProgressMonitor monitor) throws Exception {
-		_editableMember.upload(monitor);		
-	}
+    @Override
+    public boolean exists() throws Exception {
+        return _editableMember.exists();
+    }
 
-	public IFile getLocalResource() {
-		return _editableMember.getLocalResource();
-	}
+    @Override
+    public void download(IProgressMonitor monitor) throws Exception {
+        _editableMember.download(monitor);
+    }
 
-	public void openStream() throws Exception {
-		_editableMember.openStream();
-	}
+    @Override
+    public void upload(IProgressMonitor monitor) throws Exception {
+        _editableMember.upload(monitor);
+    }
 
-	public void closeStream() throws Exception {
-		_editableMember.closeStream();
-	}
+    @Override
+    public IFile getLocalResource() {
+        return _editableMember.getLocalResource();
+    }
 
-	public void addIgnoreFile() {
-		ISeriesTempFileListener.getListener().addIgnoreFile(_editableMember.getLocalResource());
-	}
+    @Override
+    public void openStream() throws Exception {
+        _editableMember.openStream();
+    }
 
-	public void removeIgnoreFile() {
-		ISeriesTempFileListener.getListener().removeIgnoreFile(_editableMember.getLocalResource());
-	}
+    @Override
+    public void closeStream() throws Exception {
+        _editableMember.closeStream();
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    @Override
+    public void addIgnoreFile() {
+        ISeriesTempFileListener.getListener().addIgnoreFile(_editableMember.getLocalResource());
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    @Override
+    public void removeIgnoreFile() {
+        ISeriesTempFileListener.getListener().removeIgnoreFile(_editableMember.getLocalResource());
+    }
 
-	public boolean isArchive() {
-		return archive;
-	}
+    @Override
+    public String getLabel() {
+        return label;
+    }
 
-	public void setArchive(boolean archive) {
-		this.archive = archive;
-	}
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public String getArchiveLibrary() {
-		return archiveLibrary;
-	}
+    @Override
+    public boolean isArchive() {
+        return archive;
+    }
 
-	public void setArchiveLibrary(String archiveLibrary) {
-		this.archiveLibrary = archiveLibrary;
-	}
+    @Override
+    public void setArchive(boolean archive) {
+        this.archive = archive;
+    }
 
-	public String getArchiveFile() {
-		return archiveFile;
-	}
+    @Override
+    public String getArchiveLibrary() {
+        return archiveLibrary;
+    }
 
-	public void setArchiveFile(String archiveFile) {
-		this.archiveFile = archiveFile;
-	}
+    @Override
+    public void setArchiveLibrary(String archiveLibrary) {
+        this.archiveLibrary = archiveLibrary;
+    }
 
-	public String getArchiveMember() {
-		return archiveMember;
-	}
+    @Override
+    public String getArchiveFile() {
+        return archiveFile;
+    }
 
-	public void setArchiveMember(String archiveMember) {
-		this.archiveMember = archiveMember;
-	}
+    @Override
+    public void setArchiveFile(String archiveFile) {
+        this.archiveFile = archiveFile;
+    }
 
-	public String getArchiveDate() {
-		return archiveDate;
-	}
+    @Override
+    public String getArchiveMember() {
+        return archiveMember;
+    }
 
-	public void setArchiveDate(String archiveDate) {
-		this.archiveDate = archiveDate;
-	}
+    @Override
+    public void setArchiveMember(String archiveMember) {
+        this.archiveMember = archiveMember;
+    }
 
-	public String getArchiveTime() {
-		return archiveTime;
-	}
+    @Override
+    public String getArchiveDate() {
+        return archiveDate;
+    }
 
-	public void setArchiveTime(String archiveTime) {
-		this.archiveTime = archiveTime;
-	}
-	
+    @Override
+    public void setArchiveDate(String archiveDate) {
+        this.archiveDate = archiveDate;
+    }
+
+    @Override
+    public String getArchiveTime() {
+        return archiveTime;
+    }
+
+    @Override
+    public void setArchiveTime(String archiveTime) {
+        this.archiveTime = archiveTime;
+    }
+
 }

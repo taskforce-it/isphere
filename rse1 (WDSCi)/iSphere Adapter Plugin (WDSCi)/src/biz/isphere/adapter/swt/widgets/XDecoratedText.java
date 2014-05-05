@@ -17,11 +17,11 @@ public class XDecoratedText implements IControlCreator {
     private FieldDecoration errorFieldIndicator;
 
     public XDecoratedText(Composite aParent, int aStyle) {
-    	
+
         text = new DecoratedField(aParent, aStyle, this);
         errorFieldIndicator = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
         text.addFieldDecoration(errorFieldIndicator, SWT.LEFT | SWT.TOP, true);
-       
+
         hideDecoration();
     }
 
@@ -39,9 +39,9 @@ public class XDecoratedText implements IControlCreator {
 
     public void showDecoration(String aDescription) {
         if (aDescription == null) {
-        	errorFieldIndicator.setDescription(errorFieldIndicator.getDescription());
+            errorFieldIndicator.setDescription(errorFieldIndicator.getDescription());
         } else {
-        	errorFieldIndicator.setDescription(aDescription);
+            errorFieldIndicator.setDescription(aDescription);
         }
         text.showDecoration(errorFieldIndicator);
     }

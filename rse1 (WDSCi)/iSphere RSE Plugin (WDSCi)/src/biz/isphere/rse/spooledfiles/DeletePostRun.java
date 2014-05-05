@@ -6,10 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
-
-import biz.isphere.core.sourcefilesearch.ViewSearchResults;
 
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.model.ISystemRemoteChangeEvents;
@@ -38,17 +35,12 @@ public class DeletePostRun implements IDeletePostRun {
             deleteResult = aDeleteResult;
         }
 
+        @Override
         public IStatus runInUIThread(IProgressMonitor aMonitor) {
-			SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+            SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
             Vector<SpooledFileResource> spooledFileVector = deleteResult.getDeletedSpooledFiles();
             if (!spooledFileVector.isEmpty()) {
-				sr.fireRemoteResourceChangeEvent(
-						ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, 
-						spooledFileVector, 
-						null, 
-						null, 
-						null, 
-						null);
+                sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, spooledFileVector, null, null, null, null);
             }
             return Status.OK_STATUS;
         }

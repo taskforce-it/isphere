@@ -11,19 +11,6 @@
 
 package biz.isphere.rse.actions;
 
-import com.ibm.etools.iseries.core.api.ISeriesMember;
-import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
-import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
-import com.ibm.etools.systems.core.ui.SystemMenuManager;
-import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
-import com.ibm.etools.systems.dstore.core.model.DataElement;
-
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.compareeditor.CompareAction;
-import biz.isphere.rse.Messages;
-import biz.isphere.rse.compareeditor.RSECompareDialog;
-import biz.isphere.rse.internal.RSEMember;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -31,108 +18,117 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.compareeditor.CompareAction;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.compareeditor.RSECompareDialog;
+import biz.isphere.rse.internal.RSEMember;
+
+import com.ibm.etools.iseries.core.api.ISeriesMember;
+import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
+import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
+import com.ibm.etools.systems.core.ui.SystemMenuManager;
+import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
+import com.ibm.etools.systems.dstore.core.model.DataElement;
+
 public class CompareEditorAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
-	protected ArrayList arrayListSelection;
+    protected ArrayList arrayListSelection;
 
-	public CompareEditorAction() {
-		super(Messages.iSphere_Compare_Editor, "", null);
-		arrayListSelection = new ArrayList();
-		setContextMenuGroup("additions");
-		allowOnMultipleSelection(true);
-		setHelp("");
-		setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COMPARE));
-	}
+    public CompareEditorAction() {
+        super(Messages.iSphere_Compare_Editor, "", null);
+        arrayListSelection = new ArrayList();
+        setContextMenuGroup("additions");
+        allowOnMultipleSelection(true);
+        setHelp("");
+        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COMPARE));
+    }
 
-	public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
-		setShell(shell);
-		menu.add("additions", this);
-	}
+    public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
+        setShell(shell);
+        menu.add("additions", this);
+    }
 
-	public void run() {
-		if (arrayListSelection.size() > 0) {
-			for (Iterator iterMembers = arrayListSelection.iterator(); iterMembers.hasNext();) {
-				DataElement dataElement = (DataElement)iterMembers.next();
-				ISeriesMember member = new ISeriesMember(dataElement);
-				if (member != null) {
-					
-					try {
-						
-						RSEMember rseLeftMember = new RSEMember(member);
-						
-						RSECompareDialog dialog = new RSECompareDialog(getShell(), true, rseLeftMember);
-						
-						if (dialog.open() == Dialog.OK) {
-							
-							boolean editable = dialog.isEditable();
-							boolean considerDate = dialog.isConsiderDate();
-							boolean threeWay = dialog.isThreeWay();
-							
-							RSEMember rseAncestorMember = null;
+    @Override
+    public void run() {
+        if (arrayListSelection.size() > 0) {
+            for (Iterator iterMembers = arrayListSelection.iterator(); iterMembers.hasNext();) {
+                DataElement dataElement = (DataElement)iterMembers.next();
+                ISeriesMember member = new ISeriesMember(dataElement);
+                if (member != null) {
 
-							if (threeWay) {
-								
-								ISeriesMember ancestorMember = dialog.getAncestorConnection().getISeriesMember(
-										getShell(), 
-										dialog.getAncestorLibrary(), 
-										dialog.getAncestorFile(), 
-										dialog.getAncestorMember());
-								
-								if (ancestorMember != null) {
-									rseAncestorMember = new RSEMember(ancestorMember);
-								}
-								
-							}
+                    try {
 
-							RSEMember rseRightMember = null;
-							
-							ISeriesMember rightMember = dialog.getRightConnection().getISeriesMember(
-									getShell(), 
-									dialog.getRightLibrary(), 
-									dialog.getRightFile(), 
-									dialog.getRightMember());
-							
-							if (rightMember != null) {
-								rseRightMember = new RSEMember(rightMember);
-							}
+                        RSEMember rseLeftMember = new RSEMember(member);
 
-							CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember, null);
-							action.run();
-							
-						}
+                        RSECompareDialog dialog = new RSECompareDialog(getShell(), true, rseLeftMember);
 
-					} catch (Exception e) {
-					}
-					
-				}
-			}
-		}
-	}
+                        if (dialog.open() == Dialog.OK) {
 
-	public boolean supportsSelection(IStructuredSelection selection) {
+                            boolean editable = dialog.isEditable();
+                            boolean considerDate = dialog.isConsiderDate();
+                            boolean threeWay = dialog.isThreeWay();
 
-		this.arrayListSelection.clear();
+                            RSEMember rseAncestorMember = null;
 
-		ArrayList<DataElement> arrayListSelection = new ArrayList<DataElement>();
+                            if (threeWay) {
 
-		for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
-			Object objSelection = iterSelection.next();
-			if (objSelection instanceof DataElement) {
-				DataElement dataElement = (DataElement)objSelection;
-				ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-				if (type.isSourceMember()) {
-					arrayListSelection.add(dataElement);
-				}
-			}
-		}
-		
-		if (arrayListSelection.isEmpty() || arrayListSelection.size() != 1) {
-			return false;
-		}
-		
-		this.arrayListSelection = arrayListSelection;
-		return true;
-		
-	}
+                                ISeriesMember ancestorMember = dialog.getAncestorConnection().getISeriesMember(getShell(),
+                                    dialog.getAncestorLibrary(), dialog.getAncestorFile(), dialog.getAncestorMember());
+
+                                if (ancestorMember != null) {
+                                    rseAncestorMember = new RSEMember(ancestorMember);
+                                }
+
+                            }
+
+                            RSEMember rseRightMember = null;
+
+                            ISeriesMember rightMember = dialog.getRightConnection().getISeriesMember(getShell(), dialog.getRightLibrary(),
+                                dialog.getRightFile(), dialog.getRightMember());
+
+                            if (rightMember != null) {
+                                rseRightMember = new RSEMember(rightMember);
+                            }
+
+                            CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember,
+                                rseRightMember, null);
+                            action.run();
+
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                }
+            }
+        }
+    }
+
+    public boolean supportsSelection(IStructuredSelection selection) {
+
+        this.arrayListSelection.clear();
+
+        ArrayList<DataElement> arrayListSelection = new ArrayList<DataElement>();
+
+        for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
+            Object objSelection = iterSelection.next();
+            if (objSelection instanceof DataElement) {
+                DataElement dataElement = (DataElement)objSelection;
+                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+                if (type.isSourceMember()) {
+                    arrayListSelection.add(dataElement);
+                }
+            }
+        }
+
+        if (arrayListSelection.isEmpty() || arrayListSelection.size() != 1) {
+            return false;
+        }
+
+        this.arrayListSelection = arrayListSelection;
+        return true;
+
+    }
 
 }

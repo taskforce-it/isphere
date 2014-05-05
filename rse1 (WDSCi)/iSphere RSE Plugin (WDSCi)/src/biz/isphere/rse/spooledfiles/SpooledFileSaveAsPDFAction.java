@@ -15,8 +15,9 @@ import biz.isphere.core.preferencepages.IPreferences;
 
 public class SpooledFileSaveAsPDFAction extends AbstractSpooledFileAction {
 
-	public String execute(SpooledFileResource spooledFileResource) {
-		return spooledFileResource.getSpooledFile().save(getShell(), IPreferences.OUTPUT_FORMAT_PDF);
-	}
+    @Override
+    public String execute(SpooledFileResource spooledFileResource) {
+        return spooledFileResource.getSpooledFile().save(getShell(), IPreferences.OUTPUT_FORMAT_PDF);
+    }
 
 }

@@ -25,53 +25,60 @@ import com.ibm.etools.systems.core.ui.SystemWidgetHelpers;
 import com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane;
 
 public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane {
-		
-	private SpooledFileBaseFilterStringEditPane base = new SpooledFileBaseFilterStringEditPane();
 
-	public SpooledFileFilterStringEditPane(Shell shell) {
-		super(shell);
-	}
-	
-	public Control createContents(Composite parent) {
-		
-		int nbrColumns = 2;
-		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
-		((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
-		
-		ModifyListener keyListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-					validateStringInput();
-			}
-		};
-		
-		base.createContents(composite_prompts, keyListener, inputFilterString);
-		
-		return composite_prompts;
-		
-	}
-	
-	public Control getInitialFocusControl() {
-		return base.getInitialFocusControl();
-	}	
-	
-	protected void doInitializeFields() {
-		base.doInitializeFields(inputFilterString);
-	}
-	
-	protected void resetFields() {
-		base.resetFields();
-	}
-	
-	protected boolean areFieldsComplete() {
-		return base.areFieldsComplete();
-	}
-	
-	public String getFilterString() {
-		return base.getFilterString();
-	}	
-	
-	public SystemMessage verify() {
-		return null;
-	}
+    private SpooledFileBaseFilterStringEditPane base = new SpooledFileBaseFilterStringEditPane();
+
+    public SpooledFileFilterStringEditPane(Shell shell) {
+        super(shell);
+    }
+
+    @Override
+    public Control createContents(Composite parent) {
+
+        int nbrColumns = 2;
+        Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
+        ((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
+
+        ModifyListener keyListener = new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                validateStringInput();
+            }
+        };
+
+        base.createContents(composite_prompts, keyListener, inputFilterString);
+
+        return composite_prompts;
+
+    }
+
+    @Override
+    public Control getInitialFocusControl() {
+        return base.getInitialFocusControl();
+    }
+
+    @Override
+    protected void doInitializeFields() {
+        base.doInitializeFields(inputFilterString);
+    }
+
+    @Override
+    protected void resetFields() {
+        base.resetFields();
+    }
+
+    @Override
+    protected boolean areFieldsComplete() {
+        return base.areFieldsComplete();
+    }
+
+    @Override
+    public String getFilterString() {
+        return base.getFilterString();
+    }
+
+    @Override
+    public SystemMessage verify() {
+        return null;
+    }
 
 }

@@ -13,10 +13,7 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class RSEHelper {
 
-	public static SystemFilter createMemberFilter(
-			ISeriesConnection connection, 
-			String filterName,
-			ISeriesMemberFilterString[] filterStrings) {
+    public static SystemFilter createMemberFilter(ISeriesConnection connection, String filterName, ISeriesMemberFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -24,13 +21,10 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Member", filterName, _filterStrings);
-		
-	}
 
-	public static SystemFilter createObjectFilter(
-			ISeriesConnection connection, 
-			String filterName,
-			ISeriesObjectFilterString[] filterStrings) {
+    }
+
+    public static SystemFilter createObjectFilter(ISeriesConnection connection, String filterName, ISeriesObjectFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -38,13 +32,10 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Object", filterName, _filterStrings);
-		
-	}
 
-	public static SystemFilter createLibraryFilter(
-			ISeriesConnection connection, 
-			String filterName,
-			ISeriesLibraryFilterString[] filterStrings) {
+    }
+
+    public static SystemFilter createLibraryFilter(ISeriesConnection connection, String filterName, ISeriesLibraryFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
@@ -52,56 +43,51 @@ public class RSEHelper {
         }
 
         return createFilter(connection, "Library", filterName, _filterStrings);
-		
-	}
-	
-	public static SystemFilter createFilter(
-			ISeriesConnection connection, 
-			String filterType, 
-			String filterName, 
-			Vector filterStrings) {
-		
+
+    }
+
+    public static SystemFilter createFilter(ISeriesConnection connection, String filterType, String filterName, Vector filterStrings) {
+
         SubSystem subsystem = connection.getISeriesFileSubSystem();
-        
+
         if (subsystem != null) {
-        	
+
             SystemFilterPool pools[] = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
-            
+
             if (pools != null) {
-            	
-            	SystemFilterPool defaultPool = null;
+
+                SystemFilterPool defaultPool = null;
                 for (int idx = 0; idx < pools.length; idx++) {
                     if (pools[idx].isDefault()) {
                         defaultPool = pools[idx];
                         break;
                     }
                 }
-            	
+
                 if (defaultPool != null) {
-                    
+
                     Vector filterNames = defaultPool.getSystemFilterNames();
                     for (int idx = 0; idx < filterNames.size(); idx++) {
-                    	if (((String)filterNames.get(idx)).equals(filterName)) {
-                    		return null;
-                    	}
+                        if (((String)filterNames.get(idx)).equals(filterName)) {
+                            return null;
+                        }
                     }
-                	
+
                     SystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-                    
+
                     try {
                         return dftPoolMgr.createSystemFilter(defaultPool, filterName, filterStrings, filterType);
+                    } catch (Exception e) {
                     }
-                    catch(Exception e) {
-                    }
-                	
+
                 }
-                
+
             }
-        	
+
         }
-        
+
         return null;
-        
-	}
-	
+
+    }
+
 }

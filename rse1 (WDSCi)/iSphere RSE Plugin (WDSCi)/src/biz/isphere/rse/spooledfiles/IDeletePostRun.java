@@ -10,6 +10,6 @@ package biz.isphere.rse.spooledfiles;
 
 public interface IDeletePostRun {
 
-	public void run(DeleteResult aDeleteResults);
-	
+    public void run(DeleteResult aDeleteResults);
+
 }
