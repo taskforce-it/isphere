@@ -33,12 +33,12 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 
     @Override
     public Control createContents(Composite parent) {
-        Composite _container = new Composite(parent, SWT.NULL);
+        Composite _container = new Composite(parent, SWT.NONE);
         _container.setLayout(new FillLayout(SWT.VERTICAL));
 
         ScrolledComposite sc = new ScrolledComposite(_container, SWT.H_SCROLL | SWT.V_SCROLL);
 
-        Composite container = new Composite(sc, SWT.NULL);
+        Composite container = new Composite(sc, SWT.NONE);
         final GridLayout gridLayout = new GridLayout();
         container.setLayout(gridLayout);
 

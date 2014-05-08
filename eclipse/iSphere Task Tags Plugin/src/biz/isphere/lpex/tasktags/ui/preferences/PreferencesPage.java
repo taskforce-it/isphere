@@ -86,7 +86,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         setTitle(Messages.PreferencesPage_title);
 
-        Composite mainPanel = new Composite(parent, SWT.NULL);
+        Composite mainPanel = new Composite(parent, SWT.NONE);
         GridLayout gl_mainPanel = new GridLayout(2, false);
         gl_mainPanel.marginBottom = 10;
         gl_mainPanel.marginWidth = 0;

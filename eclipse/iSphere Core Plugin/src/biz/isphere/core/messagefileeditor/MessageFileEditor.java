@@ -29,7 +29,7 @@ public class MessageFileEditor extends EditorPart {
     @Override
     public void createPartControl(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new FillLayout());
 
         MessageDescriptionViewer _messageDescriptionViewer = new MessageDescriptionViewer(input.getAS400(), input.getConnection(),

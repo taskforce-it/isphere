@@ -123,7 +123,7 @@ public class FieldFormatViewer {
 
         shell = parent.getShell();
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
