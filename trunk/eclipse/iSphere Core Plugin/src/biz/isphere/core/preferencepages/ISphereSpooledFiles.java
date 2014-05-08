@@ -76,7 +76,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     @Override
     public Control createContents(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         final GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 1;
         container.setLayout(gridLayout);

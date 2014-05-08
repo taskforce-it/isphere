@@ -40,7 +40,7 @@ public class SignOn {
 
     public void createContents(Composite parent, String aHostName) {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
 
         final Composite compositeGeneral = new Composite(container, SWT.NONE);

@@ -145,7 +145,7 @@ public class SearchResultViewer {
 
         shell = parent.getShell();
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
 
         final SashForm sashFormSearchResult = new SashForm(container, SWT.BORDER);

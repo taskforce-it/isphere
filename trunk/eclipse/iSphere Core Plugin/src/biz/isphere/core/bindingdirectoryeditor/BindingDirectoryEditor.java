@@ -31,7 +31,7 @@ public class BindingDirectoryEditor extends EditorPart {
     @Override
     public void createPartControl(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new FillLayout());
 
         BindingDirectoryEntryViewer _bindingDirectoryEntryViewer = new BindingDirectoryEntryViewer(input.getLevel(), input.getAS400(),

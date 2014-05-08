@@ -62,7 +62,7 @@ public class MessageDescriptionDetail {
      */
     public void createContents(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
 
         // Action
