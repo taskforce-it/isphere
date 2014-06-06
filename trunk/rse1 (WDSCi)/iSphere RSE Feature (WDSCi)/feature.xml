@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for WDSCi 7.0 (recommended)"
-      version="2.1.0"
+      version="2.1.1"
       provider-name="iSphere Project Owners">
 
    <description>
