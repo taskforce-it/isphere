@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.core"
       label="iSphere Core (required)"
-      version="2.1.0"
+      version="2.1.1"
       provider-name="iSphere Project Owners">
 
    <description>
