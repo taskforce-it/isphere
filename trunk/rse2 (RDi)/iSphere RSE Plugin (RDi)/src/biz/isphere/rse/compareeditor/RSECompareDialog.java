@@ -47,11 +47,20 @@ public class RSECompareDialog extends CompareDialog {
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember) {
         super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
         this.rseMember = leftMember;
+        initializeRightMember(rightMember);
     }
 
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
         this.rseMember = leftMember;
+        initializeRightMember(rightMember);
+    }
+
+    private void initializeRightMember(RSEMember rightMember) {
+        this.rightConnection = rightMember.getRSEConnection();
+        this.rightLibrary = rightMember.getLibrary();
+        this.rightFile = rightMember.getSourceFile();
+        this.rightMember = rightMember.getMember();
     }
 
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember) {

@@ -30,59 +30,54 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
     public void run(IAction arg0) {
 
-        if (structuredSelection != null && !structuredSelection.isEmpty()) {
+        try {
 
-            Object object = structuredSelection.getFirstElement();
+            RSEMember rseLeftMember = getLeftMemberFromSelection();
+            RSEMember rseRightMember = getRightMemberFromSelection();
 
-            if (object instanceof QSYSRemoteSourceMember) {
+            if (rseLeftMember != null) {
 
-                QSYSRemoteSourceMember member = (QSYSRemoteSourceMember)object;
+                RSECompareDialog dialog;
+                if (rseRightMember == null) {
+                    dialog = new RSECompareDialog(shell, true, rseLeftMember);
+                } else {
+                    dialog = new RSECompareDialog(shell, true, rseLeftMember, rseRightMember);
+                }
 
-                try {
+                if (dialog.open() == Dialog.OK) {
 
-                    RSEMember rseLeftMember = new RSEMember(member);
+                    boolean editable = dialog.isEditable();
+                    boolean considerDate = dialog.isConsiderDate();
+                    boolean threeWay = dialog.isThreeWay();
 
-                    RSECompareDialog dialog = new RSECompareDialog(shell, true, rseLeftMember);
+                    RSEMember rseAncestorMember = null;
 
-                    if (dialog.open() == Dialog.OK) {
+                    if (threeWay) {
 
-                        boolean editable = dialog.isEditable();
-                        boolean considerDate = dialog.isConsiderDate();
-                        boolean threeWay = dialog.isThreeWay();
+                        IQSYSMember ancestorMember = dialog.getAncestorConnection().getMember(dialog.getAncestorLibrary(), dialog.getAncestorFile(),
+                            dialog.getAncestorMember(), null);
 
-                        RSEMember rseAncestorMember = null;
-
-                        if (threeWay) {
-
-                            IQSYSMember ancestorMember = dialog.getAncestorConnection().getMember(dialog.getAncestorLibrary(),
-                                dialog.getAncestorFile(), dialog.getAncestorMember(), null);
-
-                            if (ancestorMember != null) {
-                                rseAncestorMember = new RSEMember(ancestorMember);
-                            }
-
+                        if (ancestorMember != null) {
+                            rseAncestorMember = new RSEMember(ancestorMember);
                         }
-
-                        RSEMember rseRightMember = null;
-
-                        IQSYSMember rightMember = dialog.getRightConnection().getMember(dialog.getRightLibrary(), dialog.getRightFile(),
-                            dialog.getRightMember(), null);
-
-                        if (rightMember != null) {
-                            rseRightMember = new RSEMember(rightMember);
-                        }
-
-                        CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember,
-                            null);
-                        action.run();
 
                     }
 
-                } catch (Exception e) {
+                    IQSYSMember rightMember = dialog.getRightConnection().getMember(dialog.getRightLibrary(), dialog.getRightFile(),
+                        dialog.getRightMember(), null);
+
+                    if (rightMember != null) {
+                        rseRightMember = new RSEMember(rightMember);
+                    }
+
+                    CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember, null);
+                    action.run();
+
                 }
 
             }
 
+        } catch (Exception e) {
         }
 
     }
@@ -90,13 +85,39 @@ public class CompareEditorAction implements IObjectActionDelegate {
     public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
             structuredSelection = ((IStructuredSelection)selection);
+            if (structuredSelection.size() >= 1 && structuredSelection.size() <= 2) {
+                action.setEnabled(true);
+            } else {
+                action.setEnabled(false);
+            }
         } else {
             structuredSelection = null;
+            action.setEnabled(false);
         }
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
         shell = workbenchPart.getSite().getShell();
+    }
+
+    private RSEMember getLeftMemberFromSelection() throws Exception {
+        if (structuredSelection != null && structuredSelection.size() >= 1) {
+            Object[] objects = structuredSelection.toArray();
+            if (objects[0] instanceof QSYSRemoteSourceMember) {
+                return new RSEMember((QSYSRemoteSourceMember)objects[0]);
+            }
+        }
+        return null;
+    }
+
+    private RSEMember getRightMemberFromSelection() throws Exception {
+        if (structuredSelection != null && structuredSelection.size() >= 2) {
+            Object[] objects = structuredSelection.toArray();
+            if (objects[1] instanceof QSYSRemoteSourceMember) {
+                return new RSEMember((QSYSRemoteSourceMember)objects[1]);
+            }
+        }
+        return null;
     }
 
 }
