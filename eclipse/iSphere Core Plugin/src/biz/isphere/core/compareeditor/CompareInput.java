@@ -73,14 +73,17 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                 fAncestor = new CompareNode(fAncestorResource, considerDate);
             }
+
             leftMember.download(monitor);
             IResource fLeftResource = leftMember.getLocalResource();
             fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
             fLeft = new CompareNode(fLeftResource, considerDate);
+
             rightMember.download(monitor);
             IResource fRightResource = rightMember.getLocalResource();
             fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
             fRight = new CompareNode(fRightResource, considerDate);
+
             monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
             CompareDifferencer d;
             if (editable) {
