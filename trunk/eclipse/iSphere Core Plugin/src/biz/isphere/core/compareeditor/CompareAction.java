@@ -80,7 +80,7 @@ public class CompareAction {
                     IEditorPart editor = findMemberInEditor(leftMember);
                     if (editor != null) {
                         MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                            Messages.Member_is_already_open_in_an_editor);
+                            Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                         return;
                     }
 
