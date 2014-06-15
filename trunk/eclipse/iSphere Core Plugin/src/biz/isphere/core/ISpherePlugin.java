@@ -63,6 +63,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_EXCEL = "excel.png";
     public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
     public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
+    public static final String IMAGE_SWITCH_MEMBER = "switch_member.gif";
 
     public ISpherePlugin() {
         super();
@@ -173,6 +174,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
         reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
         reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
+        reg.put(IMAGE_SWITCH_MEMBER, getImageDescriptor(IMAGE_SWITCH_MEMBER));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

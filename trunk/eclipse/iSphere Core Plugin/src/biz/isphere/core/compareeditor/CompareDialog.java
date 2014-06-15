@@ -10,18 +10,24 @@ package biz.isphere.core.compareeditor;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
 
@@ -44,47 +50,67 @@ public abstract class CompareDialog extends Dialog {
     private boolean defined;
     private boolean hasRight;
     private boolean hasAncestor;
+    private Image switchImage;
+    private Text leftConnectionText;
+    private Text leftLibraryText;
+    private Text leftFileText;
+    private Text leftMemberText;
+    private Text rightConnectionText;
+    private Text rightLibraryText;
+    private Text rightFileText;
+    private Text rightMemberText;
 
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell);
-        this.selectEditable = selectEditable;
-        this.leftMember = leftMember;
-        this.rightMember = null;
-        this.ancestorMember = null;
-        defined = false;
-        hasRight = false;
-        hasAncestor = false;
-        editable = false;
-        considerDate = false;
-        threeWay = false;
+        initialize(parentShell, selectEditable, leftMember, null, null);
     }
 
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell);
-        this.selectEditable = selectEditable;
-        this.leftMember = leftMember;
-        this.rightMember = rightMember;
-        this.ancestorMember = null;
-        defined = true;
-        hasRight = true;
-        hasAncestor = false;
-        editable = false;
-        considerDate = false;
-        threeWay = false;
+        initialize(parentShell, selectEditable, leftMember, rightMember, null);
     }
 
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
         super(parentShell);
+        initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
+    }
+
+    private void initialize(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
         this.selectEditable = selectEditable;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
         this.ancestorMember = ancestorMember;
-        defined = true;
-        hasRight = true;
-        hasAncestor = true;
+
         editable = false;
         considerDate = false;
-        threeWay = true;
+
+        if (this.rightMember == null) {
+            defined = false;
+            hasRight = false;
+        } else {
+            defined = true;
+            hasRight = true;
+        }
+
+        if (this.ancestorMember == null) {
+            hasAncestor = false;
+            threeWay = false;
+        } else {
+            hasAncestor = true;
+            threeWay = true;
+        }
+
+        addImageDisposeListener(parentShell);
+    }
+
+    private void addImageDisposeListener(Shell parentShell) {
+        parentShell.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (switchImage != null) {
+                    switchImage.dispose();
+                }
+            }
+        });
     }
 
     @Override
@@ -192,14 +218,14 @@ public abstract class CompareDialog extends Dialog {
         Label leftConnectionLabel = new Label(leftGroup, SWT.NONE);
         leftConnectionLabel.setText(Messages.Connection_colon);
 
-        Text leftConnectionText = new Text(leftGroup, SWT.BORDER);
+        leftConnectionText = new Text(leftGroup, SWT.BORDER);
         leftConnectionText.setEditable(false);
         leftConnectionText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         leftConnectionText.setText(leftMember.getConnection());
 
         Label leftLibraryLabel = new Label(leftGroup, SWT.NONE);
         leftLibraryLabel.setText(Messages.Library_colon);
-        Text leftLibraryText = new Text(leftGroup, SWT.BORDER);
+        leftLibraryText = new Text(leftGroup, SWT.BORDER);
         leftLibraryText.setEditable(false);
         leftLibraryText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         if (leftMember.isArchive()) {
@@ -210,7 +236,7 @@ public abstract class CompareDialog extends Dialog {
 
         Label leftFileLabel = new Label(leftGroup, SWT.NONE);
         leftFileLabel.setText(Messages.File_colon);
-        Text leftFileText = new Text(leftGroup, SWT.BORDER);
+        leftFileText = new Text(leftGroup, SWT.BORDER);
         leftFileText.setEditable(false);
         leftFileText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         if (leftMember.isArchive()) {
@@ -221,7 +247,7 @@ public abstract class CompareDialog extends Dialog {
 
         Label leftMemberLabel = new Label(leftGroup, SWT.NONE);
         leftMemberLabel.setText(Messages.Member_colon);
-        Text leftMemberText = new Text(leftGroup, SWT.BORDER);
+        leftMemberText = new Text(leftGroup, SWT.BORDER);
         leftMemberText.setEditable(false);
         leftMemberText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         if (leftMember.isArchive()) {
@@ -249,6 +275,21 @@ public abstract class CompareDialog extends Dialog {
 
             if (hasRight) {
 
+                Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
+                GridLayout middleLayout = new GridLayout();
+                middleLayout.numColumns = 1;
+                switchPanel.setLayout(middleLayout);
+                switchPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+
+                Button switchMemberButton = new Button(switchPanel, SWT.PUSH);
+                switchMemberButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
+                switchMemberButton.setImage(getSwitchImage());
+                switchMemberButton.addListener(SWT.Selection, new Listener() {
+                    public void handleEvent(Event arg0) {
+                        switchLeftAndRightMember(leftMember, rightMember);
+                    }
+                });
+
                 Group rightGroup = new Group(rtnGroup, SWT.NONE);
                 rightGroup.setText(Messages.Right);
                 GridLayout rightLayout = new GridLayout();
@@ -259,14 +300,14 @@ public abstract class CompareDialog extends Dialog {
                 Label rightConnectionLabel = new Label(rightGroup, SWT.NONE);
                 rightConnectionLabel.setText(Messages.Connection_colon);
 
-                Text rightConnectionText = new Text(rightGroup, SWT.BORDER);
+                rightConnectionText = new Text(rightGroup, SWT.BORDER);
                 rightConnectionText.setEditable(false);
                 rightConnectionText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
                 rightConnectionText.setText(rightMember.getConnection());
 
                 Label rightLibraryLabel = new Label(rightGroup, SWT.NONE);
                 rightLibraryLabel.setText(Messages.Library_colon);
-                Text rightLibraryText = new Text(rightGroup, SWT.BORDER);
+                rightLibraryText = new Text(rightGroup, SWT.BORDER);
                 rightLibraryText.setEditable(false);
                 rightLibraryText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
                 if (rightMember.isArchive()) {
@@ -277,7 +318,7 @@ public abstract class CompareDialog extends Dialog {
 
                 Label rightFileLabel = new Label(rightGroup, SWT.NONE);
                 rightFileLabel.setText(Messages.File_colon);
-                Text rightFileText = new Text(rightGroup, SWT.BORDER);
+                rightFileText = new Text(rightGroup, SWT.BORDER);
                 rightFileText.setEditable(false);
                 rightFileText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
                 if (rightMember.isArchive()) {
@@ -288,7 +329,7 @@ public abstract class CompareDialog extends Dialog {
 
                 Label rightMemberLabel = new Label(rightGroup, SWT.NONE);
                 rightMemberLabel.setText(Messages.Member_colon);
-                Text rightMemberText = new Text(rightGroup, SWT.BORDER);
+                rightMemberText = new Text(rightGroup, SWT.BORDER);
                 rightMemberText.setEditable(false);
                 rightMemberText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
                 if (rightMember.isArchive()) {
@@ -380,6 +421,30 @@ public abstract class CompareDialog extends Dialog {
         }
 
         return rtnGroup;
+    }
+
+    private Image getSwitchImage() {
+        if (switchImage == null) {
+            switchImage = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SWITCH_MEMBER).createImage();
+        }
+        return switchImage;
+    }
+
+    protected void switchLeftAndRightMember(Member leftMember, Member rightMember) {
+        Member tempMember = leftMember;
+        this.leftMember = rightMember;
+
+        leftConnectionText.setText(this.leftMember.getConnection());
+        leftLibraryText.setText(this.leftMember.getLibrary());
+        leftFileText.setText(this.leftMember.getSourceFile());
+        leftMemberText.setText(this.leftMember.getMember());
+
+        this.rightMember = tempMember;
+
+        rightConnectionText.setText(this.rightMember.getConnection());
+        rightLibraryText.setText(this.rightMember.getLibrary());
+        rightFileText.setText(this.rightMember.getSourceFile());
+        rightMemberText.setText(this.rightMember.getMember());
     }
 
     @Override
