@@ -3,32 +3,73 @@
 <plugin>
     
 	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Editor Contributions
+      	  ==========================================
+      	-->
+
 		<dynamicPopupMenuExtension
 			name="Message File Editor"
 			class="biz.isphere.rse.actions.MessageFileEditorAction"
 			id="biz.isphere.rse.actions.MessageFileEditorAction">
 	    </dynamicPopupMenuExtension>
-		<dynamicPopupMenuExtension
-			name="Compare Editor"
-			class="biz.isphere.rse.actions.CompareEditorAction"
-			id="biz.isphere.rse.actions.CompareEditorAction">
-	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Binding Directory Editor Contributions
+      	  ==========================================
+      	-->
+      	
 		<dynamicPopupMenuExtension
 			name="Binding Directory Editor"
 			class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
 			id="biz.isphere.rse.actions.BindingDirectoryEditorAction">
 	    </dynamicPopupMenuExtension>
+	
+      	<!--
+      	  ==========================================
+      	    Source Member Compare Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Compare Editor"
+			class="biz.isphere.rse.actions.CompareEditorAction"
+			id="biz.isphere.rse.actions.CompareEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Source File/Member Search Contributions
+      	  ==========================================
+      	-->
+	
 		<dynamicPopupMenuExtension
 			name="iSphere Source File Search"
 			class="biz.isphere.rse.actions.SourceFileSearchAction"
 			id="biz.isphere.rse.actions.SourceFileSearchAction">
 	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Search Contributions
+      	  ==========================================
+      	-->
+      	
 		<dynamicPopupMenuExtension
 			name="iSphere Message File Search"
 			class="biz.isphere.rse.actions.MessageFileSearchAction"
 			id="biz.isphere.rse.actions.MessageFileSearchAction">
 	    </dynamicPopupMenuExtension>
 	</extension>  
+      	
+      	<!--
+      	  ==========================================
+      	    Others
+      	  ==========================================
+      	-->
 
    <extension
          point="com.ibm.etools.systems.core.subsystemfactory">
@@ -48,6 +89,7 @@
          point="com.ibm.etools.systems.core.popupMenus">
       <objectContribution
             subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+
             subtypefilter="*"
             typecategoryfilter="*"
             typefilter="*"
@@ -145,14 +187,15 @@
    <extension
          point="com.ibm.etools.systems.core.propertyPages">
       <page
-            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
+            id="biz.isphere.rse.spooledfiles.SpooledFileProperties"
             name="%GeneralInformation"
+            namefilter="*"
+
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
             subtypefilter="*"
             typecategoryfilter="*"
-            typefilter="*"
-            class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
-            namefilter="*"
-            id="biz.isphere.rse.spooledfiles.SpooledFileProperties">
+            typefilter="*">
       </page>
    </extension>
 
