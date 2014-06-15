@@ -94,7 +94,7 @@
             id="biz.isphere.core.menu.member">
 	         <action
                 class="biz.isphere.rse.actions.CompareEditorAction"
-                enablesFor="1"
+                enablesFor="1+"
                 id="biz.isphere.rse.actions.CompareEditorAction"
                 label="%iSphere_Compare_Editor"
                 icon="icons/compare.gif"
