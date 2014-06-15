@@ -86,12 +86,8 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
 
                         }
 
-                        ISeriesMember rightMember = dialog.getRightConnection().getISeriesMember(getShell(), dialog.getRightLibrary(),
-                            dialog.getRightFile(), dialog.getRightMember());
-
-                        if (rightMember != null) {
-                            rseRightMember = new RSEMember(rightMember);
-                        }
+                        rseRightMember = dialog.getRightRSEMember();
+                        rseLeftMember = dialog.getLeftRSEMember();
 
                         CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember,
                             null);
