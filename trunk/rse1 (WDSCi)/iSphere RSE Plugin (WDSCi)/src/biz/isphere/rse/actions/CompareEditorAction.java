@@ -52,56 +52,57 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
     @Override
     public void run() {
         if (arrayListSelection.size() > 0) {
-            for (Iterator iterMembers = arrayListSelection.iterator(); iterMembers.hasNext();) {
-                DataElement dataElement = (DataElement)iterMembers.next();
-                ISeriesMember member = new ISeriesMember(dataElement);
-                if (member != null) {
 
-                    try {
+            try {
 
-                        RSEMember rseLeftMember = new RSEMember(member);
+                RSEMember rseLeftMember = getLeftMemberFromSelection();
+                RSEMember rseRightMember = getRightMemberFromSelection();
 
-                        RSECompareDialog dialog = new RSECompareDialog(getShell(), true, rseLeftMember);
+                if (rseLeftMember != null) {
 
-                        if (dialog.open() == Dialog.OK) {
+                    RSECompareDialog dialog;
+                    if (rseRightMember == null) {
+                        dialog = new RSECompareDialog(shell, true, rseLeftMember);
+                    } else {
+                        dialog = new RSECompareDialog(shell, true, rseLeftMember, rseRightMember);
+                    }
 
-                            boolean editable = dialog.isEditable();
-                            boolean considerDate = dialog.isConsiderDate();
-                            boolean threeWay = dialog.isThreeWay();
+                    if (dialog.open() == Dialog.OK) {
 
-                            RSEMember rseAncestorMember = null;
+                        boolean editable = dialog.isEditable();
+                        boolean considerDate = dialog.isConsiderDate();
+                        boolean threeWay = dialog.isThreeWay();
 
-                            if (threeWay) {
+                        RSEMember rseAncestorMember = null;
 
-                                ISeriesMember ancestorMember = dialog.getAncestorConnection().getISeriesMember(getShell(),
-                                    dialog.getAncestorLibrary(), dialog.getAncestorFile(), dialog.getAncestorMember());
+                        if (threeWay) {
 
-                                if (ancestorMember != null) {
-                                    rseAncestorMember = new RSEMember(ancestorMember);
-                                }
+                            ISeriesMember ancestorMember = dialog.getAncestorConnection().getISeriesMember(getShell(), dialog.getAncestorLibrary(),
+                                dialog.getAncestorFile(), dialog.getAncestorMember());
 
+                            if (ancestorMember != null) {
+                                rseAncestorMember = new RSEMember(ancestorMember);
                             }
-
-                            RSEMember rseRightMember = null;
-
-                            ISeriesMember rightMember = dialog.getRightConnection().getISeriesMember(getShell(), dialog.getRightLibrary(),
-                                dialog.getRightFile(), dialog.getRightMember());
-
-                            if (rightMember != null) {
-                                rseRightMember = new RSEMember(rightMember);
-                            }
-
-                            CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember,
-                                rseRightMember, null);
-                            action.run();
 
                         }
 
-                    } catch (Exception e) {
-                    }
+                        ISeriesMember rightMember = dialog.getRightConnection().getISeriesMember(getShell(), dialog.getRightLibrary(),
+                            dialog.getRightFile(), dialog.getRightMember());
 
+                        if (rightMember != null) {
+                            rseRightMember = new RSEMember(rightMember);
+                        }
+
+                        CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember,
+                            null);
+                        action.run();
+
+                    }
                 }
+
+            } catch (Exception e) {
             }
+
         }
     }
 
@@ -122,13 +123,33 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
             }
         }
 
-        if (arrayListSelection.isEmpty() || arrayListSelection.size() != 1) {
+        if (arrayListSelection.size() >= 1 && arrayListSelection.size() <= 2) {
+            this.arrayListSelection = arrayListSelection;
+            return true;
+        } else {
             return false;
         }
 
-        this.arrayListSelection = arrayListSelection;
-        return true;
+    }
 
+    private RSEMember getLeftMemberFromSelection() throws Exception {
+        if (this.arrayListSelection != null && this.arrayListSelection.size() >= 1) {
+            Object[] objects = this.arrayListSelection.toArray();
+            if (objects[0] instanceof DataElement) {
+                return new RSEMember(new ISeriesMember((DataElement)objects[0]));
+            }
+        }
+        return null;
+    }
+
+    private RSEMember getRightMemberFromSelection() throws Exception {
+        if (this.arrayListSelection != null && this.arrayListSelection.size() >= 2) {
+            Object[] objects = this.arrayListSelection.toArray();
+            if (objects[1] instanceof DataElement) {
+                return new RSEMember(new ISeriesMember((DataElement)objects[1]));
+            }
+        }
+        return null;
     }
 
 }
