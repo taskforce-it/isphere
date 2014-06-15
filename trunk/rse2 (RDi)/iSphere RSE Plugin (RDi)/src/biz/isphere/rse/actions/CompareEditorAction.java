@@ -63,12 +63,8 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
                     }
 
-                    IQSYSMember rightMember = dialog.getRightConnection().getMember(dialog.getRightLibrary(), dialog.getRightFile(),
-                        dialog.getRightMember(), null);
-
-                    if (rightMember != null) {
-                        rseRightMember = new RSEMember(rightMember);
-                    }
+                    rseRightMember = dialog.getRightRSEMember();
+                    rseLeftMember = dialog.getLeftRSEMember();
 
                     CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember, null);
                     action.run();
