@@ -121,6 +121,8 @@ public class Messages extends NLS {
     public static String Member_not_found_colon_RIGHT;
 
     public static String Member_is_already_open_in_an_editor;
+    
+    public static String Member_2_file_1_in_library_0_not_found;
 
     public static String Menu_item_colon;
 
