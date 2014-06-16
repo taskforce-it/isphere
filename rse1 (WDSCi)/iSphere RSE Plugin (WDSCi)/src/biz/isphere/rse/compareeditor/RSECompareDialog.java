@@ -11,6 +11,7 @@
 
 package biz.isphere.rse.compareeditor;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,14 +36,14 @@ public class RSECompareDialog extends CompareDialog {
 
     private Group ancestorGroup;
     private RSEMember rseLeftMember;
-    
+
     private ISeriesConnectionCombo rightConnectionCombo;
     private ISeriesMemberPrompt rightMemberPrompt;
     private ISeriesConnection rightConnection;
     private String rightLibrary;
     private String rightFile;
     private String rightMember;
-    
+
     private ISeriesConnectionCombo ancestorConnectionCombo;
     private ISeriesMemberPrompt ancestorMemberPrompt;
     private ISeriesConnection ancestorConnection;
@@ -172,6 +173,15 @@ public class RSECompareDialog extends CompareDialog {
             rightLibrary = rightMemberPrompt.getLibraryName();
             rightFile = rightMemberPrompt.getFileName();
             rightMember = rightMemberPrompt.getMemberName();
+
+            if (!exists(getRightRSEMember())) {
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                    rightLibrary, rightFile, rightMember });
+                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+                rightMemberPrompt.getMemberCombo().setFocus();
+                return;
+            }
+
             if (isThreeWay()) {
                 ancestorConnection = ISeriesConnection.getConnection(ancestorConnectionCombo.getSystemConnection());
                 ancestorLibrary = ancestorMemberPrompt.getLibraryName();
@@ -179,7 +189,17 @@ public class RSECompareDialog extends CompareDialog {
                 ancestorMember = ancestorMemberPrompt.getMemberName();
             }
         }
+
+        // Close dialog
         super.okPressed();
+    }
+
+    private boolean exists(RSEMember rseMember) {
+        try {
+            return rseMember.exists();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -219,8 +239,12 @@ public class RSECompareDialog extends CompareDialog {
         return rseLeftMember;
     }
 
-    public RSEMember getRightRSEMember() throws Exception {
-        return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
+    public RSEMember getRightRSEMember() {
+        try {
+            return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ISeriesConnection getRightConnection() {
