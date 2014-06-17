@@ -19,6 +19,12 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 
 public class CompareDifferencer extends Differencer {
 
+    CompareEditorConfiguration config = null;
+
+    public CompareDifferencer(CompareEditorConfiguration aCompareEditorConfiguration) {
+        config = aCompareEditorConfiguration;
+    }
+
     @Override
     protected boolean contentsEqual(Object input1, Object input2) {
 
@@ -38,13 +44,24 @@ public class CompareDifferencer extends Differencer {
 
             br2 = new BufferedReader(new InputStreamReader(is2));
 
+            boolean ignoreCase = config.isIgnoreCase();
+
             while (true) {
-                String s1 = br1.readLine();
-                String s2 = br2.readLine();
+
+                String s1;
+                String s2;
+
+                s1 = br1.readLine();
+                s2 = br2.readLine();
+
+                if (ignoreCase) {
+                    if (s1 != null) s1 = s1.toLowerCase();
+                    if (s2 != null) s2 = s2.toLowerCase();
+                }
+
                 if (s1 == null && s2 == null) return true;
                 if (s1 == null && s2 != null) break;
                 if (s2 == null && s1 != null) break;
-
                 if (!s1.equals(s2)) break;
 
             }

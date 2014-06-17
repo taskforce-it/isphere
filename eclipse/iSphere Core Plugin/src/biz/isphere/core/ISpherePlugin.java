@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -266,6 +267,16 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     public IProject getSpooledFilesProject() {
         return spooledFilesProject;
+    }
+
+    /**
+     * Convenience method to log error messages to the application log.
+     * 
+     * @param message Message
+     * @param e The exception that has produced the error
+     */
+    public static void logError(String message, Exception e) {
+        plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 
 }

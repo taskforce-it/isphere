@@ -74,6 +74,8 @@ public class Messages extends NLS {
 
     public static String Don_t_consider_date;
 
+    public static String Don_t_ignore_case;
+
     public static String Down;
 
     public static String Downloading_source_members;
@@ -98,6 +100,8 @@ public class Messages extends NLS {
 
     public static String Host_name_colon;
 
+    public static String Ignore_case;
+
     public static String Info;
 
     public static String Left;
@@ -121,7 +125,7 @@ public class Messages extends NLS {
     public static String Member_not_found_colon_RIGHT;
 
     public static String Member_is_already_open_in_an_editor;
-    
+
     public static String Member_2_file_1_in_library_0_not_found;
 
     public static String Menu_item_colon;

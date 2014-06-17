@@ -10,7 +10,6 @@ package biz.isphere.core.compareeditor;
 
 import java.util.ArrayList;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,20 +33,16 @@ import biz.isphere.core.internal.Member;
 public class CompareAction {
 
     private ArrayList<CleanupListener> cleanupListener = new ArrayList<CleanupListener>();
-    private boolean editable;
-    private boolean considerDate;
-    private boolean threeWay;
+    private CompareEditorConfiguration cc;
     private Member ancestorMember;
     private Member leftMember;
     private Member rightMember;
     private String editorTitle;
     private CompareInput fInput;
 
-    public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
+    public CompareAction(CompareEditorConfiguration compareConfiguration, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
-        this.editable = editable;
-        this.considerDate = considerDate;
-        this.threeWay = threeWay;
+        this.cc = compareConfiguration;
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
@@ -58,7 +53,7 @@ public class CompareAction {
         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
             public void run() {
 
-                if (threeWay && (ancestorMember == null || !ancestorMember.exists())) {
+                if (cc.isThreeWay() && (ancestorMember == null || !ancestorMember.exists())) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.Member_not_found_colon_ANCESTOR);
                     return;
@@ -78,8 +73,8 @@ public class CompareAction {
 
                 IEditorPart editor = findMemberInEditor(leftMember);
                 if (editor != null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, Messages.bind(
-                        Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                        Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                     return;
                 }
 
@@ -88,7 +83,7 @@ public class CompareAction {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
                             if (editorPart.getEditorInput() == fInput) {
-                                if (editable) {
+                                if (cc.isLeftEditable()) {
                                     fInput.removeIgnoreFile();
                                 }
                                 fInput.cleanup();
@@ -113,10 +108,7 @@ public class CompareAction {
                     }
                 });
 
-                CompareConfiguration cc = new CompareConfiguration();
-                cc.setLeftEditable(editable);
-                cc.setRightEditable(false);
-                if (threeWay) {
+                if (cc.isThreeWay()) {
                     if (ancestorMember.getLabel() != null) {
                         cc.setAncestorLabel(ancestorMember.getLabel());
                     } else {
@@ -124,23 +116,26 @@ public class CompareAction {
                             + ")");
                     }
                 }
+
                 if (leftMember.getLabel() != null) {
                     cc.setLeftLabel(leftMember.getLabel());
                 } else {
                     cc.setLeftLabel(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
                 }
+
                 if (rightMember.getLabel() != null) {
                     cc.setRightLabel(rightMember.getLabel());
                 } else {
                     cc.setRightLabel(rightMember.getLibrary() + "/" + rightMember.getSourceFile() + "(" + rightMember.getMember() + ")");
                 }
-                cc.setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
-                fInput = new CompareInput(cc, editable, considerDate, threeWay, ancestorMember, leftMember, rightMember);
+
+                fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {
                     fInput.setTitle(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
                 }
+
                 CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
                 for (int index = 0; index < cleanupListener.size(); index++) {
                     (cleanupListener.get(index)).cleanup();
