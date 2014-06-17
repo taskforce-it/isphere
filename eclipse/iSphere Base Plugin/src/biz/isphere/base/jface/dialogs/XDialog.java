@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Special <i>Dialog</i> class that automatically saves and restores its state.
- * A plugin that wants to use XDialog must override
+ * A plug-in that wants to use XDialog must override
  * {@link #getDialogBoundsSettings(IDialogSettings)} instead of
  * {@link #getDialogBoundsSettings()} to activate the save and restore settings
  * feature.
@@ -58,6 +58,9 @@ public class XDialog extends Dialog {
     @Override
     protected Point getInitialSize() {
         Point result = getDefaultSize();
+        if (!isResizable()) {
+            return result;
+        }
 
         // Check the dialog settings for a stored size.
         if ((getDialogBoundsStrategy() & DIALOG_PERSISTSIZE) != 0) {
@@ -106,11 +109,11 @@ public class XDialog extends Dialog {
 
         // No attempt is made to constrain the bounds. The default
         // constraining behavior in Window will be used.
-        return result;
+        return getDefaultSize(); // result
     }
 
     /**
-     * A plugin that wants to use the XDialog class must override
+     * A plug-in that wants to use the XDialog class must override
      * {@link Dialog#getDialogBoundsSettings()} as shown in the example below.
      * Otherwise all dialogs share section <i>Workbench</i> and hence overwrite
      * their settings.
@@ -142,7 +145,7 @@ public class XDialog extends Dialog {
     }
 
     /**
-     * Provides the dialog's default size. Duplicates the behaviour of JFace's
+     * Provides the dialog's default size. Duplicates the behavior of JFace's
      * standard dialog. Subclasses may override.
      * <p>
      * this method replaces
