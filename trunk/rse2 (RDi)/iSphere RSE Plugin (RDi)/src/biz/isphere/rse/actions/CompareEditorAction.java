@@ -18,6 +18,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.compareeditor.CompareAction;
+import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
@@ -50,6 +51,7 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
                     boolean editable = dialog.isEditable();
                     boolean considerDate = dialog.isConsiderDate();
+                    boolean ignoreCase = dialog.isIgnoreCase();
                     boolean threeWay = dialog.isThreeWay();
 
                     RSEMember rseAncestorMember = null;
@@ -68,11 +70,17 @@ public class CompareEditorAction implements IObjectActionDelegate {
                     rseRightMember = dialog.getRightRSEMember();
                     rseLeftMember = dialog.getLeftRSEMember();
 
-                    CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember, null);
+                    CompareEditorConfiguration cc = new CompareEditorConfiguration();
+                    cc.setLeftEditable(editable);
+                    cc.setRightEditable(false);
+                    cc.setConsiderDate(considerDate);
+                    cc.setIgnoreCase(ignoreCase);
+                    cc.setThreeWay(threeWay);
+
+                    CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
                     action.run();
 
                 }
-
             }
 
         } catch (Exception e) {

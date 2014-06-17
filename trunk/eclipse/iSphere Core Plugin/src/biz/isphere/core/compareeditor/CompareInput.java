@@ -11,7 +11,6 @@ package biz.isphere.core.compareeditor;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
@@ -23,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IFileEditorInput;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
 
@@ -40,7 +40,6 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     }
 
     private boolean editable;
-    private boolean considerDate;
     private boolean threeWay;
     private Member ancestorMember;
     private Member leftMember;
@@ -52,12 +51,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     // private boolean isSaveNeeded = false;
 
-    public CompareInput(CompareConfiguration config, boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember,
-        Member leftMember, Member rightMember) {
+    public CompareInput(CompareEditorConfiguration config, Member ancestorMember, Member leftMember, Member rightMember) {
         super(config);
-        this.editable = editable;
-        this.considerDate = considerDate;
-        this.threeWay = threeWay;
+        this.editable = config.isLeftEditable();
+        this.threeWay = config.isThreeWay();
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
@@ -71,36 +68,38 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 ancestorMember.download(monitor);
                 IResource fAncestorResource = ancestorMember.getLocalResource();
                 fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                fAncestor = new CompareNode(fAncestorResource, considerDate);
+                fAncestor = new CompareNode(fAncestorResource, getConfiguration().isConsiderDate());
             }
 
             leftMember.download(monitor);
             IResource fLeftResource = leftMember.getLocalResource();
             fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fLeft = new CompareNode(fLeftResource, considerDate);
+            fLeft = new CompareNode(fLeftResource, getConfiguration().isConsiderDate());
 
             rightMember.download(monitor);
             IResource fRightResource = rightMember.getLocalResource();
             fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fRight = new CompareNode(fRightResource, considerDate);
+            fRight = new CompareNode(fRightResource, getConfiguration().isConsiderDate());
 
             monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
             CompareDifferencer d;
             if (editable) {
-                d = new CompareDifferencer() {
+                d = new CompareDifferencer(getConfiguration()) {
                     @Override
                     protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
                         return new MyDiffNode((IDiffContainer)data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
                     }
                 };
             } else {
-                d = new CompareDifferencer();
+                d = new CompareDifferencer(getConfiguration());
             }
+
             if (threeWay) {
                 fRoot = d.findDifferences(true, monitor, null, fAncestor, fLeft, fRight);
             } else {
                 fRoot = d.findDifferences(false, monitor, null, null, fLeft, fRight);
             }
+
             if (fRoot == null) {
                 cleanup();
             } else {
@@ -108,14 +107,21 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                     addIgnoreFile();
                 }
             }
+
             return fRoot;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            String message;
+            if (e.getLocalizedMessage() == null) {
+                message = e.getClass().getName() + " - " + getClass().getName();
+            } else {
+                message = e.getLocalizedMessage();
+            }
+            throw new RuntimeException(message, e);
         } finally {
             monitor.done();
         }
-        return null;
     }
 
     // public boolean isSaveNeeded() {
@@ -212,6 +218,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     public IStorage getStorage() throws CoreException {
         return leftMember.getLocalResource();
+    }
+
+    public CompareEditorConfiguration getConfiguration() {
+        return (CompareEditorConfiguration)super.getCompareConfiguration();
     }
 
 }

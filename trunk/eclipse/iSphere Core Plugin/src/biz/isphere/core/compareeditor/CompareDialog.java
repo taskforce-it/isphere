@@ -8,7 +8,7 @@
 
 package biz.isphere.core.compareeditor;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -27,24 +27,33 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
 
-public abstract class CompareDialog extends Dialog {
+public abstract class CompareDialog extends XDialog {
 
+    private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY"; 
+    private static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY"; 
+    private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY"; 
+    
     private boolean selectEditable;
     private Member leftMember;
     private Member rightMember;
     private Member ancestorMember;
     private Button editButton;
     private Button browseButton;
+    private Button dontIgnoreCaseButton;
+    private Button ignoreCaseButton;
     private Button dontConsiderDateButton;
     private Button considerDateButton;
     private Button twoWayButton;
     private Button threeWayButton;
     private boolean editable;
     private boolean considerDate;
+    private boolean ignoreCase;
     private boolean threeWay;
     private Button okButton;
     private boolean defined;
@@ -81,8 +90,7 @@ public abstract class CompareDialog extends Dialog {
         this.rightMember = rightMember;
         this.ancestorMember = ancestorMember;
 
-        editable = false;
-        considerDate = false;
+        loadScreenValues();
 
         if (this.rightMember == null) {
             defined = false;
@@ -121,31 +129,32 @@ public abstract class CompareDialog extends Dialog {
         GridLayout rtnLayout = new GridLayout();
         rtnLayout.numColumns = 1;
         rtnGroup.setLayout(rtnLayout);
-        rtnGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        rtnGroup.setLayoutData(getGridData());
 
         Group modeGroup = new Group(rtnGroup, SWT.NONE);
         modeGroup.setText(Messages.Mode);
         GridLayout modeLayout = new GridLayout();
         modeLayout.numColumns = 1;
         modeGroup.setLayout(modeLayout);
-        modeGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        modeGroup.setLayoutData(getGridData());
 
         if (selectEditable) {
 
             Composite editableGroup = new Composite(modeGroup, SWT.NONE);
-            GridLayout editableLayout = new GridLayout();
-            editableLayout.numColumns = 2;
+            GridLayout editableLayout = new GridLayout(2, true);
             editableGroup.setLayout(editableLayout);
-            editableGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+            editableGroup.setLayoutData(getGridData());
 
             browseButton = new Button(editableGroup, SWT.RADIO);
             browseButton.setText(Messages.Open_for_browse);
+            browseButton.setLayoutData(getGridData());
             if (!editable) {
                 browseButton.setSelection(true);
             }
 
             editButton = new Button(editableGroup, SWT.RADIO);
             editButton.setText(Messages.Open_for_edit);
+            editButton.setLayoutData(getGridData());
             if (editable) {
                 editButton.setSelection(true);
             }
@@ -153,33 +162,53 @@ public abstract class CompareDialog extends Dialog {
         }
 
         Composite considerDateGroup = new Composite(modeGroup, SWT.NONE);
-        GridLayout considerDateLayout = new GridLayout();
-        considerDateLayout.numColumns = 2;
+        GridLayout considerDateLayout = new GridLayout(2, true);
         considerDateGroup.setLayout(considerDateLayout);
-        considerDateGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        considerDateGroup.setLayoutData(getGridData());
 
         dontConsiderDateButton = new Button(considerDateGroup, SWT.RADIO);
         dontConsiderDateButton.setText(Messages.Don_t_consider_date);
+        dontConsiderDateButton.setLayoutData(getGridData());
         if (!considerDate) {
             dontConsiderDateButton.setSelection(true);
         }
 
         considerDateButton = new Button(considerDateGroup, SWT.RADIO);
         considerDateButton.setText(Messages.Consider_date);
+        considerDateButton.setLayoutData(getGridData());
         if (considerDate) {
             considerDateButton.setSelection(true);
+        }
+
+        Composite ignoreCaseGroup = new Composite(modeGroup, SWT.NONE);
+        GridLayout ignoreCaseLayout = new GridLayout(2, true);
+        ignoreCaseGroup.setLayout(ignoreCaseLayout);
+        ignoreCaseGroup.setLayoutData(getGridData());
+
+        dontIgnoreCaseButton = new Button(ignoreCaseGroup, SWT.RADIO);
+        dontIgnoreCaseButton.setText(Messages.Don_t_ignore_case);
+        dontIgnoreCaseButton.setLayoutData(getGridData());
+        if (!ignoreCase) {
+            dontIgnoreCaseButton.setSelection(true);
+        }
+
+        ignoreCaseButton = new Button(ignoreCaseGroup, SWT.RADIO);
+        ignoreCaseButton.setText(Messages.Ignore_case);
+        ignoreCaseButton.setLayoutData(getGridData());
+        if (ignoreCase) {
+            ignoreCaseButton.setSelection(true);
         }
 
         if (!defined) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
-            GridLayout threeWayLayout = new GridLayout();
-            threeWayLayout.numColumns = 2;
+            GridLayout threeWayLayout = new GridLayout(2, true);
             threeWayGroup.setLayout(threeWayLayout);
-            threeWayGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+            threeWayGroup.setLayoutData(getGridData());
 
             twoWayButton = new Button(threeWayGroup, SWT.RADIO);
             twoWayButton.setText(Messages.Two_way_compare);
+            twoWayButton.setLayoutData(getGridData());
             if (!threeWay) {
                 twoWayButton.setSelection(true);
             }
@@ -194,6 +223,7 @@ public abstract class CompareDialog extends Dialog {
 
             threeWayButton = new Button(threeWayGroup, SWT.RADIO);
             threeWayButton.setText(Messages.Three_way_compare);
+            threeWayButton.setLayoutData(getGridData());
             if (threeWay) {
                 threeWayButton.setSelection(true);
             }
@@ -210,24 +240,23 @@ public abstract class CompareDialog extends Dialog {
 
         Group leftGroup = new Group(rtnGroup, SWT.NONE);
         leftGroup.setText(Messages.Left);
-        GridLayout leftLayout = new GridLayout();
-        leftLayout.numColumns = 2;
+        GridLayout leftLayout = new GridLayout(2, false);
         leftGroup.setLayout(leftLayout);
-        leftGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        leftGroup.setLayoutData(getGridData());
 
         Label leftConnectionLabel = new Label(leftGroup, SWT.NONE);
         leftConnectionLabel.setText(Messages.Connection_colon);
 
         leftConnectionText = new Text(leftGroup, SWT.BORDER);
         leftConnectionText.setEditable(false);
-        leftConnectionText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        leftConnectionText.setLayoutData(getGridData());
         leftConnectionText.setText(leftMember.getConnection());
 
         Label leftLibraryLabel = new Label(leftGroup, SWT.NONE);
         leftLibraryLabel.setText(Messages.Library_colon);
         leftLibraryText = new Text(leftGroup, SWT.BORDER);
         leftLibraryText.setEditable(false);
-        leftLibraryText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        leftLibraryText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftLibraryText.setText(leftMember.getArchiveLibrary());
         } else {
@@ -238,7 +267,7 @@ public abstract class CompareDialog extends Dialog {
         leftFileLabel.setText(Messages.File_colon);
         leftFileText = new Text(leftGroup, SWT.BORDER);
         leftFileText.setEditable(false);
-        leftFileText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        leftFileText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftFileText.setText(leftMember.getArchiveFile());
         } else {
@@ -249,7 +278,7 @@ public abstract class CompareDialog extends Dialog {
         leftMemberLabel.setText(Messages.Member_colon);
         leftMemberText = new Text(leftGroup, SWT.BORDER);
         leftMemberText.setEditable(false);
-        leftMemberText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        leftMemberText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftMemberText.setText(leftMember.getArchiveMember());
         } else {
@@ -261,7 +290,7 @@ public abstract class CompareDialog extends Dialog {
             leftTimeLabel.setText(Messages.Archive_colon);
             Text leftTimeText = new Text(leftGroup, SWT.BORDER);
             leftTimeText.setEditable(false);
-            leftTimeText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+            leftTimeText.setLayoutData(getGridData());
             leftTimeText.setText(leftMember.getArchiveDate() + " - " + leftMember.getArchiveTime());
         }
 
@@ -279,7 +308,7 @@ public abstract class CompareDialog extends Dialog {
                 GridLayout middleLayout = new GridLayout();
                 middleLayout.numColumns = 1;
                 switchPanel.setLayout(middleLayout);
-                switchPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                switchPanel.setLayoutData(getGridData());
 
                 Button switchMemberButton = new Button(switchPanel, SWT.PUSH);
                 switchMemberButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
@@ -292,24 +321,23 @@ public abstract class CompareDialog extends Dialog {
 
                 Group rightGroup = new Group(rtnGroup, SWT.NONE);
                 rightGroup.setText(Messages.Right);
-                GridLayout rightLayout = new GridLayout();
-                rightLayout.numColumns = 2;
+                GridLayout rightLayout = new GridLayout(2, false);
                 rightGroup.setLayout(rightLayout);
-                rightGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                rightGroup.setLayoutData(getGridData());
 
                 Label rightConnectionLabel = new Label(rightGroup, SWT.NONE);
                 rightConnectionLabel.setText(Messages.Connection_colon);
 
                 rightConnectionText = new Text(rightGroup, SWT.BORDER);
                 rightConnectionText.setEditable(false);
-                rightConnectionText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                rightConnectionText.setLayoutData(getGridData());
                 rightConnectionText.setText(rightMember.getConnection());
 
                 Label rightLibraryLabel = new Label(rightGroup, SWT.NONE);
                 rightLibraryLabel.setText(Messages.Library_colon);
                 rightLibraryText = new Text(rightGroup, SWT.BORDER);
                 rightLibraryText.setEditable(false);
-                rightLibraryText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                rightLibraryText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightLibraryText.setText(rightMember.getArchiveLibrary());
                 } else {
@@ -320,7 +348,7 @@ public abstract class CompareDialog extends Dialog {
                 rightFileLabel.setText(Messages.File_colon);
                 rightFileText = new Text(rightGroup, SWT.BORDER);
                 rightFileText.setEditable(false);
-                rightFileText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                rightFileText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightFileText.setText(rightMember.getArchiveFile());
                 } else {
@@ -331,7 +359,7 @@ public abstract class CompareDialog extends Dialog {
                 rightMemberLabel.setText(Messages.Member_colon);
                 rightMemberText = new Text(rightGroup, SWT.BORDER);
                 rightMemberText.setEditable(false);
-                rightMemberText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                rightMemberText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightMemberText.setText(rightMember.getArchiveMember());
                 } else {
@@ -343,7 +371,7 @@ public abstract class CompareDialog extends Dialog {
                     rightTimeLabel.setText(Messages.Archive_colon);
                     Text rightTimeText = new Text(rightGroup, SWT.BORDER);
                     rightTimeText.setEditable(false);
-                    rightTimeText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                    rightTimeText.setLayoutData(getGridData());
                     rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime());
                 }
 
@@ -353,24 +381,23 @@ public abstract class CompareDialog extends Dialog {
 
                 Group ancestorGroup = new Group(rtnGroup, SWT.NONE);
                 ancestorGroup.setText(Messages.Ancestor);
-                GridLayout ancestorLayout = new GridLayout();
-                ancestorLayout.numColumns = 2;
+                GridLayout ancestorLayout = new GridLayout(2, false);
                 ancestorGroup.setLayout(ancestorLayout);
-                ancestorGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                ancestorGroup.setLayoutData(getGridData());
 
                 Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorConnectionLabel.setText(Messages.Connection_colon);
 
                 Text ancestorConnectionText = new Text(ancestorGroup, SWT.BORDER);
                 ancestorConnectionText.setEditable(false);
-                ancestorConnectionText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                ancestorConnectionText.setLayoutData(getGridData());
                 ancestorConnectionText.setText(ancestorMember.getConnection());
 
                 Label ancestorLibraryLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorLibraryLabel.setText(Messages.Library_colon);
                 Text ancestorLibraryText = new Text(ancestorGroup, SWT.BORDER);
                 ancestorLibraryText.setEditable(false);
-                ancestorLibraryText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                ancestorLibraryText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorLibraryText.setText(ancestorMember.getArchiveLibrary());
                 } else {
@@ -381,7 +408,7 @@ public abstract class CompareDialog extends Dialog {
                 ancestorFileLabel.setText(Messages.File_colon);
                 Text ancestorFileText = new Text(ancestorGroup, SWT.BORDER);
                 ancestorFileText.setEditable(false);
-                ancestorFileText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                ancestorFileText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorFileText.setText(ancestorMember.getArchiveFile());
                 } else {
@@ -392,7 +419,7 @@ public abstract class CompareDialog extends Dialog {
                 ancestorMemberLabel.setText(Messages.Member_colon);
                 Text ancestorMemberText = new Text(ancestorGroup, SWT.BORDER);
                 ancestorMemberText.setEditable(false);
-                ancestorMemberText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                ancestorMemberText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorMemberText.setText(ancestorMember.getArchiveMember());
                 } else {
@@ -404,7 +431,7 @@ public abstract class CompareDialog extends Dialog {
                     ancestorTimeLabel.setText(Messages.Archive_colon);
                     Text ancestorTimeText = new Text(ancestorGroup, SWT.BORDER);
                     ancestorTimeText.setEditable(false);
-                    ancestorTimeText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+                    ancestorTimeText.setLayoutData(getGridData());
                     ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime());
                 }
 
@@ -419,8 +446,12 @@ public abstract class CompareDialog extends Dialog {
                 setAncestorVisible(true);
             }
         }
-
+        
         return rtnGroup;
+    }
+
+    protected GridData getGridData() {
+        return new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
     }
 
     private Image getSwitchImage() {
@@ -467,9 +498,14 @@ public abstract class CompareDialog extends Dialog {
             editable = editButton.getSelection();
         }
         considerDate = considerDateButton.getSelection();
+        ignoreCase = ignoreCaseButton.getSelection();
         if (!defined) {
             threeWay = threeWayButton.getSelection();
         }
+        
+        storeScreenValues();
+        
+        // Close screen
         super.okPressed();
     }
 
@@ -502,8 +538,33 @@ public abstract class CompareDialog extends Dialog {
         return considerDate;
     }
 
+    public boolean isIgnoreCase() {
+        return ignoreCase;
+    }
+
     public boolean isThreeWay() {
         return threeWay;
+    }
+
+    private void loadScreenValues() {
+        editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
+        considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
+        ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
+    }
+    
+    private void storeScreenValues() {
+        getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
+        getDialogBoundsSettings().put(CONSIDER_DATE_PROPERTY, considerDate);
+        getDialogBoundsSettings().put(IGNORE_CASE_PROPERTY, ignoreCase);
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
 }

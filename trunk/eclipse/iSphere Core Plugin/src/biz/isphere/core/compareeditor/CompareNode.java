@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.eclipse.compare.BufferedContent;
@@ -28,9 +29,9 @@ import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
 
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent {
@@ -52,17 +53,6 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         }
 
         Assert.isNotNull(fResource);
-
-        Calendar calendar = Calendar.getInstance();
-        String day = Integer.toString(calendar.get(Calendar.DATE));
-        while (day.length() < 2)
-            day = "0" + day;
-        String year = Integer.toString(calendar.get(Calendar.YEAR)).substring(2);
-        String month = Integer.toString(calendar.get(Calendar.MONTH) + 1);
-        while (month.length() < 2)
-            month = "0" + month;
-        yymmdd = year + month + day;
-
     }
 
     public String getName() {
@@ -144,7 +134,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 if (considerDate) {
                     updatedContents.append(sequence + newStr + "\r\n");
                 } else {
-                    updatedContents.append(sequence + yymmdd + newStr + "\r\n");
+                    updatedContents.append(sequence + getSourceDate() + newStr + "\r\n");
                 }
             }
             in.close();
@@ -161,6 +151,14 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             }
         }
         file.refreshLocal(IFile.DEPTH_INFINITE, pm);
+    }
+
+    private String getSourceDate() {
+        if (yymmdd == null) {
+            SimpleDateFormat tDateFormatter = new SimpleDateFormat("yyMMdd");
+            yymmdd = tDateFormatter.format(Calendar.getInstance().getTime());
+        }
+        return yymmdd;
     }
 
 }
