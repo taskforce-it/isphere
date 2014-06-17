@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.compareeditor;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -169,6 +170,15 @@ public class RSECompareDialog extends CompareDialog {
             rightLibrary = rightMemberPrompt.getLibraryName();
             rightFile = rightMemberPrompt.getFileName();
             rightMember = rightMemberPrompt.getMemberName();
+
+            if (!getRightRSEMember().exists()) {
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                    rightLibrary, rightFile, rightMember });
+                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+                rightMemberPrompt.getMemberCombo().setFocus();
+                return;
+            }
+
             if (isThreeWay()) {
                 ancestorConnection = IBMiConnection.getConnection(ancestorConnectionCombo.getHost());
                 ancestorLibrary = ancestorMemberPrompt.getLibraryName();
@@ -176,6 +186,8 @@ public class RSECompareDialog extends CompareDialog {
                 ancestorMember = ancestorMemberPrompt.getMemberName();
             }
         }
+
+        // Close dialog
         super.okPressed();
     }
 
@@ -214,8 +226,12 @@ public class RSECompareDialog extends CompareDialog {
         return rseLeftMember;
     }
 
-    public RSEMember getRightRSEMember() throws Exception {
-        return new RSEMember(rightConnection.getMember(rightLibrary, rightFile, rightMember, null));
+    public RSEMember getRightRSEMember() {
+        try {
+            return new RSEMember(rightConnection.getMember(rightLibrary, rightFile, rightMember, null));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public IBMiConnection getRightConnection() {

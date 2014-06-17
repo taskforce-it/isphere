@@ -10,6 +10,7 @@ package biz.isphere.rse.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -17,6 +18,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.compareeditor.CompareAction;
+import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
 
@@ -74,6 +76,12 @@ public class CompareEditorAction implements IObjectActionDelegate {
             }
 
         } catch (Exception e) {
+            ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            if (e.getLocalizedMessage() == null) {
+                MessageDialog.openError(shell, biz.isphere.core.Messages.Unexpected_Error, e.getClass().getName() + " - " + getClass().getName());
+            } else {
+                MessageDialog.openError(shell, biz.isphere.core.Messages.Unexpected_Error, e.getLocalizedMessage());
+            }
         }
 
     }
