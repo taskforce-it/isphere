@@ -21,7 +21,7 @@ public abstract class Member {
 
     public abstract String getMember();
 
-    public abstract boolean exists() throws Exception;
+    public abstract boolean exists();
 
     public abstract void download(IProgressMonitor monitor) throws Exception;
 

@@ -354,6 +354,8 @@ public class Messages extends NLS {
 
     public static String Pages;
 
+    public static String Unexpected_Error;
+
     public static String User;
 
     public static String User_data;

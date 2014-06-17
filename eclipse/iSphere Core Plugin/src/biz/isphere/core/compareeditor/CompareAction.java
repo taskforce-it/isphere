@@ -57,99 +57,95 @@ public class CompareAction {
     public void run() {
         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
             public void run() {
-                try {
 
-                    if (threeWay && (ancestorMember == null || !ancestorMember.exists())) {
-                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                            Messages.Member_not_found_colon_ANCESTOR);
-                        return;
-                    }
+                if (threeWay && (ancestorMember == null || !ancestorMember.exists())) {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                        Messages.Member_not_found_colon_ANCESTOR);
+                    return;
+                }
 
-                    if (leftMember == null || !leftMember.exists()) {
-                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                            Messages.Member_not_found_colon_LEFT);
-                        return;
-                    }
+                if (leftMember == null || !leftMember.exists()) {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                        Messages.Member_not_found_colon_LEFT);
+                    return;
+                }
 
-                    if (rightMember == null || !rightMember.exists()) {
-                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                            Messages.Member_not_found_colon_RIGHT);
-                        return;
-                    }
+                if (rightMember == null || !rightMember.exists()) {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                        Messages.Member_not_found_colon_RIGHT);
+                    return;
+                }
 
-                    IEditorPart editor = findMemberInEditor(leftMember);
-                    if (editor != null) {
-                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                            Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
-                        return;
-                    }
+                IEditorPart editor = findMemberInEditor(leftMember);
+                if (editor != null) {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, Messages.bind(
+                        Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
+                    return;
+                }
 
-                    ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
-                        public void partClosed(IWorkbenchPart part) {
-                            if (part instanceof EditorPart) {
-                                EditorPart editorPart = (EditorPart)part;
-                                if (editorPart.getEditorInput() == fInput) {
-                                    if (editable) {
-                                        fInput.removeIgnoreFile();
-                                    }
-                                    fInput.cleanup();
-                                    IWorkbenchPage workbenchPage = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow()
-                                        .getActivePage();
-                                    if (workbenchPage != null) {
-                                        workbenchPage.removePartListener(this);
-                                    }
+                ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
+                    public void partClosed(IWorkbenchPart part) {
+                        if (part instanceof EditorPart) {
+                            EditorPart editorPart = (EditorPart)part;
+                            if (editorPart.getEditorInput() == fInput) {
+                                if (editable) {
+                                    fInput.removeIgnoreFile();
+                                }
+                                fInput.cleanup();
+                                IWorkbenchPage workbenchPage = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                                if (workbenchPage != null) {
+                                    workbenchPage.removePartListener(this);
                                 }
                             }
                         }
-
-                        public void partActivated(IWorkbenchPart part) {
-                        }
-
-                        public void partBroughtToTop(IWorkbenchPart part) {
-                        }
-
-                        public void partDeactivated(IWorkbenchPart part) {
-                        }
-
-                        public void partOpened(IWorkbenchPart part) {
-                        }
-                    });
-
-                    CompareConfiguration cc = new CompareConfiguration();
-                    cc.setLeftEditable(editable);
-                    cc.setRightEditable(false);
-                    if (threeWay) {
-                        if (ancestorMember.getLabel() != null) {
-                            cc.setAncestorLabel(ancestorMember.getLabel());
-                        } else {
-                            cc.setAncestorLabel(ancestorMember.getLibrary() + "/" + ancestorMember.getSourceFile() + "(" + ancestorMember.getMember()
-                                + ")");
-                        }
                     }
-                    if (leftMember.getLabel() != null) {
-                        cc.setLeftLabel(leftMember.getLabel());
+
+                    public void partActivated(IWorkbenchPart part) {
+                    }
+
+                    public void partBroughtToTop(IWorkbenchPart part) {
+                    }
+
+                    public void partDeactivated(IWorkbenchPart part) {
+                    }
+
+                    public void partOpened(IWorkbenchPart part) {
+                    }
+                });
+
+                CompareConfiguration cc = new CompareConfiguration();
+                cc.setLeftEditable(editable);
+                cc.setRightEditable(false);
+                if (threeWay) {
+                    if (ancestorMember.getLabel() != null) {
+                        cc.setAncestorLabel(ancestorMember.getLabel());
                     } else {
-                        cc.setLeftLabel(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
+                        cc.setAncestorLabel(ancestorMember.getLibrary() + "/" + ancestorMember.getSourceFile() + "(" + ancestorMember.getMember()
+                            + ")");
                     }
-                    if (rightMember.getLabel() != null) {
-                        cc.setRightLabel(rightMember.getLabel());
-                    } else {
-                        cc.setRightLabel(rightMember.getLibrary() + "/" + rightMember.getSourceFile() + "(" + rightMember.getMember() + ")");
-                    }
-                    cc.setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
-                    fInput = new CompareInput(cc, editable, considerDate, threeWay, ancestorMember, leftMember, rightMember);
-                    if (editorTitle != null) {
-                        fInput.setTitle(editorTitle);
-                    } else {
-                        fInput.setTitle(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
-                    }
-                    CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
-                    for (int index = 0; index < cleanupListener.size(); index++) {
-                        (cleanupListener.get(index)).cleanup();
-                    }
-
-                } catch (Exception e) {
                 }
+                if (leftMember.getLabel() != null) {
+                    cc.setLeftLabel(leftMember.getLabel());
+                } else {
+                    cc.setLeftLabel(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
+                }
+                if (rightMember.getLabel() != null) {
+                    cc.setRightLabel(rightMember.getLabel());
+                } else {
+                    cc.setRightLabel(rightMember.getLibrary() + "/" + rightMember.getSourceFile() + "(" + rightMember.getMember() + ")");
+                }
+                cc.setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
+                fInput = new CompareInput(cc, editable, considerDate, threeWay, ancestorMember, leftMember, rightMember);
+                if (editorTitle != null) {
+                    fInput.setTitle(editorTitle);
+                } else {
+                    fInput.setTitle(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
+                }
+                CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
+                for (int index = 0; index < cleanupListener.size(); index++) {
+                    (cleanupListener.get(index)).cleanup();
+                }
+
             }
         });
     }
