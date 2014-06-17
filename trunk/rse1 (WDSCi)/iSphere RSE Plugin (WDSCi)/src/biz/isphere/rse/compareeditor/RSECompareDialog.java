@@ -174,7 +174,7 @@ public class RSECompareDialog extends CompareDialog {
             rightFile = rightMemberPrompt.getFileName();
             rightMember = rightMemberPrompt.getMemberName();
 
-            if (!exists(getRightRSEMember())) {
+            if (!getRightRSEMember().exists()) {
                 String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
                     rightLibrary, rightFile, rightMember });
                 MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
@@ -192,14 +192,6 @@ public class RSECompareDialog extends CompareDialog {
 
         // Close dialog
         super.okPressed();
-    }
-
-    private boolean exists(RSEMember rseMember) {
-        try {
-            return rseMember.exists();
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override

@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.compareeditor.CompareAction;
+import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
@@ -97,6 +99,12 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
                 }
 
             } catch (Exception e) {
+                ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+                if (e.getLocalizedMessage() == null) {
+                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Unexpected_Error, e.getClass().getName() + " - " + getClass().getName());
+                } else {
+                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Unexpected_Error, e.getLocalizedMessage());
+                }
             }
 
         }

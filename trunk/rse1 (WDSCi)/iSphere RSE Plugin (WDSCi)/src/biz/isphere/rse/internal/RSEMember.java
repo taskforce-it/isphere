@@ -73,7 +73,10 @@ public class RSEMember extends Member {
     }
 
     @Override
-    public boolean exists() throws Exception {
+    public boolean exists() {
+        if (_editableMember == null) {
+            return false;
+        }
         return _editableMember.exists();
     }
 
