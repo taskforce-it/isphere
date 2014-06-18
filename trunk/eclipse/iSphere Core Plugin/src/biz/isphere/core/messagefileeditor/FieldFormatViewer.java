@@ -11,6 +11,8 @@ package biz.isphere.core.messagefileeditor;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -135,6 +137,22 @@ public class FieldFormatViewer {
         _tableViewer = new TableViewer(groupFieldFormats, SWT.FULL_SELECTION | SWT.BORDER);
         _tableViewer.setLabelProvider(new LabelProviderTableViewer());
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
+        
+        _tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                if (_tableViewer.getSelection() instanceof IStructuredSelection) {
+
+                    IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
+                    FieldFormat _fieldFormat = (FieldFormat)structuredSelection.getFirstElement();
+
+                    FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, 
+                        actionType, _fieldFormat);
+                    if (_fieldFormatDetailDialog.open() == Dialog.OK) {
+                    }
+
+                }
+            }
+        });
 
         _table = _tableViewer.getTable();
         _table.addSelectionListener(new SelectionAdapter() {
@@ -143,6 +161,7 @@ public class FieldFormatViewer {
                 refreshUpDown();
             }
         });
+        
         _table.setLinesVisible(true);
         _table.setHeaderVisible(true);
         _table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
