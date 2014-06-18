@@ -83,13 +83,11 @@ public class RSECompareDialog extends CompareDialog {
         GridLayout rightLayout = new GridLayout();
         rightLayout.numColumns = 1;
         rightGroup.setLayout(rightLayout);
-        rightGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        rightGroup.setLayoutData(getGridData());
 
         rightConnectionCombo = new ISeriesConnectionCombo(rightGroup, rseLeftMember.getRSEConnection(), false);
-        rightConnectionCombo.setLayoutData(new GridData());
-        GridData gd = new GridData();
-        gd.widthHint = 200;
-        rightConnectionCombo.getCombo().setLayoutData(gd);
+        rightConnectionCombo.setLayoutData(getGridData());
+        rightConnectionCombo.getCombo().setLayoutData(getGridData());
 
         rightConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -115,7 +113,6 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.getFileCombo().addModifyListener(modifyListener);
         rightMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
         rightMemberPrompt.getLibraryCombo().setFocus();
-
     }
 
     @Override
@@ -126,13 +123,11 @@ public class RSECompareDialog extends CompareDialog {
         GridLayout ancestorLayout = new GridLayout();
         ancestorLayout.numColumns = 1;
         ancestorGroup.setLayout(ancestorLayout);
-        ancestorGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        ancestorGroup.setLayoutData(getGridData());
 
         ancestorConnectionCombo = new ISeriesConnectionCombo(ancestorGroup, rseLeftMember.getRSEConnection(), false);
-        ancestorConnectionCombo.setLayoutData(new GridData());
-        GridData gd = new GridData();
-        gd.widthHint = 200;
-        ancestorConnectionCombo.getCombo().setLayoutData(gd);
+        ancestorConnectionCombo.setLayoutData(getGridData());
+        ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
 
         ancestorConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override

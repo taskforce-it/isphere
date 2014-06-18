@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.compareeditor.CompareAction;
+import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
@@ -73,6 +74,7 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
 
                         boolean editable = dialog.isEditable();
                         boolean considerDate = dialog.isConsiderDate();
+                        boolean ignoreCase = dialog.isIgnoreCase();
                         boolean threeWay = dialog.isThreeWay();
 
                         RSEMember rseAncestorMember = null;
@@ -91,8 +93,14 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
                         rseRightMember = dialog.getRightRSEMember();
                         rseLeftMember = dialog.getLeftRSEMember();
 
-                        CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember,
-                            null);
+                        CompareEditorConfiguration cc = new CompareEditorConfiguration();
+                        cc.setLeftEditable(editable);
+                        cc.setRightEditable(false);
+                        cc.setConsiderDate(considerDate);
+                        cc.setIgnoreCase(ignoreCase);
+                        cc.setThreeWay(threeWay);
+
+                        CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
                         action.run();
 
                     }
@@ -101,7 +109,8 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
             } catch (Exception e) {
                 ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
                 if (e.getLocalizedMessage() == null) {
-                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Unexpected_Error, e.getClass().getName() + " - " + getClass().getName());
+                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Unexpected_Error, e.getClass().getName() + " - "
+                        + getClass().getName());
                 } else {
                     MessageDialog.openError(getShell(), biz.isphere.core.Messages.Unexpected_Error, e.getLocalizedMessage());
                 }
