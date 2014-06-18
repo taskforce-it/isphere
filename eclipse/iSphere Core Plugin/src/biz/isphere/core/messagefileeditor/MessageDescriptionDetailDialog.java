@@ -33,7 +33,6 @@ public class MessageDescriptionDetailDialog extends XDialog {
 
     public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.as400 = as400;
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
@@ -67,6 +66,14 @@ public class MessageDescriptionDetailDialog extends XDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.Message_description);
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
     }
 
     /**
