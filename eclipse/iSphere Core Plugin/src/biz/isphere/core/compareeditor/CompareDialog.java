@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
