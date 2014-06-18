@@ -1,3 +1,5 @@
+Comment: Do not remove biz.isphere.adapter, because
+ it is required by the PropertyTester classes
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere for RDi 8.0+
@@ -21,6 +23,7 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.toolbox,
  com.ibm.etools.systems.editor,
  biz.isphere.core,
+ biz.isphere.adapter,
  biz.isphere.base
 Bundle-ActivationPolicy: lazy
 Export-Package: biz.isphere.rse,
