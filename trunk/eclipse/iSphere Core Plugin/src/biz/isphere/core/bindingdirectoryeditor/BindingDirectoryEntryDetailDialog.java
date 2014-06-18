@@ -39,7 +39,6 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
     public BindingDirectoryEntryDetailDialog(Shell parentShell, String level, int actionType, BindingDirectoryEntry _bindingDirectoryEntry,
         ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.level = level;
         this.actionType = actionType;
         this._bindingDirectoryEntry = _bindingDirectoryEntry;
@@ -74,6 +73,14 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.Binding_Directory_Entry);
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
     }
 
     /**

@@ -9,8 +9,8 @@
 package biz.isphere.core.internal;
 
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -21,10 +21,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 
-public class FilterDialog extends Dialog {
+public class FilterDialog extends XDialog {
 
     private Text textFilter;
     private StatusLineManager statusLineManager;
@@ -32,7 +33,6 @@ public class FilterDialog extends Dialog {
 
     public FilterDialog(Shell parentShell) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     @Override
@@ -98,12 +98,32 @@ public class FilterDialog extends Dialog {
 
     }
 
+    public String getFilter() {
+        return filter;
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
     @Override
-    protected Point getInitialSize() {
+    protected boolean isResizable() {
+        return false;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
         return getShell().computeSize(Size.getSize(250), SWT.DEFAULT, true);
     }
 
-    public String getFilter() {
-        return filter;
+    /**
+     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 }

@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,11 +32,12 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 
-public class SearchDialog extends Dialog {
+public class SearchDialog extends XDialog {
 
     private HashMap<String, SearchElement> searchElements;
     private String searchString;
@@ -53,7 +54,6 @@ public class SearchDialog extends Dialog {
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.searchElements = searchElements;
         ISpherePlugin.getDefault().getPreferenceStore();
         // TODO: Remove disabled statements 'DE.TASKFORCE'
@@ -204,11 +204,6 @@ public class SearchDialog extends Dialog {
         newShell.setText(Messages.iSphere_Message_File_Search);
     }
 
-    @Override
-    protected Point getInitialSize() {
-        return getShell().computeSize(400, 600, true);
-    }
-
     public String getString() {
         return _string;
     }
@@ -223,6 +218,31 @@ public class SearchDialog extends Dialog {
 
     public String getCase() {
         return _case;
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        return getShell().computeSize(400, 600, true);
+    }
+
+    /**
+     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
 }

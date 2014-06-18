@@ -10,6 +10,7 @@ package biz.isphere.core.spooledfiles;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -26,10 +27,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 
-public class ConfirmDeletionSpooledFiles extends Dialog {
+public class ConfirmDeletionSpooledFiles extends XDialog {
 
     private SpooledFile[] spooledFiles;
     private TableViewer tableViewerSpooledFiles;
@@ -78,7 +81,6 @@ public class ConfirmDeletionSpooledFiles extends Dialog {
 
     public ConfirmDeletionSpooledFiles(Shell parentShell, SpooledFile[] spooledFiles) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.spooledFiles = spooledFiles;
     }
 
@@ -153,11 +155,31 @@ public class ConfirmDeletionSpooledFiles extends Dialog {
         newShell.setText(Messages.Confirm_Deletion_Spooled_Files);
     }
 
+    /**
+     * Overridden to make this dialog resizable.
+     */
     @Override
-    protected Point getInitialSize() {
+    protected boolean isResizable() {
+        return true;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
         Point point = getShell().computeSize(Size.getSize(600), SWT.DEFAULT, true);
         point.y = point.y + getTableHeight(10);
         return point;
+    }
+
+    /**
+     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
 }

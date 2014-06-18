@@ -30,7 +30,6 @@ public class SignOnDialog extends XDialog {
 
     public SignOnDialog(Shell parentShell, String aHostName) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         hostName = aHostName;
     }
 
@@ -64,16 +63,31 @@ public class SignOnDialog extends XDialog {
         newShell.setText(Messages.Sign_On);
     }
 
+    public AS400 getAS400() {
+        return signOn.getAS400();
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
     @Override
     protected Point getDefaultSize() {
         Point point = getShell().computeSize(250, SWT.DEFAULT, true);
         return point;
     }
 
-    public AS400 getAS400() {
-        return signOn.getAS400();
-    }
-
+    /**
+     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
