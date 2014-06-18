@@ -37,6 +37,7 @@ public class XDialog extends Dialog {
      */
     protected XDialog(Shell parentShell) {
         super(parentShell);
+        setStyleResizable();
     }
 
     /**
@@ -44,6 +45,7 @@ public class XDialog extends Dialog {
      */
     protected XDialog(IShellProvider parentShell) {
         super(parentShell);
+        setStyleResizable();
     }
 
     /**
@@ -58,7 +60,7 @@ public class XDialog extends Dialog {
     @Override
     protected Point getInitialSize() {
         Point result = getDefaultSize();
-        if (!isResizable()) {
+        if (!isStyleResizable()) {
             return result;
         }
 
@@ -109,7 +111,7 @@ public class XDialog extends Dialog {
 
         // No attempt is made to constrain the bounds. The default
         // constraining behavior in Window will be used.
-        return getDefaultSize(); // result
+        return result;
     }
 
     /**
@@ -155,5 +157,52 @@ public class XDialog extends Dialog {
      */
     protected Point getDefaultSize() {
         return getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+    }
+
+    /**
+     * Returns a boolean indicating whether the dialog should be considered
+     * resizable when the shell style is initially set. This method is used to
+     * ensure that all style bits appropriate for resizable dialogs are added to
+     * the shell style. Individual dialogs may always set the shell style to
+     * ensure that a dialog is resizable, but using this method ensures that
+     * resizable dialogs will be created with the same set of style bits. Style
+     * bits will never be removed based on the return value of this method. For
+     * example, if a dialog returns false, but also sets a style bit for a
+     * SWT.RESIZE border, the style bit will be honored.
+     * <p>
+     * Added, because this method is missing for WDSC 7.0.
+     * 
+     * @return a boolean indicating whether the dialog is resizable and should
+     *         have the default style bits for resizable dialogs
+     */
+    protected boolean isResizable() {
+        return false;
+    }
+
+    /**
+     * Code of the original implementation of class {@link org.eclipse.jface.dialogs.Dialog}.
+     * <p>
+     * Added, to support {@link #isResizable()}, which is missing in WDSC 7.0.
+     * 
+     */
+    private void setStyleResizable() {
+        if (isResizable()) {
+            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.MAX | SWT.RESIZE
+                    | getDefaultOrientation());
+        } else {
+            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL
+                    | getDefaultOrientation());
+        }
+    }
+
+    /**
+     * Checks the style of the shell to determine whether or not the dialog is
+     * resizable.
+     */
+    private boolean isStyleResizable() {
+        if ((getShellStyle() & SWT.RESIZE) == SWT.RESIZE) {
+            return true;
+        }
+        return false;
     }
 }
