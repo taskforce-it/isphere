@@ -111,7 +111,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             return fRoot;
 
         } catch (Exception e) {
-            ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            ISpherePlugin.logError(Messages.Unexpected_Error, e);
             String message;
             if (e.getLocalizedMessage() == null) {
                 message = e.getClass().getName() + " - " + getClass().getName();

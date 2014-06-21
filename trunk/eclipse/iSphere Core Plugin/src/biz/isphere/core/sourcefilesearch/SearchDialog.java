@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.preferences.Preferences;
 
 public class SearchDialog extends XDialog {
@@ -191,9 +192,9 @@ public class SearchDialog extends XDialog {
         Preferences.getInstance().setSourceFileSearchString(textString.getText());
         _string = textString.getText().trim();
         if (buttonCaseNo.getSelection()) {
-            _case = "*IGNORE";
+            _case = SearchExec.CASE_IGNORE;
         } else {
-            _case = "*MATCH";
+            _case = SearchExec.CASE_MATCH;
         }
         super.okPressed();
     }

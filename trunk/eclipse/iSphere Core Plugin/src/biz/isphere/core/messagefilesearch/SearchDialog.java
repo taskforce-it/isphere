@@ -180,9 +180,9 @@ public class SearchDialog extends XDialog {
         Preferences.getInstance().setMessageFileSearchString(textString.getText());
         _string = textString.getText().trim();
         if (buttonCaseNo.getSelection()) {
-            _case = "*IGNORE";
+            _case = SearchExec.CASE_IGNORE;
         } else {
-            _case = "*MATCH";
+            _case = SearchExec.CASE_MATCH;
         }
         super.okPressed();
     }
