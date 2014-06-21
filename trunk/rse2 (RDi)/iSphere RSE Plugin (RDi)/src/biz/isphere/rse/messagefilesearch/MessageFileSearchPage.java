@@ -29,6 +29,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
@@ -382,8 +383,10 @@ public class MessageFileSearchPage extends DialogPage implements ISearchPage, Li
             IHost tHost = (IHost)tSelection.getFirstElement();
 
             IBMiConnection tConnection = IBMiConnection.getConnection(tHost);
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject())) {
+                return false;
+            }
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-
             Object[] tObjects = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
             for (Object tObject : tObjects) {
                 if (tObject instanceof QSYSRemoteMessageFile) {
@@ -435,17 +438,17 @@ public class MessageFileSearchPage extends DialogPage implements ISearchPage, Li
      * Adds an element to the list of elements that are searched for a given
      * search string.
      * 
-     * @param searchElements - list of elements that are searched
+     * @param aSearchElements - list of elements that are searched
      * @param aMessageFile - message file that is added to the list
      */
-    private void addElement(HashMap<String, SearchElement> searchElements, IQSYSResource aMessageFile) {
+    private void addElement(HashMap<String, SearchElement> aSearchElements, IQSYSResource aMessageFile) {
         String key = aMessageFile.getLibrary() + "-" + aMessageFile.getName();
-        if (!searchElements.containsKey(key)) {
-            SearchElement searchElement = new SearchElement();
-            searchElement.setLibrary(aMessageFile.getLibrary());
-            searchElement.setMessageFile(aMessageFile.getName());
-            searchElement.setDescription(aMessageFile.getDescription());
-            searchElements.put(key, searchElement);
+        if (!aSearchElements.containsKey(key)) {
+            SearchElement aSearchElement = new SearchElement();
+            aSearchElement.setLibrary(aMessageFile.getLibrary());
+            aSearchElement.setMessageFile(aMessageFile.getName());
+            aSearchElement.setDescription(aMessageFile.getDescription());
+            aSearchElements.put(key, aSearchElement);
         }
     }
 

@@ -62,6 +62,8 @@
      dGIUP             C                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'         Upper case
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
+     dNULL             C                   -1
+
       //*==========================================================================================*
       //* Get Handle                                                                               *
       //*==========================================================================================*
@@ -177,12 +179,12 @@
       // Locale field declarations
 
      dLISTG            S             40A                                        String
-     dLITXT            S            132A                                        Text
+     dLITXT            S            132A   varying                              Text to be searched
      dLICNT            S              6S 0                                      Counter
      dLICNL            S             10A                                        Cancel
-     dLIRTVOPT         S             10A                                        Abrufoption
-     dLIMSGID          S              7A                                        Nachrichten-Id.
-     dLIMSG            S            132A                                        Nachricht
+     dLIRTVOPT         S             10A                                        Retrieve options
+     dLIMSGID          S              7A                                        Message ID
+     dLIMSG            S            132A                                        Message
 
       //*------------------------------------------------------------------------------------------*
 
@@ -311,7 +313,20 @@
            LISTG = LPSTG;
 
            // Initialize text
-           LITXT = %SubSt(LIMSG : LPFCOL : LPTCOL - LPFCOL + 1);
+           Select;
+           when (LPFCOL = NULL and LPTCOL = NULL);
+              // Search option: all columns
+              LITXT = LIMSG;
+           when (LPFCOL = NULL);
+              // Search option: position 1 to end column
+              LITXT = %SubSt(LIMSG : 1 : LPTCOL);
+           when (LPTCOL = NULL);
+              // Search option: start column to the end of text
+              LITXT = %SubSt(LIMSG : LPFCOL);
+           other;
+              // Search option: start to end column
+              LITXT = %SubSt(LIMSG : LPFCOL : LPTCOL - LPFCOL + 1);
+           endsl;
 
            // Ignore upper/lower case
            If LPCASE = '*IGNORE';
