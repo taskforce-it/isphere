@@ -67,6 +67,27 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere Message File Search Page
+      	  ==========================================
+      	-->
+      
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+      		id="biz.isphere.rse.messagefilesearch.MessageFileSearchPage"
+            label="iSphere Message File Search"
+            enabled="true"
+            icon="icons/message_file_search.png"
+            class="biz.isphere.rse.messagefilesearch.MessageFileSearchPage"
+            sizeHint="250,160"
+            tabPosition="0"
+            extensions="msgf:100, *msgf:100, **msgf:100" 
+            >
+      </page>
+	</extension>  
+      	
+      	<!--
+      	  ==========================================
       	    Others
       	  ==========================================
       	-->

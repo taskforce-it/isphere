@@ -21,13 +21,11 @@ public class Messages extends NLS {
 
     public static String iSphere_Compare_Editor;
 
-    public static String iSphere_Binding_Directory_Editor;
-
-    public static String iSphere_Source_File_Search;
-
     public static String Right;
 
     public static String Ancestor;
+
+    public static String iSphere_Binding_Directory_Editor;
 
     public static String E_R_R_O_R;
 
@@ -35,9 +33,49 @@ public class Messages extends NLS {
 
     public static String iSphere_Message_File_Search;
 
+    public static String iSphere_Source_File_Search;
+
     public static String Deleting_spooled_files;
 
     public static String Deleting;
+
+    public static String Search_string;
+    
+    public static String String_to_be_searched;
+    
+    public static String Enter_or_select_search_string;
+    
+    public static String Case_sensitive;
+    
+    public static String Specify_whether_case_should_be_considered_during_search;
+    
+    public static String Connection;
+    
+    public static String Target;
+    
+    public static String Enter_or_select_a_library_name;
+    
+    public static String Enter_or_select_a_simple_or_generic_message_file_name;
+    
+    public static String Library;
+    
+    public static String Message_file;
+    
+    public static String Columns;
+    
+    public static String All_columns;
+    
+    public static String Search_all_columns;
+    
+    public static String Between;
+    
+    public static String Search_between_specified_columns;
+    
+    public static String Specify_start_column;
+    
+    public static String and;
+    
+    public static String Specify_end_column_max_132;
 
     static {
         // initialize resource bundle

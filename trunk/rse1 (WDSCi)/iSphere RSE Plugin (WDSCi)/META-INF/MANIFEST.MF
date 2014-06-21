@@ -14,9 +14,11 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.core,
  com.ibm.etools.systems.core,
  com.ibm.etools.systems.dstore.core,
+ org.eclipse.search,
  com.ibm.etools.iseries.toolbox,
  com.ibm.etools.systems.editor,
  biz.isphere.core,
+ biz.isphere.adapter,
  biz.isphere.base
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.rse,
