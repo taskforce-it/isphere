@@ -386,13 +386,11 @@ public class MessageFileSearchPage extends DialogPage implements ISearchPage, Li
             SystemConnection tHost = (SystemConnection)tSelection.getFirstElement();
 
             ISeriesConnection tConnection = ISeriesConnection.getConnection(tHost);
-            AS400 tAS400 = tConnection.getAS400ToolboxObject(getShell());
-            if (!ISphereHelper.checkISphereLibrary(getShell(), tAS400)) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject(getShell()))) {
                 return false;
             }
 
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-
             Object[] tObjects = tConnection.listObjects(getShell(), getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" });
             for (Object tObject : tObjects) {
                 if (tObject instanceof ISeriesObject) {
