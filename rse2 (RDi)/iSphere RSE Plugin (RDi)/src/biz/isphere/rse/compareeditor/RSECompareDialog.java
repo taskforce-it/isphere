@@ -8,20 +8,22 @@
 
 package biz.isphere.rse.compareeditor;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.internal.Member;
+import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.internal.RSEMember;
 
@@ -267,6 +269,15 @@ public class RSECompareDialog extends CompareDialog {
         super.switchLeftAndRightMember(leftMember, rightMember);
         initializeRightMember((RSEMember)leftMember);
         this.rseLeftMember = (RSEMember)rightMember;
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISphereRSEPlugin.getDefault().getDialogSettings());
     }
 
 }
