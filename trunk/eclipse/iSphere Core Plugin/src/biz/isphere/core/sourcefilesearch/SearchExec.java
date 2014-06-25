@@ -26,6 +26,9 @@ import com.ibm.as400.access.AS400;
 
 public class SearchExec {
 
+    public static final String CASE_MATCH = "*MATCH";
+    public static final String CASE_IGNORE = "*IGNORE";
+
     private class Search extends Job {
 
         private AS400 _as400;

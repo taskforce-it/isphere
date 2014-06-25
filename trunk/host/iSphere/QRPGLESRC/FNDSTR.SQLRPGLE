@@ -97,6 +97,8 @@
      dGIUP             C                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'         Upper case
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
+     dNULL             C                   -1
+
       //*==========================================================================================*
       //* Get Handle                                                                               *
       //*==========================================================================================*
@@ -522,16 +524,23 @@
            EndIf;
 
            // Get start and length
-           If LPFCOL <= LIRLNG;
+           Select;
+           When (LPFCOL = NULL);
+             LISTR = 1;
+           When (LPFCOL <= LIRLNG);
              LISTR = LPFCOL;
-           Else;
+           Other;
              LISTR = LIRLNG;
-           EndIf;
-           If LPTCOL > LIRLNG;
+           EndSl;
+
+           Select;
+           When (LPTCOL = NULL);
+             LILNG = LIRLNG;
+           When LPTCOL > LIRLNG;
              LILNG = LIRLNG - LPFCOL + 1;
-           Else;
+           Other;
              LILNG = LPTCOL - LPFCOL + 1;
-           EndIf;
+           EndSl;
 
          EndIf;
 
