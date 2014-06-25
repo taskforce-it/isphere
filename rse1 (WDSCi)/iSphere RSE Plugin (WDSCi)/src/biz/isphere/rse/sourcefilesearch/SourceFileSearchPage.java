@@ -1,4 +1,4 @@
-package biz.isphere.rse.messagefilesearch;
+package biz.isphere.rse.sourcefilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,26 +27,28 @@ import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
-import biz.isphere.core.messagefilesearch.SearchElement;
-import biz.isphere.core.messagefilesearch.SearchExec;
-import biz.isphere.core.messagefilesearch.SearchPostRun;
+import biz.isphere.core.sourcefilesearch.SearchElement;
+import biz.isphere.core.sourcefilesearch.SearchExec;
+import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
-import com.ibm.etools.iseries.core.api.ISeriesObject;
+import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
+import com.ibm.etools.iseries.core.ui.widgets.IISeriesFilePromptTypes;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
-import com.ibm.etools.iseries.core.ui.widgets.ISeriesMsgFilePrompt;
+import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
 import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.model.SystemConnection;
 
-public class MessageFileSearchPage extends XDialogPage implements ISearchPage, Listener {
+public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
-    private static final String MESSAGE_FILE = "messageFile";
+    private static final String SOURCE_FILE = "sourceFile";
+    private static final String SOURCE_MEMBER = "sourceMember";
     private static final String LIBRARY = "library";
     private static final String SEARCH_STRING = "searchString";
     private static final String CASE_SENSITIVE = "caseSensitive";
@@ -56,13 +58,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private SystemHistoryCombo searchStringCombo;
     private Button caseButton;
     private ISeriesConnectionCombo connectionCombo;
-    private ISeriesMsgFilePrompt messageFilePrompt;
+    private ISeriesMemberPrompt sourceFilePrompt;
     private Button allColumnsButton;
     private Button betweenColumnsButton;
     private Text startColumnText;
     private Text endColumnText;
 
-    public MessageFileSearchPage() {
+    public SourceFileSearchPage() {
         super();
         return;
     }
@@ -78,7 +80,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         createSearchStringGroup(tMainPanel);
         createConnectionGroup(tMainPanel);
-        createMessageFileGroup(tMainPanel);
+        createSourceMemberGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
 
         addListeners();
@@ -130,14 +132,14 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         connectionCombo.getPromptLabel().setText(Messages.Connection);
     }
 
-    private void createMessageFileGroup(Composite aMainPanel) {
+    private void createSourceMemberGroup(Composite aMainPanel) {
         Group tTargetGroup = createGroup(aMainPanel, Messages.Target);
-        messageFilePrompt = new ISeriesMsgFilePrompt(tTargetGroup, SWT.NONE, true, true);
-        messageFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
-        messageFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
-        messageFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_message_file_name);
-        messageFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
-        messageFilePrompt.getObjectPromptLabel().setText(Messages.Message_file);
+        sourceFilePrompt = new ISeriesMemberPrompt(tTargetGroup, SWT.NONE, true, true, IISeriesFilePromptTypes.FILETYPE_SRC);
+        sourceFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
+        sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
+        sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_message_file_name);
+        sourceFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
+        sourceFilePrompt.setMemberPromptLabel(Messages.Source_Member);
     }
 
     private void createColumnsGroup(Composite aMainPanel) {
@@ -221,8 +223,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void loadScreenValues() {
         searchStringCombo.setText(loadValue(SEARCH_STRING, "Enter search string here"));
         caseButton.setSelection(loadBooleanValue(CASE_SENSITIVE, false));
-        messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
-        messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, ""));
+        sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
+        sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
+        sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
 
         loadColumnButtonsSelection();
     }
@@ -233,8 +236,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void storeScreenValues() {
         storeValue(SEARCH_STRING, getSearchString());
         storeValue(CASE_SENSITIVE, getCase());
-        storeValue(LIBRARY, getMessageFileLibrary());
-        storeValue(MESSAGE_FILE, getMessageFile());
+        storeValue(LIBRARY, getSourceFileLibrary());
+        storeValue(SOURCE_FILE, getSourceFile());
+        storeValue(SOURCE_MEMBER, getSourceMember());
 
         saveColumnButtonsSelection();
     }
@@ -252,7 +256,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             processBetweenColumnsButtonSelected();
         }
         startColumnText.setText(loadValue(START_COLUMN, "1"));
-        endColumnText.setText(loadValue(END_COLUMN, "132"));
+        endColumnText.setText(loadValue(END_COLUMN, "100"));
     }
 
     /**
@@ -269,7 +273,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
-     * Returns the search string the message files are searched for.
+     * Returns the search string the source files are searched for.
      * 
      * @return search argument
      */
@@ -292,22 +296,32 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
     /**
      * Returns the simple or generic name of the libraries that are searched for
-     * the message file.
+     * the source files that contain the source members.
      * 
      * @return name of the library
      */
-    private String getMessageFileLibrary() {
-        return messageFilePrompt.getLibraryCombo().getText();
+    private String getSourceFileLibrary() {
+        return sourceFilePrompt.getLibraryCombo().getText();
     }
 
     /**
-     * Returns the simple or generic name of the message file(s) that are
+     * Returns the simple or generic name of the source file(s) that are
      * searched for the search string.
      * 
      * @return simple or generic name of the message file
      */
-    private String getMessageFile() {
-        return messageFilePrompt.getObjectCombo().getText();
+    private String getSourceFile() {
+        return sourceFilePrompt.getObjectCombo().getText();
+    }
+
+    /**
+     * Returns the simple or generic source member name of the source file(s)
+     * that are searched for the search string.
+     * 
+     * @return simple or generic member name of the source file
+     */
+    private String getSourceMember() {
+        return sourceFilePrompt.getMemberCombo().getText();
     }
 
     /**
@@ -354,12 +368,11 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject(getShell()))) {
                 return false;
             }
-
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            Object[] tObjects = tConnection.listObjects(getShell(), getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" });
+            Object[] tObjects = tConnection.listMembers(getShell(), getSourceFileLibrary(), getSourceFile(), getSourceMember());
             for (Object tObject : tObjects) {
-                if (tObject instanceof ISeriesObject) {
-                    addElement(searchElements, ((ISeriesObject)tObject).getDataElement());
+                if (tObject instanceof ISeriesMember) {
+                    addElement(searchElements, ((ISeriesMember)tObject).getDataElement());
                 }
             }
 
@@ -385,8 +398,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                 endColumn = getNumericFieldContent(endColumnText);
             }
 
-            new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), tConnection.getJDBCConnection(null,
-                false), getSearchString(), startColumn, endColumn, getCaseAsString(), new ArrayList<SearchElement>(searchElements.values()), postRun);
+            new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getJDBCConnection(null, false), getSearchString(),
+                startColumn, endColumn, getCaseAsString(), new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
@@ -407,16 +420,18 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * search string.
      * 
      * @param aSearchElements - list of elements that are searched
-     * @param aMessageFile - message file that is added to the list
+     * @param aSourceMember - message file that is added to the list
      */
-    private void addElement(HashMap<String, SearchElement> aSearchElements, DataElement aMessageFile) {
-        String tKey = ISeriesDataElementHelpers.getLibrary(aMessageFile) + "-" + ISeriesDataElementHelpers.getName(aMessageFile);
+    private void addElement(HashMap<String, SearchElement> aSearchElements, DataElement aSourceMember) {
+        String tKey = ISeriesDataElementHelpers.getLibrary(aSourceMember) + "-" + ISeriesDataElementHelpers.getFile(aSourceMember) + "-"
+            + ISeriesDataElementHelpers.getName(aSourceMember);
         if (!aSearchElements.containsKey(tKey)) {
-            SearchElement tSearchElement = new SearchElement();
-            tSearchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(aMessageFile));
-            tSearchElement.setMessageFile(ISeriesDataElementHelpers.getName(aMessageFile));
-            tSearchElement.setDescription(ISeriesDataElementHelpers.getDescription(aMessageFile));
-            aSearchElements.put(tKey, tSearchElement);
+            SearchElement aSearchElement = new SearchElement();
+            aSearchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(aSourceMember));
+            aSearchElement.setFile(ISeriesDataElementHelpers.getFile(aSourceMember));
+            aSearchElement.setMember(ISeriesDataElementHelpers.getName(aSourceMember));
+            aSearchElement.setDescription(ISeriesDataElementHelpers.getDescription(aSourceMember));
+            aSearchElements.put(tKey, aSearchElement);
         }
     }
 

@@ -76,6 +76,8 @@ public class Messages extends NLS {
     public static String and;
     
     public static String Specify_end_column_max_132;
+    
+    public static String Source_Member; 
 
     static {
         // initialize resource bundle

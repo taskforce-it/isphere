@@ -81,10 +81,29 @@
             class="biz.isphere.rse.messagefilesearch.MessageFileSearchPage"
             sizeHint="250,160"
             tabPosition="0"
-            extensions="msgf:100, *msgf:100, **msgf:100" 
             >
       </page>
 	</extension>  
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Source File Search Page
+      	  ==========================================
+      	-->
+      
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+      		id="biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"
+            label="iSphere Source File Search"
+            enabled="true"
+            icon="icons/source_file_search.gif"
+            class="biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"
+            sizeHint="250,160"
+            tabPosition="0"
+            >
+      </page>
+   </extension>
       	
       	<!--
       	  ==========================================
