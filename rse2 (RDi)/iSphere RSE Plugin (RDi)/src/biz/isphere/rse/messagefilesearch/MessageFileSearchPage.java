@@ -314,11 +314,20 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * 
      * @return status of the "Case sensitive" check box
      */
-    private String getCase() {
-        if (caseButton.getSelection()) {
+    private String getCaseAsString() {
+        if (getCase()) {
             return SearchExec.CASE_MATCH;
         }
         return SearchExec.CASE_IGNORE;
+    }
+
+    /**
+     * Returns the status of the "Case sensitive" check box.
+     * 
+     * @return status of the "Case sensitive" check box
+     */
+    private boolean getCase() {
+        return caseButton.getSelection();
     }
 
     /**
@@ -375,7 +384,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getHost().getName(),
-                tConnection.getJDBCConnection(null, false), getSearchString(), startColumn, endColumn, getCase(), new ArrayList<SearchElement>(
+                tConnection.getJDBCConnection(null, false), getSearchString(), startColumn, endColumn, getCaseAsString(), new ArrayList<SearchElement>(
                     searchElements.values()), postRun);
 
         } catch (Exception e) {

@@ -328,11 +328,20 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * 
      * @return status of the "Case sensitive" check box
      */
-    private String getCase() {
-        if (caseButton.getSelection()) {
+    private String getCaseAsString() {
+        if (getCase()) {
             return SearchExec.CASE_MATCH;
         }
         return SearchExec.CASE_IGNORE;
+    }
+
+    /**
+     * Returns the status of the "Case sensitive" check box.
+     * 
+     * @return status of the "Case sensitive" check box
+     */
+    private boolean getCase() {
+        return caseButton.getSelection();
     }
 
     /**
@@ -389,7 +398,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             }
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getJDBCConnection(null, false), getSearchString(), startColumn,
-                endColumn, getCase(), new ArrayList<SearchElement>(searchElements.values()), postRun);
+                endColumn, getCaseAsString(), new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
@@ -413,14 +422,14 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * @param aSourceMember - message file that is added to the list
      */
     private void addElement(HashMap<String, SearchElement> aSearchElements, IQSYSResource aSourceMember) {
-        String key = aSourceMember.getLibrary() + "-" + aSourceMember.getName();
-        if (!aSearchElements.containsKey(key)) {
+        String tKey = aSourceMember.getLibrary() + "-" + ((IQSYSMember)aSourceMember).getFile() + "-" + aSourceMember.getName();
+        if (!aSearchElements.containsKey(tKey)) {
             SearchElement aSearchElement = new SearchElement();
             aSearchElement.setLibrary(aSourceMember.getLibrary());
             aSearchElement.setFile(((IQSYSMember)aSourceMember).getFile());
             aSearchElement.setMember(aSourceMember.getName());
             aSearchElement.setDescription(aSourceMember.getDescription());
-            aSearchElements.put(key, aSearchElement);
+            aSearchElements.put(tKey, aSearchElement);
         }
     }
 
