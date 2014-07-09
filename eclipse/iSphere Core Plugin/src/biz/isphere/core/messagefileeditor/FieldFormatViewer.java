@@ -137,7 +137,7 @@ public class FieldFormatViewer {
         _tableViewer = new TableViewer(groupFieldFormats, SWT.FULL_SELECTION | SWT.BORDER);
         _tableViewer.setLabelProvider(new LabelProviderTableViewer());
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
-        
+
         _tableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 if (_tableViewer.getSelection() instanceof IStructuredSelection) {
@@ -145,9 +145,22 @@ public class FieldFormatViewer {
                     IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
                     FieldFormat _fieldFormat = (FieldFormat)structuredSelection.getFirstElement();
 
-                    FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, 
-                        actionType, _fieldFormat);
-                    if (_fieldFormatDetailDialog.open() == Dialog.OK) {
+                    switch (actionType) {
+                    case DialogActionTypes.CREATE:
+                        performChange(_fieldFormat);
+                        break;
+                    case DialogActionTypes.COPY:
+                        performChange(_fieldFormat);
+                        break;
+                    case DialogActionTypes.CHANGE:
+                        performChange(_fieldFormat);
+                        break;
+                    case DialogActionTypes.DELETE:
+                        performDisplay(_fieldFormat);
+                        break;
+                    case DialogActionTypes.DISPLAY:
+                        performDisplay(_fieldFormat);
+                        break;
                     }
 
                 }
@@ -161,7 +174,7 @@ public class FieldFormatViewer {
                 refreshUpDown();
             }
         });
-        
+
         _table.setLinesVisible(true);
         _table.setHeaderVisible(true);
         _table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -297,11 +310,7 @@ public class FieldFormatViewer {
                     public void widgetSelected(SelectionEvent e) {
                         for (int idx = 0; idx < selectedItems.length; idx++) {
                             if (selectedItems[idx] instanceof FieldFormat) {
-                                FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, DialogActionTypes.CHANGE,
-                                    (FieldFormat)selectedItems[idx]);
-                                if (_fieldFormatDetailDialog.open() == Dialog.OK) {
-                                    _tableViewer.refresh();
-                                }
+                                performChange((FieldFormat)selectedItems[idx]);
                             }
                         }
                         deSelectAllItems();
@@ -371,10 +380,7 @@ public class FieldFormatViewer {
                     public void widgetSelected(SelectionEvent e) {
                         for (int idx = 0; idx < selectedItems.length; idx++) {
                             if (selectedItems[idx] instanceof FieldFormat) {
-                                FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, DialogActionTypes.DISPLAY,
-                                    (FieldFormat)selectedItems[idx]);
-                                if (_fieldFormatDetailDialog.open() == Dialog.OK) {
-                                }
+                                performDisplay((FieldFormat)selectedItems[idx]);
                             }
                         }
                         deSelectAllItems();
@@ -573,6 +579,20 @@ public class FieldFormatViewer {
 
         return target.toString();
 
+    }
+
+    private void performChange(FieldFormat fieldFormat) {
+        FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, DialogActionTypes.CHANGE, fieldFormat);
+        if (_fieldFormatDetailDialog.open() == Dialog.OK) {
+            _tableViewer.update(fieldFormat, null);
+            _tableViewer.refresh();
+        }
+    }
+
+    private void performDisplay(FieldFormat fieldFormat) {
+        FieldFormatDetailDialog _fieldFormatDetailDialog = new FieldFormatDetailDialog(shell, DialogActionTypes.DISPLAY, fieldFormat);
+        if (_fieldFormatDetailDialog.open() == Dialog.OK) {
+        }
     }
 
     private void deSelectAllItems() {
