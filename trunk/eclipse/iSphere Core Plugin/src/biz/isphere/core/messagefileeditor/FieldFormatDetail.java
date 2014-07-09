@@ -418,9 +418,11 @@ public class FieldFormatDetail {
         if (buttonVLNo.getSelection()) {
             _fieldFormat.setLength(validatorLength.getIntegerValue());
             _fieldFormat.setDecimalPositions(validatorDecimalPositions.getIntegerValue());
+            _fieldFormat.setVary(false);
         }
         if (buttonVLYes.getSelection()) {
             _fieldFormat.setBytes(validatorBytes.getIntegerValue());
+            _fieldFormat.setVary(true);
         }
     }
 }
