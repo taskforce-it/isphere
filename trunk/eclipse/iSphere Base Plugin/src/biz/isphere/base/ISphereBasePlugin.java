@@ -75,6 +75,10 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
     /**
      * Returns the version of the plugin, as assigned to "Bundle-Version" in
      * "MANIFEST.MF".
+     * <p>
+     * The build process retrieves the version number from
+     * <i>build.properties</i> and updates all MANIFEST, feature and plugin
+     * files. (See: build.xml - updateVersionNumber)
      * 
      * @return Version of the plugin.
      */
