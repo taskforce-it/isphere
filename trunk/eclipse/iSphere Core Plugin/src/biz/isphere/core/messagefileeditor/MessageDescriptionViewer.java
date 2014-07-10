@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
@@ -207,7 +208,7 @@ public class MessageDescriptionViewer {
                     MessageDescription _messageDescription = (MessageDescription)structuredSelection.getFirstElement();
 
                     MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                        DialogActionTypes.DISPLAY, _messageDescription);
+                        DialogActionTypes.getSubEditorActionType(mode), _messageDescription);
                     if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                     }
 
@@ -427,7 +428,7 @@ public class MessageDescriptionViewer {
         for (int idx = 0; idx < selectedItems.length; idx++) {
             if (selectedItems[idx] instanceof MessageDescription) {
                 MessageDescription _messageDescription = (MessageDescription)selectedItems[idx];
-                if (mode.equals("*EDIT")) {
+                if (mode.equals(IEditor.EDIT)) {
                     if (isValid(_messageDescription, "*CHANGE")) {
                         menuItemChange++;
                     }
@@ -455,7 +456,7 @@ public class MessageDescriptionViewer {
         if (menuItemDisplay > 0 && menuItemDisplay == selectedItems.length) {
             validMenuItem.add("*DISPLAY");
         }
-        if (mode.equals("*EDIT")) {
+        if (mode.equals(IEditor.EDIT)) {
             validMenuItem.add("*NEW");
         }
         validMenuItem.add("*REFRESH");

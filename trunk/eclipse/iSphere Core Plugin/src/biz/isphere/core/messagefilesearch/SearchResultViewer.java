@@ -170,7 +170,7 @@ public class SearchResultViewer {
                     if (editor != null) {
 
                         MessageFileEditor.openEditor(_searchResult.getAS400(), _searchResult.getHost(), _searchResult.getLibrary(),
-                            _searchResult.getMessageFile(), "*EDIT");
+                            _searchResult.getMessageFile(), IEditor.EDIT);
 
                     }
 
@@ -354,7 +354,7 @@ public class SearchResultViewer {
                 SearchResult _searchResult = (SearchResult)selectedItemsMessageFiles[idx];
 
                 MessageFileEditor.openEditor(_searchResult.getAS400(), _searchResult.getHost(), _searchResult.getLibrary(),
-                    _searchResult.getMessageFile(), "*EDIT");
+                    _searchResult.getMessageFile(), IEditor.EDIT);
 
             }
 

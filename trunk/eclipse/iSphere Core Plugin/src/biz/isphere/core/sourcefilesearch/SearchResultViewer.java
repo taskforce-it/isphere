@@ -164,7 +164,7 @@ public class SearchResultViewer {
 
                     if (editor != null) {
 
-                        editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, "*OPEN");
+                        editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, IEditor.OPEN);
 
                     }
 
@@ -281,7 +281,7 @@ public class SearchResultViewer {
                         if (editor != null) {
 
                             editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
-                                statementLine, "*OPEN");
+                                statementLine, IEditor.OPEN);
 
                         }
 
@@ -351,7 +351,7 @@ public class SearchResultViewer {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
 
-                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, "*OPEN");
+                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, IEditor.OPEN);
 
             }
 
