@@ -38,5 +38,15 @@ public class DialogActionTypes {
         }
         return "";
     }
+    
+    public static int getSubEditorActionType(String mode) {
+        int actionType;
+        if (IEditor.EDIT.equals(mode)) {
+            actionType = DialogActionTypes.CHANGE;
+        } else {
+            actionType = DialogActionTypes.DISPLAY;
+        }
+        return actionType;
+    }
 
 }

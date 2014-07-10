@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
@@ -130,10 +131,9 @@ public class BindingDirectoryEntryViewer {
 
                     IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
                     if (structuredSelection.getFirstElement() instanceof BindingDirectoryEntry) {
-
                         BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)structuredSelection.getFirstElement();
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
-                            DialogActionTypes.CHANGE, bindingDirectoryEntry, _bindingDirectoryEntries);
+                            DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, _bindingDirectoryEntries);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                             uploadEntries();
                             _tableViewer.refresh();
@@ -248,7 +248,7 @@ public class BindingDirectoryEntryViewer {
                 boolean isRefresh = false;
                 for (int idx = 0; idx < selectedItems.length; idx++) {
                     if (selectedItems[idx] instanceof BindingDirectoryEntry) {
-                        if (mode.equals("*EDIT")) {
+                        if (mode.equals(IEditor.EDIT)) {
                             isChange = true;
                             isCopy = true;
                             isDelete = true;
@@ -257,7 +257,7 @@ public class BindingDirectoryEntryViewer {
                         isRefresh = true;
                     }
                 }
-                if (mode.equals("*EDIT")) {
+                if (mode.equals(IEditor.EDIT)) {
                     createMenuItemNew();
                 }
                 if (isChange) createMenuItemChange();
@@ -437,7 +437,7 @@ public class BindingDirectoryEntryViewer {
         buttonUp.setEnabled(false);
         buttonDown.setEnabled(false);
 
-        if (mode.equals("*EDIT")) {
+        if (mode.equals(IEditor.EDIT)) {
 
             retrieveSelectedTableItems();
 
