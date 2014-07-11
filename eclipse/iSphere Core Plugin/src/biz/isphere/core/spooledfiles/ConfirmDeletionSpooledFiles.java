@@ -54,9 +54,9 @@ public class ConfirmDeletionSpooledFiles extends XDialog {
             } else if (columnIndex == 5) {
                 return spooledFile.getJobSystem();
             } else if (columnIndex == 6) {
-                return spooledFile.getCreationDate();
+                return spooledFile.getCreationDateFormated();
             } else if (columnIndex == 7) {
-                return spooledFile.getCreationTime();
+                return spooledFile.getCreationTimeFormated();
             }
             return "*UNKNOWN";
         }
