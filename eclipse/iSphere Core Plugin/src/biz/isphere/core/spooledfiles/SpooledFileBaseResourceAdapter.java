@@ -46,8 +46,7 @@ public class SpooledFileBaseResourceAdapter {
     }
 
     public String getAbsoluteName(SpooledFile splf) {
-        return "Spooled_File/" + splf.getFile() + "/" + splf.getFileNumber() + "/" + splf.getJobName() + "/" + splf.getJobNumber() + "/"
-            + splf.getJobUser() + "/" + splf.getJobSystem() + "/" + splf.getCreationDate() + "/" + splf.getCreationTime();
+        return splf.getAbsoluteName();
     }
 
     public String getType(SpooledFile splf) {
@@ -56,7 +55,7 @@ public class SpooledFileBaseResourceAdapter {
 
     public IPropertyDescriptor[] internalGetPropertyDescriptors() {
 
-        PropertyDescriptor[] ourPDs = new PropertyDescriptor[16];
+        PropertyDescriptor[] ourPDs = new PropertyDescriptor[17];
 
         ourPDs[0] = new PropertyDescriptor("File", Messages.File);
         ourPDs[0].setDescription(Messages.File);
@@ -106,16 +105,19 @@ public class SpooledFileBaseResourceAdapter {
         ourPDs[15] = new PropertyDescriptor("Current_page", Messages.Current_page);
         ourPDs[15].setDescription(Messages.Current_page);
 
+        ourPDs[16] = new PropertyDescriptor("Creation_timestamp", "Creation timestamp");
+        ourPDs[16].setDescription("Creation_timestamp");
+
         return ourPDs;
 
     }
 
     public Object internalGetPropertyValue(SpooledFile splf, Object propKey) {
         if ("File".equals(propKey)) return splf.getFile();
-        if ("File_number".equals(propKey)) return Integer.toString(splf.getFileNumber());
+        if ("File_number".equals(propKey)) return new Integer(splf.getFileNumber()); // Integer.toString(splf.getFileNumber());
         if ("Job_name".equals(propKey)) return splf.getJobName();
         if ("Job_user".equals(propKey)) return splf.getJobUser();
-        if ("Job_number".equals(propKey)) return splf.getJobNumber();
+        if ("Job_number".equals(propKey)) return new Integer(splf.getJobNumber()); // splf.getJobNumber();
         if ("Job_system".equals(propKey)) return splf.getJobSystem();
         if ("Creation_date".equals(propKey)) return splf.getCreationDateFormated();
         if ("Creation_time".equals(propKey)) return splf.getCreationTimeFormated();
@@ -124,9 +126,10 @@ public class SpooledFileBaseResourceAdapter {
         if ("Output_priority".equals(propKey)) return splf.getOutputPriority();
         if ("User_data".equals(propKey)) return splf.getUserData();
         if ("Form_type".equals(propKey)) return splf.getFormType();
-        if ("Copies".equals(propKey)) return Integer.toString(splf.getCopies());
-        if ("pages".equals(propKey)) return Integer.toString(splf.getPages());
-        if ("Current_page".equals(propKey)) return Integer.toString(splf.getCurrentPage());
+        if ("Copies".equals(propKey)) return new Integer(splf.getCopies()); // Integer.toString(splf.getCopies());
+        if ("pages".equals(propKey)) return new Integer(splf.getPages()); // Integer.toString(splf.getPages());
+        if ("Current_page".equals(propKey)) return new Integer(splf.getCurrentPage()); // Integer.toString(splf.getCurrentPage());
+        if ("Creation_timestamp".equals(propKey)) return splf.getCreationTimestampFormatted();
         return null;
     }
 

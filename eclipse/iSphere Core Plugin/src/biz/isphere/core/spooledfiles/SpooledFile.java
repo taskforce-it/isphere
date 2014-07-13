@@ -11,6 +11,11 @@ package biz.isphere.core.spooledfiles;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
@@ -59,7 +64,13 @@ public class SpooledFile {
 
     private String creationDate;
 
+    /* Lazy loaded and cached! Do not access directly */
+    private String creationDateFormatted;
+
     private String creationTime;
+
+    /* Lazy loaded and cached! Do not access directly */
+    private String creationTimeFormatted;
 
     private String status;
 
@@ -79,6 +90,8 @@ public class SpooledFile {
 
     private int currentPage;
 
+    private Date creationTimestamp;
+
     private Object data;
 
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
@@ -92,7 +105,9 @@ public class SpooledFile {
         jobNumber = "";
         jobSystem = "";
         creationDate = "";
+        creationDateFormatted = null;
         creationTime = "";
+        creationTimeFormatted = null;
         status = "";
         outputQueue = "";
         outputQueueLibrary = "";
@@ -102,6 +117,7 @@ public class SpooledFile {
         copies = 0;
         pages = 0;
         currentPage = 0;
+        creationTimestamp = null;
         data = null;
         toolboxSpooledFile = null;
     }
@@ -162,20 +178,36 @@ public class SpooledFile {
         this.jobSystem = jobSystem;
     }
 
-    public String getCreationDate() {
+    private String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    private void setCreationDate(Date creationDate) {
+        DateFormat formatter = new SimpleDateFormat("yyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(creationDate);
+        if (calendar.get(Calendar.YEAR) >= 2000) {
+            this.creationDate = "1" + formatter.format(creationDate);
+        } else {
+            this.creationDate = "0" + formatter.format(creationDate);
+        }
+        creationDateFormatted = null;
     }
 
-    public String getCreationTime() {
+    private String getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(String creationTime) {
-        this.creationTime = creationTime;
+    private void setCreationTime(Time creationTime) {
+        DateFormat formatter = new SimpleDateFormat("HHmmss");
+        this.creationTime = formatter.format(creationTime);
+        creationTimeFormatted = null;
+    }
+
+    public void setCreationTimestamp(Date date, Time time) {
+        this.creationTimestamp = new Date(date.getTime() + time.getTime());
+        setCreationDate(date);
+        setCreationTime(time);
     }
 
     public String getStatus() {
@@ -259,7 +291,8 @@ public class SpooledFile {
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
-        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, creationDate, creationTime);
+        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, getCreationDate(),
+            getCreationTime());
     }
 
     public String hold() {
@@ -435,16 +468,40 @@ public class SpooledFile {
         return outputQueueLibrary + "/" + outputQueue;
     }
 
+    /**
+     * Returns the formatted date the spooled file was created.
+     * <p>
+     * This property is lazy loaded because it is not used before the user
+     * selects "Show in Table" from the RSE tree.
+     * 
+     * @return date the spooled file was created
+     */
     public String getCreationDateFormated() {
-        String date = creationDate;
-        if (date.length() == 7) date = date.substring(5, 7) + "." + date.substring(3, 5) + "." + date.substring(1, 3);
-        return date;
+        if (creationDateFormatted == null) {
+            DateFormat formatter = new SimpleDateFormat("dd.MM.yy");
+            creationDateFormatted = formatter.format(creationTimestamp);
+        }
+        return creationDateFormatted;
     }
 
+    /**
+     * Returns the formatted time the spooled file was created.
+     * <p>
+     * This property is lazy loaded because it is not used before the user
+     * selects "Show in Table" from the RSE tree.
+     * 
+     * @return time the spooled file was created
+     */
     public String getCreationTimeFormated() {
-        String time = creationTime;
-        if (time.length() == 6) time = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
-        return time;
+        if (creationTimeFormatted == null) {
+            DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+            creationTimeFormatted = formatter.format(creationTimestamp);
+        }
+        return creationTimeFormatted;
+    }
+
+    public String getCreationTimestampFormatted() {
+        return getCreationDateFormated() + "   " + getCreationTimeFormated();
     }
 
     public String open(String format) {
@@ -713,7 +770,7 @@ public class SpooledFile {
     }
 
     public String getAbsoluteName() {
-        return file + "_" + fileNumber + "_" + jobName + "_" + jobUser + "_" + jobNumber + "_" + jobSystem + "_" + creationDate + "_" + creationTime;
+        return "Spooled_File/" + getAbsoluteNameInternal("/");
     }
 
     public String getTemporaryName(String format) {
@@ -727,8 +784,12 @@ public class SpooledFile {
             fileExtension = ".pdf";
         }
 
-        return "iSphere_Spooled_File_" + getAbsoluteName() + fileExtension;
+        return "iSphere_Spooled_File_" + getAbsoluteNameInternal("_") + fileExtension;
+    }
 
+    private String getAbsoluteNameInternal(String delimiter) {
+        return file + delimiter + fileNumber + delimiter + jobName + delimiter + jobUser + delimiter + jobNumber + delimiter + jobSystem + delimiter
+            + getCreationDate() + delimiter + getCreationTime();
     }
 
     public String save(Shell shell, String format) {

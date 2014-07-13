@@ -89,7 +89,7 @@ public class SpooledFileFactory {
                         ResultSet resultSet = null;
 
                         try {
-
+                            
                             preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + ISpherePlugin.getISphereLibrary()
                                 + _separator + "SPLF WHERE SFHDL = ? ORDER BY SFHDL, SFCNT", ResultSet.TYPE_SCROLL_INSENSITIVE,
                                 ResultSet.CONCUR_READ_ONLY);
@@ -106,8 +106,7 @@ public class SpooledFileFactory {
                                 _spooledFile.setJobUser(resultSet.getString("SFJOBUSR").trim());
                                 _spooledFile.setJobNumber(resultSet.getString("SFJOBNBR").trim());
                                 _spooledFile.setJobSystem(resultSet.getString("SFJOBSYS").trim());
-                                _spooledFile.setCreationDate(resultSet.getString("SFCRTDATEX").trim());
-                                _spooledFile.setCreationTime(resultSet.getString("SFCRTTIMEX").trim());
+                                _spooledFile.setCreationTimestamp(resultSet.getDate("SFCRTDATE"), resultSet.getTime("SFCRTTIME"));
                                 _spooledFile.setStatus(resultSet.getString("SFSTS").trim());
                                 _spooledFile.setOutputQueue(resultSet.getString("SFOUTQ").trim());
                                 _spooledFile.setOutputQueueLibrary(resultSet.getString("SFOUTQLIB").trim());
