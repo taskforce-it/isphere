@@ -301,6 +301,8 @@ public class Messages extends NLS {
     public static String Creation_date;
 
     public static String Creation_time;
+    
+    public static String Creation_timestamp;
 
     public static String Current_page;
 
