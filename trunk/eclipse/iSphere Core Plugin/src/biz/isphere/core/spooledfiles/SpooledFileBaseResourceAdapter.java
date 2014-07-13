@@ -105,7 +105,7 @@ public class SpooledFileBaseResourceAdapter {
         ourPDs[15] = new PropertyDescriptor("Current_page", Messages.Current_page);
         ourPDs[15].setDescription(Messages.Current_page);
 
-        ourPDs[16] = new PropertyDescriptor("Creation_timestamp", "Creation timestamp");
+        ourPDs[16] = new PropertyDescriptor("Creation_timestamp", Messages.Creation_timestamp);
         ourPDs[16].setDescription("Creation_timestamp");
 
         return ourPDs;
