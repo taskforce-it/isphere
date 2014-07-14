@@ -18,6 +18,8 @@ public class Messages extends NLS {
 
     public static String Activation_colon;
 
+    public static String Advanced_options;
+
     public static String Ancestor;
 
     public static String Archive_colon;
@@ -45,6 +47,8 @@ public class Messages extends NLS {
     public static String Cancel;
 
     public static String Case_sensitive_colon;
+
+    public static String Ccsid_colon;
 
     public static String Change;
 
@@ -180,6 +184,8 @@ public class Messages extends NLS {
 
     public static String Select_all;
 
+    public static String Severity_colon;
+    
     public static String Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
 
     public static String Statement;
@@ -193,6 +199,8 @@ public class Messages extends NLS {
     public static String The_value_in_field_Activation_is_not_valid;
 
     public static String The_value_in_field_Bytes_is_not_valid;
+    
+    public static String The_value_in_field_Ccsid_is_not_valid;
 
     public static String The_value_in_field_Decimal_positions_is_not_valid;
 
@@ -213,6 +221,8 @@ public class Messages extends NLS {
     public static String The_value_in_field_Type_is_not_valid;
 
     public static String The_value_in_field_iSphere_library_is_not_valid;
+    
+    public static String The_value_in_field_Severity_is_not_valid;
 
     public static String Three_way_compare;
 

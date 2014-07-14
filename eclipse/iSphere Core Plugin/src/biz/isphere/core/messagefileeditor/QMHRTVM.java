@@ -69,6 +69,8 @@ public class QMHRTVM {
                         if (helpText.equals("")) {
                             helpText = "*NONE";
                         }
+                        Integer severity = pcml.getIntValue("QMHRTVM.receiver.severity");
+                        Integer ccsid = pcml.getIntValue("QMHRTVM.receiver.ccsid");
 
                         ArrayList<FieldFormat> _fieldFormats = new ArrayList<FieldFormat>();
 
@@ -105,6 +107,8 @@ public class QMHRTVM {
                         messageDescription.setMessage(message);
                         messageDescription.setHelpText(helpText);
                         messageDescription.setFieldFormats(_fieldFormats);
+                        messageDescription.setSeverity(severity);
+                        messageDescription.setCcsid(ccsid);
 
                         messages.add(messageDescription);
 

@@ -13,16 +13,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
@@ -33,20 +39,29 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ErrorCompletingRequestException;
+import com.ibm.as400.access.ValidationListTranslatedData;
 
 public class MessageDescriptionDetail {
 
+    private static final String STATUS_BUTTON_HIDE_ADVANCED_OPTIONS = "status_buttonHideAdvancedOptions";
+    
     private AS400 as400;
     private int actionType;
     private MessageDescription _messageDescription;
     private Text textMessageId;
     private Text textMessage;
     private CCombo comboHelpText;
+    private Text textSeveriry;
+    private CCombo comboCcsid;
     private Validator validatorMessageId;
     private Validator validatorMessage;
     private Validator validatorHelpText;
+    private Validator validatorSeverity;
+    private Validator validatorCcsid;
     private StatusLineManager statusLineManager;
     private FieldFormatViewer _fieldFormatViewer;
+    private Composite compositeAdvancedOptions;
+    private Button buttonHideAdvancedOptions;
 
     public MessageDescriptionDetail(AS400 as400, int actionType, MessageDescription _messageDescription) {
         this.as400 = as400;
@@ -60,15 +75,15 @@ public class MessageDescriptionDetail {
     /**
      * @wbp.parser.entryPoint
      */
-    public void createContents(Composite parent) {
+    public void createContents(final Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NONE);
+        final Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
 
         // Action
 
         final Label labelAction = new Label(container, SWT.CENTER | SWT.BORDER);
-        labelAction.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        labelAction.setLayoutData(getLayoutData());
         labelAction.setText(DialogActionTypes.getText(actionType));
         labelAction.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
         if (actionType == DialogActionTypes.DELETE) {
@@ -80,7 +95,7 @@ public class MessageDescriptionDetail {
         // Header
 
         final Composite compositeHeader = new Composite(container, SWT.NONE);
-        compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        compositeHeader.setLayoutData(getLayoutData());
         final GridLayout gridLayoutCompositeHeader = new GridLayout();
         gridLayoutCompositeHeader.numColumns = 2;
         compositeHeader.setLayout(gridLayoutCompositeHeader);
@@ -93,7 +108,7 @@ public class MessageDescriptionDetail {
         final Text textConnection = new Text(compositeHeader, SWT.BORDER);
         textConnection.setText(_messageDescription.getConnection());
         textConnection.setEditable(false);
-        textConnection.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textConnection.setLayoutData(getLayoutData());
 
         // Library
 
@@ -103,7 +118,7 @@ public class MessageDescriptionDetail {
         final Text textLibrary = new Text(compositeHeader, SWT.BORDER);
         textLibrary.setText(_messageDescription.getLibrary());
         textLibrary.setEditable(false);
-        textLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textLibrary.setLayoutData(getLayoutData());
 
         // Message file
 
@@ -113,7 +128,7 @@ public class MessageDescriptionDetail {
         final Text textMessageFile = new Text(compositeHeader, SWT.BORDER);
         textMessageFile.setText(_messageDescription.getMessageFile());
         textMessageFile.setEditable(false);
-        textMessageFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textMessageFile.setLayoutData(getLayoutData());
 
         // Message-Id.
 
@@ -121,7 +136,7 @@ public class MessageDescriptionDetail {
         labelMessageId.setText(Messages.Message_Id_colon);
 
         textMessageId = new Text(compositeHeader, SWT.BORDER);
-        textMessageId.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textMessageId.setLayoutData(getLayoutData());
         textMessageId.setTextLimit(7);
         if (actionType == DialogActionTypes.CREATE) {
             textMessageId.setText("");
@@ -143,7 +158,7 @@ public class MessageDescriptionDetail {
         labelMessage.setText(Messages.Message_colon);
 
         textMessage = new Text(compositeHeader, SWT.BORDER);
-        textMessage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textMessage.setLayoutData(getLayoutData());
         textMessage.setTextLimit(132);
         if (actionType == DialogActionTypes.CREATE) {
             textMessage.setText("");
@@ -165,7 +180,7 @@ public class MessageDescriptionDetail {
         labelHelpText.setText(Messages.Helptext_colon);
 
         comboHelpText = new CCombo(compositeHeader, SWT.BORDER);
-        comboHelpText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        comboHelpText.setLayoutData(getLayoutData());
         comboHelpText.setTextLimit(3000);
         comboHelpText.add("*NONE");
         if (actionType == DialogActionTypes.CREATE) {
@@ -188,12 +203,71 @@ public class MessageDescriptionDetail {
         _fieldFormatViewer = new FieldFormatViewer(actionType, _messageDescription, textMessage, comboHelpText);
         _fieldFormatViewer.createContents(container);
 
+        // Advanced options
+
+        buttonHideAdvancedOptions = new Button(container, SWT.CHECK);
+        buttonHideAdvancedOptions.setText(Messages.Advanced_options);
+        buttonHideAdvancedOptions.setSelection(false);
+        buttonHideAdvancedOptions.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                setAdvancedOptionsEnablement();
+                buttonHideAdvancedOptions.getShell().pack();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                return;
+            }
+        });
+
+        compositeAdvancedOptions = new Composite(container, SWT.BORDER_SOLID);
+        compositeAdvancedOptions.setLayoutData(getLayoutData());
+        compositeAdvancedOptions.setLayout(new GridLayout(2, false));
+        setAdvancedOptionsEnablement();
+
+        GridData gridDataAdvancedOptions = getLayoutData();
+        compositeAdvancedOptions.setLayoutData(gridDataAdvancedOptions);
+
+        // Severity
+
+        final Label labelSeverity = new Label(compositeAdvancedOptions, SWT.NONE);
+        labelSeverity.setText(Messages.Severity_colon);
+
+        textSeveriry = new Text(compositeAdvancedOptions, SWT.BORDER);
+        textSeveriry.addVerifyListener(new NumericOnlyVerifyListener());
+        textSeveriry.setLayoutData(getLayoutData(60));
+        textSeveriry.setTextLimit(2);
+        textSeveriry.setText(_messageDescription.getSeverity().toString());
+
+        validatorSeverity = new Validator();
+        validatorSeverity.setType("*DEC");
+        validatorSeverity.setLength(textSeveriry.getTextLimit());
+        validatorSeverity.setPrecision(0);
+
+        // Ccsid
+
+        final Label labelCcsid = new Label(compositeAdvancedOptions, SWT.NONE);
+        labelCcsid.setText(Messages.Ccsid_colon);
+
+        comboCcsid = new CCombo(compositeAdvancedOptions, SWT.BORDER);
+        comboCcsid.setLayoutData(getLayoutData(60));
+        comboCcsid.setTextLimit(5);
+        comboCcsid.add(MessageDescription.CCSID_JOB);
+        comboCcsid.add(MessageDescription.CCSID_HEX);
+        comboCcsid.setText(_messageDescription.getCcsidAsString());
+
+        validatorCcsid = new Validator();
+        validatorCcsid.setType("*DEC");
+        validatorCcsid.setLength(textSeveriry.getTextLimit());
+        validatorCcsid.setPrecision(0);
+        validatorCcsid.addSpecialValue(MessageDescription.CCSID_JOB);
+        validatorCcsid.addSpecialValue(MessageDescription.CCSID_HEX);
+
         // Status line
 
         statusLineManager = new StatusLineManager();
         statusLineManager.createControl(container, SWT.NONE);
         Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        final GridData gridDataStatusLine = getLayoutData();
         statusLine.setLayoutData(gridDataStatusLine);
 
         // Set focus
@@ -203,6 +277,22 @@ public class MessageDescriptionDetail {
         } else {
             textMessageId.setFocus();
         }
+
+    }
+
+    private void setAdvancedOptionsEnablement() {
+        compositeAdvancedOptions.setVisible(buttonHideAdvancedOptions.getSelection());
+        ((GridData)compositeAdvancedOptions.getLayoutData()).exclude = !buttonHideAdvancedOptions.getSelection();
+    }
+
+    private GridData getLayoutData() {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false);
+    }
+
+    private GridData getLayoutData(int widthHint) {
+        GridData gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
+        gridData.widthHint = widthHint;
+        return gridData;
     }
 
     protected void setErrorMessage(String errorMessage) {
@@ -284,6 +374,23 @@ public class MessageDescriptionDetail {
                 return false;
             }
 
+            // The value in field 'Severity' is not valid.
+
+            if (!validatorSeverity.validate(textSeveriry.getText())) {
+                setErrorMessage(Messages.The_value_in_field_Severity_is_not_valid);
+                textSeveriry.setFocus();
+                return false;
+            }
+
+            // The value in field 'Ccsid' is not valid.
+
+            ValidationListTranslatedData validationList = new ValidationListTranslatedData();
+            if (!validatorCcsid.validate(comboCcsid.getText())) {
+                setErrorMessage(Messages.The_value_in_field_Ccsid_is_not_valid);
+                comboCcsid.setFocus();
+                return false;
+            }
+
         }
 
         // Befehl erstellen
@@ -324,12 +431,23 @@ public class MessageDescriptionDetail {
             parameterFMT = buffer.toString();
         }
 
+        String parameterSEV = "SEV(" + getNumericString(textSeveriry.getText(), "0") + ")";
+
+        String parameterCCSID;
+        if (comboCcsid.getText().startsWith("*")) {
+            parameterCCSID = "CCSID('" + getStringWithQuotes(comboCcsid.getText()) + "')";
+        } else {
+            parameterCCSID = "CCSID(" + comboCcsid.getText() + ")";
+        }
+
         String command = "";
 
         if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY) {
-            command = "ADDMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT;
+            command = "ADDMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT + " "
+                + parameterSEV + " " + parameterCCSID;
         } else if (actionType == DialogActionTypes.CHANGE) {
-            command = "CHGMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT;
+            command = "CHGMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT + " "
+                + parameterSEV + " " + parameterCCSID;
         } else if (actionType == DialogActionTypes.DELETE) {
             command = "RMVMSGD " + parameterMSGF + " " + parameterMSGID;
         }
@@ -370,6 +488,13 @@ public class MessageDescriptionDetail {
         return true;
     }
 
+    private String getNumericString(String numericValue, String defaultValue) {
+        if (StringHelper.isNullOrEmpty(numericValue)) {
+            return defaultValue;
+        }
+        return numericValue;
+    }
+
     private String getStringWithQuotes(String stringToBeQuoted) {
         StringBuffer stringWithQuotes = new StringBuffer("");
         for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
@@ -403,8 +528,19 @@ public class MessageDescriptionDetail {
             _messageDescription.setMessage(_description[0].getMessage());
             _messageDescription.setHelpText(_description[0].getHelpText());
             _messageDescription.setFieldFormats(_description[0].getFieldFormats());
+            _messageDescription.setSeverity(_description[0].getSeverity());
+            _messageDescription.setCcsid(_description[0].getCcsid());
         }
 
+    }
+
+    public void saveSettings(IDialogSettings dialogBoundsSettings) {
+        dialogBoundsSettings.put(STATUS_BUTTON_HIDE_ADVANCED_OPTIONS, buttonHideAdvancedOptions.getSelection());
+    }
+
+    public void loadSettings(IDialogSettings dialogBoundsSettings) {
+        buttonHideAdvancedOptions.setSelection(dialogBoundsSettings.getBoolean(STATUS_BUTTON_HIDE_ADVANCED_OPTIONS));
+        setAdvancedOptionsEnablement();
     }
 
 }

@@ -34,10 +34,16 @@ public class MessageDescriptionDetailDialog extends XDialog {
     public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
         super(parentShell);
         this.as400 = as400;
-        this.actionType = actionType;
+        this.actionType = actionType;                                                                                   
         this._messageDescription = _messageDescription;
     }
-
+    
+    @Override
+    public void create() {
+        super.create();
+        getShell().pack();
+    }
+    
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
@@ -45,6 +51,7 @@ public class MessageDescriptionDetailDialog extends XDialog {
 
         _messageDescriptionDetail = new MessageDescriptionDetail(as400, actionType, _messageDescription);
         _messageDescriptionDetail.createContents(container);
+        _messageDescriptionDetail.loadSettings(getDialogBoundsSettings());
 
         return container;
     }
@@ -67,6 +74,12 @@ public class MessageDescriptionDetailDialog extends XDialog {
         super.configureShell(newShell);
         newShell.setText(Messages.Message_description);
     }
+    
+    @Override
+    public boolean close() {
+        _messageDescriptionDetail.saveSettings(getDialogBoundsSettings());
+        return super.close();
+    }
 
     /**
      * Overridden to make this dialog resizable.
@@ -88,7 +101,7 @@ public class MessageDescriptionDetailDialog extends XDialog {
     }
 
     /**
-     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * Overridden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
     @Override
