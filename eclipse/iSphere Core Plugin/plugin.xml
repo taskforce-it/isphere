@@ -101,7 +101,7 @@
             adaptable="false"
             class="biz.isphere.core.decorators.RSEHostObjectDecorator"
             id="biz.isphere.core.decorators.RSEHostObjectDecorator"
-            label="iSphere - Display Object and Source Descriptions"
+            label="%iSphere_Display_Object_and_Source_Descriptions"
             lightweight="true"
             state="false">
          <enablement>
