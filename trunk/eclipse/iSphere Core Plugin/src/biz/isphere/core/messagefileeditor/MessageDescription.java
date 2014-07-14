@@ -12,12 +12,17 @@ import java.util.ArrayList;
 
 public class MessageDescription {
 
+    public static final String CCSID_JOB = "*JOB";
+    public static final String CCSID_HEX = "*HEX";
+    
     private String connection;
     private String library;
     private String messageFile;
     private String messageId;
     private String message;
     private String helpText;
+    private Integer severity;
+    private Integer ccsid;
     private ArrayList fieldFormats;
 
     public MessageDescription() {
@@ -27,6 +32,7 @@ public class MessageDescription {
         messageId = "";
         message = "";
         helpText = "";
+        severity = new Integer("0");
         fieldFormats = new ArrayList();
     }
 
@@ -76,6 +82,42 @@ public class MessageDescription {
 
     public void setHelpText(String helpText) {
         this.helpText = helpText;
+    }
+
+    public Integer getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(Integer severity) {
+        this.severity = severity;
+    }
+
+    public Integer getCcsid() {
+        return ccsid;
+    }
+
+    public String getCcsidAsString() {
+        if (ccsid.intValue() == 65535) {
+            return CCSID_HEX;
+        } else if (ccsid == -1) {
+            return CCSID_JOB;
+        } else {
+            return ccsid.toString();
+        }
+    }
+
+    public void setCcsid(String ccsid) {
+        if (CCSID_HEX.equals(ccsid)) {
+            this.ccsid = new Integer(65535);
+        } else if (CCSID_JOB.equals(ccsid)) {
+            this.ccsid = new Integer(-1);
+        } else {
+            throw new IllegalArgumentException("Value " + ccsid + " not allowed.");
+        }
+    }
+
+    public void setCcsid(Integer ccsid) {
+        this.ccsid = ccsid;
     }
 
     public ArrayList getFieldFormats() {

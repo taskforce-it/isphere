@@ -526,6 +526,8 @@ public class MessageDescriptionViewer {
                 _messageDescription.setMessageId(((MessageDescription)selectedItems[idx]).getMessageId());
                 _messageDescription.setMessage(((MessageDescription)selectedItems[idx]).getMessage());
                 _messageDescription.setHelpText(((MessageDescription)selectedItems[idx]).getHelpText());
+                _messageDescription.setSeverity(((MessageDescription)selectedItems[idx]).getSeverity()); 
+                _messageDescription.setCcsid(((MessageDescription)selectedItems[idx]).getCcsid()); 
 
                 ArrayList<?> fieldFormats1 = ((MessageDescription)selectedItems[idx]).getFieldFormats();
                 ArrayList<FieldFormat> fieldFormats2 = new ArrayList<FieldFormat>();

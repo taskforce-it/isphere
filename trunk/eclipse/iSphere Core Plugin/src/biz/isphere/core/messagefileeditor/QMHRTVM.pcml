@@ -3,11 +3,14 @@
   <struct name="receiver">
     <data name="bytesReturned"             type="int"    length="4"        usage="output"/>
     <data name="bytesAvailable"            type="int"    length="4"        usage="output"/>
-    <data                                  type="char"   length="18"       usage="output"/>
+    <data name="severity"                  type="int"    length="4"        usage="output"/>
+    <data                                  type="char"   length="14"       usage="output"/>
     <data name="messageId"                 type="char"   length="7"        usage="output"/>
     <data                                  type="char"   length="3"        usage="output"/>
     <data name="numberOfSVF"               type="int"    length="4"        usage="output"/>
-    <data                                  type="char"   length="24"       usage="output"/>
+    <data                                  type="char"   length="8"        usage="output"/>
+    <data name="ccsid"                     type="int"    length="4"        usage="output"/>
+    <data                                  type="char"   length="12"       usage="output"/>
     <data name="offsetOfMessage"           type="int"    length="4"        usage="output"/>
     <data name="lengthOfMessageReturned"   type="int"    length="4"        usage="output"/>
     <data name="lengthOfMessageAvailable"  type="int"    length="4"        usage="output"/>
