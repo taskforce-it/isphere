@@ -7,7 +7,8 @@
  *
  *   Here are the steps to create an iSphere update site:
  *
- *     - On the AS/400 change version number in COPYRIGHT.RPGLE.
+ *     - On the PC change version number in COPYRIGHT.RPGLE.
+ *     - On the PC push changes of project 'iSphere' to the AS/400.
  *     - On the AS/400 compile and run BUILD.CLLE.
  *     - On the PC update minimum server version number in iSpherePlugin.
  *
