@@ -71,8 +71,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String CASE_SENSITIVE = "caseSensitive";
 
     private ISearchPageContainer container;
-    // private SystemHistoryCombo searchStringCombo;
-    // private Button caseButton;
     private IBMiConnectionCombo connectionCombo;
     private QSYSMemberPrompt sourceFilePrompt;
     private Button allColumnsButton;
