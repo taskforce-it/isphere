@@ -30,20 +30,24 @@
       // Procedure prototyp for procedure 'W001002'
 
      dW001002          PR
-     d                               10S 0 Const                                --> Handle
-     d                               40A   Const                                --> String
-     d                                3S 0 Const                                --> From column
-     d                                3S 0 Const                                --> To column
-     d                               10A   Const                                --> Case
+     d handle                        10S 0 Const                                --> Handle
+     d showRecords                     N   Const                                --> Show records
+     d matchAll                        N   Const                                --> Match all finds
+     d numArguments                  10I 0 Const                                --> Number of args.
+     d arguments                           Const Likeds(searchArgument_t)       --> Search argument
+     d                                     Options(*varsize)
+     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
 
       // Procedure interface for procedure 'W001002'
 
      dW001002          PI
      d LPHDL                         10S 0 Const                                --> Handle
-     d LPSTG                         40A   Const                                --> String
-     d LPFCOL                         3S 0 Const                                --> From column
-     d LPTCOL                         3S 0 Const                                --> To column
-     d LPCASE                        10A   Const                                --> Case
+     d LSSHWRCDS                       N   Const                                --> Show records
+     d LSMTCALL                        N   Const                                --> Match all finds
+     d LISIZE                        10I 0 Const                                --> Number of args.
+     d LSARGS                              Const Likeds(searchArgument_t)       --> String
+     d                                     Options(*varsize)
+     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -57,11 +61,11 @@
 
        // Call service program
        FNDSTR_search(
-        LPHDL :  // --> Handle
-        LPSTG :  // --> String
-        LPFCOL : // --> From column
-        LPTCOL : // --> To column
-        LPCASE   // --> Case
+        LPHDL :     // --> Handle
+        LSSHWRCDS : // --> Show records
+        LSMTCALL :  // --> Match all finds
+        LISIZE :    // --> Number of args.
+        LSARGS      // --> Search arguments
        );
 
        // Leave procedure

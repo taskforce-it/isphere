@@ -185,7 +185,7 @@ public class Messages extends NLS {
     public static String Select_all;
 
     public static String Severity_colon;
-    
+
     public static String Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
 
     public static String Statement;
@@ -199,7 +199,7 @@ public class Messages extends NLS {
     public static String The_value_in_field_Activation_is_not_valid;
 
     public static String The_value_in_field_Bytes_is_not_valid;
-    
+
     public static String The_value_in_field_Ccsid_is_not_valid;
 
     public static String The_value_in_field_Decimal_positions_is_not_valid;
@@ -221,7 +221,7 @@ public class Messages extends NLS {
     public static String The_value_in_field_Type_is_not_valid;
 
     public static String The_value_in_field_iSphere_library_is_not_valid;
-    
+
     public static String The_value_in_field_Severity_is_not_valid;
 
     public static String Three_way_compare;
@@ -311,7 +311,7 @@ public class Messages extends NLS {
     public static String Creation_date;
 
     public static String Creation_time;
-    
+
     public static String Creation_timestamp;
 
     public static String Current_page;
@@ -441,6 +441,12 @@ public class Messages extends NLS {
     public static String The_filter_could_not_be_created;
 
     public static String Could_not_create_stream_file_for_spooled_file_on_host;
+
+    public static String Contains;
+
+    public static String Contains_not;
+
+    public static String Case_sensitive;
 
     static {
         // initialize resource bundle

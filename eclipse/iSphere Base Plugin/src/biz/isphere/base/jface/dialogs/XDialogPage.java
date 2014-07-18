@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 
 public abstract class XDialogPage extends DialogPage {
@@ -44,6 +45,18 @@ public abstract class XDialogPage extends DialogPage {
     protected boolean loadBooleanValue(String aKey, boolean aDefault) {
         String tValue = getDialogSettings().get(aKey);
         return BooleanHelper.tryParseBoolean(tValue, aDefault);
+    }
+
+    /**
+     * Retrieves the the value that is assigned to a given key.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @param aDefault - default value, that is returned if then key does not
+     *        yet exist
+     * @return the value that is assigned to the key
+     */
+    protected int loadIntValue(String aKey, int aDefault) {
+        return IntHelper.tryParseInt(getDialogSettings().get(aKey), aDefault);
     }
 
     /**

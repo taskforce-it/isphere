@@ -1,4 +1,6 @@
       //*------------------------------------------------------------------------------------------*
+      //* Find String in Source File                                                               *
+      //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
       //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
@@ -98,6 +100,29 @@
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
      dNULL             C                   -1
+
+      // Local procedures
+
+     d removeMember...
+     d                 PR                  Extproc('removeMember')
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+
+     d addMember...
+     d                 PR                  Extproc('addMember')
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+     d  i_stmt                        6S 0 Const
+     d  i_srcdta                    228A   Const
+
+     d updateStatus...
+     d                 PR                  Extproc('updateStatus')
+     d  i_handle                     10S 0 Const
+     d  i_status                     10I 0 Const
 
       //*==========================================================================================*
       //* Get Handle                                                                               *
@@ -374,10 +399,12 @@
      dFNDSTR_search...
      d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
-     d LPSTG                         40A   Const                                --> String
-     d LPFCOL                         3S 0 Const                                --> From column
-     d LPTCOL                         3S 0 Const                                --> To column
-     d LPCASE                        10A   Const                                --> Case
+     d LSSHWRCDS                       N   Const                                --> Show records
+     d LSMTCALL                        N   Const                                --> Match all finds
+     d LISIZE                        10I 0 Const                                --> Number of args.
+     d LSARGS                              Const Likeds(searchArgument_t)       --> String
+     d                                     Options(*varsize)
+     d                                     dim(FNDSTR_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -395,11 +422,29 @@
      dLILINE           S            228A                                        Line
      dLISTG            S             40A                                        String
      dLICNT            S              6S 0                                      Counter
+     dLIRCDS           S             10I 0                                      Counter for records
      dLICNL            S             10A                                        Cancel
+     dLIIDX            S             10I 0                                      Search arg. index
+
+      // This array has a 1:1 relation to
+      // the LSARGS input array.
+     d matchesResult   DS                  Qualified
+     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     Inz
+     d  mustBeFound                    N
+     d  hasBeenFound                   N
+
+     d recordFound     S               N
+     d memberFound     S               N
 
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+       If (LISIZE <= 0);
+         updateStatus(LPHDL: -1);
+         Return;
+       EndIf;
 
        // Initialize counter
        LICNT = *Zero;
@@ -452,13 +497,7 @@
          If %Rem(LICNT : 100) = *Zero;
 
            // Update file 'Status'
-           Exec SQL
-              UPDATE
-                 FNDSTRS
-              SET
-                 XSCNT = :LICNT
-              WHERE
-                 XSHDL = :LPHDL;
+           updateStatus(LPHDL: LICNT);
 
            // Initialize 'Cancel'
            LICNL = *Blanks;
@@ -523,32 +562,6 @@
              LIRLNG = %Size(SRCDTA);
            EndIf;
 
-           // Get start and length
-           Select;
-           When (LPFCOL = NULL);
-             LISTR = 1;
-           When (LPFCOL <= LIRLNG);
-             LISTR = LPFCOL;
-           Other;
-             LISTR = LIRLNG;
-           EndSl;
-
-           Select;
-           When (LPTCOL = NULL);
-             LILNG = LIRLNG;
-           When LPTCOL > LIRLNG;
-             LILNG = LIRLNG - LPFCOL + 1;
-           Other;
-             LILNG = LPTCOL - LPFCOL + 1;
-           EndSl;
-
-         EndIf;
-
-         // Not the right attributes
-         If Not (LITYP1 = 'P' And
-               LITYP2 = 'S' And
-               LIRLNG <> *Zero);
-           Iter;
          EndIf;
 
          // Open member
@@ -561,8 +574,25 @@
            Iter;
          EndIf;
 
+         // Set "matches to find / not to find"
+         For LIIDX = 1 to LISIZE;
+           Select;
+           When (LSARGS(LIIDX).operator = FNDSTR_OPERATOR_CONTAINS);
+             matchesResult(LIIDX).mustBeFound = *ON;
+           When (LSARGS(LIIDX).operator = FNDSTR_OPERATOR_CONTAINS_NOT);
+             matchesResult(LIIDX).mustBeFound = *OFF;
+           EndSl;
+           matchesResult(LIIDX).hasBeenFound = *OFF;
+         EndFor;
+
          // Initialize statement
          LISTMT = *Zero;
+
+         // Initialize record counter
+         LIRCDS = *Zero;
+
+         // Initialize "member found" indicator
+         memberFound = *OFF;
 
          DoW GILoop;
 
@@ -577,61 +607,113 @@
            // Increase statement
            LISTMT = LISTMT + 1;
 
-           // Initialize string
-           LISTG = LPSTG;
+           // Check search arguments
+           recordFound = *OFF;
+           For LIIDX = 1 to LISIZE;
 
-           // Initialize line
-           LILINE = %SubSt(SRCDTA : LISTR : LILNG);
+             // Get start and length
+             Select;
+             When (LSARGS(LIIDX).fromColumn = NULL);
+               LISTR = 1;
+             When (LSARGS(LIIDX).fromColumn <= LIRLNG);
+               LISTR = LSARGS(LIIDX).fromColumn;
+             Other;
+               LISTR = LIRLNG;
+             EndSl;
 
-           // Ignore upper/lower case
-           If LPCASE = '*IGNORE';
-             LISTG = %XLate(GILO:GIUP:LISTG);
-             LILINE = %XLate(GILO:GIUP:LILINE);
-           EndIf;
+             Select;
+             When (LSARGS(LIIDX).toColumn = NULL);
+               LILNG = LIRLNG;
+             When LSARGS(LIIDX).toColumn > LIRLNG;
+               LILNG = LIRLNG - LSARGS(LIIDX).fromColumn + 1;
+             Other;
+               LILNG = LSARGS(LIIDX).toColumn - LSARGS(LIIDX).fromColumn + 1;
+             EndSl;
 
-           // No match
-           If %Scan(%TrimR(LISTG) : LILINE) = *Zero;
+             // Initialize line
+             LILINE = %SubSt(SRCDTA : LISTR : LILNG);
+
+             // Initialize string
+             LISTG = LSARGS(LIIDX).string;
+
+             // Ignore upper/lower case
+             If LSARGS(LIIDX).case = '*IGNORE';
+               LISTG = %XLate(GILO:GIUP:LISTG);
+               LILINE = %XLate(GILO:GIUP:LILINE);
+             EndIf;
+
+             // Match!
+             If %Scan(%TrimR(LISTG) : LILINE) > *Zero;
+               matchesResult(LIIDX).hasBeenFound = *ON;
+               if (matchesResult(LIIDX).mustBeFound);
+                 recordFound = *ON;
+                 memberFound = *ON; // For now. Maybe changed below.
+               Else;
+                 // For "contains not" crtierias,
+                 // records are not logged.
+               EndIf;
+             EndIf;
+
+           EndFor;
+
+           // Check record found
+           // (record matches at least 1 criterum)
+           If (not recordFound);
              Iter;
            EndIf;
 
-           // Write file 'Output'
-           Exec SQL
-              INSERT
-                 INTO
-              FNDSTRO
-                 (
-                  XOHDL,
-                  XOLIB,
-                  XOFILE,
-                  XOMBR,
-                  XOSTMT,
-                  XOLINE
-                 )
-              VALUES
-                 (
-                  :LPHDL,
-                  :XILIB,
-                  :XIFILE,
-                  :XIMBR,
-                  :LISTMT,
-                  :SRCDTA
-                 );
+           // Count output records
+           LIRCDS += 1;
+
+           // Check whether or not all records
+           // must be added to the output file
+           If (not LSSHWRCDS and LIRCDS > 1);
+             Iter;
+           EndIf;
+
+           addMember(LPHDL: XIFILE: XILIB: XIMBR: LISTMT: SRCDTA);
 
          EndDo;
 
          // Close member
          Close QSRCF;
 
+
+         // Evaluate final result
+         For LIIDX = 1 to LISIZE;
+           If ((matchesResult(LIIDX).mustBeFound and
+                matchesResult(LIIDX).hasBeenFound) or
+               (not matchesResult(LIIDX).mustBeFound and
+                not matchesResult(LIIDX).hasBeenFound));
+             // That is just fine for "match all find conditions"
+           Else;
+             If (LSMTCALL);
+               memberFound = *OFF;
+               Leave;
+             EndIf;
+           EndIf;
+         EndFor;
+
+         // Set final result
+         If (LIRCDS > 0);
+           If (not memberFound);
+             // Remove statement records in case
+             // of a "must not contain" condition has not been met.
+             removeMember(LPHDL: XIFILE: XILIB: XIMBR);
+           EndIf;
+         Else;
+           If (memberFound);
+             // Ensure at least a "member record" in case
+             // we only had "must not contain" condition.
+             addMember(LPHDL: XIFILE: XILIB: XIMBR: 0:
+                       %trim(XILIB) + '/' + %trim(XIFILE) + '.' + %trim(XIMBR));
+           EndIf;
+         EndIf;
+
        EndDo;
 
        // Update file 'Status'
-       Exec SQL
-          UPDATE
-             FNDSTRS
-          SET
-             XSCNT = -1
-          WHERE
-             XSHDL = :LPHDL;
+       updateStatus(LPHDL: -1);
 
        // Close cursor
        Exec SQL
@@ -691,4 +773,103 @@
        //*------------------------------------------------------------------------------------------
 
      pFNDSTR_clear...
+     p                 E
+
+      //*==========================================================================================*
+      //* Removes a member from the output file.                                                   *
+      //*==========================================================================================*
+
+     p removeMember...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       // Clear file 'Output'
+       Exec SQL
+          DELETE FROM
+             FNDSTRO
+          WHERE
+             XOHDL = :i_handle and
+             XOLIB = :i_lib and
+             XOFILE = :i_file and
+             XOMBR = :i_mbr;
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Adds a member from the output file.                                                      *
+      //*==========================================================================================*
+
+     p addMember...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+     d  i_stmt                        6S 0 Const
+     d  i_srcdta                    228A   Const
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           // Write file 'Output'
+           Exec SQL
+              INSERT
+                 INTO
+              FNDSTRO
+                 (
+                  XOHDL,
+                  XOLIB,
+                  XOFILE,
+                  XOMBR,
+                  XOSTMT,
+                  XOLINE
+                 )
+              VALUES
+                 (
+                  :i_handle,
+                  :i_lib,
+                  :i_file,
+                  :i_mbr,
+                  :i_stmt,
+                  :i_srcdta
+                 );
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Updates the status field of the result table.                                            *
+      //*==========================================================================================*
+
+     p updateStatus...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_status                     10I 0 Const
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           // Update file 'Status'
+           Exec SQL
+              UPDATE
+                 FNDSTRS
+              SET
+                 XSCNT = :i_status
+              WHERE
+                 XSHDL = :i_handle;
+
+      /End-Free
      p                 E
