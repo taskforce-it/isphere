@@ -118,10 +118,10 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tMatchGroupLayout.marginHeight = 5;
         tMatchGroup.setLayout(tMatchGroupLayout);
 
-        rdoMatchAll = new Button(aMainPanel, SWT.RADIO);
+        rdoMatchAll = new Button(tMatchGroup, SWT.RADIO);
         rdoMatchAll.setText(Messages.MatchAllConditions);
 
-        rdoMatchAny = new Button(aMainPanel, SWT.RADIO);
+        rdoMatchAny = new Button(tMatchGroup, SWT.RADIO);
         rdoMatchAny.setText(Messages.MatchAnyCondition);
 
         Composite scrollableContainer = new Composite(aMainPanel, SWT.NONE);
