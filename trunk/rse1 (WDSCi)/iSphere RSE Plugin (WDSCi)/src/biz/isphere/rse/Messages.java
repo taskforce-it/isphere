@@ -49,6 +49,8 @@ public class Messages extends NLS {
     
     public static String Specify_whether_case_should_be_considered_during_search;
     
+    public static String Specify_whether_all_matching_records_are_returned;
+    
     public static String Connection;
     
     public static String Target;
@@ -77,7 +79,19 @@ public class Messages extends NLS {
     
     public static String Specify_end_column_max_132;
     
+    public static String Source_File;
+
     public static String Source_Member; 
+
+    public static String Options;
+    
+    public static String ShowRecords;
+
+    public static String MatchAllConditions;
+
+    public static String MatchAnyCondition;
+
+    public static String No_objects_found_that_match_the_selection_criteria;
 
     static {
         // initialize resource bundle

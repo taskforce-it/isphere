@@ -372,7 +372,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
 
             if (searchElements.isEmpty()) {
-                MessageDialog.openInformation(getShell(), "Information", "No objects found that match the selection criteria.");
+                MessageDialog.openInformation(getShell(), "Information", Messages.No_objects_found_that_match_the_selection_criteria);
                 return false;
             }
 
