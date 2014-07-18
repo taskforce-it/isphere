@@ -213,9 +213,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void rearrangeSearchArgumentEditors() {
-        Composite tDummy = new Composite(getShell(), SWT.NONE);
         for (SearchArgumentEditor tEditor : searchArguments) {
-            tEditor.setParent(tDummy);
+            tEditor.setParent(scrollable);
         }
         for (SearchArgumentEditor tEditor : searchArguments) {
             tEditor.setParent(searchStringGroup);
