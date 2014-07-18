@@ -119,10 +119,10 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tMatchGroupLayout.marginHeight = 5;
         tMatchGroup.setLayout(tMatchGroupLayout);
 
-        rdoMatchAll = new Button(aMainPanel, SWT.RADIO);
+        rdoMatchAll = new Button(tMatchGroup, SWT.RADIO);
         rdoMatchAll.setText(Messages.MatchAllConditions);
 
-        rdoMatchAny = new Button(aMainPanel, SWT.RADIO);
+        rdoMatchAny = new Button(tMatchGroup, SWT.RADIO);
         rdoMatchAny.setText(Messages.MatchAnyCondition);
 
         Composite scrollableContainer = new Composite(aMainPanel, SWT.NONE);
@@ -149,15 +149,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void addSearchArgumentEditorAndLayout() {
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         addSearchArgumentEditor(null);
+        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         searchStringGroup.layout(true);
     }
 
     private void addSearchArgumentEditorAndLayout(Button aButton) {
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         SearchArgumentEditor tEditor = addSearchArgumentEditor(aButton);
+        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         searchStringGroup.layout(true);
+        
         scrollable.setOrigin(tEditor.getBounds().x, tEditor.getBounds().y - tEditor.getBounds().height - 5);
         tEditor.setFocus();
     }
@@ -212,8 +213,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void rearrangeSearchArgumentEditors() {
+        Composite tDummy = new Composite(getShell(), SWT.NONE);
         for (SearchArgumentEditor tEditor : searchArguments) {
-            tEditor.setParent(scrollable);
+            tEditor.setParent(tDummy);
         }
         for (SearchArgumentEditor tEditor : searchArguments) {
             tEditor.setParent(searchStringGroup);
