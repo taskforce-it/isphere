@@ -371,7 +371,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         for (int i = 0; i < searchArguments.size(); i++) {
             storeValue(COMPARE_CONDITION + "_" + i, searchArguments.get(i).getCompareCondition());
             storeValue(SEARCH_STRING + "_" + i, searchArguments.get(i).getSearchString());
-            storeValue(CASE_SENSITIVE + "_" + i, searchArguments.get(i).getCase());
+            storeValue(CASE_SENSITIVE + "_" + i, searchArguments.get(i).isCaseSensitive());
         }
 
         storeValue(SHOW_RECORDS, isShowRecords());
@@ -473,27 +473,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
-     * Returns the status of the "Case sensitive" check box.
-     * 
-     * @return status of the "Case sensitive" check box
-     */
-    private String getCase() {
-        if (isCaseSensitive()) {
-            return SearchArgument.CASE_MATCH;
-        }
-        return SearchArgument.CASE_IGNORE;
-    }
-
-    /**
-     * Returns the status of the "Case sensitive" check box.
-     * 
-     * @return status of the "Case sensitive" check box
-     */
-    private boolean isCaseSensitive() {
-        return searchArguments.get(0).getCase();
-    }
-
-    /**
      * Returns the status of the "show records" check box.
      * 
      * @return status of the "show records" check box
@@ -567,7 +546,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowRecords());
             for (SearchArgumentEditor editor : searchArguments) {
                 if (!StringHelper.isNullOrEmpty(editor.getSearchString())) {
-                    searchOptions.addSearchArgument(new SearchArgument(editor.getSearchString(), startColumn, endColumn, getCase(), editor
+                    searchOptions.addSearchArgument(new SearchArgument(editor.getSearchString(), startColumn, endColumn, editor.isCaseSensitive(), editor
                         .getCompareCondition()));
                 }
             }
