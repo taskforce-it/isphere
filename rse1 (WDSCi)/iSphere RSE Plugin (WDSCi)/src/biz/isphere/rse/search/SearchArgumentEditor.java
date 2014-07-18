@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.search;
+package biz.isphere.rse.search;
 
-import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -19,6 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.search.SearchArgument;
+
+import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 
 public class SearchArgumentEditor {
 
