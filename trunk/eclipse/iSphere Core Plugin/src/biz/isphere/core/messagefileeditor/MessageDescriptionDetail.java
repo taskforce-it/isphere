@@ -219,7 +219,7 @@ public class MessageDescriptionDetail {
             }
         });
 
-        compositeAdvancedOptions = new Composite(container, SWT.BORDER_SOLID);
+        compositeAdvancedOptions = new Composite(container, SWT.BORDER);
         compositeAdvancedOptions.setLayoutData(getLayoutData());
         compositeAdvancedOptions.setLayout(new GridLayout(2, false));
         setAdvancedOptionsEnablement();
