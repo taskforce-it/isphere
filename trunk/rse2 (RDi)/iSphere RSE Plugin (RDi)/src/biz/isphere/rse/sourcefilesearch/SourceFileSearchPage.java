@@ -148,15 +148,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void addSearchArgumentEditorAndLayout() {
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         addSearchArgumentEditor(null);
+        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         searchStringGroup.layout(true);
     }
 
     private void addSearchArgumentEditorAndLayout(Button aButton) {
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         SearchArgumentEditor tEditor = addSearchArgumentEditor(aButton);
+        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         searchStringGroup.layout(true);
+        
         scrollable.setOrigin(tEditor.getBounds().x, tEditor.getBounds().y - tEditor.getBounds().height - 5);
         tEditor.setFocus();
     }
