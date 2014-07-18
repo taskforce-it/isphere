@@ -20,19 +20,30 @@ public class SearchArgument {
     private String string;
     private int fromColumn;
     private int toColumn;
-    private String caseSensitive;
+    private String caseSensitive; // TODO: change to boolean -> SNDSTR.RPGLE
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive) {
         this(aString, aFromColumn, aToColumn, aCaseSensitive, CONTAINS);
     }
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive, int anOperator) {
-        checkCase(aCaseSensitive);
         operator = anOperator;
         string = aString;
         fromColumn = aFromColumn;
         toColumn = aToColumn;
         caseSensitive = aCaseSensitive;
+    }
+
+    public SearchArgument(String aString, int aFromColumn, int aToColumn, boolean anIsCaseSensitive, int anOperator) {
+        operator = anOperator;
+        string = aString;
+        fromColumn = aFromColumn;
+        toColumn = aToColumn;
+        if (anIsCaseSensitive) {
+            caseSensitive = SearchArgument.CASE_MATCH;
+        } else {
+            caseSensitive = SearchArgument.CASE_IGNORE;
+        }
     }
 
     public int getOperator() {
@@ -61,12 +72,6 @@ public class SearchArgument {
 
     public static String getCaseIgnore() {
         return CASE_IGNORE;
-    }
-
-    private void checkCase(String aCaseSensitive) {
-        if (!CASE_IGNORE.equals(aCaseSensitive) && !CASE_MATCH.equals(aCaseSensitive)) {
-            throw new IllegalArgumentException("Invalid value: " + aCaseSensitive);
-        }
     }
 
 }
