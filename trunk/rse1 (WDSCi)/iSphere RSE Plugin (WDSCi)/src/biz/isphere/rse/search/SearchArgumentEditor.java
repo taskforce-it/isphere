@@ -132,12 +132,12 @@ public class SearchArgumentEditor {
         txtSearchString.setText(aString);
     }
 
-    public boolean getCase() {
+    public boolean isCaseSensitive() {
         return btnCaseSensitive.getSelection();
     }
 
-    public void setCase(boolean aCase) {
-        btnCaseSensitive.setSelection(aCase);
+    public void setCase(boolean anIsCaseSensitive) {
+        btnCaseSensitive.setSelection(anIsCaseSensitive);
     }
 
     public Rectangle getBounds() {
