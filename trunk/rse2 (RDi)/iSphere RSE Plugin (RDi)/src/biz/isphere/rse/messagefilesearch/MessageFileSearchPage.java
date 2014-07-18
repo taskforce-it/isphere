@@ -370,7 +370,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
 
             if (searchElements.isEmpty()) {
-                MessageDialog.openInformation(getShell(), "Information", "No objects found that match the selection criteria.");
+                MessageDialog.openInformation(getShell(), "Information", Messages.No_objects_found_that_match_the_selection_criteria);
                 return false;
             }
 
@@ -392,8 +392,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getHost().getName(),
-                tConnection.getJDBCConnection(null, false), getSearchString(), startColumn, endColumn, getCaseAsString(), new ArrayList<SearchElement>(
-                    searchElements.values()), postRun);
+                tConnection.getJDBCConnection(null, false), getSearchString(), startColumn, endColumn, getCaseAsString(),
+                new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);

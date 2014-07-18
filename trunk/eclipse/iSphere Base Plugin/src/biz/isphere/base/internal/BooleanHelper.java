@@ -50,6 +50,9 @@ public final class BooleanHelper {
      *         value.
      */
     public static Boolean tryParseBoolean(String aSomeText, boolean aDefaultValue) {
+        if (aSomeText == null) {
+            return aDefaultValue;
+        }
         Boolean tBoolean = tryParseBoolean(aSomeText);
         if (tBoolean == null) {
             return new Boolean(aDefaultValue);
