@@ -160,6 +160,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         
         scrollable.setOrigin(tEditor.getBounds().x, tEditor.getBounds().y - tEditor.getBounds().height - 5);
         tEditor.setFocus();
+        
+        setAddButtonEnablement();
     }
 
     private SearchArgumentEditor addSearchArgumentEditor(Button aButton) {
@@ -199,6 +201,18 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             searchArguments.get(searchArguments.size() - 1).setFocus();
         } else {
             searchArguments.get(anEditor).setFocus();
+        }
+        
+        setAddButtonEnablement();
+    }
+
+    private void setAddButtonEnablement() {
+        boolean isEnabled = false;
+        if (searchArguments.size() < SearchOptions.FNDSTR_ARGUMENTS_SIZE) {
+            isEnabled = true;
+        }
+        for (SearchArgumentEditor tEditor : searchArguments) {
+            tEditor.setAddButtonEnablement(isEnabled);
         }
     }
 

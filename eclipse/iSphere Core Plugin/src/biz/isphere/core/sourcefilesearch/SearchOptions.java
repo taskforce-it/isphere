@@ -15,6 +15,13 @@ import biz.isphere.core.search.SearchArgument;
 
 public class SearchOptions {
 
+    /**
+     * Size of the 'search arguments' array of FNDSTR.
+     * <p>
+     * The value specified here must match QCPYSRC.FNDSTR.FNDSTR_ARGUMENTS_SIZE.
+     */
+    public static int FNDSTR_ARGUMENTS_SIZE = 16;
+
     private boolean matchAll;
     private boolean showRecords;
     private List<SearchArgument> searchArguments;
