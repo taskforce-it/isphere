@@ -17,8 +17,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,6 +44,7 @@ import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.search.SearchArgumentEditor;
+import biz.isphere.rse.search.SearchArgumentsListEditor;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
@@ -79,11 +78,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private Text startColumnText;
     private Text endColumnText;
     private Button showRecordsButton;
-    private List<SearchArgumentEditor> searchArguments;
-    private Composite searchStringGroup;
-    private ScrolledComposite scrollable;
-    private Button rdoMatchAll;
-    private Button rdoMatchAny;
+    private SearchArgumentsListEditor searchArgumentsListEditor;
 
     public SourceFileSearchPage() {
         super();
@@ -113,126 +108,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-
-        Composite tMatchGroup = new Composite(aMainPanel, SWT.NONE);
-        FillLayout tMatchGroupLayout = new FillLayout(SWT.HORIZONTAL);
-        tMatchGroupLayout.marginHeight = 5;
-        tMatchGroup.setLayout(tMatchGroupLayout);
-
-        rdoMatchAll = new Button(tMatchGroup, SWT.RADIO);
-        rdoMatchAll.setText(Messages.MatchAllConditions);
-
-        rdoMatchAny = new Button(tMatchGroup, SWT.RADIO);
-        rdoMatchAny.setText(Messages.MatchAnyCondition);
-
-        Composite scrollableContainer = new Composite(aMainPanel, SWT.NONE);
-        scrollableContainer.setLayout(new GridLayout(1, false));
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.heightHint = 135;
-        gd.grabExcessHorizontalSpace = true;
-        gd.grabExcessVerticalSpace = true;
-        scrollableContainer.setLayoutData(gd);
-
-        scrollable = new ScrolledComposite(scrollableContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        scrollable.setLayout(new GridLayout(1, false));
-        scrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
-        scrollable.setExpandHorizontal(true);
-        scrollable.setExpandVertical(true);
-
-        searchStringGroup = new Composite(scrollable, SWT.NONE);
-        searchStringGroup.setLayout(new GridLayout(1, false));
-        searchStringGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-        searchStringGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        scrollable.setContent(searchStringGroup);
-
-        searchArguments = new ArrayList<SearchArgumentEditor>();
-    }
-
-    private void addSearchArgumentEditorAndLayout() {
-        addSearchArgumentEditor(null);
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        searchStringGroup.layout(true);
-    }
-
-    private void addSearchArgumentEditorAndLayout(Button aButton) {
-        SearchArgumentEditor tEditor = addSearchArgumentEditor(aButton);
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        searchStringGroup.layout(true);
-        
-        scrollable.setOrigin(tEditor.getBounds().x, tEditor.getBounds().y - tEditor.getBounds().height - 5);
-        tEditor.setFocus();
-        
-        setAddButtonEnablement();
-    }
-
-    private SearchArgumentEditor addSearchArgumentEditor(Button aButton) {
-        SearchArgumentEditor tEditor = new SearchArgumentEditor();
-        tEditor.createContents(searchStringGroup);
-        tEditor.addSearchStringListener(this);
-        tEditor.addButtonListener(this);
-
-        if (aButton == null) {
-            searchArguments.add(tEditor);
-        } else {
-            searchArguments.add(findSearchArgumentEditor(aButton) + 1, tEditor);
-        }
-
-        rearrangeSearchArgumentEditors();
-
-        return tEditor;
-    }
-
-    private void removeSearchArgumentEditor(Button aButton) {
-        if (searchArguments.size() == 1) {
-            return;
-        }
-        removeSearchArgumentEditor(findSearchArgumentEditor(aButton));
-    }
-
-    private void removeSearchArgumentEditor(int anEditor) {
-        if (anEditor < 0) {
-            return;
-        }
-        searchArguments.get(anEditor).dispose();
-        searchArguments.remove(anEditor);
-        scrollable.setMinSize(searchStringGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        searchStringGroup.layout(true);
-
-        if (anEditor > searchArguments.size() - 1) {
-            searchArguments.get(searchArguments.size() - 1).setFocus();
-        } else {
-            searchArguments.get(anEditor).setFocus();
-        }
-        
-        setAddButtonEnablement();
-    }
-
-    private void setAddButtonEnablement() {
-        boolean isEnabled = false;
-        if (searchArguments.size() < SearchOptions.FNDSTR_ARGUMENTS_SIZE) {
-            isEnabled = true;
-        }
-        for (SearchArgumentEditor tEditor : searchArguments) {
-            tEditor.setAddButtonEnablement(isEnabled);
-        }
-    }
-
-    private int findSearchArgumentEditor(Button aButton) {
-        for (int i = 0; i < searchArguments.size(); i++) {
-            if (searchArguments.get(i).hasButton(aButton)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private void rearrangeSearchArgumentEditors() {
-        for (SearchArgumentEditor tEditor : searchArguments) {
-            tEditor.setParent(scrollable);
-        }
-        for (SearchArgumentEditor tEditor : searchArguments) {
-            tEditor.setParent(searchStringGroup);
-        }
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.FNDSTR_ARGUMENTS_SIZE);
+        searchArgumentsListEditor.setListener(this);
+        searchArgumentsListEditor.createControl(aMainPanel);
     }
 
     private void createConnectionGroup(Composite aMainPanel) {
@@ -337,8 +215,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Add listeners to verify user input.
      */
     private void addListeners() {
-        rdoMatchAll.addListener(SWT.Selection, this);
-        rdoMatchAny.addListener(SWT.Selection, this);
         allColumnsButton.addListener(SWT.Selection, this);
         betweenColumnsButton.addListener(SWT.Selection, this);
         startColumnText.addListener(SWT.Modify, this);
@@ -351,22 +227,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Restores the screen values of the last search search.
      */
     private void loadScreenValues() {
-        rdoMatchAll.setSelection(loadBooleanValue(MATCH_ALL, true));
-        rdoMatchAny.setSelection(!rdoMatchAll.getSelection());
-
-        int numConditions = loadIntValue(NUM_CONDITIONS, 1);
-        for (int i = 0; i < numConditions; i++) {
-            try {
-                addSearchArgumentEditorAndLayout();
-                searchArguments.get(i)
-                    .setCompareCondition(IntHelper.tryParseInt(loadValue(COMPARE_CONDITION + "_" + i, ""), SearchArgument.CONTAINS));
-                searchArguments.get(i).setSearchString(loadValue(SEARCH_STRING + "_" + i, "Enter search string here"));
-                searchArguments.get(i).setCase(loadBooleanValue(CASE_SENSITIVE + "_" + i, false));
-            } catch (Throwable e) {
-                // ignore all errors
-            }
-        }
-        searchArguments.get(0).setFocus();
+        searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
         showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, false));
         sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
@@ -380,14 +241,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Stores the screen values that are preserved for the next search.
      */
     private void storeScreenValues() {
-        storeValue(MATCH_ALL, rdoMatchAll.getSelection());
-
-        storeValue(NUM_CONDITIONS, searchArguments.size());
-        for (int i = 0; i < searchArguments.size(); i++) {
-            storeValue(COMPARE_CONDITION + "_" + i, searchArguments.get(i).getCompareCondition());
-            storeValue(SEARCH_STRING + "_" + i, searchArguments.get(i).getSearchString());
-            storeValue(CASE_SENSITIVE + "_" + i, searchArguments.get(i).isCaseSensitive());
-        }
+        searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
         storeValue(SHOW_RECORDS, isShowRecords());
         storeValue(LIBRARY, getSourceFileLibrary());
@@ -433,12 +287,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private String getCombinedSearchString() {
         StringBuilder tBuffer = new StringBuilder();
-        for (SearchArgumentEditor tArgument : searchArguments) {
-            if (tArgument.getSearchString().trim().length() > 0) {
+        for (SearchArgument tSearchArgument : searchArgumentsListEditor.getSearchArguments(0, 0)) {
+            if (tSearchArgument.getString().trim().length() > 0) {
                 if (tBuffer.length() > 0) {
                     tBuffer.append("/");
                 }
-                tBuffer.append(tArgument.getSearchString());
+                tBuffer.append(tSearchArgument.getString());
             }
         }
         return tBuffer.toString();
@@ -502,7 +356,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * @return status of the "is match all" radio button
      */
     private boolean isMatchAll() {
-        return rdoMatchAll.getSelection();
+        return searchArgumentsListEditor.getIsMatchAll();
     }
 
     /**
@@ -559,10 +413,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             }
 
             SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowRecords());
-            for (SearchArgumentEditor editor : searchArguments) {
-                if (!StringHelper.isNullOrEmpty(editor.getSearchString())) {
-                    searchOptions.addSearchArgument(new SearchArgument(editor.getSearchString(), startColumn, endColumn, editor.isCaseSensitive(), editor
-                        .getCompareCondition()));
+            for (SearchArgument searchArgument : searchArgumentsListEditor.getSearchArguments(startColumn, endColumn)) {
+                if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
+                    searchOptions.addSearchArgument(searchArgument);
                 }
             }
 
@@ -613,11 +466,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         boolean result = true;
 
-        if ((widget == rdoMatchAll) && (type == SWT.Selection)) {
-            processMatchButtonsSelected();
-        } else if ((widget == rdoMatchAny) && (type == SWT.Selection)) {
-            processMatchButtonsSelected();
-        } else if ((widget == allColumnsButton) && (type == SWT.Selection)) {
+        if ((widget == allColumnsButton) && (type == SWT.Selection)) {
             processAllColumnsButtonSelected();
         } else if ((widget == betweenColumnsButton) && (type == SWT.Selection)) {
             processBetweenColumnsButtonSelected();
@@ -627,10 +476,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             result = processEndColumnTextModified();
         } else if (widget.getData() == SearchArgumentEditor.TEXT_SEARCH_STRING && (type == SWT.Modify)) {
             result = !isSearchStringEmpty();
-        } else if (widget.getData() == SearchArgumentEditor.BUTTON_ADD && (type == SWT.Selection)) {
-            addSearchArgumentEditorAndLayout((Button)widget);
-        } else if (widget.getData() == SearchArgumentEditor.BUTTON_REMOVE && (type == SWT.Selection)) {
-            removeSearchArgumentEditor((Button)widget);
         }
 
         if (!result) {
@@ -638,18 +483,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         } else {
             container.setPerformActionEnabled(checkAll());
         }
-    }
-
-    /**
-     * Executed when the "Match all" or "Match any" radio button has been
-     * selected.
-     */
-    private void processMatchButtonsSelected() {
-        // if (rdoMatchAll.getSelection()) {
-        // rdoMatchAny.setSelection(false);
-        // } else if (rdoMatchAny.getSelection()) {
-        // rdoMatchAll.setSelection(false);
-        // }
     }
 
     /**
@@ -709,8 +542,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private boolean checkAll() {
 
-        for (SearchArgumentEditor tEditor : searchArguments) {
-            if (StringHelper.isNullOrEmpty(tEditor.getSearchString())) {
+        int startColumn = getNumericFieldContent(startColumnText);
+        int endColumn = getNumericFieldContent(endColumnText);
+        List<SearchArgument> tSearchArguments = searchArgumentsListEditor.getSearchArguments(startColumn, endColumn);
+        for (SearchArgument tSearchArgument : tSearchArguments) {
+            if (StringHelper.isNullOrEmpty(tSearchArgument.getString())) {
                 return false;
             }
         }
