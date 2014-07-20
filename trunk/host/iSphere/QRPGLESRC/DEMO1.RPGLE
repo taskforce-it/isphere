@@ -42,6 +42,8 @@
 
      dGIHDL            S             10S 0                                      Handle
      dGIELE            S              6S 0                                      Elements
+     dsearchArguments  DS                  likeds(searchArgument_t) inz
+     d                                     dim(FNDSTR_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -69,12 +71,18 @@
        );
 
        // Do search
+       searchArguments(1).operator = FNDSTR_OPERATOR_CONTAINS;
+       searchArguments(1).string = 'MYSTRG';
+       searchArguments(1).fromColumn = 1;
+       searchArguments(1).toColumn = 228;
+       searchArguments(1).case = '*IGNORE';
+
        FNDSTR_search(
-        GIHDL :    // --> Handle
-        'MYSTRG' : // --> String
-        1 :        // --> From column
-        228 :      // --> To column
-        '*IGNORE'  // --> Case (*IGNORE / *MATCH)
+        GIHDL :         // --> Handle
+        *ON :           // --> Show all records
+        *ON :           // --> Match all search arguments
+        1 :             // --> Number of search arguments
+        searchArguments // --> search arguments
        );
 
        // The search results reside in file FNDSTRO. They have to be read and processed
