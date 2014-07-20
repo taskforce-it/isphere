@@ -142,4 +142,8 @@ public class SearchArgumentEditor {
     public Rectangle getBounds() {
         return container.getBounds();
     }
+
+    public void setAddButtonEnablement(boolean anIsEnabled) {
+        btnAdd.setEnabled(anIsEnabled);
+    }
 }
