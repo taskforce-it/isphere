@@ -108,7 +108,7 @@ public abstract class XDialogPage extends DialogPage {
      *         and/or size, or null if the dialog's bounds should never be
      *         stored.
      */
-    private IDialogSettings getDialogSettings() {
+    protected IDialogSettings getDialogSettings() {
         IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
         if (workbenchSettings == null) {
             throw new IllegalArgumentException("Parameter 'workbenchSettings' must not be null.");
