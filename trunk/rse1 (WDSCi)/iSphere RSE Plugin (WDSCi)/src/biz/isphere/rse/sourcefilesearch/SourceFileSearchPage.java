@@ -52,6 +52,7 @@ import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.widgets.IISeriesFilePromptTypes;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
+import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.model.SystemConnection;
 
@@ -376,12 +377,23 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject(getShell()))) {
                 return false;
             }
+
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            Object[] tObjects = tConnection.listMembers(getShell(), getSourceFileLibrary(), getSourceFile(), getSourceMember());
-            for (Object tObject : tObjects) {
-                if (tObject instanceof ISeriesMember) {
-                    addElement(searchElements, ((ISeriesMember)tObject).getDataElement());
+            try {
+                Object[] tMembers = tConnection.listMembers(getShell(), getSourceFileLibrary(), getSourceFile(), getSourceMember());
+                if (tMembers != null) {
+                    for (Object tMember : tMembers) {
+                        if (tMember instanceof ISeriesMember) {
+                            if ("SRC".equals(((ISeriesMember)tMember).getSubType())) {
+                                addElement(searchElements, ((ISeriesMember)tMember).getDataElement());
+                                ;
+                            }
+                        }
+                    }
                 }
+            } catch (SystemMessageException e) {
+                // Library or file not found.
+                // Ignore errors.
             }
 
             if (searchElements.isEmpty()) {
