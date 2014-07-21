@@ -22,6 +22,7 @@
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
@@ -404,7 +405,7 @@
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
-     d                                     dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -429,7 +430,7 @@
       // This array has a 1:1 relation to
       // the LSARGS input array.
      d matchesResult   DS                  Qualified
-     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
      d                                     Inz
      d  mustBeFound                    N
      d  hasBeenFound                   N
@@ -577,9 +578,9 @@
          // Set "matches to find / not to find"
          For LIIDX = 1 to LISIZE;
            Select;
-           When (LSARGS(LIIDX).operator = FNDSTR_OPERATOR_CONTAINS);
+           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS);
              matchesResult(LIIDX).mustBeFound = *ON;
-           When (LSARGS(LIIDX).operator = FNDSTR_OPERATOR_CONTAINS_NOT);
+           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT);
              matchesResult(LIIDX).mustBeFound = *OFF;
            EndSl;
            matchesResult(LIIDX).hasBeenFound = *OFF;
@@ -637,7 +638,7 @@
              LISTG = LSARGS(LIIDX).string;
 
              // Ignore upper/lower case
-             If LSARGS(LIIDX).case = '*IGNORE';
+             If LSARGS(LIIDX).case = SRCHOPTS_CASE_IGNORE;
                LISTG = %XLate(GILO:GIUP:LISTG);
                LILINE = %XLate(GILO:GIUP:LILINE);
              EndIf;

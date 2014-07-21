@@ -43,7 +43,7 @@
      dGIHDL            S             10S 0                                      Handle
      dGIELE            S              6S 0                                      Elements
      dsearchArguments  DS                  likeds(searchArgument_t) inz
-     d                                     dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -71,11 +71,11 @@
        );
 
        // Do search
-       searchArguments(1).operator = FNDSTR_OPERATOR_CONTAINS;
+       searchArguments(1).operator = SRCHOPTS_OPERATOR_CONTAINS;
        searchArguments(1).string = 'MYSTRG';
        searchArguments(1).fromColumn = 1;
        searchArguments(1).toColumn = 228;
-       searchArguments(1).case = '*IGNORE';
+       searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
 
        FNDSTR_search(
         GIHDL :         // --> Handle

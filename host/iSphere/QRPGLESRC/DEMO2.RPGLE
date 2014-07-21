@@ -18,8 +18,8 @@
       //*       >>COMPILE<<                                                                        *
       //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
       //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
-      //*         >>PARM<<  DBGVIEW(*LIST);                                                        *
-      //*         >>PARM<<  OPTIMIZE(*NONE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
@@ -43,7 +43,7 @@
      dGIHDL            S             10S 0                                      Handle
      dGIELE            S              6S 0                                      Elements
      dsearchArguments  DS                  likeds(searchArgument_t) inz
-     d                                     dim(XFNDSTR_ARGUMENTS_SIZE)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -65,22 +65,23 @@
        );
 
        // Do search
-       searchArguments(1).operator = XFNDSTR_OPERATOR_CONTAINS;
+       searchArguments(1).operator = SRCHOPTS_OPERATOR_CONTAINS;
        searchArguments(1).string = 'allowed';
        searchArguments(1).fromColumn = 1;
        searchArguments(1).toColumn = 132;
-       searchArguments(1).case = '*IGNORE';
+       searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
 
-       searchArguments(2).operator = XFNDSTR_OPERATOR_CONTAINS;
+       searchArguments(2).operator = SRCHOPTS_OPERATOR_CONTAINS;
        searchArguments(2).string = 'mode';
        searchArguments(2).fromColumn = 1;
        searchArguments(2).toColumn = 132;
-       searchArguments(2).case = '*IGNORE';
+       searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
 
        XFNDSTR_search(
         GIHDL :    // --> Handle
         *ON :           // --> Show all records
         *OFF :          // --> Match all search arguments
+        *OFF :          // --> Include second level text
         2 :             // --> Number of search arguments
         searchArguments // --> search arguments
        );

@@ -36,7 +36,7 @@
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)
-     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       // Procedure interface for procedure 'W001002'
 
@@ -47,7 +47,7 @@
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
-     d                                     Dim(FNDSTR_ARGUMENTS_SIZE)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
