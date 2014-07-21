@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
@@ -59,7 +60,6 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private static final String END_COLUMN = "endColumn";
     private static final String MESSAGE_FILE = "messageFile";
     private static final String LIBRARY = "library";
-    private static final String SEARCH_STRING = "searchString";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
 
     private ISearchPageContainer container;
@@ -337,12 +337,20 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject())) {
                 return false;
             }
+
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            Object[] tObjects = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
-            for (Object tObject : tObjects) {
-                if (tObject instanceof QSYSRemoteMessageFile) {
-                    addElement(searchElements, (QSYSRemoteMessageFile)tObject);
+            Object[] tMsgFiles = null;
+            try {
+                tMsgFiles = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
+                if (tMsgFiles != null) {
+                    for (Object tMsgFile : tMsgFiles) {
+                        if (tMsgFile instanceof QSYSRemoteMessageFile) {
+                            addElement(searchElements, (QSYSRemoteMessageFile)tMsgFile);
+                        }
+                    }
                 }
+            } catch (SystemMessageException e) {
+                tMsgFiles = new Object[] {};
             }
 
             if (searchElements.isEmpty()) {
