@@ -19,6 +19,7 @@ import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.sourcefilesearch.SearchOptions;
 import biz.isphere.rse.Messages;
 
 public class SearchArgumentsListEditor implements Listener {
@@ -223,7 +224,7 @@ public class SearchArgumentsListEditor implements Listener {
             try {
                 addSearchArgumentEditorAndLayout();
                 searchArgumentEditors.get(i).setCompareCondition(
-                    IntHelper.tryParseInt(loadValue(aDialogSettings, COMPARE_CONDITION + "_" + i, ""), SearchArgument.CONTAINS));
+                    IntHelper.tryParseInt(loadValue(aDialogSettings, COMPARE_CONDITION + "_" + i, ""), SearchOptions.CONTAINS));
                 searchArgumentEditors.get(i).setSearchString(loadValue(aDialogSettings, SEARCH_STRING + "_" + i, "Enter search string here"));
                 searchArgumentEditors.get(i).setCase(loadBooleanValue(aDialogSettings, CASE_SENSITIVE + "_" + i, false));
             } catch (Throwable e) {
