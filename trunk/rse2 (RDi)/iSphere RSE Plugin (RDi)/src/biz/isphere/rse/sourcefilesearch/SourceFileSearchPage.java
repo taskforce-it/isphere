@@ -223,7 +223,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private void loadScreenValues() {
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
-        showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, false));
+        showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
         sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
         sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
