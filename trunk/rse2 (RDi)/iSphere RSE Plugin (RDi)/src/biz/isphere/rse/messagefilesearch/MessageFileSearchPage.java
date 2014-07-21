@@ -61,6 +61,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private static final String MESSAGE_FILE = "messageFile";
     private static final String LIBRARY = "library";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
+    private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
+    
+    /**
+     * The MAX_END_COLUMN value specified here must match the maximum message
+     * text length in XFNDSTR (see: LITXT).
+     */
+    private static int MAX_END_COLUMN = 132;
 
     private ISearchPageContainer container;
     private IBMiConnectionCombo connectionCombo;
@@ -70,6 +77,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private Text startColumnText;
     private Text endColumnText;
     private SearchArgumentsListEditor searchArgumentsListEditor;
+    private Button includeSecondLevelTextButton;
 
     public MessageFileSearchPage() {
         super();
@@ -88,6 +96,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         createConnectionGroup(tMainPanel);
         createMessageFileGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
+        createOptionsGroup(tMainPanel);
 
         addListeners();
 
@@ -98,7 +107,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.FNDSTR_ARGUMENTS_SIZE);
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE);
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(aMainPanel);
     }
@@ -162,6 +171,26 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         endColumnText.setToolTipText(Messages.Specify_end_column_max_132);
     }
 
+    private void createOptionsGroup(Composite aMainPanel) {
+        Group tOptionsGroup = createGroup(aMainPanel, Messages.Options);
+        GridLayout tOptionsGroupLayout = new GridLayout(1, false);
+        tOptionsGroupLayout.marginWidth = 5;
+        tOptionsGroupLayout.marginHeight = 5;
+        tOptionsGroup.setLayout(tOptionsGroupLayout);
+        GridData tGridData = new GridData(GridData.FILL_VERTICAL);
+        tGridData.horizontalAlignment = GridData.FILL;
+        tGridData.grabExcessHorizontalSpace = true;
+        tGridData.widthHint = 250;
+        tOptionsGroup.setLayoutData(tGridData);
+
+        includeSecondLevelTextButton = new Button(tOptionsGroup, SWT.CHECK);
+        includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
+        includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
+        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData.grabExcessHorizontalSpace = false;
+        includeSecondLevelTextButton.setLayoutData(tGridData);
+    }
+
     private Group createGroup(Composite aParent, String aText) {
         Group tGroup = new Group(aParent, SWT.SHADOW_ETCHED_IN);
         tGroup.setText(aText);
@@ -198,6 +227,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void loadScreenValues() {
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
+        includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
         messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, ""));
 
@@ -210,6 +240,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void storeScreenValues() {
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
+        storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
         storeValue(LIBRARY, getMessageFileLibrary());
         storeValue(MESSAGE_FILE, getMessageFile());
 
@@ -229,7 +260,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             processBetweenColumnsButtonSelected();
         }
         startColumnText.setText(loadValue(START_COLUMN, "1"));
-        endColumnText.setText(loadValue(END_COLUMN, "132"));
+        endColumnText.setText(loadValue(END_COLUMN, "" + MAX_END_COLUMN));
     }
 
     /**
@@ -315,6 +346,15 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
+     * Returns the status of the "include second level text" check box.
+     * 
+     * @return status of the "include second level text" check box
+     */
+    private boolean isIncludeSecondLevelText() {
+        return includeSecondLevelTextButton.getSelection();
+    }
+
+    /**
      * Overridden to let {@link XDialogPage} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
@@ -339,9 +379,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
 
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            Object[] tMsgFiles = null;
             try {
-                tMsgFiles = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
+                Object[] tMsgFiles = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
                 if (tMsgFiles != null) {
                     for (Object tMsgFile : tMsgFiles) {
                         if (tMsgFile instanceof QSYSRemoteMessageFile) {
@@ -350,7 +389,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                     }
                 }
             } catch (SystemMessageException e) {
-                tMsgFiles = new Object[] {};
+                // Library or file not found.
+                // Ignore errors.
             }
 
             if (searchElements.isEmpty()) {
@@ -381,6 +421,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                     searchOptions.addSearchArgument(searchArgument);
                 }
             }
+            searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getHost().getName(),
                 tConnection.getJDBCConnection(null, false), searchOptions, new ArrayList<SearchElement>(searchElements.values()), postRun);
@@ -407,13 +448,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * @param aMessageFile - message file that is added to the list
      */
     private void addElement(HashMap<String, SearchElement> aSearchElements, IQSYSResource aMessageFile) {
-        String key = aMessageFile.getLibrary() + "-" + aMessageFile.getName();
-        if (!aSearchElements.containsKey(key)) {
-            SearchElement aSearchElement = new SearchElement();
-            aSearchElement.setLibrary(aMessageFile.getLibrary());
-            aSearchElement.setMessageFile(aMessageFile.getName());
-            aSearchElement.setDescription(aMessageFile.getDescription());
-            aSearchElements.put(key, aSearchElement);
+        String tKey = aMessageFile.getLibrary() + "-" + aMessageFile.getName();
+        if (!aSearchElements.containsKey(tKey)) {
+            SearchElement tSearchElement = new SearchElement();
+            tSearchElement.setLibrary(aMessageFile.getLibrary());
+            tSearchElement.setMessageFile(aMessageFile.getName());
+            tSearchElement.setDescription(aMessageFile.getDescription());
+            aSearchElements.put(tKey, tSearchElement);
         }
     }
 
@@ -470,7 +511,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {
-            endColumnText.setText("132");
+            endColumnText.setText("" + MAX_END_COLUMN);
         }
     }
 
@@ -527,7 +568,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             if (queryNumericFieldContent(endColumnText) != 0) {
                 return false;
             }
-            if (getNumericFieldContent(endColumnText) <= 132) {
+            if (getNumericFieldContent(endColumnText) <= MAX_END_COLUMN) {
                 return true;
             }
         }
