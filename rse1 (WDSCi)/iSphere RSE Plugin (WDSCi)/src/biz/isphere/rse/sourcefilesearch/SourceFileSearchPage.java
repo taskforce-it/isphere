@@ -468,7 +468,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             result = processStartColumnTextModified();
         } else if ((widget == endColumnText) && (type == SWT.Modify)) {
             result = processEndColumnTextModified();
-        } else if (widget.getData() == SearchArgumentEditor.TEXT_SEARCH_STRING && (type == SWT.Modify)) {
+        } else if (!widget.isDisposed() && widget.getData() == SearchArgumentEditor.TEXT_SEARCH_STRING && (type == SWT.Modify)) {
             result = !isSearchStringEmpty();
         }
 
