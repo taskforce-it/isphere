@@ -46,7 +46,7 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.arguments.case", indices, searchArgument.getCaseSensitive());
             }
 
-            if (_searchOptions.isShowRecords()) {
+            if (_searchOptions.isShowAllItems()) {
                 pcml.setValue("XFNDSTR_search.showRecords", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.showRecords", "0");
@@ -56,6 +56,12 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.matchAll", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.matchAll", "0");
+            }
+
+            if (_searchOptions.isOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT)) {
+                pcml.setValue("XFNDSTR_search.secLvlText", "1");
+            } else {
+                pcml.setValue("XFNDSTR_search.secLvlText", "0");
             }
 
             boolean rc = pcml.callProgram("XFNDSTR_search");

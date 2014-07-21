@@ -30,6 +30,7 @@ public class SearchExec {
 
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
+    public static final String INCLUDE_SECOND_LEVEL_TEXT = "INCLUDE_SECOND_LEVEL_TEXT";
 
     private class Search extends Job {
 
