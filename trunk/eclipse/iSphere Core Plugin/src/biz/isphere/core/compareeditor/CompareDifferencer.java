@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
+import biz.isphere.base.internal.StringHelper;
+
 public class CompareDifferencer extends Differencer {
 
     CompareEditorConfiguration config = null;
@@ -24,7 +26,6 @@ public class CompareDifferencer extends Differencer {
     public CompareDifferencer(CompareEditorConfiguration aCompareEditorConfiguration) {
         config = aCompareEditorConfiguration;
     }
-
     @Override
     protected boolean contentsEqual(Object input1, Object input2) {
 
@@ -62,6 +63,18 @@ public class CompareDifferencer extends Differencer {
                 if (s1 == null && s2 == null) return true;
                 if (s1 == null && s2 != null) break;
                 if (s2 == null && s1 != null) break;
+
+                /*
+                 * We need to trim the input strings, because the LPEX editor
+                 * may also strips trailing spaces on save depending on it
+                 * configuration properties. (LPEX Editor -> Save -> Trim
+                 * trailing blanks) Hence two actually identical lines may be
+                 * shown as different, when one input source has been saved on
+                 * the PC (and trimmed) whereas the other input source has just
+                 * been downloaded from the i (not trimmed).
+                 */
+                s1 = StringHelper.trimR(s1);
+                s2 = StringHelper.trimR(s2);
                 if (!s1.equals(s2)) break;
 
             }
