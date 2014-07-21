@@ -65,6 +65,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String LIBRARY = "library";
     private static final String SHOW_RECORDS = "showRecords";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
+
+    /**
+     * The MAX_END_COLUMN value specified here must match the maximum line
+     * length in FNDSTR (see: LILINE).
+     */
+    private static int MAX_END_COLUMN = 228;
+
     private ISearchPageContainer container;
     private ISeriesConnectionCombo connectionCombo;
     private ISeriesMemberPrompt sourceFilePrompt;
@@ -72,7 +79,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private Button betweenColumnsButton;
     private Text startColumnText;
     private Text endColumnText;
-    private Button showRecordsButton;
+    private Button showAllRecordsButton;
     private SearchArgumentsListEditor searchArgumentsListEditor;
 
     public SourceFileSearchPage() {
@@ -103,7 +110,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.FNDSTR_ARGUMENTS_SIZE);
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE);
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(aMainPanel);
     }
@@ -165,7 +172,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tGridData.widthHint = 30;
         endColumnText.setLayoutData(tGridData);
         endColumnText.setTextLimit(3);
-        endColumnText.setToolTipText(Messages.Specify_end_column_max_132);
+        endColumnText.setToolTipText(Messages.Specify_end_column_max_228);
     }
 
     private void createOptionsGroup(Composite aMainPanel) {
@@ -180,12 +187,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tGridData.widthHint = 250;
         tOptionsGroup.setLayoutData(tGridData);
 
-        showRecordsButton = new Button(tOptionsGroup, SWT.CHECK);
-        showRecordsButton.setText(Messages.ShowRecords);
-        showRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
+        showAllRecordsButton = new Button(tOptionsGroup, SWT.CHECK);
+        showAllRecordsButton.setText(Messages.ShowAllRecords);
+        showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
         tGridData = new GridData(SWT.HORIZONTAL);
         tGridData.grabExcessHorizontalSpace = false;
-        showRecordsButton.setLayoutData(tGridData);
+        showAllRecordsButton.setLayoutData(tGridData);
     }
 
     private Group createGroup(Composite aParent, String aText) {
@@ -224,7 +231,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private void loadScreenValues() {
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
-        showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
+        showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
         sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
         sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
@@ -238,7 +245,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private void storeScreenValues() {
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
-        storeValue(SHOW_RECORDS, isShowRecords());
+        storeValue(SHOW_RECORDS, isShowAllRecords());
         storeValue(LIBRARY, getSourceFileLibrary());
         storeValue(SOURCE_FILE, getSourceFile());
         storeValue(SOURCE_MEMBER, getSourceMember());
@@ -341,8 +348,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * 
      * @return status of the "show records" check box
      */
-    private boolean isShowRecords() {
-        return showRecordsButton.getSelection();
+    private boolean isShowAllRecords() {
+        return showAllRecordsButton.getSelection();
     }
 
     /**
@@ -386,7 +393,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                         if (tMember instanceof ISeriesMember) {
                             if ("SRC".equals(((ISeriesMember)tMember).getSubType())) {
                                 addElement(searchElements, ((ISeriesMember)tMember).getDataElement());
-                                ;
                             }
                         }
                     }
@@ -418,7 +424,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 endColumn = getNumericFieldContent(endColumnText);
             }
 
-            SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowRecords());
+            SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowAllRecords());
             for (SearchArgument searchArgument : searchArgumentsListEditor.getSearchArguments(startColumn, endColumn)) {
                 if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
                     searchOptions.addSearchArgument(searchArgument);
@@ -515,7 +521,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {
-            endColumnText.setText("132");
+            endColumnText.setText("" + MAX_END_COLUMN);
         }
     }
 
@@ -572,7 +578,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (queryNumericFieldContent(endColumnText) != 0) {
                 return false;
             }
-            if (getNumericFieldContent(endColumnText) <= 132) {
+            if (getNumericFieldContent(endColumnText) <= MAX_END_COLUMN) {
                 return true;
             }
         }

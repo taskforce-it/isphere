@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.sourcefilesearch.SearchOptions;
 
 import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 
@@ -27,6 +28,7 @@ public class SearchArgumentEditor {
     public static final String TEXT_SEARCH_STRING = "TEXT_SEARCH_STRING";
     public static final String BUTTON_REMOVE = "BUTTON_REMOVE";
     public static final String BUTTON_ADD = "BUTTON_ADD";
+    
     private SystemHistoryCombo txtSearchString;
     private Button btnRemove;
     private Button btnAdd;
@@ -57,6 +59,7 @@ public class SearchArgumentEditor {
         txtSearchString = new SystemHistoryCombo(container, 0, "biz.isphere.core.search.SearchArgumentEditor.findString", 10, false);
         txtSearchString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtSearchString.setSize(76, 19);
+        txtSearchString.setTextLimit(SearchOptions.MAX_STRING_SIZE);
         txtSearchString.getCombo().setData(TEXT_SEARCH_STRING);
 
         btnCaseSensitive = new Button(container, SWT.CHECK);
@@ -110,14 +113,14 @@ public class SearchArgumentEditor {
 
     public int getCompareCondition() {
         if (Messages.Contains.equals(cboCondition.getText())) {
-            return SearchArgument.CONTAINS;
+            return SearchOptions.CONTAINS;
         } else {
-            return SearchArgument.CONTAINS_NOT;
+            return SearchOptions.CONTAINS_NOT;
         }
     }
 
     public void setCompareCondition(int aCondition) {
-        if (aCondition == SearchArgument.CONTAINS) {
+        if (aCondition == SearchOptions.CONTAINS) {
             cboCondition.setText(Messages.Contains);
         } else {
             cboCondition.setText(Messages.Contains_not);
@@ -146,5 +149,9 @@ public class SearchArgumentEditor {
 
     public void setAddButtonEnablement(boolean anIsEnabled) {
         btnAdd.setEnabled(anIsEnabled);
+    }
+    
+    public SearchArgument getSearchArgument() {
+        return new SearchArgument(getSearchString(), isCaseSensitive(), getCompareCondition());
     }
 }

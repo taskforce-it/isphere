@@ -79,17 +79,23 @@ public class Messages extends NLS {
     
     public static String Specify_end_column_max_132;
     
+    public static String Specify_end_column_max_228;
+    
     public static String Source_File;
 
     public static String Source_Member; 
 
     public static String Options;
     
-    public static String ShowRecords;
+    public static String ShowAllRecords;
 
     public static String MatchAllConditions;
 
     public static String MatchAnyCondition;
+    
+    public static String IncludeSecondLevelText;
+    
+    public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String No_objects_found_that_match_the_selection_criteria;
 
