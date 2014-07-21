@@ -20,27 +20,14 @@
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
      d matchAll                        N   Const                                --> Match all finds
+     d secLvlText                      N   Const                                --> Inc. 2.level txt
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)
-     d                                     Dim(XFNDSTR_ARGUMENTS_SIZE)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
 
      dXFNDSTR_clear...
      d                 PR
      d                               10S 0 Const                                --> Handle
 
-     d XFNDSTR_OPERATOR_CONTAINS...
-     d                 C                   1
-     d XFNDSTR_OPERATOR_CONTAINS_NOT...
-     d                 C                   -1
-
-     d XFNDSTR_ARGUMENTS_SIZE...
-     d                 C                   16
-
-     d searchArgument_t...
-     d                 DS                  Qualified Based(pTemplate)
-     d  operator                     10I 0
-     d  string                       40A   Varying
-     d  fromColumn                   10I 0
-     d  toColumn                     10I 0
-     d  case                         10A
+      /copy qcpysrc,srchopts_t

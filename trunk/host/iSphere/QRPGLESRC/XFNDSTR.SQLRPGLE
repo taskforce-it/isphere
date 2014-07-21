@@ -22,6 +22,7 @@
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
@@ -188,10 +189,11 @@
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
      d LSMTCALL                        N   Const                                --> Match all finds
+     d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
-     d                                     dim(XFNDSTR_ARGUMENTS_SIZE)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
@@ -199,6 +201,7 @@
 
      dLISTG            S             40A   varying                              String
      dLITXT            S            132A   varying                              Text to be searched
+     dLIHELP           S           3000A   varying                              Text to be searched
      dLICNT            S              6S 0                                      Counter
      dLICNL            S             10A                                        Cancel
      dLIRTVOPT         S             10A                                        Retrieve options
@@ -212,7 +215,7 @@
       // This array has a 1:1 relation to
       // the LSARGS input array.
      d matchesResult   DS                  Qualified
-     d                                     Dim(XFNDSTR_ARGUMENTS_SIZE)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
      d                                     Inz
      d  mustBeFound                    N
      d  hasBeenFound                   N
@@ -300,9 +303,9 @@
          // Set "matches to find / not to find"
          For LIIDX = 1 to LISIZE;
            Select;
-           When (LSARGS(LIIDX).operator = XFNDSTR_OPERATOR_CONTAINS);
+           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS);
              matchesResult(LIIDX).mustBeFound = *ON;
-           When (LSARGS(LIIDX).operator = XFNDSTR_OPERATOR_CONTAINS_NOT);
+           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT);
              matchesResult(LIIDX).mustBeFound = *OFF;
            EndSl;
            matchesResult(LIIDX).hasBeenFound = *OFF;
@@ -349,6 +352,13 @@
            LIMSGID = RTVMMsgId;
            LIMSG = %SubSt(RTVM0300 : RTVMOffMsg + 1 : RTVMLenMsgRtn);
 
+           // Add second level text
+           If (LSSECLVLTX and RTVMLenMsgHAvl > 0);
+             LIHELP = %SubSt(RTVM0300 : RTVMOffMsgH + 1 : RTVMLenMsgHRtn);
+           Else;
+             LIHELP = '';
+           EndIf;
+
            // Set retrieve option
            LIRTVOPT = '*NEXT';
 
@@ -382,13 +392,15 @@
              LISTG = %trimR(LSARGS(LIIDX).string);
 
              // Ignore upper/lower case
-             If LSARGS(LIIDX).case = '*IGNORE';
+             If LSARGS(LIIDX).case = SRCHOPTS_CASE_IGNORE;
                LISTG = %XLate(GILO:GIUP:LISTG);
                LITXT = %XLate(GILO:GIUP:LITXT);
+               LIHELP = %XLate(GILO:GIUP:LIHELP);
              EndIf;
 
              // Match!
-             If %Scan(LISTG : LITXT) > *Zero;
+             If %Scan(LISTG : LITXT) > *Zero or
+                %Scan(LISTG : LIHELP) > *Zero;
                matchesResult(LIIDX).hasBeenFound = *ON;
                if (matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;
