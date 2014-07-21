@@ -192,9 +192,9 @@ public class SearchDialog extends XDialog {
         Preferences.getInstance().setSourceFileSearchString(textString.getText());
         _string = textString.getText().trim();
         if (buttonCaseNo.getSelection()) {
-            _case = SearchArgument.CASE_IGNORE;
+            _case = SearchOptions.CASE_IGNORE;
         } else {
-            _case = SearchArgument.CASE_MATCH;
+            _case = SearchOptions.CASE_MATCH;
         }
         super.okPressed();
     }

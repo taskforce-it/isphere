@@ -46,7 +46,7 @@ public class FNDSTR_search {
                 pcml.setValue("FNDSTR_search.arguments.case", indices, searchArgument.getCaseSensitive());
             }
 
-            if (_searchOptions.isShowRecords()) {
+            if (_searchOptions.isShowAllItems()) {
                 pcml.setValue("FNDSTR_search.showRecords", "1");
             } else {
                 pcml.setValue("FNDSTR_search.showRecords", "0");

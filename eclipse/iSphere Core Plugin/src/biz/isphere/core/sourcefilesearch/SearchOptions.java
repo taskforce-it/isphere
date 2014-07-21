@@ -9,35 +9,40 @@
 package biz.isphere.core.sourcefilesearch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import biz.isphere.core.search.SearchArgument;
 
 public class SearchOptions {
 
-    /**
-     * Size of the 'search arguments' array of FNDSTR.
-     * <p>
-     * The value specified here must match QCPYSRC.FNDSTR.FNDSTR_ARGUMENTS_SIZE.
-     */
-    public static int FNDSTR_ARGUMENTS_SIZE = 16;
+    public static int ARGUMENTS_SIZE = 16;
+    public static int MAX_STRING_SIZE = 40;
+
+    public static final int CONTAINS = 1;
+    public static final int CONTAINS_NOT = -1;
+
+    public static final String CASE_MATCH = "*MATCH";
+    public static final String CASE_IGNORE = "*IGNORE";
 
     private boolean matchAll;
-    private boolean showRecords;
+    private boolean showAllItems;
     private List<SearchArgument> searchArguments;
+    private Map<String, Object> genericOptions;
 
     public SearchOptions() {
         this(true, true);
     }
 
-    public SearchOptions(boolean aMatchAll, boolean aShowRecords) {
+    public SearchOptions(boolean aMatchAll, boolean aShowAllItems) {
         matchAll = aMatchAll;
-        showRecords = aShowRecords;
+        showAllItems = aShowAllItems;
         searchArguments = null;
     }
 
-    public boolean isShowRecords() {
-        return showRecords;
+    public boolean isShowAllItems() {
+        return showAllItems;
     }
 
     public boolean isMatchAll() {
@@ -59,4 +64,25 @@ public class SearchOptions {
         searchArguments = aSearchArguments;
     }
 
+    public void setOption(String anOption, Boolean aValue) {
+        getOptions().put(anOption, aValue);
+    }
+
+    public boolean isOption(String anOption) {
+        if (!getOptions().containsKey(anOption)) {
+            return false;
+        }
+        Object tValue = getOptions().get(anOption);
+        if (!(tValue instanceof Boolean)) {
+            throw new IllegalArgumentException("Invalid object type assigned to boolean option: " + tValue);
+        }
+        return ((Boolean)tValue).booleanValue();
+    }
+
+    private Map<String, Object> getOptions() {
+        if (genericOptions == null) {
+            genericOptions = new HashMap<String, Object>();
+        }
+        return genericOptions;
+    }
 }

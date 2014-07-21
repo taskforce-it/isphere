@@ -8,22 +8,18 @@
 
 package biz.isphere.core.search;
 
+import biz.isphere.core.sourcefilesearch.SearchOptions;
+
 public class SearchArgument {
-
-    public static final int CONTAINS = 1;
-    public static final int CONTAINS_NOT = -1;
-
-    public static final String CASE_MATCH = "*MATCH";
-    public static final String CASE_IGNORE = "*IGNORE";
 
     private int operator;
     private String string;
     private int fromColumn;
     private int toColumn;
-    private String caseSensitive; // TODO: change to boolean -> SNDSTR.RPGLE
+    private String caseSensitive; // TODO: change to boolean -> FNDSTR.RPGLE
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive) {
-        this(aString, aFromColumn, aToColumn, aCaseSensitive, CONTAINS);
+        this(aString, aFromColumn, aToColumn, aCaseSensitive, SearchOptions.CONTAINS);
     }
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive, int anOperator) {
@@ -40,10 +36,14 @@ public class SearchArgument {
         fromColumn = aFromColumn;
         toColumn = aToColumn;
         if (anIsCaseSensitive) {
-            caseSensitive = SearchArgument.CASE_MATCH;
+            caseSensitive = SearchOptions.CASE_MATCH;
         } else {
-            caseSensitive = SearchArgument.CASE_IGNORE;
+            caseSensitive = SearchOptions.CASE_IGNORE;
         }
+    }
+
+    public SearchArgument(String aString, boolean anIsCaseSensitive, int anOperator) {
+        this(aString, -1, -1, anIsCaseSensitive, anOperator);
     }
 
     public int getOperator() {
@@ -66,12 +66,9 @@ public class SearchArgument {
         return caseSensitive;
     }
 
-    public static String getCaseMatch() {
-        return CASE_MATCH;
+    public void setRange(int aFromColumn, int aToColumn) {
+        fromColumn = aFromColumn;
+        toColumn = aToColumn;
     }
-
-    public static String getCaseIgnore() {
-        return CASE_IGNORE;
-    }
-
+    
 }
