@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.sourcefilesearch.SearchOptions;
 
 import com.ibm.as400.access.AS400;
 
@@ -28,34 +30,28 @@ public class SearchExec {
 
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
-    
+
     private class Search extends Job {
 
         private AS400 _as400;
         private String _host;
         private Connection _jdbcConnection;
-        private String _string;
-        private int _fromColumn;
-        private int _toColumn;
-        private String _case;
+        private SearchOptions _searchOptions;
         private ArrayList<SearchElement> _searchElements;
         private ISearchPostRun _searchPostRun;
         private int _handle;
         private int _counter;
         private String iSphereLibrary;
 
-        public Search(AS400 _as400, String _host, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case,
-            ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
+        public Search(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
+            ISearchPostRun _searchPostRun) {
 
             super("iSphere Message File Search");
 
             this._as400 = _as400;
             this._host = _host;
             this._jdbcConnection = _jdbcConnection;
-            this._string = _string;
-            this._fromColumn = _fromColumn;
-            this._toColumn = _toColumn;
-            this._case = _case;
+            this._searchOptions = _searchOptions;
             this._searchElements = _searchElements;
             this._searchPostRun = _searchPostRun;
 
@@ -94,7 +90,7 @@ public class SearchExec {
 
                         monitor.beginTask("Searching", _numberOfSearchElements);
 
-                        new DoSearch(_as400, _handle, _string, _fromColumn, _toColumn, _case).start();
+                        new DoSearch(_as400, _handle, _searchOptions).start();
 
                         int _lastCounter = 0;
 
@@ -224,23 +220,17 @@ public class SearchExec {
 
         private AS400 _as400;
         private int _handle;
-        private String _string;
-        private int _fromColumn;
-        private int _toColumn;
-        private String _case;
+        private SearchOptions _searchOptions;
 
-        public DoSearch(AS400 _as400, int _handle, String _string, int _fromColumn, int _toColumn, String _case) {
+        public DoSearch(AS400 _as400, int _handle, SearchOptions _searchOptions) {
             this._as400 = _as400;
             this._handle = _handle;
-            this._string = _string;
-            this._fromColumn = _fromColumn;
-            this._toColumn = _toColumn;
-            this._case = _case;
+            this._searchOptions = _searchOptions;
         }
 
         @Override
         public void run() {
-            new XFNDSTR_search().run(_as400, _handle, _string, _fromColumn, _toColumn, _case);
+            new XFNDSTR_search().run(_as400, _handle, _searchOptions);
         }
 
     }
@@ -250,7 +240,10 @@ public class SearchExec {
     public SearchResult[] execute(AS400 _as400, String _host, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn,
         String _case, ArrayList<SearchElement> _searchElements) {
 
-        Search search = new Search(_as400, _host, _jdbcConnection, _string, _fromColumn, _toColumn, _case, _searchElements, null);
+        SearchOptions searchOptions = new SearchOptions();
+        searchOptions.addSearchArgument(new SearchArgument(_string, _fromColumn, _toColumn, _case));
+
+        Search search = new Search(_as400, _host, _jdbcConnection, searchOptions, _searchElements, null);
         search.setUser(true);
         search.schedule();
 
@@ -270,7 +263,19 @@ public class SearchExec {
     public void execute(AS400 _as400, String _host, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case,
         ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
 
-        Search search = new Search(_as400, _host, _jdbcConnection, _string, _fromColumn, _toColumn, _case, _searchElements, _searchPostRun);
+        SearchOptions searchOptions = new SearchOptions(true, true);
+        searchOptions.addSearchArgument(new SearchArgument(_string, _fromColumn, _toColumn, _case));
+
+        Search search = new Search(_as400, _host, _jdbcConnection, searchOptions, _searchElements, _searchPostRun);
+        search.setUser(true);
+        search.schedule();
+
+    }
+
+    public void execute(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions searchOptions,
+        ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
+
+        Search search = new Search(_as400, _host, _jdbcConnection, searchOptions, _searchElements, _searchPostRun);
         search.setUser(true);
         search.schedule();
 

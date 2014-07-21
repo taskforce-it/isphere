@@ -8,6 +8,9 @@
 
 package biz.isphere.core.messagefilesearch;
 
+import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.sourcefilesearch.SearchOptions;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
@@ -15,20 +18,45 @@ import com.ibm.as400.data.ProgramCallDocument;
 
 public class XFNDSTR_search {
 
-    public int run(AS400 _as400, int _handle, String _string, int _fromColumn, int _toColumn, String _case) {
+    public int run(AS400 _as400, int _handle, SearchOptions _searchOptions) {
 
         int errno = 0;
 
         try {
 
+            // Debug options:
+            // Trace.setTraceOn(true); // Turn on tracing function.
+            // Trace.setTracePCMLOn(true); // Turn on PCML tracing.
+
             ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.messagefilesearch.XFNDSTR_search", this.getClass()
                 .getClassLoader());
 
             pcml.setIntValue("XFNDSTR_search.handle", _handle);
-            pcml.setValue("XFNDSTR_search.string", _string);
-            pcml.setIntValue("XFNDSTR_search.fromColumn", _fromColumn);
-            pcml.setIntValue("XFNDSTR_search.toColumn", _toColumn);
-            pcml.setValue("XFNDSTR_search.case", _case);
+
+            int[] indices = new int[1];
+            pcml.setIntValue("XFNDSTR_search.size", _searchOptions.getSearchArguments().size());
+            
+            for (indices[0] = 0; indices[0] < _searchOptions.getSearchArguments().size(); indices[0]++) {
+                SearchArgument searchArgument = _searchOptions.getSearchArguments().get(indices[0]);
+                pcml.setIntValue("XFNDSTR_search.arguments.operator", indices, searchArgument.getOperator());
+                pcml.setValue("XFNDSTR_search.arguments.string.length", indices, searchArgument.getString().length());
+                pcml.setValue("XFNDSTR_search.arguments.string.value", indices, searchArgument.getString());
+                pcml.setIntValue("XFNDSTR_search.arguments.fromColumn", indices, searchArgument.getFromColumn());
+                pcml.setIntValue("XFNDSTR_search.arguments.toColumn", indices, searchArgument.getToColumn());
+                pcml.setValue("XFNDSTR_search.arguments.case", indices, searchArgument.getCaseSensitive());
+            }
+
+            if (_searchOptions.isShowRecords()) {
+                pcml.setValue("XFNDSTR_search.showRecords", "1");
+            } else {
+                pcml.setValue("XFNDSTR_search.showRecords", "0");
+            }
+
+            if (_searchOptions.isMatchAll()) {
+                pcml.setValue("XFNDSTR_search.matchAll", "1");
+            } else {
+                pcml.setValue("XFNDSTR_search.matchAll", "0");
+            }
 
             boolean rc = pcml.callProgram("XFNDSTR_search");
 

@@ -1,4 +1,6 @@
       //*------------------------------------------------------------------------------------------*
+      //* Find String in Message File                                                              *
+      //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
       //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
@@ -63,6 +65,21 @@
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
      dNULL             C                   -1
+
+      // Local procedures
+
+     d addMessageDescription...
+     d                 PR                  Extproc('addMessageDescription')
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_msgID                       7A   Const
+     d  i_msgText                   132A   Const
+
+     d updateStatus...
+     d                 PR                  Extproc('updateStatus')
+     d  i_handle                     10S 0 Const
+     d  i_status                     10I 0 Const
 
       //*==========================================================================================*
       //* Get Handle                                                                               *
@@ -169,26 +186,47 @@
      dXFNDSTR_search...
      d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
-     d LPSTG                         40A   Const                                --> String
-     d LPFCOL                         3S 0 Const                                --> From column
-     d LPTCOL                         3S 0 Const                                --> To column
-     d LPCASE                        10A   Const                                --> Case
+     d LSSHWRCDS                       N   Const                                --> Show records
+     d LSMTCALL                        N   Const                                --> Match all finds
+     d LISIZE                        10I 0 Const                                --> Number of args.
+     d LSARGS                              Const Likeds(searchArgument_t)       --> String
+     d                                     Options(*varsize)
+     d                                     dim(XFNDSTR_ARGUMENTS_SIZE)
 
       //*------------------------------------------------------------------------------------------*
 
       // Locale field declarations
 
-     dLISTG            S             40A                                        String
+     dLISTG            S             40A   varying                              String
      dLITXT            S            132A   varying                              Text to be searched
      dLICNT            S              6S 0                                      Counter
      dLICNL            S             10A                                        Cancel
      dLIRTVOPT         S             10A                                        Retrieve options
      dLIMSGID          S              7A                                        Message ID
      dLIMSG            S            132A                                        Message
+     dLISTR            S              3S 0                                      Start
+     dLILNG            S              3S 0                                      Length
+     dLIRCDS           S             10I 0                                      Counter for records
+     dLIIDX            S             10I 0                                      Search arg. index
+
+      // This array has a 1:1 relation to
+      // the LSARGS input array.
+     d matchesResult   DS                  Qualified
+     d                                     Dim(XFNDSTR_ARGUMENTS_SIZE)
+     d                                     Inz
+     d  mustBeFound                    N
+     d  hasBeenFound                   N
+
+     d recordFound     S               N
 
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+       If (LISIZE <= 0);
+         updateStatus(LPHDL: -1);
+         Return;
+       EndIf;
 
        // Initialize counter
        LICNT = *Zero;
@@ -236,13 +274,7 @@
          If %Rem(LICNT : 100) = *Zero;
 
            // Update file 'Status'
-           Exec SQL
-              UPDATE
-                 XFNDSTRS
-              SET
-                 XSCNT = :LICNT
-              WHERE
-                 XSHDL = :LPHDL;
+           updateStatus(LPHDL: LICNT);
 
            // Initialize 'Cancel'
            LICNL = *Blanks;
@@ -264,6 +296,17 @@
            EndIf;
 
          EndIf;
+
+         // Set "matches to find / not to find"
+         For LIIDX = 1 to LISIZE;
+           Select;
+           When (LSARGS(LIIDX).operator = XFNDSTR_OPERATOR_CONTAINS);
+             matchesResult(LIIDX).mustBeFound = *ON;
+           When (LSARGS(LIIDX).operator = XFNDSTR_OPERATOR_CONTAINS_NOT);
+             matchesResult(LIIDX).mustBeFound = *OFF;
+           EndSl;
+           matchesResult(LIIDX).hasBeenFound = *OFF;
+         EndFor;
 
          // Initialize message id.
          LIMSGID = *Blanks;
@@ -309,69 +352,88 @@
            // Set retrieve option
            LIRTVOPT = '*NEXT';
 
-           // Initialize string
-           LISTG = LPSTG;
+           // Check search arguments
+           recordFound = *OFF;
+           For LIIDX = 1 to LISIZE;
 
-           // Initialize text
-           Select;
-           when (LPFCOL = NULL and LPTCOL = NULL);
-              // Search option: all columns
-              LITXT = LIMSG;
-           when (LPFCOL = NULL);
-              // Search option: position 1 to end column
-              LITXT = %SubSt(LIMSG : 1 : LPTCOL);
-           when (LPTCOL = NULL);
-              // Search option: start column to the end of text
-              LITXT = %SubSt(LIMSG : LPFCOL);
-           other;
-              // Search option: start to end column
-              LITXT = %SubSt(LIMSG : LPFCOL : LPTCOL - LPFCOL + 1);
-           endsl;
+             // Get start and length
+             Select;
+             When (LSARGS(LIIDX).fromColumn = NULL);
+               LISTR = 1;
+             When (LSARGS(LIIDX).fromColumn <= 132);
+               LISTR = LSARGS(LIIDX).fromColumn;
+             Other;
+               LISTR = 132;
+             EndSl;
 
-           // Ignore upper/lower case
-           If LPCASE = '*IGNORE';
-             LISTG = %XLate(GILO:GIUP:LISTG);
-             LITXT = %XLate(GILO:GIUP:LITXT);
-           EndIf;
+             Select;
+             When (LSARGS(LIIDX).toColumn = NULL);
+               LILNG = 132;
+             When LSARGS(LIIDX).toColumn > 132;
+               LILNG = 132 - LSARGS(LIIDX).fromColumn + 1;
+             Other;
+               LILNG = LSARGS(LIIDX).toColumn - LSARGS(LIIDX).fromColumn + 1;
+             EndSl;
 
-           // No match
-           If %Scan(%TrimR(LISTG) : LITXT) = *Zero;
+             // Initialize message text
+             LITXT = %trimR(%SubSt(LIMSG : LISTR : LILNG));
+
+             // Initialize string
+             LISTG = %trimR(LSARGS(LIIDX).string);
+
+             // Ignore upper/lower case
+             If LSARGS(LIIDX).case = '*IGNORE';
+               LISTG = %XLate(GILO:GIUP:LISTG);
+               LITXT = %XLate(GILO:GIUP:LITXT);
+             EndIf;
+
+             // Match!
+             If %Scan(LISTG : LITXT) > *Zero;
+               matchesResult(LIIDX).hasBeenFound = *ON;
+               if (matchesResult(LIIDX).mustBeFound);
+                 recordFound = *ON;
+               Else;
+                 If (LSMTCALL);
+                   recordFound = *OFF;
+                   Leave;
+                 EndIf;
+               EndIf;
+             Else;
+               if (not matchesResult(LIIDX).mustBeFound);
+                 recordFound = *ON;
+               Else;
+                 If (LSMTCALL);
+                   recordFound = *OFF;
+                   Leave;
+                 EndIf;
+               EndIf;
+             EndIf;
+
+           EndFor;
+
+           // Check record found
+           // (record matches at least 1 criterum)
+           If (not recordFound);
              Iter;
            EndIf;
 
-           // Write file 'Output'
-           Exec SQL
-              INSERT
-                 INTO
-              XFNDSTRO
-                 (
-                  XOHDL,
-                  XOLIB,
-                  XOMSGF,
-                  XOMSGID,
-                  XOMSG
-                 )
-              VALUES
-                 (
-                  :LPHDL,
-                  :XILIB,
-                  :XIMSGF,
-                  :LIMSGID,
-                  :LIMSG
-                 );
+           // Count output records
+           LIRCDS += 1;
+
+           // Check whether or not all records
+           // must be added to the output file
+           If (not LSSHWRCDS and LIRCDS > 1);
+             Iter;
+           EndIf;
+
+           addMessageDescription(LPHDL: XIMSGF: XILIB: LIMSGID: LIMSG);
 
          EndDo;
 
        EndDo;
 
        // Update file 'Status'
-       Exec SQL
-          UPDATE
-             XFNDSTRS
-          SET
-             XSCNT = -1
-          WHERE
-             XSHDL = :LPHDL;
+       updateStatus(LPHDL: -1);
 
        // Close cursor
        Exec SQL
@@ -431,4 +493,71 @@
        //*------------------------------------------------------------------------------------------
 
      pXFNDSTR_clear...
+     p                 E
+
+      //*==========================================================================================*
+      //* Adds a member to the output file.                                                      *
+      //*==========================================================================================*
+
+     p addMessageDescription...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_msgID                       7A   Const
+     d  i_msgText                   132A   Const
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           // Write file 'Output'
+           Exec SQL
+              INSERT
+                 INTO
+              XFNDSTRO
+                 (
+                  XOHDL,
+                  XOLIB,
+                  XOMSGF,
+                  XOMSGID,
+                  XOMSG
+                 )
+              VALUES
+                 (
+                  :i_handle,
+                  :i_lib,
+                  :i_file,
+                  :i_msgID,
+                  :i_msgText
+                 );
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Updates the status field of the result table.                                            *
+      //*==========================================================================================*
+
+     p updateStatus...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_status                     10I 0 Const
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           // Update file 'Status'
+           Exec SQL
+              UPDATE
+                 XFNDSTRS
+              SET
+                 XSCNT = :i_status
+              WHERE
+                 XSHDL = :i_handle;
+
+      /End-Free
      p                 E
