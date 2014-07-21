@@ -62,14 +62,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String SOURCE_FILE = "sourceFile";
     private static final String SOURCE_MEMBER = "sourceMember";
     private static final String LIBRARY = "library";
-    private static final String MATCH_ALL = "matchAll";
     private static final String SHOW_RECORDS = "showRecords";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
-    private static final String NUM_CONDITIONS = "numberOfCompareConditions";
-    private static final String COMPARE_CONDITION = "compareCondition";
-    private static final String SEARCH_STRING = "searchString";
-    private static final String CASE_SENSITIVE = "caseSensitive";
-
     private ISearchPageContainer container;
     private ISeriesConnectionCombo connectionCombo;
     private ISeriesMemberPrompt sourceFilePrompt;
@@ -229,7 +223,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private void loadScreenValues() {
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
-        showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, false));
+        showRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
         sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
         sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
