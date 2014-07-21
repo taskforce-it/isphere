@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
@@ -376,12 +377,22 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject())) {
                 return false;
             }
+
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            Object[] tObjects = tConnection.listMembers(getSourceFileLibrary(), getSourceFile(), getSourceMember(), null);
-            for (Object tObject : tObjects) {
-                if (tObject instanceof IQSYSMember) {
-                    addElement(searchElements, (IQSYSMember)tObject);
+            Object[] tMembers = null;
+            try {
+                tMembers = tConnection.listMembers(getSourceFileLibrary(), getSourceFile(), getSourceMember(), null);
+                if (tMembers != null) {
+                    for (Object tMember : tMembers) {
+                        if (tMember instanceof IQSYSMember) {
+                            if ("SRC".equals(((IQSYSMember)tMember).getSubType())) {
+                                addElement(searchElements, (IQSYSMember)tMember);
+                            }
+                        }
+                    }
                 }
+            } catch (SystemMessageException e) {
+                tMembers = new Object[] {};
             }
 
             if (searchElements.isEmpty()) {
