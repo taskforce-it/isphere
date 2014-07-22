@@ -442,12 +442,6 @@ public class Messages extends NLS {
 
     public static String Could_not_create_stream_file_for_spooled_file_on_host;
 
-    public static String Contains;
-
-    public static String Contains_not;
-
-    public static String Case_sensitive;
-
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

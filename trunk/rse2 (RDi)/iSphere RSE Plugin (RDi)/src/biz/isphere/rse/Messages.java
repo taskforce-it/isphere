@@ -42,6 +42,10 @@ public class Messages extends NLS {
 
     public static String Enter_or_select_search_string;
 
+    public static String Contains;
+
+    public static String Contains_not;
+
     public static String Case_sensitive;
 
     public static String Specify_whether_case_should_be_considered_during_search;
@@ -96,6 +100,12 @@ public class Messages extends NLS {
 
     public static String No_objects_found_that_match_the_selection_criteria;
 
+    public static String Add_search_condition;
+
+    public static String Remove_search_condition;
+    
+    public static String Specify_how_to_search_for_the_string;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
