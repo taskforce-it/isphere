@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
-import biz.isphere.core.Messages;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.rse.Messages;
 
 import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 
@@ -55,15 +55,18 @@ public class SearchArgumentEditor {
         cboCondition.setLayoutData(gd_cboCondition);
         cboCondition.setSize(92, 21);
         cboCondition.setText(Messages.Contains);
+        cboCondition.setToolTipText(Messages.Specify_how_to_search_for_the_string);
 
         txtSearchString = new SystemHistoryCombo(container, 0, "biz.isphere.core.search.SearchArgumentEditor.findString", 10, false);
         txtSearchString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtSearchString.setSize(76, 19);
         txtSearchString.setTextLimit(SearchOptions.MAX_STRING_SIZE);
+        txtSearchString.setToolTipText(Messages.Enter_or_select_search_string);
         txtSearchString.getCombo().setData(TEXT_SEARCH_STRING);
 
         btnCaseSensitive = new Button(container, SWT.CHECK);
         btnCaseSensitive.setText(Messages.Case_sensitive);
+        btnCaseSensitive.setToolTipText(Messages.Specify_whether_case_should_be_considered_during_search);
 
         btnAdd = new Button(container, SWT.NONE);
         GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -71,6 +74,7 @@ public class SearchArgumentEditor {
         btnAdd.setLayoutData(gd_btnAdd);
         btnAdd.setSize(68, 23);
         btnAdd.setText("+");
+        btnAdd.setToolTipText(Messages.Add_search_condition);
         btnAdd.setData(BUTTON_ADD);
 
         btnRemove = new Button(container, SWT.NONE);
@@ -80,6 +84,7 @@ public class SearchArgumentEditor {
         // btnRemove.setBounds(0, 0, 68, 23);
         btnAdd.setSize(68, 23);
         btnRemove.setText("-");
+        btnRemove.setToolTipText(Messages.Remove_search_condition);
         btnRemove.setData(BUTTON_REMOVE);
     }
 
