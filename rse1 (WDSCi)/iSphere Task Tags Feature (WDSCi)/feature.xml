@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.tasks"
       label="iSphere Task Tags for WDSCi 7.0 (optional)"
-      version="2.1.1"
+      version="2.2.0"
       provider-name="iSphere Project Owners">
 
    <description url="http://code.google.com/p/isphere">
@@ -33,5 +33,11 @@ v1.0.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="biz.isphere.lpex.tasks.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
