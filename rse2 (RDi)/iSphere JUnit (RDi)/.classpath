@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere RSE Plugin (RDi)"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere Task Tags Plugin"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Adapter Plugin (RDi)"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
