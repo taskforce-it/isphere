@@ -8,4 +8,11 @@
     <topic label="..." href="html/tasktags/..." />
     -->
   </topic>
+  <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
+    <!--
+	Add sub topics here:
+    <topic label="..." href="html/tasktags/..." />
+    -->
+    <topic label="Preferences" href="html/decorator/preferences.html" />
+  </topic>
 </toc> 
