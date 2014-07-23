@@ -219,7 +219,7 @@ public class MessageDescriptionDetail {
             }
         });
 
-        compositeAdvancedOptions = new Composite(container, SWT.BORDER);
+        compositeAdvancedOptions = new Composite(container, SWT.NONE);
         compositeAdvancedOptions.setLayoutData(getLayoutData());
         compositeAdvancedOptions.setLayout(new GridLayout(2, false));
         setAdvancedOptionsEnablement();
@@ -237,6 +237,9 @@ public class MessageDescriptionDetail {
         textSeveriry.setLayoutData(getLayoutData(60));
         textSeveriry.setTextLimit(2);
         textSeveriry.setText(_messageDescription.getSeverity().toString());
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            textSeveriry.setEditable(false);
+        }
 
         validatorSeverity = new Validator();
         validatorSeverity.setType("*DEC");
@@ -254,6 +257,9 @@ public class MessageDescriptionDetail {
         comboCcsid.add(MessageDescription.CCSID_JOB);
         comboCcsid.add(MessageDescription.CCSID_HEX);
         comboCcsid.setText(_messageDescription.getCcsidAsString());
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            comboCcsid.setEditable(false);
+        }
 
         validatorCcsid = new Validator();
         validatorCcsid.setType("*DEC");
