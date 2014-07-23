@@ -10,6 +10,10 @@ package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -30,6 +34,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,6 +46,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -67,6 +77,7 @@ public class MessageDescriptionViewer {
     private Button buttonNo;
     private Button buttonYes;
     private Object[] messageDescriptions;
+    private MessageFileEditor messageFileEditor;
 
     private class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object element, int columnIndex) {
@@ -127,14 +138,26 @@ public class MessageDescriptionViewer {
 
         }
     }
-
-    public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode) {
+    
+    private class TableViewerSelectionAdapter extends SelectionAdapter {
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+            try {
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ViewMessageDescriptionPreview.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+            } catch (PartInitException e) {
+                // ignore errors
+            }
+        }
+    }
+    
+    public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode, MessageFileEditor site) {
         this.as400 = as400;
         this.connection = connection;
         this.library = library;
         this.messageFile = messageFile;
         this.mode = mode;
         messageDescriptions = null;
+        this.messageFileEditor = site;
     }
 
     /**
@@ -149,8 +172,7 @@ public class MessageDescriptionViewer {
 
         Composite compositeHeader = new Composite(container, SWT.NONE);
         compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        GridLayout gridLayoutCompositeHeader = new GridLayout();
-        gridLayoutCompositeHeader.numColumns = 4;
+        GridLayout gridLayoutCompositeHeader = new GridLayout(5, false);
         compositeHeader.setLayout(gridLayoutCompositeHeader);
 
         Label labelFilter = new Label(compositeHeader, SWT.NONE);
@@ -198,8 +220,17 @@ public class MessageDescriptionViewer {
         });
         buttonYes.setText(Messages.Yes);
         buttonYes.setSelection(false);
+        
+        Composite compositePreviewButton = new Composite(compositeHeader, SWT.NONE);
+        compositePreviewButton.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+        compositePreviewButton.setLayout(new GridLayout(1, false));
+        
+        Button buttonMessagePreview = new Button(compositePreviewButton, SWT.PUSH);
+        buttonMessagePreview.setText(Messages.Display_MessageDescription_Preview_View);
+        buttonMessagePreview.setToolTipText(Messages.Display_MessageDescription_Preview_View_ToolTip);
+        buttonMessagePreview.addSelectionListener(new TableViewerSelectionAdapter());
 
-        _tableViewer = new TableViewer(container, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+        _tableViewer = new TableViewer(container, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER); 
         _tableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 if (_tableViewer.getSelection() instanceof IStructuredSelection) {
@@ -220,6 +251,7 @@ public class MessageDescriptionViewer {
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
         _filterTableViewer = new FilterTableViewer();
         _tableViewer.addFilter(_filterTableViewer);
+        this.messageFileEditor.getSite().setSelectionProvider(_tableViewer);
 
         _table = _tableViewer.getTable();
         _table.addKeyListener(new KeyAdapter() {
@@ -526,8 +558,8 @@ public class MessageDescriptionViewer {
                 _messageDescription.setMessageId(((MessageDescription)selectedItems[idx]).getMessageId());
                 _messageDescription.setMessage(((MessageDescription)selectedItems[idx]).getMessage());
                 _messageDescription.setHelpText(((MessageDescription)selectedItems[idx]).getHelpText());
-                _messageDescription.setSeverity(((MessageDescription)selectedItems[idx]).getSeverity()); 
-                _messageDescription.setCcsid(((MessageDescription)selectedItems[idx]).getCcsid()); 
+                _messageDescription.setSeverity(((MessageDescription)selectedItems[idx]).getSeverity());
+                _messageDescription.setCcsid(((MessageDescription)selectedItems[idx]).getCcsid());
 
                 ArrayList<?> fieldFormats1 = ((MessageDescription)selectedItems[idx]).getFieldFormats();
                 ArrayList<FieldFormat> fieldFormats2 = new ArrayList<FieldFormat>();

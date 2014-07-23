@@ -441,6 +441,10 @@ public class Messages extends NLS {
     public static String The_filter_could_not_be_created;
 
     public static String Could_not_create_stream_file_for_spooled_file_on_host;
+    
+    public static String Display_MessageDescription_Preview_View;
+    
+    public static String Display_MessageDescription_Preview_View_ToolTip;
 
     static {
         // initialize resource bundle

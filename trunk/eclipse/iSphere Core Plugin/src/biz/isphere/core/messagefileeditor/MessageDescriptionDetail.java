@@ -39,12 +39,11 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.ValidationListTranslatedData;
 
 public class MessageDescriptionDetail {
 
     private static final String STATUS_BUTTON_HIDE_ADVANCED_OPTIONS = "status_buttonHideAdvancedOptions";
-    
+
     private AS400 as400;
     private int actionType;
     private MessageDescription _messageDescription;
@@ -390,7 +389,6 @@ public class MessageDescriptionDetail {
 
             // The value in field 'Ccsid' is not valid.
 
-            ValidationListTranslatedData validationList = new ValidationListTranslatedData();
             if (!validatorCcsid.validate(comboCcsid.getText())) {
                 setErrorMessage(Messages.The_value_in_field_Ccsid_is_not_valid);
                 comboCcsid.setFocus();
