@@ -78,7 +78,6 @@ public class SearchArgumentsListEditor implements Listener {
         searchStringGroup = new Composite(scrollable, SWT.NONE);
         searchStringGroup.setLayout(new GridLayout(1, false));
         searchStringGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-        searchStringGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         scrollable.setContent(searchStringGroup);
 
         searchArgumentEditors = new ArrayList<SearchArgumentEditor>();
