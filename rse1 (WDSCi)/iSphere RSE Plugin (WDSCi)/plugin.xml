@@ -107,6 +107,25 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere Views
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="iSphere"
+            id="biz.isphere.core.views.categories"/>	
+      <view
+            icon="icons/message_file_preview.gif"
+            class="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Message_Description_Preview"
+            id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
+   </extension> 
+      	
+      	<!--
+      	  ==========================================
       	    Others
       	  ==========================================
       	-->

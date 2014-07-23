@@ -34,6 +34,14 @@ public final class PluginCheck implements IObsoleteBundles {
         tChecker.performBundleCheck();
     }
 
+    public static boolean hasPlugin(String aPluginID) {
+        Bundle bundle = Platform.getBundle(aPluginID);
+        if (bundle != null) {
+            return true;
+        }
+        return false;
+    }
+    
     private void performBundleCheck() {
         final List<Bundle> tObsoleteBundles = verifyInstalledBundles();
         if (tObsoleteBundles.size() == 0) {

@@ -10,10 +10,6 @@ package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -34,7 +30,6 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,12 +41,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
@@ -138,18 +132,19 @@ public class MessageDescriptionViewer {
 
         }
     }
-    
+
     private class TableViewerSelectionAdapter extends SelectionAdapter {
         @Override
         public void widgetSelected(SelectionEvent event) {
             try {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ViewMessageDescriptionPreview.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
+                    "biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview", null, IWorkbenchPage.VIEW_VISIBLE);
             } catch (PartInitException e) {
                 // ignore errors
             }
         }
     }
-    
+
     public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode, MessageFileEditor site) {
         this.as400 = as400;
         this.connection = connection;
@@ -220,17 +215,19 @@ public class MessageDescriptionViewer {
         });
         buttonYes.setText(Messages.Yes);
         buttonYes.setSelection(false);
-        
+
         Composite compositePreviewButton = new Composite(compositeHeader, SWT.NONE);
         compositePreviewButton.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
         compositePreviewButton.setLayout(new GridLayout(1, false));
-        
-        Button buttonMessagePreview = new Button(compositePreviewButton, SWT.PUSH);
-        buttonMessagePreview.setText(Messages.Display_MessageDescription_Preview_View);
-        buttonMessagePreview.setToolTipText(Messages.Display_MessageDescription_Preview_View_ToolTip);
-        buttonMessagePreview.addSelectionListener(new TableViewerSelectionAdapter());
 
-        _tableViewer = new TableViewer(container, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER); 
+        if (PluginCheck.hasPlugin("biz.isphere.rse")) {
+            Button buttonMessagePreview = new Button(compositePreviewButton, SWT.PUSH);
+            buttonMessagePreview.setText(Messages.Display_MessageDescription_Preview_View);
+            buttonMessagePreview.setToolTipText(Messages.Display_MessageDescription_Preview_View_ToolTip);
+            buttonMessagePreview.addSelectionListener(new TableViewerSelectionAdapter());
+        }
+
+        _tableViewer = new TableViewer(container, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         _tableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 if (_tableViewer.getSelection() instanceof IStructuredSelection) {

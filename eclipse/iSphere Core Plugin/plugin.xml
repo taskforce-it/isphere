@@ -50,12 +50,6 @@
             category="biz.isphere.core.views.categories"
             name="%iSphere_Message_File_Search"
             id="biz.isphere.core.messagefilesearch.ViewSearchResults"/>
-      <view
-            icon="icons/message_file.gif"
-            class="biz.isphere.core.messagefileeditor.ViewMessageDescriptionPreview"
-            category="biz.isphere.core.views.categories"
-            name="%iSphere_Message_Description_Preview"
-            id="biz.isphere.core.messagefileeditor.ViewMessageDescriptionPreview"/>
    </extension>
       	
       	<!--

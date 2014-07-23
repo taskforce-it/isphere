@@ -1,8 +1,6 @@
 package biz.isphere.core.internal;
 
-import biz.isphere.base.internal.StringHelper;
-
-public class MessageFormatter {
+public abstract class AbstractMessageFormatter {
 
     private int width = 79;
 
@@ -14,7 +12,7 @@ public class MessageFormatter {
     private static final String POSITION_4 = "   "; // 3 spaces
     private static final String POSITION_6 = "     "; // 5 spaces
 
-    private static final String INDENT_DEFAULT = "";
+    private static final String INDENT_DEFAULT = POSITION_2;
     private static final String INDENT_N = POSITION_2;
     private static final String INDENT_P = POSITION_6;
     private static final String INDENT_B = POSITION_4;
@@ -23,10 +21,10 @@ public class MessageFormatter {
         if (aMessage == null) {
             return "";
         }
-        
-        int tLineLength = 0;
+
         String tIndent = INDENT_DEFAULT;
         StringBuilder tFormatted = new StringBuilder();
+        int tLineLength = tFormatted.length();
 
         String[] tWords = aMessage.split("(?<=[\\s])");
         for (String tWord : tWords) {
@@ -53,9 +51,13 @@ public class MessageFormatter {
                 }
 
                 if (tWord.length() > 0) {
+                    if (tFormatted.length() == 0) {
+                        tFormatted.append(tIndent);
+                        tLineLength += tIndent.length();
+                        tIndent = POSITION_4;
+                    }
                     tFormatted.append(tWord);
                 }
-
                 tLineLength += tWord.length();
             }
 
@@ -65,7 +67,7 @@ public class MessageFormatter {
     }
 
     public static void main(String[] args) {
-        MessageFormatter main = new MessageFormatter();
+        AbstractMessageFormatter main = new AbstractMessageFormatter() {};
         String tMessage = "&N Cause . . . . . :   The application running requires a later version of CSP/AE. &N Recovery  . . . :   Contact the application developer to generate the application for the level of CSP/AE installed. Or, contact your system administrator to determine the correct level of CSP/AE required to run the generated application. &N Technical description . . . . . . . . :   Consult the Program Directory of your current CSP/AD product to determine the level of CSP/AE required to run the generated application.";
         System.out.println(main.format(tMessage));
     }
