@@ -9,8 +9,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ibm.etools.iseries.toolbox,
- com.ibm.etools.iseries.services.qsys;bundle-version="8.0.5",
- com.ibm.etools.iseries.subsystems.qsys;bundle-version="8.0.5",
  org.eclipse.compare,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,

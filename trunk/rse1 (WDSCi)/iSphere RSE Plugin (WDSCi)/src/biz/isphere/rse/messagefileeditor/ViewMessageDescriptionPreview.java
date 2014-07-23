@@ -1,4 +1,4 @@
-package biz.isphere.core.messagefileeditor;
+package biz.isphere.rse.messagefileeditor;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -14,13 +14,14 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMessageDescription;
+import com.ibm.etools.iseries.comm.interfaces.IISeriesMessageDescription;
 
-import biz.isphere.core.internal.MessageFormatter;
+import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.rse.internal.MessageFormatter;
 
 public class ViewMessageDescriptionPreview extends ViewPart {
 
-    public static final String ID = "biz.isphere.core.messagefileeditor.ViewMessageDescriptionPreview";
+    public static final String ID = "biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview";
     private ISelectionListener selectionListener;
     private Text tMessagePreview;
 
@@ -64,16 +65,11 @@ public class ViewMessageDescriptionPreview extends ViewPart {
                 Object tItem = tSelection.getFirstElement();
                 if (tItem instanceof MessageDescription) {
                     MessageDescription tMessageDescription = (MessageDescription)tItem;
-                    displayMessage(tMessageDescription.getMessage(), tMessageDescription.getHelpText());
-                } else if (tItem instanceof QSYSRemoteMessageDescription) {
-                    QSYSRemoteMessageDescription tMessageDescription = (QSYSRemoteMessageDescription)tItem;
-                    displayMessage(tMessageDescription.getText(), tMessageDescription.getHelp());
+                    tMessagePreview.setText(formatter.format(tMessageDescription));
+                } else if (tItem instanceof IISeriesMessageDescription) {
+                    IISeriesMessageDescription tMessageDescription = (IISeriesMessageDescription)tItem;
+                    tMessagePreview.setText(formatter.format(tMessageDescription));
                 }
-            }
-
-            private void displayMessage(String aMessage, String aHelpText) {
-                String tText = " " + formatter.format(aMessage) + "\n" + formatter.format(aHelpText);
-                tMessagePreview.setText(tText);
             }
         };
 
