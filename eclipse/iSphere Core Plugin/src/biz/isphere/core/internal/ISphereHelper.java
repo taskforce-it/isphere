@@ -151,24 +151,16 @@ public class ISphereHelper {
     public static String executeCommand(AS400 as400, String command) throws Exception {
 
         CommandCall commandCall = new CommandCall(as400);
-
-        if (commandCall != null) {
-
-            commandCall.run(command);
-            AS400Message[] messageList = commandCall.getMessageList();
-            if (messageList.length > 0) {
-                for (int idx = 0; idx < messageList.length; idx++) {
-                    if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                        return messageList[idx].getID();
-                    }
+        commandCall.run(command);
+        AS400Message[] messageList = commandCall.getMessageList();
+        if (messageList.length > 0) {
+            for (int idx = 0; idx < messageList.length; idx++) {
+                if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                    return messageList[idx].getID();
                 }
             }
-            return "";
-
         }
-
-        return "CPF0000";
-
+        return "";
     }
 
     public static String getCurrentLibrary(AS400 _as400) throws Exception {
