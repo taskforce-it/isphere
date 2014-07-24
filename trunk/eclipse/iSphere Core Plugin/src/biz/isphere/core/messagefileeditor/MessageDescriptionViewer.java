@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -54,7 +53,6 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.xslt4j.bcel.generic.GETSTATIC;
 
 public class MessageDescriptionViewer {
 
