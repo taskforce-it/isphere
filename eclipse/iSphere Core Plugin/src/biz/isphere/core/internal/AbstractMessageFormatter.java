@@ -1,5 +1,7 @@
 package biz.isphere.core.internal;
 
+import biz.isphere.core.Messages;
+
 public abstract class AbstractMessageFormatter {
 
     private int width = 79;
@@ -64,6 +66,17 @@ public abstract class AbstractMessageFormatter {
         }
 
         return tFormatted.toString();
+    }
+
+    protected String format(String aText, String aHelp) {
+        String tHelp = format(aHelp);
+        String tNewLine;
+        if (!tHelp.startsWith("\n")) {
+            tNewLine = "\n\n";
+        } else {
+            tNewLine = "\n";
+        }
+        return format(Messages.MessageText_Message_Colon + "   " + aText) + tNewLine + tHelp;
     }
 
     public static void main(String[] args) {

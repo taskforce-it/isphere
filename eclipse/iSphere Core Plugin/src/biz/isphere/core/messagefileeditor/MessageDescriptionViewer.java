@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -53,6 +54,7 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.xslt4j.bcel.generic.GETSTATIC;
 
 public class MessageDescriptionViewer {
 
@@ -71,7 +73,7 @@ public class MessageDescriptionViewer {
     private Button buttonNo;
     private Button buttonYes;
     private Object[] messageDescriptions;
-    private MessageFileEditor messageFileEditor;
+    private IWorkbenchPartSite site;
 
     private class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object element, int columnIndex) {
@@ -137,22 +139,21 @@ public class MessageDescriptionViewer {
         @Override
         public void widgetSelected(SelectionEvent event) {
             try {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
-                    "biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview", null, IWorkbenchPage.VIEW_VISIBLE);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(AbstractViewMessageDescriptionPreview.ID);
             } catch (PartInitException e) {
                 // ignore errors
             }
         }
     }
 
-    public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode, MessageFileEditor site) {
+    public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode, IWorkbenchPartSite site) {
         this.as400 = as400;
         this.connection = connection;
         this.library = library;
         this.messageFile = messageFile;
         this.mode = mode;
-        messageDescriptions = null;
-        this.messageFileEditor = site;
+        this.messageDescriptions = null;
+        this.site = site;
     }
 
     /**
@@ -248,7 +249,7 @@ public class MessageDescriptionViewer {
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
         _filterTableViewer = new FilterTableViewer();
         _tableViewer.addFilter(_filterTableViewer);
-        this.messageFileEditor.getSite().setSelectionProvider(_tableViewer);
+         site.setSelectionProvider(_tableViewer);
 
         _table = _tableViewer.getTable();
         _table.addKeyListener(new KeyAdapter() {
