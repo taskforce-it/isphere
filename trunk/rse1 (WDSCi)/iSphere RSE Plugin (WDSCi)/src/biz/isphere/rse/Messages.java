@@ -45,14 +45,6 @@ public class Messages extends NLS {
     
     public static String Enter_or_select_search_string;
     
-    public static String Contains;
-
-    public static String Contains_not;
-
-    public static String Case_sensitive;
-    
-    public static String Specify_whether_case_should_be_considered_during_search;
-    
     public static String Specify_whether_all_matching_records_are_returned;
     
     public static String Connection;
@@ -92,22 +84,12 @@ public class Messages extends NLS {
     public static String Options;
     
     public static String ShowAllRecords;
-
-    public static String MatchAllConditions;
-
-    public static String MatchAnyCondition;
     
     public static String IncludeSecondLevelText;
     
     public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String No_objects_found_that_match_the_selection_criteria;
-
-    public static String Add_search_condition;
-
-    public static String Remove_search_condition;
-    
-    public static String Specify_how_to_search_for_the_string;
     
     static {
         // initialize resource bundle
