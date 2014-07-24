@@ -33,7 +33,7 @@ public class MessageFileEditor extends EditorPart {
         container.setLayout(new FillLayout());
 
         MessageDescriptionViewer _messageDescriptionViewer = new MessageDescriptionViewer(input.getAS400(), input.getConnection(),
-            input.getLibrary(), input.getMessageFile(), input.getMode(), this); 
+            input.getLibrary(), input.getMessageFile(), input.getMode(), getSite()); 
 
         _messageDescriptionViewer.createContents(container);
 

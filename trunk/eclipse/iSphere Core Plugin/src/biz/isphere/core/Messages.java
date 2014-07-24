@@ -446,6 +446,8 @@ public class Messages extends NLS {
     
     public static String Display_MessageDescription_Preview_View_ToolTip;
 
+    public static String MessageText_Message_Colon;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
