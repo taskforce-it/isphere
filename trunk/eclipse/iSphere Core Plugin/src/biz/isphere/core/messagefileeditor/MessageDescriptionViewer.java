@@ -191,6 +191,7 @@ public class MessageDescriptionViewer {
         labelCaseSensitive.setText(Messages.Case_sensitive_colon);
 
         Composite groupCaseSensitive = new Composite(compositeHeader, SWT.NONE);
+        groupCaseSensitive.setBackgroundMode(SWT.INHERIT_FORCE);
         GridLayout editableLayout = new GridLayout();
         editableLayout.numColumns = 2;
         groupCaseSensitive.setLayout(editableLayout);
