@@ -36,7 +36,6 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.search.SearchArgument;
 
 public class SearchDialog extends XDialog {
 

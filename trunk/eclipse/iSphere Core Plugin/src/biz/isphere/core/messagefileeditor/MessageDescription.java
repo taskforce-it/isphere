@@ -23,7 +23,7 @@ public class MessageDescription {
     private String helpText;
     private Integer severity;
     private Integer ccsid;
-    private ArrayList fieldFormats;
+    private ArrayList<FieldFormat> fieldFormats;
 
     public MessageDescription() {
         connection = "";
@@ -33,7 +33,7 @@ public class MessageDescription {
         message = "";
         helpText = "";
         severity = new Integer("0");
-        fieldFormats = new ArrayList();
+        fieldFormats = new ArrayList<FieldFormat>();
     }
 
     public String getConnection() {
@@ -120,11 +120,11 @@ public class MessageDescription {
         this.ccsid = ccsid;
     }
 
-    public ArrayList getFieldFormats() {
+    public ArrayList<FieldFormat> getFieldFormats() {
         return fieldFormats;
     }
 
-    public void setFieldFormats(ArrayList fieldFormats) {
+    public void setFieldFormats(ArrayList<FieldFormat> fieldFormats) {
         this.fieldFormats = fieldFormats;
     }
 
