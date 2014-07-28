@@ -39,7 +39,7 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
         try {
             if (tResource.getDescription() != null) {
-                decoration.addSuffix("   " + tResource.getDescription());
+                decoration.addSuffix(" - \"" + tResource.getDescription().trim() + "\"");
             }
             return;
         } catch (Exception e) {
