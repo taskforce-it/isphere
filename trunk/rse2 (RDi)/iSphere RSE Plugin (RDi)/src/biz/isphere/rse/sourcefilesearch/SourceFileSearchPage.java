@@ -124,7 +124,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         sourceFilePrompt = new QSYSMemberPrompt(tTargetGroup, SWT.NONE, true, true, QSYSFilePrompt.FILETYPE_SRC);
         sourceFilePrompt.setSystemConnection(connectionCombo.getHost());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
-        sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_message_file_name);
+        sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
         sourceFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
         sourceFilePrompt.setObjectPromptLabel(Messages.Source_File);
         sourceFilePrompt.setMemberPromptLabel(Messages.Source_Member);
