@@ -178,10 +178,15 @@ public class SpooledFile {
         this.jobSystem = jobSystem;
     }
 
-    private String getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+        creationDateFormatted = null;
+    }
+    
     private void setCreationDate(Date creationDate) {
         DateFormat formatter = new SimpleDateFormat("yyMMdd");
         Calendar calendar = Calendar.getInstance();
@@ -193,9 +198,14 @@ public class SpooledFile {
         }
         creationDateFormatted = null;
     }
-
-    private String getCreationTime() {
+    
+    public String getCreationTime() {
         return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+        creationTimeFormatted = null;
     }
 
     private void setCreationTime(Time creationTime) {

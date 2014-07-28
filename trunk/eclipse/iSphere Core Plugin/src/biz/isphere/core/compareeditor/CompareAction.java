@@ -39,7 +39,25 @@ public class CompareAction {
     private Member rightMember;
     private String editorTitle;
     private CompareInput fInput;
-
+    
+    // Don`t change this constructor due to CMOne compatibility reasons
+    
+    public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
+        String editorTitle) {
+        
+        this.cc = new CompareEditorConfiguration();
+        cc.setLeftEditable(editable);
+        cc.setRightEditable(false);
+        cc.setConsiderDate(considerDate);
+        cc.setThreeWay(threeWay);
+        
+        this.ancestorMember = ancestorMember;
+        this.leftMember = leftMember;
+        this.rightMember = rightMember;
+        this.editorTitle = editorTitle;
+        
+    }
+    
     public CompareAction(CompareEditorConfiguration compareConfiguration, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
         this.cc = compareConfiguration;
