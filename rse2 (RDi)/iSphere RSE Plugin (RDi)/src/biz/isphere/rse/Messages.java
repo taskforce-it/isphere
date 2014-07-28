@@ -60,6 +60,8 @@ public class Messages extends NLS {
 
     public static String Enter_or_select_a_simple_or_generic_message_file_name;
 
+    public static String Enter_or_select_a_simple_or_generic_file_name;
+
     public static String Library;
 
     public static String Message_file;
