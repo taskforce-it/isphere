@@ -26,68 +26,120 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchArgumentsListEditor;
 
-public class SearchDialog extends XDialog {
+public class SearchDialog extends XDialog implements Listener{
 
     private HashMap<String, SearchElement> searchElements;
-    private String searchString;
+    private boolean _editor;
+    private SearchArgumentsListEditor _listEditor;
     private Text textString;
-    private Text textFromColumn;
-    private Text textToColumn;
     private Button buttonCaseNo;
     private Button buttonCaseYes;
-    private Button okButton;
+    private Text textFromColumn;
+    private Text textToColumn;
+    private SearchOptions _searchOptions;
     private String _string;
+    private String _case;
     private int _fromColumn = 1;
     private int _toColumn = 228;
-    private String _case;
+    private Button okButton;
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell);
         this.searchElements = searchElements;
-        ISpherePlugin.getDefault().getPreferenceStore();
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // searchString =
-        // store.getString("DE.TASKFORCE.ISPHERE.SOURCEFILESEARCH.SEARCHSTRING");
-        searchString = Preferences.getInstance().getSourceFileSearchString();
+        _editor = false;
+    }
+
+    public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
+        super(parentShell);
+        this.searchElements = searchElements;
+        if (searchArgumentsListEditor) {
+            _editor = ISpherePlugin.isSearchArgumentsListEditor();
+        }
+        else {
+            _editor = false;
+        }
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new GridLayout(1, false));
+        
+        if (_editor) {
+            
+            Composite _searchArguments = new Composite(container, SWT.NONE);
+            _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+            _searchArguments.setLayout(new GridLayout());
 
+            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor();
+            _listEditor.createControl(_searchArguments);
+            _listEditor.setListener(this);
+            _listEditor.loadScreenValues(getDialogBoundsSettings());
+            
+        }
+        
         Group groupAttributes = new Group(container, SWT.NONE);
         groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         groupAttributes.setText(Messages.Attributes);
         groupAttributes.setLayout(new GridLayout(2, false));
 
-        Label labelString = new Label(groupAttributes, SWT.NONE);
-        labelString.setText(Messages.String_colon);
-
-        textString = new Text(groupAttributes, SWT.BORDER);
-        textString.setText(searchString);
-        textString.setTextLimit(40);
-        textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        textString.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                if (textString.getText().trim().equals("")) {
-                    okButton.setEnabled(false);
-                } else {
-                    okButton.setEnabled(true);
-                }
+        if (!_editor) {
+            
+            String searchString = Preferences.getInstance().getSourceFileSearchString();
+            if (searchString.equals("")) {
+                searchString = "Enter search string here";
             }
-        });
+        
+            Label labelString = new Label(groupAttributes, SWT.NONE);
+            labelString.setText(Messages.String_colon);
+            
+            textString = new Text(groupAttributes, SWT.BORDER);
+            textString.setText(searchString);
+            textString.setTextLimit(40);
+            textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+            textString.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    if (textString.getText().trim().equals("")) {
+                        okButton.setEnabled(false);
+                    } else {
+                        okButton.setEnabled(true);
+                    }
+                }
+            });
+
+            Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
+            labelCaseSensitive.setText(Messages.Case_sensitive_colon);
+    
+            Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
+            GridLayout editableLayout = new GridLayout();
+            editableLayout.numColumns = 2;
+            groupCaseSensitive.setLayout(editableLayout);
+    
+            buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
+            buttonCaseNo.setText(Messages.No);
+            buttonCaseNo.setSelection(true);
+    
+            buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
+            buttonCaseYes.setText(Messages.Yes);
+            buttonCaseYes.setSelection(false);
+
+        }
 
         Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
         labelFromColumn.setText(Messages.From_column_colon);
@@ -143,23 +195,7 @@ public class SearchDialog extends XDialog {
                 }
             }
         });
-
-        Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
-        labelCaseSensitive.setText(Messages.Case_sensitive_colon);
-
-        Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
-        GridLayout editableLayout = new GridLayout();
-        editableLayout.numColumns = 2;
-        groupCaseSensitive.setLayout(editableLayout);
-
-        buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
-        buttonCaseNo.setText(Messages.No);
-        buttonCaseNo.setSelection(true);
-
-        buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
-        buttonCaseYes.setText(Messages.Yes);
-        buttonCaseYes.setSelection(false);
-
+            
         Group groupArea = new Group(container, SWT.NONE);
         groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         groupArea.setText(Messages.Area);
@@ -185,16 +221,43 @@ public class SearchDialog extends XDialog {
 
     @Override
     protected void okPressed() {
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // store.setValue("DE.TASKFORCE.ISPHERE.SOURCEFILESEARCH.SEARCHSTRING",
-        // textString.getText().trim());
-        Preferences.getInstance().setSourceFileSearchString(textString.getText());
-        _string = textString.getText().trim();
-        if (buttonCaseNo.getSelection()) {
-            _case = SearchOptions.CASE_IGNORE;
+
+        if (_editor) {
+            
+            _listEditor.storeScreenValues(getDialogBoundsSettings());
+            
+            _searchOptions = new SearchOptions(_listEditor.getIsMatchAll(), true);
+            java.util.List<SearchArgument> searchArguments = _listEditor.getSearchArguments(_fromColumn, _toColumn);
+            for (SearchArgument searchArgument : searchArguments) {
+                if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
+                    _searchOptions.addSearchArgument(searchArgument);
+                }
+            }
+            
+            StringBuilder tBuffer = new StringBuilder();
+            for (SearchArgument searchArgument : searchArguments) {
+                if (searchArgument.getString().trim().length() > 0) {
+                    if (tBuffer.length() > 0) {
+                        tBuffer.append("/");
+                    }
+                    tBuffer.append(searchArgument.getString());
+                }
+            }
+            _string = tBuffer.toString();
+            
         } else {
-            _case = SearchOptions.CASE_MATCH;
+            
+            Preferences.getInstance().setSourceFileSearchString(textString.getText());
+            _string = textString.getText().trim();
+
+            if (buttonCaseNo.getSelection()) {
+                _case = SearchOptions.CASE_IGNORE;
+            } else {
+                _case = SearchOptions.CASE_MATCH;
+            }
+            
         }
+        
         super.okPressed();
     }
 
@@ -202,11 +265,6 @@ public class SearchDialog extends XDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         okButton = createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
         createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-        if (searchString.equals("")) {
-            okButton.setEnabled(false);
-        } else {
-            okButton.setEnabled(true);
-        }
     }
 
     @Override
@@ -214,9 +272,17 @@ public class SearchDialog extends XDialog {
         super.configureShell(newShell);
         newShell.setText(Messages.iSphere_Source_File_Search);
     }
+    
+    public SearchOptions getSearchOptions() {
+        return _searchOptions;
+    }
 
     public String getString() {
         return _string;
+    }
+
+    public String getCase() {
+        return _case;
     }
 
     public int getFromColumn() {
@@ -225,10 +291,6 @@ public class SearchDialog extends XDialog {
 
     public int getToColumn() {
         return _toColumn;
-    }
-
-    public String getCase() {
-        return _case;
     }
 
     /**
@@ -254,6 +316,20 @@ public class SearchDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
+
+    public void handleEvent(Event anEvent) {
+        okButton.setEnabled(isSearchStringValid());
+    }
+
+    private boolean isSearchStringValid() {
+        java.util.List<SearchArgument> tSearchArguments = _listEditor.getSearchArguments(0, 0);
+        for (SearchArgument tSearchArgument : tSearchArguments) {
+            if (StringHelper.isNullOrEmpty(tSearchArgument.getString())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
