@@ -27,6 +27,7 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -65,6 +66,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
     public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
     public static final String IMAGE_SWITCH_MEMBER = "switch_member.gif";
+    private static boolean searchArgumentsListEditor = false;
+    private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
 
     public ISpherePlugin() {
         super();
@@ -277,6 +280,22 @@ public class ISpherePlugin extends AbstractUIPlugin {
      */
     public static void logError(String message, Exception e) {
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
+    }
+
+    public static boolean isSearchArgumentsListEditor() {
+        return searchArgumentsListEditor;
+    }
+
+    public static void setSearchArgumentsListEditor(boolean searchArgumentsListEditor) {
+        ISpherePlugin.searchArgumentsListEditor = searchArgumentsListEditor;
+    }
+
+    public static ISearchArgumentsListEditorProvider getSearchArgumentsListEditorProvider() {
+        return searchArgumentsListEditorProvider;
+    }
+
+    public static void setSearchArgumentsListEditorProvider(ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider) {
+        ISpherePlugin.searchArgumentsListEditorProvider = searchArgumentsListEditorProvider;
     }
 
 }
