@@ -39,7 +39,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
@@ -125,7 +125,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         sourceFilePrompt = new ISeriesMemberPrompt(tTargetGroup, SWT.NONE, true, true, IISeriesFilePromptTypes.FILETYPE_SRC);
         sourceFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
-        sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_message_file_name);
+        sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
         sourceFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
         sourceFilePrompt.setObjectPromptLabel(Messages.Source_File);
         sourceFilePrompt.setMemberPromptLabel(Messages.Source_Member);

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 import biz.isphere.core.search.AbstractSearchArgumentEditor;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.rse.Messages;
 
 import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
