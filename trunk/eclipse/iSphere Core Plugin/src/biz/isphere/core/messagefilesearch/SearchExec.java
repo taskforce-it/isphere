@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchArgument;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 
 import com.ibm.as400.access.AS400;
 

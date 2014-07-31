@@ -6,14 +6,13 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.sourcefilesearch;
+package biz.isphere.core.search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import biz.isphere.core.search.SearchArgument;
 
 public class SearchOptions {
 

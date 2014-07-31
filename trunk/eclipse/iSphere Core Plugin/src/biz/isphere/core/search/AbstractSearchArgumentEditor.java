@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
 
 public abstract class AbstractSearchArgumentEditor {
 
