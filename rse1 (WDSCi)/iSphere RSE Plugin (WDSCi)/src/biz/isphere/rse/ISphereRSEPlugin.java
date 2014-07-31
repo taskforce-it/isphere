@@ -26,6 +26,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import biz.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
+import biz.isphere.rse.search.SearchArgumentsListEditorProvider;
 import biz.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
 import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
@@ -51,6 +52,8 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         ISpherePlugin.setEditor(new Editor());
         ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
         ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
+        ISpherePlugin.setSearchArgumentsListEditor(true);
+        ISpherePlugin.setSearchArgumentsListEditorProvider(new SearchArgumentsListEditorProvider());
         setupAdapters();
     }
 

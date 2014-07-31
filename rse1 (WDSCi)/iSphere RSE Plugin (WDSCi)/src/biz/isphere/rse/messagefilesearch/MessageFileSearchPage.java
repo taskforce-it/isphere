@@ -40,7 +40,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.core.search.SearchArgument;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.search.SearchArgumentEditor;
