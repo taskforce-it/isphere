@@ -9,7 +9,7 @@
 package biz.isphere.core.messagefilesearch;
 
 import biz.isphere.core.search.SearchArgument;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;

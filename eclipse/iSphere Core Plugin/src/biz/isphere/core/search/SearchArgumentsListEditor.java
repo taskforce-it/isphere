@@ -19,7 +19,6 @@ import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
 
 public abstract class SearchArgumentsListEditor implements Listener {
 

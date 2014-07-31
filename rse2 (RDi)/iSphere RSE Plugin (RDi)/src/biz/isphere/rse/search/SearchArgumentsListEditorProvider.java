@@ -1,7 +1,7 @@
 package biz.isphere.rse.search;
 
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
-import biz.isphere.core.sourcefilesearch.SearchOptions;
+import biz.isphere.core.search.SearchOptions;
 
 public class SearchArgumentsListEditorProvider implements ISearchArgumentsListEditorProvider {
 

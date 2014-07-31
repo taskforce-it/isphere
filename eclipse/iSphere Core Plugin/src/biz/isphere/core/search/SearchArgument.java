@@ -8,7 +8,6 @@
 
 package biz.isphere.core.search;
 
-import biz.isphere.core.sourcefilesearch.SearchOptions;
 
 public class SearchArgument {
 

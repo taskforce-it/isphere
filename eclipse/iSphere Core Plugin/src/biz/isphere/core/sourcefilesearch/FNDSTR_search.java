@@ -10,6 +10,7 @@ package biz.isphere.core.sourcefilesearch;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptions;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
