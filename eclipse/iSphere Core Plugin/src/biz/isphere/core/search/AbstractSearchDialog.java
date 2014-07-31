@@ -283,7 +283,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(400, 600, true);
+        return getShell().computeSize(800, 600, true);
     }
 
     /**
