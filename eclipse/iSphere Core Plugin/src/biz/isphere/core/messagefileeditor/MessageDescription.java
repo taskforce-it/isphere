@@ -33,6 +33,7 @@ public class MessageDescription {
         message = "";
         helpText = "";
         severity = new Integer("0");
+        setCcsid(CCSID_JOB);
         fieldFormats = new ArrayList<FieldFormat>();
     }
 
