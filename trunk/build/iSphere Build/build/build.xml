@@ -7,6 +7,9 @@
  *
  *   Here are the steps to create an iSphere update site:
  *
+ *     - On the PC run the 'CheckNLSMessages' JUnit test to check
+ *       for missing or obsolete message property entries.
+ *
  *     - On the PC change version number in COPYRIGHT.RPGLE.
  *     - On the PC push changes of project 'iSphere' to the AS/400.
  *     - On the AS/400 compile and run BUILD.CLLE.
@@ -17,9 +20,9 @@
  *     - On the PC set version number (build.version) in build.properties.
  *       (version number is automatically updated in MANIFEST.MF, feature.xml 
  *        and plugin.xml by build target 'updateVersionNumber'.)
- *     - On the PC run target 'download'.
  *
  *   Repeat for RDi and WDSC:
+ *     - On the PC run target 'download'.
  *     - On the PC run target 'build' using lauch for RDP or WDSC.
  *     - On the PC right click 'site.xml', 
  *       select 'PDE Tools' -> 'Build Site'.
