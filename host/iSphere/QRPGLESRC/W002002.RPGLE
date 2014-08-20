@@ -33,6 +33,7 @@
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
      d matchAll                        N   Const                                --> Match all finds
+     d firstLvlText                    N   Const                                --> Inc. 1.level txt
      d secLvlText                      N   Const                                --> Inc. 2.level txt
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
@@ -45,6 +46,7 @@
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
      d LSMTCALL                        N   Const                                --> Match all finds
+     d LSFSTLVLTX                      N   Const                                --> Inc. 1.level txt
      d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
@@ -66,6 +68,7 @@
         LPHDL :      // --> Handle
         LSSHWRCDS :  // --> Show records
         LSMTCALL :   // --> Match all finds
+        LSFSTLVLTX : // --> Inc. 1.level txt
         LSSECLVLTX : // --> Inc. 2.level txt
         LISIZE :     // --> Number of args.
         LSARGS       // --> Search arguments

@@ -189,6 +189,7 @@
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
      d LSMTCALL                        N   Const                                --> Match all finds
+     d LSFSTLVLTX                      N   Const                                --> Inc. 1.level txt
      d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
@@ -350,6 +351,8 @@
 
            // Extract message id. and message
            LIMSGID = RTVMMsgId;
+
+           // Get first level text
            LIMSG = %SubSt(RTVM0300 : RTVMOffMsg + 1 : RTVMLenMsgRtn);
 
            // Add second level text
@@ -386,7 +389,11 @@
              EndSl;
 
              // Initialize message text
-             LITXT = %trimR(%SubSt(LIMSG : LISTR : LILNG));
+             If (LSFSTLVLTX);
+               LITXT = %trimR(%SubSt(LIMSG : LISTR : LILNG));
+             Else;
+               LITXT = '';
+             EndIf;
 
              // Initialize string
              LISTG = %trimR(LSARGS(LIIDX).string);

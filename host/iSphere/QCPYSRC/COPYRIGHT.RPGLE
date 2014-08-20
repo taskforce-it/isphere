@@ -2,11 +2,11 @@
 
       /if defined(VERSION_INFO)
      D ISPHERE_SERVER_VERSION...
-     D                 c                   '2.2.0'
+     D                 c                   '2.3.0'
      D ISPHERE_MIN_CLIENT_VERSION...
-     D                 c                   '2.2.0'
+     D                 c                   '2.3.0'
 
      D ISPHERE_DATE...
-     D                 c                   '18.08.2014'
+     D                 c                   '20.08.2014'
       /endif
 

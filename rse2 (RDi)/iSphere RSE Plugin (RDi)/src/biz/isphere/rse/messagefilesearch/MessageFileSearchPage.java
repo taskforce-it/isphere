@@ -61,6 +61,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private static final String MESSAGE_FILE = "messageFile";
     private static final String LIBRARY = "library";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
+    private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
     private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
     
     /**
@@ -77,6 +78,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private Text startColumnText;
     private Text endColumnText;
     private SearchArgumentsListEditor searchArgumentsListEditor;
+    private Button includeFirstLevelTextButton;
     private Button includeSecondLevelTextButton;
 
     public MessageFileSearchPage() {
@@ -183,6 +185,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         tGridData.widthHint = 250;
         tOptionsGroup.setLayoutData(tGridData);
 
+        includeFirstLevelTextButton = new Button(tOptionsGroup, SWT.CHECK);
+        includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
+        includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
+        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData.grabExcessHorizontalSpace = false;
+        includeFirstLevelTextButton.setLayoutData(tGridData);
+
         includeSecondLevelTextButton = new Button(tOptionsGroup, SWT.CHECK);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
@@ -219,6 +228,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         startColumnText.addVerifyListener(new NumericOnlyVerifyListener());
         endColumnText.addListener(SWT.Modify, this);
         endColumnText.addVerifyListener(new NumericOnlyVerifyListener());
+        includeFirstLevelTextButton.addListener(SWT.Selection, this);
+        includeSecondLevelTextButton.addListener(SWT.Selection, this);
     }
 
     /**
@@ -227,11 +238,16 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void loadScreenValues() {
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
+        includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
         includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
         messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, ""));
 
         loadColumnButtonsSelection();
+        
+        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+            includeFirstLevelTextButton.setSelection(true);
+        }
     }
 
     /**
@@ -240,6 +256,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private void storeScreenValues() {
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
+        storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
         storeValue(LIBRARY, getMessageFileLibrary());
         storeValue(MESSAGE_FILE, getMessageFile());
@@ -346,6 +363,15 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
+     * Returns the status of the "include first level text" check box.
+     * 
+     * @return status of the "include first level text" check box
+     */
+    private boolean isIncludeFirstLevelText() {
+        return includeFirstLevelTextButton.getSelection();
+    }
+
+    /**
      * Returns the status of the "include second level text" check box.
      * 
      * @return status of the "include second level text" check box
@@ -421,6 +447,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                     searchOptions.addSearchArgument(searchArgument);
                 }
             }
+            searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
             searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getHost().getName(),
@@ -557,10 +584,6 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             return false;
         }
 
-        if (allColumnsButton.getSelection()) {
-            return true;
-        }
-
         if (betweenColumnsButton.getSelection()) {
             if (queryNumericFieldContent(startColumnText) != 0) {
                 return false;
@@ -568,12 +591,16 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             if (queryNumericFieldContent(endColumnText) != 0) {
                 return false;
             }
-            if (getNumericFieldContent(endColumnText) <= MAX_END_COLUMN) {
-                return true;
+            if (getNumericFieldContent(endColumnText) > MAX_END_COLUMN) {
+                return false;
             }
         }
+        
+        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+            return false;
+        }
 
-        return false;
+        return true;
     }
 
     /**
