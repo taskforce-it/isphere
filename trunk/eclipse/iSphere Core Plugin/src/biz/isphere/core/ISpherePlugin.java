@@ -283,7 +283,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     }
 
     public static boolean isSearchArgumentsListEditor() {
-        return false; // return searchArgumentsListEditor;
+        return searchArgumentsListEditor;
     }
 
     public static void setSearchArgumentsListEditor(boolean searchArgumentsListEditor) {
