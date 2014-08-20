@@ -17,6 +17,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.StringHelper;
+
 /**
  * Special <i>Dialog</i> class that automatically saves and restores its state.
  * A plug-in that wants to use XDialog must override
@@ -212,5 +215,56 @@ public class XDialog extends Dialog {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Retrieves the screen value that was last displayed on the dialog.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @param aDefault - default value, that is returned if then key does not
+     *        yet exist
+     * @return the screen value that was last shown
+     */
+    protected String loadValue(String aKey, String aDefault) {
+        String tValue = getDialogBoundsSettings().get(aKey);
+        if (StringHelper.isNullOrEmpty(tValue)) {
+            tValue = aDefault;
+        }
+        return tValue;
+    }
+
+    /**
+     * Stores a given string value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, String aValue) {
+        getDialogBoundsSettings().put(aKey, aValue);
+    }
+
+    /**
+     * Stores a given boolean value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, boolean aValue) {
+        getDialogBoundsSettings().put(aKey, aValue);
+    }
+
+    /**
+     * Retrieves the screen value that was last displayed on the dialog.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @param aDefault - default value, that is returned if then key does not
+     *        yet exist
+     * @return the screen value that was last shown
+     */
+    protected boolean loadBooleanValue(String aKey, boolean aDefault) {
+        String tValue = getDialogBoundsSettings().get(aKey);
+        return BooleanHelper.tryParseBoolean(tValue, aDefault);
     }
 }

@@ -465,7 +465,19 @@ public class Messages extends NLS {
     public static String MatchAllConditions;
 
     public static String MatchAnyCondition;
+    
+    public static String Options;
 
+    public static String IncludeFirstLevelText;
+    
+    public static String Specify_whether_or_not_to_include_the_first_level_message_text;
+
+    public static String IncludeSecondLevelText;
+    
+    public static String Specify_whether_or_not_to_include_the_second_level_message_text;
+
+    public static String Enter_search_string_here;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

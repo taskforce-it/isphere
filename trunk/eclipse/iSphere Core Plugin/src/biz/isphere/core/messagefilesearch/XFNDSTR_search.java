@@ -58,6 +58,12 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.matchAll", "0");
             }
 
+            if (_searchOptions.isOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT)) {
+                pcml.setValue("XFNDSTR_search.firstLvlText", "1");
+            } else {
+                pcml.setValue("XFNDSTR_search.firstLvlText", "0");
+            }
+
             if (_searchOptions.isOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.secLvlText", "1");
             } else {
