@@ -19,7 +19,7 @@
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
      /*         >>PARM<<  TGTRLS(&TR);                                        */
-     /*         >>PARM<<  MODULE(NBRRNG);                                     */
+     /*         >>PARM<<  MODULE(&LI/NBRRNG);                                 */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
      /*         >>PARM<<  TEXT('Number Range');                               */
      /*       >>END-COMPILE<<                                                 */

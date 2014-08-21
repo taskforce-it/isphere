@@ -17,10 +17,10 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
-     /*         >>PARM<<  BNDSRVPGM((NBRRNG *IMMED));                         */
+     /*         >>PARM<<  BNDSRVPGM((&LI/NBRRNG *IMMED));                     */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
      /*         >>PARM<<  TGTRLS(&TR);                                        */
-     /*         >>PARM<<  MODULE(SPLF);                                       */
+     /*         >>PARM<<  MODULE(&LI/SPLF);                                   */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
      /*         >>PARM<<  TEXT('Spooled Files');                              */
      /*       >>END-COMPILE<<                                                 */
