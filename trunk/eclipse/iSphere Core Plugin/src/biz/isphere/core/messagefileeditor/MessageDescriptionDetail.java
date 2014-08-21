@@ -16,8 +16,11 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,7 +28,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
@@ -42,6 +47,8 @@ import com.ibm.as400.access.ErrorCompletingRequestException;
 
 public class MessageDescriptionDetail {
 
+    private static final String SPECIAL_VALUE_NONE = "*NONE";
+
     private static final String STATUS_BUTTON_HIDE_ADVANCED_OPTIONS = "status_buttonHideAdvancedOptions";
 
     private AS400 as400;
@@ -49,7 +56,7 @@ public class MessageDescriptionDetail {
     private MessageDescription _messageDescription;
     private Text textMessageId;
     private Text textMessage;
-    private CCombo comboHelpText;
+    private Text textHelpText;
     private Text textSeveriry;
     private CCombo comboCcsid;
     private Validator validatorMessageId;
@@ -175,31 +182,11 @@ public class MessageDescriptionDetail {
 
         // Helptext
 
-        final Label labelHelpText = new Label(compositeHeader, SWT.NONE);
-        labelHelpText.setText(Messages.Helptext_colon);
-
-        comboHelpText = new CCombo(compositeHeader, SWT.BORDER);
-        comboHelpText.setLayoutData(getLayoutData());
-        comboHelpText.setTextLimit(3000);
-        comboHelpText.add("*NONE");
-        if (actionType == DialogActionTypes.CREATE) {
-            comboHelpText.setText("*NONE");
-        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
-            || actionType == DialogActionTypes.DISPLAY) {
-            comboHelpText.setText(_messageDescription.getHelpText());
-        }
-        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
-            comboHelpText.setEditable(false);
-        }
-
-        validatorHelpText = new Validator();
-        validatorHelpText.setType("*CHAR");
-        validatorHelpText.setLength(3000);
-        validatorHelpText.addSpecialValue("*NONE");
+        createSecondLevelTextEditor(compositeHeader);
 
         // Field formats
 
-        _fieldFormatViewer = new FieldFormatViewer(actionType, _messageDescription, textMessage, comboHelpText);
+        _fieldFormatViewer = new FieldFormatViewer(actionType, _messageDescription, textMessage, textHelpText);
         _fieldFormatViewer.createContents(container);
 
         // Advanced options
@@ -210,7 +197,11 @@ public class MessageDescriptionDetail {
         buttonHideAdvancedOptions.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 setAdvancedOptionsEnablement();
-                buttonHideAdvancedOptions.getShell().pack();
+                Shell shell = buttonHideAdvancedOptions.getShell();
+                Point size = shell.getSize();
+                Point newSize = shell.computeSize(size.x, SWT.DEFAULT, false);
+                newSize.x = size.x;
+                shell.setSize(newSize);
             }
 
             public void widgetDefaultSelected(SelectionEvent arg0) {
@@ -284,6 +275,44 @@ public class MessageDescriptionDetail {
         }
 
     }
+
+    private void createSecondLevelTextEditor(Composite compositeHeader) {
+
+        final Label labelHelpText = new Label(compositeHeader, SWT.NONE);
+        labelHelpText.setText(Messages.Helptext_colon);
+        labelHelpText.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+        textHelpText = new Text(compositeHeader, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        textHelpText.setFont(SWTResourceManager.getFont("Courier New", 10, SWT.NORMAL));
+        GridData gridData = getLayoutData();
+        gridData.heightHint = 80;
+        textHelpText.setLayoutData(gridData);
+        textHelpText.setTextLimit(3000);
+
+        textHelpText.setText(_messageDescription.getHelpText());
+        if (actionType == DialogActionTypes.CREATE) {
+            textHelpText.setText(SPECIAL_VALUE_NONE);
+        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
+            || actionType == DialogActionTypes.DISPLAY) {
+            textHelpText.setText(_messageDescription.getHelpText());
+        }
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            textHelpText.setEditable(false);
+        }
+
+        textHelpText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent paramModifyEvent) {
+                if (StringHelper.isNullOrEmpty(textHelpText.getText())) {
+                    textHelpText.setText(SPECIAL_VALUE_NONE);
+                }
+            }
+        });
+        
+        validatorHelpText = new Validator();
+        validatorHelpText.setType("*CHAR");
+        validatorHelpText.setLength(textHelpText.getTextLimit());
+        validatorHelpText.addSpecialValue(SPECIAL_VALUE_NONE);
+ }
 
     private void setAdvancedOptionsEnablement() {
         compositeAdvancedOptions.setVisible(buttonHideAdvancedOptions.getSelection());
@@ -373,9 +402,9 @@ public class MessageDescriptionDetail {
 
             // The value in field 'Helptext' is not valid.
 
-            if (!validatorHelpText.validate(comboHelpText.getText())) {
+            if (!validatorHelpText.validate(textHelpText.getText())) {
                 setErrorMessage(Messages.The_value_in_field_Helptext_is_not_valid);
-                comboHelpText.setFocus();
+                textHelpText.setFocus();
                 return false;
             }
 
@@ -405,7 +434,7 @@ public class MessageDescriptionDetail {
 
         String parameterMSG = "MSG('" + getStringWithQuotes(textMessage.getText()) + "')";
 
-        String parameterSECLVL = "SECLVL('" + getStringWithQuotes(comboHelpText.getText()) + "')";
+        String parameterSECLVL = "SECLVL('" + getStringWithQuotes(textHelpText.getText()) + "')";
 
         String parameterFMT = "";
         ArrayList<?> fieldFormats = _fieldFormatViewer.getFieldFormats();

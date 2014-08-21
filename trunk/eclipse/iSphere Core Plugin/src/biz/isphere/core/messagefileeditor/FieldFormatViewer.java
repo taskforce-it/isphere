@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -51,13 +50,11 @@ public class FieldFormatViewer {
     private Object[] selectedItems;
     private Shell shell;
     private int actionType;
-    // private MessageDescription _messageDescription;
-    private int tableHeight;
     private ArrayList<FieldFormat> _fieldFormats = new ArrayList<FieldFormat>();
     private Button buttonUp;
     private Button buttonDown;
     private Text message;
-    private CCombo helpText;
+    private Text helpText;
 
     private class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object element, int columnIndex) {
@@ -105,7 +102,7 @@ public class FieldFormatViewer {
         }
     }
 
-    public FieldFormatViewer(int actionType, MessageDescription _messageDescription, Text message, CCombo helpText) {
+    public FieldFormatViewer(int actionType, MessageDescription _messageDescription, Text message, Text helpText) {
 
         this.actionType = actionType;
         // this._messageDescription = _messageDescription;
@@ -132,7 +129,9 @@ public class FieldFormatViewer {
         Group groupFieldFormats = new Group(container, SWT.NONE);
         groupFieldFormats.setText(Messages.Field_formats);
         groupFieldFormats.setLayout(new GridLayout(2, false));
-        groupFieldFormats.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        GridData groupFieldFormatsGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        groupFieldFormatsGridData.heightHint = getTableHeight(4);
+        groupFieldFormats.setLayoutData(groupFieldFormatsGridData);
 
         _tableViewer = new TableViewer(groupFieldFormats, SWT.FULL_SELECTION | SWT.BORDER);
         _tableViewer.setLabelProvider(new LabelProviderTableViewer());
@@ -389,8 +388,6 @@ public class FieldFormatViewer {
             }
         });
         _table.setMenu(menuTableFieldFormats);
-
-        tableHeight = _table.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
         _tableViewer.setInput(new Object());
     }
 
@@ -606,8 +603,9 @@ public class FieldFormatViewer {
 
     }
 
+    // TODO: implement algorithm to properly calculate the table height for a given number of rows.
     public int getTableHeight(int visibleTableItems) {
-        return -_table.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y + tableHeight + (_table.getItemHeight() * visibleTableItems);
+        return 102;
     }
 
     public ArrayList<FieldFormat> getFieldFormats() {

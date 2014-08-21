@@ -34,16 +34,15 @@ public class MessageDescriptionDetailDialog extends XDialog {
     public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
         super(parentShell);
         this.as400 = as400;
-        this.actionType = actionType;                                                                                   
+        this.actionType = actionType;
         this._messageDescription = _messageDescription;
     }
-    
+
     @Override
     public void create() {
         super.create();
-        getShell().pack();
     }
-    
+
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
@@ -74,7 +73,7 @@ public class MessageDescriptionDetailDialog extends XDialog {
         super.configureShell(newShell);
         newShell.setText(Messages.Message_description);
     }
-    
+
     @Override
     public boolean close() {
         _messageDescriptionDetail.saveSettings(getDialogBoundsSettings());
@@ -97,7 +96,6 @@ public class MessageDescriptionDetailDialog extends XDialog {
         Point point = getShell().computeSize(Size.getSize(600), SWT.DEFAULT, true);
         point.y = point.y + _messageDescriptionDetail.getFieldFormatViewer().getTableHeight(4);
         return point;
-
     }
 
     /**
