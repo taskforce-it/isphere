@@ -424,6 +424,14 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
+             /* Create build command                            */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD') LIB(&PRDLIB) +
+                          OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
+                          TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
              /* Change object owner to QPGMR                    */
              /* ----------------------------------------------- */
 
