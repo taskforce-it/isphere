@@ -16,10 +16,10 @@
 ARG DEVLIB TGTRLS;
 
 /* Create XML-Installer */
-'CRTBNDRPG ',
-'PGM(&DEVLIB/XMLINST) ',
-'SRCFILE(QBUILD) ',
-'SRCMBR(XMLINST)';
+"CRTBNDRPG ",
+"PGM(&DEVLIB/XMLINST) ",
+"SRCFILE(QBUILD) ",
+"SRCMBR(XMLINST)";
 
 /* Create Preprocessor */
 "CALL ",
