@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -70,6 +71,7 @@ public class MessageDescriptionViewer {
     private FilterTableViewer _filterTableViewer;
     private Button buttonNo;
     private Button buttonYes;
+    private Combo includeText;
     private Object[] messageDescriptions;
     private IWorkbenchPartSite site;
 
@@ -119,17 +121,37 @@ public class MessageDescriptionViewer {
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-            if (!filterMessage.equals("")) {
-                String elementMessage = ((MessageDescription)element).getMessage();
-                if (buttonNo.getSelection() && !elementMessage.toUpperCase().contains(filterMessage.toUpperCase())) {
-                    return false;
-                } else if (buttonYes.getSelection() && !elementMessage.contains(filterMessage)) {
-                    return false;
+            if (filterMessage.equals("")) {
+                return true;
+            }
+
+            MessageDescription messageDescription = (MessageDescription)element;
+            boolean ignoreCase = buttonNo.getSelection();
+
+            if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 1) {
+                // Compare first level text
+                if (textContains(messageDescription.getMessage(), ignoreCase)) {
+                    return true;
                 }
             }
 
-            return true;
+            if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 2) {
+                // Compare second level text
+                if (textContains(messageDescription.getHelpText(), ignoreCase)) {
+                    return true;
+                }
+            }
 
+            return false;
+
+        }
+
+        private boolean textContains(String message, boolean ignoreCase) {
+            if (ignoreCase) {
+                return message.toUpperCase().contains(filterMessage.toUpperCase());
+            } else {
+                return message.contains(filterMessage);
+            }
         }
     }
 
@@ -166,7 +188,7 @@ public class MessageDescriptionViewer {
 
         Composite compositeHeader = new Composite(container, SWT.NONE);
         compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        GridLayout gridLayoutCompositeHeader = new GridLayout(5, false);
+        GridLayout gridLayoutCompositeHeader = new GridLayout(7, false);
         compositeHeader.setLayout(gridLayoutCompositeHeader);
 
         Label labelFilter = new Label(compositeHeader, SWT.NONE);
@@ -186,6 +208,21 @@ public class MessageDescriptionViewer {
         textFilter.setText("");
         textFilter.setEditable(true);
         textFilter.setLayoutData(new GridData(Size.getSize(100), SWT.DEFAULT));
+
+        Label labelIncludeText = new Label(compositeHeader, SWT.NONE);
+        labelIncludeText.setText(Messages.apply_on);
+
+        includeText = new Combo(compositeHeader, SWT.DROP_DOWN | SWT.READ_ONLY);
+        includeText.add(Messages.both_texts);
+        includeText.add(Messages.first_level_text);
+        includeText.add(Messages.second_level_text);
+        includeText.select(0);
+        includeText.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                _tableViewer.addFilter(_filterTableViewer);
+            }
+        });
 
         Label labelCaseSensitive = new Label(compositeHeader, SWT.NONE);
         labelCaseSensitive.setText(Messages.Case_sensitive_colon);
@@ -248,7 +285,7 @@ public class MessageDescriptionViewer {
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
         _filterTableViewer = new FilterTableViewer();
         _tableViewer.addFilter(_filterTableViewer);
-         site.setSelectionProvider(_tableViewer);
+        site.setSelectionProvider(_tableViewer);
 
         _table = _tableViewer.getTable();
         _table.addKeyListener(new KeyAdapter() {

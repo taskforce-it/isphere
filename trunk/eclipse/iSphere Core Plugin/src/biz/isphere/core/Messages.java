@@ -477,6 +477,14 @@ public class Messages extends NLS {
     public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String Enter_search_string_here;
+
+    public static String apply_on;
+    
+    public static String both_texts;
+    
+    public static String first_level_text;
+    
+    public static String second_level_text;
     
     static {
         // initialize resource bundle
