@@ -13,7 +13,7 @@
 /*-----------------------------------------------------------------------*/
 
 /* Start */
-ARG DEVLIB;
+ARG DEVLIB TGTRLS;
 
 /* Create XML-Installer */
 'CRTBNDRPG ',
@@ -24,7 +24,7 @@ ARG DEVLIB;
 /* Create Preprocessor */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('STRPREPRC' 'QBUILD' &DEVLIB)";
+"PARM('STRPREPRC' 'QBUILD' &DEVLIB '' 'ENG;NO' &TGTRLS)";
 
 /* End */
 EXIT;
