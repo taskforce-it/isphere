@@ -22,28 +22,27 @@ DUMMY5 "(" ISPHERE")",
 DUMMY6 "(" TGTRLS")";
 
 /* Change current library to iSphere development library */
-'CHGCURLIB ',
-'CURLIB(&DEVLIB)';
+"CHGCURLIB ",
+"CURLIB(&DEVLIB)";
 
-IF PREPRC = '*YES' THEN;
+IF PREPRC = "*YES" THEN;
 DO;
 
    /* The creation of the preprocessor has to run in a separate REXX procedure due to */
    /* inexplicable errors which occur when the creation runs in this REXX procedure */
-   'STRREXPRC SRCMBR(BUILD2) SRCFILE(QBUILD) ',
-   'PARM(&DEVLIB &TGTRLS)';
+   CALL BUILD2 DEVLIB TGTRLS;
 
 END;
 
-IF ISPHERE = '*YES' THEN;
+IF ISPHERE = "*YES" THEN;
 DO;
 
    /* Create Main Builder */
-   'CRTBNDCL ',
-   'PGM(&DEVLIB/BUILD_CRT) ',
-   'SRCFILE(QBUILD) ',
-   'SRCMBR(BUILD_CRT) ',
-   'DBGVIEW(*LIST)';
+   "CRTBNDCL ",
+   "PGM(&DEVLIB/BUILD_CRT) ",
+   "SRCFILE(QBUILD) ",
+   "SRCMBR(BUILD_CRT) ",
+   "DBGVIEW(*LIST)";
 
    /* Create iSphere */
    "CALL ",
@@ -53,8 +52,8 @@ DO;
 END;
 
 /* Remove current library */
-'CHGCURLIB ',
-'CURLIB(*CRTDFT)';
+"CHGCURLIB ",
+"CURLIB(*CRTDFT)";
 
 /* End */
 EXIT;
