@@ -31,7 +31,7 @@ DO;
    /* The creation of the preprocessor has to run in a separate REXX procedure due to */
    /* inexplicable errors which occur when the creation runs in this REXX procedure */
    'STRREXPRC SRCMBR(BUILD2) SRCFILE(QBUILD) ',
-   'PARM(&DEVLIB)';
+   'PARM(&DEVLIB &TGTRLS)';
 
 END;
 
