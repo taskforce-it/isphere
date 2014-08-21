@@ -12,7 +12,7 @@
  *
  *     - On the PC change version number in COPYRIGHT.RPGLE.
  *     - On the PC push changes of project 'iSphere' to the AS/400.
- *     - On the AS/400 compile and run BUILD.CLLE.
+ *     - On the AS/400 compile and execute command BUILD.
  *     - On the PC update minimum server version number in iSpherePlugin.
  *
  *     - On the PC update document iSphere.doc.
