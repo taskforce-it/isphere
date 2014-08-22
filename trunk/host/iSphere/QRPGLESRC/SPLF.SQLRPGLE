@@ -20,6 +20,7 @@
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *

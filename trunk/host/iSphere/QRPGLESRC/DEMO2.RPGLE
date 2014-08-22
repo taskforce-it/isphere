@@ -20,6 +20,7 @@
       //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
       //*         >>PARM<<  DBGVIEW(*LIST);                                                        *
       //*         >>PARM<<  OPTIMIZE(*NONE);                                                       *
+      //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *

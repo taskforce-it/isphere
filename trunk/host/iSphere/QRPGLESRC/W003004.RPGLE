@@ -21,6 +21,7 @@
       //*         >>PARM<<  BNDDIR(ISPHERE);                                                       *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
