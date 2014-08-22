@@ -13,10 +13,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
 
 public abstract class XDialogPage extends DialogPage {
     
