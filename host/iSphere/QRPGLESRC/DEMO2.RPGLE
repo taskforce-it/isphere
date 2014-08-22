@@ -18,8 +18,8 @@
       //*       >>COMPILE<<                                                                        *
       //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
       //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
-      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
-      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
+      //*         >>PARM<<  DBGVIEW(*LIST);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*NONE);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
@@ -81,6 +81,7 @@
         GIHDL :    // --> Handle
         *ON :           // --> Show all records
         *OFF :          // --> Match all search arguments
+        *ON :           // --> Include first level text
         *OFF :          // --> Include second level text
         2 :             // --> Number of search arguments
         searchArguments // --> search arguments
