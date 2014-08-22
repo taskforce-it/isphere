@@ -18,6 +18,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 
 /**
@@ -42,12 +44,15 @@ public class XDialog extends Dialog {
     public static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
     public static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+    
+    private DialogSettingsManager dialogSettingsManager = null;
 
     /**
      * {@inheritDoc}
      */
     protected XDialog(Shell parentShell) {
         super(parentShell);
+        initializeDialogSettingsManager();
         setStyleResizable();
     }
 
@@ -56,7 +61,15 @@ public class XDialog extends Dialog {
      */
     protected XDialog(IShellProvider parentShell) {
         super(parentShell);
+        initializeDialogSettingsManager();
         setStyleResizable();
+    }
+
+    /**
+     * Initializes the dialog settings manager of this dialog.
+     */
+    private void initializeDialogSettingsManager() {
+        dialogSettingsManager = new DialogSettingsManager(getDialogBoundsSettings());
     }
 
     /**
@@ -226,11 +239,7 @@ public class XDialog extends Dialog {
      * @return the screen value that was last shown
      */
     protected String loadValue(String aKey, String aDefault) {
-        String tValue = getDialogBoundsSettings().get(aKey);
-        if (StringHelper.isNullOrEmpty(tValue)) {
-            tValue = aDefault;
-        }
-        return tValue;
+        return dialogSettingsManager.loadValue(aKey, aDefault);
     }
 
     /**
@@ -241,18 +250,7 @@ public class XDialog extends Dialog {
      * @param aValue - the screen value that is stored
      */
     protected void storeValue(String aKey, String aValue) {
-        getDialogBoundsSettings().put(aKey, aValue);
-    }
-
-    /**
-     * Stores a given boolean value to preserve it for the next time the dialog
-     * is shown.
-     * 
-     * @param aKey - key, the value is assigned to
-     * @param aValue - the screen value that is stored
-     */
-    protected void storeValue(String aKey, boolean aValue) {
-        getDialogBoundsSettings().put(aKey, aValue);
+        dialogSettingsManager.storeValue(aKey, aValue);
     }
 
     /**
@@ -264,7 +262,40 @@ public class XDialog extends Dialog {
      * @return the screen value that was last shown
      */
     protected boolean loadBooleanValue(String aKey, boolean aDefault) {
-        String tValue = getDialogBoundsSettings().get(aKey);
-        return BooleanHelper.tryParseBoolean(tValue, aDefault);
+        return dialogSettingsManager.loadBooleanValue(aKey, aDefault);
+    }
+
+    /**
+     * Stores a given boolean value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, boolean aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
+    }
+
+    /**
+     * Stores a given numeric value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, int aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
+    }
+
+    /**
+     * Retrieves the the value that is assigned to a given key.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @param aDefault - default value, that is returned if then key does not
+     *        yet exist
+     * @return the value that is assigned to the key
+     */
+    protected int loadIntValue(String aKey, int aDefault) {
+        return dialogSettingsManager.loadIntValue(aKey, aDefault);
     }
 }
