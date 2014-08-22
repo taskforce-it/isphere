@@ -7,6 +7,6 @@
      D                 c                   '2.3.0'
 
      D ISPHERE_DATE...
-     D                 c                   '20.08.2014'
+     D                 c                   '22.08.2014'
       /endif
 
