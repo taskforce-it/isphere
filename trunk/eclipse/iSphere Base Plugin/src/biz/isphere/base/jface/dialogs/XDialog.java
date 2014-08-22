@@ -17,10 +17,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
 
 /**
  * Special <i>Dialog</i> class that automatically saves and restores its state.
