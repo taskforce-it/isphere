@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/biz.isphere.core_2.3.0.jar" id="biz.isphere.core" version="2.3.0">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.rse_2.3.0.jar" id="biz.isphere.rse" version="2.3.0">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.lpex.tasks_2.3.0.jar" id="biz.isphere.lpex.tasks" version="2.3.0">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <category-def name="iSphere for WDSCi 7.0" label="iSphere for WDSCi 7.0"/>
+</site>
