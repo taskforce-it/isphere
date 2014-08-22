@@ -10,13 +10,38 @@ package biz.isphere.base.jface.dialogs;
 
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 
 public abstract class XDialogPage extends DialogPage {
+    
+    private DialogSettingsManager dialogSettingsManager = null;
+
+    protected XDialogPage() {
+        initializeDialogSettingsManager();
+    }
+    
+    protected XDialogPage(String title) {
+        super(title);
+        initializeDialogSettingsManager();
+    }
+    
+    protected XDialogPage(String title, ImageDescriptor image) {
+        super(title, image);
+        initializeDialogSettingsManager();
+    }
+
+    /**
+     * Initializes the dialog settings manager of this dialog.
+     */
+    private void initializeDialogSettingsManager() {
+        dialogSettingsManager = new DialogSettingsManager(getDialogSettings());
+    }
 
     /**
      * Retrieves the screen value that was last displayed on the dialog.
@@ -27,11 +52,18 @@ public abstract class XDialogPage extends DialogPage {
      * @return the screen value that was last shown
      */
     protected String loadValue(String aKey, String aDefault) {
-        String tValue = getDialogSettings().get(aKey);
-        if (StringHelper.isNullOrEmpty(tValue)) {
-            tValue = aDefault;
-        }
-        return tValue;
+        return dialogSettingsManager.loadValue(aKey, aDefault);
+    }
+
+    /**
+     * Stores a given string value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, String aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
     }
 
     /**
@@ -43,8 +75,29 @@ public abstract class XDialogPage extends DialogPage {
      * @return the screen value that was last shown
      */
     protected boolean loadBooleanValue(String aKey, boolean aDefault) {
-        String tValue = getDialogSettings().get(aKey);
-        return BooleanHelper.tryParseBoolean(tValue, aDefault);
+        return dialogSettingsManager.loadBooleanValue(aKey, aDefault);
+    }
+
+    /**
+     * Stores a given boolean value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, boolean aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
+    }
+
+    /**
+     * Stores a given numeric value to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, int aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
     }
 
     /**
@@ -56,40 +109,7 @@ public abstract class XDialogPage extends DialogPage {
      * @return the value that is assigned to the key
      */
     protected int loadIntValue(String aKey, int aDefault) {
-        return IntHelper.tryParseInt(getDialogSettings().get(aKey), aDefault);
-    }
-
-    /**
-     * Stores a given string value to preserve it for the next time the dialog
-     * is shown.
-     * 
-     * @param aKey - key, the value is assigned to
-     * @param aValue - the screen value that is stored
-     */
-    protected void storeValue(String aKey, String aValue) {
-        getDialogSettings().put(aKey, aValue);
-    }
-
-    /**
-     * Stores a given numeric value to preserve it for the next time the dialog
-     * is shown.
-     * 
-     * @param aKey - key, the value is assigned to
-     * @param aValue - the screen value that is stored
-     */
-    protected void storeValue(String aKey, int aValue) {
-        getDialogSettings().put(aKey, aValue);
-    }
-
-    /**
-     * Stores a given boolean value to preserve it for the next time the dialog
-     * is shown.
-     * 
-     * @param aKey - key, the value is assigned to
-     * @param aValue - the screen value that is stored
-     */
-    protected void storeValue(String aKey, boolean aValue) {
-        getDialogSettings().put(aKey, aValue);
+        return dialogSettingsManager.loadIntValue(aKey, aDefault);
     }
 
     /**
