@@ -23,6 +23,7 @@
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
+      //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
