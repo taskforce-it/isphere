@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for RDi 8.0+ (recommended)"
-      version="2.2.0"
+      version="2.3.0"
       provider-name="iSphere Project Owners">
 
    <description url="https://sourceforge.net/projects/isphere/">
@@ -27,7 +27,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="2.2.0" match="greaterOrEqual"/>
+      <import feature="biz.isphere.core" version="2.3.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -41,7 +41,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
          id="biz.isphere.adapter"
          download-size="0"
          install-size="0"
-         version="2.2.0"
+         version="2.3.0"
          unpack="false"/>
 
 </feature>
