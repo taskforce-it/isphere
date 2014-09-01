@@ -150,10 +150,10 @@ public class XMLFilterHelper {
                     }
                 }
                 else if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart() == (FILTER)) {
+                    if (event.asEndElement().getName().getLocalPart().equals(FILTER)) {
                         items.add(item);
                     }
-                    else if (event.asEndElement().getName().getLocalPart() == (FILTERSTRINGS)) {
+                    else if (event.asEndElement().getName().getLocalPart().equals(FILTERSTRINGS)) {
                         String[] _filterStrings = new String[filterStrings.size()];
                         filterStrings.toArray(_filterStrings);
                         item.setFilterStrings(_filterStrings);

@@ -3,6 +3,7 @@ package biz.isphere.rse.rsemanagement.filter;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -18,18 +19,16 @@ public class RSEFilterHelper {
 
 	public static RSEFilterPool[] getFilterPools() {
 
-		ArrayList<RSEFilterPool> allFilterPools = new ArrayList<RSEFilterPool>();
+	    ArrayList<RSEFilterPool> allFilterPools = new ArrayList<RSEFilterPool>();
 		
 		ISystemProfile[] profiles = SystemProfileManager.getDefault().getSystemProfiles();
 		for (int idx1 = 0; idx1 < profiles.length; idx1++) {
-			ISystemFilterPool[] filterPools = profiles[idx1].getFilterPools();
+			ISystemFilterPool[] filterPools = profiles[idx1].getFilterPools(RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration("com.ibm.etools.iseries.subsystems.qsys.objects"));
 			for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
-				if (filterPools[idx2].getId().equals("com.ibm.etools.iseries.subsystems.qsys.objects")) {
-	            	RSEFilterPool rseFilterPool = new RSEFilterPool(
-	            			profiles[idx1].getName() + " --> " + filterPools[idx2].getName(),
-	            			filterPools[idx2]);
-					allFilterPools.add(rseFilterPool);
-				}
+            	RSEFilterPool rseFilterPool = new RSEFilterPool(
+            			profiles[idx1].getName() + " --> " + filterPools[idx2].getName(),
+            			filterPools[idx2]);
+				allFilterPools.add(rseFilterPool);
 			}
 		}
         
