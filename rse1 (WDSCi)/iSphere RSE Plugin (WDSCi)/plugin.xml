@@ -258,4 +258,28 @@
       </page>
    </extension>
 
+   <extension point="org.eclipse.ui.viewActions"> 
+      <viewContribution 
+         id="biz.isphere.rse.actions" 
+         targetID="com.ibm.etools.systems.core.ui.view.systemView"> 
+         <menu
+            id="biz.isphere.rse.menu" 
+            label="iSphere" 
+            path="additions"> 
+            <separator name="group1"/> 
+         </menu> 
+         <action
+            id="biz.isphere.rse.actions.RSEManagementAction" 
+            label="&amp;%iSphere_RSE_Filter_Management" 
+            menubarPath="biz.isphere.rse.menu/group1" 
+            toolbarPath="Normal/additions"
+            style="push"
+            state="true" 
+            icon="icons/iSphere_RSE_Management.gif" 
+            tooltip="%iSphere_RSE_Filter_Management" 
+            class="biz.isphere.rse.actions.RSEManagementAction"> 
+         </action> 
+     </viewContribution> 
+   </extension>    
+
 </plugin>

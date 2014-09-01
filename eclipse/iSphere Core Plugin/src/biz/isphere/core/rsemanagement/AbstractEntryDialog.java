@@ -130,7 +130,7 @@ public abstract class AbstractEntryDialog extends Dialog {
                 dialog.setFilterExtensions(new String[] { "*." + getFileExtension()});
                 dialog.setFilterPath("C:\\");
                 // dialog.setFileName("export.xls");
-                dialog.setOverwrite(true);
+                // dialog.setOverwrite(true);
                 String file = dialog.open();
                 if (file != null) {
                 	textRepository.setText(file);
