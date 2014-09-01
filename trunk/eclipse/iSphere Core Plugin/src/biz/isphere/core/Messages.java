@@ -486,6 +486,76 @@ public class Messages extends NLS {
     
     public static String second_level_text;
     
+    public static String Action;
+
+    public static String Browse;
+    
+    public static String Delete_from_both;
+    
+    public static String Delete_from_repository;
+    
+    public static String Delete_from_workspace;
+    
+    public static String Edit_only_repository;
+    
+    public static String Edit_only_workspace;
+    
+    public static String Edit_workspace_and_repository;
+    
+    public static String Editing_area;
+    
+    public static String Enter_a_file_name;
+    
+    public static String File_name_does_not_end_with;
+    
+    public static String Filters;
+    
+    public static String Invalid_file_name;
+    
+    public static String Name;
+    
+    public static String Perform_actions;
+    
+    public static String Push_to_repository;
+    
+    public static String Push_to_workspace;
+    
+    public static String RSE_Filter_Management;
+        
+    public static String Repository;
+    
+    public static String Strings;
+    
+    public static String Unknown;
+    
+    public static String Undo_action;
+    
+    public static String in_workspace_and_in_repository_with_different;
+    
+    public static String in_workspace_and_in_repository_with_equal;
+    
+    public static String only_in_repository;
+    
+    public static String only_in_workspace;
+    
+    public static String type_and_string;
+    
+    public static String type_or_string;
+    
+    public static String filters;
+    
+    public static String RSE_Filters;
+    
+    public static String Filter_pool;
+    
+    public static String No_filter_pools_available;
+    
+    public static String Repository_does_not_exist;
+    
+    public static String Create_the_repository;
+    
+    public static String Are_you_sure;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
