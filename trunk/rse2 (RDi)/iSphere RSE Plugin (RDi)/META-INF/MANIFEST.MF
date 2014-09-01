@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.systems.editor,
  biz.isphere.core,
  biz.isphere.adapter,
- biz.isphere.base
+ biz.isphere.base,
+ org.eclipse.rse.useractions
 Bundle-ActivationPolicy: lazy
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
