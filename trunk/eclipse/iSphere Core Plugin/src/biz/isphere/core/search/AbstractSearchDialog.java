@@ -13,8 +13,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -34,7 +32,6 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.messagefilesearch.SearchExec;
 
 public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
@@ -52,14 +49,10 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private int _toColumn;
     private Button okButton;
     private int maxColumns;
-    private Button includeFirstLevelTextButton;
-    private Button includeSecondLevelTextButton;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
     private static final String FROM_COLUMN = "fromColumn";
-    private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
-    private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
 
     // CMOne settings
     private static final String TEXT_STRING = "textString";
@@ -190,7 +183,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             }
         });
 
-        createOptionsGroup(container);
+        addElements(container);
 
         Group groupArea = new Group(container, SWT.NONE);
         groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -205,7 +198,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         return container;
     }
 
-    private void setOKButtonEnablement() {
+    public void setOKButtonEnablement() {
         if (okButton == null) {
             return;
         }
@@ -227,7 +220,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             return;
         }
 
-        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+        if (!checkElements()) {
             okButton.setEnabled(false);
             return;
         }
@@ -240,46 +233,6 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         Control control = super.createContents(parent);
         setOKButtonEnablement();
         return control;
-    }
-
-    private void createOptionsGroup(Composite container) {
-
-        Group groupOptions = new Group(container, SWT.NONE);
-        groupOptions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        groupOptions.setText(Messages.Options);
-        groupOptions.setLayout(new GridLayout(1, false));
-
-        GridData tGridData;
-        includeFirstLevelTextButton = new Button(groupOptions, SWT.CHECK);
-        includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
-        includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
-        tGridData.grabExcessHorizontalSpace = false;
-        includeFirstLevelTextButton.setLayoutData(tGridData);
-        includeFirstLevelTextButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent arg0) {
-                setOKButtonEnablement();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-        });
-
-        includeSecondLevelTextButton = new Button(groupOptions, SWT.CHECK);
-        includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
-        includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
-        tGridData.grabExcessHorizontalSpace = false;
-        includeSecondLevelTextButton.setLayoutData(tGridData);
-        includeSecondLevelTextButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent arg0) {
-                setOKButtonEnablement();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-        });
-
     }
 
     @Override
@@ -296,8 +249,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
                     _searchOptions.addSearchArgument(searchArgument);
                 }
             }
-            _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
-            _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+            setElementsSearchOptions(_searchOptions);
 
             StringBuilder tBuffer = new StringBuilder();
             for (SearchArgument searchArgument : searchArguments) {
@@ -323,8 +275,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
             _searchOptions = new SearchOptions(true, true);
             _searchOptions.addSearchArgument(new SearchArgument(getSearchArgument(), getFromColumn(), getToColumn(), getCase()));
-            _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
-            _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
+            setElementsSearchOptions(_searchOptions);
 
         }
 
@@ -361,14 +312,6 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
     public int getToColumn() {
         return _toColumn;
-    }
-
-    public boolean isIncludeFirstLevelText() {
-        return includeFirstLevelTextButton.getSelection();
-    }
-
-    public boolean isIncludeSecondLevelText() {
-        return includeSecondLevelTextButton.getSelection();
     }
 
     /**
@@ -422,14 +365,9 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             buttonCaseYes.setSelection(!buttonCaseNo.getSelection());
         }
 
-        includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
-        includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
-
         loadColumnButtonsSelection();
 
-        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
-            includeFirstLevelTextButton.setSelection(true);
-        }
+        loadElementValues();
     }
 
     private void loadColumnButtonsSelection() {
@@ -449,10 +387,9 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             buttonCaseYes.setSelection(!buttonCaseNo.getSelection());
         }
 
-        storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
-        storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-
         saveColumnButtonsSelection();
+        
+        saveElementValues();
     }
 
     private void saveColumnButtonsSelection() {
@@ -468,4 +405,16 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
     public abstract void setSearchArgument(String argument);
 
+    public void addElements(Composite container) {};
+    
+    public void loadElementValues() {};
+    
+    public void saveElementValues() {};
+
+    public boolean checkElements() {
+        return true;
+    }
+ 
+    public void setElementsSearchOptions(SearchOptions _searchOptions) {};
+    
 }
