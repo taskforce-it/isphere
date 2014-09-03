@@ -238,6 +238,28 @@ public class SearchExec {
 
     private SearchResult[] _searchResults = null;
 
+    // This method will be used by CMOne
+    public SearchResult[] executeJoin(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions,
+        ArrayList<SearchElement> _searchElements) {
+
+        Search search = new Search(_as400, _jdbcConnection, _searchOptions, _searchElements, null);
+        search.setUser(true);
+        search.schedule();
+
+        try {
+            search.join();
+        } catch (InterruptedException e) {
+        }
+
+        if (_searchResults == null) {
+            return new SearchResult[0];
+        } else {
+            return _searchResults;
+        }
+
+    }
+    
+    // TODO : Remove this method after publishing CMOne NG 4.1.12
     public SearchResult[] execute(AS400 _as400, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case,
         ArrayList<SearchElement> _searchElements) {
 
@@ -260,28 +282,7 @@ public class SearchExec {
         }
 
     }
-
-    // TODO: refactor to use 'SearchOptions'
-    public void execute(AS400 _as400, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case,
-        ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
-
-        execute(_as400, _jdbcConnection, _string, _fromColumn, _toColumn, _case, true, true, _searchElements, _searchPostRun);
-
-    }
-
-    // TODO: refactor to use 'SearchOptions'
-    public void execute(AS400 _as400, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case, boolean _matchAll,
-        boolean _showRecords, ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
-
-        SearchOptions searchArguments = new SearchOptions(_matchAll, _showRecords);
-        searchArguments.addSearchArgument(new SearchArgument(_string, _fromColumn, _toColumn, _case));
-
-        Search search = new Search(_as400, _jdbcConnection, searchArguments, _searchElements, _searchPostRun);
-        search.setUser(true);
-        search.schedule();
-
-    }
-
+    
     public void execute(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
         ISearchPostRun _searchPostRun) {
 
