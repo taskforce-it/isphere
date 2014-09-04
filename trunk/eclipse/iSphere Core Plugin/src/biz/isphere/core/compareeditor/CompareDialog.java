@@ -147,14 +147,22 @@ public abstract class CompareDialog extends XDialog {
             browseButton = new Button(editableGroup, SWT.RADIO);
             browseButton.setText(Messages.Open_for_browse);
             browseButton.setLayoutData(getGridData());
-            if (!editable) {
+            if (!editable || ignoreCase) {
                 browseButton.setSelection(true);
             }
 
             editButton = new Button(editableGroup, SWT.RADIO);
             editButton.setText(Messages.Open_for_edit);
             editButton.setLayoutData(getGridData());
-            if (editable) {
+            editButton.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    if (editButton.getSelection()) {
+                        dontIgnoreCaseButton.setSelection(true);
+                        ignoreCaseButton.setSelection(false);
+                    }
+                }
+            });
+            if (editable && !ignoreCase) {
                 editButton.setSelection(true);
             }
 
@@ -194,6 +202,16 @@ public abstract class CompareDialog extends XDialog {
         ignoreCaseButton = new Button(ignoreCaseGroup, SWT.RADIO);
         ignoreCaseButton.setText(Messages.Ignore_case);
         ignoreCaseButton.setLayoutData(getGridData());
+        ignoreCaseButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (selectEditable) {
+                    if (ignoreCaseButton.getSelection()) {
+                        browseButton.setSelection(true);
+                        editButton.setSelection(false);
+                    }
+                }
+            }
+        });
         if (ignoreCase) {
             ignoreCaseButton.setSelection(true);
         }

@@ -41,6 +41,8 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     private boolean editable;
     private boolean threeWay;
+    private boolean considerDate;
+    private boolean ignoreCase;
     private Member ancestorMember;
     private Member leftMember;
     private Member rightMember;
@@ -55,6 +57,8 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         super(config);
         this.editable = config.isLeftEditable();
         this.threeWay = config.isThreeWay();
+        this.considerDate = config.isConsiderDate();
+        this.ignoreCase = config.isIgnoreCase();
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
@@ -68,18 +72,18 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 ancestorMember.download(monitor);
                 IResource fAncestorResource = ancestorMember.getLocalResource();
                 fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                fAncestor = new CompareNode(fAncestorResource, getConfiguration().isConsiderDate());
+                fAncestor = new CompareNode(fAncestorResource, considerDate, ignoreCase);
             }
 
             leftMember.download(monitor);
             IResource fLeftResource = leftMember.getLocalResource();
             fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fLeft = new CompareNode(fLeftResource, getConfiguration().isConsiderDate());
+            fLeft = new CompareNode(fLeftResource, considerDate, ignoreCase);
 
             rightMember.download(monitor);
             IResource fRightResource = rightMember.getLocalResource();
             fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fRight = new CompareNode(fRightResource, getConfiguration().isConsiderDate());
+            fRight = new CompareNode(fRightResource, considerDate, ignoreCase);
 
             monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
             CompareDifferencer d;
@@ -133,7 +137,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     public void cleanup() {
         if (threeWay && fAncestor != null) {
-            File ancestorTemp = fAncestor.getTempFile();
+            File ancestorTemp = fAncestor.getTempFile(ignoreCase);
             if (ancestorTemp != null) {
                 try {
                     ancestorTemp.delete();
@@ -143,7 +147,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             }
         }
         if (fLeft != null) {
-            File leftTemp = fLeft.getTempFile();
+            File leftTemp = fLeft.getTempFile(ignoreCase);
             if (leftTemp != null) {
                 try {
                     leftTemp.delete();
@@ -153,7 +157,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             }
         }
         if (fRight != null) {
-            File rightTemp = fRight.getTempFile();
+            File rightTemp = fRight.getTempFile(ignoreCase);
             if (rightTemp != null) {
                 try {
                     rightTemp.delete();

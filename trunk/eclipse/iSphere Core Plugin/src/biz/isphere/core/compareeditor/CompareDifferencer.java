@@ -31,8 +31,8 @@ public class CompareDifferencer extends Differencer {
 
         if (input1 == input2) return true;
 
-        InputStream is1 = getStream(input1);
-        InputStream is2 = getStream(input2);
+        InputStream is1 = getStream(input1, config.isIgnoreCase());
+        InputStream is2 = getStream(input2, config.isIgnoreCase());
         BufferedReader br1 = null;
         BufferedReader br2 = null;
 
@@ -45,8 +45,6 @@ public class CompareDifferencer extends Differencer {
 
             br2 = new BufferedReader(new InputStreamReader(is2));
 
-            boolean ignoreCase = config.isIgnoreCase();
-
             while (true) {
 
                 String s1;
@@ -54,11 +52,6 @@ public class CompareDifferencer extends Differencer {
 
                 s1 = br1.readLine();
                 s2 = br2.readLine();
-
-                if (ignoreCase) {
-                    if (s1 != null) s1 = s1.toLowerCase();
-                    if (s2 != null) s2 = s2.toLowerCase();
-                }
 
                 if (s1 == null && s2 == null) return true;
                 if (s1 == null && s2 != null) break;
@@ -102,9 +95,9 @@ public class CompareDifferencer extends Differencer {
 
     }
 
-    private InputStream getStream(Object o) {
+    private InputStream getStream(Object o, boolean ignoreCase) {
         try {
-            return new BufferedInputStream(new FileInputStream(((CompareNode)o).getTempFile()));
+            return new BufferedInputStream(new FileInputStream(((CompareNode)o).getTempFile(ignoreCase)));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
