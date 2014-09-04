@@ -38,14 +38,16 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
 
     private IResource fResource;
     private boolean considerDate;
+    private boolean ignoreCase;
     private int column;
     private File tempFile;
     private String yymmdd;
 
-    public CompareNode(IResource fResource, boolean considerDate) {
+    public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase) {
 
         this.fResource = fResource;
         this.considerDate = considerDate;
+        this.ignoreCase = ignoreCase;
         if (considerDate) {
             column = 6;
         } else {
@@ -78,14 +80,14 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     @Override
     protected InputStream createStream() throws CoreException {
         try {
-            return new BufferedInputStream(new FileInputStream(getTempFile()));
+            return new BufferedInputStream(new FileInputStream(getTempFile(ignoreCase)));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public File getTempFile() {
+    public File getTempFile(boolean ignoreCase) {
         try {
             if (tempFile == null) {
                 File file = fResource.getLocation().toFile();
@@ -95,7 +97,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
                     String newString = new String(oldString.getBytes(), "UTF-8");
-                    out.println(newString.substring(column));
+                    out.println(ignoreCase ? newString.substring(column).toLowerCase() : newString.substring(column));
                 }
                 in.close();
                 out.close();
@@ -110,7 +112,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     public void refreshTempFile() {
         tempFile.delete();
         tempFile = null;
-        getTempFile();
+        getTempFile(ignoreCase);
     }
 
     public void commit(IProgressMonitor pm) throws Exception {
