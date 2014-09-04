@@ -39,7 +39,7 @@ public class BindingDirectory {
         try {
 
             String command = "DSPBNDDIR BNDDIR(" + _library + "/" + _bindingDirectory
-                + ") OUTPUT(*OUTFILE) OUTFILE(QTEMP/#BNDDIR#) OUTMBR(*FIRST *REPLACE)";
+                + ") OUTPUT(*OUTFILE) OUTFILE(QTEMP/XBNDDIRX) OUTMBR(*FIRST *REPLACE)";
             StringBuffer buffer = new StringBuffer(Integer.toString(command.length()));
             int number = 10 - buffer.length();
             for (int idx = 0; idx < number; idx++) {
@@ -56,7 +56,7 @@ public class BindingDirectory {
             ResultSet resultSet = null;
             try {
                 preparedStatementSelect = _jdbcConnection
-                    .prepareStatement("SELECT * FROM QTEMP" + _jdbcConnection.getMetaData().getCatalogSeparator() + "#BNDDIR#",
+                    .prepareStatement("SELECT * FROM QTEMP" + _jdbcConnection.getMetaData().getCatalogSeparator() + "XBNDDIRX",
                         ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 resultSet = preparedStatementSelect.executeQuery();
 
