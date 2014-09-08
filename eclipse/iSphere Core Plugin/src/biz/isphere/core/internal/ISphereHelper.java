@@ -203,7 +203,7 @@ public class ISphereHelper {
      * @param version Version String of type "v.r.m".
      * @return Comparable version String.
      */
-    private static String comparableVersion(String version) {
+    public static String comparableVersion(String version) {
         String comparableVersion = version;
         String[] parts = new String[3];
         parts = comparableVersion.split("\\.");

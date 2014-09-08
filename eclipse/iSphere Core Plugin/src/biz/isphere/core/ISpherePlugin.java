@@ -26,6 +26,7 @@ import org.osgi.framework.Constants;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 
@@ -93,6 +94,12 @@ public class ISpherePlugin extends AbstractUIPlugin {
             spooledFilesProject.create(description, null);
         }
 
+        if (Preferences.getInstance().isSearchForUpdates()) {
+            SearchForUpdates search = new SearchForUpdates(false);
+            search.setUser(false);
+            search.schedule();
+        }
+        
     }
 
     @Override

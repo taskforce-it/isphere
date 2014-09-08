@@ -73,6 +73,12 @@ public final class Preferences {
 
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
+    private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
+
+    private static final String URL_FOR_UPDATES = DOMAIN + "URL_FOR_UPDATES"; //$NON-NLS-1$
+
+    private static final String LAST_VERSION_FOR_UPDATES = DOMAIN + "LAST_VERSION_FOR_UPDATES"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -117,6 +123,18 @@ public final class Preferences {
 
     public int getFtpPortNumber() {
         return preferenceStore.getInt(FTP_PORT_NUMBER);
+    }
+
+    public boolean isSearchForUpdates() {
+        return preferenceStore.getBoolean(SEARCH_FOR_UPDATES);
+    }
+
+    public String getURLForUpdates() {
+        return preferenceStore.getString(URL_FOR_UPDATES);
+    }
+
+    public String getLastVersionForUpdates() {
+        return preferenceStore.getString(LAST_VERSION_FOR_UPDATES);
     }
 
     public String getMessageFileSearchString() {
@@ -191,6 +209,18 @@ public final class Preferences {
         preferenceStore.setValue(FTP_PORT_NUMBER, aPortNumber);
     }
 
+    public void setSearchForUpdates(boolean aSearchForUpdates) {
+        preferenceStore.setValue(SEARCH_FOR_UPDATES, aSearchForUpdates);
+    }
+
+    public void setURLForUpdates(String aURLForUpdates) {
+        preferenceStore.setValue(URL_FOR_UPDATES, aURLForUpdates);
+    }
+
+    public void setLastVersionForUpdates(String aLastVersionForUpdates) {
+        preferenceStore.setValue(LAST_VERSION_FOR_UPDATES, aLastVersionForUpdates);
+    }
+
     public void setMessageFileSearchString(String aSearchString) {
         preferenceStore.setValue(MESSAGEFILESEARCH_SEARCHSTRING, aSearchString.trim());
     }
@@ -251,6 +281,9 @@ public final class Preferences {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
+        preferenceStore.setDefault(SEARCH_FOR_UPDATES, getDefaultSearchForUpdates());
+        preferenceStore.setDefault(URL_FOR_UPDATES, getDefaultURLForUpdates());
+        preferenceStore.setDefault(LAST_VERSION_FOR_UPDATES, getDefaultLastVersionForUpdates());
 
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
 
@@ -296,6 +329,33 @@ public final class Preferences {
      */
     public int getDefaultFtpPortNumber() {
         return 21;
+    }
+
+    /**
+     * Returns the default search for updates flag.
+     * 
+     * @return default search for updates flag.
+     */
+    public boolean getDefaultSearchForUpdates() {
+        return true;
+    }
+
+    /**
+     * Returns the default URL for updates.
+     * 
+     * @return default URL for updates.
+     */
+    public String getDefaultURLForUpdates() {
+        return "http://sourceforge.net/p/isphere/code/HEAD/tree/trunk/eclipse/iSphere%20Core%20Plugin/META-INF/MANIFEST.MF?format=raw";
+    }
+
+    /**
+     * Returns the default last version for updates.
+     * 
+     * @return default last version for updates.
+     */
+    public String getDefaultLastVersionForUpdates() {
+        return "000000";
     }
 
     /**

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="biz.isphere.core.StartUp"/>
+   </extension>
       	
       	<!--
       	  ==========================================
@@ -70,6 +75,11 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Spooled_Files"
             id="biz.isphere.core.preferencepages.ISphereSpooledFiles"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereUpdates"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Updates"
+            id="biz.isphere.core.preferencepages.ISphereUpdates"/>
    </extension>
    
    <extension
