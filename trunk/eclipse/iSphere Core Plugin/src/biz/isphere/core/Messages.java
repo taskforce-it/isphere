@@ -556,6 +556,26 @@ public class Messages extends NLS {
     
     public static String Are_you_sure;
     
+    public static String Search_for_updates;
+
+    public static String URL_for_updates;
+
+    public static String The_value_in_field_URL_for_updates_is_not_valid;
+
+    public static String iSphere_Search_for_updates;
+ 
+    public static String Searching;
+
+    public static String There_is_a_new_version_available;
+
+    public static String There_is_no_new_version_available;
+
+    public static String Do_not_show_this_message_again;
+
+    public static String Current_version;
+    
+    public static String Available_version;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
