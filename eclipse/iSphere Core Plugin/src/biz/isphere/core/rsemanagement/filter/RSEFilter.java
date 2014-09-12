@@ -8,6 +8,8 @@
 
 package biz.isphere.core.rsemanagement.filter;
 
+import java.util.Arrays;
+
 import biz.isphere.core.Messages;
 import biz.isphere.core.rsemanagement.AbstractResource;
 
@@ -40,6 +42,7 @@ public class RSEFilter extends AbstractResource {
 		this.type = type;
 		this.filterStrings = filterStrings;
 		this.origin = origin;
+		Arrays.sort(this.filterStrings);
 	}
 
 	public RSEFilterPool getFilterPool() {
@@ -72,6 +75,7 @@ public class RSEFilter extends AbstractResource {
 
 	public void setFilterStrings(String[] filterStrings) {
 		this.filterStrings = filterStrings;
+	      Arrays.sort(this.filterStrings);
 	}
 
 	public Object getOrigin() {

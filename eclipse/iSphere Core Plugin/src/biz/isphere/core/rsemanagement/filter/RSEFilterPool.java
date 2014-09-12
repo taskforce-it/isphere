@@ -11,10 +11,12 @@ package biz.isphere.core.rsemanagement.filter;
 public class RSEFilterPool {
 	
 	private String name;
+	private boolean _default;
 	private Object origin;
 
-	public RSEFilterPool(String name, Object origin) {
+	public RSEFilterPool(String name, boolean _default, Object origin) {
 		this.name = name;
+		this._default = _default;
 		this.origin = origin;
 	}
 
@@ -22,7 +24,11 @@ public class RSEFilterPool {
 		return name;
 	}
 
-	public Object getOrigin() {
+	public boolean isDefault() {
+        return _default;
+    }
+
+    public Object getOrigin() {
 		return origin;
 	}
 	
