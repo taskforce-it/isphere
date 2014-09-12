@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2014 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.rse.rsemanagement.filter;
 
 import java.util.ArrayList;
@@ -27,7 +35,8 @@ public class RSEFilterHelper {
 			SystemFilterPool[] filterPools = profiles[idx1].getFilterPools(ISeriesSubSystemHelpers.getISeriesObjectsSubSystemFactory());
 			for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
             	RSEFilterPool rseFilterPool = new RSEFilterPool(
-            			profiles[idx1].getName() + " --> " + filterPools[idx2].getName(),
+            			profiles[idx1].getName() + "." + filterPools[idx2].getName(),
+                        filterPools[idx2].isDefault(),
             			filterPools[idx2]);
 				allFilterPools.add(rseFilterPool);
 			}
@@ -44,43 +53,45 @@ public class RSEFilterHelper {
         
         EList filters = ((SystemFilterPool)filterPool.getOrigin()).getFilters();
 
-		RSEFilter[] rseFilters = new RSEFilter[filters.size()];
+        ArrayList<RSEFilter> rseFilters = new ArrayList<RSEFilter>();
 
         for (int idx = 0; idx < filters.size(); idx++) {
 
             SystemFilter filter = (SystemFilter)filters.get(idx);
             
         	String type;
-        	boolean editable;
         	if (filter.getType().equals(IISeriesFilterTypes.FILTERTYPE_LIBRARY)) {
         		type = RSEFilter.TYPE_LIBRARY;
-        		editable = true;
         	}
         	else if (filter.getType().equals(IISeriesFilterTypes.FILTERTYPE_OBJECT)) {
         		type = RSEFilter.TYPE_OBJECT;
-        		editable = true;
         	}
         	else if (filter.getType().equals(IISeriesFilterTypes.FILTERTYPE_MEMBER)) {
         		type = RSEFilter.TYPE_MEMBER;
-        		editable = true;
         	}
         	else {
         		type = RSEFilter.TYPE_UNKNOWN;
-        		editable = false;
         	}
 
-        	RSEFilter rseFilter = new RSEFilter(
-        			filterPool,
-        			filter.getName(),
-        			type,
-        			filter.getFilterStrings(),
-        			editable,
-        			filter);
-        	rseFilters[idx] = rseFilter;
+            if (!type.equals(RSEFilter.TYPE_UNKNOWN)) {
+
+                RSEFilter rseFilter = new RSEFilter(
+                        filterPool,
+                        filter.getName(),
+                        type,
+                        filter.getFilterStrings(),
+                        true,
+                        filter);
+ 
+                rseFilters.add(rseFilter);
+                
+            }
         	
         }
 				
-		return rseFilters;
+        RSEFilter[] _rseFilters = new RSEFilter[rseFilters.size()];
+        rseFilters.toArray(_rseFilters);
+        return _rseFilters;
 		
 	}
 	 
