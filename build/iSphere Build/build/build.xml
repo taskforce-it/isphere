@@ -27,9 +27,13 @@
  *     - On the PC right click 'site.xml', 
  *       select 'PDE Tools' -> 'Build Site'.
  *     - On the PC run target 'createSourceForgeFiles'.
- *
  *     - Upload files to SourceForge.
  *     - Create SVN tag.
+ *   Last step when all changes are committed to the repository and all the
+ *   files are published at sourceforge.
+ *     - Set the version number in MANIFEST.MF in project "iSphere Notifier"
+ *       and commit the change to the repository. After this the iSphere users
+ *       get notified of the new iSphere version.
  *
  * ===================================================================== -->
 <project basedir="." default="build" >
