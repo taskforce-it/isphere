@@ -95,11 +95,12 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
 			comboViewerFilterPool.setInput(new Object());
 			comboFilterPool = comboViewerFilterPool.getCombo();
 			comboFilterPool.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			if (filterPools.length > 1) {
-				comboViewerFilterPool.setSelection(new StructuredSelection(filterPools[1]), true);
-			}
-			else if (filterPools.length > 0) {
-				comboViewerFilterPool.setSelection(new StructuredSelection(filterPools[0]), true);
+
+			for (int idx = 0; idx < filterPools.length; idx++) {
+			    if (!filterPools[idx].isDefault()) {
+	                comboViewerFilterPool.setSelection(new StructuredSelection(filterPools[idx]), true);
+	                break;
+			    }
 			}
 			
 		}
