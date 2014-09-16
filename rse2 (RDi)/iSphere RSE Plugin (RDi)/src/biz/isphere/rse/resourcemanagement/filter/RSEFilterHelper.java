@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.rsemanagement.filter;
+package biz.isphere.rse.resourcemanagement.filter;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -17,8 +17,8 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
-import biz.isphere.core.rsemanagement.filter.RSEFilter;
-import biz.isphere.core.rsemanagement.filter.RSEFilterPool;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 
 import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 

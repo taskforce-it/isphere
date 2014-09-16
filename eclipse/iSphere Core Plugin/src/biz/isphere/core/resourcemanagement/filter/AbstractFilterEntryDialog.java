@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.rsemanagement.AbstractEntryDialog;
+import biz.isphere.core.resourcemanagement.AbstractEntryDialog;
 
 public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
 
@@ -61,7 +61,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
 		return Messages.RSE_Filter_Management;
 	}
 
-	protected String getRSESubject() {
+	protected String getFileSubject() {
 		return Messages.RSE_Filters;
 	}
 

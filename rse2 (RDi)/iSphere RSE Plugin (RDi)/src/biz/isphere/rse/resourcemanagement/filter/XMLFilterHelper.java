@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.rsemanagement.filter;
+package biz.isphere.rse.resourcemanagement.filter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,8 +22,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import biz.isphere.core.rsemanagement.filter.RSEFilter;
-import biz.isphere.core.rsemanagement.filter.RSEFilterPool;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 
 public class XMLFilterHelper {
 

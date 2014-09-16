@@ -6,26 +6,26 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.rsemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class FilterEditingAreaBothEqual extends AbstractFilterEditingArea {
+public class FilterEditingAreaWorkspace extends AbstractFilterEditingArea {
 
-	public FilterEditingAreaBothEqual(Composite parent, AbstractResource[] resources, boolean both) {
+	public FilterEditingAreaWorkspace(Composite parent, AbstractResource[] resources, boolean both) {
 		super(parent, resources, both);
 	}
 
 	@Override
 	protected String[] getActions(boolean both) {
-		return getActionsBothEqual();
+		return getActionsWorkspace(both);
 	}
 
 	public String getTitle() {
-		return Messages.Filters + " " + getTitleBothEqual() + " " + Messages.type_and_string;
+		return Messages.Filters + " " + getTitleWorkspace();
 	}
 
 }

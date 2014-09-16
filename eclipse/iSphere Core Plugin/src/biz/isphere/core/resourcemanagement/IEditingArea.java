@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement;
+package biz.isphere.core.resourcemanagement;
 
 public interface IEditingArea {
 

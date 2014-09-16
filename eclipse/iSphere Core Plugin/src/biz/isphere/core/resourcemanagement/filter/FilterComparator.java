@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
-import biz.isphere.core.rsemanagement.AbstractComparator;
-import biz.isphere.core.rsemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.AbstractComparator;
+import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterComparator extends AbstractComparator {
 

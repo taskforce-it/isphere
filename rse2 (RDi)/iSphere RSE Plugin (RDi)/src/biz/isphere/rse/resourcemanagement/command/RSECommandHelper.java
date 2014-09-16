@@ -1,4 +1,4 @@
-package biz.isphere.rse.rsemanagement.command;
+package biz.isphere.rse.resourcemanagement.command;
 
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;

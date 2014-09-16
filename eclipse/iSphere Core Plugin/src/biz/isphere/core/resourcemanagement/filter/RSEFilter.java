@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 import java.util.Arrays;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.rsemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class RSEFilter extends AbstractResource {
 
