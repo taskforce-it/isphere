@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
-import biz.isphere.rse.rsemanagement.filter.FilterEntryDialog;
+import biz.isphere.rse.resourcemanagement.filter.FilterEntryDialog;
 
 public class RSEManagementAction implements IViewActionDelegate {
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 public class RSEFilterPool {
 	

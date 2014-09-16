@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.rsemanagement.AbstractEditingArea;
-import biz.isphere.core.rsemanagement.AbstractEditingDialog;
-import biz.isphere.core.rsemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.AbstractEditingArea;
+import biz.isphere.core.resourcemanagement.AbstractEditingDialog;
+import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog {
 

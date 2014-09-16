@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement;
+package biz.isphere.core.resourcemanagement;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +134,7 @@ public abstract class AbstractEntryDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(shell, SWT.OK);
-                dialog.setFilterNames(new String[] {getRSESubject()});
+                dialog.setFilterNames(new String[] {getFileSubject()});
                 dialog.setFilterExtensions(new String[] { "*." + getFileExtension()});
                 dialog.setFilterPath("C:\\");
                 // dialog.setFileName("export.xls");
@@ -295,7 +295,7 @@ public abstract class AbstractEntryDialog extends Dialog {
 	
 	protected abstract String getTitle();
 
-	protected abstract String getRSESubject();
+	protected abstract String getFileSubject();
 
 	protected abstract String getSubject();
 	

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
-import biz.isphere.core.rsemanagement.AbstractResourceBoth;
+import biz.isphere.core.resourcemanagement.AbstractResourceBoth;
 
 public class RSEFilterBoth extends AbstractResourceBoth {
 

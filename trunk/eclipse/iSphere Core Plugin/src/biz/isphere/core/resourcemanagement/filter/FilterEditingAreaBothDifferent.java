@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.rsemanagement.filter;
+package biz.isphere.core.resourcemanagement.filter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.rsemanagement.AbstractEditingArea;
-import biz.isphere.core.rsemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.AbstractEditingArea;
+import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaBothDifferent extends AbstractEditingArea {
 
