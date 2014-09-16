@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.rsemanagement.filter;
+package biz.isphere.rse.resourcemanagement.filter;
 
 import java.io.File;
 import java.util.Arrays;
@@ -14,10 +14,10 @@ import java.util.Vector;
 
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.rsemanagement.AbstractResource;
-import biz.isphere.core.rsemanagement.filter.AbstractFilterEditingDialog;
-import biz.isphere.core.rsemanagement.filter.RSEFilter;
-import biz.isphere.core.rsemanagement.filter.RSEFilterBoth;
+import biz.isphere.core.resourcemanagement.AbstractResource;
+import biz.isphere.core.resourcemanagement.filter.AbstractFilterEditingDialog;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterBoth;
 
 public class FilterEditingDialog extends AbstractFilterEditingDialog {
 
