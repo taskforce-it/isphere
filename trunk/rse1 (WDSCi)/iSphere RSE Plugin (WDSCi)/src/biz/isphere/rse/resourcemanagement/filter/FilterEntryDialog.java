@@ -6,17 +6,17 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.rsemanagement.filter;
+package biz.isphere.rse.resourcemanagement.filter;
 
 import java.io.File;
 
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.rsemanagement.filter.AbstractFilterEntryDialog;
-import biz.isphere.core.rsemanagement.filter.AbstractFilterEditingDialog;
-import biz.isphere.core.rsemanagement.filter.RSEFilter;
-import biz.isphere.core.rsemanagement.filter.RSEFilterBoth;
-import biz.isphere.core.rsemanagement.filter.RSEFilterPool;
+import biz.isphere.core.resourcemanagement.filter.AbstractFilterEntryDialog;
+import biz.isphere.core.resourcemanagement.filter.AbstractFilterEditingDialog;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterBoth;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 
 public class FilterEntryDialog extends AbstractFilterEntryDialog {
 
