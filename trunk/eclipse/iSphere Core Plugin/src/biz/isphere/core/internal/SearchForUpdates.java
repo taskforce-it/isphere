@@ -34,23 +34,21 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 
 public class SearchForUpdates extends Job {
-	
+
     private boolean showResultAlways;
     private boolean newVersionAvailable;
-    private String currentVersionToShow;
-    private String currentVersion;
-    private String availableVersionToShow;
-    private String availableVersion;
-    
-	public SearchForUpdates(boolean showResultAlways) {
-		super(Messages.iSphere_Search_for_updates);
-		this.showResultAlways = showResultAlways;
-	}
+    private Version currentVersion;
+    private Version availableVersion;
 
-	protected IStatus run(IProgressMonitor monitor) {
+    public SearchForUpdates(boolean showResultAlways) {
+        super(Messages.iSphere_Search_for_updates);
+        this.showResultAlways = showResultAlways;
+    }
 
-	    newVersionAvailable = false;
-        
+    protected IStatus run(IProgressMonitor monitor) {
+
+        newVersionAvailable = false;
+
         try {
             URL url = new URL(Preferences.getInstance().getURLForUpdates());
             URLConnection connection = url.openConnection();
@@ -59,46 +57,40 @@ public class SearchForUpdates extends Job {
             }
             String[] propertyValues = getPropertyValues(connection.getInputStream(), "Bundle-Version");
             if (propertyValues != null && propertyValues.length == 1) {
-                currentVersionToShow = ISpherePlugin.getDefault().getVersion();
-                currentVersion = ISphereHelper.comparableVersion(currentVersionToShow);
-                availableVersionToShow = propertyValues[0];
-                availableVersion = ISphereHelper.comparableVersion(availableVersionToShow);
-                if (currentVersion.compareTo(availableVersion) != 0) {
+                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
+                availableVersion = new Version(propertyValues[0]);
+                if (availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
                 }
             }
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (showResultAlways || newVersionAvailable) {
-            
+
             if (!showResultAlways) {
-                String lastVersion = Preferences.getInstance().getLastVersionForUpdates();
+                Version lastVersion; 
+                try {
+                    lastVersion = new Version(Preferences.getInstance().getLastVersionForUpdates());
+                } catch (IllegalArgumentException e) {
+                    lastVersion = new Version("0");
+                }
                 if (lastVersion.compareTo(availableVersion) != 0) {
                     new UIJob("ISPHERE_UPDATES") {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(
-                                parent, 
-                                "iSphere", 
-                                null, 
-                                Messages.There_is_a_new_version_available + "\n" + 
-                                    Messages.Current_version + ": " + currentVersionToShow + "\n" + 
-                                    Messages.Available_version + ": " + availableVersionToShow,
-                                MessageDialog.INFORMATION, 
-                                new String[] {Messages.OK},
-                                0,
-                                availableVersion);
+                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null,
+                                Messages.There_is_a_new_version_available + "\n" + Messages.Current_version + ": " + currentVersion + "\n"
+                                    + Messages.Available_version + ": " + availableVersion, MessageDialog.INFORMATION, new String[] { Messages.OK },
+                                0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
                     }.schedule();
                 }
-            }
-            else {
+            } else {
                 new UIJob("ISPHERE_UPDATES") {
                     @Override
                     public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -107,8 +99,7 @@ public class SearchForUpdates extends Job {
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
                             tMessageBox.setMessage(Messages.There_is_a_new_version_available);
-                        }
-                        else {
+                        } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
                         tMessageBox.open();
@@ -116,12 +107,12 @@ public class SearchForUpdates extends Job {
                     }
                 }.schedule();
             }
-            
+
         }
-        
+
         return Status.OK_STATUS;
-        
-	}
+
+    }
 
     private String[] getPropertyValues(InputStream manifestStream, String property) {
         String[] propertyValues = null;
@@ -129,24 +120,21 @@ public class SearchForUpdates extends Job {
             Manifest manifest = new Manifest(manifestStream);
             Properties prop = _manifestToProperties(manifest.getMainAttributes());
             String requires = prop.getProperty(property);
-            if(requires != null) {
+            if (requires != null) {
                 ManifestElement elements[] = ManifestElement.parseHeader(property, requires);
                 propertyValues = new String[elements.length];
-                for(int idx = 0; idx < elements.length; idx++) {
+                for (int idx = 0; idx < elements.length; idx++) {
                     propertyValues[idx] = elements[idx].getValue();
                 }
             }
-        }
-        catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
-                if(manifestStream != null) {
+                if (manifestStream != null) {
                     manifestStream.close();
                 }
-            }
-            catch(Exception e) { 
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -157,7 +145,7 @@ public class SearchForUpdates extends Job {
         Iterator<?> iter = d.keySet().iterator();
         Properties result = new Properties();
         Attributes.Name key;
-        for(; iter.hasNext(); result.put(key.toString(), d.get(key)))
+        for (; iter.hasNext(); result.put(key.toString(), d.get(key)))
             key = (Attributes.Name)iter.next();
 
         return result;
