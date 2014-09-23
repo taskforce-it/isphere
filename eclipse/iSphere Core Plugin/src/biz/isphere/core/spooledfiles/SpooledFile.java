@@ -488,7 +488,7 @@ public class SpooledFile {
      */
     public String getCreationDateFormated() {
         if (creationDateFormatted == null) {
-            DateFormat formatter = new SimpleDateFormat("dd.MM.yy");
+            DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT);
             creationDateFormatted = formatter.format(creationTimestamp);
         }
         return creationDateFormatted;
@@ -504,7 +504,7 @@ public class SpooledFile {
      */
     public String getCreationTimeFormated() {
         if (creationTimeFormatted == null) {
-            DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+            DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT);
             creationTimeFormatted = formatter.format(creationTimestamp);
         }
         return creationTimeFormatted;
