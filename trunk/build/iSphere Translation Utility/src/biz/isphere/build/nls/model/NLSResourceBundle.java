@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import biz.isphere.build.nls.exception.JobCanceledException;
+
 /**
  * This class represents a language resource such as "plugin_*.properties". It
  * is the host of all language properties files that belong to the resource.
@@ -36,7 +38,7 @@ public class NLSResourceBundle {
         return fRelativePath;
     }
 
-    public void add(NLSPropertiesFile nlsFile) throws Exception {
+    public void add(NLSPropertiesFile nlsFile) throws JobCanceledException {
         fNLSFiles.put(nlsFile.getKey(), nlsFile);
     }
 
@@ -52,7 +54,7 @@ public class NLSResourceBundle {
         return keys.toArray(new String[keys.size()]);
     }
 
-    public NLSTextEntry[] getValues(String key) throws Exception {
+    public NLSTextEntry[] getValues(String key) throws JobCanceledException {
         List<NLSTextEntry> values = new ArrayList<NLSTextEntry>();
         for (String languageKey : getLanguageKeys()) {
             NLSPropertiesFile nlsFile = getNLSFile(languageKey);
@@ -66,7 +68,7 @@ public class NLSResourceBundle {
         return fNLSFiles.get(languageKey);
     }
 
-    public void updateFiles(String projectName) throws Exception {
+    public void updateFiles(String projectName) throws JobCanceledException {
         for (NLSPropertiesFile nlsFile : fNLSFiles.values()) {
             if (!nlsFile.getLanguage().isProtected()) {
                 nlsFile.updateProperties(projectName);

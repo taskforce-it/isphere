@@ -14,16 +14,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PatternFormatting;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 import biz.isphere.build.nls.NLS;
 import biz.isphere.build.nls.configuration.Configuration;
+import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.model.EclipseProject;
 import biz.isphere.build.nls.model.NLSResourceBundle;
 import biz.isphere.build.nls.model.NLSTextEntry;
@@ -51,6 +59,13 @@ public class NLSExporter {
 
     private Map<String, CellStyle> styles = null;
 
+    /**
+     * Main method of the exporter utility. Valid optional arguments are:
+     * <p>
+     * - name of the configuration properties file
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         NLSExporter main = new NLSExporter();
 
@@ -59,12 +74,12 @@ public class NLSExporter {
                 Configuration.getInstance().setConfigurationFile(args[0]);
             }
             main.run();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JobCanceledException e) {
+            System.out.println(e.getLocalizedMessage());
         }
     }
 
-    private void run() throws Exception {
+    private void run() throws JobCanceledException {
         Configuration config = Configuration.getInstance();
         String[] projectNames = config.getProjects();
         Workbook workbook = new HSSFWorkbook();
@@ -78,7 +93,7 @@ public class NLSExporter {
         LogUtil.print("Finished Excel Export");
     }
 
-    private void saveWorkbook(Workbook workbook, File file) {
+    private void saveWorkbook(Workbook workbook, File file) throws JobCanceledException {
 
         LogUtil.print("Saving Excel workbook to: " + file.getAbsolutePath());
 
@@ -88,10 +103,11 @@ public class NLSExporter {
             out.close();
         } catch (Exception e) {
             LogUtil.error("Failed to save workbook to: " + file.getAbsolutePath());
+            throw new JobCanceledException(e.getLocalizedMessage());
         }
     }
 
-    private void addToExcelSheet(Workbook workbook, EclipseProject project) throws Exception {
+    private void addToExcelSheet(Workbook workbook, EclipseProject project) throws JobCanceledException {
 
         LogUtil.print("Adding to Excel workbook: " + project);
 
@@ -119,15 +135,23 @@ public class NLSExporter {
 
         // data row
         NLSResourceBundle[] bundles = project.getBundles();
+        Row firstDataRow = null;
+        Row lastDataRow = null;
         for (NLSResourceBundle bundle : bundles) {
             for (String key : bundle.getKeys()) {
                 Row dataRow = addDataRow(sheet, bundle.getID(), key);
+                if (firstDataRow == null) {
+                    firstDataRow = dataRow;
+                }
+                lastDataRow = dataRow;
                 for (NLSTextEntry value : bundle.getValues(key)) {
                     addLanguageCell(dataRow, value.getText(), value.isProtected());
                 }
                 ;
             }
         }
+
+        addCellFormatting(sheet, firstDataRow, lastDataRow);
 
         // column widths
         sheet.setColumnWidth(0, sheet.getColumnWidth(0) * 5);
@@ -137,8 +161,103 @@ public class NLSExporter {
         }
 
         // protect sheet
-        sheet.protectSheet("");
+        // sheet.protectSheet("");
 
+    }
+
+    /*
+     * This cell formatting approach works as designed, but is fairly slow on
+     * opening the workbook.
+     */
+    private void addCellFormatting(Sheet sheet, Row firstDataRow, Row lastDataRow) {
+
+        for (int r = firstDataRow.getRowNum(); r <= lastDataRow.getRowNum(); r++) {
+            Row row = sheet.getRow(r);
+            Cell defaultLanguageCell = row.getCell(2);
+            for (int c = 3; c < row.getLastCellNum(); c++) {
+                createCellFormattingRule(sheet, defaultLanguageCell, row.getCell(c));
+            }
+        }
+    }
+
+    private void createCellFormattingRule(Sheet sheet, Cell defaultLanguageCell, Cell cell) {
+
+        SheetConditionalFormatting formating = sheet.getSheetConditionalFormatting();
+
+        // Create formatting rule
+        ConditionalFormattingRule rule = formating.createConditionalFormattingRule(ComparisonOperator.EQUAL,
+            getExcelCellCoordinates(defaultLanguageCell));
+
+        // Create formatting pattern which is applied to the cell when the rule
+        // evaluates to true.
+        PatternFormatting pattern = rule.createPatternFormatting();
+        pattern.setFillBackgroundColor(HSSFColor.AQUA.index);
+
+        // Bind rule to cell and sheet
+        int rowNum = cell.getRowIndex();
+        int columnNum = cell.getColumnIndex();
+        CellRangeAddress[] regions = { new CellRangeAddress(rowNum, rowNum, columnNum, columnNum) };
+        formating.addConditionalFormatting(regions, rule);
+
+    }
+
+    private String getExcelCellCoordinates(Cell cell) {
+        StringBuilder coordinates = new StringBuilder();
+        String columnLetter = CellReference.convertNumToColString(cell.getColumnIndex());
+        coordinates.append("$");
+        coordinates.append(columnLetter);
+        coordinates.append("$");
+        coordinates.append(cell.getRowIndex() + 1);
+        return coordinates.toString();
+    }
+
+    /*
+     * What am I doing wrong?
+     */
+    /*
+     * This cell formatting rule approach does not work, because Excel shows
+     * 'F7' as the cell with the default language string, whereas 'C4' is
+     * expected. The problem seems to be related to the way
+     * addConditionalFormatting() works. Changing the return value of
+     * getExcelCellCoordinates() to fixed 'A1' gets closer but not close enough.
+     * For 'A1' Excel shows 'D4' instead of 'C4'.
+     */
+    private void addCellFormatting_doesNotWork(Sheet sheet, Row firstDataRow, Row lastDataRow) {
+        createCellFormattingRule_doesNotWork(sheet, firstDataRow, lastDataRow);
+    }
+
+    private void createCellFormattingRule_doesNotWork(Sheet sheet, Row firstDataRow, Row lastDataRow) {
+
+        Cell defaultLanguageCell = firstDataRow.getCell(2);
+        Cell topLeftLanguageCell = firstDataRow.getCell(3);
+        Cell bottomRightLanguageCell = lastDataRow.getCell(lastDataRow.getLastCellNum() - 1);
+
+        SheetConditionalFormatting formating = sheet.getSheetConditionalFormatting();
+
+        // Create formatting rule
+        ConditionalFormattingRule rule = formating.createConditionalFormattingRule(ComparisonOperator.EQUAL,
+            getExcelCellCoordinates_1(defaultLanguageCell));
+
+        // Create formatting pattern which is applied to the cell when the rule
+        // evaluates to true.
+        PatternFormatting pattern = rule.createPatternFormatting();
+        pattern.setFillBackgroundColor(HSSFColor.AQUA.index);
+
+        // Bind rule to cell and sheet
+        CellRangeAddress[] regions = { new CellRangeAddress(firstDataRow.getRowNum(), lastDataRow.getRowNum(), topLeftLanguageCell.getColumnIndex(),
+            bottomRightLanguageCell.getColumnIndex()) };
+        formating.addConditionalFormatting(regions, rule);
+
+        System.out.println(rule.getFormula1());
+    }
+
+    private String getExcelCellCoordinates_1(Cell cell) {
+        StringBuilder coordinates = new StringBuilder();
+        String columnLetter = CellReference.convertNumToColString(cell.getColumnIndex());
+        coordinates.append(columnLetter);
+        coordinates.append(cell.getRowIndex() + 1);
+        // return coordinates.toString();
+        return "A1";
     }
 
     private Row addDataRow(Sheet sheet, String id, String key) {
