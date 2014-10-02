@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 
@@ -73,10 +76,14 @@ public final class Configuration {
         fProperties = loadProperties();
     }
 
-    public File getExcelFile()  {
+    public File getExcelFile() {
         String file = getString(EXPORT_FILE);
         if (!file.endsWith(".xls")) {
             file = file + ".xls";
+        }
+        int i = file.lastIndexOf(".");
+        if (i != -1) {
+            file = file.substring(0, i) + "_" + getDateAsString() + file.substring(i);
         }
         return new File(file);
     }
@@ -85,11 +92,11 @@ public final class Configuration {
         return FileUtil.fixAbsolutePath(fWorkspace.getPath());
     }
 
-    public String[] getProjects()  {
+    public String[] getProjects() {
         return getStringArray(PROJECTS);
     }
 
-    public FileSelectionEntry[] getFiles()  {
+    public FileSelectionEntry[] getFiles() {
         List<FileSelectionEntry> files = new ArrayList<FileSelectionEntry>();
         String[] entries = getStringArray(FILES);
         for (String entry : entries) {
@@ -98,23 +105,28 @@ public final class Configuration {
         return files.toArray(new FileSelectionEntry[files.size()]);
     }
 
-    public String getDefaultLanguageID()  {
+    public String getDefaultLanguageID() {
         return getString(DEFAULT_LANGUAGE);
     }
 
-    public boolean isDefaultLanguage(String languageID)  {
+    public boolean isDefaultLanguage(String languageID) {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
+    }
+
+    private String getDateAsString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(GregorianCalendar.getInstance().getTime());
     }
 
     private String getResourcePath() {
         return new File(fResource).getAbsolutePath();
     }
 
-    private String getString(String key)  {
+    private String getString(String key) {
         return getProperties().getProperty(key);
     }
 
-    private String[] getStringArray(String key)  {
+    private String[] getStringArray(String key) {
         String value = getProperties().getProperty(key);
         return value.split(",");
     }
