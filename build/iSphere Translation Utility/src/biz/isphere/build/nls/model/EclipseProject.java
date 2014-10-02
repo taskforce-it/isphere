@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import biz.isphere.build.nls.configuration.Configuration;
+import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.utils.FileUtil;
 
 /**
@@ -29,7 +30,7 @@ public class EclipseProject {
     File fPath;
     Map<String, NLSResourceBundle> fNLSBundle;
 
-    public EclipseProject(String projectName) throws Exception {
+    public EclipseProject(String projectName) throws JobCanceledException {
         fPath = new File(Configuration.getInstance().getWorkspacePath() + projectName);
         fNLSBundle = new HashMap<String, NLSResourceBundle>();
     }
@@ -59,19 +60,19 @@ public class EclipseProject {
         fNLSBundle.put(bundle.getID(), bundle);
     }
 
-    public void loadNLSPropertiesFiles(FileSelectionEntry[] files) throws Exception {
+    public void loadNLSPropertiesFiles(FileSelectionEntry[] files) throws JobCanceledException {
         for (FileSelectionEntry selectedFile : files) {
             loadFileAndCreateBundle(this, selectedFile.getPath(), selectedFile.getPattern(), selectedFile.isSubdirectories());
         }
     }
 
-    public void updateNLSPropertiesFiles() throws Exception {
+    public void updateNLSPropertiesFiles() throws JobCanceledException {
         for (NLSResourceBundle bundle : fNLSBundle.values()) {
             bundle.updateFiles(getName());
         }
     }
 
-    private void loadFileAndCreateBundle(EclipseProject project, String relativePath, String pattern, boolean searchSubDirectories) throws Exception {
+    private void loadFileAndCreateBundle(EclipseProject project, String relativePath, String pattern, boolean searchSubDirectories) throws JobCanceledException {
         File[] files = new File(project.getPath() + relativePath).listFiles();
         String regex = pattern.replace("?", ".?").replace("*", ".*?").replace("\\", "\\\\");
         for (File file : files) {

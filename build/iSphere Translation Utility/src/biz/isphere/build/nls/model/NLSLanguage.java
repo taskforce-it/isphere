@@ -9,6 +9,7 @@
 package biz.isphere.build.nls.model;
 
 import biz.isphere.build.nls.configuration.Configuration;
+import biz.isphere.build.nls.exception.JobCanceledException;
 
 /**
  * Class to represent a language. Languages can be protected and hence text
@@ -22,7 +23,7 @@ public class NLSLanguage {
     private String fLanguageID;
     private boolean fIsProtected;
 
-    public NLSLanguage(String languageID) throws Exception {
+    public NLSLanguage(String languageID) throws JobCanceledException {
         fLanguageID = languageID;
         fIsProtected = Configuration.getInstance().getDefaultLanguageID().equalsIgnoreCase(languageID);
     }

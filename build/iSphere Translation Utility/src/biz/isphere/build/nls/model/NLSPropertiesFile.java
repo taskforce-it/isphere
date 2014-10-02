@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import biz.isphere.build.nls.configuration.Configuration;
+import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.utils.FileUtil;
 import biz.isphere.build.nls.utils.LogUtil;
 
@@ -63,16 +64,16 @@ public class NLSPropertiesFile {
      *        file that contains the NLS strings.
      * @param languageKey Language key as used as the title of the language
      *        column in the Excel sheet.
-     * @throws Exception
+     * @throws JobCanceledException
      */
-    public NLSPropertiesFile(String projectPath, String relativePath, String languageKey) throws Exception {
+    public NLSPropertiesFile(String projectPath, String relativePath, String languageKey) throws JobCanceledException {
         fProjectPath = projectPath;
         fFile = new File(projectPath + relativePath + getLanguageSuffix(removeProtectedLanguageFlag(languageKey)) + ".properties");
         fProperties = null;
         fLanguage = null;
     }
 
-    public String getKey() throws Exception {
+    public String getKey() throws JobCanceledException {
         if (Configuration.getInstance().isDefaultLanguage(getLanguage().getLanguageID())) {
             return PROTECTED_LANGUAGE_FLAG + getLanguage().getLanguageID();
         }
@@ -83,7 +84,7 @@ public class NLSPropertiesFile {
         return FileUtil.fixRelativePath(getRelativeFile().getParent()) + getFileNameWithoutExtension().split(LANGUAGE_ID_DELIMITER)[0];
     }
 
-    public NLSLanguage getLanguage() throws Exception {
+    public NLSLanguage getLanguage() throws JobCanceledException {
         if (fLanguage == null) {
             String languageID;
             String[] parts = getFileNameWithoutExtension().split(LANGUAGE_ID_DELIMITER);
@@ -103,7 +104,7 @@ public class NLSPropertiesFile {
                 return getProperties().getString(key);
             }
             return "";
-        } catch (Exception e) {
+        } catch (JobCanceledException e) {
             e.printStackTrace();
             return "";
         }
@@ -117,18 +118,18 @@ public class NLSPropertiesFile {
                 keys.add(key);
             }
             return keys;
-        } catch (Exception e) {
+        } catch (JobCanceledException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public void setProperty(String key, String text) throws Exception {
+    public void setProperty(String key, String text) throws JobCanceledException {
         PropertiesConfiguration properties = getProperties();
         properties.setProperty(key, text);
     }
 
-    public void updateProperties(String projectName) throws Exception {
+    public void updateProperties(String projectName) throws JobCanceledException {
         PropertiesConfiguration properties = getProperties();
 
         try {
@@ -141,10 +142,15 @@ public class NLSPropertiesFile {
 
     }
 
-    private PropertiesConfiguration getProperties() throws Exception {
+    private PropertiesConfiguration getProperties() throws JobCanceledException {
         if (fProperties == null) {
             fProperties = new PropertiesConfiguration();
-            fProperties.load(new FileInputStream(fFile));
+            try {
+                fProperties.load(new FileInputStream(fFile));
+            } catch (Exception e) {
+                LogUtil.error("Failed to load properties from file: " + fFile.getAbsolutePath());
+                throw new JobCanceledException(e.getLocalizedMessage());
+            }
         }
         return fProperties;
     }
@@ -157,7 +163,7 @@ public class NLSPropertiesFile {
         return new File(FileUtil.fixRelativeFile(fFile.getPath().substring(fProjectPath.length())));
     }
 
-    private String getLanguageSuffix(String languageID) throws Exception {
+    private String getLanguageSuffix(String languageID) throws JobCanceledException {
         if (Configuration.getInstance().isDefaultLanguage(languageID)) {
             return "";
         }

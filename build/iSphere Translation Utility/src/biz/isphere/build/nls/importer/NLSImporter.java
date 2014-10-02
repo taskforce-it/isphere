@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import biz.isphere.build.nls.NLS;
 import biz.isphere.build.nls.configuration.Configuration;
+import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.model.EclipseProject;
 import biz.isphere.build.nls.model.NLSPropertiesFile;
 import biz.isphere.build.nls.model.NLSResourceBundle;
@@ -43,6 +44,13 @@ import biz.isphere.build.nls.utils.LogUtil;
  */
 public class NLSImporter {
 
+    /**
+     * Main method of the importer utility. Valid optional arguments are:
+     * <p>
+     * - name of the configuration properties file
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         NLSImporter main = new NLSImporter();
 
@@ -51,12 +59,12 @@ public class NLSImporter {
                 Configuration.getInstance().setConfigurationFile(args[0]);
             }
             main.run();
-        } catch (Exception e) {
+        } catch (JobCanceledException e) {
             e.printStackTrace();
         }
     }
 
-    private void run() throws Exception {
+    private void run() throws JobCanceledException {
         Workbook workbook = loadWorkbook(Configuration.getInstance().getExcelFile());
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
@@ -67,7 +75,7 @@ public class NLSImporter {
         LogUtil.print("Finished Excel Import");
     }
 
-    private EclipseProject loadFromExcelSheet(Sheet sheet, Workbook wb) throws Exception {
+    private EclipseProject loadFromExcelSheet(Sheet sheet, Workbook wb) throws JobCanceledException {
 
         LogUtil.print("Loading data from Excel sheet: " + sheet.getSheetName());
 
@@ -83,7 +91,7 @@ public class NLSImporter {
         return project;
     }
 
-    private void importPropertiesFileFromExcelSheet(EclipseProject project, Sheet sheet, Row firstDataRow, Row lastDataRow) throws Exception {
+    private void importPropertiesFileFromExcelSheet(EclipseProject project, Sheet sheet, Row firstDataRow, Row lastDataRow) throws JobCanceledException {
 
         String relativePath = firstDataRow.getCell(0).getStringCellValue();
         NLSResourceBundle bundle = new NLSResourceBundle(relativePath);
@@ -162,7 +170,7 @@ public class NLSImporter {
         return false;
     }
 
-    private String[] getLanguagesKeys(Sheet sheet) throws Exception {
+    private String[] getLanguagesKeys(Sheet sheet) throws JobCanceledException {
         Set<String> languages = new TreeSet<String>();
 
         for (Iterator<Row> iterator = sheet.iterator(); iterator.hasNext();) {

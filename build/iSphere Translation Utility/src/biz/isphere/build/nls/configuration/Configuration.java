@@ -13,10 +13,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.model.FileSelectionEntry;
 import biz.isphere.build.nls.utils.FileUtil;
 import biz.isphere.build.nls.utils.LogUtil;
@@ -41,23 +43,22 @@ public final class Configuration {
     /**
      * Private constructor to ensure the Singleton pattern.
      */
-    private Configuration() throws Exception {
+    private Configuration() throws JobCanceledException {
         setConfigurationFile(CONFIG_FILE);
         fWorkspace = new File(new File(fResource).getParentFile().getParentFile().getParent());
-        fProperties = null;
     }
 
     /**
      * Thread-safe method that returns the instance of this Singleton class.
      */
-    public synchronized static Configuration getInstance() throws Exception {
+    public synchronized static Configuration getInstance() throws JobCanceledException {
         if (instance == null) {
             instance = new Configuration();
         }
         return instance;
     }
 
-    public void setConfigurationFile(String fileName) throws Exception {
+    public void setConfigurationFile(String fileName) throws JobCanceledException {
         try {
             File file = new File(fileName);
             if (file.exists()) {
@@ -65,14 +66,14 @@ public final class Configuration {
             } else {
                 fResource = getClass().getResource("/" + fileName).toURI();
             }
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             LogUtil.error("Configuration file not found: " + fileName);
-            throw e;
+            throw new JobCanceledException(e.getLocalizedMessage());
         }
         fProperties = loadProperties();
     }
 
-    public File getExcelFile() {
+    public File getExcelFile()  {
         String file = getString(EXPORT_FILE);
         if (!file.endsWith(".xls")) {
             file = file + ".xls";
@@ -84,11 +85,11 @@ public final class Configuration {
         return FileUtil.fixAbsolutePath(fWorkspace.getPath());
     }
 
-    public String[] getProjects() {
+    public String[] getProjects()  {
         return getStringArray(PROJECTS);
     }
 
-    public FileSelectionEntry[] getFiles() {
+    public FileSelectionEntry[] getFiles()  {
         List<FileSelectionEntry> files = new ArrayList<FileSelectionEntry>();
         String[] entries = getStringArray(FILES);
         for (String entry : entries) {
@@ -97,11 +98,11 @@ public final class Configuration {
         return files.toArray(new FileSelectionEntry[files.size()]);
     }
 
-    public String getDefaultLanguageID() {
+    public String getDefaultLanguageID()  {
         return getString(DEFAULT_LANGUAGE);
     }
 
-    public boolean isDefaultLanguage(String languageID) {
+    public boolean isDefaultLanguage(String languageID)  {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
     }
 
@@ -109,38 +110,29 @@ public final class Configuration {
         return new File(fResource).getAbsolutePath();
     }
 
-    private String getString(String key) {
+    private String getString(String key)  {
         return getProperties().getProperty(key);
     }
 
-    private String[] getStringArray(String key) {
+    private String[] getStringArray(String key)  {
         String value = getProperties().getProperty(key);
         return value.split(",");
     }
 
     private Properties getProperties() {
-        if (fProperties == null) {
-            fProperties = loadProperties();
-        }
         return fProperties;
     }
 
-    private Properties loadProperties() {
+    private Properties loadProperties() throws JobCanceledException {
         Properties nlsProps = new Properties();
         InputStream in = null;
         try {
             in = new FileInputStream(getResourcePath());
             nlsProps.load(in);
+            in.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            LogUtil.error("Failed to load properties from file: " + getResourcePath());
+            throw new JobCanceledException(e.getLocalizedMessage());
         }
         return nlsProps;
     }
