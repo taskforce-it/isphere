@@ -10,11 +10,9 @@ package biz.isphere.build.nls.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -39,16 +37,16 @@ public final class Configuration {
     private static final String EXPORT_FILE = "exportFile";
     private static final String DEFAULT_LANGUAGE = "defaultLanguage";
 
-    URI fResource;
+    String fConfigurationResource;
     File fWorkspace;
     Properties fProperties;
 
     /**
      * Private constructor to ensure the Singleton pattern.
      */
-    private Configuration() throws JobCanceledException {
+    private Configuration() {
         setConfigurationFile(CONFIG_FILE);
-        fWorkspace = new File(new File(fResource).getParentFile().getParentFile().getParent());
+        fWorkspace = null;
     }
 
     /**
@@ -61,22 +59,12 @@ public final class Configuration {
         return instance;
     }
 
-    public void setConfigurationFile(String fileName) throws JobCanceledException {
-        try {
-            File file = new File(fileName);
-            if (file.exists()) {
-                fResource = file.toURI();
-            } else {
-                fResource = getClass().getResource("/" + fileName).toURI();
-            }
-        } catch (URISyntaxException e) {
-            LogUtil.error("Configuration file not found: " + fileName);
-            throw new JobCanceledException(e.getLocalizedMessage());
-        }
-        fProperties = loadProperties();
+    public void setConfigurationFile(String fileName) {
+        fConfigurationResource = fileName;
+        fProperties = null;
     }
 
-    public File getExcelFile() {
+    public File getExcelFile() throws JobCanceledException {
         String file = getString(EXPORT_FILE);
         if (!file.endsWith(".xls")) {
             file = file + ".xls";
@@ -88,15 +76,15 @@ public final class Configuration {
         return new File(file);
     }
 
-    public String getWorkspacePath() {
-        return FileUtil.fixAbsolutePath(fWorkspace.getPath());
+    public String getWorkspacePath() throws JobCanceledException {
+        return FileUtil.fixAbsolutePath(getWorkspace().getPath());
     }
 
-    public String[] getProjects() {
+    public String[] getProjects() throws JobCanceledException {
         return getStringArray(PROJECTS);
     }
 
-    public FileSelectionEntry[] getFiles() {
+    public FileSelectionEntry[] getFiles() throws JobCanceledException {
         List<FileSelectionEntry> files = new ArrayList<FileSelectionEntry>();
         String[] entries = getStringArray(FILES);
         for (String entry : entries) {
@@ -105,12 +93,19 @@ public final class Configuration {
         return files.toArray(new FileSelectionEntry[files.size()]);
     }
 
-    public String getDefaultLanguageID() {
+    public String getDefaultLanguageID() throws JobCanceledException {
         return getString(DEFAULT_LANGUAGE);
     }
 
-    public boolean isDefaultLanguage(String languageID) {
+    public boolean isDefaultLanguage(String languageID) throws JobCanceledException {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
+    }
+
+    private File getWorkspace() throws JobCanceledException {
+        if (fWorkspace == null) {
+            fWorkspace = new File(new File(getResourcePath()).getParentFile().getParentFile().getParent());
+        }
+        return fWorkspace;
     }
 
     private String getDateAsString() {
@@ -118,20 +113,35 @@ public final class Configuration {
         return formatter.format(GregorianCalendar.getInstance().getTime());
     }
 
-    private String getResourcePath() {
-        return new File(fResource).getAbsolutePath();
+    private String getResourcePath() throws JobCanceledException {
+        try {
+            File file = new File(fConfigurationResource);
+            URI configurationURI;
+            if (file.exists()) {
+                configurationURI = file.toURI();
+            } else {
+                configurationURI = getClass().getResource("/" + fConfigurationResource).toURI();
+            }
+            return configurationURI.getPath();
+        } catch (URISyntaxException e) {
+            LogUtil.error("Configuration file not found: " + fConfigurationResource);
+            throw new JobCanceledException(e.getLocalizedMessage());
+        }
     }
 
-    private String getString(String key) {
+    private String getString(String key) throws JobCanceledException {
         return getProperties().getProperty(key);
     }
 
-    private String[] getStringArray(String key) {
+    private String[] getStringArray(String key) throws JobCanceledException {
         String value = getProperties().getProperty(key);
         return value.split(",");
     }
 
-    private Properties getProperties() {
+    private Properties getProperties() throws JobCanceledException {
+        if (fProperties == null) {
+            fProperties = loadProperties();
+        }
         return fProperties;
     }
 
