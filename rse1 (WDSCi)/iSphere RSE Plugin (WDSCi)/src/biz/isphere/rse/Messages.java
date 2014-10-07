@@ -39,10 +39,6 @@ public class Messages extends NLS {
 
     public static String Deleting;
 
-    public static String Search_string;
-    
-    public static String String_to_be_searched;
-    
     public static String Enter_or_select_search_string;
     
     public static String Specify_whether_all_matching_records_are_returned;
