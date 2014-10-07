@@ -14,14 +14,17 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
 
+    // Only for WDSCi
     public static String iSphere_Message_File_Editor;
 
+    // Only for WDSCi
     public static String iSphere_Compare_Editor;
 
     public static String Right;
 
     public static String Ancestor;
 
+    // Only for WDSCi
     public static String iSphere_Binding_Directory_Editor;
 
     public static String E_R_R_O_R;
@@ -35,10 +38,6 @@ public class Messages extends NLS {
     public static String Deleting_spooled_files;
 
     public static String Deleting;
-
-    public static String Search_string;
-
-    public static String String_to_be_searched;
 
     public static String Enter_or_select_search_string;
 
@@ -85,15 +84,15 @@ public class Messages extends NLS {
     public static String ShowAllRecords;
 
     public static String IncludeFirstLevelText;
-    
+
     public static String Specify_whether_or_not_to_include_the_first_level_message_text;
 
     public static String IncludeSecondLevelText;
-    
+
     public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String No_objects_found_that_match_the_selection_criteria;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
