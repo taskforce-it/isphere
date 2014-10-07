@@ -275,6 +275,7 @@ public class MessageDescriptionViewer {
                     MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
                         DialogActionTypes.getSubEditorActionType(mode), _messageDescription);
                     if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
+                        _tableViewer.update(_messageDescription, null);
                     }
 
                 }
