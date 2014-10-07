@@ -106,7 +106,7 @@ public class Messages extends NLS {
 
     public static String Ignore_case;
 
-    public static String Info;
+    public static String Info; // FIXME: obsolete
 
     public static String Left;
 
@@ -132,7 +132,7 @@ public class Messages extends NLS {
 
     public static String Member_2_file_1_in_library_0_not_found;
 
-    public static String Menu_item_colon;
+    public static String Menu_item_colon; // FIXME: obsolete
 
     public static String Message;
 
@@ -144,7 +144,7 @@ public class Messages extends NLS {
 
     public static String Message_description;
 
-    public static String Message_descriptions;
+    public static String Message_descriptions; // FIXME: obsolete
 
     public static String Message_file_colon;
 
@@ -178,7 +178,7 @@ public class Messages extends NLS {
 
     public static String Remove_tab_item;
 
-    public static String Reset;
+    public static String Reset; // FIXME: obsolete
 
     public static String Right;
 
@@ -298,7 +298,7 @@ public class Messages extends NLS {
 
     public static String Error;
 
-    public static String Error_occurred_while_processing;
+    public static String Error_occurred_while_processing; // FIXME: obsolete
 
     public static String Change_Spooled_File_Filter;
 
@@ -358,7 +358,7 @@ public class Messages extends NLS {
 
     public static String Spooled_File_Message;
 
-    public static String Spooled_file;
+    public static String Spooled_file; // FIXME: obsolete
 
     public static String Spooled_file_filter;
 
@@ -396,7 +396,7 @@ public class Messages extends NLS {
 
     public static String The_value_in_field_Command_is_not_valid;
 
-    public static String Restore_Default_Values;
+    public static String Restore_Default_Values; // FIXME: obsolete
 
     public static String Do_you_really_want_to_restore_the_default_values;
 
@@ -564,7 +564,7 @@ public class Messages extends NLS {
 
     public static String iSphere_Search_for_updates;
  
-    public static String Searching;
+    public static String Searching; // FIXME: obsolete
 
     public static String There_is_a_new_version_available;
 
