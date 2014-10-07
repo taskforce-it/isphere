@@ -116,6 +116,9 @@ public final class Configuration {
 
     public String[] getImportLanguageIDs() throws JobCanceledException {
         String[] languageIDs = getStringArray(IMPORT_LANGUAGE_IDS);
+        if (languageIDs.length == 0) {
+            LogUtil.error("No languages specified for import: importLanguageIDs");
+        }
         return languageIDs;
     }
 
@@ -154,7 +157,6 @@ public final class Configuration {
     private String[] getStringArray(String key) throws JobCanceledException {
         String value = getProperties().getProperty(key);
         if (value.trim().length() == 0) {
-            LogUtil.error("No languages specified for import: importLanguageIDs");
             return new String[]{};
         }
         return value.split(",");
