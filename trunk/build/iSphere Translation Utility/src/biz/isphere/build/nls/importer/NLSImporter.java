@@ -55,7 +55,7 @@ public class NLSImporter {
         NLSImporter main = new NLSImporter();
 
         try {
-            if (args.length != 1) {
+            if (args.length > 0) {
                 Configuration.getInstance().setConfigurationFile(args[0]);
             }
             main.run();
@@ -65,7 +65,7 @@ public class NLSImporter {
     }
 
     private void run() throws JobCanceledException {
-        Workbook workbook = loadWorkbook(Configuration.getInstance().getExcelFile());
+        Workbook workbook = loadWorkbook(Configuration.getInstance().getImportFile());
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
             EclipseProject project = loadFromExcelSheet(sheet, workbook);
@@ -91,7 +91,8 @@ public class NLSImporter {
         return project;
     }
 
-    private void importPropertiesFileFromExcelSheet(EclipseProject project, Sheet sheet, Row firstDataRow, Row lastDataRow) throws JobCanceledException {
+    private void importPropertiesFileFromExcelSheet(EclipseProject project, Sheet sheet, Row firstDataRow, Row lastDataRow)
+        throws JobCanceledException {
 
         String relativePath = firstDataRow.getCell(0).getStringCellValue();
         NLSResourceBundle bundle = new NLSResourceBundle(relativePath);
@@ -152,11 +153,13 @@ public class NLSImporter {
         Row lastRow = null;
         for (int i = firstDataRow.getRowNum(); i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
-            String currPath = row.getCell(0).getStringCellValue();
-            if (!startPath.equals(currPath)) {
-                return lastRow;
-            } else {
-                lastRow = row;
+            if (row != null && row.getCell(0) != null) {
+                String currPath = row.getCell(0).getStringCellValue();
+                if (!startPath.equals(currPath)) {
+                    return lastRow;
+                } else {
+                    lastRow = row;
+                }
             }
         }
         return firstDataRow;
@@ -164,7 +167,7 @@ public class NLSImporter {
 
     private boolean isHeadLineRow(Row row) {
         Cell cell = row.getCell(0);
-        if (NLS.PATH.equals(cell.getStringCellValue())) {
+        if (cell != null && NLS.PATH.equals(cell.getStringCellValue())) {
             return true;
         }
         return false;

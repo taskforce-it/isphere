@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import biz.isphere.build.nls.configuration.Configuration;
 import biz.isphere.build.nls.exception.JobCanceledException;
 
 /**
@@ -70,10 +71,22 @@ public class NLSResourceBundle {
 
     public void updateFiles(String projectName) throws JobCanceledException {
         for (NLSPropertiesFile nlsFile : fNLSFiles.values()) {
-            if (!nlsFile.getLanguage().isProtected()) {
+            if (!nlsFile.getLanguage().isProtected() && isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
                 nlsFile.updateProperties(projectName);
             }
         }
+    }
+
+    private boolean isSelectedForImport(NLSLanguage language, String[] importLanguageIDs) {
+        if (importLanguageIDs.length == 1 && "*".equals(importLanguageIDs[0])) {
+            return true;
+        }
+        for (String languageID : importLanguageIDs) {
+            if (languageID.equalsIgnoreCase(language.getLanguageID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

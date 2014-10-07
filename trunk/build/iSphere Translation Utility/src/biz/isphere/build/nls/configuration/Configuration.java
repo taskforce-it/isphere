@@ -35,7 +35,9 @@ public final class Configuration {
     private static final String PROJECTS = "projects";
     private static final String FILES = "files";
     private static final String EXPORT_FILE = "exportFile";
+    private static final String IMPORT_FILE = "importFile";
     private static final String DEFAULT_LANGUAGE = "defaultLanguage";
+    private static final String IMPORT_LANGUAGE_IDS = "importLanguageIDs";
 
     String fConfigurationResource;
     File fWorkspace;
@@ -64,16 +66,27 @@ public final class Configuration {
         fProperties = null;
     }
 
-    public File getExcelFile() throws JobCanceledException {
+    public File getExportFile() throws JobCanceledException {
         String file = getString(EXPORT_FILE);
-        if (!file.endsWith(".xls")) {
-            file = file + ".xls";
-        }
+        file = addFileExtension(file);
         int i = file.lastIndexOf(".");
         if (i != -1) {
             file = file.substring(0, i) + "_" + getDateAsString() + file.substring(i);
         }
         return new File(file);
+    }
+
+    public File getImportFile() throws JobCanceledException {
+        String file = getString(IMPORT_FILE);
+        file = addFileExtension(file);
+        return new File(file);
+    }
+
+    private String addFileExtension(String file) {
+        if (!file.endsWith(".xls")) {
+            file = file + ".xls";
+        }
+        return file;
     }
 
     public String getWorkspacePath() throws JobCanceledException {
@@ -99,6 +112,11 @@ public final class Configuration {
 
     public boolean isDefaultLanguage(String languageID) throws JobCanceledException {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
+    }
+
+    public String[] getImportLanguageIDs() throws JobCanceledException {
+        String[] languageIDs = getStringArray(IMPORT_LANGUAGE_IDS);
+        return languageIDs;
     }
 
     private File getWorkspace() throws JobCanceledException {
@@ -135,6 +153,10 @@ public final class Configuration {
 
     private String[] getStringArray(String key) throws JobCanceledException {
         String value = getProperties().getProperty(key);
+        if (value.trim().length() == 0) {
+            LogUtil.error("No languages specified for import: importLanguageIDs");
+            return new String[]{};
+        }
         return value.split(",");
     }
 

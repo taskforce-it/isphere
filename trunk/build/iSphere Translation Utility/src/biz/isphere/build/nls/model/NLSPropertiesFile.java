@@ -136,6 +136,7 @@ public class NLSPropertiesFile {
             FileOutputStream out = new FileOutputStream(fFile);
             properties.save(out);
             out.close();
+            LogUtil.print("Updated properties file: " + fFile.getName());
         } catch (Exception e) {
             LogUtil.error("Failed to save properties to: " + fFile);
         }

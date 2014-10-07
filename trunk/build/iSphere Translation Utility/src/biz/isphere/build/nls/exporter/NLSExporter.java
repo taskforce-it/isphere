@@ -88,7 +88,7 @@ public class NLSExporter {
             project.loadNLSPropertiesFiles(config.getFiles());
             addToExcelSheet(workbook, project);
         }
-        saveWorkbook(workbook, config.getExcelFile());
+        saveWorkbook(workbook, config.getExportFile());
 
         LogUtil.print("Finished Excel Export");
     }
