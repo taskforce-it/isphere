@@ -106,8 +106,6 @@ public class Messages extends NLS {
 
     public static String Ignore_case;
 
-    public static String Info; // FIXME: obsolete
-
     public static String Left;
 
     public static String Length;
@@ -132,8 +130,6 @@ public class Messages extends NLS {
 
     public static String Member_2_file_1_in_library_0_not_found;
 
-    public static String Menu_item_colon; // FIXME: obsolete
-
     public static String Message;
 
     public static String Message_Id;
@@ -143,8 +139,6 @@ public class Messages extends NLS {
     public static String Message_colon;
 
     public static String Message_description;
-
-    public static String Message_descriptions; // FIXME: obsolete
 
     public static String Message_file_colon;
 
@@ -177,8 +171,6 @@ public class Messages extends NLS {
     public static String Refresh;
 
     public static String Remove_tab_item;
-
-    public static String Reset; // FIXME: obsolete
 
     public static String Right;
 
@@ -298,8 +290,6 @@ public class Messages extends NLS {
 
     public static String Error;
 
-    public static String Error_occurred_while_processing; // FIXME: obsolete
-
     public static String Change_Spooled_File_Filter;
 
     public static String Completion;
@@ -358,8 +348,6 @@ public class Messages extends NLS {
 
     public static String Spooled_File_Message;
 
-    public static String Spooled_file; // FIXME: obsolete
-
     public static String Spooled_file_filter;
 
     public static String Spooled_file_resource;
@@ -395,10 +383,6 @@ public class Messages extends NLS {
     public static String Command_colon;
 
     public static String The_value_in_field_Command_is_not_valid;
-
-    public static String Restore_Default_Values; // FIXME: obsolete
-
-    public static String Do_you_really_want_to_restore_the_default_values;
 
     public static String Substitution_variables_for_conversion_commands;
 
@@ -441,21 +425,21 @@ public class Messages extends NLS {
     public static String The_filter_could_not_be_created;
 
     public static String Could_not_create_stream_file_for_spooled_file_on_host;
-    
+
     public static String Display_MessageDescription_Preview_View;
-    
+
     public static String Display_MessageDescription_Preview_View_ToolTip;
 
     public static String MessageText_Message_Colon;
-    
+
     public static String Contains;
 
     public static String Contains_not;
-    
+
     public static String Specify_how_to_search_for_the_string;
 
     public static String Case_sensitive;
-    
+
     public static String Specify_whether_case_should_be_considered_during_search;
 
     public static String Add_search_condition;
@@ -465,97 +449,97 @@ public class Messages extends NLS {
     public static String MatchAllConditions;
 
     public static String MatchAnyCondition;
-    
+
     public static String Options;
 
     public static String IncludeFirstLevelText;
-    
+
     public static String Specify_whether_or_not_to_include_the_first_level_message_text;
 
     public static String IncludeSecondLevelText;
-    
+
     public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String Enter_search_string_here;
 
     public static String apply_on;
-    
+
     public static String both_texts;
-    
+
     public static String first_level_text;
-    
+
     public static String second_level_text;
-    
+
     public static String Action;
 
     public static String Browse;
-    
+
     public static String Delete_from_both;
-    
+
     public static String Delete_from_repository;
-    
+
     public static String Delete_from_workspace;
-    
+
     public static String Edit_only_repository;
-    
+
     public static String Edit_only_workspace;
-    
+
     public static String Edit_workspace_and_repository;
-    
+
     public static String Editing_area;
-    
+
     public static String Enter_a_file_name;
-    
+
     public static String File_name_does_not_end_with;
-    
+
     public static String Filters;
-    
+
     public static String Invalid_file_name;
-    
+
     public static String Name;
-    
+
     public static String Perform_actions;
-    
+
     public static String Push_to_repository;
-    
+
     public static String Push_to_workspace;
-    
+
     public static String RSE_Filter_Management;
-        
+
     public static String Repository;
-    
+
     public static String Strings;
-    
+
     public static String Unknown;
-    
+
     public static String Undo_action;
-    
+
     public static String in_workspace_and_in_repository_with_different;
-    
+
     public static String in_workspace_and_in_repository_with_equal;
-    
+
     public static String only_in_repository;
-    
+
     public static String only_in_workspace;
-    
+
     public static String type_and_string;
-    
+
     public static String type_or_string;
-    
+
     public static String filters;
-    
+
     public static String RSE_Filters;
-    
+
     public static String Filter_pool;
-    
+
     public static String No_filter_pools_available;
-    
+
     public static String Repository_does_not_exist;
-    
+
     public static String Create_the_repository;
-    
+
     public static String Are_you_sure;
-    
+
     public static String Search_for_updates;
 
     public static String URL_for_updates;
@@ -563,8 +547,6 @@ public class Messages extends NLS {
     public static String The_value_in_field_URL_for_updates_is_not_valid;
 
     public static String iSphere_Search_for_updates;
- 
-    public static String Searching; // FIXME: obsolete
 
     public static String There_is_a_new_version_available;
 
@@ -573,9 +555,9 @@ public class Messages extends NLS {
     public static String Do_not_show_this_message_again;
 
     public static String Current_version;
-    
+
     public static String Available_version;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
