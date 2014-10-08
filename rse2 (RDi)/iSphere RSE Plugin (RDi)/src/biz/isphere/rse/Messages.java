@@ -14,18 +14,15 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
 
-    // Only for WDSCi
-    public static String iSphere_Message_File_Editor;
+    public static String iSphere_Message_File_Editor; // Only for WDSCi
 
-    // Only for WDSCi
-    public static String iSphere_Compare_Editor;
+    public static String iSphere_Compare_Editor; // Only for WDSCi
 
     public static String Right;
 
     public static String Ancestor;
 
-    // Only for WDSCi
-    public static String iSphere_Binding_Directory_Editor;
+    public static String iSphere_Binding_Directory_Editor; // Only for WDSCi
 
     public static String E_R_R_O_R;
 
