@@ -276,6 +276,8 @@ public class MessageDescriptionViewer {
                         DialogActionTypes.getSubEditorActionType(mode), _messageDescription);
                     if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                         _tableViewer.update(_messageDescription, null);
+                        // Update message preview
+                        _tableViewer.setSelection(structuredSelection);
                     }
 
                 }
