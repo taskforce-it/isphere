@@ -11,6 +11,7 @@ package biz.isphere.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -100,6 +101,8 @@ public class CheckNLSMessages {
             String messageText = properties.getProperty(nlsMessageConstant);
 
             // Check
+            System.out.println("Testing: " + nlsMessageConstant);
+            assertFalse(messageText.endsWith(" "));
             assertNotNull("Message text must not be [null]. Missing property: " + nlsMessageConstant + "(" + nlsMessagesObject.getClass().getName() + ")", messageText);
             assertTrue("Length of message must be greater than zero. Property: " + nlsMessageConstant, messageText.length() > 0);
             assertEquals("Assigned message text must match text in properties file.", messageText, field.get(null));
