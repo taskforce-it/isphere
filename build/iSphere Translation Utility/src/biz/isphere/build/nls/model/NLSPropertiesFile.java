@@ -21,6 +21,7 @@ import biz.isphere.build.nls.configuration.Configuration;
 import biz.isphere.build.nls.exception.JobCanceledException;
 import biz.isphere.build.nls.utils.FileUtil;
 import biz.isphere.build.nls.utils.LogUtil;
+import biz.isphere.build.nls.utils.StringUtil;
 
 /**
  * This class is equivalent to a language properties file such as
@@ -126,7 +127,7 @@ public class NLSPropertiesFile {
 
     public void setProperty(String key, String text) throws JobCanceledException {
         PropertiesConfiguration properties = getProperties();
-        properties.setProperty(key, text);
+        properties.setProperty(key, StringUtil.trimR(text));
     }
 
     public void updateProperties(String projectName) throws JobCanceledException {
