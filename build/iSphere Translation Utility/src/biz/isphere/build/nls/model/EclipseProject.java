@@ -57,7 +57,7 @@ public class EclipseProject {
     }
 
     public void addBundle(NLSResourceBundle bundle) {
-        fNLSBundle.put(bundle.getID(), bundle);
+        fNLSBundle.put(bundle.getRelativePath(), bundle);
     }
 
     public void loadNLSPropertiesFiles(FileSelectionEntry[] files) throws JobCanceledException {
