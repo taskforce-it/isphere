@@ -118,7 +118,7 @@ public final class Configuration {
     public String[] getExportLanguageIDs() throws JobCanceledException {
         String[] languageIDs = getStringArray(EXPORT_LANGUAGE_IDS);
         if (languageIDs.length == 0) {
-            LogUtil.error("No languages specified for export: exportLanguageIDs");
+            throw new JobCanceledException("No languages specified for export: exportLanguageIDs");
         }
         return languageIDs;
     }
@@ -126,7 +126,7 @@ public final class Configuration {
     public String[] getImportLanguageIDs() throws JobCanceledException {
         String[] languageIDs = getStringArray(IMPORT_LANGUAGE_IDS);
         if (languageIDs.length == 0) {
-            LogUtil.error("No languages specified for import: importLanguageIDs");
+            throw new JobCanceledException("No languages specified for import: importLanguageIDs");
         }
         return languageIDs;
     }

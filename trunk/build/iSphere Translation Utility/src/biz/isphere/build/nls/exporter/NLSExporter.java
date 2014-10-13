@@ -139,7 +139,7 @@ public class NLSExporter {
         Row lastDataRow = null;
         for (NLSResourceBundle bundle : bundles) {
             for (String key : bundle.getKeys()) {
-                Row dataRow = addDataRow(sheet, bundle.getID(), key);
+                Row dataRow = addDataRow(sheet, bundle.getRelativePath(), key);
                 if (firstDataRow == null) {
                     firstDataRow = dataRow;
                 }
@@ -260,9 +260,9 @@ public class NLSExporter {
         return "A1";
     }
 
-    private Row addDataRow(Sheet sheet, String id, String key) {
+    private Row addDataRow(Sheet sheet, String relativePath, String key) {
         Row row = sheet.createRow(getNextRowNum(sheet));
-        addDataCell(row, id);
+        addDataCell(row, relativePath);
         addDataCell(row, key);
         return row;
     }

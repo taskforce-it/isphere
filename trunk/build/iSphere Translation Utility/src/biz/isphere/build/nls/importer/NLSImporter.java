@@ -60,7 +60,7 @@ public class NLSImporter {
             }
             main.run();
         } catch (JobCanceledException e) {
-            e.printStackTrace();
+            System.out.println(e.getLocalizedMessage());
         }
     }
 
@@ -189,7 +189,7 @@ public class NLSImporter {
 
     }
 
-    private Workbook loadWorkbook(File file) {
+    private Workbook loadWorkbook(File file) throws JobCanceledException {
 
         LogUtil.print("Loading Excel workbook from: " + file.getAbsolutePath());
 
@@ -199,8 +199,7 @@ public class NLSImporter {
             in.close();
             return workbook;
         } catch (Exception e) {
-            LogUtil.error("Failed to load workbook from: " + file.getAbsolutePath());
-            return null;
+            throw new JobCanceledException("Failed to load workbook from: " + file.getAbsolutePath());
         }
 
     }
