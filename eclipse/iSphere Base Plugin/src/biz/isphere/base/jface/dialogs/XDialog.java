@@ -26,6 +26,10 @@ import biz.isphere.base.internal.DialogSettingsManager;
  * {@link #getDialogBoundsSettings()} to activate the save and restore settings
  * feature.
  * <p>
+ * In order to set a default size, the dialog class must override
+ * {@link #getDefaultSize()}. Overriding {@link #getInitialSize()} does not
+ * work!
+ * <p>
  * The settings file (<i>dialog_settings.xml</i>) is stored in directory
  * <code>[workspaces]\.metadata\.plugins\package.of.plugin\</code>.
  * <p>
@@ -41,7 +45,7 @@ public class XDialog extends Dialog {
     public static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
     public static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
-    
+
     private DialogSettingsManager dialogSettingsManager = null;
 
     /**
@@ -201,18 +205,16 @@ public class XDialog extends Dialog {
     }
 
     /**
-     * Code of the original implementation of class {@link org.eclipse.jface.dialogs.Dialog}.
+     * Code of the original implementation of class
+     * {@link org.eclipse.jface.dialogs.Dialog}.
      * <p>
      * Added, to support {@link #isResizable()}, which is missing in WDSC 7.0.
-     * 
      */
     private void setStyleResizable() {
         if (isResizable()) {
-            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.MAX | SWT.RESIZE
-                    | getDefaultOrientation());
+            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.MAX | SWT.RESIZE | getDefaultOrientation());
         } else {
-            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL
-                    | getDefaultOrientation());
+            setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | getDefaultOrientation());
         }
     }
 
