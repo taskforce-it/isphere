@@ -43,8 +43,14 @@ public class NLSResourceBundle {
         fNLSFiles.put(nlsFile.getKey(), nlsFile);
     }
 
-    public Set<String> getLanguageKeys() {
-        return new TreeSet<String>(fNLSFiles.keySet());
+    public Set<String> getLanguageKeys() throws JobCanceledException {
+        Set<String> languageKeys = new TreeSet<String>();
+        for (NLSPropertiesFile nlsFile : fNLSFiles.values()) {
+            if (nlsFile.getLanguage().isProtected() || isSelectedForExport(nlsFile.getLanguage(), Configuration.getInstance().getExportLanguageIDs())) {
+                languageKeys.add(nlsFile.getKey());
+            }
+        }
+        return languageKeys;
     }
 
     public String[] getKeys() {
@@ -71,10 +77,23 @@ public class NLSResourceBundle {
 
     public void updateFiles(String projectName) throws JobCanceledException {
         for (NLSPropertiesFile nlsFile : fNLSFiles.values()) {
-            if (!nlsFile.getLanguage().isProtected() && isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
+            if (!nlsFile.getLanguage().isProtected()
+                && isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
                 nlsFile.updateProperties(projectName);
             }
         }
+    }
+
+    private boolean isSelectedForExport(NLSLanguage language, String[] exportLanguageIDs) {
+        if (exportLanguageIDs.length == 1 && "*".equals(exportLanguageIDs[0])) {
+            return true;
+        }
+        for (String languageID : exportLanguageIDs) {
+            if (languageID.equalsIgnoreCase(language.getLanguageID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isSelectedForImport(NLSLanguage language, String[] importLanguageIDs) {

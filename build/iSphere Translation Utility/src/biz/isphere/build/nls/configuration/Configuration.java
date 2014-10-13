@@ -37,6 +37,7 @@ public final class Configuration {
     private static final String EXPORT_FILE = "exportFile";
     private static final String IMPORT_FILE = "importFile";
     private static final String DEFAULT_LANGUAGE = "defaultLanguage";
+    private static final String EXPORT_LANGUAGE_IDS = "exportLanguageIDs";
     private static final String IMPORT_LANGUAGE_IDS = "importLanguageIDs";
 
     String fConfigurationResource;
@@ -114,6 +115,14 @@ public final class Configuration {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
     }
 
+    public String[] getExportLanguageIDs() throws JobCanceledException {
+        String[] languageIDs = getStringArray(EXPORT_LANGUAGE_IDS);
+        if (languageIDs.length == 0) {
+            LogUtil.error("No languages specified for export: exportLanguageIDs");
+        }
+        return languageIDs;
+    }
+
     public String[] getImportLanguageIDs() throws JobCanceledException {
         String[] languageIDs = getStringArray(IMPORT_LANGUAGE_IDS);
         if (languageIDs.length == 0) {
@@ -159,7 +168,7 @@ public final class Configuration {
         if (value.trim().length() == 0) {
             return new String[]{};
         }
-        return value.split(",");
+        return value.split("\\s*,\\s*");
     }
 
     private Properties getProperties() throws JobCanceledException {
