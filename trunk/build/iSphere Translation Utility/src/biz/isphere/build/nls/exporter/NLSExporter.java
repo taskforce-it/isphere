@@ -129,7 +129,7 @@ public class NLSExporter {
         addTitleCell(titleRow, NLS.PATH);
         addTitleCell(titleRow, NLS.KEY);
 
-        for (String languageID : project.getLanguageIDs()) {
+        for (String languageID : project.getLanguageKeys()) {
             addTitleCell(titleRow, languageID);
         }
 
@@ -161,7 +161,7 @@ public class NLSExporter {
         }
 
         // protect sheet
-        // sheet.protectSheet("");
+         sheet.protectSheet("");
 
     }
 

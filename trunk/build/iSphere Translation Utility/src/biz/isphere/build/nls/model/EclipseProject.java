@@ -43,7 +43,7 @@ public class EclipseProject {
         return fPath.getName();
     }
 
-    public String[] getLanguageIDs() {
+    public String[] getLanguageKeys() throws JobCanceledException {
         Set<String> languages = new TreeSet<String>();
         for (String bundleKey : fNLSBundle.keySet()) {
             NLSResourceBundle bundle = fNLSBundle.get(bundleKey);
