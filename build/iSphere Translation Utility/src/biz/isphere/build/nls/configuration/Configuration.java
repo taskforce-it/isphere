@@ -144,19 +144,27 @@ public final class Configuration {
     }
 
     private String getResourcePath() throws JobCanceledException {
-        try {
             File file = new File(fConfigurationResource);
-            URI configurationURI;
+            URI configurationURI = null;
             if (file.exists()) {
                 configurationURI = file.toURI();
             } else {
-                configurationURI = getClass().getResource("/" + fConfigurationResource).toURI();
+                if (getClass().getResource("/" + fConfigurationResource) != null) {
+                    try {
+                    configurationURI = getClass().getResource("/" + fConfigurationResource).toURI();
+                    } catch (URISyntaxException e) {
+                        // ignore exception
+                    }
+                } else {
+                    throw new JobCanceledException("Configuration file not found: " + fConfigurationResource);
+                }
+            }
+            if (configurationURI == null) {
+                String message = "Configuration file not found: " + fConfigurationResource;
+                LogUtil.error(message);
+                throw new JobCanceledException(message);
             }
             return configurationURI.getPath();
-        } catch (URISyntaxException e) {
-            LogUtil.error("Configuration file not found: " + fConfigurationResource);
-            throw new JobCanceledException(e.getLocalizedMessage());
-        }
     }
 
     private String getString(String key) throws JobCanceledException {
@@ -166,7 +174,7 @@ public final class Configuration {
     private String[] getStringArray(String key) throws JobCanceledException {
         String value = getProperties().getProperty(key);
         if (value.trim().length() == 0) {
-            return new String[]{};
+            return new String[] {};
         }
         return value.split("\\s*,\\s*");
     }
