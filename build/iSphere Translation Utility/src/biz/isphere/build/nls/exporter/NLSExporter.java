@@ -10,9 +10,14 @@ package biz.isphere.build.nls.exporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,6 +27,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PatternFormatting;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
@@ -57,6 +63,8 @@ public class NLSExporter {
 
     private static final String STYLE_DATA_PROTECTED = "data_protected";
 
+    private static final String STYLE_HELP = "help";
+
     private Map<String, CellStyle> styles = null;
 
     /**
@@ -80,14 +88,21 @@ public class NLSExporter {
     }
 
     private void run() throws JobCanceledException {
+
         Configuration config = Configuration.getInstance();
-        String[] projectNames = config.getProjects();
+
         Workbook workbook = new HSSFWorkbook();
+        styles = createStyles(workbook);
+
+        addHelpSheet(workbook, "## Help ##");
+
+        String[] projectNames = config.getProjects();
         for (String projectName : projectNames) {
             EclipseProject project = new EclipseProject(projectName);
             project.loadNLSPropertiesFiles(config.getFiles());
             addToExcelSheet(workbook, project);
         }
+
         saveWorkbook(workbook, config.getExportFile());
 
         LogUtil.print("Finished Excel Export");
@@ -111,9 +126,6 @@ public class NLSExporter {
 
         LogUtil.print("Adding to Excel workbook: " + project);
 
-        // cell styles
-        styles = createStyles(workbook);
-
         // Excel sheet
         Sheet sheet = workbook.createSheet(project.getName());
 
@@ -122,7 +134,7 @@ public class NLSExporter {
         headlineRow.setHeightInPoints(12.75f);
         addHeadlineCell(headlineRow, project.getName());
 
-        // title row
+        // title row (languages)
         Row titleRow = sheet.createRow(getNextRowNum(sheet));
         titleRow.setHeightInPoints(12.75f);
 
@@ -161,7 +173,33 @@ public class NLSExporter {
         }
 
         // protect sheet
-         sheet.protectSheet("");
+        sheet.protectSheet("");
+
+    }
+
+    private void addHelpSheet(Workbook workbook, String title) throws JobCanceledException {
+
+        LogUtil.print("Adding help sheet");
+
+        // Excel sheet
+        Sheet sheet = workbook.createSheet(title);
+
+        // headline row
+        Row headlineRow = sheet.createRow(getNextRowNum(sheet));
+        headlineRow.setHeightInPoints(12.75f);
+        addHeadlineCell(headlineRow, "iSphere Translation Utility - Help");
+
+        // help row
+        Row helpRow = sheet.createRow(getNextRowNum(sheet));
+
+        // help cell
+        addHelpCell(helpRow, getFormattedHelpText(workbook));
+
+        // column widths
+        sheet.setColumnWidth(0, sheet.getColumnWidth(0) * 12);
+
+        // protect sheet
+        sheet.protectSheet("");
 
     }
 
@@ -283,6 +321,12 @@ public class NLSExporter {
         }
     }
 
+    private void addHelpCell(Row row, RichTextString value) {
+        Cell helpCell = row.createCell(getNextCellNum(row));
+        helpCell.setCellValue(value);
+        helpCell.setCellStyle(styles.get(STYLE_HELP));
+    }
+
     private void addTitleCell(Row row, String title) {
         Cell titleCell = row.createCell(getNextCellNum(row));
         titleCell.setCellValue(title);
@@ -353,6 +397,23 @@ public class NLSExporter {
         styles.put(STYLE_LANGUAGE, createLanguageStyle(workbook, false));
         styles.put(STYLE_LANGUAGE_PROTECTED, createLanguageStyle(workbook, true));
 
+        Font helpFont = workbook.createFont();
+        helpFont.setFontHeightInPoints((short)10);
+        helpFont.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+        style = workbook.createCellStyle();
+        style.setAlignment(CellStyle.ALIGN_LEFT);
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setFont(helpFont);
+        style.setLocked(true);
+        style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setBorderBottom(BorderFormatting.BORDER_MEDIUM);
+        style.setBorderLeft(BorderFormatting.BORDER_MEDIUM);
+        style.setBorderRight(BorderFormatting.BORDER_MEDIUM);
+        style.setBorderTop(BorderFormatting.BORDER_MEDIUM);
+        styles.put(STYLE_HELP, style);
+
         return styles;
     }
 
@@ -375,4 +436,101 @@ public class NLSExporter {
         return style;
     }
 
+    private RichTextString getFormattedHelpText(Workbook workbook) {
+        StringBuilder helpText = new StringBuilder();
+
+        helpText.append("\n");
+        helpText.append("Thank you for contributing to the iSphere Project.\n");
+        helpText.append("\n");
+        helpText.append("Please follow the steps and advices given below:\n");
+        helpText.append("\n");
+        helpText.append("a) Translate the column with your language and keep the other columns unchanged.\n");
+        helpText.append("b) Return the Excel file to the iSphere project when you are done.\n");
+        helpText.append("\n");
+        helpText.append("Never change anything in a column, with a headline preceded by an asterix (*)!\n");
+        helpText.append("\n");
+        helpText.append("_Colors_\n");
+        helpText.append("Cells with a turquois background color contain an English expression and may need to be translated.\n");
+        helpText.append("English is the default language, indicated by a yellow background color.\n");
+        helpText.append("\n");
+        helpText.append("_Shortcuts_\n");
+        helpText.append("Embedded ampersands (&) indicate keyboard shortcuts, such as \"Match an&y of the following\" ");
+        helpText.append("where the 'y' is the keyboard shortcut. ");
+        helpText.append("It is recommended to keep the English shortcut wherever possible and useful. ");
+        helpText.append("But at the end it is up to you to define meaningful shortcuts for your language.\n");
+        helpText.append("\n");
+        helpText.append("_Protection_\n");
+        helpText.append("By default this workbook is protected. Although it is recommended not to unlock the workbook, ");
+        helpText.append("you why want to unlock it, in order to remove language columns that you are not interested ");
+        helpText.append("in. Translation might be easier for you without the other languages. But please do not remove ");
+        helpText.append("any columns, with a headline starting with an asterix (*).\n");
+
+        return performRichTextFormattings(workbook, helpText.toString());
+    }
+
+    private RichTextString performRichTextFormattings(Workbook workbook, String unformatted) {
+
+        Font underlineFont = workbook.createFont();
+        underlineFont.setUnderline(HSSFFont.U_SINGLE);
+
+        List<IFormatting> formattings = new ArrayList<IFormatting>();
+        String formatted = collectFontFormattings(formattings, unformatted, "_", underlineFont);
+        return applyFormattings(formattings, formatted);
+    }
+
+    private String collectFontFormattings(List<IFormatting> formattings, String unformatted, String formatChar, Font underlineFont) {
+
+        int s = unformatted.indexOf(formatChar);
+        if (s < 0 || s >= unformatted.length()) {
+            return unformatted;
+        }
+
+        int e = unformatted.indexOf(formatChar, s + 1);
+        if (e < 0) {
+            return unformatted;
+        }
+        
+        String part1 = unformatted.substring(0, s);
+        String part2 = unformatted.substring(s + 1, e);
+        String part3;
+        if (e >= unformatted.length()) {
+            part3 = "";
+        } else {
+            part3 = unformatted.substring(e + 1);
+        }
+
+        formattings.add(new FontFormatting(s - 1, e - 1, underlineFont));
+        
+        return collectFontFormattings(formattings, part1 + part2+ part3, formatChar, underlineFont);
+    }
+
+    private HSSFRichTextString applyFormattings(List<IFormatting> formattings, String formatted) {
+        HSSFRichTextString richTextString = new HSSFRichTextString(formatted);
+        for (IFormatting formatting : formattings) {
+            formatting.applyFormatting(richTextString);
+        }
+        return richTextString;
+    }
+    
+    private interface IFormatting {
+        public void applyFormatting(RichTextString richTextString);
+    }
+    
+    private class FontFormatting implements IFormatting {
+
+        private int start;
+        private int end;
+        private Font font;
+
+        public FontFormatting(int start, int end, Font font) {
+            this.start = start;
+            this.end = end;
+            this.font = font;
+        }
+
+        public void applyFormatting(RichTextString richTextString) {
+            richTextString.applyFont(this.start, this.end, this.font);
+        }
+
+    }
 }
