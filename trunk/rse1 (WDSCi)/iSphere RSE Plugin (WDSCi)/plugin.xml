@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Editors
+      	  ==========================================
+      	-->
+
+    <extension point="org.eclipse.ui.editors">
+        <editor
+            name=""
+            icon="icons/data_area.gif"
+            class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
+            id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
+    </extension>
     
 	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
       	
@@ -26,6 +40,18 @@
 			name="Binding Directory Editor"
 			class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
 			id="biz.isphere.rse.actions.BindingDirectoryEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Data Area Editor Contributions
+      	  ==========================================
+      	-->
+      	
+		<dynamicPopupMenuExtension
+			name="Data Area Editor"
+			class="biz.isphere.rse.actions.DataAreaEditorAction"
+			id="biz.isphere.rse.actions.DataAreaEditorAction">
 	    </dynamicPopupMenuExtension>
 	
       	<!--

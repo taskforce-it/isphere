@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CaretEvent;
-import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
@@ -43,12 +41,9 @@ import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 import com.ibm.as400.access.AS400;
 
-public class DataAreaEditor extends EditorPart {
-    public DataAreaEditor() {
-        isDirty = false;
-    }
+public abstract class AbstractDataAreaEditor extends EditorPart {
 
-    public static final String ID = "biz.isphere.core.dataareaeditor.DataAreaEditor";
+    public static final String ID = "biz.isphere.rse.dataareaeditor.DataAreaEditor";
 
     private int DEFAULT_EDITOR_WIDTH = 50; // default width on 5250 screen
 
@@ -57,8 +52,10 @@ public class DataAreaEditor extends EditorPart {
     private StatusBar statusBar;
     private Control editorControl;
     private boolean isDirty;
-
-    // private boolean isModifying;
+    
+    public AbstractDataAreaEditor() {
+        isDirty = false;
+    }
 
     @Override
     public void createPartControl(Composite aParent) {
@@ -114,18 +111,7 @@ public class DataAreaEditor extends EditorPart {
         dataAreaText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // Add status bar
-        statusBar = new StatusBar(aParent);
-        statusBar.setPosition(1, 1);
-
-        // Add 'caret' listener
-        dataAreaText.addCaretListener(new CaretListener() {
-            public void caretMoved(CaretEvent anEvent) {
-                DataAreaText textControl = (DataAreaText)anEvent.getSource();
-                int row = textControl.getCaretRow();
-                int column = textControl.getCaretColumn();
-                statusBar.setPosition(row, column);
-            }
-        });
+        statusBar = createStatusBar(aParent, 1 , 1);
 
         // Set screen value
         dataAreaText.setText(aValue);
@@ -164,31 +150,7 @@ public class DataAreaEditor extends EditorPart {
         validator.setPrecision(dataAreaDelegate.getDecimalPositions());
         
         // Add status bar
-        statusBar = new StatusBar(aParent);
-        statusBar.setPosition(1, 1);
-
-        // Add 'caret' listener
-        dataAreaText.addCaretListener(new CaretListener() {
-            private static final int LEN_COMMA = 1;
-            public void caretMoved(CaretEvent anEvent) {
-//                int caretPosition;
-//                if (getCaretPosition(anEvent) == dataAreaDelegate.getDigits() + 1) {
-//                    // positioned on the comma
-//                    caretPosition = dataAreaDelegate.getDigits();   
-//                } else if (getCaretPosition(anEvent) > dataAreaDelegate.getDigits()) {
-//                    caretPosition = ((getCaretPosition(anEvent) - dataAreaDelegate.getDigits()) * -1) + LEN_COMMA;
-//                    statusBar.setPosition(caretPosition);
-//                } else {
-//                    caretPosition = getCaretPosition(anEvent);
-//                    statusBar.setPosition(caretPosition);
-//                }
-                statusBar.setPosition(getCaretPosition(anEvent));
-            }
-
-            private int getCaretPosition(CaretEvent anEvent) {
-                return anEvent.caretOffset + 1;
-            }
-        });
+        statusBar = createStatusBar(aParent);
 
         // Set screen value
         dataAreaText.setText(aValue.toString());
@@ -226,7 +188,7 @@ public class DataAreaEditor extends EditorPart {
         filler.setLayoutData(fillerLayoutData);
         
         // Add status bar
-        statusBar = new StatusBar(aParent);
+        statusBar = createStatusBar(aParent);
         
         // Set screen value
         dataAreaText.setSelection(aValue);
@@ -354,11 +316,15 @@ public class DataAreaEditor extends EditorPart {
         try {
 
             DataAreaEditorInput editorInput = new DataAreaEditorInput(anAS400, aConnection, aLibrary, aDataArea, aMode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DataAreaEditor.ID);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractDataAreaEditor.ID);
 
         } catch (PartInitException e) {
         }
 
     }
+    
+    protected abstract StatusBar createStatusBar(Composite aParent);
+    
+    protected abstract StatusBar createStatusBar(Composite aParent, int aRow, int aColumn);
 
 }
