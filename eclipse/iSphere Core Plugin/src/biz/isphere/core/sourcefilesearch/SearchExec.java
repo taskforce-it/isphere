@@ -259,30 +259,6 @@ public class SearchExec {
 
     }
     
-    // TODO : Remove this method after publishing CMOne NG 4.1.12
-    public SearchResult[] execute(AS400 _as400, Connection _jdbcConnection, String _string, int _fromColumn, int _toColumn, String _case,
-        ArrayList<SearchElement> _searchElements) {
-
-        SearchOptions searchArguments = new SearchOptions();
-        searchArguments.addSearchArgument(new SearchArgument(_string, _fromColumn, _toColumn, _case));
-
-        Search search = new Search(_as400, _jdbcConnection, searchArguments, _searchElements, null);
-        search.setUser(true);
-        search.schedule();
-
-        try {
-            search.join();
-        } catch (InterruptedException e) {
-        }
-
-        if (_searchResults == null) {
-            return new SearchResult[0];
-        } else {
-            return _searchResults;
-        }
-
-    }
-    
     public void execute(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
         ISearchPostRun _searchPostRun) {
 
