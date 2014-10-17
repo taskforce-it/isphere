@@ -85,6 +85,32 @@
       	
       	<!--
       	  ==========================================
+      	    Data Area Editor Contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="biz.isphere.core.menu.bnddir">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*DTAARA"/>
+            	</and>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.DataAreaEditorAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.DataAreaEditorAction"
+                label="%iSphere_Data_Area_Editor"
+                icon="icons/data_area.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
       	    Source Member Compare Contributions
       	  ==========================================
       	-->
