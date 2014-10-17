@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 
 import com.ibm.as400.access.AS400;
@@ -58,7 +59,7 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
                         }
                         if (as400 != null && host != null) {
 
-                            MessageFileEditor.openEditor(as400, host, library, messageFile, "*EDIT");
+                            MessageFileEditor.openEditor(as400, host, library, messageFile, IEditor.EDIT);
 
                         }
 
