@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
 
@@ -109,7 +110,7 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 
                         if (as400 != null && host != null) {
 
-                            MessageFileEditor.openEditor(as400, host, library, messageFile, "*EDIT");
+                            MessageFileEditor.openEditor(as400, host, library, messageFile, IEditor.EDIT);
 
                         }
 

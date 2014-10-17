@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
@@ -117,7 +118,7 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
 
                         if (as400 != null && jdbcConnection != null) {
 
-                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, "*EDIT");
+                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, IEditor.EDIT);
 
                         }
 
