@@ -88,4 +88,21 @@ public final class StringHelper {
     public static String trimL(String aString) {
         return aString.replaceAll("^\\s+", "");
     }
+    
+
+    /**
+     * Returns a fixed length string suitable for IBM API calls.
+     * 
+     * @param aValue - String value that is expanded to 'aLength'.
+     * @param aLength
+     * @return
+     */
+    public static String getFixLength(String aValue, int aLength) {
+        StringBuffer fixLength = new StringBuffer(aValue);
+        while (fixLength.length() < aLength) {
+            fixLength.append(" ");
+        }
+        return fixLength.toString();
+    }
+
 }
