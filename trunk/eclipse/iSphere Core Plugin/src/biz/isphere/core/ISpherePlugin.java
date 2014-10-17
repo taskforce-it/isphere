@@ -53,6 +53,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_MESSAGE_FILE = "message_file.gif";
     public static final String IMAGE_MESSAGE = "message.gif";
+    public static final String IMAGE_DATA_AREA = "data_area.gif";
     public static final String IMAGE_COMPARE = "compare.gif";
     public static final String IMAGE_BINDING_DIRECTORY = "binding_directory.gif";
     public static final String IMAGE_MINUS = "minus.gif";
@@ -172,6 +173,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
         reg.put(IMAGE_MESSAGE_FILE, getImageDescriptor(IMAGE_MESSAGE_FILE));
         reg.put(IMAGE_MESSAGE, getImageDescriptor(IMAGE_MESSAGE));
+        reg.put(IMAGE_DATA_AREA, getImageDescriptor(IMAGE_DATA_AREA));
         reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_COMPARE));
         reg.put(IMAGE_BINDING_DIRECTORY, getImageDescriptor(IMAGE_BINDING_DIRECTORY));
         reg.put(IMAGE_MINUS, getImageDescriptor(IMAGE_MINUS));

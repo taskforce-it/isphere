@@ -558,6 +558,10 @@ public class Messages extends NLS {
 
     public static String Available_version;
 
+    public static String Value_colon;
+    
+    public static String Length_or_number_of_decimal_digits_on_value_not_valid;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
