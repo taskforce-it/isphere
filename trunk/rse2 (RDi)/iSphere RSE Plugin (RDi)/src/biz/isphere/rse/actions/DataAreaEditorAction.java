@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.internal.IEditor;
 
 import com.ibm.as400.access.AS400;
@@ -59,7 +59,7 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
 
                         if (as400 != null) {
 
-                            DataAreaEditor.openEditor(as400, host, library, dataArea, IEditor.EDIT);
+                            AbstractDataAreaEditor.openEditor(as400, host, library, dataArea, IEditor.EDIT);
 
                         }
 
