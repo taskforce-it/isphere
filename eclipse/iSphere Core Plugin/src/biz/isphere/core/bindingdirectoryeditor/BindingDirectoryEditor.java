@@ -20,13 +20,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.core.ISpherePlugin;
-
 import com.ibm.as400.access.AS400;
 
 public class BindingDirectoryEditor extends EditorPart {
 
-    BindingDirectoryEditorInput input;
+    public static final String ID = "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor";
+
+    private BindingDirectoryEditorInput input;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -35,7 +35,7 @@ public class BindingDirectoryEditor extends EditorPart {
         container.setLayout(new FillLayout());
 
         BindingDirectoryEntryViewer _bindingDirectoryEntryViewer = new BindingDirectoryEntryViewer(input.getLevel(), input.getAS400(),
-            input.getJDBCConnection(), input.getConnection(), input.getLibrary(), input.getBindingDirectory(), input.getMode());
+            input.getJDBCConnection(), input.getConnection(), input.getObjectLibrary(), input.getBindingDirectory(), input.getMode());
 
         _bindingDirectoryEntryViewer.createContents(container);
 
@@ -46,7 +46,7 @@ public class BindingDirectoryEditor extends EditorPart {
         setSite(site);
         setInput(input);
         setPartName(input.getName());
-        setTitleImage(((BindingDirectoryEditorInput)input).getImage());
+        setTitleImage(((BindingDirectoryEditorInput)input).getTitleImage());
         this.input = (BindingDirectoryEditorInput)input;
     }
 
@@ -77,17 +77,13 @@ public class BindingDirectoryEditor extends EditorPart {
         return false;
     }
 
-    public static void openEditor(AS400 as400, Connection jdbcConnection, String host, String library, String bindingDirectory, String mode) {
+    public static void openEditor(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
 
         try {
 
-            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(
-                "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor", as400, jdbcConnection, host, library, bindingDirectory, mode,
-                bindingDirectory + ".BNDDIR", "\\\\" + host + "\\QSYS.LIB\\" + library + ".LIB\\" + bindingDirectory + ".BNDDIR", ISpherePlugin
-                    .getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_BINDING_DIRECTORY));
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connection, library, bindingDirectory, mode);
 
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                .openEditor(editorInput, "biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor");
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
 
         } catch (PartInitException e) {
         }

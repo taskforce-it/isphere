@@ -20,6 +20,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.internal.IEditor;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -67,7 +68,7 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
                         if (as400 != null && jdbcConnection != null) {
 
-                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, "*EDIT");
+                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, IEditor.EDIT);
 
                         }
 

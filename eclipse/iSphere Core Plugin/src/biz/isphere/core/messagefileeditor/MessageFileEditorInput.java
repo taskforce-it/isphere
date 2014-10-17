@@ -9,103 +9,39 @@
 package biz.isphere.core.messagefileeditor;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 import com.ibm.as400.access.AS400;
 
-public class MessageFileEditorInput implements IEditorInput {
+public class MessageFileEditorInput extends AbstractObjectEditorInput {
 
-    private String id;
-    private AS400 as400;
-    private String connection;
-    private String library;
-    private String messageFile;
-    private String mode;
-    private String name;
-    private String toolTip;
-    private Image image;
+    private static final String OBJECT_TYPE = "MSGF";
 
-    public MessageFileEditorInput(String id, AS400 as400, String connection, String library, String messageFile, String mode, String name,
-        String toolTip, Image image) {
-        this.id = id;
-        this.as400 = as400;
-        this.connection = connection;
-        this.library = library;
-        this.messageFile = messageFile;
-        this.mode = mode;
-        this.name = name;
-        this.toolTip = toolTip;
-        this.image = image;
+    public MessageFileEditorInput(AS400 anAS400, String aConnection, String aLibrary, String aMessageFile, String aMode) {
+        super(anAS400, aConnection, aLibrary, aMessageFile, OBJECT_TYPE, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
     }
 
     public boolean exists() {
         return false;
     }
 
-    public Image getImage() {
-        return image;
-    }
-
     public ImageDescriptor getImageDescriptor() {
         return null;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public IPersistableElement getPersistable() {
         return null;
     }
 
-    public String getToolTipText() {
-        return toolTip;
-    }
-
     public Object getAdapter(Class adapter) {
         return null;
     }
 
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        MessageFileEditorInput other = (MessageFileEditorInput)obj;
-        if (!id.equals(other.id) || !connection.equals(other.connection) || !library.equals(other.library) || !messageFile.equals(other.messageFile))
-            return false;
-        return true;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public AS400 getAS400() {
-        return as400;
-    }
-
-    public String getConnection() {
-        return connection;
-    }
-
-    public String getLibrary() {
-        return library;
-    }
-
     public String getMessageFile() {
-        return messageFile;
-    }
-
-    public String getMode() {
-        return mode;
+        return super.getObjectName();
     }
 
 }
