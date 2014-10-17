@@ -18,6 +18,8 @@ public class Messages extends NLS {
 
     public static String iSphere_Compare_Editor; // Only for WDSCi
 
+    public static String iSphere_Data_Area_Editor; // Only for WDSCi
+
     public static String Right;
 
     public static String Ancestor;
