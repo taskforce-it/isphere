@@ -9,7 +9,6 @@ public abstract class AbstractMessageFormatter {
     private static final String FMT_CTRL_CHAR_N = "&N ";
     private static final String FMT_CTRL_CHAR_P = "&P ";
     private static final String FMT_CTRL_CHAR_B = "&B ";
-    private static final int FMT_CTRL_LENGTH = 3;
 
     private static final String POSITION_2 = " "; // 1 space
     private static final String POSITION_4 = "   "; // 3 spaces
