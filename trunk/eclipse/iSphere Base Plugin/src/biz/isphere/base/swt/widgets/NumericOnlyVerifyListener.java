@@ -14,6 +14,16 @@ import org.eclipse.swt.events.VerifyListener;
 
 public class NumericOnlyVerifyListener implements VerifyListener {
 
+    private boolean isDecimalPositions;
+
+    public NumericOnlyVerifyListener() {
+        this(false);
+    }
+
+    public NumericOnlyVerifyListener(boolean anIsDecimalPositions) {
+        isDecimalPositions = anIsDecimalPositions;
+    }
+
     public void verifyText(VerifyEvent event) {
         switch (event.keyCode) {
         case SWT.BS: // Backspace
@@ -25,8 +35,16 @@ public class NumericOnlyVerifyListener implements VerifyListener {
             return;
         }
 
-        if (event.keyCode != 0 && !Character.isDigit(event.character)) {
-            event.doit = false; // disallow the action
+        if (isDecimalPositions) {
+            if (event.keyCode == 44 || event.keyCode == 46 || event.keyCode == SWT.KEYPAD_DECIMAL) {
+                return;
+            }
+        }
+
+        if (event.keyCode != 0) {
+            if (!Character.isDigit(event.character)) {
+                event.doit = false; // disallow the action
+            }
         }
     }
 }
