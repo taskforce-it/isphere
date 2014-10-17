@@ -41,7 +41,7 @@ public class QWCRDTAA {
                 return null;
 
             } else {
-                type = pcml.getStringValue("QWCRDTAA.receiver.type");
+                type = pcml.getStringValue("QWCRDTAA.receiver.type", 0);
             }
 
         } catch (PcmlException e) {

@@ -30,11 +30,6 @@
             icon="icons/browser.gif"
             class="biz.isphere.core.internal.BrowserEditor"
             id="biz.isphere.core.internal.BrowserEditor"/>
-      <editor
-            name=""
-            icon="icons/data_area.gif"
-            class="biz.isphere.core.dataareaeditor.DataAreaEditor"
-            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
    </extension>
       	
       	<!--

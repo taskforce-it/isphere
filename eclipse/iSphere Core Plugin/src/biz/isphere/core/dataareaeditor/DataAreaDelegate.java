@@ -219,7 +219,7 @@ public class DataAreaDelegate {
     }
 
     private String retrieveDataAreaText(AS400 anAS400, String aLibrary, String aDataArea) {
-        ObjectDescription objectDescription = new ObjectDescription(as400, getObjectPathName());
+        ObjectDescription objectDescription = new ObjectDescription(as400, aLibrary, aDataArea, "DTAARA");
         String text;
         try {
             text = (String)objectDescription.getValue(ObjectDescription.TEXT_DESCRIPTION);
