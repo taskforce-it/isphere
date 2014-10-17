@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Validator {
     private SimpleDateFormat timeFormat2;
     private int integerValue;
     private long longValue;
+    private BigDecimal bigDecimal;
     private String date;
     private String time;
 
@@ -123,6 +125,11 @@ public class Validator {
     }
 
     public boolean validate(String argument) {
+        boolean isDecPos = false;
+        int countLength = 0;
+        int countDecPos = 0;
+        int countComma = 0;
+
         integerValue = -1;
         longValue = -1;
         date = null;
@@ -137,6 +144,7 @@ public class Validator {
             } else if (type.equals("*DEC")) {
                 integerValue = 0;
                 longValue = 0;
+                bigDecimal = new BigDecimal(0);
                 return true;
             } else {
                 return true;
@@ -171,8 +179,27 @@ public class Validator {
             char character;
             for (int idx = 0; idx < argument.length(); idx++) {
                 character = argument.charAt(idx);
-                if (Arrays.binarySearch(charactersDec, character) < 0) {
+                if ((character == '.' && precision <= 0) && Arrays.binarySearch(charactersDec, character) < 0) {
                     return false;
+                }
+                if (character == '.') {
+                    isDecPos = true;
+                    countComma++;
+                    if (countComma > 1) {
+                        return false;
+                    }
+                } else {
+                    if (isDecPos) {
+                        countDecPos++;
+                        if (countDecPos > precision) {
+                            return false;
+                        }
+                    } else {
+                        countLength++;
+                        if (countLength > length - precision) {
+                            return false;
+                        }
+                    }
                 }
             }
             if (precision == 0) {
@@ -185,6 +212,12 @@ public class Validator {
                     longValue = Long.parseLong(argument);
                 } catch (NumberFormatException e) {
                     longValue = 0;
+                }
+            } else {
+                try {
+                    bigDecimal = new BigDecimal(argument);
+                } catch (NumberFormatException e) {
+                    bigDecimal = null;
                 }
             }
         } else if (type.equals("*DATE")) {
@@ -229,6 +262,10 @@ public class Validator {
 
     public String getTimeValue() {
         return time;
+    }
+
+    public BigDecimal getBigDecimal() {
+        return bigDecimal;
     }
 
     public static boolean validateFile(String file) {
