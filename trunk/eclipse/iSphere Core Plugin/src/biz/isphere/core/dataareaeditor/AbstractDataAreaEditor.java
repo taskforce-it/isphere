@@ -52,7 +52,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
     private StatusBar statusBar;
     private Control editorControl;
     private boolean isDirty;
-    
+
     public AbstractDataAreaEditor() {
         isDirty = false;
     }
@@ -111,18 +111,21 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
         dataAreaText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // Add status bar
-        statusBar = createStatusBar(aParent, 1 , 1);
+        statusBar = createStatusBar(aParent, 1, 1);
+
+        // Add 'caret' listener
+        addCaretListener(dataAreaText);
 
         // Set screen value
         dataAreaText.setText(aValue);
-        
+
         // Add 'dirty' listener
         dataAreaText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 setDirty(true);
             }
         });
-        
+
         return dataAreaText;
     }
 
@@ -148,7 +151,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
         validator.setType("*DEC");
         validator.setLength(dataAreaDelegate.getLength());
         validator.setPrecision(dataAreaDelegate.getDecimalPositions());
-        
+
         // Add status bar
         statusBar = createStatusBar(aParent);
 
@@ -167,7 +170,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
                 }
             }
         });
-        
+
         return dataAreaText;
     }
 
@@ -186,10 +189,10 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
         fillerLayoutData.grabExcessVerticalSpace = true;
         fillerLayoutData.horizontalSpan = 2;
         filler.setLayoutData(fillerLayoutData);
-        
+
         // Add status bar
         statusBar = createStatusBar(aParent);
-        
+
         // Set screen value
         dataAreaText.setSelection(aValue);
 
@@ -322,9 +325,11 @@ public abstract class AbstractDataAreaEditor extends EditorPart {
         }
 
     }
-    
+
+    protected abstract void addCaretListener(DataAreaText aTextControl);
+
     protected abstract StatusBar createStatusBar(Composite aParent);
-    
+
     protected abstract StatusBar createStatusBar(Composite aParent, int aRow, int aColumn);
 
 }
