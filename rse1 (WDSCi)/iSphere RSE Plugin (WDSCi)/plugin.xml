@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-      	
-      	<!--
-      	  ==========================================
-      	    iSphere Editors
-      	  ==========================================
-      	-->
-
-    <extension point="org.eclipse.ui.editors">
-        <editor
-            name=""
-            icon="icons/data_area.gif"
-            class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
-            id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
-    </extension>
     
 	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
       	
