@@ -64,7 +64,7 @@ public class SearchForUpdates extends Job {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
         }
 
         if (showResultAlways || newVersionAvailable) {

@@ -541,6 +541,8 @@ public class Messages extends NLS {
     public static String Are_you_sure;
 
     public static String Search_for_updates;
+    
+    public static String Failed_to_connect_to_iSphere_update_server;
 
     public static String URL_for_updates;
 
@@ -561,6 +563,10 @@ public class Messages extends NLS {
     public static String Value_colon;
     
     public static String Length_or_number_of_decimal_digits_on_value_not_valid;
+    
+    public static String Mode_Insert;
+
+    public static String Mode_Overwrite;
 
     static {
         // initialize resource bundle
