@@ -94,8 +94,8 @@ public final class StringHelper {
      * Returns a fixed length string suitable for IBM API calls.
      * 
      * @param aValue - String value that is expanded to 'aLength'.
-     * @param aLength
-     * @return
+     * @param aLength - The length the string is expanded to.
+     * @return string with fixed length
      */
     public static String getFixLength(String aValue, int aLength) {
         StringBuffer fixLength = new StringBuffer(aValue);
@@ -105,4 +105,50 @@ public final class StringHelper {
         return fixLength.toString();
     }
 
+    /**
+     * Reverses a given String.
+     * 
+     * @param aText - String that is put in reverse order.
+     * @return reversed string
+     */
+    public static String reverse(String aText) {
+        StringBuilder builder = new StringBuilder(aText);
+        return builder.reverse().toString();
+    }
+    
+    /**
+     * <p>Checks whether the character is ASCII 7 bit printable.</p>
+     *
+     * <pre>
+     *   CharUtils.isAsciiPrintable('a')  = true
+     *   CharUtils.isAsciiPrintable('A')  = true
+     *   CharUtils.isAsciiPrintable('3')  = true
+     *   CharUtils.isAsciiPrintable('-')  = true
+     *   CharUtils.isAsciiPrintable('\n') = false
+     *   CharUtils.isAsciiPrintable('&copy;') = false
+     * </pre>
+     * 
+     * @param ch  the character to check
+     * @return true if between 32 and 126 inclusive
+     */
+    public static boolean isAsciiPrintable(char ch) {
+        return ch >= 32 && ch < 127;
+    }
+
+    /**
+     * Count the number of character that are included in a given string.
+     * 
+     * @param string - String that is search for a given character
+     * @param c - character that is counted
+     * @return number of occurrences of 'c'
+     */
+    public static int count(String string, char c) {
+        int count = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

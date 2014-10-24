@@ -8,6 +8,8 @@
 
 package biz.isphere.rse.actions;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -16,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.DataAreaEditor;
 import biz.isphere.core.internal.IEditor;
 
 import com.ibm.as400.access.AS400;
@@ -29,48 +31,42 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
     protected Shell shell;
 
     public void run(IAction arg0) {
+        if (structuredSelection != null) {
+            Iterator<?> iter = structuredSelection.iterator();
+            while (iter.hasNext()) {
+                Object object = iter.next();
+                if (object instanceof QSYSRemoteObject) {
+                    run((QSYSRemoteObject)object);
+                }
+            }
+        }
+    }
 
-        if (structuredSelection != null && !structuredSelection.isEmpty()) {
+    private void run(QSYSRemoteObject remoteObject) {
+        
+        String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+        String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+        String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
-            Object object = structuredSelection.getFirstElement();
+        if (remoteObject.getType().equals("*DTAARA")) {
+            
+            String library = remoteObject.getLibrary();
+            String dataArea = remoteObject.getName();
+            IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
 
-            if (object instanceof QSYSRemoteObject) {
+            if (ibmiConnection != null) {
 
-                QSYSRemoteObject remoteObject = (QSYSRemoteObject)object;
-
-                String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-                String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-                String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
-
-                if (remoteObject.getType().equals("*DTAARA")) {
-
-                    String library = remoteObject.getLibrary();
-                    String dataArea = remoteObject.getName();
-
-                    IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
-
-                    if (ibmiConnection != null) {
-
-                        AS400 as400 = null;
-                        try {
-                            as400 = ibmiConnection.getAS400ToolboxObject();
-                        } catch (SystemMessageException e) {
-                        }
-
-                        if (as400 != null) {
-
-                            AbstractDataAreaEditor.openEditor(as400, host, library, dataArea, IEditor.EDIT);
-
-                        }
-
-                    }
-
+                AS400 as400 = null;
+                try {
+                    as400 = ibmiConnection.getAS400ToolboxObject();
+                } catch (SystemMessageException e) {
                 }
 
+                if (as400 != null) {
+                    DataAreaEditor.openEditor(as400, host, library, dataArea, IEditor.EDIT);
+                }
             }
-
         }
-
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
