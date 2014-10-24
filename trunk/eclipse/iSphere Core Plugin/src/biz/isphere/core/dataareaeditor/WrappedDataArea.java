@@ -21,7 +21,7 @@ import com.ibm.as400.access.LogicalDataArea;
 import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
 
-public class DataAreaDelegate {
+public class WrappedDataArea {
 
     public static final String CHARACTER = "*CHAR";
     public static final String DECIMAL = "*DEC";
@@ -34,7 +34,7 @@ public class DataAreaDelegate {
     private String text;
     private DataArea dataArea;
 
-    public DataAreaDelegate(AS400 anAS400, String aLibrary, String aName) {
+    public WrappedDataArea(AS400 anAS400, String aLibrary, String aName) {
         as400 = anAS400;
         library = aLibrary;
         name = aName;

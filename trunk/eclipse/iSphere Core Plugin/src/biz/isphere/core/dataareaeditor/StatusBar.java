@@ -46,9 +46,8 @@ public class StatusBar {
         GridLayout statusBarLayout = new GridLayout(3, false);
         statusBarLayout.verticalSpacing = 1;
         statusBarLayout.horizontalSpacing = 1;
-        statusBarLayout.marginLeft = 0;
-        statusBarLayout.marginRight = 0;
         statusBarLayout.marginWidth = 0;
+        statusBarLayout.marginHeight = 0;
         statusBar.setLayout(statusBarLayout);
 
         GridData statusBarGridData = new GridData();

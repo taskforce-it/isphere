@@ -36,6 +36,7 @@ public class DataAreaEditorInput extends AbstractObjectEditorInput {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         return null;
     }

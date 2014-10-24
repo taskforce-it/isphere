@@ -30,6 +30,45 @@
             icon="icons/browser.gif"
             class="biz.isphere.core.internal.BrowserEditor"
             id="biz.isphere.core.internal.BrowserEditor"/>
+      <editor
+            name=""
+            icon="icons/data_area.gif"
+            class="biz.isphere.core.dataareaeditor.DataAreaEditor"
+            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Fonts & Colors
+      	  ==========================================
+      	-->
+      	
+   <extension 
+   		 point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="biz.isphere.core.ui.fontsandcolors"
+            label="iSphere"/>
+   		 
+      <fontDefinition
+            id="biz.isphere.fonts.editors.fixedsize"
+            categoryId="biz.isphere.core.ui.fontsandcolors"        
+            label="%Fixed_Size_Editor_Font"
+            defaultsTo="org.eclipse.jface.textfont">
+         <description>
+            %Fixed_Size_Editor_Font_Description
+         </description>
+      </fontDefinition>
+      
+      <colorDefinition 
+            id="biz.isphere.fonts.editors.unreachablebackground"
+            categoryId="biz.isphere.core.ui.fontsandcolors"
+            label="%Editor_unreachable_areas"
+            value="228,228,228">
+         <description>
+            %Editor_unreachable_areas_Description
+         </description>
+      </colorDefinition>
+      
    </extension>
       	
       	<!--
