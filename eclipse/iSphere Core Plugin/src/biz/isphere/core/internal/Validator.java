@@ -176,16 +176,27 @@ public class Validator {
                 }
             }
         } else if (type.equals("*DEC")) {
+            int maxLength = length;
+            if (precision > 0) {
+                maxLength++;
+            }
+            if (argument.length() > maxLength) {
+                return false;
+            }
+            
             char character;
             for (int idx = 0; idx < argument.length(); idx++) {
                 character = argument.charAt(idx);
+                if (!(Character.isDigit(character) || character == '.')) {
+                    return false;
+                }
                 if ((character == '.' && precision <= 0) && Arrays.binarySearch(charactersDec, character) < 0) {
                     return false;
                 }
                 if (character == '.') {
                     isDecPos = true;
                     countComma++;
-                    if (countComma > 1) {
+                    if (countComma > 1 || countComma !=0 && precision == 0) {
                         return false;
                     }
                 } else {
