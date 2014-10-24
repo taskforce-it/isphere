@@ -36,7 +36,7 @@ public class NumericOnlyVerifyListener implements VerifyListener {
         }
 
         if (isDecimalPositions) {
-            if (event.keyCode == 44 || event.keyCode == 46 || event.keyCode == SWT.KEYPAD_DECIMAL) {
+            if (event.character == ',' || event.character == '.' || event.keyCode == SWT.KEYPAD_DECIMAL) {
                 return;
             }
         }
