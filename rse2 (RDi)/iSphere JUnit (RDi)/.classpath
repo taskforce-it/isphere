@@ -8,6 +8,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere Task Tags Plugin"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Adapter Plugin (RDi)"/>
-	<classpathentry kind="con" path="org.eclipse.datatools.connectivity.jdt.DRIVERLIBRARY/AS/400 Toolbox for Java"/>
+	<classpathentry kind="lib" path="lib/jt400.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
