@@ -151,6 +151,10 @@ public class DataAreaText {
     public void setFocus() {
         textControl.setFocus();
     }
+    
+    public void resetDirtyFlag() {
+        fireStatusChangedEvent(false);
+    }
 
     private void updateText(String aText) {
         setText(aText);
@@ -323,12 +327,12 @@ public class DataAreaText {
         return (anEvent.stateMask & SWT.CTRL) == SWT.CTRL;
     }
 
-    private void fireStatusChangedEvent() {
-        fireStatusChangedEvent(isDirty);
-    }
-
     private void fireStatusChangedEvent(boolean anIsDirty) {
         isDirty = anIsDirty;
+        fireStatusChangedEvent();
+    }
+
+    private void fireStatusChangedEvent() {
         StatusChangedEvent event = new StatusChangedEvent(textControl, getCaretPosition(), getCaretRow(), getCaretColumn(), isInsertMode, isDirty);
         fireStatusChangedEvent(event);
     }

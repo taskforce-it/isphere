@@ -37,23 +37,29 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
     @Override
     public void createPartControl(Composite aParent) {
 
-        Composite editorArea = createEditorArea(aParent, 2);
+        Composite editorArea = createEditorArea(aParent, 3);
 
         Label valueLabel = new Label(editorArea, SWT.NONE);
         valueLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
         valueLabel.setText(Messages.Value_colon);
+
+        Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
+        GridData horizontalSpacerLayoutData = new GridData();
+        horizontalSpacerLayoutData.widthHint = 20;
+        horizontalSpacerLayoutData.heightHint = 1;
+        horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 
         dataAreaText = new Button(editorArea, SWT.CHECK);
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
 
-        Composite filler = new Composite(aParent, SWT.NONE);
-        GridData fillerLayoutData = new GridData();
-        fillerLayoutData.grabExcessHorizontalSpace = true;
-        fillerLayoutData.grabExcessVerticalSpace = true;
-        fillerLayoutData.horizontalSpan = 2;
-        filler.setLayoutData(fillerLayoutData);
+        Composite verticalSpacer = new Composite(aParent, SWT.NONE);
+        GridData verticalSpacerLayoutData = new GridData();
+        verticalSpacerLayoutData.grabExcessHorizontalSpace = true;
+        verticalSpacerLayoutData.grabExcessVerticalSpace = true;
+        verticalSpacerLayoutData.horizontalSpan = 2;
+        verticalSpacer.setLayoutData(verticalSpacerLayoutData);
 
         // Set screen value
         dataAreaText.setSelection(getWrappedDataArea().getBooleanValue());
@@ -72,7 +78,7 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         Throwable exception = getWrappedDataArea().setValue(dataAreaText.getSelection());
-        handleSaveException(aMonitor, exception);
+        handleSaveResult(aMonitor, exception);
     }
 
     @Override

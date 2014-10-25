@@ -59,6 +59,14 @@ public class WrappedDataArea {
         return text;
     }
 
+    public String getLengthAsText() {
+        if (DECIMAL.equals(type)) {
+            return getLength() + ", " + getDecimalPositions();
+        } else {
+            return "" + getLength();
+        }
+    }
+
     public int getTextLimit() {
         if (DECIMAL.equals(type) && getDecimalPositions() > 0) {
             return getLength() + 1;

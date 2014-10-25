@@ -112,7 +112,7 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
         GridLayout editorAreaLayout = new GridLayout(aColumns, false);
         editorAreaLayout.marginTop = 0;
         editorAreaLayout.marginBottom = 10;
-        editorAreaLayout.marginWidth = 10;
+        editorAreaLayout.marginLeft = 0;
         editorArea.setLayout(editorAreaLayout);
         return editorArea;
     }
@@ -133,12 +133,12 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
      * @param aMonitor
      * @param anException
      */
-    protected void handleSaveException(IProgressMonitor aMonitor, Throwable anException) {
+    protected void handleSaveResult(IProgressMonitor aMonitor, Throwable anException) {
         if (anException != null) {
             statusBar.setMessage(anException.getLocalizedMessage());
             aMonitor.setCanceled(true);
         } else {
-            dataAreaEditor.setDirty(false);
+            resetDirtyFlag();
         }
     }
 
@@ -265,4 +265,8 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
      */
     public abstract void setInitialFocus();
 
+    protected void resetDirtyFlag() {
+        dataAreaEditor.setDirty(false);
+    }
+    
 }
