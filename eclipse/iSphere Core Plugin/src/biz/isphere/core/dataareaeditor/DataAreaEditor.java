@@ -56,17 +56,17 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
     public void createPartControl(Composite aParent) {
 
         Composite editorParent = new Composite(aParent, SWT.NONE);
-        GridLayout editorParentLayout = new GridLayout(2, false);
+        GridLayout editorParentLayout = new GridLayout(1, false);
         editorParentLayout.marginTop = 5;
         editorParentLayout.marginWidth = 10;
         editorParent.setLayout(editorParentLayout);
 
-        Label headline = new Label(editorParent, SWT.NONE);
-        GridData headlineLayoutData = new GridData();
-        headlineLayoutData.horizontalAlignment = GridData.BEGINNING;
-        headlineLayoutData.horizontalSpan = 2;
-        headline.setLayoutData(headlineLayoutData);
-        headline.setText(getHeadlineText());
+        Composite header = new Composite(editorParent, SWT.NONE);
+        header.setLayout(new GridLayout(3, false));
+        
+        createHeadline(header, "Type", "" + getWrappedDataArea().getType());
+        createHeadline(header, "Length", "" + getWrappedDataArea().getLengthAsText());
+        createHeadline(header, "Text", getWrappedDataArea().getText());
 
         aParent.getClientArea();
 
@@ -75,6 +75,23 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         editorDelegate.setStatusBar(new StatusBar(editorParent));
 
         registerDelegateActions();
+    }
+
+    private void createHeadline(Composite aHeader, String aLabel, String aValue) {
+        Label lblText = new Label(aHeader, SWT.NONE);
+        lblText.setLayoutData(new GridData());
+        lblText.setText(aLabel);
+
+        Composite spacer = new Composite(aHeader, SWT.NONE);
+        GridData spacerLayoutData = new GridData();
+        spacerLayoutData.widthHint = 20;
+        spacerLayoutData.heightHint = 1;
+        spacer.setLayoutData(spacerLayoutData);
+        
+        Label dataAreaText = new Label(aHeader, SWT.NONE);
+        GridData headlineLayoutData = new GridData();
+        dataAreaText.setLayoutData(headlineLayoutData);
+        dataAreaText.setText(aValue);
     }
 
     @Override
@@ -133,17 +150,6 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         } 
 
         return new UnsupportedDataAreaEditorDelegate(this);
-    }
-
-    private String getHeadlineText() {
-        String text = wrappedDataArea.getText();
-        if (StringHelper.isNullOrEmpty(text)) {
-            text = ":";
-        }
-        if (!text.endsWith(":")) {
-            text = text + ":";
-        }
-        return text;
     }
 
     public void registerDelegateActions() {

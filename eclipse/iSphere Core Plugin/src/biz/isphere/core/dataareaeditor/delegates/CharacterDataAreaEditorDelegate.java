@@ -96,7 +96,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         GridLayout rulerAreaLayout = new GridLayout(1, false);
         rulerAreaLayout.marginTop = 5;
         rulerAreaLayout.marginBottom = 0;
-        rulerAreaLayout.marginWidth = 10;
+        rulerAreaLayout.marginWidth = 0;
         rulerAreaLayout.verticalSpacing = 0;
         rulerArea.setLayout(rulerAreaLayout);
         GridData rulerAreaLayoutData = createRulerLayoutData();
@@ -143,9 +143,18 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         Throwable exception = getWrappedDataArea().setValue(dataAreaText.getText());
-        handleSaveException(aMonitor, exception);
+        handleSaveResult(aMonitor, exception);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void resetDirtyFlag() {
+        super.resetDirtyFlag();
+        dataAreaText.resetDirtyFlag();
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -366,7 +375,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private class ParentPaintListener implements PaintListener {
         public void paintControl(PaintEvent event) {
             Composite composite = (Composite)event.getSource();
-            dataAreaTextLayoutData.heightHint = composite.getClientArea().height - 110;
+            dataAreaTextLayoutData.heightHint = composite.getClientArea().height - 160;
             layoutEditorArea();
         }
     }

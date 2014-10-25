@@ -54,6 +54,12 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         valueLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
         valueLabel.setText(Messages.Value_colon);
 
+        Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
+        GridData horizontalSpacerLayoutData = new GridData();
+        horizontalSpacerLayoutData.widthHint = 20;
+        horizontalSpacerLayoutData.heightHint = 1;
+        horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
+
         dataAreaText = new Text(editorArea, SWT.BORDER);
         dataAreaText.addVerifyListener(new NumericOnlyVerifyListener(true));
         dataAreaText.setTextLimit(getWrappedDataArea().getTextLimit());
@@ -61,15 +67,12 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         dataAreaTextLayoutData.widthHint = 160;
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
 
-        Label dataFormat = new Label(editorArea, SWT.NONE);
-        dataFormat.setText("(" + getWrappedDataArea().getLength() + ", " + getWrappedDataArea().getDecimalPositions() + ")");
-
-        Composite filler = new Composite(aParent, SWT.NONE);
-        GridData fillerLayoutData = new GridData();
-        fillerLayoutData.grabExcessHorizontalSpace = true;
-        fillerLayoutData.grabExcessVerticalSpace = true;
-        fillerLayoutData.horizontalSpan = 2;
-        filler.setLayoutData(fillerLayoutData);
+        Composite verticalSpacer = new Composite(aParent, SWT.NONE);
+        GridData verticalSpacerLayoutData = new GridData();
+        verticalSpacerLayoutData.grabExcessHorizontalSpace = true;
+        verticalSpacerLayoutData.grabExcessVerticalSpace = true;
+        verticalSpacerLayoutData.horizontalSpan = 2;
+        verticalSpacer.setLayoutData(verticalSpacerLayoutData);
 
         validator = new Validator();
         validator.setType("*DEC");
@@ -101,7 +104,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         }
 
         Throwable exception = getWrappedDataArea().setValue(new BigDecimal(dataAreaText.getText()));
-        handleSaveException(aMonitor, exception);
+        handleSaveResult(aMonitor, exception);
     }
 
     @Override
