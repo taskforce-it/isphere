@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -56,6 +57,8 @@ import biz.isphere.core.internal.FontHelper;
  */
 public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
 
+    private static final int OFFSET_WIDHT_HINT = 42;
+
     protected static int DEFAULT_EDITOR_WIDTH = 50; // default width on 5250
                                                     // screen
     private DataAreaText dataAreaText;
@@ -68,6 +71,11 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private ScrolledComposite editorAreaScrollable;
     private GridData dataAreaTextLayoutData;
     private Label ruler;
+
+    private Composite offsetArea;
+    private GridData offsetAreaLayoutData;
+
+    private int lastTopRow = -1;
 
     public CharacterDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -82,8 +90,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         FontRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
         registry.addListener(new ThemeChangedListener());
 
-        aParent.addPaintListener(new ParentPaintListener());
-
         editorAreaScrollable = new ScrolledComposite(aParent, SWT.H_SCROLL | SWT.NONE);
         editorAreaScrollable.setLayout(new GridLayout(1, false));
         editorAreaScrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -93,7 +99,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         editorArea = createEditorArea(editorAreaScrollable, 1);
 
         Composite rulerArea = new Composite(editorArea, SWT.NONE);
-        GridLayout rulerAreaLayout = new GridLayout(1, false);
+        GridLayout rulerAreaLayout = new GridLayout(2, false);
         rulerAreaLayout.marginTop = 5;
         rulerAreaLayout.marginBottom = 0;
         rulerAreaLayout.marginWidth = 0;
@@ -102,12 +108,23 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         GridData rulerAreaLayoutData = createRulerLayoutData();
         rulerArea.setLayoutData(rulerAreaLayoutData);
 
+        createOffsetLabel(rulerArea, Messages.Offset);
+
         ruler = new Label(rulerArea, SWT.NONE);
         ruler.setFont(FontHelper.getFixedSizeFont());
         ruler.setText(getRulerText(DEFAULT_EDITOR_WIDTH));
         GridData rulerLayoutData = new GridData();
         rulerLayoutData.horizontalIndent = 5;
         ruler.setLayoutData(rulerLayoutData);
+
+        offsetArea = new Composite(rulerArea, SWT.NONE);
+        GridLayout offsetAreaLayout = new GridLayout(1, false);
+        offsetAreaLayout.marginWidth = 0;
+        offsetAreaLayout.marginHeight = 0;
+        offsetAreaLayout.verticalSpacing = 0;
+        offsetArea.setLayout(offsetAreaLayout);
+        offsetAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        offsetArea.setLayoutData(offsetAreaLayoutData);
 
         dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, ruler.getText().length());
         dataAreaText.setTextLimit(getWrappedDataArea().getLength());
@@ -119,22 +136,46 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         dataAreaText.setText(getWrappedDataArea().getStringValue());
 
         // Add 'status changed' listener
-        dataAreaText.addStatusChangedListener(new StatusChangedListener() {
-            public void statusChanged(StatusChangedEvent anEvent) {
-                if (anEvent.dirty) {
-                    setEditorDirty();
-                }
-                getStatusBar().setPosition(anEvent.position);
-                if (anEvent.insertMode) {
-                    getStatusBar().setInfo(Messages.Mode_Insert);
-                } else {
-                    getStatusBar().setInfo(Messages.Mode_Overwrite);
-                }
-            }
-        });
+        dataAreaText.addStatusChangedListener(new DataAreaTextStatusChangedListener());
 
         editorAreaScrollable.setContent(editorArea);
         editorAreaScrollable.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+        aParent.addPaintListener(new ParentPaintListener());
+    }
+
+    private void updateRuler(int aTopRow) {
+        drawRuler(aTopRow);
+    }
+
+    private void drawRuler(int aTopRow) {
+        if (lastTopRow == aTopRow || offsetArea.getChildren().length == 0) {
+            return;
+        }
+        int lineLength = ruler.getText().length();
+        int offset = aTopRow * lineLength;
+        Control[] labels = offsetArea.getChildren();
+        for (Control label : labels) {
+            ((Label)label).setText("" + offset);
+            offset = offset + lineLength;
+        }
+        lastTopRow = aTopRow;
+    }
+
+    private void createOffsetLabel(Composite aParent, int anOffset, Font aFont) {
+        Label label = createOffsetLabel(aParent, "" + anOffset);
+        label.setAlignment(SWT.RIGHT);
+        label.setFont(aFont);
+    }
+
+    private Label createOffsetLabel(Composite aParent, String aText) {
+        Label label = new Label(aParent, SWT.NONE);
+        label.setAlignment(SWT.RIGHT);
+        GridData offsetHeadlineLayoutData = new GridData();
+        offsetHeadlineLayoutData.widthHint = OFFSET_WIDHT_HINT;
+        label.setLayoutData(offsetHeadlineLayoutData);
+        label.setText(aText);
+        return label;
     }
 
     /**
@@ -154,7 +195,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         super.resetDirtyFlag();
         dataAreaText.resetDirtyFlag();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -292,6 +333,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private GridData createRulerLayoutData() {
         GridData rulerAreaLayoutData = new GridData();
         rulerAreaLayoutData.horizontalAlignment = GridData.FILL;
+        rulerAreaLayoutData.verticalAlignment = GridData.BEGINNING;
         rulerAreaLayoutData.grabExcessHorizontalSpace = false;
         /*
          * for the vertical alignment (height), see: ParentPaintListener
@@ -375,9 +417,26 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private class ParentPaintListener implements PaintListener {
         public void paintControl(PaintEvent event) {
             Composite composite = (Composite)event.getSource();
-            dataAreaTextLayoutData.heightHint = composite.getClientArea().height - 160;
+            int charHeight = FontHelper.getFontCharHeight(ruler);
+            int numRows = (composite.getClientArea().height - 145) / charHeight;
+            int heightHint = numRows * charHeight;
+            dataAreaTextLayoutData.heightHint = heightHint;
+            offsetAreaLayoutData.heightHint = heightHint;
+
+            if (offsetArea.getChildren().length == 0) {
+                createRuler(numRows);
+            }
+
             layoutEditorArea();
         }
+
+        private void createRuler(int numRows) {
+            for (int i = 0; i < numRows; i++) {
+                createOffsetLabel(offsetArea, 0, ruler.getFont());
+            }
+            updateRuler(0);
+        }
+
     }
 
     /**
@@ -402,4 +461,21 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         }
     }
 
+    private class DataAreaTextStatusChangedListener implements StatusChangedListener {
+        public void statusChanged(StatusChangedEvent anEvent) {
+            if (anEvent.dirty) {
+                setEditorDirty();
+            }
+            getStatusBar().setPosition(anEvent.position);
+            if (anEvent.insertMode) {
+                getStatusBar().setInfo(Messages.Mode_Insert);
+            } else {
+                getStatusBar().setInfo(Messages.Mode_Overwrite);
+            }
+            if (anEvent.message != null) {
+                getStatusBar().setMessage(anEvent.message);
+            }
+            updateRuler(anEvent.topRow);
+        }
+    }
 }

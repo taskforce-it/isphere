@@ -14,6 +14,7 @@ public class StatusChangedEvent extends EventObject {
 
     private static final long serialVersionUID = -3632244163034792956L;
 
+    public int topRow;
     public int position;
     public int row;
     public int column;
@@ -21,14 +22,15 @@ public class StatusChangedEvent extends EventObject {
     public boolean dirty;
     public String message;
 
-    public StatusChangedEvent(Object aSource, int aPosition, int aRow, int aColumn, boolean anInsertMode, boolean anIsDirty) {
+    public StatusChangedEvent(Object aSource, int aTopRow, int aPosition, int aRow, int aColumn, boolean anInsertMode, boolean anIsDirty) {
         super(aSource);
+        topRow = aTopRow;
         position = aPosition;
         row = aRow;
         column = aColumn;
         insertMode = anInsertMode;
         dirty = anIsDirty;
-        message = "";
+        message = null;
     }
 
     @Override
