@@ -54,6 +54,8 @@ public class DataAreaText {
     private boolean hasFocus = false;
     private boolean isDirty;
 
+    private StatusChangedEvent lastStatusChangedEvent = null;
+
     Vector<StatusChangedListener> statusChangedListeners = new Vector<StatusChangedListener>();
 
     public DataAreaText(Composite aParent, int aStyle, int aLineLength) {
@@ -151,7 +153,7 @@ public class DataAreaText {
     public void setFocus() {
         textControl.setFocus();
     }
-    
+
     public void resetDirtyFlag() {
         fireStatusChangedEvent(false);
     }
@@ -334,7 +336,10 @@ public class DataAreaText {
 
     private void fireStatusChangedEvent() {
         StatusChangedEvent event = new StatusChangedEvent(textControl, getCaretPosition(), getCaretRow(), getCaretColumn(), isInsertMode, isDirty);
-        fireStatusChangedEvent(event);
+        if (lastStatusChangedEvent == null || !lastStatusChangedEvent.equals(event)) {
+            fireStatusChangedEvent(event);
+            lastStatusChangedEvent = event;
+        }
     }
 
     private void fireStatusChangedEvent(StatusChangedEvent anEvent) {
@@ -415,7 +420,7 @@ public class DataAreaText {
      */
     private class TextControlMouseListener extends MouseAdapter {
         @Override
-        public void mouseDown(MouseEvent e) {
+        public void mouseDown(MouseEvent anEvent) {
             fireStatusChangedEvent();
         }
     }
