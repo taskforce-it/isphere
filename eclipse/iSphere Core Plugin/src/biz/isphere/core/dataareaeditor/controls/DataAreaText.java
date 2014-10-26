@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.events.StatusChangedEvent;
 import biz.isphere.core.dataareaeditor.events.StatusChangedListener;
 import biz.isphere.core.internal.ColorHelper;
@@ -158,11 +159,6 @@ public class DataAreaText {
         fireStatusChangedEvent(false);
     }
 
-    private void updateText(String aText) {
-        setText(aText);
-        fireStatusChangedEvent(true);
-    }
-
     private int getSelectedLength(Point aSelection) {
         return aSelection.y - aSelection.x;
     }
@@ -271,12 +267,17 @@ public class DataAreaText {
 
     private void performInsert(char character) {
         Point selection = getSelection();
-        performReplaceTextRange(selection.x, 0, Character.toString(character));
+        int length = selection.y - selection.x;
+        performReplaceTextRange(selection.x, length, Character.toString(character));
     }
 
     private void performOverwrite(char character) {
         Point selection = getSelection();
-        performReplaceTextRange(selection.x, 1, Character.toString(character));
+        int length = selection.y - selection.x;
+        if (length == 0) {
+            length = 1;
+        }
+        performReplaceTextRange(selection.x, length, Character.toString(character));
     }
 
     private void performReplaceTextRange(int aStart, int aLength, String aNewText) {
@@ -285,21 +286,26 @@ public class DataAreaText {
         }
 
         String text = getText();
-        if (isInsertMode && !hasEnoughSpace(text, aNewText.length())) {
+        if (isInsertMode && !hasEnoughSpace(text, aLength, aNewText.length())) {
+            fireStatusChangedEvent(Messages.Not_enough_space_to_insert_text);
             return;
         }
 
         text = delete(text, aStart, aStart + aLength);
         text = insert(text, aStart, aNewText);
-        updateText(text);
-        setSelection(aStart + aNewText.length());
+        updateSelection(text, aStart + aNewText.length());
     }
 
     private void deleteSelection(int aStart, int anEnd) {
         String text = getText();
         text = delete(text, aStart, anEnd);
-        updateText(text);
+        updateSelection(text, aStart);
+    }
+
+    private void updateSelection(String aText, int aStart) {
+        setText(aText);
         setSelection(aStart);
+        fireStatusChangedEvent(true, "");
     }
 
     private String delete(String aText, int aStart, int anEnd) {
@@ -318,8 +324,8 @@ public class DataAreaText {
         return text;
     }
 
-    private boolean hasEnoughSpace(String text, int i) {
-        if (StringHelper.trimR(text).length() + i <= maxLength) {
+    private boolean hasEnoughSpace(String text, int aLength, int aNewLengh) {
+        if (StringHelper.trimR(text).length() - aLength + aNewLengh <= maxLength) {
             return true;
         }
         return false;
@@ -334,8 +340,24 @@ public class DataAreaText {
         fireStatusChangedEvent();
     }
 
+    private void fireStatusChangedEvent(boolean anIsDirty, String aText) {
+        isDirty = anIsDirty;
+        fireStatusChangedEvent(aText);
+    }
+
     private void fireStatusChangedEvent() {
-        StatusChangedEvent event = new StatusChangedEvent(textControl, getCaretPosition(), getCaretRow(), getCaretColumn(), isInsertMode, isDirty);
+        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), getCaretPosition(), getCaretRow(),
+            getCaretColumn(), isInsertMode, isDirty);
+        if (lastStatusChangedEvent == null || !lastStatusChangedEvent.equals(event)) {
+            fireStatusChangedEvent(event);
+            lastStatusChangedEvent = event;
+        }
+    }
+
+    private void fireStatusChangedEvent(String aMessage) {
+        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), getCaretPosition(), getCaretRow(),
+            getCaretColumn(), isInsertMode, isDirty);
+        event.message = aMessage;
         if (lastStatusChangedEvent == null || !lastStatusChangedEvent.equals(event)) {
             fireStatusChangedEvent(event);
             lastStatusChangedEvent = event;

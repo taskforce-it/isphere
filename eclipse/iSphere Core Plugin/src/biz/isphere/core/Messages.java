@@ -568,6 +568,12 @@ public class Messages extends NLS {
 
     public static String Mode_Overwrite;
 
+    public static String Offset;
+    
+    public static String Text;
+
+    public static String Not_enough_space_to_insert_text;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

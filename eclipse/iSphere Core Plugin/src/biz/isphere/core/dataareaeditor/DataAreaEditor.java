@@ -32,6 +32,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.delegates.AbstractDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.CharacterDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.DecimalDataAreaEditorDelegate;
@@ -64,9 +65,9 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         Composite header = new Composite(editorParent, SWT.NONE);
         header.setLayout(new GridLayout(3, false));
         
-        createHeadline(header, "Type", "" + getWrappedDataArea().getType());
-        createHeadline(header, "Length", "" + getWrappedDataArea().getLengthAsText());
-        createHeadline(header, "Text", getWrappedDataArea().getText());
+        createHeadline(header, Messages.Type, "" + getWrappedDataArea().getType());
+        createHeadline(header, Messages.Length, "" + getWrappedDataArea().getLengthAsText());
+        createHeadline(header, Messages.Text, getWrappedDataArea().getText());
 
         aParent.getClientArea();
 
