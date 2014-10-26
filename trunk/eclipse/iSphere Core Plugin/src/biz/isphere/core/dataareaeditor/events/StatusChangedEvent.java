@@ -13,14 +13,14 @@ import java.util.EventObject;
 public class StatusChangedEvent extends EventObject {
 
     private static final long serialVersionUID = -3632244163034792956L;
-    
+
     public int position;
     public int row;
     public int column;
     public boolean insertMode;
     public boolean dirty;
     public String message;
-    
+
     public StatusChangedEvent(Object aSource, int aPosition, int aRow, int aColumn, boolean anInsertMode, boolean anIsDirty) {
         super(aSource);
         position = aPosition;
@@ -30,4 +30,35 @@ public class StatusChangedEvent extends EventObject {
         dirty = anIsDirty;
         message = "";
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + column;
+        result = prime * result + (dirty ? 1231 : 1237);
+        result = prime * result + (insertMode ? 1231 : 1237);
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        result = prime * result + position;
+        result = prime * result + row;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        StatusChangedEvent other = (StatusChangedEvent)obj;
+        if (column != other.column) return false;
+        if (dirty != other.dirty) return false;
+        if (insertMode != other.insertMode) return false;
+        if (message == null) {
+            if (other.message != null) return false;
+        } else if (!message.equals(other.message)) return false;
+        if (position != other.position) return false;
+        if (row != other.row) return false;
+        return true;
+    }
+
 }
