@@ -283,7 +283,6 @@ public class MessageDescriptionDetail {
         labelHelpText.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
         textHelpText = new Text(compositeHeader, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-        textHelpText.setFont(SWTResourceManager.getFont("Courier New", 10, SWT.NORMAL));
         GridData gridData = getLayoutData();
         gridData.heightHint = 80;
         textHelpText.setLayoutData(gridData);
