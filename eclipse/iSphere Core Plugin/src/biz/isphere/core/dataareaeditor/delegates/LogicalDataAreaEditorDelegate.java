@@ -39,13 +39,16 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
 
         Composite editorArea = createEditorArea(aParent, 3);
 
-        Label valueLabel = new Label(editorArea, SWT.NONE);
-        valueLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
-        valueLabel.setText(Messages.Value_colon);
+        Label lblValue = new Label(editorArea, SWT.NONE);
+        GridData lblValueLayoutData = new GridData();
+        lblValueLayoutData.widthHint = DataAreaEditor.VALUE_LABEL_WIDTH_HINT;
+        lblValueLayoutData.verticalAlignment = GridData.BEGINNING;
+        lblValue.setLayoutData(lblValueLayoutData);
+        lblValue.setText(Messages.Value_colon);
 
         Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
         GridData horizontalSpacerLayoutData = new GridData();
-        horizontalSpacerLayoutData.widthHint = 20;
+        horizontalSpacerLayoutData.widthHint = DataAreaEditor.SPACER_WIDTH_HINT;
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 

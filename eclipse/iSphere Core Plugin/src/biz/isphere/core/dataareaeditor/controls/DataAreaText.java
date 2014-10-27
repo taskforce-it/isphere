@@ -11,8 +11,6 @@ package biz.isphere.core.dataareaeditor.controls;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -24,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
@@ -54,6 +53,7 @@ public class DataAreaText {
     private boolean isInsertMode = false;
     private boolean hasFocus = false;
     private boolean isDirty;
+    private int lastTopIndex = -1;
 
     private StatusChangedEvent lastStatusChangedEvent = null;
 
@@ -67,7 +67,6 @@ public class DataAreaText {
 
         textControl.addKeyListener(new TextControlKeyListener());
         textControl.addMouseListener(new TextControlMouseListener());
-        textControl.addFocusListener(new TextControlFocusListener());
         textControl.addPaintListener(new TextControlPaintListener());
     }
 
@@ -85,6 +84,10 @@ public class DataAreaText {
 
     public void setLayoutData(Object aLayoutData) {
         textControl.setLayoutData(aLayoutData);
+    }
+
+    public Object getLayoutData() {
+        return textControl.getLayoutData();
     }
 
     public void setTextLimit(int aLimit) {
@@ -159,6 +162,14 @@ public class DataAreaText {
         fireStatusChangedEvent(false);
     }
 
+    public int getTotalNumberOfRows() {
+        int rows = maxLength / lineLength;
+        if (maxLength % lineLength != 0) {
+            rows++;
+        }
+        return rows;
+    }
+
     private int getSelectedLength(Point aSelection) {
         return aSelection.y - aSelection.x;
     }
@@ -221,14 +232,6 @@ public class DataAreaText {
             row++;
         }
         return row;
-    }
-
-    private int getTotalNumberOfRows() {
-        int rows = maxLength / lineLength;
-        if (maxLength % lineLength != 0) {
-            rows++;
-        }
-        return rows;
     }
 
     private int getNumberOfCompleteRows() {
@@ -447,41 +450,34 @@ public class DataAreaText {
         }
     }
 
-    /**
-     * Inner class that listens for the focus of the widget in order to let the
-     * editor decide whether or not to perform a CUT or PASTE event.
-     */
-    private class TextControlFocusListener extends FocusAdapter {
-        @Override
-        public void focusGained(FocusEvent e) {
-            hasFocus = true;
-            fireStatusChangedEvent();
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            hasFocus = false;
-        }
-    }
-
     private class TextControlPaintListener implements PaintListener {
         public void paintControl(PaintEvent event) {
             paintBackground(event);
+
+            if (textControl.getClientArea().height / textControl.getLineHeight() < 1) {
+                // Enforce status change event
+                lastStatusChangedEvent = null;
+            } 
+            
+            if (lastStatusChangedEvent == null || lastTopIndex != textControl.getTopIndex()) {
+                fireStatusChangedEvent();
+                lastTopIndex = textControl.getTopIndex();
+            }
         }
 
         public void paintBackground(PaintEvent event) {
 
-            Text drawable = (Text)event.getSource();
+            Scrollable textWidget = (Scrollable)event.getSource();
             int rows = getTotalNumberOfRows();
-            Color color = ColorHelper.getUnreachableBackgroundColor();
+            Color color = ColorHelper.getBackgroundColorOfProtectedAreas();
 
             GC gc = event.gc;
             gc.setBackground(color);
 
-            int charWidht = FontHelper.getFontCharWidth(drawable);
-            int charHeight = FontHelper.getFontCharHeight(drawable);
+            int charWidht = FontHelper.getFontCharWidth(textWidget);
+            int charHeight = FontHelper.getFontCharHeight(textWidget);
             int editableAreaHeight = rows * charHeight;
-            gc.fillRectangle(0, editableAreaHeight, drawable.getClientArea().width, drawable.getClientArea().height - editableAreaHeight);
+            gc.fillRectangle(0, editableAreaHeight, textWidget.getClientArea().width, textWidget.getClientArea().height - editableAreaHeight);
 
             // Remaining space of last row
             if (maxLength % lineLength == 0) {
@@ -491,8 +487,8 @@ public class DataAreaText {
             // Have to add 2 for the EOL_CHAR, because of inaccurate charWidth
             int x = (getNumberOfRemainingChars() + 2) * charWidht;
             int y = getNumberOfCompleteRows() * charHeight;
-            int width = drawable.getClientArea().width - x;
-            int height = drawable.getClientArea().height - y;
+            int width = textWidget.getClientArea().width - x;
+            int height = textWidget.getClientArea().height - y;
             gc.fillRectangle(x, y, width, height);
         }
     }

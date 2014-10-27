@@ -7,11 +7,11 @@ import biz.isphere.core.ISpherePlugin;
 
 public class ColorHelper {
     
-    public static final String EDITOR_UNREACHABLE_BACKGROUND = "biz.isphere.fonts.editors.unreachablebackground";
+    public static final String EDITOR_PROTECTED_AREAS_BACKGROUND = "biz.isphere.fonts.editors.protectedbackground";
     
-    public static Color getUnreachableBackgroundColor() {
+    public static Color getBackgroundColorOfProtectedAreas() {
         ColorRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
-        return registry.get(EDITOR_UNREACHABLE_BACKGROUND);
+        return registry.get(EDITOR_PROTECTED_AREAS_BACKGROUND);
     }
 
 }

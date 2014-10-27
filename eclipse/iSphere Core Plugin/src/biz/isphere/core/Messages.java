@@ -570,7 +570,7 @@ public class Messages extends NLS {
 
     public static String Offset;
     
-    public static String Text;
+    public static String Text_colon;
 
     public static String Not_enough_space_to_insert_text;
     
