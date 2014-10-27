@@ -17,7 +17,13 @@ u { text-decoration: underline; }
 h1 { font-size: 1.8em; color: #f26721; line-height: 1.4em; }
 
 /*
- *  Headline of a topic.
+ *  Headline within a topic.
+ */
+
+h2 { color: #000000; line-height: 1.6em; font-weight: bold; }
+
+/*
+ *  Default body style.
  */
 
 body { 

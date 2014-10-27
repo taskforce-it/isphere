@@ -11,8 +11,13 @@
   <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
     <!--
 	Add sub topics here:
-    <topic label="..." href="html/tasktags/..." />
     -->
     <topic label="Preferences" href="html/decorator/preferences.html" />
+  </topic>
+  <topic label="Data Area Editor"  href="html/dataareaeditor/dataareaeditor.html"> 
+    <!--
+	Add sub topics here:
+    -->
+    <topic label="Preferences" href="html/dataareaeditor/preferences.html" />
   </topic>
 </toc> 
