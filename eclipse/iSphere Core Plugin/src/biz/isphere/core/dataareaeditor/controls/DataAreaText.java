@@ -306,10 +306,10 @@ public class DataAreaText {
     }
 
     private void updateSelection(String aText, int aStart) {
-        int topIndex = textControl.getTopIndex();
+        int topIndex = textControl.getTopIndex(); // FIXME: remove flickering
         setText(aText);
         setSelection(aStart);
-        textControl.setTopIndex(topIndex);
+        textControl.setTopIndex(topIndex); // FIXME: remove flickering
         fireStatusChangedEvent(true, "");
     }
 
