@@ -306,8 +306,10 @@ public class DataAreaText {
     }
 
     private void updateSelection(String aText, int aStart) {
+        int topIndex = textControl.getTopIndex();
         setText(aText);
         setSelection(aStart);
+        textControl.setTopIndex(topIndex);
         fireStatusChangedEvent(true, "");
     }
 
