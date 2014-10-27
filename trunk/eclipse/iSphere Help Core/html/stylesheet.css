@@ -4,6 +4,12 @@
 
 * { font-family: Verdana, Arial, sans-serif; font-size: 1.0em; font-weight: normal; font-style: normal; }
 
+i { font-style: italic; }
+
+b { font-weight: bold; }
+
+u { text-decoration: underline; }
+
 /*
  *  Headline of a topic.
  */
@@ -11,7 +17,13 @@
 h1 { font-size: 1.8em; color: #f26721; line-height: 1.4em; }
 
 /*
- *  Headline of a topic.
+ *  Headline within a topic.
+ */
+
+h2 { color: #000000; line-height: 1.6em; font-weight: bold; }
+
+/*
+ *  Default body style.
  */
 
 body { 
