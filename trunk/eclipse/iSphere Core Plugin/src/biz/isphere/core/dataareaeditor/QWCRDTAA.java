@@ -8,6 +8,7 @@
 
 package biz.isphere.core.dataareaeditor;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.APIProgramCallDocument;
 
 import com.ibm.as400.access.AS400;
@@ -35,9 +36,9 @@ public class QWCRDTAA {
 
                 AS400Message[] msgs = pcml.getMessageList("QWCRDTAA");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
                 }
-                System.out.println("*** Call to QWCRDTAA failed. See messages above ***");
+                ISpherePlugin.logError("*** Call to QWCRDTAA failed. See previous messages ***", null);
                 return null;
 
             } else {

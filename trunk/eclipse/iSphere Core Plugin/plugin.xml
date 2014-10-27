@@ -60,12 +60,12 @@
       </fontDefinition>
       
       <colorDefinition 
-            id="biz.isphere.fonts.editors.unreachablebackground"
+            id="biz.isphere.fonts.editors.protectedbackground"
             categoryId="biz.isphere.core.ui.fontsandcolors"
-            label="%Editor_unreachable_areas"
+            label="%Editor_protected_areas"
             value="228,228,228">
          <description>
-            %Editor_unreachable_areas_Description
+            %Editor_protected_areas_Description
          </description>
       </colorDefinition>
       

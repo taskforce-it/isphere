@@ -33,11 +33,11 @@ public class StatusBar {
     }
 
     public void setInfo(String anInfo) {
-        infoLabel.setText(anInfo);
+        infoLabel.setText(" " + anInfo);
     }
 
     public void setMessage(String aMessage) {
-        messageLabel.setText(aMessage);
+        messageLabel.setText(" " + aMessage);
     }
 
     private void createStatusBar(Composite aParent) {

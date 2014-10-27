@@ -57,7 +57,7 @@ import biz.isphere.core.internal.FontHelper;
  */
 public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
 
-    private static final int OFFSET_WIDHT_HINT = 42;
+    private static final int OFFSET_LABEL_WIDTH_HINT = 55;
 
     protected static int DEFAULT_EDITOR_WIDTH = 50; // default width on 5250
                                                     // screen
@@ -67,15 +67,17 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private Action pasteAction;
     private Action findReplaceAction;
 
-    private Composite editorArea;
+    private Composite parent;
     private ScrolledComposite editorAreaScrollable;
-    private GridData dataAreaTextLayoutData;
+    private Composite editorArea;
+    private Composite rulerArea;
+    private Label offsetLabel;
     private Label ruler;
-
     private Composite offsetArea;
-    private GridData offsetAreaLayoutData;
 
-    private int lastTopRow = -1;
+    private int lastTopIndex = -1;
+    private Font lastFont = null;
+    private int lastNumRows = -1;
 
     public CharacterDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -87,10 +89,12 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     @Override
     public void createPartControl(final Composite aParent) {
 
+        parent = aParent;
+
         FontRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
         registry.addListener(new ThemeChangedListener());
 
-        editorAreaScrollable = new ScrolledComposite(aParent, SWT.H_SCROLL | SWT.NONE);
+        editorAreaScrollable = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.NONE);
         editorAreaScrollable.setLayout(new GridLayout(1, false));
         editorAreaScrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
         editorAreaScrollable.setExpandHorizontal(true);
@@ -98,38 +102,39 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
 
         editorArea = createEditorArea(editorAreaScrollable, 1);
 
-        Composite rulerArea = new Composite(editorArea, SWT.NONE);
+        rulerArea = new Composite(editorArea, SWT.NONE);
         GridLayout rulerAreaLayout = new GridLayout(2, false);
-        rulerAreaLayout.marginTop = 5;
-        rulerAreaLayout.marginBottom = 0;
+        rulerAreaLayout.marginHeight = 0;
         rulerAreaLayout.marginWidth = 0;
         rulerAreaLayout.verticalSpacing = 0;
         rulerArea.setLayout(rulerAreaLayout);
-        GridData rulerAreaLayoutData = createRulerLayoutData();
+        GridData rulerAreaLayoutData = createRulerAndEditorLayoutData();
         rulerArea.setLayoutData(rulerAreaLayoutData);
 
-        createOffsetLabel(rulerArea, Messages.Offset);
+        offsetLabel = createTextOffsetLabel(rulerArea, getEditorFont(), Messages.Offset);
 
         ruler = new Label(rulerArea, SWT.NONE);
-        ruler.setFont(FontHelper.getFixedSizeFont());
+        ruler.setFont(getEditorFont());
         ruler.setText(getRulerText(DEFAULT_EDITOR_WIDTH));
         GridData rulerLayoutData = new GridData();
+        rulerLayoutData.verticalAlignment = 0;
         rulerLayoutData.horizontalIndent = 5;
         ruler.setLayoutData(rulerLayoutData);
 
         offsetArea = new Composite(rulerArea, SWT.NONE);
         GridLayout offsetAreaLayout = new GridLayout(1, false);
+        offsetAreaLayout.marginTop = 2;
         offsetAreaLayout.marginWidth = 0;
         offsetAreaLayout.marginHeight = 0;
         offsetAreaLayout.verticalSpacing = 0;
         offsetArea.setLayout(offsetAreaLayout);
-        offsetAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        GridData offsetAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         offsetArea.setLayoutData(offsetAreaLayoutData);
 
         dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, ruler.getText().length());
         dataAreaText.setTextLimit(getWrappedDataArea().getLength());
-        dataAreaText.setFont(ruler.getFont());
-        dataAreaTextLayoutData = createRulerLayoutData();
+        dataAreaText.setFont(getEditorFont());
+        GridData dataAreaTextLayoutData = createRulerAndEditorLayoutData();
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
 
         // Set screen value
@@ -138,44 +143,9 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         // Add 'status changed' listener
         dataAreaText.addStatusChangedListener(new DataAreaTextStatusChangedListener());
 
-        editorAreaScrollable.setContent(editorArea);
-        editorAreaScrollable.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        layoutEditorArea();
 
-        aParent.addPaintListener(new ParentPaintListener());
-    }
-
-    private void updateRuler(int aTopRow) {
-        drawRuler(aTopRow);
-    }
-
-    private void drawRuler(int aTopRow) {
-        if (lastTopRow == aTopRow || offsetArea.getChildren().length == 0) {
-            return;
-        }
-        int lineLength = ruler.getText().length();
-        int offset = aTopRow * lineLength;
-        Control[] labels = offsetArea.getChildren();
-        for (Control label : labels) {
-            ((Label)label).setText("" + offset);
-            offset = offset + lineLength;
-        }
-        lastTopRow = aTopRow;
-    }
-
-    private void createOffsetLabel(Composite aParent, int anOffset, Font aFont) {
-        Label label = createOffsetLabel(aParent, "" + anOffset);
-        label.setAlignment(SWT.RIGHT);
-        label.setFont(aFont);
-    }
-
-    private Label createOffsetLabel(Composite aParent, String aText) {
-        Label label = new Label(aParent, SWT.NONE);
-        label.setAlignment(SWT.RIGHT);
-        GridData offsetHeadlineLayoutData = new GridData();
-        offsetHeadlineLayoutData.widthHint = OFFSET_WIDHT_HINT;
-        label.setLayoutData(offsetHeadlineLayoutData);
-        label.setText(aText);
-        return label;
+        parent.addPaintListener(new ParentPaintListener());
     }
 
     /**
@@ -250,6 +220,10 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
      */
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
 
+        // Tested regular expression beforehand
+        // TODO: implement IFindReplaceTargetExtension3
+        boolean isRegEx = false;
+
         String findRegEx;
         String text;
         if (aSearchForward) {
@@ -258,10 +232,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         } else {
             findRegEx = StringHelper.reverse(aFindString);
             text = StringHelper.reverse(dataAreaText.getText());
-        }
-
-        if (aWholeWord) {
-            findRegEx = "\\b" + findRegEx + "\\b";
         }
 
         int offset;
@@ -276,19 +246,44 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             }
         }
 
-        int flags = 0;
-        if (!aCaseSensitive) {
-            flags = flags | Pattern.CASE_INSENSITIVE;
+        int index;
+        if (isRegEx) {
+            int flags = 0;
+            if (!aCaseSensitive) {
+                flags = flags | Pattern.CASE_INSENSITIVE;
+            }
+            if (aWholeWord) {
+                findRegEx = "\\b" + findRegEx + "\\b";
+            }
+            Pattern pattern = Pattern.compile(findRegEx, flags);
+            Matcher matcher = pattern.matcher(text);
+            if (!matcher.find(offset)) {
+                return -1;
+            }
+            index = matcher.start();
+        } else {
+            if (!aCaseSensitive) {
+                findRegEx = findRegEx.toLowerCase();
+                text = text.toLowerCase();
+            }
+            index = text.indexOf(findRegEx, offset);
+            if (index >= 0) {
+                if (aWholeWord && !(isPrecededByWordBoundary(text, index) && isFollowedByWordBoundary(text, index, aFindString.length()))) {
+                    int newOffset;
+                    if (aSearchForward) {
+                        newOffset = index + aFindString.length();
+                    } else {
+                        newOffset = aWidgetOffset - aFindString.length();
+                    }
+                    return findAndSelect(newOffset, aFindString, aSearchForward, aCaseSensitive, aWholeWord);
+                }
+            }
         }
 
-        int index;
-        Pattern pattern = Pattern.compile(findRegEx, flags);
-        Matcher matcher = pattern.matcher(text);
-        if (!matcher.find(offset)) {
+        if (index < 0) {
             return -1;
         }
 
-        index = matcher.start();
         if (aSearchForward) {
             dataAreaText.setSelection(index, index + aFindString.length());
             return index;
@@ -297,6 +292,33 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             dataAreaText.setSelection(index, index + aFindString.length());
             return index;
         }
+    }
+
+    private boolean isPrecededByWordBoundary(String text, int offset) {
+        if (offset == 0) {
+            return true;
+        }
+        if (isWordBoundaryChar(text.substring(offset - 1, offset))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isFollowedByWordBoundary(String text, int offset, int length) {
+        if (offset == text.length()) {
+            return true;
+        }
+        if (isWordBoundaryChar(text.substring(offset + length, offset + length + 1))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isWordBoundaryChar(String aChar) {
+        // [^a-zA-Z_0-9]
+        Pattern pattern = Pattern.compile("[^a-zA-Z_0-9]");
+        Matcher matcher = pattern.matcher(aChar);
+        return matcher.find();
     }
 
     /**
@@ -330,14 +352,212 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         dataAreaText.replaceTextRange(getSelection(), aText);
     }
 
-    private GridData createRulerLayoutData() {
+    /**
+     * Returns the font used for the ruler, offset column and editor.
+     * 
+     * @return font for ruler, offset column and editor
+     */
+    private Font getEditorFont() {
+        return FontHelper.getFixedSizeFont();
+    }
+
+    /**
+     * Returns height of the characters of the font of the editor.
+     * 
+     * @return character height
+     */
+    private int getEditorCharHeight() {
+        return FontHelper.getFontCharHeight(ruler);
+    }
+
+    /**
+     * Updates the editor, when its height has been changed.
+     * 
+     * @param aNumRows - new height of the editor
+     */
+    private void updateEditorHeight(int aNumRows) {
+        if (aNumRows == lastNumRows) {
+            return;
+        }
+        lastNumRows = aNumRows;
+
+        int heightHint = aNumRows * getEditorCharHeight();
+
+        GridData gd;
+        gd = (GridData)offsetArea.getLayoutData();
+        gd.heightHint = heightHint;
+        gd = (GridData)dataAreaText.getLayoutData();
+        gd.heightHint = heightHint;
+
+        updateEditor(ruler.getFont(), aNumRows);
+    }
+
+    /**
+     * Updates the editor, when its height has been changed.
+     * 
+     * @param aFont - new font of the editor
+     */
+    private void updateEditorFont(Font aFont) {
+        if (aFont == lastFont) {
+            return;
+        }
+        lastFont = aFont;
+
+        offsetLabel.setFont(aFont);
+        ruler.setFont(aFont);
+        dataAreaText.setFont(aFont);
+
+        int numRows = getNumRowsOfEditorArea();
+        if (offsetArea.getChildren().length == 0) {
+            createOffsetLabels(aFont, numRows);
+        }
+
+        updateEditor(aFont, numRows);
+    }
+
+    /**
+     * Updates the editor, when its height has been changed.
+     * 
+     * @param aFont - new font of the editor
+     */
+    private void updateEditor(Font aFont, int aNumRows) {
+
+        int maxLength = offsetLabel.getText().length();
+
+        if (offsetArea.getChildren().length != aNumRows) {
+            while (offsetArea.getChildren().length > aNumRows) {
+                int i = offsetArea.getChildren().length - 1;
+                offsetArea.getChildren()[i].dispose();
+            }
+            while (offsetArea.getChildren().length < aNumRows) {
+                createNumericOffsetLabel(offsetArea, aFont);
+            }
+            if (lastTopIndex == -1) {
+                drawOffsetLabels(0);
+            } else {
+                drawOffsetLabels(lastTopIndex);
+            }
+        }
+
+        Control[] labels = offsetArea.getChildren();
+        for (Control control : labels) {
+            Label label = (Label)control;
+            label.setFont(aFont);
+            if (label.getText().length() > maxLength) {
+                maxLength = label.getText().length();
+            }
+        }
+
+        int widthHint = maxLength * FontHelper.getFontCharWidth(ruler);
+
+        ((GridData)offsetLabel.getLayoutData()).widthHint = widthHint;
+        labels = offsetArea.getChildren();
+        for (Control control : labels) {
+            Label label = (Label)control;
+            ((GridData)label.getLayoutData()).widthHint = widthHint;
+        }
+
+        layoutEditorArea();
+    }
+
+    /**
+     * Layouts the editor area.
+     */
+    private void layoutEditorArea() {
+        offsetArea.layout();
+        rulerArea.layout();
+        editorArea.layout();
+        editorAreaScrollable.setContent(editorArea);
+        editorAreaScrollable.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    }
+
+    /**
+     * Creates the labels of the offset column.
+     * 
+     * @param aFont - font used for the labels
+     * @param aNumRows - number of offset labels to create
+     */
+    private void createOffsetLabels(Font aFont, int aNumRows) {
+        for (int i = 0; i < aNumRows; i++) {
+            createNumericOffsetLabel(offsetArea, aFont);
+        }
+        drawOffsetLabels(0);
+    }
+
+    /**
+     * Creates a right aligned offset label for a given parent.
+     * 
+     * @param aParent - parent, the label is attached to
+     * @param aFont - font used for the label
+     */
+    private void createNumericOffsetLabel(Composite aParent, Font aFont) {
+        Label label = createTextOffsetLabel(aParent, aFont, "-1");
+        label.setAlignment(SWT.RIGHT);
+    }
+
+    /**
+     * Creates an offset label with the specified text. The label is attached to
+     * the specified parent.
+     * 
+     * @param aParent - parent, the label is attached to
+     * @param aFont - font used for the label
+     * @param aText - text of the label
+     * @return
+     */
+    private Label createTextOffsetLabel(Composite aParent, Font aFont, String aText) {
+        Label label = new Label(aParent, SWT.NONE);
+        label.setFont(aFont);
+        label.setAlignment(SWT.LEFT);
+        GridData offsetHeadlineLayoutData = new GridData();
+        offsetHeadlineLayoutData.widthHint = OFFSET_LABEL_WIDTH_HINT;
+        label.setLayoutData(offsetHeadlineLayoutData);
+        label.setText(aText);
+        return label;
+    }
+
+    /**
+     * Draws the offset labels starting at a given top index.
+     * 
+     * @param aTopIndex - top index used to calculate the first offset
+     */
+    private void drawOffsetLabels(int aTopIndex) {
+        int lineLength = ruler.getText().length();
+        int offset = aTopIndex * lineLength;
+        Control[] labels = offsetArea.getChildren();
+        for (Control control : labels) {
+            Label label = (Label)control;
+            label.setText(offset + "");
+            offset = offset + lineLength;
+        }
+        lastTopIndex = aTopIndex;
+    }
+
+    /**
+     * Returns the number of rows that fit into the editor area.
+     * 
+     * @return number of rows fitting into the editor area
+     */
+    private int getNumRowsOfEditorArea() {
+        int numRows = (parent.getClientArea().height - 145) / getEditorCharHeight();
+        if (numRows > dataAreaText.getTotalNumberOfRows()) {
+            numRows = dataAreaText.getTotalNumberOfRows();
+        }
+        if (numRows < 0) {
+            numRows = 0;
+        }
+        return numRows;
+    }
+
+    /**
+     * Creates the layout data used for the ruler and the editor.
+     * 
+     * @return layout data for ruler and editor
+     */
+    private GridData createRulerAndEditorLayoutData() {
         GridData rulerAreaLayoutData = new GridData();
         rulerAreaLayoutData.horizontalAlignment = GridData.FILL;
         rulerAreaLayoutData.verticalAlignment = GridData.BEGINNING;
         rulerAreaLayoutData.grabExcessHorizontalSpace = false;
-        /*
-         * for the vertical alignment (height), see: ParentPaintListener
-         */
         return rulerAreaLayoutData;
     }
 
@@ -367,14 +587,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             }
         }
         return ruler.toString();
-    }
-
-    /**
-     * Repaints the editor area (<i>see: dataAreaText</i>) composite.
-     */
-    private void layoutEditorArea() {
-        editorArea.layout();
-        editorAreaScrollable.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
 
     /**
@@ -416,25 +628,13 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
      */
     private class ParentPaintListener implements PaintListener {
         public void paintControl(PaintEvent event) {
-            Composite composite = (Composite)event.getSource();
-            int charHeight = FontHelper.getFontCharHeight(ruler);
-            int numRows = (composite.getClientArea().height - 145) / charHeight;
-            int heightHint = numRows * charHeight;
-            dataAreaTextLayoutData.heightHint = heightHint;
-            offsetAreaLayoutData.heightHint = heightHint;
+            int numRows = getNumRowsOfEditorArea();
 
-            if (offsetArea.getChildren().length == 0) {
-                createRuler(numRows);
-            }
-
-            layoutEditorArea();
+            changeEditorSize(numRows);
         }
 
-        private void createRuler(int numRows) {
-            for (int i = 0; i < numRows; i++) {
-                createOffsetLabel(offsetArea, 0, ruler.getFont());
-            }
-            updateRuler(0);
+        private void changeEditorSize(int aNumRows) {
+            updateEditorHeight(aNumRows);
         }
 
     }
@@ -447,17 +647,15 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         public void propertyChange(PropertyChangeEvent event) {
             if (FontHelper.EDITOR_FIXED_SIZE.equals(event.getProperty())) {
                 if (event.getNewValue() instanceof FontData[]) {
-                    FontData[] fonts = (FontData[])event.getNewValue();
-                    changeFont(fonts[0]);
+                    FontData[] fontDataArray = (FontData[])event.getNewValue();
+                    changeFont(fontDataArray[0]);
                 }
             }
         }
 
         private void changeFont(FontData aFontData) {
             Font font = SWTResourceManager.getFont(aFontData.getName(), aFontData.getHeight(), aFontData.getStyle());
-            ruler.setFont(font);
-            dataAreaText.setFont(font);
-            layoutEditorArea();
+            updateEditorFont(font);
         }
     }
 
@@ -466,6 +664,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             if (anEvent.dirty) {
                 setEditorDirty();
             }
+
             getStatusBar().setPosition(anEvent.position);
             if (anEvent.insertMode) {
                 getStatusBar().setInfo(Messages.Mode_Insert);
@@ -475,7 +674,15 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             if (anEvent.message != null) {
                 getStatusBar().setMessage(anEvent.message);
             }
-            updateRuler(anEvent.topRow);
+
+            updateOffsetLabels(anEvent.topIndex);
+        }
+
+        private void updateOffsetLabels(int aTopIndex) {
+            if (lastTopIndex == aTopIndex || offsetArea.getChildren().length == 0) {
+                return;
+            }
+            drawOffsetLabels(aTopIndex);
         }
     }
 }

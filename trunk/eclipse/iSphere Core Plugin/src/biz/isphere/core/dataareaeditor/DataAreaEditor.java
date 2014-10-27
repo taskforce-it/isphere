@@ -31,7 +31,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.delegates.AbstractDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.CharacterDataAreaEditorDelegate;
@@ -44,6 +43,9 @@ import com.ibm.as400.access.AS400;
 public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
 
     public static final String ID = "biz.isphere.core.dataareaeditor.DataAreaEditor";
+
+    public static final int VALUE_LABEL_WIDTH_HINT = 40;
+    public static final int SPACER_WIDTH_HINT = 10;
 
     private boolean isDirty;
     WrappedDataArea wrappedDataArea;
@@ -65,9 +67,9 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         Composite header = new Composite(editorParent, SWT.NONE);
         header.setLayout(new GridLayout(3, false));
         
-        createHeadline(header, Messages.Type, "" + getWrappedDataArea().getType());
-        createHeadline(header, Messages.Length, "" + getWrappedDataArea().getLengthAsText());
-        createHeadline(header, Messages.Text, getWrappedDataArea().getText());
+        createHeadline(header, Messages.Type_colon, "" + getWrappedDataArea().getType());
+        createHeadline(header, Messages.Length_colon, "" + getWrappedDataArea().getLengthAsText());
+        createHeadline(header, Messages.Text_colon, getWrappedDataArea().getText());
 
         aParent.getClientArea();
 
@@ -80,12 +82,14 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
 
     private void createHeadline(Composite aHeader, String aLabel, String aValue) {
         Label lblText = new Label(aHeader, SWT.NONE);
-        lblText.setLayoutData(new GridData());
+        GridData lblTextLayoutData = new GridData(); 
+        lblTextLayoutData.widthHint = VALUE_LABEL_WIDTH_HINT;
+        lblText.setLayoutData(lblTextLayoutData);
         lblText.setText(aLabel);
 
         Composite spacer = new Composite(aHeader, SWT.NONE);
         GridData spacerLayoutData = new GridData();
-        spacerLayoutData.widthHint = 20;
+        spacerLayoutData.widthHint = SPACER_WIDTH_HINT;
         spacerLayoutData.heightHint = 1;
         spacer.setLayoutData(spacerLayoutData);
         
