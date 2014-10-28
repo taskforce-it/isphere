@@ -108,8 +108,7 @@ public class FieldFormatDetail {
             comboType.setEnabled(false);
         }
 
-        validatorType = new Validator();
-        validatorType.setType("*CHAR");
+        validatorType = Validator.getCharInstance();
         validatorType.setLength(10);
         validatorType.setRestricted(true);
         validatorType.addSpecialValue("*QTDCHAR");
@@ -187,8 +186,7 @@ public class FieldFormatDetail {
             textLength.setEnabled(false);
         }
 
-        validatorLength = new Validator();
-        validatorLength.setType("*DEC");
+        validatorLength = Validator.getDecInstance();
         validatorLength.setLength(5);
         validatorLength.setPrecision(0);
 
@@ -214,8 +212,7 @@ public class FieldFormatDetail {
             textDecimalPositions.setEnabled(false);
         }
 
-        validatorDecimalPositions = new Validator();
-        validatorDecimalPositions.setType("*DEC");
+        validatorDecimalPositions = Validator.getDecInstance();
         validatorDecimalPositions.setLength(2);
         validatorDecimalPositions.setPrecision(0);
 
@@ -237,8 +234,7 @@ public class FieldFormatDetail {
             textBytes.setEnabled(false);
         }
 
-        validatorBytes = new Validator();
-        validatorBytes.setType("*DEC");
+        validatorBytes = Validator.getDecInstance();
         validatorBytes.setLength(1);
         validatorBytes.setPrecision(0);
 

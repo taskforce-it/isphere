@@ -171,8 +171,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionTextLibrary.setTextLimit(10);
 
-        validatorConversionTextLibrary = new Validator();
-        validatorConversionTextLibrary.setType("*NAME");
+        validatorConversionTextLibrary = Validator.getNameInstance();
         validatorConversionTextLibrary.setLength(10);
         validatorConversionTextLibrary.setRestricted(false);
 
@@ -245,8 +244,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionHTMLLibrary.setTextLimit(10);
 
-        validatorConversionHTMLLibrary = new Validator();
-        validatorConversionHTMLLibrary.setType("*NAME");
+        validatorConversionHTMLLibrary = Validator.getNameInstance();
         validatorConversionHTMLLibrary.setLength(10);
         validatorConversionHTMLLibrary.setRestricted(false);
 
@@ -319,8 +317,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionPDFLibrary.setTextLimit(10);
 
-        validatorConversionPDFLibrary = new Validator();
-        validatorConversionPDFLibrary.setType("*NAME");
+        validatorConversionPDFLibrary = Validator.getNameInstance();
         validatorConversionPDFLibrary.setLength(10);
         validatorConversionPDFLibrary.setRestricted(false);
 
