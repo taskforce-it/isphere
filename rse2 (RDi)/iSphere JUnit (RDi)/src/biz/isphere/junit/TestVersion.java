@@ -96,6 +96,11 @@ public class TestVersion {
         Assert.assertTrue(new Version("2.4.2.b5").compareTo(new Version("2.4.2.b6")) < 0);
         Assert.assertTrue(new Version("2.4.b1").compareTo(new Version("2.4.b2")) < 0);
 
+        Assert.assertFalse(new Version("2.4.2").isBeta());
+        Assert.assertTrue(new Version("2.4.2.b010").isBeta());
+        Assert.assertTrue(new Version("2.4.2.b5").isBeta());
+        Assert.assertTrue(new Version("2.4.b1").isBeta());
+        
     }
 
 }
