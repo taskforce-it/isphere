@@ -88,7 +88,6 @@ public final class StringHelper {
     public static String trimL(String aString) {
         return aString.replaceAll("^\\s+", "");
     }
-    
 
     /**
      * Returns a fixed length string suitable for IBM API calls.
@@ -115,10 +114,12 @@ public final class StringHelper {
         StringBuilder builder = new StringBuilder(aText);
         return builder.reverse().toString();
     }
-    
+
     /**
-     * <p>Checks whether the character is ASCII 7 bit printable.</p>
-     *
+     * <p>
+     * Checks whether the character is ASCII 7 bit printable.
+     * </p>
+     * 
      * <pre>
      *   CharUtils.isAsciiPrintable('a')  = true
      *   CharUtils.isAsciiPrintable('A')  = true
@@ -128,7 +129,7 @@ public final class StringHelper {
      *   CharUtils.isAsciiPrintable('&copy;') = false
      * </pre>
      * 
-     * @param ch  the character to check
+     * @param ch the character to check
      * @return true if between 32 and 126 inclusive
      */
     public static boolean isAsciiPrintable(char ch) {
@@ -148,6 +149,23 @@ public final class StringHelper {
             if (string.charAt(i) == c) {
                 count++;
             }
+        }
+        return count;
+    }
+
+    /**
+     * Count the number of substrings that are included in a given string.
+     * 
+     * @param string - String that is search for a given character
+     * @param substring - substring that is counted
+     * @return number of occurrences of 'substring'
+     */
+    public static int count(String string, String substring) {
+        int count = 0;
+        int i = 0;
+        while ((i = string.indexOf(substring, i)) >= 0) {
+            count++;
+            i = i + substring.length();
         }
         return count;
     }
