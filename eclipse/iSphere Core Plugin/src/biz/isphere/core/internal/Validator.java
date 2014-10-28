@@ -21,6 +21,12 @@ import org.eclipse.core.runtime.IStatus;
 
 public class Validator {
 
+    private static final String TYPE_NAME = "*NAME";
+    private static final String TYPE_DEC = "*DEC";
+    private static final String TYPE_CHAR = "*CHAR";
+    private static final String TYPE_DATE = "*DATE";
+    private static final String TYPE_TIME = "*TIME";
+
     private String type;
     private int length;
     private int precision;
@@ -43,8 +49,28 @@ public class Validator {
     private String date;
     private String time;
 
-    public Validator() {
-        type = null;
+    public static Validator getNameInstance() {
+        return new Validator(TYPE_NAME);
+    }
+
+    public static Validator getDecInstance() {
+        return new Validator(TYPE_DEC);
+    }
+
+    public static Validator getCharInstance() {
+        return new Validator(TYPE_CHAR);
+    }
+
+    public static Validator getDateInstance() {
+        return new Validator(TYPE_DATE);
+    }
+
+    public static Validator getTimeInstance() {
+        return new Validator(TYPE_TIME);
+    }
+
+    private Validator(String type) {
+        checkAndSetType(type);
         length = -1;
         precision = -1;
         mandatory = true;
@@ -72,13 +98,12 @@ public class Validator {
         time = null;
     }
 
-    public boolean setType(String type) {
-        if (type.equals("*NAME") || type.equals("*DEC") || type.equals("*CHAR") || type.equals("*DATE") || type.equals("*TIME")) {
+    private void checkAndSetType(String type) {
+        if (type.equals(TYPE_NAME) || type.equals(TYPE_DEC) || type.equals(TYPE_CHAR) || type.equals(TYPE_DATE) || type.equals(TYPE_TIME)) {
             this.type = type;
-            return true;
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type); //$NON-NLS-1$
         }
-        this.type = null;
-        return false;
     }
 
     public boolean setLength(int length) {
@@ -91,7 +116,7 @@ public class Validator {
     }
 
     public boolean setPrecision(int precision) {
-        if (type.equals("*DEC") && precision >= 0) {
+        if (type.equals(TYPE_DEC) && precision >= 0) {
             this.precision = precision;
             return true;
         }
@@ -134,14 +159,14 @@ public class Validator {
         longValue = -1;
         date = null;
         time = null;
-        if (type == null || length == -1 || (type.equals("*DEC") && precision == -1) || (!type.equals("*CHAR") && restricted)
-            || (!type.equals("*NAME") && generic)) {
+        if (type == null || length == -1 || (type.equals(TYPE_DEC) && precision == -1) || (!type.equals(TYPE_CHAR) && restricted)
+            || (!type.equals(TYPE_NAME) && generic)) {
             return false;
         }
-        if (argument.equals("")) {
+        if (argument.equals("")) { //$NON-NLS-1$
             if (mandatory || restricted) {
                 return false;
-            } else if (type.equals("*DEC")) {
+            } else if (type.equals(TYPE_DEC)) {
                 integerValue = 0;
                 longValue = 0;
                 bigDecimal = new BigDecimal(0);
@@ -158,8 +183,8 @@ public class Validator {
         if (restricted) {
             return false;
         }
-        if (type.equals("*NAME")) {
-            if (generic && argument.endsWith("*")) {
+        if (type.equals(TYPE_NAME)) {
+            if (generic && argument.endsWith("*")) { //$NON-NLS-1$
                 argument = argument.substring(0, argument.length() - 1);
                 if (argument.equals("")) {
                     return false;
@@ -175,7 +200,7 @@ public class Validator {
                     return false;
                 }
             }
-        } else if (type.equals("*DEC")) {
+        } else if (type.equals(TYPE_DEC)) {
             int maxLength = length;
             if (precision > 0) {
                 maxLength++;
@@ -183,7 +208,7 @@ public class Validator {
             if (argument.length() > maxLength) {
                 return false;
             }
-            
+
             char character;
             for (int idx = 0; idx < argument.length(); idx++) {
                 character = argument.charAt(idx);
@@ -196,7 +221,7 @@ public class Validator {
                 if (character == '.') {
                     isDecPos = true;
                     countComma++;
-                    if (countComma > 1 || countComma !=0 && precision == 0) {
+                    if (countComma > 1 || countComma != 0 && precision == 0) {
                         return false;
                     }
                 } else {
@@ -231,7 +256,7 @@ public class Validator {
                     bigDecimal = null;
                 }
             }
-        } else if (type.equals("*DATE")) {
+        } else if (type.equals(TYPE_DATE)) {
             try {
                 dateFormat1.parse(argument);
                 date = argument;
@@ -243,7 +268,7 @@ public class Validator {
                     return false;
                 }
             }
-        } else if (type.equals("*TIME")) {
+        } else if (type.equals(TYPE_TIME)) {
             try {
                 timeFormat1.parse(argument);
                 time = argument;

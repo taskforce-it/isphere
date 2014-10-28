@@ -99,8 +99,7 @@ public class BindingDirectoryEntryDetail {
             comboLibrary.setEnabled(false);
         }
 
-        validatorLibrary = new Validator();
-        validatorLibrary.setType("*NAME");
+        validatorLibrary = Validator.getNameInstance();
         validatorLibrary.setLength(10);
         validatorLibrary.setRestricted(false);
         validatorLibrary.addSpecialValue("*LIBL");
@@ -123,8 +122,7 @@ public class BindingDirectoryEntryDetail {
             textObject.setEnabled(false);
         }
 
-        validatorObject = new Validator();
-        validatorObject.setType("*NAME");
+        validatorObject = Validator.getNameInstance();
         validatorObject.setLength(10);
 
         // Object type
@@ -159,8 +157,7 @@ public class BindingDirectoryEntryDetail {
             });
         }
 
-        validatorObjectType = new Validator();
-        validatorObjectType.setType("*CHAR");
+        validatorObjectType = Validator.getCharInstance();
         validatorObjectType.setLength(10);
         validatorObjectType.setRestricted(true);
         validatorObjectType.addSpecialValue("*SRVPGM");
@@ -194,8 +191,7 @@ public class BindingDirectoryEntryDetail {
                 comboActivation.setEnabled(false);
             }
 
-            validatorActivation = new Validator();
-            validatorActivation.setType("*CHAR");
+            validatorActivation = Validator.getCharInstance();
             validatorActivation.setLength(10);
             validatorActivation.setRestricted(true);
             validatorActivation.addSpecialValue("*IMMED");

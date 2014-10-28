@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
@@ -154,8 +153,7 @@ public class MessageDescriptionDetail {
             textMessageId.setEditable(false);
         }
 
-        validatorMessageId = new Validator();
-        validatorMessageId.setType("*NAME");
+        validatorMessageId = Validator.getNameInstance();
         validatorMessageId.setLength(7);
 
         // Message
@@ -176,8 +174,7 @@ public class MessageDescriptionDetail {
             textMessage.setEditable(false);
         }
 
-        validatorMessage = new Validator();
-        validatorMessage.setType("*CHAR");
+        validatorMessage = Validator.getCharInstance();
         validatorMessage.setLength(132);
 
         // Helptext
@@ -231,8 +228,7 @@ public class MessageDescriptionDetail {
             textSeveriry.setEditable(false);
         }
 
-        validatorSeverity = new Validator();
-        validatorSeverity.setType("*DEC");
+        validatorSeverity = Validator.getDecInstance();
         validatorSeverity.setLength(textSeveriry.getTextLimit());
         validatorSeverity.setPrecision(0);
 
@@ -251,8 +247,7 @@ public class MessageDescriptionDetail {
             comboCcsid.setEditable(false);
         }
 
-        validatorCcsid = new Validator();
-        validatorCcsid.setType("*DEC");
+        validatorCcsid = Validator.getDecInstance();
         validatorCcsid.setLength(textSeveriry.getTextLimit());
         validatorCcsid.setPrecision(0);
         validatorCcsid.addSpecialValue(MessageDescription.CCSID_JOB);
@@ -306,12 +301,11 @@ public class MessageDescriptionDetail {
                 }
             }
         });
-        
-        validatorHelpText = new Validator();
-        validatorHelpText.setType("*CHAR");
+
+        validatorHelpText = Validator.getCharInstance();
         validatorHelpText.setLength(textHelpText.getTextLimit());
         validatorHelpText.addSpecialValue(SPECIAL_VALUE_NONE);
- }
+    }
 
     private void setAdvancedOptionsEnablement() {
         compositeAdvancedOptions.setVisible(buttonHideAdvancedOptions.getSelection());
