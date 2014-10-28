@@ -11,6 +11,8 @@ package biz.isphere.core.dataareaeditor.controls;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -68,6 +70,7 @@ public class DataAreaText {
         textControl.addKeyListener(new TextControlKeyListener());
         textControl.addMouseListener(new TextControlMouseListener());
         textControl.addPaintListener(new TextControlPaintListener());
+        textControl.addFocusListener(new TextControlFocusListener());
     }
 
     public void addStatusChangedListener(StatusChangedListener listener) {
@@ -108,12 +111,32 @@ public class DataAreaText {
         return hasFocus;
     }
 
+    /**
+     * Sets the selection to the range specified by the given start and end
+     * indices.
+     * <p>
+     * Indexing is zero based.
+     * 
+     * @param aStart the start of the range
+     * @param anEnd the end of the range
+     */
     public void setSelection(int aStart, int anEnd) {
+
+        int numCRLF = 0;
+        int i = aStart;
+        while (aStart % lineLength != 0 && i < anEnd) {
+            if (i % lineLength == 0) {
+                numCRLF++;
+            }
+            i++;
+        }
+
         int start = aStart + (aStart / lineLength) * CRLF.length();
         if (start > textControl.getTextLimit()) {
             start = textControl.getTextLimit() - 1;
         }
-        textControl.setSelection(start, start + (anEnd - aStart));
+        int length = (anEnd - aStart) + numCRLF * CRLF.length();
+        textControl.setSelection(start, start + length);
     }
 
     public void replaceTextRange(Point aSelection, String aNewText) {
@@ -130,7 +153,7 @@ public class DataAreaText {
      */
     public Point getSelection() {
         Point selection = textControl.getSelection();
-        int length = selection.y - selection.x;
+        int length = selection.y - selection.x - StringHelper.count(textControl.getSelectionText(), CRLF) * CRLF.length();
         int start = selection.x - (selection.x / lineLengthIcludingCR) * CRLF.length();
         selection = new Point(start, start + length);
         return selection;
@@ -147,7 +170,8 @@ public class DataAreaText {
             return "";
         }
         String text = fromScreen(textControl.getText());
-        return text.substring(selection.x, selection.y);
+        text = text.substring(selection.x, selection.y);
+        return text;
     }
 
     public boolean isEnabled() {
@@ -340,6 +364,10 @@ public class DataAreaText {
         return (anEvent.stateMask & SWT.CTRL) == SWT.CTRL;
     }
 
+    private boolean isShiftKey(KeyEvent anEvent) {
+        return (anEvent.stateMask & SWT.SHIFT) == SWT.SHIFT;
+    }
+
     private void fireStatusChangedEvent(boolean anIsDirty) {
         isDirty = anIsDirty;
         fireStatusChangedEvent();
@@ -395,12 +423,22 @@ public class DataAreaText {
 
             } else if (anEvent.keyCode == SWT.END) {
                 // END
-                if (isControlKey(anEvent)) {
-                    // END of text
-                    textControl.setSelection(textControl.getText().length() - EOL_CHAR.length());
+                if (!isShiftKey(anEvent)) {
+                    if (isControlKey(anEvent)) {
+                        // move to END of text
+                        textControl.setSelection(textControl.getText().length() - EOL_CHAR.length());
+                    } else {
+                        // move to END of line
+                        textControl.setSelection(getCaretRow() * lineLengthIcludingCR - CRLF.length());
+                    }
                 } else {
-                    // END of line
-                    textControl.setSelection(getCaretRow() * lineLengthIcludingCR - CRLF.length());
+                    if (isControlKey(anEvent)) {
+                        // expand selection to END of text
+                        textControl.setSelection(0, textControl.getText().length() - EOL_CHAR.length());
+                    } else {
+                        // expand selection to END of line
+                        textControl.setSelection(textControl.getCaretPosition(), getCaretRow() * lineLengthIcludingCR - CRLF.length());
+                    }
                 }
                 anEvent.doit = false;
 
@@ -409,14 +447,18 @@ public class DataAreaText {
 
             } else if (anEvent.keyCode == SWT.ARROW_LEFT) {
                 // Cursor LEFT
-                if (getCaretPosition() <= 1) {
-                    anEvent.doit = false;
+                if (!isControlKey(anEvent) && !isShiftKey(anEvent)) {
+                    if (getCaretPosition() <= 1) {
+                        anEvent.doit = false;
+                    }
                 }
 
             } else if (anEvent.keyCode == SWT.ARROW_RIGHT) {
                 // Cursor RIGHT
-                if (getCaretPosition() > maxLength) {
-                    anEvent.doit = false;
+                if (!isControlKey(anEvent) && !isShiftKey(anEvent)) {
+                    if (getCaretPosition() > maxLength) {
+                        anEvent.doit = false;
+                    }
                 }
 
             } else if (anEvent.keyCode == SWT.DEL) {
@@ -452,6 +494,11 @@ public class DataAreaText {
         }
     }
 
+    /**
+     * Inner class that paints the protected areas and that informs the data
+     * area editor when the top index has changed. The top index is the index of
+     * the first row shown in the editor.
+     */
     private class TextControlPaintListener implements PaintListener {
         public void paintControl(PaintEvent event) {
             paintBackground(event);
@@ -459,8 +506,8 @@ public class DataAreaText {
             if (textControl.getClientArea().height / textControl.getLineHeight() < 1) {
                 // Enforce status change event
                 lastStatusChangedEvent = null;
-            } 
-            
+            }
+
             if (lastStatusChangedEvent == null || lastTopIndex != textControl.getTopIndex()) {
                 fireStatusChangedEvent();
                 lastTopIndex = textControl.getTopIndex();
@@ -492,6 +539,23 @@ public class DataAreaText {
             int width = textWidget.getClientArea().width - x;
             int height = textWidget.getClientArea().height - y;
             gc.fillRectangle(x, y, width, height);
+        }
+    }
+
+    /**
+     * Inner class that listens for the focus of the widget in order to let the
+     * editor decide whether or not to perform a CUT or PASTE event.
+     */
+    private class TextControlFocusListener extends FocusAdapter {
+        @Override
+        public void focusGained(FocusEvent e) {
+            hasFocus = true;
+            fireStatusChangedEvent();
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            hasFocus = false;
         }
     }
 
