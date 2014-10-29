@@ -139,10 +139,26 @@ public class DataAreaText {
         textControl.setSelection(start, start + length);
     }
 
+    /**
+     * Replaces the specified text range with the given text.
+     * <p>
+     * Processings rules:<br>
+     * <ul>
+     * <li>Text of multiple lines<br>
+     * Lines are expanded to the current line length of the editor. If one line
+     * exceeds the line length of the editor, all new line characters are
+     * removed.</li>
+     * <li>Single line text<br>
+     * The text is inserted as it is.</li>
+     * </ul>
+     * 
+     * @param aSelection - text range to be replaced
+     * @param aNewText - text that replaces the specified text range
+     */
     public void replaceTextRange(Point aSelection, String aNewText) {
         int start = aSelection.x;
         int length = aSelection.y;
-        performReplaceTextRange(start, length, aNewText);
+        performReplaceTextRange(start, length, replaceCRLF(aNewText));
     }
 
     /**
@@ -160,7 +176,7 @@ public class DataAreaText {
     }
 
     /**
-     * Returns the currently selected text.
+     * Returns the currently selected text. Linefeeds are removed.
      * 
      * @return selected text
      */
@@ -194,6 +210,25 @@ public class DataAreaText {
         return rows;
     }
 
+    private String replaceCRLF(String aText) {
+        String[] lines = textToArray(aText);
+        if (lines.length == 1) {
+            return lines[0];
+        }
+        StringBuilder text = new StringBuilder();
+        for (String line : lines) {
+            if (line.length() > lineLength) {
+                return aText.replaceAll(CR, "").replaceAll(LF, "");
+            }
+            text.append(StringHelper.getFixLength(line, lineLength));
+        }
+        return text.toString();
+    }
+
+    private String[] textToArray(String aText) {
+        return aText.replaceAll(CR, "").split(LF);
+    }
+
     private int getSelectedLength(Point aSelection) {
         return aSelection.y - aSelection.x;
     }
@@ -209,13 +244,21 @@ public class DataAreaText {
         } else {
             tValue = aValue;
         }
-
-        String[] tLines = tValue.replaceAll(CR, "").split(LF);
-        StringBuilder stringValue = new StringBuilder();
-        for (String line : tLines) {
-            stringValue.append(line);
-        }
-        return stringValue.toString();
+        
+        return tValue.replaceAll(CR, "").replaceAll(LF, "");
+        
+//        String[] tLines = textToArray(tValue);
+//        StringBuilder stringValue = new StringBuilder();
+//        for (String line : tLines) {
+//            stringValue.append(line);
+//        }
+//
+//        // TODO: remove debug code
+//        if (!tValue.replaceAll(CR, "").replaceAll(LF, "").equals(stringValue.toString())) {
+//            throw new RuntimeException("Strings do not match as expected.");
+//        }
+//
+//        return stringValue.toString();
     }
 
     private String toScreen(String stringValue) {
