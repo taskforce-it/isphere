@@ -64,6 +64,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private DataAreaText dataAreaText;
 
     private Action cutAction;
+    private Action copyAction;
     private Action pasteAction;
     private Action findReplaceAction;
 
@@ -78,6 +79,8 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     private int lastTopIndex = -1;
     private Font lastFont = null;
     private int lastNumRows = -1;
+
+    private int currentWidth;
 
     public CharacterDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -113,9 +116,11 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
 
         offsetLabel = createTextOffsetLabel(rulerArea, getEditorFont(), Messages.Offset);
 
+        currentWidth = DEFAULT_EDITOR_WIDTH;
+
         ruler = new Label(rulerArea, SWT.NONE);
         ruler.setFont(getEditorFont());
-        ruler.setText(getRulerText(DEFAULT_EDITOR_WIDTH));
+        ruler.setText(getRulerText(currentWidth));
         GridData rulerLayoutData = new GridData();
         rulerLayoutData.verticalAlignment = 0;
         rulerLayoutData.horizontalIndent = 5;
@@ -131,7 +136,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         GridData offsetAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         offsetArea.setLayoutData(offsetAreaLayoutData);
 
-        dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, ruler.getText().length());
+        dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, currentWidth);
         dataAreaText.setTextLimit(getWrappedDataArea().getLength());
         dataAreaText.setFont(getEditorFont());
         GridData dataAreaTextLayoutData = createRulerAndEditorLayoutData();
@@ -183,6 +188,17 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
             cutAction = new CutAction();
         }
         return cutAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getCopyAction() {
+        if (copyAction == null) {
+            copyAction = new CopyAction();
+        }
+        return copyAction;
     }
 
     /**
@@ -521,7 +537,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
      * @param aTopIndex - top index used to calculate the first offset
      */
     private void drawOffsetLabels(int aTopIndex) {
-        int lineLength = ruler.getText().length();
+        int lineLength = currentWidth;
         int offset = aTopIndex * lineLength;
         Control[] labels = offsetArea.getChildren();
         for (Control control : labels) {
@@ -591,6 +607,16 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
 
     /**
      * Class, that overrides the original "paste" action of the SWT Text widget.
+     * <ul>
+     * <li>Text of multiple lines<br>
+     * Lines are expanded to the current line length of the editor. If one line
+     * exceeds the line length of the editor, all new line characters are
+     * removed.</li>
+     * <li>Single line text<br>
+     * The text is inserted as it is.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#replaceTextRange(Point, String)
      */
     private class PasteAction extends Action {
         @Override
@@ -606,7 +632,37 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
     };
 
     /**
+     * Class, that overrides the original "copy" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>Text is returned with no linefeeds, of course.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#getSelectionText(Point, String)
+     */
+    private class CopyAction extends Action {
+        @Override
+        public void run() {
+            if (dataAreaText.hasFocus()) {
+                String text = getSelectionText();
+                if (StringHelper.isNullOrEmpty(text)) {
+                    return;
+                }
+                setClipboardText(text);
+            }
+        }
+    }
+
+    /**
      * Class, that overrides the original "cut" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>Text is returned with no linefeeds, of course.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#getSelectionText(Point, String)
      */
     private class CutAction extends Action {
         @Override

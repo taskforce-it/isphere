@@ -31,12 +31,14 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.delegates.AbstractDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.CharacterDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.DecimalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.UnsupportedDataAreaEditorDelegate;
+import biz.isphere.core.internal.IEditor;
 
 import com.ibm.as400.access.AS400;
 
@@ -66,7 +68,7 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
 
         Composite header = new Composite(editorParent, SWT.NONE);
         header.setLayout(new GridLayout(3, false));
-        
+
         createHeadline(header, Messages.Type_colon, "" + getWrappedDataArea().getType());
         createHeadline(header, Messages.Length_colon, "" + getWrappedDataArea().getLengthAsText());
         createHeadline(header, Messages.Text_colon, getWrappedDataArea().getText());
@@ -82,7 +84,7 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
 
     private void createHeadline(Composite aHeader, String aLabel, String aValue) {
         Label lblText = new Label(aHeader, SWT.NONE);
-        GridData lblTextLayoutData = new GridData(); 
+        GridData lblTextLayoutData = new GridData();
         lblTextLayoutData.widthHint = VALUE_LABEL_WIDTH_HINT;
         lblText.setLayoutData(lblTextLayoutData);
         lblText.setText(aLabel);
@@ -92,7 +94,7 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         spacerLayoutData.widthHint = SPACER_WIDTH_HINT;
         spacerLayoutData.heightHint = 1;
         spacer.setLayoutData(spacerLayoutData);
-        
+
         Label dataAreaText = new Label(aHeader, SWT.NONE);
         GridData headlineLayoutData = new GridData();
         dataAreaText.setLayoutData(headlineLayoutData);
@@ -145,6 +147,14 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
         firePropertyChange(IEditorPart.PROP_DIRTY);
     }
 
+    /**
+     * Creates the editor delegate depending on the type of the data area.
+     * <p>
+     * If the data area is of an unsupported type, a special
+     * {@link UnsupportedDataAreaEditorDelegate} is returned.
+     * 
+     * @return editor delegate
+     */
     private AbstractDataAreaEditorDelegate createEditorDelegate() {
         if (WrappedDataArea.CHARACTER.equals(getWrappedDataArea().getType())) {
             return new CharacterDataAreaEditorDelegate(this);
@@ -152,12 +162,19 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
             return new DecimalDataAreaEditorDelegate(this);
         } else if (WrappedDataArea.LOGICAL.equals(getWrappedDataArea().getType())) {
             return new LogicalDataAreaEditorDelegate(this);
-        } 
+        }
 
         return new UnsupportedDataAreaEditorDelegate(this);
     }
 
-    public void registerDelegateActions() {
+    /**
+     * Registers the actions, the delegate wants to override.
+     * <p>
+     * Some delegates, such as the {@link CharacterDataAreaEditorDelegate}, may
+     * want to change the behavior of the <i>Find & Replace</i>, <i>Copy</i>,
+     * <i>Cut</i> and <i>Paste</i> actions to match their specific needs.
+     */
+    private void registerDelegateActions() {
 
         final Action findReplaceAction = editorDelegate.getFindReplaceAction(this);
         if (findReplaceAction != null) {
@@ -176,12 +193,27 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
             actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), editorDelegate.getCutAction());
         }
 
+        if (editorDelegate.getCopyAction() != null) {
+            IActionBars actionBars = getEditorSite().getActionBars();
+            actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), editorDelegate.getCopyAction());
+        }
+
         if (editorDelegate.getPasteAction() != null) {
             IActionBars actionBars = getEditorSite().getActionBars();
             actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editorDelegate.getPasteAction());
         }
     }
 
+    /**
+     * Opens the data area editor for a given data area.
+     * 
+     * @param anAS400 - system that hosts the data area.
+     * @param aConnection - connection used to access the system.
+     * @param aLibrary - library that contains the data area
+     * @param aDataArea - the data area
+     * @param aMode - mode, the editor is opened for. The only allowed value is
+     *        {@link IEditor#EDIT}
+     */
     public static void openEditor(AS400 anAS400, String aConnection, String aLibrary, String aDataArea, String aMode) {
 
         try {
@@ -190,36 +222,81 @@ public class DataAreaEditor extends EditorPart implements IFindReplaceTarget {
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DataAreaEditor.ID);
 
         } catch (PartInitException e) {
+            ISpherePlugin.logError("Failed to open data area editor", e);
         }
 
     }
 
+    /**
+     * Overridden, to dispose resources allocated by the delegate.
+     */
     @Override
     public void dispose() {
         editorDelegate.dispose();
         super.dispose();
     }
 
+    /**
+     * Returns whether a find operation can be performed.
+     * 
+     * @return whether a find operation can be performed
+     */
     public boolean canPerformFind() {
         return editorDelegate.canPerformFind();
     }
 
+    /**
+     * Searches for a string starting at the given widget offset and using the
+     * specified search directives. If a string has been found it is selected
+     * and its start offset is returned.
+     * 
+     * @param aWidgetOffset - the widget offset at which searching starts
+     * @param aFindString - the string which should be found
+     * @param aSearchForward - <code>true</code> searches forward,
+     *        <code>false</code> backwards
+     * @param aCaseSensitive - <code>true</code> performs a case sensitive
+     *        search, <code>false</code> an insensitive search
+     * @param aWholeWord - if <code>true</code> only occurrences are reported in
+     *        which the findString stands as a word by itself
+     */
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
         return editorDelegate.findAndSelect(aWidgetOffset, aFindString, aSearchForward, aCaseSensitive, aWholeWord);
     }
 
+    /**
+     * Returns the currently selected range of characters as a offset and length
+     * in widget coordinates.
+     * 
+     * @return the currently selected character range in widget coordinates
+     */
     public Point getSelection() {
         return editorDelegate.getSelection();
     }
 
+    /**
+     * Returns the currently selected characters as a string.
+     * 
+     * @return the currently selected characters
+     */
     public String getSelectionText() {
         return editorDelegate.getSelectionText();
     }
 
+    /**
+     * Returns whether this target can be modified.
+     * 
+     * @return <code>true</code> if target can be modified
+     */
     public boolean isEditable() {
         return editorDelegate.isEditable();
     }
 
+    /**
+     * Replaces the currently selected range of characters with the given text.
+     * This target must be editable. Otherwise nothing happens.
+     * 
+     * @param aText - the substitution text
+     */
     public void replaceSelection(String aText) {
         editorDelegate.replaceSelection(aText);
     }

@@ -165,6 +165,17 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
     }
 
     /**
+     * Returns the CopyAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return CopyAction to override the original behavior
+     */
+    public Action getCopyAction() {
+        return null;
+    }
+
+    /**
      * Returns the PasteAction that overrides the original action of the editor
      * widget.
      * 
@@ -176,7 +187,8 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
     }
 
     /**
-     * Called by the editor part, when the parts is disposed.
+     * Called by the editor part, when the parts is disposed. Overridden, to
+     * dispose the clipboard.
      */
     public void dispose() {
         if (clipboard != null) {
@@ -187,7 +199,7 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
     /**
      * Returns whether a find operation can be performed.
      * 
-     * @returns whether a find operation can be performed
+     * @return whether a find operation can be performed
      */
     public boolean canPerformFind() {
         return false;
@@ -268,5 +280,5 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
     protected void resetDirtyFlag() {
         dataAreaEditor.setDirty(false);
     }
-    
+
 }
