@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
 
@@ -64,7 +65,7 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
                 ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
                 if (type.isObject()) {
                     String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase("*MSGF")) {
+                    if (strType.equalsIgnoreCase(ISeries.MSGF)) {
                         arrayListSelection.add(dataElement);
                     }
                 }

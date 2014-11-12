@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.sourcefilesearch.SearchDialog;
 import biz.isphere.core.sourcefilesearch.SearchElement;
@@ -234,12 +235,8 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(
-                        as400, 
-                        jdbcConnection, 
-                        dialog.getSearchOptions(),
-                        new ArrayList<SearchElement>(_searchElements.values()), 
-                        postRun);
+                    new SearchExec().execute(as400, jdbcConnection, dialog.getSearchOptions(),
+                        new ArrayList<SearchElement>(_searchElements.values()), postRun);
 
                 }
 
@@ -300,7 +297,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*");
-            _objectFilterString.setObjectType("*FILE");
+            _objectFilterString.setObjectType(ISeries.FILE);
             String attributes = "*FILE:PF-SRC *FILE:PF38-SRC";
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }

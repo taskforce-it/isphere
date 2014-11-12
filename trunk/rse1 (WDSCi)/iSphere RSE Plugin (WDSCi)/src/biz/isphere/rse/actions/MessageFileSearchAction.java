@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchDialog;
 import biz.isphere.core.messagefilesearch.SearchElement;
@@ -236,13 +237,8 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(
-                        as400, 
-                        host, 
-                        jdbcConnection, 
-                        dialog.getSearchOptions(), 
-                        new ArrayList<SearchElement>(_searchElements.values()), 
-                        postRun);
+                    new SearchExec().execute(as400, host, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
+                        .values()), postRun);
 
                 }
 
@@ -276,7 +272,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*");
-            _objectFilterString.setObjectType("*MSGF");
+            _objectFilterString.setObjectType(ISeries.MSGF);
             String attributes = "*MSGF:*";
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
