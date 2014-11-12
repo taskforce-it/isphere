@@ -33,6 +33,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchDialog;
 import biz.isphere.core.messagefilesearch.SearchElement;
@@ -248,8 +249,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*");
-            _objectFilterString.setObjectType("*MSGF");
-            String attributes = "*MSGF:*";
+            _objectFilterString.setObjectType(ISeries.MSGF);
+            String attributes = ISeries.MSGF + ":*";
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
 
