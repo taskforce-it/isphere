@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -45,7 +46,7 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
                 String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
                 String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
-                if (remoteObject.getType().equals("*BNDDIR")) {
+                if (remoteObject.getType().equals(ISeries.BNDDIR)) {
 
                     String library = remoteObject.getLibrary();
                     String bindingDirectory = remoteObject.getName();
