@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
@@ -66,7 +67,7 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
                 ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
                 if (type.isObject()) {
                     String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase("*BNDDIR")) {
+                    if (strType.equalsIgnoreCase(ISeries.BNDDIR)) {
                         arrayListSelection.add(dataElement);
                     }
                 }

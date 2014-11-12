@@ -9,6 +9,7 @@
 package biz.isphere.rse.internal;
 
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.messagefilesearch.SearchResult;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -25,7 +26,7 @@ public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchO
             ISeriesObjectFilterString filterString = new ISeriesObjectFilterString();
             filterString.setLibrary(searchResults[idx].getLibrary());
             filterString.setObject(searchResults[idx].getMessageFile());
-            filterString.setObjectType("*MSGF");
+            filterString.setObjectType(ISeries.MSGF);
 
             filterStrings[idx] = filterString;
 
