@@ -105,6 +105,22 @@ public final class StringHelper {
     }
 
     /**
+     * Returns a fixed length string suitable for IBM API calls.
+     * 
+     * @param aValue - String value that is expanded to 'aLength'.
+     * @param aLength - The length the string is expanded to.
+     * @return string with fixed length
+     */
+    public static String getFixLengthLeading(String aValue, int aLength) {
+        StringBuffer fixLength = new StringBuffer();
+        while (fixLength.length() < aLength - aValue.length()) {
+            fixLength.append(" ");
+        }
+        fixLength.append(aValue);
+        return fixLength.toString();
+    }
+
+    /**
      * Reverses a given String.
      * 
      * @param aText - String that is put in reverse order.
