@@ -37,6 +37,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
@@ -406,7 +407,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
             HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
             try {
-                Object[] tMsgFiles = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { "*MSGF" }, null);
+                Object[] tMsgFiles = tConnection.listObjects(getMessageFileLibrary(), getMessageFile(), new String[] { ISeries.MSGF }, null);
                 if (tMsgFiles != null) {
                     for (Object tMsgFile : tMsgFiles) {
                         if (tMsgFile instanceof QSYSRemoteMessageFile) {

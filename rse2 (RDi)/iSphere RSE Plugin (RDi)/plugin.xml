@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Editors
+      	  ==========================================
+      	-->
+
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			name=""
+			icon="icons/data_space_editor_designer.gif"
+			class="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"
+			id="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"/>
+      <editor
+            name=""
+            icon="icons/data_area.gif"
+            class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
+            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
+	</extension>
 
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -91,7 +111,7 @@
       	
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
-            id="biz.isphere.core.menu.bnddir">
+            id="biz.isphere.core.menu.dtaara">
             
             <enablement>
             	<and>
@@ -124,6 +144,60 @@
                 id="biz.isphere.rse.actions.CompareEditorAction"
                 label="%iSphere_Compare_Editor"
                 icon="icons/compare.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Data Area Monitor Contributions
+      	  ==========================================
+      	-->
+      	
+      	<!-- Right-click: message file -->
+      	<objectContribution
+             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+             id="biz.isphere.core.menu.dtaara.monitor">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*DTAARA"/>
+            	</and>
+         	</enablement>
+         	
+	         <action
+                class="biz.isphere.rse.dataspaceeditor.rse.MonitorDataAreaAction"
+                enablesFor="*"
+                id="biz.isphere.rse.dataspaceeditor.rse.DataAreaMonitorAction"
+                label="Data Area Monitor"
+                icon="icons/data_monitor.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    User Space Monitor Contributions
+      	  ==========================================
+      	-->
+      	
+      	<!-- Right-click: message file -->
+      	<objectContribution
+             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+             id="biz.isphere.core.menu.usrspc.monitor">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*USRSPC"/>
+            	</and>
+         	</enablement>
+         	
+	         <action
+                class="biz.isphere.rse.dataspaceeditor.rse.MonitorUserSpaceAction"
+                enablesFor="*"
+                id="biz.isphere.rse.dataspaceeditor.rse.UserSpaceMonitorAction"
+                label="User Space Monitor"
+                icon="icons/data_monitor.gif"
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
@@ -334,6 +408,19 @@
             category="biz.isphere.core.views.categories"
             name="%iSphere_Message_Description_Preview"
             id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
+      <view
+            icon="icons/message_file_preview.gif"
+            class="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Message_Description_Preview"
+            id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
+      <view
+            icon="icons/data_monitor.gif"
+            class="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Data_Space_Monitor"
+            id="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
+            allowMultiple="true"/>
    </extension> 
 	      	
       	<!--
@@ -493,5 +580,38 @@
          </action> 
      </viewContribution> 
    </extension>    
+
+      	<!--
+      	  ==========================================
+      	    iSphere Menu Contribution
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="biz.isphere.core.menu.isphere"
+               label="%menu_iSphere">
+            <command
+                  commandId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+                  label="%menu_DataSpace_Editor_Designer"
+                  style="push"
+                  tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="biz.isphere.core.dataspaceeditor.rse.OpenDataSpaceEditorDesignerHandler"
+            id="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+            name="%command_DataSpace_Editor_Designer">
+      </command>
+   </extension>
 
 </plugin>

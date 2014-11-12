@@ -18,8 +18,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -46,9 +47,9 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
         
         String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
         String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-        String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+        String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
-        if (remoteObject.getType().equals("*DTAARA")) {
+        if (remoteObject.getType().equals(ISeries.DTAARA)) {
             
             String library = remoteObject.getLibrary();
             String dataArea = remoteObject.getName();
@@ -63,7 +64,7 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
                 }
 
                 if (as400 != null) {
-                    DataAreaEditor.openEditor(as400, host, library, dataArea, IEditor.EDIT);
+                    AbstractDataAreaEditor.openEditor(as400, connectionName, library, dataArea, IEditor.EDIT);
                 }
             }
         }

@@ -10,8 +10,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.dataareaeditor.WrappedDataArea;
+import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.exception.IllegalMethodAccessException;
+import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
@@ -47,19 +50,19 @@ public class TestWrappedDataArea {
     private static String text = "ISphere JUnit test object";
 
     private static CharacterDataArea char_dataArea = null;
-    private static String char_type = WrappedDataArea.CHARACTER;
+    private static String char_type = AbstractWrappedDataSpace.CHARACTER;
     private static int char_length = 100;
     private static String char_name = "ISPHERE.C";
     private static String char_value = "The quick brown fox jumps over the lazy dog.";
 
     private static LogicalDataArea lgl_dataArea = null;
-    private static String lgl_type = WrappedDataArea.LOGICAL;
+    private static String lgl_type = AbstractWrappedDataSpace.LOGICAL;
     private static int lgl_length = 1;
     private static String lgl_name = "ISPHERE.L";
     private static boolean lgl_value = true;
 
     private static DecimalDataArea dec_dataArea = null;
-    private static String dec_type = WrappedDataArea.DECIMAL;
+    private static String dec_type = AbstractWrappedDataSpace.DECIMAL;
     private static int dec_length = 18;
     private static int dec_decPos = 6;
     private static String dec_name = "ISPHERE.D";
@@ -68,7 +71,8 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfCharacterDataArea() throws Exception {
         
-        WrappedDataArea char_delegate = new WrappedDataArea(as400, library, char_name);
+        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace char_delegate = new WrappedDataSpace(as400, object);
         
         try {
             char_delegate.getBooleanValue();
@@ -93,7 +97,8 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfLogicalDataArea() throws Exception {
         
-        WrappedDataArea lgl_delegate = new WrappedDataArea(as400, library, lgl_name);
+        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace lgl_delegate = new WrappedDataSpace(as400, object);
         
         try {
             lgl_delegate.getStringValue();
@@ -118,7 +123,8 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfDecimalDataArea() throws Exception {
         
-        WrappedDataArea dec_delegate = new WrappedDataArea(as400, library, dec_name);
+        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace dec_delegate = new WrappedDataSpace(as400, object);
         
         try {
             dec_delegate.getBooleanValue();
@@ -137,9 +143,10 @@ public class TestWrappedDataArea {
     @Test
     public void testCharacterDataArea() throws Exception {
 
-        WrappedDataArea delegate = new WrappedDataArea(as400, library, char_name);
+        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
-        Assert.assertEquals(char_type, delegate.getType());
+        Assert.assertEquals(char_type, delegate.getDataType());
         Assert.assertEquals(char_length, delegate.getLength());
         Assert.assertEquals(char_value, StringHelper.trimR(delegate.getStringValue()));
 
@@ -148,9 +155,10 @@ public class TestWrappedDataArea {
     @Test
     public void testLogicalDataArea() throws Exception {
 
-        WrappedDataArea delegate = new WrappedDataArea(as400, library, lgl_name);
+        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
-        Assert.assertEquals(lgl_type, delegate.getType());
+        Assert.assertEquals(lgl_type, delegate.getDataType());
         Assert.assertEquals(lgl_length, delegate.getLength());
         Assert.assertEquals(lgl_value, delegate.getBooleanValue().booleanValue());
 
@@ -159,9 +167,10 @@ public class TestWrappedDataArea {
     @Test
     public void testDecimalDataArea() throws Exception {
 
-        WrappedDataArea delegate = new WrappedDataArea(as400, library, dec_name);
+        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA);
+        AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
-        Assert.assertEquals(dec_type, delegate.getType());
+        Assert.assertEquals(dec_type, delegate.getDataType());
         Assert.assertEquals(dec_length, delegate.getLength());
         Assert.assertEquals(dec_decPos, delegate.getDecimalPositions());
         Assert.assertEquals(dec_value, delegate.getDecimalValue());

@@ -20,9 +20,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.dataareaeditor.StatusBar;
-import biz.isphere.core.dataareaeditor.WrappedDataArea;
+import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 
 /**
  * Abstract class that implements the basic services of a data area editor
@@ -33,11 +33,11 @@ import biz.isphere.core.dataareaeditor.WrappedDataArea;
  */
 public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarget {
 
-    private DataAreaEditor dataAreaEditor;
+    private AbstractDataAreaEditor dataAreaEditor;
     private StatusBar statusBar;
     private Clipboard clipboard;
 
-    public AbstractDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
+    public AbstractDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
         dataAreaEditor = aDataAreaEditor;
     }
 
@@ -46,7 +46,7 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
      * 
      * @return data area that is currently edited
      */
-    protected WrappedDataArea getWrappedDataArea() {
+    protected AbstractWrappedDataSpace getWrappedDataArea() {
         return dataAreaEditor.getWrappedDataArea();
     }
 

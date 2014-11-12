@@ -573,6 +573,84 @@ public class Messages extends NLS {
     public static String Text_colon;
 
     public static String Not_enough_space_to_insert_text;
+
+    public static String Failed_to_delete_file;
+
+    public static String Failed_to_save_file;
+
+    public static String Assign_data_area;
+
+    public static String Assign_user_space;
+
+    public static String Remove_referenced_objects;
+
+    public static String New_Editor;
+
+    public static String Change_Editor;
+
+    public static String Delete_Editor;
+    
+    public static String Tooltip_0_data_at_offset_1_length_2;
+    
+    public static String Data_type_Text;
+    
+    public static String Data_type_Decimal;
+    
+    public static String Data_type_Boolean;
+    
+    public static String Data_type_Integer_1_byte;
+    
+    public static String Data_type_Integer_2_byte;
+    
+    public static String Data_type_Integer_4_byte;
+    
+    public static String Data_type_Integer_8_byte;
+
+    public static String Expand_all; 
+
+    public static String Collapse_all; 
+
+    public static String Loading_sample_data;
+
+    public static String Drag_drop_sample_data_from_the_RSE_tree;
+    
+    public static String Double_click_existing_editor_for_editing_or_create_a_new_one;
+    
+    public static String Offset_length_of_selected_data;
+    
+    public static String Add_field_colon;
+
+    public static String Name_colon;
+    
+    public static String Columns_colon;
+    
+    public static String New_0_Field;
+
+    public static String Label_colon;
+    
+    public static String Offset_colon;
+
+    public static String Dropped_object_does_not_match_expected_type;
+
+    public static String Only_one_data_space_object_must_be_selected_to_provide_sample_data;
+
+    public static String Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data;
+
+    public static String Data_Space_Editor_Designer_Title;
+     
+    public static String Data_Space_Editor_Designer_Tooltip;
+
+    public static String Can_not_display_more_than_one_object_at_a_time;
+
+    public static String No_matching_editor_found;
+
+    public static String Drag_drop_character_data_area_or_user_space_from_RSE_tree;
+
+    public static String Loading_remote_objects;
+
+    public static String Select_editor;
+
+    public static String Use_the_context_menu_to_watch_an_item;
     
     static {
         // initialize resource bundle
