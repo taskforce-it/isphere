@@ -59,6 +59,7 @@ public class BrowserEditorInput implements IEditorInput {
         return toolTip;
     }
 
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         return null;
     }

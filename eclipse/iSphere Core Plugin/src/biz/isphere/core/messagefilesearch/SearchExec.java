@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
-import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 
 import com.ibm.as400.access.AS400;
@@ -240,7 +239,7 @@ public class SearchExec {
     private SearchResult[] _searchResults;
 
     // This method will be used by CMOne
-    public SearchResult[] executeJoin(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions _searchOptions, 
+    public SearchResult[] executeJoin(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions _searchOptions,
         ArrayList<SearchElement> _searchElements) {
 
         Search search = new Search(_as400, _host, _jdbcConnection, _searchOptions, _searchElements, null);
@@ -259,7 +258,7 @@ public class SearchExec {
         }
 
     }
-    
+
     public void execute(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions searchOptions,
         ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
 
@@ -268,5 +267,5 @@ public class SearchExec {
         search.schedule();
 
     }
-    
+
 }
