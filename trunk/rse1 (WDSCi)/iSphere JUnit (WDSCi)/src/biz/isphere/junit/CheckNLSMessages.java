@@ -20,6 +20,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.JUnit4TestAdapter;
 
@@ -59,7 +60,7 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.core.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.lpex.tasktags.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.rse.Messages.class, "messages");
-        
+
         System.out.println("** Finished testing NLS messages **");
     }
 
@@ -81,7 +82,7 @@ public class CheckNLSMessages {
             System.out.println("  Locale: " + resourcePath);
 
             Properties properties = getPropertyResourceBundle(nlsMessagesObject, resourcePath);
-            checkMessagesForLocale(nlsMessagesObject, properties);
+            checkMessagesForLocale(resourcePath, nlsMessagesObject, properties);
         }
     }
 
@@ -94,7 +95,7 @@ public class CheckNLSMessages {
      * @param locale
      * @throws IllegalAccessException
      */
-    private void checkMessagesForLocale(Object nlsMessagesObject, Properties properties) throws Exception {
+    private void checkMessagesForLocale(String resourcePath, Object nlsMessagesObject, Properties properties) throws Exception {
         Field[] fields = nlsMessagesObject.getClass().getFields();
         for (Field field : fields) {
 
@@ -105,11 +106,25 @@ public class CheckNLSMessages {
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
             assertFalse(messageText.endsWith(" "));
-            assertNotNull("Message text must not be [null]. Missing property: " + nlsMessageConstant + "(" + nlsMessagesObject.getClass().getName() + ")", messageText);
+            assertNotNull("Message text must not be [null]. Missing property: " + nlsMessageConstant + "(" + nlsMessagesObject.getClass().getName()
+                + ")", messageText);
             assertTrue("Length of message must be greater than zero. Property: " + nlsMessageConstant, messageText.length() > 0);
+            try {
             assertEquals("Assigned message text must match text in properties file.", messageText, field.get(null));
+            } catch (NullPointerException e) {
+                assertTrue("Error: 'static' modifier missing for: " + field.getName(), false);
+            }
             properties.remove(nlsMessageConstant);
         }
+
+        if (properties.size() > 0) {
+            System.out.println("\nERROR: Unused literals that needs to be removed from: " + resourcePath);
+            Set<Object> keys = properties.keySet();
+            for (Object key : keys) {
+                System.out.println(key);
+            }
+        }
+
         assertEquals("Properties must be empty. Otherwise there are more properties than message constants.", 0, properties.size());
     }
 
