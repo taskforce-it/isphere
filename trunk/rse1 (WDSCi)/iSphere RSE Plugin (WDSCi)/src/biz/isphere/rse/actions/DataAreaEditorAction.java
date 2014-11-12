@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
 
@@ -99,7 +99,7 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
 
                     if (iseriesConnection != null) {
 
-                        String host = iseriesConnection.getSystemConnection().getHostName();
+                        String connectionName = iseriesConnection.getSystemConnection().getAliasName();
 
                         AS400 as400 = null;
                         try {
@@ -115,7 +115,7 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
 
                         if (as400 != null && jdbcConnection != null) {
 
-                            DataAreaEditor.openEditor(as400, host, library, bindingDirectory, IEditor.EDIT);
+                            AbstractDataAreaEditor.openEditor(as400, connectionName, library, bindingDirectory, IEditor.EDIT);
 
                         }
 

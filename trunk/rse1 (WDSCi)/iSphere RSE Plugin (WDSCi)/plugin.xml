@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Editors
+      	  ==========================================
+      	-->
+
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			name=""
+			icon="icons/data_space_editor_designer.gif"
+			class="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"
+			id="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"/>
+      <editor
+            name=""
+            icon="icons/data_area.gif"
+            class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
+            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
+	</extension>
     
-	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+	<extension 
+		point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
       	
       	<!--
       	  ==========================================
@@ -50,6 +71,30 @@
 			name="Compare Editor"
 			class="biz.isphere.rse.actions.CompareEditorAction"
 			id="biz.isphere.rse.actions.CompareEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Data Area Monitor Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Data Area Monitor"
+			class="biz.isphere.rse.actions.MonitorDataAreaAction"
+			id="biz.isphere.rse.actions.MonitorDataAreaAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    User Space Monitor Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="User Space Monitor"
+			class="biz.isphere.rse.actions.MonitorUserSpaceAction"
+			id="biz.isphere.rse.actions.MonitorUserSpaceAction">
 	    </dynamicPopupMenuExtension>
       	
       	<!--
@@ -134,6 +179,12 @@
             category="biz.isphere.core.views.categories"
             name="%iSphere_Message_Description_Preview"
             id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
+      <view
+            icon="icons/data_monitor.gif"
+            class="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Data_Space_Monitor"
+            id="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"/>
    </extension> 
       	
       	<!--
@@ -293,5 +344,45 @@
          </action> 
      </viewContribution> 
    </extension>    
+
+      	<!--
+      	  ==========================================
+      	    iSphere Menu Contribution
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="biz.isphere.core.actionSet"
+            label="iSphere Action Set"
+            visible="true">
+         <menu
+               id="biz.isphere.core.menu.isphere"
+               label="%menu_iSphere">
+            <separator
+                  name="Group0">
+            </separator>
+         </menu>
+         <action
+               class="biz.isphere.rse.dataspaceeditor.action.OpenDataSpaceEditorDesignerAction"
+               id="biz.isphere.rse.dataspaceeditor.action.OpenDataSpaceEditorDesignerAction"
+               definitionId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+               label="%menu_DataSpace_Editor_Designer"
+               menubarPath="biz.isphere.core.menu.isphere/Group0"
+               toolbarPath="Group0"
+               tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
+         </action>
+      </actionSet>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="biz.isphere.core.dataspaceeditor.rse.OpenDataSpaceEditorDesignerHandler"
+            id="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+            name="%command_DataSpace_Editor_Designer">
+      </command>
+   </extension>
 
 </plugin>

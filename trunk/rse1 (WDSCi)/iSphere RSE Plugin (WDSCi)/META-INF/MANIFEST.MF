@@ -4,7 +4,7 @@ Bundle-Name: iSphere for WDSCi 7.0
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
 Bundle-Version: 2.4.2
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
-Bundle-Vendor: Task Force IT-Consulting GmbH
+Bundle-Vendor: iSphere Project Owners
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.core,
  biz.isphere.adapter,
  biz.isphere.base,
- org.eclipse.emf.common.ui
+ org.eclipse.emf.common.ui,
+ org.eclipse.jface.text
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
