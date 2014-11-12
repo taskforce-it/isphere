@@ -26,7 +26,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.core,
  biz.isphere.adapter,
  biz.isphere.base,
- org.eclipse.rse.useractions
+ org.eclipse.rse.useractions,
+ org.eclipse.jface.text
 Bundle-ActivationPolicy: lazy
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,

@@ -4,26 +4,21 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 
 public abstract class AbstractObjectEditorInput implements IEditorInput, IObjectEditor {
 
     private AS400 as400;
-    private String connection;
-    private String library;
-    private String objectName;
-    private String objectType;
+    private RemoteObject remoteObject;
     private String mode;
     private Image titleImage;
 
     public AbstractObjectEditorInput(AS400 anAS400, String aConnection, String aLibrary, String anObjectName, String anObjectType, String aMode,
         String anImageID) {
         as400 = anAS400;
-        connection = aConnection;
-        library = aLibrary;
-        objectName = anObjectName;
-        objectType = anObjectType;
+        remoteObject = new RemoteObject(aConnection, anObjectName, aLibrary, anObjectType);
         mode = aMode;
         titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);
     }
@@ -32,16 +27,20 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
         return as400;
     }
 
+    public RemoteObject getRemoteObject() {
+        return remoteObject;
+    }
+    
     public String getConnection() {
-        return connection;
+        return remoteObject.getConnectionName();
     }
 
     public String getObjectLibrary() {
-        return library;
+        return remoteObject.getLibrary();
     }
 
     public String getObjectName() {
-        return objectName;
+        return remoteObject.getName();
     }
 
     public Image getTitleImage() {
@@ -49,11 +48,11 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     }
 
     public String getName() {
-        return getObjectName() + "." + objectType;
+        return getObjectName() + "." + remoteObject.getObjectType();
     }
 
     public String getToolTipText() {
-        return "\\\\" + getConnection() + "\\QSYS.LIB\\" + getObjectLibrary() + ".LIB\\" + getObjectName() + "." + objectType;
+        return "\\\\" + getAS400().getSystemName() + "\\QSYS.LIB\\" + getObjectLibrary() + ".LIB\\" + getObjectName() + "." + remoteObject.getObjectType();
     }
 
     public String getMode() {
@@ -66,9 +65,9 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
          * Siehe: http://www.ibm.com/developerworks/library/j-jtp05273/
          */
         int hash = 3;
-        hash = hash * 17 + connection.hashCode();
-        hash = hash * 17 + library.hashCode();
-        hash = hash * 17 + objectName.hashCode();
+        hash = hash * 17 + remoteObject.getConnectionName().hashCode();
+        hash = hash * 17 + remoteObject.getLibrary().hashCode();
+        hash = hash * 17 + remoteObject.getName().hashCode();
         return hash;
 
     }

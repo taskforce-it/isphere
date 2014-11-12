@@ -36,7 +36,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.dataareaeditor.controls.DataAreaText;
 import biz.isphere.core.dataareaeditor.events.StatusChangedEvent;
 import biz.isphere.core.dataareaeditor.events.StatusChangedListener;
@@ -82,7 +82,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
 
     private int currentWidth;
 
-    public CharacterDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
+    public CharacterDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 

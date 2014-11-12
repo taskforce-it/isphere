@@ -14,8 +14,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
-import biz.isphere.core.dataareaeditor.WrappedDataArea;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 
 /**
  * Fallback editor delegate that is used in case the is a unknown data area
@@ -23,7 +23,7 @@ import biz.isphere.core.dataareaeditor.WrappedDataArea;
  */
 public class UnsupportedDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
 
-    public UnsupportedDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
+    public UnsupportedDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 
@@ -35,7 +35,7 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataAreaEditorDel
         Label info1 = new Label(editorArea, SWT.NONE);
         info1.setText("Unsupported data area type. Please contact the developer.");
 
-        WrappedDataArea dataArea = getWrappedDataArea();
+        AbstractWrappedDataSpace dataArea = getWrappedDataArea();
 
         Label info2 = new Label(editorArea, SWT.NONE);
         info2.setText(dataArea.toString());

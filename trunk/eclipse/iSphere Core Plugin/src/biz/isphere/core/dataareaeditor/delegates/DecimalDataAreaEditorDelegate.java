@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.internal.Validator;
 
 /**
@@ -41,7 +41,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
     private Text dataAreaText;
     private Validator validator;
 
-    public DecimalDataAreaEditorDelegate(DataAreaEditor aDataAreaEditor) {
+    public DecimalDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 
@@ -52,14 +52,14 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
 
         Label lblValue = new Label(editorArea, SWT.NONE);
         GridData lblValueLayoutData = new GridData();
-        lblValueLayoutData.widthHint = DataAreaEditor.VALUE_LABEL_WIDTH_HINT;
+        lblValueLayoutData.widthHint = AbstractDataAreaEditor.VALUE_LABEL_WIDTH_HINT;
         lblValueLayoutData.verticalAlignment = GridData.BEGINNING;
         lblValue.setLayoutData(lblValueLayoutData);
         lblValue.setText(Messages.Value_colon);
 
         Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
         GridData horizontalSpacerLayoutData = new GridData();
-        horizontalSpacerLayoutData.widthHint = DataAreaEditor.SPACER_WIDTH_HINT;
+        horizontalSpacerLayoutData.widthHint = AbstractDataAreaEditor.SPACER_WIDTH_HINT;
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 

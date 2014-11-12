@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import biz.isphere.core.dataspaceeditor.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
@@ -35,7 +36,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
 
-    private static final String MIN_SERVER_VERSION = "2.3.0";
+    private static final String MIN_SERVER_VERSION = "2.3.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;
@@ -68,6 +69,16 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
     public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
     public static final String IMAGE_SWITCH_MEMBER = "switch_member.gif";
+    public static final String IMAGE_EXPAND_ALL = "expandall.gif";
+    public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
+    public static final String IMAGE_NEW_DIALOG = "newdialog.gif";
+    public static final String IMAGE_ADD_DATA_AREA = "add_data_area.gif";
+    public static final String IMAGE_ADD_USER_SPACE = "add_user_space.gif";
+    public static final String IMAGE_REMOVE_DATA_SPACE = "remove_data_space.gif";
+    public static final String IMAGE_WATCHING = "watching.gif";
+    public static final String IMAGE_DATA_AREA_MONITOR = "data_monitor.gif";
+    public static final String IMAGE_USER_SPACE_MONITOR = "data_monitor.gif";
+    
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
 
@@ -100,7 +111,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
             search.setUser(false);
             search.schedule();
         }
-        
     }
 
     @Override
@@ -116,6 +126,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         }
 
         Preferences.dispose();
+        DataSpaceEditorRepository.dispose();
 
     }
 
@@ -188,6 +199,16 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
         reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
         reg.put(IMAGE_SWITCH_MEMBER, getImageDescriptor(IMAGE_SWITCH_MEMBER));
+        reg.put(IMAGE_EXPAND_ALL, getImageDescriptor(IMAGE_EXPAND_ALL));
+        reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_COLLAPSE_ALL));
+        reg.put(IMAGE_NEW_DIALOG, getImageDescriptor(IMAGE_NEW_DIALOG));
+        reg.put(IMAGE_ADD_DATA_AREA, getImageDescriptor(IMAGE_ADD_DATA_AREA));
+        reg.put(IMAGE_ADD_USER_SPACE, getImageDescriptor(IMAGE_ADD_USER_SPACE));
+        reg.put(IMAGE_REMOVE_DATA_SPACE, getImageDescriptor(IMAGE_REMOVE_DATA_SPACE));
+        reg.put(IMAGE_WATCHING, getImageDescriptor(IMAGE_WATCHING));
+        reg.put(IMAGE_DATA_AREA_MONITOR, getImageDescriptor(IMAGE_DATA_AREA_MONITOR));
+        reg.put(IMAGE_USER_SPACE_MONITOR, getImageDescriptor(IMAGE_USER_SPACE_MONITOR));
+
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {
@@ -306,5 +327,4 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static void setSearchArgumentsListEditorProvider(ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider) {
         ISpherePlugin.searchArgumentsListEditorProvider = searchArgumentsListEditorProvider;
     }
-
 }

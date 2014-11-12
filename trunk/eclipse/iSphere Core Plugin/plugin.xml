@@ -30,11 +30,6 @@
             icon="icons/browser.gif"
             class="biz.isphere.core.internal.BrowserEditor"
             id="biz.isphere.core.internal.BrowserEditor"/>
-      <editor
-            name=""
-            icon="icons/data_area.gif"
-            class="biz.isphere.core.dataareaeditor.DataAreaEditor"
-            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
    </extension>
       	
       	<!--
@@ -66,6 +61,16 @@
             value="228,228,228">
          <description>
             %Editor_protected_areas_Description
+         </description>
+      </colorDefinition>
+      
+      <colorDefinition 
+            id="biz.isphere.fonts.editors.selectedcontrol"
+            categoryId="biz.isphere.core.ui.fontsandcolors"
+            label="%Editor_selected_control"
+            value="255,128,64">
+         <description>
+            %Editor_selected_control_Description
          </description>
       </colorDefinition>
       

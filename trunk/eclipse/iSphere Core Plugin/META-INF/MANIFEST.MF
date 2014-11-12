@@ -21,12 +21,17 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/jxl.jar,
- lib/itextpdf-5.5.0.jar
+ lib/itextpdf-5.5.0.jar,
+ lib/xstream/xpp3_min-1.1.4c.jar,
+ lib/xstream/xstream-1.4.7.jar
 Export-Package: biz.isphere.core,
  biz.isphere.core.bindingdirectoryeditor,
  biz.isphere.core.ccsid,
  biz.isphere.core.compareeditor,
  biz.isphere.core.dataareaeditor,
+ biz.isphere.core.dataspace.rse,
+ biz.isphere.core.dataspaceeditor.rse,
+ biz.isphere.core.dataspacemonitor.rse,
  biz.isphere.core.decorators,
  biz.isphere.core.internal,
  biz.isphere.core.messagefileeditor,
