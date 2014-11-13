@@ -321,20 +321,24 @@ public abstract class CompareDialog extends XDialog {
 
             if (hasRight) {
 
-                Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
-                GridLayout middleLayout = new GridLayout();
-                middleLayout.numColumns = 1;
-                switchPanel.setLayout(middleLayout);
-                switchPanel.setLayoutData(getGridData());
+                if (!hasAncestor) {
+                    
+                    Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
+                    GridLayout middleLayout = new GridLayout();
+                    middleLayout.numColumns = 1;
+                    switchPanel.setLayout(middleLayout);
+                    switchPanel.setLayoutData(getGridData());
 
-                Button switchMemberButton = new Button(switchPanel, SWT.PUSH);
-                switchMemberButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
-                switchMemberButton.setImage(getSwitchImage());
-                switchMemberButton.addListener(SWT.Selection, new Listener() {
-                    public void handleEvent(Event arg0) {
-                        switchLeftAndRightMember(leftMember, rightMember);
-                    }
-                });
+                    Button switchMemberButton = new Button(switchPanel, SWT.PUSH);
+                    switchMemberButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
+                    switchMemberButton.setImage(getSwitchImage());
+                    switchMemberButton.addListener(SWT.Selection, new Listener() {
+                        public void handleEvent(Event arg0) {
+                            switchLeftAndRightMember(leftMember, rightMember);
+                        }
+                    });
+                    
+                }
 
                 Group rightGroup = new Group(rtnGroup, SWT.NONE);
                 rightGroup.setText(Messages.Right);
