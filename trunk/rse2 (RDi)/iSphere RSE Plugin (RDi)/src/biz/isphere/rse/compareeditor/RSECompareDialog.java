@@ -163,13 +163,20 @@ public class RSECompareDialog extends CompareDialog {
 
     @Override
     protected void okPressed() {
+        
         if (!isDefined()) {
+            
             rightConnection = IBMiConnection.getConnection(rightConnectionCombo.getHost());
             rightLibrary = rightMemberPrompt.getLibraryName();
             rightFile = rightMemberPrompt.getFileName();
             rightMember = rightMemberPrompt.getMemberName();
-
-            if (!getRightRSEMember().exists()) {
+            
+            RSEMember _rightMember = getRightRSEMember();
+            if (_rightMember == null) {
+                rightMemberPrompt.getMemberCombo().setFocus();
+                return;
+            }
+            else if (!_rightMember.exists()) {
                 String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
                     rightLibrary, rightFile, rightMember });
                 MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
@@ -178,11 +185,27 @@ public class RSECompareDialog extends CompareDialog {
             }
 
             if (isThreeWay()) {
+                
                 ancestorConnection = IBMiConnection.getConnection(ancestorConnectionCombo.getHost());
                 ancestorLibrary = ancestorMemberPrompt.getLibraryName();
                 ancestorFile = ancestorMemberPrompt.getFileName();
                 ancestorMember = ancestorMemberPrompt.getMemberName();
+
+                RSEMember _ancestorMember = getAncestorRSEMember();
+                if (_ancestorMember == null) {
+                    ancestorMemberPrompt.getMemberCombo().setFocus();
+                    return;
+                }
+                else if (!_ancestorMember.exists()) {
+                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                        ancestorLibrary, ancestorFile, ancestorMember });
+                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+                    ancestorMemberPrompt.getMemberCombo().setFocus();
+                    return;
+                }
+                
             }
+            
         }
 
         // Close dialog
@@ -228,6 +251,16 @@ public class RSECompareDialog extends CompareDialog {
         try {
             return new RSEMember(rightConnection.getMember(rightLibrary, rightFile, rightMember, null));
         } catch (Exception e) {
+            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
+            return null;
+        }
+    }
+
+    public RSEMember getAncestorRSEMember() {
+        try {
+            return new RSEMember(ancestorConnection.getMember(ancestorLibrary, ancestorFile, ancestorMember, null));
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
             return null;
         }
     }

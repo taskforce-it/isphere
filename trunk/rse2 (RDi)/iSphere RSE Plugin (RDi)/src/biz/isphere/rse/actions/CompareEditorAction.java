@@ -23,7 +23,6 @@ import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
 
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
 public class CompareEditorAction implements IObjectActionDelegate {
@@ -54,21 +53,12 @@ public class CompareEditorAction implements IObjectActionDelegate {
                     boolean ignoreCase = dialog.isIgnoreCase();
                     boolean threeWay = dialog.isThreeWay();
 
-                    RSEMember rseAncestorMember = null;
-
-                    if (threeWay) {
-
-                        IQSYSMember ancestorMember = dialog.getAncestorConnection().getMember(dialog.getAncestorLibrary(), dialog.getAncestorFile(),
-                            dialog.getAncestorMember(), null);
-
-                        if (ancestorMember != null) {
-                            rseAncestorMember = new RSEMember(ancestorMember);
-                        }
-
-                    }
-
-                    rseRightMember = dialog.getRightRSEMember();
                     rseLeftMember = dialog.getLeftRSEMember();
+                    rseRightMember = dialog.getRightRSEMember();
+                    RSEMember rseAncestorMember = null;
+                    if (threeWay) {
+                        rseAncestorMember = dialog.getAncestorRSEMember();
+                    }
 
                     CompareEditorConfiguration cc = new CompareEditorConfiguration();
                     cc.setLeftEditable(editable);
