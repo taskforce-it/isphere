@@ -23,7 +23,6 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -260,7 +259,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
 
         if (dEditor != null) {
-            
+
             AbstractDWidget[] widgets = dEditor.getWidgets();
             Color color = ColorHelper.getBackgroundColorOfSelectedControls();
             for (AbstractDWidget widget : widgets) {
@@ -282,7 +281,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             Label watchInfo = new Label(parent, SWT.NONE);
             watchInfo.setText(Messages.Use_the_context_menu_to_watch_an_item);
             watchInfo.setLayoutData(createGridDataFillAndGrab(numColumns));
-            
+
         } else {
 
             Label dragDropInfo = new Label(parent, SWT.NONE);
@@ -433,7 +432,14 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             }
 
             DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
-            if (selectedEditor == null) {
+            if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
+                /*
+                 * Cancel job, because we need an editor and user spaces might
+                 * be quite large. This way we do not load it for nothing, in
+                 * case we cannot find an editor. For all types of data areas we
+                 * can generate the editor. Although it might be quite ugly,
+                 * generating a text field for a 2000-byte character value.
+                 */
                 return Status.OK_STATUS;
             }
 
@@ -441,7 +447,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
              * Submit long term process to batch. Let the process load the data
              * and pass it on to the UI update job.
              */
-            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(getName(), remoteObject, selectedEditor);
+            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(getName(), remoteObject, null);
             loadDataJob.schedule();
 
             return Status.OK_STATUS;
@@ -471,13 +477,19 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             try {
 
                 AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
-                if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
-                    if (!AbstractWrappedDataSpace.CHARACTER.equals(dataSpace.getDataType())) {
-                        MessageDialogAsync.displayError(getShell(),
-                            Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
-                        return Status.OK_STATUS;
-                    }
+
+                if (dEditor == null) {
+                    dEditor = AbstractDataSpaceMonitorView.this.manager.generateEditor(dataSpace);
                 }
+                // if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
+                // if
+                // (!AbstractWrappedDataSpace.CHARACTER.equals(dataSpace.getDataType()))
+                // {
+                // MessageDialogAsync.displayError(getShell(),
+                // Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+                // return Status.OK_STATUS;
+                // }
+                // }
 
                 /*
                  * Create a UI job to update the view with the new data.
@@ -514,6 +526,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
+
+            // selectedEditor = loadEditorForDataSpaceObject(getShell(),
+            // dataSpaceValue.getRemoteObject());
+            if (selectedEditor == null) {
+                return Status.OK_STATUS;
+            }
 
             if (selectedEditor != null) {
                 replaceDataSpaceEditor(mainArea, selectedEditor, dataSpaceValue);

@@ -11,21 +11,21 @@ package biz.isphere.core.dataspaceeditor.model;
 
 public class DTemplateWidget {
 
-    private Class<AbstractDWidget> widgetClass;
+    private Class<? extends AbstractDWidget> widgetClass;
     private String label;
     private int offset;
     private int length;
     private int fraction;
 
-    public DTemplateWidget(Class<AbstractDWidget> widgetClass, String label, int offset) {
+    public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset) {
         this(widgetClass, label, offset, -1, -1);
     }
 
-    public DTemplateWidget(Class<AbstractDWidget> widgetClass, String label, int offset, int length) {
+    public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset, int length) {
         this(widgetClass, label, offset, length, -1);
     }
 
-    public DTemplateWidget(Class<AbstractDWidget> widgetClass, String label, int offset, int length, int fraction) {
+    public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset, int length, int fraction) {
         this.widgetClass = widgetClass;
         this.label = label;
         this.offset = offset;
@@ -33,7 +33,7 @@ public class DTemplateWidget {
         this.fraction = fraction;
     }
 
-    public Class<AbstractDWidget> getWidgetClass() {
+    public Class<? extends AbstractDWidget> getWidgetClass() {
         return widgetClass;
     }
 

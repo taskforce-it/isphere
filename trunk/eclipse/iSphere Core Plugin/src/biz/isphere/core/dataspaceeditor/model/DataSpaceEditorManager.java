@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.swt.widgets.ButtonLockedListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
+import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.gui.designer.ControlPayload;
 import biz.isphere.core.internal.Validator;
@@ -34,6 +35,8 @@ import biz.isphere.core.internal.Validator;
  * <p>
  */
 public final class DataSpaceEditorManager {
+
+    private static final String GENERATED = "*GENERATED";
 
     public DataSpaceEditorManager() {
     }
@@ -189,7 +192,7 @@ public final class DataSpaceEditorManager {
 
     public AbstractDWidget createWidgetFromTemplate(DTemplateWidget template) {
 
-        Class<AbstractDWidget> widgetClass = template.getWidgetClass();
+        Class<? extends AbstractDWidget> widgetClass = template.getWidgetClass();
         String label = template.getLabel();
         int offset = template.getOffset();
 
@@ -229,7 +232,53 @@ public final class DataSpaceEditorManager {
     public ControlPayload getPayloadFromControl(Control control) {
         return (ControlPayload)control.getData(DE.KEY_DATA_SPACE_PAYLOAD);
     }
-    
+
+    public DEditor generateEditor(AbstractWrappedDataSpace dataSpace) {
+
+        if (AbstractWrappedDataSpace.CHARACTER.equals(dataSpace.getDataType())) {
+            return generateCharacterEditor(dataSpace.getLength());
+        } else if (AbstractWrappedDataSpace.DECIMAL.equals(dataSpace.getDataType())) {
+            return generateDecimalEditor(dataSpace.getLength(), dataSpace.getDecimalPositions());
+        } else if (AbstractWrappedDataSpace.LOGICAL.equals(dataSpace.getDataType())) {
+            return generateLogicalEditor();
+        } else {
+            throw new IllegalArgumentException("Unknown data area type: " + dataSpace.getDataType()); //$NON-NLS-1$
+        }
+    }
+
+    private DEditor generateCharacterEditor(int length) {
+        DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
+        DEditor dEditor = createDialogFromTemplate(tEditor);
+
+        DTemplateWidget tWidget = new DTemplateWidget(DText.class, "Character value", 0, length);
+        AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
+        addWidgetToEditor(dEditor, dWidget);
+
+        return dEditor;
+    }
+
+    private DEditor generateDecimalEditor(int digits, int decimalPositions) {
+        DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
+        DEditor dEditor = createDialogFromTemplate(tEditor);
+
+        DTemplateWidget tWidget = new DTemplateWidget(DDecimal.class, "Decimal value", 0, digits, decimalPositions);
+        AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
+        addWidgetToEditor(dEditor, dWidget);
+
+        return dEditor;
+    }
+
+    private DEditor generateLogicalEditor() {
+        DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
+        DEditor dEditor = createDialogFromTemplate(tEditor);
+
+        DTemplateWidget tWidget = new DTemplateWidget(DBoolean.class, "Boolean", 0);
+        AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
+        addWidgetToEditor(dEditor, dWidget);
+
+        return dEditor;
+    }
+
     public static boolean hasLength(Class<? extends AbstractDWidget> widgetClass) {
         if (DText.class.equals(widgetClass) || DDecimal.class.equals(widgetClass)) {
             return true;
