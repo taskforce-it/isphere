@@ -54,8 +54,8 @@ d) Preferences - Java -> Editor -> Save Actions:
    Disable: Additional actions
 
 
-Strongly Run Configuration Settings:
-------------------------------------
+Strongly Recommended Run Configuration Settings:
+------------------------------------------------
 
 Add argument "-en" to the "VM arguments" field to enable Java assertions.
 
