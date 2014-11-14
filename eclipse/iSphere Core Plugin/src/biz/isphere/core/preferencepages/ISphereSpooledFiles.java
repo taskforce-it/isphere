@@ -171,9 +171,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionTextLibrary.setTextLimit(10);
 
-        validatorConversionTextLibrary = Validator.getNameInstance();
-        validatorConversionTextLibrary.setLength(10);
-        validatorConversionTextLibrary.setRestricted(false);
+        validatorConversionTextLibrary = Validator.getLibraryNameInstance();
 
         Label labelConversionTextCommand = new Label(groupConversionText, SWT.NONE);
         labelConversionTextCommand.setText(Messages.Command_colon);
@@ -244,9 +242,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionHTMLLibrary.setTextLimit(10);
 
-        validatorConversionHTMLLibrary = Validator.getNameInstance();
-        validatorConversionHTMLLibrary.setLength(10);
-        validatorConversionHTMLLibrary.setRestricted(false);
+        validatorConversionHTMLLibrary = Validator.getLibraryNameInstance();
 
         Label labelConversionHTMLCommand = new Label(groupConversionHTML, SWT.NONE);
         labelConversionHTMLCommand.setText(Messages.Command_colon);
@@ -317,9 +313,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionPDFLibrary.setTextLimit(10);
 
-        validatorConversionPDFLibrary = Validator.getNameInstance();
-        validatorConversionPDFLibrary.setLength(10);
-        validatorConversionPDFLibrary.setRestricted(false);
+        validatorConversionPDFLibrary = Validator.getLibraryNameInstance();
 
         Label labelConversionPDFCommand = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFCommand.setText(Messages.Command_colon);

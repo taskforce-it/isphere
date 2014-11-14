@@ -77,9 +77,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         verticalSpacerLayoutData.horizontalSpan = 2;
         verticalSpacer.setLayoutData(verticalSpacerLayoutData);
 
-        validator = Validator.getDecInstance();
-        validator.setLength(getWrappedDataArea().getLength());
-        validator.setPrecision(getWrappedDataArea().getDecimalPositions());
+        validator = Validator.getDecimalInstance(getWrappedDataArea().getLength(), getWrappedDataArea().getDecimalPositions());
 
         // Set screen value
         dataAreaText.setText(getWrappedDataArea().getDecimalValue().toString());

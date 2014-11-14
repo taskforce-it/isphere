@@ -49,12 +49,39 @@ public class Validator {
     private String date;
     private String time;
 
-    public static Validator getNameInstance() {
-        return new Validator(TYPE_NAME);
+    public static Validator getMessageIdInstance() {
+        Validator validator = new Validator(TYPE_NAME);
+        validator.setLength(7);
+        return validator;
     }
 
-    public static Validator getDecInstance() {
-        return new Validator(TYPE_DEC);
+    public static Validator getNameInstance() {
+        Validator validator = new Validator(TYPE_NAME);
+        validator.setLength(10);
+        return validator;
+    }
+
+    public static Validator getLibraryNameInstance(String... specialValues) {
+        Validator validator = new Validator(TYPE_NAME);
+        validator.setLength(10);
+        validator.setRestricted(false);
+        for (String specialValue : specialValues) {
+            validator.addSpecialValue(specialValue);
+        }
+        return validator;
+    }
+
+    public static Validator getIntegerInstance(int length) {
+        Validator validator = new Validator(TYPE_DEC);
+        validator.setLength(length);
+        return validator;
+    }
+
+    public static Validator getDecimalInstance(int length, int precision) {
+        Validator validator = new Validator(TYPE_DEC);
+        validator.setLength(length);
+        validator.setPrecision(precision);
+        return validator;
     }
 
     public static Validator getCharInstance() {

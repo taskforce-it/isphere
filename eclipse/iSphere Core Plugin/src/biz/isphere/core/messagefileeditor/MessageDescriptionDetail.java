@@ -153,8 +153,7 @@ public class MessageDescriptionDetail {
             textMessageId.setEditable(false);
         }
 
-        validatorMessageId = Validator.getNameInstance();
-        validatorMessageId.setLength(7);
+        validatorMessageId = Validator.getMessageIdInstance();
 
         // Message
 
@@ -228,9 +227,7 @@ public class MessageDescriptionDetail {
             textSeveriry.setEditable(false);
         }
 
-        validatorSeverity = Validator.getDecInstance();
-        validatorSeverity.setLength(textSeveriry.getTextLimit());
-        validatorSeverity.setPrecision(0);
+        validatorSeverity = Validator.getIntegerInstance(textSeveriry.getTextLimit());
 
         // Ccsid
 
@@ -247,9 +244,7 @@ public class MessageDescriptionDetail {
             comboCcsid.setEditable(false);
         }
 
-        validatorCcsid = Validator.getDecInstance();
-        validatorCcsid.setLength(textSeveriry.getTextLimit());
-        validatorCcsid.setPrecision(0);
+        validatorCcsid = Validator.getIntegerInstance(comboCcsid.getTextLimit());
         validatorCcsid.addSpecialValue(MessageDescription.CCSID_JOB);
         validatorCcsid.addSpecialValue(MessageDescription.CCSID_HEX);
 

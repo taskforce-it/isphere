@@ -9,15 +9,20 @@
 package biz.isphere.core.internal;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 
 /**
- * This interface has been added for backporting class {@link ControlDecoration}
+ * This interface has been added for backporting class <i>ControlDecoration</i>
  * for the <i>iSphere WDSCi Plugin</i>.
  * 
  * @see biz.isphere.rse.internal.RSEControlDecoration
  */
 public interface IControlDecoration {
 
+    public Control getControl();
+
+    public Image getImage();
+    
     public void setImage(Image image);
 
     public void hide();
