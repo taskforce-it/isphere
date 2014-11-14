@@ -657,6 +657,12 @@ public class Messages extends NLS {
     public static String Stop_watching;
 
     public static String Start_watching;
+
+    public static String DftText_Character_value_colon;
+    
+    public static String DftText_Decimal_value_colon;
+    
+    public static String DftText_Logical_value_colon;
     
     static {
         // initialize resource bundle
