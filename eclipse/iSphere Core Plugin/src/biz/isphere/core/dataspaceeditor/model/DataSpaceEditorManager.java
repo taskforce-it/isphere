@@ -250,7 +250,7 @@ public final class DataSpaceEditorManager {
         DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
         DEditor dEditor = createDialogFromTemplate(tEditor);
 
-        DTemplateWidget tWidget = new DTemplateWidget(DText.class, "Character value", 0, length);
+        DTemplateWidget tWidget = new DTemplateWidget(DText.class, Messages.DftText_Character_value_colon, 0, length);
         AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
         addWidgetToEditor(dEditor, dWidget);
 
@@ -261,7 +261,7 @@ public final class DataSpaceEditorManager {
         DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
         DEditor dEditor = createDialogFromTemplate(tEditor);
 
-        DTemplateWidget tWidget = new DTemplateWidget(DDecimal.class, "Decimal value", 0, digits, decimalPositions);
+        DTemplateWidget tWidget = new DTemplateWidget(DDecimal.class, Messages.DftText_Decimal_value_colon, 0, digits, decimalPositions);
         AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
         addWidgetToEditor(dEditor, dWidget);
 
@@ -272,7 +272,7 @@ public final class DataSpaceEditorManager {
         DTemplateEditor tEditor = new DTemplateEditor(GENERATED, 1);
         DEditor dEditor = createDialogFromTemplate(tEditor);
 
-        DTemplateWidget tWidget = new DTemplateWidget(DBoolean.class, "Boolean", 0);
+        DTemplateWidget tWidget = new DTemplateWidget(DBoolean.class, Messages.DftText_Logical_value_colon, 0);
         AbstractDWidget dWidget = createWidgetFromTemplate(tWidget);
         addWidgetToEditor(dEditor, dWidget);
 
