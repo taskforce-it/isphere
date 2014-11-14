@@ -36,6 +36,7 @@ public class NewDataSpaceEditorListener extends SelectionAdapter {
         if (newDDialogDialog.open() == Dialog.OK) {
             DEditor newDialog = manager.createDialogFromTemplate(newDDialogDialog.getDialog());
             editor.addDataSpaceEditor(newDialog);
+            editor.setDataSpaceEditor(newDialog);
         }
     }
 }

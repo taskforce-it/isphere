@@ -4,9 +4,11 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ControlBackgroundPainter extends MouseTrackAdapter {
+
+    private static Color COLOR_BACKGROUND_DEFAULT = SWTResourceManager.getColor(255, 255, 255);
 
     private Color selectedControlBackgroundColor;
 
@@ -40,15 +42,14 @@ public class ControlBackgroundPainter extends MouseTrackAdapter {
             return;
         }
 
-        boolean isEnabled = currentControl.isEnabled();
-        if (currentControl instanceof Text) {
-            isEnabled &= ((Text)currentControl).getEditable();
-        }
-
-        if (isEnabled) {
-            currentControl.setBackground(oldBackgroundColor);
-        } else {
+        if (oldBackgroundColor.equals(COLOR_BACKGROUND_DEFAULT)) {
+            /*
+             * Ugly hack for WDSCi to reset the background color to the default
+             * color.
+             */
             currentControl.setBackground(null);
+        } else {
+            currentControl.setBackground(oldBackgroundColor);
         }
 
         currentControl = null;

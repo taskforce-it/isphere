@@ -25,19 +25,19 @@ public class StatusBar {
     }
 
     public void setPosition(int aColumn) {
-        positionLabel.setText("" + aColumn);
+        positionLabel.setText(String.valueOf(aColumn));
     }
 
     public void setPosition(int aRow, int aColumn) {
-        positionLabel.setText(aRow + " : " + aColumn);
+        positionLabel.setText(aRow + " : " + aColumn); //$NON-NLS-1$
     }
 
     public void setInfo(String anInfo) {
-        infoLabel.setText(" " + anInfo);
+        infoLabel.setText(" " + anInfo); //$NON-NLS-1$
     }
 
     public void setMessage(String aMessage) {
-        messageLabel.setText(" " + aMessage);
+        messageLabel.setText(" " + aMessage); //$NON-NLS-1$
     }
 
     private void createStatusBar(Composite aParent) {
@@ -59,13 +59,13 @@ public class StatusBar {
 
         positionLabel = createStatusBarLabel(statusBar, 50);
         positionLabel.setAlignment(SWT.CENTER);
-        positionLabel.setText("");
+        positionLabel.setText(""); //$NON-NLS-1$
 
         infoLabel = createStatusBarLabel(statusBar, 100);
-        infoLabel.setText("");
+        infoLabel.setText(""); //$NON-NLS-1$
 
         messageLabel = createStatusBarLabel(statusBar, -1);
-        messageLabel.setText("");
+        messageLabel.setText(""); //$NON-NLS-1$
 
     }
 

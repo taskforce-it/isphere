@@ -14,7 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.gui.dialog.DWidgetDialog;
 import biz.isphere.core.dataspaceeditor.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditor.model.DEditor;

@@ -651,6 +651,12 @@ public class Messages extends NLS {
     public static String Select_editor;
 
     public static String Use_the_context_menu_to_watch_an_item;
+
+    public static String Refresh_the_contents_of_this_view;
+
+    public static String Stop_watching;
+
+    public static String Start_watching;
     
     static {
         // initialize resource bundle

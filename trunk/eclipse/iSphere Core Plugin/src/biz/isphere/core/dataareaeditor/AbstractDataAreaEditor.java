@@ -46,7 +46,7 @@ import com.ibm.as400.access.AS400;
 
 public abstract class AbstractDataAreaEditor extends EditorPart implements IFindReplaceTarget {
 
-    public static final String ID = "biz.isphere.core.dataareaeditor.DataAreaEditor";
+    public static final String ID = "biz.isphere.core.dataareaeditor.DataAreaEditor"; //$NON-NLS-1$
 
     public static final int VALUE_LABEL_WIDTH_HINT = 40;
     public static final int SPACER_WIDTH_HINT = 10;
@@ -71,8 +71,8 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
         Composite header = new Composite(editorParent, SWT.NONE);
         header.setLayout(new GridLayout(3, false));
 
-        createHeadline(header, Messages.Type_colon, "" + getWrappedDataArea().getDataType());
-        createHeadline(header, Messages.Length_colon, "" + getWrappedDataArea().getLengthAsText());
+        createHeadline(header, Messages.Type_colon, getWrappedDataArea().getDataType());
+        createHeadline(header, Messages.Length_colon, getWrappedDataArea().getLengthAsText());
         createHeadline(header, Messages.Text_colon, getWrappedDataArea().getText());
 
         aParent.getClientArea();
@@ -193,7 +193,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
                     return null;
                 }
             };
-            handlerService.activateHandler("org.eclipse.ui.edit.findReplace", handler);
+            handlerService.activateHandler("org.eclipse.ui.edit.findReplace", handler); //$NON-NLS-1$
         }
 
         if (editorDelegate.getCutAction() != null) {
@@ -230,7 +230,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractDataAreaEditor.ID);
 
         } catch (PartInitException e) {
-            ISpherePlugin.logError("Failed to open data area editor", e);
+            ISpherePlugin.logError("Failed to open data area editor", e); //$NON-NLS-1$
         }
 
     }

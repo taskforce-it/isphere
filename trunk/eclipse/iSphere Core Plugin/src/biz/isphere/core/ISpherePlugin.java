@@ -78,6 +78,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_WATCHING = "watching.gif";
     public static final String IMAGE_DATA_AREA_MONITOR = "data_monitor.gif";
     public static final String IMAGE_USER_SPACE_MONITOR = "data_monitor.gif";
+    public static final String IMAGE_VALUE_CHANGED = "value_changed.gif";
+    public static final String IMAGE_SYSTEM_HELP = "systemhelp.gif";
     
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -208,6 +210,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_WATCHING, getImageDescriptor(IMAGE_WATCHING));
         reg.put(IMAGE_DATA_AREA_MONITOR, getImageDescriptor(IMAGE_DATA_AREA_MONITOR));
         reg.put(IMAGE_USER_SPACE_MONITOR, getImageDescriptor(IMAGE_USER_SPACE_MONITOR));
+        reg.put(IMAGE_VALUE_CHANGED, getImageDescriptor(IMAGE_VALUE_CHANGED));
+        reg.put(IMAGE_SYSTEM_HELP, getImageDescriptor(IMAGE_SYSTEM_HELP));
 
     }
 

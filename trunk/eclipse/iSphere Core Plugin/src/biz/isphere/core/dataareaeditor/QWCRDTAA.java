@@ -26,23 +26,23 @@ public class QWCRDTAA {
 
         try {
 
-            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400, "biz.isphere.core.dataareaeditor.QWCRDTAA", getClass().getClassLoader());
-            pcml.setQualifiedObjectName("QWCRDTAA.dataArea", aLibrary, aDataArea);
-            pcml.setValue("QWCRDTAA.receiverLength", new Integer((pcml.getOutputsize("QWCRDTAA.receiver"))));
+            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400, "biz.isphere.core.dataareaeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
+            pcml.setQualifiedObjectName("QWCRDTAA.dataArea", aLibrary, aDataArea); //$NON-NLS-1$
+            pcml.setValue("QWCRDTAA.receiverLength", new Integer((pcml.getOutputsize("QWCRDTAA.receiver")))); //$NON-NLS-1$ //$NON-NLS-2$
 
-            boolean rc = pcml.callProgram("QWCRDTAA");
+            boolean rc = pcml.callProgram("QWCRDTAA"); //$NON-NLS-1$
 
             if (rc == false) {
 
-                AS400Message[] msgs = pcml.getMessageList("QWCRDTAA");
+                AS400Message[] msgs = pcml.getMessageList("QWCRDTAA"); //$NON-NLS-1$
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                 }
-                ISpherePlugin.logError("*** Call to QWCRDTAA failed. See previous messages ***", null);
+                ISpherePlugin.logError("*** Call to QWCRDTAA failed. See previous messages ***", null); //$NON-NLS-1$
                 return null;
 
             } else {
-                type = pcml.getStringValue("QWCRDTAA.receiver.type", 0);
+                type = pcml.getStringValue("QWCRDTAA.receiver.type", 0); //$NON-NLS-1$
             }
 
         } catch (PcmlException e) {

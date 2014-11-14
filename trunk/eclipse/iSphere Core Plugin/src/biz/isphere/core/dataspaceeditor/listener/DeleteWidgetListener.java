@@ -12,7 +12,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.MenuItem;
 
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.gui.designer.ControlPayload;
 import biz.isphere.core.dataspaceeditor.model.DEditor;
 import biz.isphere.core.dataspaceeditor.rse.IDialogEditor;
@@ -31,7 +31,7 @@ public class DeleteWidgetListener extends SelectionAdapter {
     public void widgetSelected(SelectionEvent event) {
         if (event.getSource() instanceof MenuItem) {
             MenuItem menuItem = (MenuItem)event.getSource();
-            ControlPayload payload = (ControlPayload)menuItem.getData(DE.KEY_PAYLOAD);
+            ControlPayload payload = (ControlPayload)menuItem.getData(DE.KEY_DATA_SPACE_PAYLOAD);
             editor.deleteWidget(dialog, payload.getWidget());
         }
     }

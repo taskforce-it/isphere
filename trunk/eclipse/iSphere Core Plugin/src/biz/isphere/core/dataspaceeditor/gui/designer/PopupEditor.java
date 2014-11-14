@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.listener.NewWidgetListener;
 import biz.isphere.core.dataspaceeditor.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditor.model.DBoolean;

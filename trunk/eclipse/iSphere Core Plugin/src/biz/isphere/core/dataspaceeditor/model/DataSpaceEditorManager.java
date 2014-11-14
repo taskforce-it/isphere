@@ -9,6 +9,7 @@
 package biz.isphere.core.dataspaceeditor.model;
 
 import java.math.BigDecimal;
+import java.util.EventListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -19,9 +20,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.swt.widgets.ButtonLockedListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.gui.designer.ControlPayload;
 import biz.isphere.core.internal.Validator;
 
@@ -77,12 +79,25 @@ public final class DataSpaceEditorManager {
     }
 
     public Control createReadOnlyWidgetControlAndAddToParent(Composite parent, AbstractDWidget widget) {
+
         Control control = createWidgetControlAndAddToParent(parent, widget);
+        ControlPayload payload = getPayloadFromControl(control);
+        EventListener listener = null;
+
         if (control instanceof Text) {
             ((Text)control).setEditable(false);
+        } else if (control instanceof Button) {
+            Button button = (Button)control;
+            button.setEnabled(true);
+            // button.setGrayed(true); available with 3.4 :-(
+            listener = new ButtonLockedListener();
+            button.addSelectionListener((ButtonLockedListener)listener);
         } else {
             control.setEnabled(false);
         }
+
+        payload.setLocked(true, listener);
+
         return control;
     }
 
@@ -202,7 +217,8 @@ public final class DataSpaceEditorManager {
                 }
             }
         }
-        throw new IllegalArgumentException("Illegal widget class: " + template.getClass());
+
+        throw new IllegalArgumentException("Illegal widget class: " + template.getClass()); //$NON-NLS-1$
     }
 
     public DReferencedObject createReferencedObjectFromTemplate(DTemplateReferencedObject template) {
@@ -211,7 +227,21 @@ public final class DataSpaceEditorManager {
     }
 
     public ControlPayload getPayloadFromControl(Control control) {
-        return (ControlPayload)control.getData(DE.KEY_PAYLOAD);
+        return (ControlPayload)control.getData(DE.KEY_DATA_SPACE_PAYLOAD);
+    }
+    
+    public static boolean hasLength(Class<? extends AbstractDWidget> widgetClass) {
+        if (DText.class.equals(widgetClass) || DDecimal.class.equals(widgetClass)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean hasFraction(Class<? extends AbstractDWidget> widgetClass) {
+        if (DDecimal.class.equals(widgetClass)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean validateBoolean(Button button) {
@@ -278,15 +308,13 @@ public final class DataSpaceEditorManager {
         }
 
         DDecimal dDecimal = (DDecimal)widget;
-        Validator validator = Validator.getDecInstance();
-        validator.setLength(dDecimal.getLength());
-        validator.setPrecision(dDecimal.getFraction());
+        Validator validator = Validator.getDecimalInstance(dDecimal.getLength(), dDecimal.getFraction());
 
         return validator;
     }
 
     private void setPayload(Control control, AbstractDWidget widget) {
-        control.setData(DE.KEY_PAYLOAD, new ControlPayload(widget, control));
+        control.setData(DE.KEY_DATA_SPACE_PAYLOAD, new ControlPayload(widget, control));
     }
 
     public AbstractDWidget getWidgetFromControl(Control control) {
@@ -295,12 +323,38 @@ public final class DataSpaceEditorManager {
         return widget;
     }
 
-    public void setControlValue(Control control, DDataSpaceValue value) {
+    public String getControlValue(Control control) {
         ControlPayload payload = getPayloadFromControl(control);
         if (payload == null) {
+            return null;
+        }
+
+        if (control instanceof Button) {
+            if (((Button)control).getSelection()) {
+                return DE.BOOLEAN_TRUE_1;
+            } else {
+                return DE.BOOLEAN_FALSE_0;
+            }
+        } else if (control instanceof Text) {
+            return ((Text)control).getText();
+        }
+
+        throw new IllegalArgumentException("Unknown SWT control: " + control); //$NON-NLS-1$
+    }
+
+    public boolean isManagedControl(Control control) {
+        if (getPayloadFromControl(control) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setControlValue(Control control, DDataSpaceValue value) {
+        if (!isManagedControl(control)) {
             return;
         }
 
+        ControlPayload payload = getPayloadFromControl(control);
         AbstractDWidget widget = payload.getWidget();
 
         if (widget instanceof DText) {
@@ -308,7 +362,12 @@ public final class DataSpaceEditorManager {
             ((Text)control).setText(textValue);
         } else if (widget instanceof DBoolean) {
             Boolean boolValue = value.getBoolean(widget.getOffset(), widget.getLength());
-            ((Button)control).setSelection(boolValue);
+            Button button = (Button)control;
+            button.setSelection(boolValue);
+            if (isLocked(button) && payload.getLockedListener() != null) {
+                ButtonLockedListener listener = (ButtonLockedListener)payload.getLockedListener();
+                listener.setLockedValue(boolValue);
+            }
         } else if (widget instanceof DTinyInteger) {
             Byte tinyValue = value.getTiny(widget.getOffset(), widget.getLength());
             ((Text)control).setText(tinyValue.toString());
@@ -325,6 +384,11 @@ public final class DataSpaceEditorManager {
             BigDecimal decimalValue = value.getDecimal(widget.getOffset(), widget.getLength(), ((DDecimal)widget).getFraction());
             ((Text)control).setText(decimalValue.toString());
         }
+    }
+
+    private boolean isLocked(Control control) {
+        ControlPayload payload = getPayloadFromControl(control);
+        return payload.isLocked();
     }
 
     private Button createBooleanWidget(Composite parent, AbstractDWidget widget) {
@@ -378,7 +442,6 @@ public final class DataSpaceEditorManager {
 
         return text;
     }
-
 
     private void createLabel(Composite parent, AbstractDWidget widget) {
         Label label = new Label(parent, SWT.NONE);

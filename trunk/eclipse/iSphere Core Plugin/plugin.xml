@@ -45,8 +45,8 @@
             label="iSphere"/>
    		 
       <fontDefinition
-            id="biz.isphere.fonts.editors.fixedsize"
             categoryId="biz.isphere.core.ui.fontsandcolors"        
+            id="biz.isphere.fonts.editors.fixedsize"
             label="%Fixed_Size_Editor_Font"
             defaultsTo="org.eclipse.jface.textfont">
          <description>
@@ -55,8 +55,8 @@
       </fontDefinition>
       
       <colorDefinition 
-            id="biz.isphere.fonts.editors.protectedbackground"
             categoryId="biz.isphere.core.ui.fontsandcolors"
+            id="biz.isphere.fonts.editors.protectedbackground"
             label="%Editor_protected_areas"
             value="228,228,228">
          <description>
@@ -65,12 +65,22 @@
       </colorDefinition>
       
       <colorDefinition 
-            id="biz.isphere.fonts.editors.selectedcontrol"
             categoryId="biz.isphere.core.ui.fontsandcolors"
+            id="biz.isphere.fonts.editors.selectedcontrol"
             label="%Editor_selected_control"
             value="255,128,64">
          <description>
             %Editor_selected_control_Description
+         </description>
+      </colorDefinition>
+      
+      <colorDefinition 
+            categoryId="biz.isphere.core.ui.fontsandcolors"
+            id="biz.isphere.fonts.watcheditem.valuechanged"
+            label="%Watched_Item_value_changed"
+            value="255,255,0">
+         <description>
+            %Watched_Item_value_changed_Description
          </description>
       </colorDefinition>
       

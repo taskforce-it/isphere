@@ -8,31 +8,28 @@
 
 package biz.isphere.core.dataspaceeditor.gui.dialog;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.core.ISpherePlugin;
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.model.DTemplateEditor;
 
-public class DEditorDialog extends XDialog {
+public class DEditorDialog extends AbstractDialog {
 
     private DTemplateEditor dialogTemplate;
 
     private Text textName;
-
-    private Spinner spinner;
+    private Text textDescription;
+    private Spinner spinnerColumns;
 
     public DEditorDialog(Shell parentShell) {
         super(parentShell);
@@ -45,32 +42,39 @@ public class DEditorDialog extends XDialog {
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
-
-        Composite mainArea = new Composite(parent, SWT.NONE);
-        mainArea.setLayout(new GridLayout(2, false));
-        GridData mainAreaLayoutdata = new GridData(SWT.FILL, SWT.FILL, true, true);
-        mainArea.setLayoutData(mainAreaLayoutdata);
+    protected void createContent(Composite parent) {
 
         // Name
-        Label labelName = new Label(mainArea, SWT.NONE);
-        labelName.setText(Messages.Name_colon);
+        textName = createTextField(parent, Messages.Name_colon);
+        textName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateName();
+            }
+        });
 
-        textName = new Text(mainArea, SWT.BORDER);
-        textName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        // Description
+        textDescription = createTextField(parent, Messages.Name_colon);
+        textDescription.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateDescription();
+            }
+        });
 
         // Number of columns
-        Label labelColumns = new Label(mainArea, SWT.NONE);
+        Label labelColumns = new Label(parent, SWT.NONE);
         labelColumns.setText(Messages.Columns_colon);
 
-        spinner = new Spinner(mainArea, SWT.BORDER); // | SWT.READ_ONLY
+        spinnerColumns = new Spinner(parent, SWT.BORDER); // | SWT.READ_ONLY
         GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_spinner.widthHint = 25;
-        spinner.setLayoutData(gd_spinner);
-        spinner.setMinimum(1);
-        spinner.setMaximum(5);
-
-        return dialogArea;
+        spinnerColumns.setLayoutData(gd_spinner);
+        spinnerColumns.setMinimum(1);
+        spinnerColumns.setMaximum(5);
+        spinnerColumns.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateColumns();
+            }
+        });
     }
 
     public DTemplateEditor getDialog() {
@@ -78,41 +82,61 @@ public class DEditorDialog extends XDialog {
     }
 
     @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-    }
+    protected boolean validate() {
 
-    @Override
-    protected void okPressed() {
-        String name = textName.getText();
-        dialogTemplate = new DTemplateEditor(name, spinner.getSelection());
-        super.okPressed();
-    }
+        // Name
+        if (!validateName()) {
+            return false;
+        }
 
-    /**
-     * Overridden to make this dialog resizable.
-     */
-    @Override
-    protected boolean isResizable() {
+        // Description
+        if (!validateDescription()) {
+            return false;
+        }
+
+        // Columns
+        if (!validateColumns()) {
+            return false;
+        }
+
         return true;
     }
 
-    /**
-     * Overridden to provide a default size to {@link XDialog}.
-     */
-    @Override
-    protected Point getDefaultSize() {
-        // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        return new Point(250, 150);
+    private boolean validateName() {
+
+        if (StringHelper.isNullOrEmpty(textName.getText())) {
+            setErrorMessage(textName, "Name is missing. Please specify a name.");
+            return false;
+        }
+
+        clearErrorMessage(textName);
+        return true;
     }
 
-    /**
-     * Overridden to let {@link XDialog} store the state of this dialog in a
-     * separate section of the dialog settings file.
-     */
+    private boolean validateDescription() {
+
+        clearErrorMessage(textName);
+        return true;
+    }
+
+    private boolean validateColumns() {
+
+        int columns = IntHelper.tryParseInt(spinnerColumns.getText(), -1);
+        if (columns < spinnerColumns.getMinimum() || columns > spinnerColumns.getMaximum()) {
+            setErrorMessage(spinnerColumns, "Number of columns are out of range.");
+            return false;
+        }
+
+        clearErrorMessage(spinnerColumns);
+        return true;
+    }
+
     @Override
-    protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    protected void performOKPressed() {
+
+        String name = textName.getText();
+        String description = textDescription.getText();
+        int columns = spinnerColumns.getSelection();
+        dialogTemplate = new DTemplateEditor(name, description, columns);
     }
 }

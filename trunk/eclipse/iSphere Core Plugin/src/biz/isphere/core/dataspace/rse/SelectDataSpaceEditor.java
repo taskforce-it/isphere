@@ -179,7 +179,7 @@ public class SelectDataSpaceEditor extends XDialog {
             } else if (columnIndex == 1) {
                 return dEditor.getDescription();
             }
-            return "*UNKNOWN";
+            return "*UNKNOWN"; //$NON-NLS-1$
         }
 
         public Image getColumnImage(Object element, int columnIndex) {
