@@ -7,10 +7,12 @@ import org.eclipse.swt.widgets.Menu;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditor.rse.IDialogView;
 import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.dataspacemonitor.rse.AbstractDataSpaceMonitorView;
+import biz.isphere.core.dataspacemonitor.rse.WatchItemManager;
 import biz.isphere.core.internal.IControlDecoration;
 import biz.isphere.rse.dataareaeditor.WrappedDataSpace;
 import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
@@ -28,10 +30,10 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
         return new WrappedDataSpace(remoteObject);
     }
 
-    protected void createControlPopupMenu(Composite dialogEditor, Control control) {
+    protected void createControlPopupMenu(WatchItemManager watchManager, Composite dialogEditor, Control control) {
         Menu controlMenu = new Menu(dialogEditor);
         control.setMenu(controlMenu);
-        controlMenu.addMenuListener(new PopupWidget(getDecorator(control)));
+        controlMenu.addMenuListener(new PopupWidget(watchManager, getDecorator(control)));
     }
 
     protected void createControlDecorator(Control control) {
@@ -39,16 +41,15 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
         decorator.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_WATCHING).createImage());
         decorator.hide();
         decorator.setMarginWidth(5);
-
         setDecorator(control, decorator);
     }
 
     private void setDecorator(Control control, IControlDecoration decorator) {
-        control.setData(decorator);
-    }
+        control.setData(DE.KEY_CONTROL_DECORATOR, decorator);
+}
 
     private IControlDecoration getDecorator(Control control) {
-        Object data = control.getData();
+        Object data = control.getData(DE.KEY_CONTROL_DECORATOR);
         if (data instanceof IControlDecoration) {
             return (IControlDecoration)data;
         }
