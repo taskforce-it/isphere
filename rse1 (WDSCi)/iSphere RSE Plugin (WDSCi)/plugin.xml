@@ -80,7 +80,7 @@
       	-->
 
 		<dynamicPopupMenuExtension
-			name="Data Area Monitor"
+			name="%iSphere_Data_Area_Monitor"
 			class="biz.isphere.rse.actions.MonitorDataAreaAction"
 			id="biz.isphere.rse.actions.MonitorDataAreaAction">
 	    </dynamicPopupMenuExtension>
@@ -92,7 +92,7 @@
       	-->
 
 		<dynamicPopupMenuExtension
-			name="User Space Monitor"
+			name="%iSphere_User_Space_Monitor"
 			class="biz.isphere.rse.actions.MonitorUserSpaceAction"
 			id="biz.isphere.rse.actions.MonitorUserSpaceAction">
 	    </dynamicPopupMenuExtension>
