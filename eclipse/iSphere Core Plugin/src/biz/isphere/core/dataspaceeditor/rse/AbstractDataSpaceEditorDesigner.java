@@ -53,7 +53,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.gui.designer.PopupEditor;
 import biz.isphere.core.dataspaceeditor.gui.designer.PopupTreeViewer;
 import biz.isphere.core.dataspaceeditor.gui.designer.PopupWidget;
@@ -63,6 +63,7 @@ import biz.isphere.core.dataspaceeditor.gui.designer.TreeViewSorter;
 import biz.isphere.core.dataspaceeditor.listener.AddReferencedObjectListener;
 import biz.isphere.core.dataspaceeditor.listener.CollapseAllListener;
 import biz.isphere.core.dataspaceeditor.listener.ControlBackgroundPainter;
+import biz.isphere.core.dataspaceeditor.listener.DisplayHelpListener;
 import biz.isphere.core.dataspaceeditor.listener.DropVetoListerner;
 import biz.isphere.core.dataspaceeditor.listener.ExpandAllListener;
 import biz.isphere.core.dataspaceeditor.listener.NewDataSpaceEditorListener;
@@ -163,6 +164,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         for (DEditor dEditor : getSelectedEditors()) {
             manager.addReferencedObject(dEditor, referencedObject);
             treeViewer.refresh(dEditor);
+            treeViewer.setExpandedElements(new Object[] { dEditor });
             setEditorDirty(dEditor);
         }
     }
@@ -222,7 +224,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         setSite(site);
         setInput(input);
-        setPartName(input.getName());
+        setPartName("");
     }
 
     @Override
@@ -370,9 +372,24 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     private void createRightPanel(SashForm sashForm) {
+        
+        Composite mainArea = new Composite(sashForm, SWT.BORDER);
+        mainArea.setLayout(createGridLayoutWithMargin());
+        mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        ToolBar toolBar = new ToolBar(mainArea, SWT.FLAT | SWT.RIGHT);
+        toolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
 
-        editorArea = new Composite(sashForm, SWT.BORDER);
-        editorArea.setLayout(createGridLayoutWithMargin());
+        ToolItem helpItem = new ToolItem(toolBar, SWT.NONE);
+        helpItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SYSTEM_HELP).createImage());
+        helpItem.addSelectionListener(new DisplayHelpListener());
+
+        Label separator = new Label(mainArea, SWT.SEPARATOR | SWT.HORIZONTAL);
+        separator.setLayoutData(createGridDataFillAndGrab(1));
+
+        editorArea = new Composite(mainArea, SWT.NONE);
+        editorArea.setLayout(createGridLayoutNoMargin());
+        editorArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     }
 
     @Override
@@ -594,6 +611,12 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     private void refreshEditor() {
+
+        if (currentEditedEditor == null) {
+            setPartName(getEditorInput().getName());
+        } else {
+            setPartName(currentEditedEditor.getName() + " - " + currentEditedEditor.getDescription());
+        }
 
         setControlEnablement();
         editorArea.layout();

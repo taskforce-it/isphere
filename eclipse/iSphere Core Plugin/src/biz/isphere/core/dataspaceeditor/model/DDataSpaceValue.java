@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 
 import com.ibm.as400.access.CharConverter;
@@ -29,9 +30,6 @@ import com.ibm.as400.access.CharConverter;
  * term 'data space object' is a made-up of 'Data Area' and 'User Space'.
  */
 public class DDataSpaceValue {
-
-    private static final String BOOLEAN_FALSE_0 = "0"; //$NON-NLS-1$
-    private static final String BOOLEAN_TRUE_1 = "1"; //$NON-NLS-1$
 
     private CharConverter converter;
     private byte[] bytes;
@@ -182,7 +180,7 @@ public class DDataSpaceValue {
     public void setDecimal(BigDecimal value, int offset, int length) throws CharConversionException {
         ensureDecimalType();
         String data = value.toString().replaceAll("\\.", "");
-        data = StringHelper.getFixLength(data, length).replaceAll(" ", BOOLEAN_FALSE_0);
+        data = StringHelper.getFixLength(data, length).replaceAll(" ", DE.BOOLEAN_FALSE_0);
         convertStringToByteArray(data, bytes, offset, length);
     }
 
@@ -210,7 +208,7 @@ public class DDataSpaceValue {
     }
 
     private Boolean convertStringToBoolean(String data) {
-        if (BOOLEAN_TRUE_1.equals(data)) {
+        if (DE.BOOLEAN_TRUE_1.equals(data)) {
             return Boolean.TRUE;
         } else {
             return Boolean.FALSE;
@@ -219,9 +217,9 @@ public class DDataSpaceValue {
 
     private String convertBooleanToString(Boolean boolValue) {
         if (boolValue) {
-            return BOOLEAN_TRUE_1;
+            return DE.BOOLEAN_TRUE_1;
         } else {
-            return BOOLEAN_FALSE_0;
+            return DE.BOOLEAN_FALSE_0;
         }
     }
 

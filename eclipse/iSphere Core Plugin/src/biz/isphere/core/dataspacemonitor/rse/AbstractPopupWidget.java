@@ -15,11 +15,14 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import biz.isphere.core.Messages;
+
 public abstract class AbstractPopupWidget extends MenuAdapter {
 
     private MenuItem menuItem;
 
     public AbstractPopupWidget() {
+        this.menuItem = null;
     }
 
     @Override
@@ -39,10 +42,10 @@ public abstract class AbstractPopupWidget extends MenuAdapter {
         Menu menuParent = (Menu)event.getSource();
         if (isVisible()) {
             menuItem = new MenuItem(menuParent, SWT.NONE);
-            menuItem.setText("Stop watching");
+            menuItem.setText(Messages.Stop_watching);
         } else {
             menuItem = new MenuItem(menuParent, SWT.NONE);
-            menuItem.setText("Start watching");
+            menuItem.setText(Messages.Start_watching);
         }
         menuItem.addSelectionListener(createChangeWatchingListener());
     }

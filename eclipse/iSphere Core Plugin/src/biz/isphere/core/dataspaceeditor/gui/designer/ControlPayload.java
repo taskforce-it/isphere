@@ -8,18 +8,31 @@
 
 package biz.isphere.core.dataspaceeditor.gui.designer;
 
+import java.util.EventListener;
+
 import org.eclipse.swt.widgets.Control;
 
 import biz.isphere.core.dataspaceeditor.model.AbstractDWidget;
 
+/**
+ * Instances of this class are attached to controls that display the content of
+ * a DEditor widget. Objects of this class are used to store information about
+ * the data that is displayed in the control. For now that is the widget that is
+ * the source of the control. The widget is required, in order to know where the
+ * data comes from.
+ */
 public class ControlPayload {
 
     private AbstractDWidget widget;
     private Control control;
+    private boolean locked;
+    EventListener listener;
 
     public ControlPayload(AbstractDWidget widget, Control control) {
         this.widget = widget;
         this.control = control;
+        this.locked = false;
+        this.listener = null;
     }
 
     public AbstractDWidget getWidget() {
@@ -29,5 +42,18 @@ public class ControlPayload {
     public Control getControl() {
         return control;
     }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked, EventListener listener) {
+        this.locked = locked;
+        this.listener = listener;
+    }
     
+    public EventListener getLockedListener() {
+        return listener;
+    }
+
 }

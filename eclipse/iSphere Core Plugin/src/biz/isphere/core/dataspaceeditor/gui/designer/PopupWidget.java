@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataspaceeditor.DE;
+import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditor.listener.DeleteWidgetListener;
 import biz.isphere.core.dataspaceeditor.model.DEditor;
 import biz.isphere.core.dataspaceeditor.rse.IDialogEditor;
@@ -55,6 +55,6 @@ public class PopupWidget extends MenuAdapter {
         deleteWidgetMenuItem.setText(Messages.Delete + ": " + payload.getWidget().getLabel());
         deleteWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
         deleteWidgetMenuItem.addSelectionListener(new DeleteWidgetListener(editor, dialog));
-        deleteWidgetMenuItem.setData(DE.KEY_PAYLOAD, payload);
+        deleteWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
     }
 }

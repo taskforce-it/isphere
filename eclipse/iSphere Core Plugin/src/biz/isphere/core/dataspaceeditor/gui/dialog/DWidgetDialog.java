@@ -8,22 +8,16 @@
 
 package biz.isphere.core.dataspaceeditor.gui.dialog;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditor.model.DDecimal;
@@ -31,7 +25,7 @@ import biz.isphere.core.dataspaceeditor.model.DTemplateWidget;
 import biz.isphere.core.dataspaceeditor.model.DText;
 import biz.isphere.core.dataspaceeditor.model.DataSpaceEditorManager;
 
-public class DWidgetDialog extends XDialog {
+public class DWidgetDialog extends AbstractDialog {
 
     private Class<AbstractDWidget> widgetClass;
     private DTemplateWidget widgetTemplate;
@@ -54,52 +48,46 @@ public class DWidgetDialog extends XDialog {
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
-
-        Composite mainArea = new Composite(parent, SWT.NONE);
-        mainArea.setLayout(new GridLayout(2, false));
-        GridData mainAreaLayoutData = new GridData();
-        mainAreaLayoutData.horizontalAlignment = SWT.FILL;
-        mainAreaLayoutData.grabExcessHorizontalSpace = true;
-        mainArea.setLayoutData(mainAreaLayoutData);
+    protected void createContent(Composite parent) {
 
         // Label
-        Label labelLabel = new Label(mainArea, SWT.NONE);
-        labelLabel.setText(Messages.Label_colon);
-
-        textLabel = new Text(mainArea, SWT.BORDER);
-        GridData textLabelLayoutData = new GridData();
-        textLabelLayoutData.widthHint = 150;
-        textLabelLayoutData.horizontalAlignment = SWT.FILL;
-        textLabelLayoutData.grabExcessHorizontalSpace = true;
-        textLabel.setLayoutData(textLabelLayoutData);
+        textLabel = createTextField(parent, Messages.Label_colon);
+        textLabel.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateLabel();
+            }
+        });
 
         // Offset
-        Label labelOffset = new Label(mainArea, SWT.NONE);
-        labelOffset.setText(Messages.Offset_colon);
-
-        textOffset = new Text(mainArea, SWT.BORDER);
-        textOffset.addVerifyListener(new NumericOnlyVerifyListener());
+        textOffset = createNumericField(parent, Messages.Offset_colon);
+        textOffset.setText("0"); //$NON-NLS-1$
+        textOffset.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateOffset();
+            }
+        });
 
         // Length
-        if (DText.class.equals(widgetClass) || DDecimal.class.equals(widgetClass)) {
-            Label labelLength = new Label(mainArea, SWT.NONE);
-            labelLength.setText(Messages.Length_colon);
-
-            textLength = new Text(mainArea, SWT.BORDER);
-            textLength.addVerifyListener(new NumericOnlyVerifyListener());
-
-            // Fraction
-            if (DDecimal.class.equals(widgetClass)) {
-                Label labelFraction = new Label(mainArea, SWT.NONE);
-                labelFraction.setText(Messages.Decimal_positions_colon);
-
-                textFraction = new Text(mainArea, SWT.BORDER);
-                textFraction.addVerifyListener(new NumericOnlyVerifyListener());
-            }
+        if (DataSpaceEditorManager.hasLength(widgetClass)) {
+            textLength = createNumericField(parent, Messages.Length_colon);
+            textLength.setText("0"); //$NON-NLS-1$
+            textLength.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    validateLength();
+                }
+            });
         }
 
-        return dialogArea;
+        // Fraction
+        if (DataSpaceEditorManager.hasFraction(widgetClass)) {
+            textFraction = createNumericField(parent, Messages.Decimal_positions_colon);
+            textFraction.setText("0"); //$NON-NLS-1$
+            textFraction.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    validateFraction();
+                }
+            });
+        }
     }
 
     public DTemplateWidget getWidget() {
@@ -107,19 +95,90 @@ public class DWidgetDialog extends XDialog {
     }
 
     @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+    protected boolean validate() {
+
+        // Label
+        if (!validateLabel()) {
+            return false;
+        }
+
+        // Offset
+        if (!validateOffset()) {
+            return false;
+        }
+
+        // Offset
+        if (!validateLength()) {
+            return false;
+        }
+
+        // Offset
+        if (!validateFraction()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateLabel() {
+
+        if (StringHelper.isNullOrEmpty(textLabel.getText())) {
+            setErrorMessage(textLabel, "Label is missing. Please specify a label.");
+            return false;
+        }
+
+        clearErrorMessage(textLabel);
+        return true;
+    }
+
+    private boolean validateOffset() {
+
+        if (StringHelper.isNullOrEmpty(textOffset.getText())) {
+            setErrorMessage(textOffset, "Offset is missing. Please specify an offset.");
+            return false;
+        }
+
+        if (getIntValue(textOffset) < 0) {
+            setErrorMessage(textOffset, "Invalid offset. Offset must be greater or equal zero.");
+            return false;
+        }
+
+        clearErrorMessage(textOffset);
+        return true;
+    }
+
+    private boolean validateLength() {
+        if (!DataSpaceEditorManager.hasLength(widgetClass)) {
+            return true;
+        }
+
+        if (getIntValue(textLength) <= 0) {
+            setErrorMessage(textLength, "Invalid Length. Length must be greater or equal 1.");
+            return false;
+        }
+        
+        clearErrorMessage(textLength);
+        return true;
+    }
+
+    private boolean validateFraction() {
+        if (!DataSpaceEditorManager.hasFraction(widgetClass)) {
+            return true;
+        }
+        
+        clearErrorMessage(textFraction);
+        return true;
     }
 
     @Override
-    protected void okPressed() {
+    protected void performOKPressed() {
+
         String label = textLabel.getText();
         int offset = getIntValue(textOffset);
         int length = getIntValue(textLength);
         int fraction = getIntValue(textFraction);
+
         widgetTemplate = new DTemplateWidget(widgetClass, label, offset, length, fraction);
-        super.okPressed();
     }
 
     private int getIntValue(Text text) {
@@ -130,28 +189,11 @@ public class DWidgetDialog extends XDialog {
     }
 
     /**
-     * Overridden to make this dialog resizable.
-     */
-    @Override
-    protected boolean isResizable() {
-        return true;
-    }
-
-    /**
      * Overridden to provide a default size to {@link XDialog}.
      */
     @Override
     protected Point getDefaultSize() {
         // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        return new Point(250, 150);
-    }
-
-    /**
-     * Overridden to let {@link XDialog} store the state of this dialog in a
-     * separate section of the dialog settings file.
-     */
-    @Override
-    protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+        return new Point(280, 180);
     }
 }

@@ -87,9 +87,9 @@ public abstract class AbstractWrappedDataSpace {
 
     public String getLengthAsText() {
         if (DECIMAL.equals(getDataType())) {
-            return getLength() + ", " + getDecimalPositions();
+            return getLength() + ", " + getDecimalPositions(); //$NON-NLS-1$
         } else {
-            return "" + getLength();
+            return String.valueOf(getLength());
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractWrappedDataSpace {
         try {
             return getLengthInternal(getOrLoadDataSpace());
         } catch (Exception e) {
-            ISpherePlugin.logError("Failed to retrieve data area value.", e);
+            ISpherePlugin.logError("Failed to retrieve data area value.", e); //$NON-NLS-1$
         }
         return -1;
     }
@@ -132,7 +132,7 @@ public abstract class AbstractWrappedDataSpace {
      */
     public int getDigits() {
         if (!(getOrLoadDataSpace() instanceof DecimalDataArea)) {
-            throw produceIllegalMethodAccessException("getDigits()");
+            throw produceIllegalMethodAccessException("getDigits()"); //$NON-NLS-1$
         }
         return getLength() - getDecimalPositions();
     }
@@ -149,13 +149,13 @@ public abstract class AbstractWrappedDataSpace {
      */
     public int getDecimalPositions() {
         if (!(getOrLoadDataSpace() instanceof DecimalDataArea)) {
-            throw produceIllegalMethodAccessException("getDecimalPositions()");
+            throw produceIllegalMethodAccessException("getDecimalPositions()"); //$NON-NLS-1$
         }
 
         try {
             return ((DecimalDataArea)getOrLoadDataSpace()).getDecimalPositions();
         } catch (Exception e) {
-            ISpherePlugin.logError("Failed to retrieve data area value.", e);
+            ISpherePlugin.logError("Failed to retrieve data area value.", e); //$NON-NLS-1$
         }
         return -1;
     }
@@ -192,7 +192,7 @@ public abstract class AbstractWrappedDataSpace {
      */
     public String getStringValue() {
         if (!(getOrLoadDataSpace() instanceof CharacterDataArea)) {
-            throw produceIllegalMethodAccessException("getStringValue()");
+            throw produceIllegalMethodAccessException("getStringValue()"); //$NON-NLS-1$
         }
 
         try {
@@ -202,7 +202,7 @@ public abstract class AbstractWrappedDataSpace {
             }
             return value;
         } catch (Exception e) {
-            ISpherePlugin.logError("Failed to retrieve data area value.", e);
+            ISpherePlugin.logError("Failed to retrieve data area value.", e); //$NON-NLS-1$
         }
         return null;
     }
@@ -219,14 +219,14 @@ public abstract class AbstractWrappedDataSpace {
      */
     public Throwable setValue(String aValue) {
         if (!(getOrLoadDataSpace() instanceof CharacterDataArea)) {
-            throw produceIllegalMethodAccessException("setValue(String)");
+            throw produceIllegalMethodAccessException("setValue(String)"); //$NON-NLS-1$
         }
 
         try {
             ((CharacterDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
         } catch (Exception e) {
-            return handleSaveError("Failed to save character data area value.", e);
+            return handleSaveError("Failed to save character data area value.", e); //$NON-NLS-1$
         }
     }
 
@@ -242,13 +242,13 @@ public abstract class AbstractWrappedDataSpace {
      */
     public BigDecimal getDecimalValue() {
         if (!(getOrLoadDataSpace() instanceof DecimalDataArea)) {
-            throw produceIllegalMethodAccessException("getDecimalValue()");
+            throw produceIllegalMethodAccessException("getDecimalValue()"); //$NON-NLS-1$
         }
 
         try {
             return ((DecimalDataArea)getOrLoadDataSpace()).read();
         } catch (Exception e) {
-            ISpherePlugin.logError("Failed to retrieve decimal data area value.", e);
+            ISpherePlugin.logError("Failed to retrieve decimal data area value.", e); //$NON-NLS-1$
         }
 
         return null;
@@ -266,14 +266,14 @@ public abstract class AbstractWrappedDataSpace {
      */
     public Throwable setValue(BigDecimal aValue) {
         if (!(getOrLoadDataSpace() instanceof DecimalDataArea)) {
-            throw produceIllegalMethodAccessException("setValue(BigDecimal)");
+            throw produceIllegalMethodAccessException("setValue(BigDecimal)"); //$NON-NLS-1$
         }
 
         try {
             ((DecimalDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
         } catch (Exception e) {
-            return handleSaveError("Failed to save decimal data area value.", e);
+            return handleSaveError("Failed to save decimal data area value.", e); //$NON-NLS-1$
         }
     }
 
@@ -289,13 +289,13 @@ public abstract class AbstractWrappedDataSpace {
      */
     public Boolean getBooleanValue() {
         if (!(getOrLoadDataSpace() instanceof LogicalDataArea)) {
-            throw produceIllegalMethodAccessException("getBooleanValue()");
+            throw produceIllegalMethodAccessException("getBooleanValue()"); //$NON-NLS-1$
         }
 
         try {
             return ((LogicalDataArea)getOrLoadDataSpace()).read();
         } catch (Exception e) {
-            ISpherePlugin.logError("Failed to retrieve boolean data area value.", e);
+            ISpherePlugin.logError("Failed to retrieve boolean data area value.", e); //$NON-NLS-1$
         }
         return null;
     }
@@ -312,14 +312,14 @@ public abstract class AbstractWrappedDataSpace {
      */
     public Throwable setValue(Boolean aValue) {
         if (!(getOrLoadDataSpace() instanceof LogicalDataArea)) {
-            throw produceIllegalMethodAccessException("setValue(Boolean)");
+            throw produceIllegalMethodAccessException("setValue(Boolean)"); //$NON-NLS-1$
         }
 
         try {
             ((LogicalDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
         } catch (Exception e) {
-            return handleSaveError("Failed to save boolean data area value.", e);
+            return handleSaveError("Failed to save boolean data area value.", e); //$NON-NLS-1$
         }
     }
 
@@ -355,9 +355,9 @@ public abstract class AbstractWrappedDataSpace {
             } else if (DECIMAL.equals(type)) {
                 DecimalDataArea decimalDataArea = (DecimalDataArea)getOrLoadDataSpace();
                 BigDecimal decimal = decimalDataArea.read();
-                String[] parts = decimal.toString().split("\\.");
-                String digits = "";
-                String fraction = "";
+                String[] parts = decimal.toString().split("\\."); //$NON-NLS-1$
+                String digits = ""; //$NON-NLS-1$
+                String fraction = ""; //$NON-NLS-1$
                 if (parts.length > 0) {
                     digits = parts[0];
                     if (parts.length > 1) {
@@ -366,18 +366,18 @@ public abstract class AbstractWrappedDataSpace {
                 }
                 int lenDigits = decimalDataArea.getLength() - decimalDataArea.getDecimalPositions();
                 int lenFraction = decimalDataArea.getDecimalPositions();
-                digits = StringHelper.getFixLengthLeading(digits, lenDigits).replaceAll(" ", "0");
-                fraction = StringHelper.getFixLength(fraction, lenFraction).replaceAll(" ", "0");
+                digits = StringHelper.getFixLengthLeading(digits, lenDigits).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+                fraction = StringHelper.getFixLength(fraction, lenFraction).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
                 bytes = (digits + fraction).toString().getBytes();
             } else if (LOGICAL.equals(type)) {
                 boolean isTrue = ((LogicalDataArea)getOrLoadDataSpace()).read();
                 if (isTrue) {
-                    bytes = "1".getBytes();
+                    bytes = DE.BOOLEAN_TRUE_1.getBytes();
                 } else {
-                    bytes = "0".getBytes();
+                    bytes = DE.BOOLEAN_TRUE_1.getBytes();
                 }
             } else {
-                throw produceIllegalMethodAccessException("getDataAreaBytes()");
+                throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
             }
         } catch (Exception e) {
             // FIXME: add error handling
@@ -421,11 +421,11 @@ public abstract class AbstractWrappedDataSpace {
     public String toString() {
         StringBuilder value = new StringBuilder();
         value.append(getLibrary());
-        value.append("/");
+        value.append("/"); //$NON-NLS-1$
         value.append(getName());
-        value.append("(");
+        value.append("("); //$NON-NLS-1$
         value.append(getDataType());
-        value.append(")");
+        value.append(")"); //$NON-NLS-1$
         return value.toString();
     }
 
@@ -442,7 +442,7 @@ public abstract class AbstractWrappedDataSpace {
                 } else if (LOGICAL.equals(type)) {
                     dataSpaceObject = new LogicalDataArea(as400, path.getPath());
                 } else {
-                    throw produceIllegalMethodAccessException("getOrLoadDataSpace()");
+                    throw produceIllegalMethodAccessException("getOrLoadDataSpace()"); //$NON-NLS-1$
                 }
             } else {
                 dataSpaceObject = new UserSpace(as400, path.getPath());
@@ -476,12 +476,12 @@ public abstract class AbstractWrappedDataSpace {
         try {
             text = (String)objectDescription.getValue(ObjectDescription.TEXT_DESCRIPTION);
         } catch (Exception e) {
-            text = ""; // $NON-NLS-1$
+            text = ""; //$NON-NLS-1$
         }
         return text;
     }
 
     private IllegalMethodAccessException produceIllegalMethodAccessException(String aMethodName) {
-        return new IllegalMethodAccessException("Method " + aMethodName + " is not applicable for a data area of type: " + getDataType());
+        return new IllegalMethodAccessException("Method " + aMethodName + " is not applicable for a data area of type: " + getDataType()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

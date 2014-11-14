@@ -23,6 +23,7 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -56,10 +57,11 @@ import biz.isphere.core.internal.MessageDialogAsync;
 
 public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView {
 
-    public static final String ID = "biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView";
+    public static final String ID = "biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"; //$NON-NLS-1$ 
 
     private DataSpaceEditorRepository repository;
     private DataSpaceEditorManager manager;
+    private WatchItemManager watchManager;
 
     private Composite mainArea;
     private Composite dataSpaceEditor;
@@ -74,6 +76,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public AbstractDataSpaceMonitorView() {
         manager = new DataSpaceEditorManager();
         repository = DataSpaceEditorRepository.getInstance();
+        watchManager = new WatchItemManager();
     }
 
     @Override
@@ -91,7 +94,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     private void createActions() {
 
         refreshViewAction = new RefreshViewAction(this);
-        refreshViewAction.setToolTipText("Refresh the content of the display object");
+        refreshViewAction.setToolTipText(Messages.Refresh_the_contents_of_this_view);
         refreshViewAction.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH));
         refreshViewAction.setEnabled(false);
     }
@@ -240,6 +243,62 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return valueLabel;
     }
 
+    private Composite createDataSpaceEditor(Composite parent, DEditor dEditor) {
+
+        ScrolledComposite scrollableArea = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
+        scrollableArea.setLayout(new GridLayout(1, false));
+        scrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrollableArea.setExpandHorizontal(true);
+        scrollableArea.setExpandVertical(true);
+
+        int numColumns;
+        if (dEditor == null) {
+            numColumns = 2;
+        } else {
+            numColumns = dEditor.getColumns() * 2;
+        }
+        Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
+
+        if (dEditor != null) {
+            
+            AbstractDWidget[] widgets = dEditor.getWidgets();
+            Color color = ColorHelper.getBackgroundColorOfSelectedControls();
+            for (AbstractDWidget widget : widgets) {
+                Control control = manager.createReadOnlyWidgetControlAndAddToParent(dialogEditor, widget);
+                if (control instanceof Text) {
+                    control.addMouseTrackListener(new ControlBackgroundPainter(color));
+                } else if (control instanceof Button) {
+                    control.addMouseTrackListener(new ControlBackgroundPainter(color));
+                }
+
+                createControlDecorator(control);
+                createControlPopupMenu(watchManager, dialogEditor, control);
+            }
+
+            Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+            GridData separatorLayoutData = createGridDataFillAndGrab(numColumns);
+            separator.setLayoutData(separatorLayoutData);
+
+            Label watchInfo = new Label(parent, SWT.NONE);
+            watchInfo.setText(Messages.Use_the_context_menu_to_watch_an_item);
+            watchInfo.setLayoutData(createGridDataFillAndGrab(numColumns));
+            
+        } else {
+
+            Label dragDropInfo = new Label(parent, SWT.NONE);
+            dragDropInfo.setText(Messages.Drag_drop_character_data_area_or_user_space_from_RSE_tree);
+            dragDropInfo.setLayoutData(createGridDataFillAndGrab(numColumns));
+        }
+
+        dialogEditor.layout();
+        scrollableArea.setContent(dialogEditor);
+        scrollableArea.setMinSize(dialogEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+        addDropSupportOnComposite(dialogEditor);
+
+        return dialogEditor;
+    }
+
     private DEditor loadEditorForDataSpaceObject(Shell shell, RemoteObject remoteObject) {
 
         DEditor[] dEditors = repository.getDataSpaceEditorsForObject(remoteObject);
@@ -260,13 +319,22 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return null;
     }
 
-    private void copySampleDataToControls(DDataSpaceValue dataSpaceValue) {
+    private void copyDataToControls(DDataSpaceValue dataSpaceValue) {
 
         currentDataSpaceValue = dataSpaceValue;
 
         Control[] controls = dataSpaceEditor.getChildren();
         for (Control control : controls) {
-            manager.setControlValue(control, dataSpaceValue);
+            if (manager.isManagedControl(control)) {
+                setControlValue(dataSpaceValue, control);
+            }
+        }
+    }
+
+    protected void setControlValue(DDataSpaceValue dataSpaceValue, Control control) {
+        manager.setControlValue(control, dataSpaceValue);
+        if (watchManager.isWatchedControl(control)) {
+            watchManager.setCurrentValue(control, manager.getControlValue(control));
         }
     }
 
@@ -278,61 +346,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         } else {
             refreshViewAction.setEnabled(false);
         }
-    }
-
-    private Composite createDataSpaceEditor(Composite parent, DEditor dEditor) {
-
-        ScrolledComposite scrollableArea = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
-        scrollableArea.setLayout(new GridLayout(1, false));
-        scrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
-        scrollableArea.setExpandHorizontal(true);
-        scrollableArea.setExpandVertical(true);
-
-        int numColumns;
-        if (dEditor == null) {
-            numColumns = 2;
-        } else {
-            numColumns = dEditor.getColumns() * 2;
-        }
-        Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
-
-        if (dEditor != null) {
-            AbstractDWidget[] widgets = dEditor.getWidgets();
-            Color color = ColorHelper.getBackgroundColorOfSelectedControls();
-            for (AbstractDWidget widget : widgets) {
-                Control control = manager.createReadOnlyWidgetControlAndAddToParent(dialogEditor, widget);
-                if (control instanceof Text) {
-                    control.addMouseTrackListener(new ControlBackgroundPainter(color));
-                } else if (control instanceof Button) {
-                    control.addMouseTrackListener(new ControlBackgroundPainter(color));
-                }
-
-                createControlDecorator(control);
-                createControlPopupMenu(dialogEditor, control);
-            }
-
-            Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-            GridData separatorLayoutData = createGridDataFillAndGrab(numColumns);
-            separator.setLayoutData(separatorLayoutData);
-            
-            Label watchInfo = new Label(parent, SWT.NONE);
-            watchInfo.setText("Use the context menu to watch an item.");
-            GridData watchInfoLayoutData = createGridDataFillAndGrab(numColumns);
-            watchInfo.setLayoutData(watchInfoLayoutData);
-        } else {
-
-            Label dragDropInfo = new Label(dialogEditor, SWT.NONE);
-            dragDropInfo.setText("Drag && drop character data area or user space from RSE tree");
-            dragDropInfo.setLayoutData(createGridDataFillAndGrab(numColumns));
-        }
-
-        dialogEditor.layout();
-        scrollableArea.setContent(dialogEditor);
-        scrollableArea.setMinSize(dialogEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-        addDropSupportOnComposite(dialogEditor);
-
-        return dialogEditor;
     }
 
     private void addDropSupportOnComposite(Composite dialogEditorComposite) {
@@ -353,7 +366,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private GridLayout createGridLayoutSimple(int columns) {
         GridLayout layout = new GridLayout(columns, false);
-        layout.marginHeight = 0;
+        layout.marginHeight = 5;
         layout.horizontalSpacing = 10;
         return layout;
     }
@@ -386,7 +399,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     protected abstract AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception;
 
-    protected abstract void createControlPopupMenu(Composite dialogEditor, Control control);
+    protected abstract void createControlPopupMenu(WatchItemManager watchManager, Composite dialogEditor, Control control);
 
     protected abstract void createControlDecorator(Control control);
 
@@ -508,7 +521,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                 updateDataSpaceEditorLabels(dataSpaceValue);
             }
 
-            copySampleDataToControls(dataSpaceValue);
+            copyDataToControls(dataSpaceValue);
             refreshEditor(mainArea);
 
             return Status.OK_STATUS;

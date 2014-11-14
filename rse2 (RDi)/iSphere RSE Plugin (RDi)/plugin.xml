@@ -169,7 +169,7 @@
                 class="biz.isphere.rse.dataspaceeditor.rse.MonitorDataAreaAction"
                 enablesFor="*"
                 id="biz.isphere.rse.dataspaceeditor.rse.DataAreaMonitorAction"
-                label="Data Area Monitor"
+                label="%iSphere_Data_Area_Monitor"
                 icon="icons/data_monitor.gif"
                 menubarPath="additions">
 	         </action>
@@ -196,7 +196,7 @@
                 class="biz.isphere.rse.dataspaceeditor.rse.MonitorUserSpaceAction"
                 enablesFor="*"
                 id="biz.isphere.rse.dataspaceeditor.rse.UserSpaceMonitorAction"
-                label="User Space Monitor"
+                label="%iSphere_User_Space_Monitor"
                 icon="icons/data_monitor.gif"
                 menubarPath="additions">
 	         </action>
@@ -598,6 +598,7 @@
             <command
                   commandId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
                   label="%menu_DataSpace_Editor_Designer"
+                  icon="icons/data_space_editor_designer.gif"
                   style="push"
                   tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
             </command>

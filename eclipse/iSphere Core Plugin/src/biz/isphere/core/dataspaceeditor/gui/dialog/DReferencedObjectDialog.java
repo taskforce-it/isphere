@@ -8,31 +8,28 @@
 
 package biz.isphere.core.dataspaceeditor.gui.dialog;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.core.ISpherePlugin;
+import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.model.DTemplateReferencedObject;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.Validator;
 
-public class DReferencedObjectDialog extends XDialog {
+public class DReferencedObjectDialog extends AbstractDialog {
 
     private String type;
     private DTemplateReferencedObject referencedObject;
 
     private Text textName;
     private Text textLibrary;
+
+    private Validator nameValidator;
+    private Validator libraryValidator;
 
     public DReferencedObjectDialog(Shell parentShell, String type) {
         super(parentShell);
@@ -52,36 +49,30 @@ public class DReferencedObjectDialog extends XDialog {
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
-
-        Composite mainArea = new Composite(parent, SWT.NONE);
-        mainArea.setLayout(new GridLayout(2, false));
-        GridData mainAreaLayoutData = new GridData();
-        mainAreaLayoutData.horizontalAlignment = SWT.FILL;
-        mainAreaLayoutData.grabExcessHorizontalSpace = true;
-        mainArea.setLayoutData(mainAreaLayoutData);
+    protected void createContent(Composite parent) {
 
         // Name
-        textName = createTextField(mainArea, Messages.Name_colon);
+        textName = createNameField(parent, Messages.Name_colon);
+        textName.addVerifyListener(new UpperCaseOnlyVerifier());
+        textName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateName();
+            }
+        });
+
+        nameValidator = Validator.getNameInstance();
 
         // Library
-        textLibrary = createTextField(mainArea, Messages.Library_colon);
+        textLibrary = createNameField(parent, Messages.Library_colon);
+        textLibrary.setText(ISeries.SPCVAL_LIBL);
+        textLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
+        textLibrary.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateLibrary();
+            }
+        });
 
-        return dialogArea;
-    }
-
-    private Text createTextField(Composite parent, String label) {
-        Label labelLabel = new Label(parent, SWT.NONE);
-        labelLabel.setText(label);
-
-        Text textField = new Text(parent, SWT.BORDER);
-        GridData textNameLayoutData = new GridData();
-        textNameLayoutData.widthHint = 150;
-        textNameLayoutData.horizontalAlignment = SWT.FILL;
-        textNameLayoutData.grabExcessHorizontalSpace = true;
-        textField.setLayoutData(textNameLayoutData);
-
-        return textField;
+        libraryValidator = Validator.getLibraryNameInstance(ISeries.SPCVAL_LIBL);
     }
 
     public DTemplateReferencedObject getReferencedObject() {
@@ -89,42 +80,48 @@ public class DReferencedObjectDialog extends XDialog {
     }
 
     @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
-        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
-    }
+    protected boolean validate() {
 
-    @Override
-    protected void okPressed() {
-        String name = textName.getText();
-        String library = textLibrary.getText();
-        referencedObject = new DTemplateReferencedObject(name, library, type);
-        super.okPressed();
-    }
+        // Name
+        if (!validateName()) {
+            return false;
+        }
 
-    /**
-     * Overridden to make this dialog resizable.
-     */
-    @Override
-    protected boolean isResizable() {
+        // Columns
+        if (!validateLibrary()) {
+            return false;
+        }
+
         return true;
     }
 
-    /**
-     * Overridden to provide a default size to {@link XDialog}.
-     */
-    @Override
-    protected Point getDefaultSize() {
-        // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        return new Point(250, 150);
+    private boolean validateName() {
+
+        if (!nameValidator.validate(textName.getText())) {
+            setErrorMessage(textName, "Object name is invalid or missing.");
+            return false;
+        }
+
+        clearErrorMessage(textName);
+        return true;
     }
 
-    /**
-     * Overridden to let {@link XDialog} store the state of this dialog in a
-     * separate section of the dialog settings file.
-     */
+    private boolean validateLibrary() {
+
+        if (!libraryValidator.validate(textLibrary.getText())) {
+            setErrorMessage(textLibrary, "Library name is invalid or missing.");
+            return false;
+        }
+
+        clearErrorMessage(textLibrary);
+        return true;
+    }
+
     @Override
-    protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    protected void performOKPressed() {
+
+        String name = textName.getText();
+        String library = textLibrary.getText();
+        referencedObject = new DTemplateReferencedObject(name, library, type);
     }
 }
