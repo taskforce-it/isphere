@@ -121,11 +121,14 @@ public class DEditorDialog extends AbstractDialog {
 
     private boolean validateColumns() {
 
-        int columns = IntHelper.tryParseInt(spinnerColumns.getText(), -1);
-        if (columns < spinnerColumns.getMinimum() || columns > spinnerColumns.getMaximum()) {
-            setErrorMessage(spinnerColumns, "Number of columns are out of range.");
-            return false;
-        }
+        // FIXME: spinnerColumns.getText() - available with 3.4 :-(
+        // int columns = IntHelper.tryParseInt(spinnerColumns.getText(), -1);
+        // if (columns < spinnerColumns.getMinimum() || columns >
+        // spinnerColumns.getMaximum()) {
+        // setErrorMessage(spinnerColumns, "Number of columns are out of
+        // range.");
+        // return false;
+        // }
 
         clearErrorMessage(spinnerColumns);
         return true;
