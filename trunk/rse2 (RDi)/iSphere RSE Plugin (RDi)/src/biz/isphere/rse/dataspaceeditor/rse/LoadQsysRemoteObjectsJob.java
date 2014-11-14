@@ -82,9 +82,9 @@ public class LoadQsysRemoteObjectsJob extends Job {
         ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 
         // Get connection delimiter
-        int connectionDelim = droppedObject.indexOf(":");
+        int connectionDelim = droppedObject.indexOf(":"); //$NON-NLS-1$
         if (connectionDelim == -1) {
-            int profileDelim = droppedObject.indexOf(".");
+            int profileDelim = droppedObject.indexOf("."); //$NON-NLS-1$
             if (profileDelim != -1) {
                 String profileId = droppedObject.substring(0, profileDelim);
                 String connectionId = droppedObject.substring(profileDelim + 1, droppedObject.length());
@@ -94,7 +94,7 @@ public class LoadQsysRemoteObjectsJob extends Job {
         }
 
         // Get subsystem delimiter
-        int subsystemDelim = droppedObject.indexOf(":", connectionDelim + 1);
+        int subsystemDelim = droppedObject.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
         if (subsystemDelim == -1) {
             return registry.getSubSystem(droppedObject);
         }
