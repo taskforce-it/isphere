@@ -108,9 +108,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textISphereLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textISphereLibrary.setTextLimit(10);
 
-        validatorLibrary = Validator.getNameInstance();
-        validatorLibrary.setLength(10);
-        validatorLibrary.setRestricted(false);
+        validatorLibrary = Validator.getLibraryNameInstance();
 
         Button buttonTransfer = new Button(container, SWT.NONE);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.Validator;
 
 public class BindingDirectoryEntryDetail {
@@ -99,10 +100,7 @@ public class BindingDirectoryEntryDetail {
             comboLibrary.setEnabled(false);
         }
 
-        validatorLibrary = Validator.getNameInstance();
-        validatorLibrary.setLength(10);
-        validatorLibrary.setRestricted(false);
-        validatorLibrary.addSpecialValue("*LIBL");
+        validatorLibrary = Validator.getLibraryNameInstance(ISeries.SPCVAL_LIBL);
 
         // Object
 
@@ -123,7 +121,6 @@ public class BindingDirectoryEntryDetail {
         }
 
         validatorObject = Validator.getNameInstance();
-        validatorObject.setLength(10);
 
         // Object type
 

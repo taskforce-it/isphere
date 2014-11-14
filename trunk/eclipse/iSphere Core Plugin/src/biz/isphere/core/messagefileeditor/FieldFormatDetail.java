@@ -186,9 +186,7 @@ public class FieldFormatDetail {
             textLength.setEnabled(false);
         }
 
-        validatorLength = Validator.getDecInstance();
-        validatorLength.setLength(5);
-        validatorLength.setPrecision(0);
+        validatorLength = Validator.getIntegerInstance(5);
 
         // Decimal positions
 
@@ -212,9 +210,7 @@ public class FieldFormatDetail {
             textDecimalPositions.setEnabled(false);
         }
 
-        validatorDecimalPositions = Validator.getDecInstance();
-        validatorDecimalPositions.setLength(2);
-        validatorDecimalPositions.setPrecision(0);
+        validatorDecimalPositions = Validator.getIntegerInstance(2);
 
         // Bytes
 
@@ -234,9 +230,7 @@ public class FieldFormatDetail {
             textBytes.setEnabled(false);
         }
 
-        validatorBytes = Validator.getDecInstance();
-        validatorBytes.setLength(1);
-        validatorBytes.setPrecision(0);
+        validatorBytes = Validator.getIntegerInstance(1);
 
         // Option
 
