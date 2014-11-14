@@ -20,4 +20,12 @@
     -->
     <topic label="Preferences" href="html/dataareaeditor/preferences.html" />
   </topic>
+  <topic label="Data Spaces" href="html/dataspaces/dataspaces.html"> 
+    <!--
+	Add sub topics here:
+    -->
+    <topic label="Designer" href="html/dataspaces/designer/dataspaceeditordesigner.html" />
+    <topic label="Monitor"  href="html/dataspaces/monitor/dataspacemonitor.html" />
+    <topic label="Preferences"  href="html/dataspaces/preferences/preferences.html" />
+  </topic>
 </toc> 
