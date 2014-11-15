@@ -12,15 +12,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 import com.ibm.as400.access.AS400;
 
 public class DataAreaEditorInput extends AbstractObjectEditorInput {
 
-    public DataAreaEditorInput(AS400 anAS400, String aConnection, String aLibrary, String aDataArea, String aMode) {
-        super(anAS400, aConnection, aLibrary, aDataArea, ISeries.DTAARA, aMode, ISpherePlugin.IMAGE_DATA_AREA);
+    public DataAreaEditorInput(AS400 anAS400, RemoteObject remoteObject, String aMode) {
+        super(anAS400, remoteObject, aMode, ISpherePlugin.IMAGE_DATA_AREA);
     }
 
     public boolean exists() {

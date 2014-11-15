@@ -15,12 +15,16 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     private String mode;
     private Image titleImage;
 
-    public AbstractObjectEditorInput(AS400 anAS400, String aConnection, String aLibrary, String anObjectName, String anObjectType, String aMode,
-        String anImageID) {
+    public AbstractObjectEditorInput(AS400 anAS400, RemoteObject anRemoteObject, String aMode, String anImageID) {
         as400 = anAS400;
-        remoteObject = new RemoteObject(aConnection, anObjectName, aLibrary, anObjectType);
+        remoteObject = anRemoteObject;
         mode = aMode;
         titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);
+    }
+
+    public AbstractObjectEditorInput(AS400 anAS400, String aConnection, String aLibrary, String anObjectName, String anObjectType, String aMode,
+        String anImageID) {
+        this(anAS400, new RemoteObject(aConnection, anObjectName, aLibrary, anObjectType, ""), aMode, anImageID);
     }
 
     public AS400 getAS400() {
@@ -30,7 +34,7 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     public RemoteObject getRemoteObject() {
         return remoteObject;
     }
-    
+
     public String getConnection() {
         return remoteObject.getConnectionName();
     }
@@ -52,7 +56,8 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     }
 
     public String getToolTipText() {
-        return "\\\\" + getAS400().getSystemName() + "\\QSYS.LIB\\" + getObjectLibrary() + ".LIB\\" + getObjectName() + "." + remoteObject.getObjectType();
+        return "\\\\" + getAS400().getSystemName() + "\\QSYS.LIB\\" + getObjectLibrary() + ".LIB\\" + getObjectName() + "."
+            + remoteObject.getObjectType();
     }
 
     public String getMode() {

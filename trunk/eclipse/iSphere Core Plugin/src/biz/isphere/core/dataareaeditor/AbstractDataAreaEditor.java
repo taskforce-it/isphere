@@ -211,7 +211,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
             actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editorDelegate.getPasteAction());
         }
     }
-
+    
     /**
      * Opens the data area editor for a given data area.
      * 
@@ -222,11 +222,11 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
      * @param aMode - mode, the editor is opened for. The only allowed value is
      *        {@link IEditor#EDIT}
      */
-    public static void openEditor(AS400 anAS400, String aConnection, String aLibrary, String aDataArea, String aMode) {
+    public static void openEditor(AS400 anAS400, RemoteObject remoteObject, String aMode) {
 
         try {
 
-            DataAreaEditorInput editorInput = new DataAreaEditorInput(anAS400, aConnection, aLibrary, aDataArea, aMode);
+            DataAreaEditorInput editorInput = new DataAreaEditorInput(anAS400, remoteObject, aMode);
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractDataAreaEditor.ID);
 
         } catch (PartInitException e) {
