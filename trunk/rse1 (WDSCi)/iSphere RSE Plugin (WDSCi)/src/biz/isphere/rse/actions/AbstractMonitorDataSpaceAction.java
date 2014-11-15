@@ -101,7 +101,8 @@ public abstract class AbstractMonitorDataSpaceAction extends ISeriesSystemBaseAc
                 String name = qsysRemoteObject.getName();
                 String library = qsysRemoteObject.getLibrary();
                 String type = qsysRemoteObject.getType();
-                RemoteObject remoteObject = new RemoteObject(connection, name, library, type);
+                String description = qsysRemoteObject.getDescription();
+                RemoteObject remoteObject = new RemoteObject(connection, name, library, type, description);
 
                 ((IDialogView)justActivated).setData(new RemoteObject[] { remoteObject });
             }

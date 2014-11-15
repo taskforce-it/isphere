@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.core.dataspaceeditor.rse.IListOfRemoteObjectsReceiver;
 import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.ISeries;
 
 import com.ibm.etools.iseries.core.api.ISeriesObject;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
@@ -50,7 +51,8 @@ public class LoadQsysRemoteObjectsJob extends Job {
             String name = iSeriesObject.getName();
             String library = iSeriesObject.getLibrary();
             String type = iSeriesObject.getType();
-            remoteObjects.add(new RemoteObject(connection, name, library, type));
+            String description = iSeriesObject.getDescription();
+            remoteObjects.add(new RemoteObject(connection, name, library, type, description));
         }
         receiver.setRemoteObjects(remoteObjects.toArray(new RemoteObject[remoteObjects.size()]));
 
