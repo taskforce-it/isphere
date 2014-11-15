@@ -21,8 +21,9 @@ public class WatchItemManager {
         this.watchedItems = new HashMap<Control, WatchedItem>();
     }
 
-    public void addControl(IControlDecoration decorator) {
+    public void addControl(IControlDecoration decorator, String currentValue) {
         watchedItems.put(decorator.getControl(), new WatchedItem(decorator));
+        setInitialValue(decorator, currentValue);
         decorator.show();
     }
 
@@ -37,7 +38,7 @@ public class WatchItemManager {
         }
         return false;
     }
-    
+
     public void setCurrentValue(Control control, String controlValue) {
         checkControl(control);
         WatchedItem watchedItem = watchedItems.get(control);
@@ -49,12 +50,17 @@ public class WatchItemManager {
         watchedItem.setCurrentValue(controlValue);
     }
 
+    private void setInitialValue(IControlDecoration decorator, String currentValue) {
+        WatchedItem watchedItem = watchedItems.get(decorator.getControl());
+        watchedItem.setCurrentValue(currentValue);
+    }
+
     private void checkControl(Control control) {
         if (!isWatchedControl(control)) {
             throw new RuntimeException("Control not found: " + control);
         }
     }
-    
+
     private Image getValueChangedImage() {
         if (valueChangedImage == null) {
             valueChangedImage = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_VALUE_CHANGED).createImage();

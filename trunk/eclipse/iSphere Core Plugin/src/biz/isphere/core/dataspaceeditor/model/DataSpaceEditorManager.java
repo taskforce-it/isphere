@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.ButtonLockedListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
@@ -398,6 +399,20 @@ public final class DataSpaceEditorManager {
         return false;
     }
 
+    public boolean hasInvalidDataWarning(Control control) {
+        if (getPayloadFromControl(control) != null) {
+            return getPayloadFromControl(control).hasInvalidDataWarning();
+        }
+        return false;
+    }
+
+    public boolean hasInvalidDataError(Control control) {
+        if (getPayloadFromControl(control) != null) {
+            return getPayloadFromControl(control).hasInvalidDataError();
+        }
+        return false;
+    }
+
     public void setControlValue(Control control, DDataSpaceValue value) {
         if (!isManagedControl(control)) {
             return;
@@ -406,32 +421,41 @@ public final class DataSpaceEditorManager {
         ControlPayload payload = getPayloadFromControl(control);
         AbstractDWidget widget = payload.getWidget();
 
-        if (widget instanceof DText) {
-            String textValue = value.getString(widget.getOffset(), widget.getLength());
-            ((Text)control).setText(textValue);
-        } else if (widget instanceof DBoolean) {
-            Boolean boolValue = value.getBoolean(widget.getOffset(), widget.getLength());
-            Button button = (Button)control;
-            button.setSelection(boolValue);
-            if (isLocked(button) && payload.getLockedListener() != null) {
-                ButtonLockedListener listener = (ButtonLockedListener)payload.getLockedListener();
-                listener.setLockedValue(boolValue);
+        try {
+
+            if (widget instanceof DText) {
+                String textValue = value.getString(widget.getOffset(), widget.getLength());
+                ((Text)control).setText(StringHelper.trimR(textValue));
+                if (textValue.length() != widget.getLength()) {
+                    payload.setInvalidDataWarning(true);
+                }
+            } else if (widget instanceof DBoolean) {
+                Boolean boolValue = value.getBoolean(widget.getOffset(), widget.getLength());
+                Button button = (Button)control;
+                button.setSelection(boolValue);
+                if (isLocked(button) && payload.getLockedListener() != null) {
+                    ButtonLockedListener listener = (ButtonLockedListener)payload.getLockedListener();
+                    listener.setLockedValue(boolValue);
+                }
+            } else if (widget instanceof DTinyInteger) {
+                Byte tinyValue = value.getTiny(widget.getOffset(), widget.getLength());
+                ((Text)control).setText(tinyValue.toString());
+            } else if (widget instanceof DShortInteger) {
+                Short shortValue = value.getShort(widget.getOffset(), widget.getLength());
+                ((Text)control).setText(shortValue.toString());
+            } else if (widget instanceof DInteger) {
+                Integer intValue = value.getInteger(widget.getOffset(), widget.getLength());
+                ((Text)control).setText(intValue.toString());
+            } else if (widget instanceof DLongInteger) {
+                Long longValue = value.getLongInteger(widget.getOffset(), widget.getLength());
+                ((Text)control).setText(longValue.toString());
+            } else if (widget instanceof DDecimal) {
+                BigDecimal decimalValue = value.getDecimal(widget.getOffset(), widget.getLength(), ((DDecimal)widget).getFraction());
+                ((Text)control).setText(decimalValue.toString());
             }
-        } else if (widget instanceof DTinyInteger) {
-            Byte tinyValue = value.getTiny(widget.getOffset(), widget.getLength());
-            ((Text)control).setText(tinyValue.toString());
-        } else if (widget instanceof DShortInteger) {
-            Short shortValue = value.getShort(widget.getOffset(), widget.getLength());
-            ((Text)control).setText(shortValue.toString());
-        } else if (widget instanceof DInteger) {
-            Integer intValue = value.getInteger(widget.getOffset(), widget.getLength());
-            ((Text)control).setText(intValue.toString());
-        } else if (widget instanceof DLongInteger) {
-            Long longValue = value.getLongInteger(widget.getOffset(), widget.getLength());
-            ((Text)control).setText(longValue.toString());
-        } else if (widget instanceof DDecimal) {
-            BigDecimal decimalValue = value.getDecimal(widget.getOffset(), widget.getLength(), ((DDecimal)widget).getFraction());
-            ((Text)control).setText(decimalValue.toString());
+
+        } catch (Throwable e) {
+            payload.setInvalidDataError(true);
         }
     }
 

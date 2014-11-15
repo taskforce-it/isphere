@@ -26,7 +26,9 @@ public class ControlPayload {
     private AbstractDWidget widget;
     private Control control;
     private boolean locked;
-    EventListener listener;
+    private EventListener listener;
+    private boolean invalidDataWarning;
+    private boolean invalidDataError;
 
     public ControlPayload(AbstractDWidget widget, Control control) {
         this.widget = widget;
@@ -47,13 +49,36 @@ public class ControlPayload {
         return locked;
     }
 
+    /**
+     * Sets the 'locked' status of the control. Data of a locked control cannot
+     * be modified.
+     * 
+     * @param locked - locked status of the control
+     * @param listener - listener that ensures the locked status
+     */
     public void setLocked(boolean locked, EventListener listener) {
         this.locked = locked;
         this.listener = listener;
     }
-    
+
     public EventListener getLockedListener() {
         return listener;
+    }
+    
+    public void setInvalidDataWarning(boolean invalidDataWarning) {
+        this.invalidDataWarning = invalidDataWarning;
+    }
+    
+    public boolean hasInvalidDataWarning() {
+        return invalidDataWarning;
+    }
+    
+    public void setInvalidDataError(boolean invalidDataWarning) {
+        this.invalidDataError = invalidDataWarning;
+    }
+    
+    public boolean hasInvalidDataError() {
+        return invalidDataError;
     }
 
 }
