@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
 
@@ -92,8 +93,10 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
 
                 if (object != null) {
 
+                    String dataArea = object.getName();
                     String library = object.getLibrary();
-                    String bindingDirectory = object.getName();
+                    String objectType = object.getType();
+                    String description = object.getDescription();
 
                     ISeriesConnection iseriesConnection = object.getISeriesConnection();
 
@@ -114,19 +117,12 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
                         }
 
                         if (as400 != null && jdbcConnection != null) {
-
-                            AbstractDataAreaEditor.openEditor(as400, connectionName, library, bindingDirectory, IEditor.EDIT);
-
+                            RemoteObject remoteObject = new RemoteObject(connectionName, dataArea, library, objectType, description);
+                            AbstractDataAreaEditor.openEditor(as400, remoteObject, IEditor.EDIT);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
