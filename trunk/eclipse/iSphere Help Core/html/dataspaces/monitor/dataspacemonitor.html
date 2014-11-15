@@ -10,9 +10,13 @@
 <body>
 <h1>Data Space Monitor</h1>
 The <i>Data Space Monitor</> is used for monitoring the data of your data space objects. Prior you
-can use the monitor for a specific object, you need to go to the 
+can use the monitor for character data areas with mixed data or user spaces, you need to go to the 
 <a href="../designer/dataspaceeditordesigner.html"><i>Data Space Editor Designer</i></a> and create an editor 
 for it. 
+<p>
+For simple character data areas or decimal or logical data areas that is not required, because the monitor 
+can generate an editor for it. But of course it cannot know anything about user spaces or data areas with
+mixed data.  
 <p>
 Once you have one or more editors for your space object, you can start the monitor from the context menu
 of the RSE tree. In case you have more than one editor for the selected object, you need to select the
@@ -47,6 +51,32 @@ Cool, isn't it?
 <tr><td class="info" >Hint: You can change the background color from the <i>Colors and Fonts</i> page of 
 the Eclipse preferences.</td></tr>
 </table>
+<p>
+<h2>Invalid Data Warning</h2>
+<p>
+If the monitor encounters a problem when copying the data to the screen, it displays the following 
+message at the bottom, right corner of the view:
+<p>
+<img src="assets\invalid_data_warning.gif" 
+     width="542" height="19" 
+     align="middle">
+
+<p>
+If you see that message, you should carefully check whether or not the fields of your editor are
+properly defined regarding to offset and length.
+<p>
+<h2>Invalid Data Error</h2>
+<p>
+If the monitor encounters a serious problem when copying the data to the screen, it displays the 
+following message at the bottom, right corner of the view:
+<p>
+<img src="assets\invalid_data_error.gif" 
+     width="591" height="19" 
+     align="middle">
+
+<p>
+If you see that message, you should carefully check whether or not the fields of your editor are
+properly defined regarding to offset and length.
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
