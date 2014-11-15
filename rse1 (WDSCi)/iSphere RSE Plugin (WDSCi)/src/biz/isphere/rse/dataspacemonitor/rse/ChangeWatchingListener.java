@@ -26,7 +26,7 @@ public class ChangeWatchingListener extends AbstractChangeWatchingListener {
     protected void setVisible(boolean visible) {
 
         if (visible) {
-            watchManager.addControl(decorator);
+            watchManager.addControl(decorator, getControlValue(decorator.getControl()));
         } else {
             watchManager.remoteControl(decorator);
         }
