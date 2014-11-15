@@ -663,6 +663,10 @@ public class Messages extends NLS {
     public static String DftText_Decimal_value_colon;
     
     public static String DftText_Logical_value_colon;
+
+    public static String Invalid_data_warning_Editor_might_not_be_suitable_for_the_data;
+
+    public static String Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen;
     
     static {
         // initialize resource bundle
