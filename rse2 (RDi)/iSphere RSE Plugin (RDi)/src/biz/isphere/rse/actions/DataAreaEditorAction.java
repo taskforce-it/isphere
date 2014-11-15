@@ -19,6 +19,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 
@@ -43,16 +44,18 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
         }
     }
 
-    private void run(QSYSRemoteObject remoteObject) {
+    private void run(QSYSRemoteObject qsysRemoteObject) {
         
-        String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-        String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-        String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+        String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+        String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+        String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
-        if (remoteObject.getType().equals(ISeries.DTAARA)) {
+        if (qsysRemoteObject.getType().equals(ISeries.DTAARA)) {
             
-            String library = remoteObject.getLibrary();
-            String dataArea = remoteObject.getName();
+            String dataArea = qsysRemoteObject.getName();
+            String library = qsysRemoteObject.getLibrary();
+            String objectType = qsysRemoteObject.getType();
+            String description = qsysRemoteObject.getDescription();
             IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
 
             if (ibmiConnection != null) {
@@ -64,7 +67,8 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
                 }
 
                 if (as400 != null) {
-                    AbstractDataAreaEditor.openEditor(as400, connectionName, library, dataArea, IEditor.EDIT);
+                    RemoteObject remoteObject = new RemoteObject(connectionName, dataArea, library, objectType, description);
+                    AbstractDataAreaEditor.openEditor(as400, remoteObject, IEditor.EDIT);
                 }
             }
         }
