@@ -71,7 +71,7 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfCharacterDataArea() throws Exception {
         
-        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace char_delegate = new WrappedDataSpace(as400, object);
         
         try {
@@ -97,7 +97,7 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfLogicalDataArea() throws Exception {
         
-        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace lgl_delegate = new WrappedDataSpace(as400, object);
         
         try {
@@ -123,7 +123,7 @@ public class TestWrappedDataArea {
     @Test
     public void testIllegalAccessOfDecimalDataArea() throws Exception {
         
-        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace dec_delegate = new WrappedDataSpace(as400, object);
         
         try {
@@ -143,7 +143,7 @@ public class TestWrappedDataArea {
     @Test
     public void testCharacterDataArea() throws Exception {
 
-        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, char_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
         Assert.assertEquals(char_type, delegate.getDataType());
@@ -155,7 +155,7 @@ public class TestWrappedDataArea {
     @Test
     public void testLogicalDataArea() throws Exception {
 
-        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, lgl_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
         Assert.assertEquals(lgl_type, delegate.getDataType());
@@ -167,7 +167,7 @@ public class TestWrappedDataArea {
     @Test
     public void testDecimalDataArea() throws Exception {
 
-        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA);
+        RemoteObject object = new RemoteObject(null, dec_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace delegate = new WrappedDataSpace(as400, object);
 
         Assert.assertEquals(dec_type, delegate.getDataType());
