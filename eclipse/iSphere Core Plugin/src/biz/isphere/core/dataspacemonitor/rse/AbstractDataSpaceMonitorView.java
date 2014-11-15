@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -68,9 +69,11 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private Label labelObject;
     private Label labelLibrary;
-    private Label labeltype;
+    private Label labelType;
+    private Label labelDescription;
 
     private Action refreshViewAction;
+    private Label labelInvalidDataWarningOrError;
 
     public AbstractDataSpaceMonitorView() {
         manager = new DataSpaceEditorManager();
@@ -117,7 +120,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void refreshDataSynchronously() {
         try {
 
-            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, currentDataSpaceValue.getRemoteObject(), null);
+            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, currentDataSpaceValue.getRemoteObject());
             loadDataJob.schedule();
 
         } catch (Exception e) {
@@ -138,7 +141,15 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
 
         DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
-        if (selectedEditor == null) {
+        if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
+            /*
+             * Cancel job, because we need an editor and user spaces might be
+             * quite large. This way we do not load it for nothing, in case we
+             * cannot find an editor. For all types of data areas we can
+             * generate the editor. Although it might be quite ugly, generating
+             * a text field for a 2000-byte character value.
+             */
             return;
         }
 
@@ -201,24 +212,25 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return dataSpaceValue;
     }
 
-    private void replaceDataSpaceEditor(Composite parent, DEditor dEditor, DDataSpaceValue dataSpaceValue) {
-        Control[] controls = parent.getChildren();
+    private void replaceDataSpaceEditor(DEditor dEditor, DDataSpaceValue dataSpaceValue) {
+        Control[] controls = mainArea.getChildren();
         for (Control control : controls) {
             control.dispose();
         }
 
-        createDataSpaceSpaceEditorLabels(parent, dataSpaceValue);
-        dataSpaceEditor = createDataSpaceEditor(parent, dEditor);
+        createDataSpaceSpaceEditorLabels(mainArea, dataSpaceValue);
+        dataSpaceEditor = createDataSpaceEditor(mainArea, dEditor);
     }
 
     protected void createDataSpaceSpaceEditorLabels(Composite parent, DDataSpaceValue dataSpaceValue) {
         Composite labelArea = new Composite(parent, SWT.NONE);
-        GridLayout layout = createGridLayoutSimple(6);
+        GridLayout layout = createGridLayoutSimple(8);
         labelArea.setLayout(layout);
 
         labelObject = createLabel(labelArea, Messages.Object_colon, dataSpaceValue.getName());
         labelLibrary = createLabel(labelArea, Messages.Library_colon, dataSpaceValue.getLibrary());
-        labeltype = createLabel(labelArea, Messages.Type_colon, dataSpaceValue.getObjectType());
+        labelType = createLabel(labelArea, Messages.Type_colon, dataSpaceValue.getObjectType());
+        labelDescription = createLabel(labelArea, Messages.Text_colon, dataSpaceValue.getDescrption());
 
         Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridData separatorLayoutData = createGridDataFillAndGrab(6);
@@ -228,7 +240,8 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     private void updateDataSpaceEditorLabels(DDataSpaceValue dataSpaceValue) {
         labelObject.setText(dataSpaceValue.getName());
         labelLibrary.setText(dataSpaceValue.getLibrary());
-        labeltype.setText(dataSpaceValue.getObjectType());
+        labelType.setText(dataSpaceValue.getObjectType());
+        labelDescription.setText(dataSpaceValue.getDescrption());
     }
 
     private Label createLabel(Composite parent, String label, String value) {
@@ -278,9 +291,21 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             GridData separatorLayoutData = createGridDataFillAndGrab(numColumns);
             separator.setLayoutData(separatorLayoutData);
 
-            Label watchInfo = new Label(parent, SWT.NONE);
+            Composite statusLine = new Composite(parent, SWT.NONE);
+            GridLayout statusLineLayout = createGridLayoutSimple(2);
+            statusLineLayout.marginHeight = 0;
+            statusLine.setLayout(statusLineLayout);
+            statusLine.setLayoutData(createGridDataFillAndGrab(1));
+
+            Label watchInfo = new Label(statusLine, SWT.NONE);
             watchInfo.setText(Messages.Use_the_context_menu_to_watch_an_item);
-            watchInfo.setLayoutData(createGridDataFillAndGrab(numColumns));
+            watchInfo.setLayoutData(createGridDataFillAndGrab(1));
+
+            labelInvalidDataWarningOrError = new Label(statusLine, SWT.BORDER);
+            labelInvalidDataWarningOrError.setText(Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data);
+            labelInvalidDataWarningOrError.setAlignment(SWT.CENTER);
+            labelInvalidDataWarningOrError.setLayoutData(createGridDataFillAndGrab(1));
+            labelInvalidDataWarningOrError.setVisible(false);
 
         } else {
 
@@ -302,7 +327,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         DEditor[] dEditors = repository.getDataSpaceEditorsForObject(remoteObject);
         if (dEditors == null || dEditors.length == 0) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
             return null;
         }
 
@@ -320,13 +344,32 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private void copyDataToControls(DDataSpaceValue dataSpaceValue) {
 
+        boolean hasInvalidDataWarning = false;
+        boolean hasInvalidDataError = false;
+
         currentDataSpaceValue = dataSpaceValue;
 
         Control[] controls = dataSpaceEditor.getChildren();
         for (Control control : controls) {
             if (manager.isManagedControl(control)) {
                 setControlValue(dataSpaceValue, control);
+                if (!hasInvalidDataWarning) {
+                    hasInvalidDataWarning = manager.hasInvalidDataWarning(control);
+                }
+                if (!hasInvalidDataError) {
+                    hasInvalidDataError = manager.hasInvalidDataError(control);
+                }
             }
+        }
+
+        if (hasInvalidDataError) {
+            labelInvalidDataWarningOrError.setText(Messages.Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen);
+            labelInvalidDataWarningOrError.setBackground(SWTResourceManager.getColor(SWT.COLOR_RED));
+            labelInvalidDataWarningOrError.setVisible(true);
+        } else if (hasInvalidDataWarning) {
+            labelInvalidDataWarningOrError.setText(Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data);
+            labelInvalidDataWarningOrError.setBackground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
+            labelInvalidDataWarningOrError.setVisible(true);
         }
     }
 
@@ -337,9 +380,9 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
     }
 
-    private void refreshEditor(Composite parentArea) {
+    private void refreshEditor() {
 
-        parentArea.layout();
+        mainArea.layout();
         if (currentDataSpaceValue != null) {
             refreshViewAction.setEnabled(true);
         } else {
@@ -433,6 +476,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
             DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
             if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
                 /*
                  * Cancel job, because we need an editor and user spaces might
                  * be quite large. This way we do not load it for nothing, in
@@ -447,7 +491,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
              * Submit long term process to batch. Let the process load the data
              * and pass it on to the UI update job.
              */
-            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(getName(), remoteObject, null);
+            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(getName(), remoteObject, selectedEditor);
             loadDataJob.schedule();
 
             return Status.OK_STATUS;
@@ -464,11 +508,18 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         private RemoteObject remoteObject;
         private DEditor dEditor;
+        private boolean refreshViewData;
+
+        public LoadAsyncDataJob(String name, RemoteObject remoteObject) {
+            this(name, remoteObject, null);
+            this.refreshViewData = true;
+        }
 
         public LoadAsyncDataJob(String name, RemoteObject remoteObject, DEditor dEditor) {
             super(name);
             this.remoteObject = remoteObject;
             this.dEditor = dEditor;
+            this.refreshViewData = false;
         }
 
         @Override
@@ -478,23 +529,19 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
                 AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
 
-                if (dEditor == null) {
-                    dEditor = AbstractDataSpaceMonitorView.this.manager.generateEditor(dataSpace);
+                /*
+                 * Now that we know the type of the data area (= dataSpace), we
+                 * can generate an editor on-the-fly if we do not yet have one.
+                 */
+                if (this.dEditor == null && !this.refreshViewData) {
+                    this.dEditor = AbstractDataSpaceMonitorView.this.manager.generateEditor(dataSpace);
                 }
-                // if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
-                // if
-                // (!AbstractWrappedDataSpace.CHARACTER.equals(dataSpace.getDataType()))
-                // {
-                // MessageDialogAsync.displayError(getShell(),
-                // Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
-                // return Status.OK_STATUS;
-                // }
-                // }
 
                 /*
                  * Create a UI job to update the view with the new data.
                  */
-                UIJob updateDataUIJob = new UpdateDataSpaceDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), dEditor);
+                UIJob updateDataUIJob = new UpdateDataSpaceDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace),
+                    this.dEditor);
                 updateDataUIJob.schedule();
 
             } catch (Exception e) {
@@ -504,7 +551,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
             return Status.OK_STATUS;
         }
-
     }
 
     /**
@@ -515,32 +561,26 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      */
     private class UpdateDataSpaceDataUIJob extends UIJob {
 
+        private DDataSpaceValue dataSpaceValue;
         private DEditor selectedEditor;
-        DDataSpaceValue dataSpaceValue;
 
         public UpdateDataSpaceDataUIJob(Display jobDisplay, String name, DDataSpaceValue dataSpaceValue, DEditor selectedEditor) {
             super(jobDisplay, name);
-            this.selectedEditor = selectedEditor;
             this.dataSpaceValue = dataSpaceValue;
+            this.selectedEditor = selectedEditor;
         }
 
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
-            // selectedEditor = loadEditorForDataSpaceObject(getShell(),
-            // dataSpaceValue.getRemoteObject());
-            if (selectedEditor == null) {
-                return Status.OK_STATUS;
-            }
-
             if (selectedEditor != null) {
-                replaceDataSpaceEditor(mainArea, selectedEditor, dataSpaceValue);
+                replaceDataSpaceEditor(this.selectedEditor, this.dataSpaceValue);
             } else {
-                updateDataSpaceEditorLabels(dataSpaceValue);
+                updateDataSpaceEditorLabels(this.dataSpaceValue);
             }
 
-            copyDataToControls(dataSpaceValue);
-            refreshEditor(mainArea);
+            copyDataToControls(this.dataSpaceValue);
+            refreshEditor();
 
             return Status.OK_STATUS;
         }

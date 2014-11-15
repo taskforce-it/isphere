@@ -11,11 +11,11 @@ The editors match with the following supplied test
 data areas like this:
 
   Editor              Object
-  --------------      ----------------------
-  TSTDTAARA1 - 1      TSTDTAARA1 (*DTAARA)
-  TSTDTAARA2          TSTDTAARA2 (*DTAARA)
-  TSTDTAARA3          TSTDTAARA3 (*DTAARA)
-  TSTUSRSPC1 - 1      TSTDTAARA1 (*DTAARA)
+  --------------      ---------------------------
+  TSTDTAARA1 - 1      TSTDTAARA1 (*DTAARA *CHAR)
+  TSTDTAARA2          TSTDTAARA2 (*DTAARA *DEC)
+  TSTDTAARA3          TSTDTAARA3 (*DTAARA *LGL)
+  TSTUSRSPC1 - 1      TSTDTAARA1 (*DTAARA *CHAR)
                       TSTUSRSPC1 (*USRSPC)
 
 The editor "TSTUSRSPC1 - 1" has both objects assigned.

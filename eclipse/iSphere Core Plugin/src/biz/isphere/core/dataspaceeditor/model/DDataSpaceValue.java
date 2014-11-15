@@ -89,6 +89,10 @@ public class DDataSpaceValue {
         return remoteObject.getObjectType();
     }
 
+    public String getDescrption() {
+        return remoteObject.getDescription();
+    }
+
     public RemoteObject getRemoteObject() {
         return remoteObject;
     }
@@ -107,8 +111,7 @@ public class DDataSpaceValue {
 
     public String getString(int offset, int length) {
         ensureCharcaterType();
-        String data = convertByteArrayToString(bytes, offset, length);
-        return StringHelper.trimR(data);
+        return convertByteArrayToString(bytes, offset, length);
     }
 
     public void setString(String value, int offset, int length) throws CharConversionException {

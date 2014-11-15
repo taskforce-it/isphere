@@ -10,9 +10,14 @@ package biz.isphere.core.dataspacemonitor.rse;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Control;
+
+import biz.isphere.core.dataspaceeditor.model.DataSpaceEditorManager;
 
 public abstract class AbstractChangeWatchingListener extends SelectionAdapter {
 
+    private DataSpaceEditorManager manager = new DataSpaceEditorManager();
+    
     public AbstractChangeWatchingListener() {
     }
 
@@ -22,6 +27,10 @@ public abstract class AbstractChangeWatchingListener extends SelectionAdapter {
         setVisible(!isVisible());
     }
 
+    protected String getControlValue(Control control) {
+        return manager.getControlValue(control);
+    }
+    
     protected abstract boolean isVisible();
 
     protected abstract void setVisible(boolean visible);
