@@ -49,7 +49,8 @@ public class LoadQsysRemoteObjectsJob extends Job {
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String type = qsysRemoteObject.getType();
-            remoteObjects.add(new RemoteObject(connection, name, library, type));
+            String description = qsysRemoteObject.getDescription();
+            remoteObjects.add(new RemoteObject(connection, name, library, type, description));
         }
         receiver.setRemoteObjects(remoteObjects.toArray(new RemoteObject[remoteObjects.size()]));
 
