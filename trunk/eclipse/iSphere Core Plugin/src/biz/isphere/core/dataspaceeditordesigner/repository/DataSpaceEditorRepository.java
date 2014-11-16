@@ -91,42 +91,48 @@ public final class DataSpaceEditorRepository {
      */
     public void updateOrAddDialog(DEditor dEditor) throws SaveFileException {
         saveToXml(dEditor);
-        dEditors.put(dEditor.getKey(), dEditor);
+        getOrLoadEditors().put(dEditor.getKey(), dEditor);
     }
 
     public void deleteEditor(DEditor dEditor) throws DeleteFileException {
         deleteEditorOnDisk(dEditor);
-        dEditors.remove(dEditor.getKey());
+        getOrLoadEditors().remove(dEditor.getKey());
     }
 
     /**
-     * Returns all dialogs that exist in the repository.
+     * Returns the editor that is assigned to the specified key. The value of
+     * key must match {@link DEditor#getKey()}.
      * 
-     * @return list of existing dialogs
+     * @param key - key of an existing editor
+     * @return the editor that is assigned to the key
+     */
+    public DEditor getDataSpaceEditor(String key) {
+
+        return getOrLoadEditors().get(key);
+    }
+
+    /**
+     * Returns all editors that exist in the repository.
+     * 
+     * @return list of existing editors
      */
     public DEditor[] getDataSpaceEditors() {
+        return getDataSpaceEditorsInternal(false);
+    }
 
-        if (dEditors.size() == 0) {
-            dEditors = loadEditors();
-        }
-
-        DEditor[] editorItems = new DEditor[dEditors.size()];
-
-        int i = 0;
-        for (DEditor dDialog : dEditors.values()) {
-            editorItems[i] = ObjectHelper.cloneVO(dDialog);
-            i++;
-        }
-
-        manager.resolveObjectReferences(editorItems);
-
-        return editorItems;
+    /**
+     * Returns a copy of all editors that exist in the repository.
+     * 
+     * @return list of existing editors
+     */
+    public DEditor[] getCopyOfDataSpaceEditors() {
+        return getDataSpaceEditorsInternal(true);
     }
 
     public DEditor[] getDataSpaceEditorsForObject(RemoteObject remoteObject) {
         Set<DEditor> dSelectedEditors = new TreeSet<DEditor>();
 
-        for (DEditor dEditor : getDataSpaceEditors()) {
+        for (DEditor dEditor : getDataSpaceEditorsInternal(false)) {
             if (editorSupportsObject(dEditor, remoteObject)) {
                 dSelectedEditors.add(dEditor);
             }
@@ -185,6 +191,34 @@ public final class DataSpaceEditorRepository {
 
     private String getFileName(DEditor dEditor) {
         return getRepositoryLocation() + dEditor.getKey() + "." + FILE_EXTENSION;
+    }
+
+    private DEditor[] getDataSpaceEditorsInternal(boolean clone) {
+
+        DEditor[] editorItems = new DEditor[getOrLoadEditors().size()];
+
+        int i = 0;
+        for (DEditor dEditor : getOrLoadEditors().values()) {
+            if (clone) {
+                editorItems[i] = ObjectHelper.cloneVO(dEditor);
+            } else {
+                editorItems[i] = dEditor;
+            }
+            i++;
+        }
+
+        manager.resolveObjectReferences(editorItems);
+
+        return editorItems;
+    }
+
+    private Map<String, DEditor> getOrLoadEditors() {
+
+        if (dEditors.size() == 0) {
+            dEditors = loadEditors();
+        }
+
+        return dEditors;
     }
 
     private Map<String, DEditor> loadEditors() {

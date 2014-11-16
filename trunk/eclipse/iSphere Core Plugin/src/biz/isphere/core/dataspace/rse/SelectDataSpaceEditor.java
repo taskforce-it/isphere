@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -27,19 +28,22 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
+import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.Size;
 
 public class SelectDataSpaceEditor extends XDialog {
 
+    private static final String SELECTED_EDITOR = "selectedEditor";
+
     private DEditor selectedEditor;
-
     private DEditor[] dEditors;
-
     private TableViewer tableViewer;
+    DataSpaceEditorRepository repository;
 
     public SelectDataSpaceEditor(Shell parentShell, DEditor[] dEditors) {
         super(parentShell);
         this.dEditors = dEditors;
+        this.repository = DataSpaceEditorRepository.getInstance();
     }
 
     @Override
@@ -61,9 +65,7 @@ public class SelectDataSpaceEditor extends XDialog {
         tableViewer.setContentProvider(new ContentProviderTableViewer());
         tableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                if (setSelectedItem()) {
-                    close();
-                }
+                okPressed();
             }
         });
 
@@ -82,6 +84,8 @@ public class SelectDataSpaceEditor extends XDialog {
 
         // dDialogsList.setItems(getListItems());
         tableViewer.setInput(getListItems());
+
+        loadScreenValues();
 
         return dialogArea;
     }
@@ -109,15 +113,14 @@ public class SelectDataSpaceEditor extends XDialog {
         return layoutData;
     }
 
-    private boolean setSelectedItem() {
+    private DEditor getSelectedItem() {
         if (tableViewer.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection structuredSelection = (IStructuredSelection)tableViewer.getSelection();
             if (structuredSelection.getFirstElement() instanceof DEditor) {
-                selectedEditor = (DEditor)structuredSelection.getFirstElement();
-                return true;
+                return (DEditor)structuredSelection.getFirstElement();
             }
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -128,8 +131,37 @@ public class SelectDataSpaceEditor extends XDialog {
 
     @Override
     protected void okPressed() {
-        if (setSelectedItem()) {
+
+        selectedEditor = getSelectedItem();
+        if (selectedEditor != null) {
+            storeScreenValues();
             super.okPressed();
+        }
+    }
+
+    /**
+     * Restores the screen values of the last search search.
+     */
+    private void loadScreenValues() {
+        String key = loadValue(SELECTED_EDITOR, null);
+        if (key == null) {
+            return;
+        }
+
+        DEditor dEditor = repository.getDataSpaceEditor(key);
+        if (dEditor == null) {
+            return;
+        }
+
+        tableViewer.setSelection(new StructuredSelection(dEditor), true);
+    }
+
+    /**
+     * Stores the screen values that are preserved for the next search.
+     */
+    private void storeScreenValues() {
+        if (selectedEditor != null) {
+            storeValue(SELECTED_EDITOR, selectedEditor.getKey());
         }
     }
 

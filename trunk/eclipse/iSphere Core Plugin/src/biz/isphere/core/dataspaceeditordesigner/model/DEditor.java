@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import biz.isphere.base.internal.StringHelper;
+
 @SuppressWarnings("serial")
 public class DEditor implements Comparable<DEditor>, Serializable {
 
@@ -51,6 +53,24 @@ public class DEditor implements Comparable<DEditor>, Serializable {
 
     public int getColumns() {
         return columns;
+    }
+    
+    public String getNameAndDescription() {
+        
+        if (StringHelper.isNullOrEmpty(description)) {
+            return name;
+        }
+        
+        return name + " - " + description; //$NON-NLS-1$
+    }
+
+    public boolean isGenerated() {
+
+        if (DataSpaceEditorManager.GENERATED.equals(name)) {
+            return true;
+        }
+
+        return false;
     }
 
     public AbstractDWidget[] getWidgets() {
