@@ -46,7 +46,7 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
      * 
      * @return data area that is currently edited
      */
-    protected AbstractWrappedDataSpace getWrappedDataArea() {
+    protected AbstractWrappedDataSpace getWrappedDataSpace() {
         return dataAreaEditor.getWrappedDataArea();
     }
 
@@ -138,6 +138,7 @@ public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarg
             statusBar.setMessage(anException.getLocalizedMessage());
             aMonitor.setCanceled(true);
         } else {
+            statusBar.setMessage(null);
             resetDirtyFlag();
         }
     }

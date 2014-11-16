@@ -14,6 +14,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import biz.isphere.base.internal.StringHelper;
+
 public class StatusBar {
 
     private Label positionLabel;
@@ -37,6 +39,10 @@ public class StatusBar {
     }
 
     public void setMessage(String aMessage) {
+        if (StringHelper.isNullOrEmpty(aMessage)) {
+            messageLabel.setText("");
+            return;
+        }
         messageLabel.setText(" " + aMessage); //$NON-NLS-1$
     }
 

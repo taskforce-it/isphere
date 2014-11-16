@@ -65,7 +65,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
 
         dataAreaText = new Text(editorArea, SWT.BORDER);
         dataAreaText.addVerifyListener(new NumericOnlyVerifyListener(true));
-        dataAreaText.setTextLimit(getWrappedDataArea().getTextLimit());
+        dataAreaText.setTextLimit(getWrappedDataSpace().getTextLimit());
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
@@ -77,15 +77,15 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         verticalSpacerLayoutData.horizontalSpan = 2;
         verticalSpacer.setLayoutData(verticalSpacerLayoutData);
 
-        validator = Validator.getDecimalInstance(getWrappedDataArea().getLength(), getWrappedDataArea().getDecimalPositions());
+        validator = Validator.getDecimalInstance(getWrappedDataSpace().getLength(), getWrappedDataSpace().getDecimalPositions());
 
         // Set screen value
-        dataAreaText.setText(getWrappedDataArea().getDecimalValue().toString());
+        dataAreaText.setText(getWrappedDataSpace().getDecimalValue().toString());
 
         dataAreaText.addKeyListener(new TextControlKeyListener());
 
         // Add 'verify' listener
-        boolean hasFraction = getWrappedDataArea().getDecimalPositions() != 0;
+        boolean hasFraction = getWrappedDataSpace().getDecimalPositions() != 0;
         dataAreaText.addVerifyListener(new NumericOnlyVerifyListener(hasFraction));
         dataAreaText.addVerifyListener(new TextControlVerifyListener());
 
@@ -103,7 +103,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
             getStatusBar().setMessage("");
         }
 
-        Throwable exception = getWrappedDataArea().setValue(new BigDecimal(dataAreaText.getText()));
+        Throwable exception = getWrappedDataSpace().setValue(new BigDecimal(dataAreaText.getText()));
         handleSaveResult(aMonitor, exception);
     }
 

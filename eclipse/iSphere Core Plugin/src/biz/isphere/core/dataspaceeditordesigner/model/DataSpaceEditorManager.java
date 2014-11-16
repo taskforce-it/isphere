@@ -27,6 +27,9 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditordesigner.gui.designer.ControlPayload;
+import biz.isphere.core.dataspaceeditordesigner.listener.AdapterButtonModifiedListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.AdapterTextModifiedListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
 import biz.isphere.core.internal.Validator;
 
 /**
@@ -155,6 +158,16 @@ public final class DataSpaceEditorManager {
 
     public void addWidgetToEditor(DEditor dEditor, AbstractDWidget widget) {
         dEditor.addWidget(widget);
+    }
+
+    public void addControlModifyListener(Control control, IWidgetModifyListener modifyListener) {
+        if (control instanceof Text) {
+            Text text = (Text)control;
+            text.addModifyListener(new AdapterTextModifiedListener(modifyListener));
+        } else if (control instanceof Button) {
+            Button button = (Button)control;
+            button.addSelectionListener(new AdapterButtonModifiedListener(modifyListener));
+        }
     }
 
     public void removeWidgetFromEditor(DEditor dEditor, AbstractDWidget widget) {
@@ -457,6 +470,47 @@ public final class DataSpaceEditorManager {
         } catch (Throwable e) {
             payload.setInvalidDataError(true);
         }
+    }
+
+    public Throwable updateDataSpaceFromControl(Control control, DDataSpaceValue value) {
+        if (!isManagedControl(control)) {
+            return null;
+        }
+
+        ControlPayload payload = getPayloadFromControl(control);
+        AbstractDWidget widget = payload.getWidget();
+
+        try {
+
+            if (widget instanceof DText) {
+                String text = ((Text)control).getText();
+                value.setString(text, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DBoolean) {
+                boolean boolValue = ((Button)control).getSelection();
+                value.setBoolean(boolValue, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DTinyInteger) {
+                Byte tinyValue = Byte.parseByte(((Text)control).getText());
+                value.setTiny(tinyValue, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DShortInteger) {
+                Short shortValue = Short.valueOf(((Text)control).getText());
+                value.setShort(shortValue, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DInteger) {
+                Integer intValue = Integer.valueOf(((Text)control).getText());
+                value.setInteger(intValue, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DLongInteger) {
+                Long longValue = Long.valueOf(((Text)control).getText());
+                value.setLongInteger(longValue, widget.getOffset(), widget.getLength());
+            } else if (widget instanceof DDecimal) {
+                BigDecimal decimalValue = new BigDecimal(((Text)control).getText());
+                DDecimal decimalWidget = (DDecimal)widget;
+                value.setDecimal(decimalValue, decimalWidget.getOffset(), decimalWidget.getLength(), decimalWidget.getFraction());
+            }
+
+        } catch (Throwable e) {
+            return e;
+        }
+
+        return null;
     }
 
     private boolean isLocked(Control control) {

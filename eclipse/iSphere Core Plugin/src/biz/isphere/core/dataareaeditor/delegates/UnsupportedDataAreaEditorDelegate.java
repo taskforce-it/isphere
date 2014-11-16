@@ -35,7 +35,7 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataAreaEditorDel
         Label info1 = new Label(editorArea, SWT.NONE);
         info1.setText("Unsupported data area type. Please contact the developer.");
 
-        AbstractWrappedDataSpace dataArea = getWrappedDataArea();
+        AbstractWrappedDataSpace dataArea = getWrappedDataSpace();
 
         Label info2 = new Label(editorArea, SWT.NONE);
         info2.setText(dataArea.toString());

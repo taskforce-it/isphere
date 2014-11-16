@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -35,10 +36,14 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.delegates.AbstractDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.CharacterDataAreaEditorDelegate;
+import biz.isphere.core.dataareaeditor.delegates.DataSpaceEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.DecimalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspace.rse.SelectDataSpaceEditor;
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
+import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
 
@@ -54,6 +59,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
     private boolean isDirty;
     AbstractWrappedDataSpace wrappedDataArea;
     AbstractDataAreaEditorDelegate editorDelegate;
+    DataSpaceEditorRepository repository;
 
     public AbstractDataAreaEditor() {
         isDirty = false;
@@ -127,6 +133,8 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
         } catch (Exception e) {
             throw new PartInitException(e.getMessage(), e);
         }
+
+        repository = DataSpaceEditorRepository.getInstance();
     }
 
     protected abstract AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception;
@@ -164,6 +172,20 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
      * @return editor delegate
      */
     private AbstractDataAreaEditorDelegate createEditorDelegate() {
+        DEditor selectedEditor = null;
+        DEditor[] dEditors = repository.getDataSpaceEditorsForObject(getWrappedDataArea().getRemoteObject());
+        if (dEditors != null) {
+            if (dEditors.length >= 1) {
+                SelectDataSpaceEditor dialogSelector = new SelectDataSpaceEditor(getSite().getShell(), dEditors);
+                if (dialogSelector.open() == Dialog.OK) {
+                    selectedEditor = dialogSelector.getSelectedDialog();
+                }
+            }
+        }
+        if (selectedEditor != null) {
+            return new DataSpaceEditorDelegate(this, selectedEditor);
+        }
+
         if (AbstractWrappedDataSpace.CHARACTER.equals(getWrappedDataArea().getDataType())) {
             return new CharacterDataAreaEditorDelegate(this);
         } else if (AbstractWrappedDataSpace.DECIMAL.equals(getWrappedDataArea().getDataType())) {
@@ -211,7 +233,7 @@ public abstract class AbstractDataAreaEditor extends EditorPart implements IFind
             actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editorDelegate.getPasteAction());
         }
     }
-    
+
     /**
      * Opens the data area editor for a given data area.
      * 
