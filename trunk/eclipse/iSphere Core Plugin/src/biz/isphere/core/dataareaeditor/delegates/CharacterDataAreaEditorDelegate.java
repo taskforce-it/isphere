@@ -137,13 +137,13 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
         offsetArea.setLayoutData(offsetAreaLayoutData);
 
         dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, currentWidth);
-        dataAreaText.setTextLimit(getWrappedDataArea().getLength());
+        dataAreaText.setTextLimit(getWrappedDataSpace().getLength());
         dataAreaText.setFont(getEditorFont());
         GridData dataAreaTextLayoutData = createRulerAndEditorLayoutData();
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
 
         // Set screen value
-        dataAreaText.setText(getWrappedDataArea().getStringValue());
+        dataAreaText.setText(getWrappedDataSpace().getStringValue());
 
         // Add 'status changed' listener
         dataAreaText.addStatusChangedListener(new DataAreaTextStatusChangedListener());
@@ -158,7 +158,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
      */
     @Override
     public void doSave(IProgressMonitor aMonitor) {
-        Throwable exception = getWrappedDataArea().setValue(dataAreaText.getText());
+        Throwable exception = getWrappedDataSpace().setValue(dataAreaText.getText());
         handleSaveResult(aMonitor, exception);
     }
 

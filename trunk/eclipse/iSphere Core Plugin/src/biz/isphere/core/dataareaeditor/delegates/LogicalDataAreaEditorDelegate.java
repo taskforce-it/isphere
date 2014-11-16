@@ -65,7 +65,7 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
         verticalSpacer.setLayoutData(verticalSpacerLayoutData);
 
         // Set screen value
-        dataAreaText.setSelection(getWrappedDataArea().getBooleanValue());
+        dataAreaText.setSelection(getWrappedDataSpace().getBooleanValue());
 
         // Add 'dirty' listener
         dataAreaText.addSelectionListener(new SelectionListener() {
@@ -80,7 +80,7 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
 
     @Override
     public void doSave(IProgressMonitor aMonitor) {
-        Throwable exception = getWrappedDataArea().setValue(dataAreaText.getSelection());
+        Throwable exception = getWrappedDataSpace().setValue(dataAreaText.getSelection());
         handleSaveResult(aMonitor, exception);
     }
 

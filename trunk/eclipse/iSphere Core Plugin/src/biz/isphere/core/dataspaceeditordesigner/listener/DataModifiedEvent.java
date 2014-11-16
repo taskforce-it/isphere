@@ -13,17 +13,11 @@ import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 public class DataModifiedEvent {
 
     private AbstractDWidget widget;
-    public Object value;
-    public int offset;
-    public int length;
 
-    public DataModifiedEvent(AbstractDWidget widget, Object value, int offset, int length) {
+    public DataModifiedEvent(AbstractDWidget widget) {
         this.widget = widget;
-        this.value = value;
-        this.offset = offset;
-        this.length = length;
     }
-    
+
     public AbstractDWidget getSource() {
         return widget;
     }

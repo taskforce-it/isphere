@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
+import biz.isphere.base.internal.BigDecimalHelper;
 import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
@@ -97,6 +98,10 @@ public class DDataSpaceValue {
         return remoteObject;
     }
 
+    public byte[] getBytes() {
+        return bytes;
+    }
+    
     public Boolean getBoolean(int offset, int length) {
         ensureLogicalType();
         String data = convertByteArrayToString(bytes, offset, length);
@@ -180,11 +185,10 @@ public class DDataSpaceValue {
         return new BigDecimal(digits + "." + decPos);
     }
 
-    public void setDecimal(BigDecimal value, int offset, int length) throws CharConversionException {
+    public void setDecimal(BigDecimal value, int offset, int length, int fraction) throws CharConversionException {
         ensureDecimalType();
-        String data = value.toString().replaceAll("\\.", "");
-        data = StringHelper.getFixLength(data, length).replaceAll(" ", DE.BOOLEAN_FALSE_0);
-        convertStringToByteArray(data, bytes, offset, length);
+        String data = BigDecimalHelper.getFixLength(value, length, fraction);
+        convertStringToByteArray(data.replaceAll("\\.", ""), bytes, offset, length);
     }
 
     private String convertByteArrayToString(byte[] bytes, int offset, int length) {

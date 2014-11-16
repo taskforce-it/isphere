@@ -8,9 +8,7 @@
 
 package biz.isphere.core.dataspaceeditordesigner.listener;
 
-import java.io.CharConversionException;
+public interface IWidgetModifyListener {
 
-public interface IDataModifiedListener {
-
-    public void dataModified(DataModifiedEvent event) throws CharConversionException;
+    public void dataModified(DataModifiedEvent event);
 }

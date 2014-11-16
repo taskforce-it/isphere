@@ -312,7 +312,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
      * @param message Message
      * @param e The exception that has produced the error
      */
-    public static void logError(String message, Exception e) {
+    public static void logError(String message, Throwable e) {
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 

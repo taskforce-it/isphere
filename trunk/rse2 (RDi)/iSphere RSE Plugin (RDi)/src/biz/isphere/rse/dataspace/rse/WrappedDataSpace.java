@@ -50,4 +50,8 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
         characterDataArea.read(bytes, 0, 0, characterDataArea.getLength());
         return bytes;
     }
+
+    protected void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException, IllegalObjectTypeException {
+        characterDataArea.write(bytes, 0, 0, characterDataArea.getLength());
+    }
 }

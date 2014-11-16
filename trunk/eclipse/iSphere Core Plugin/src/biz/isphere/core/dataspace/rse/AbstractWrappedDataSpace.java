@@ -10,8 +10,8 @@ package biz.isphere.core.dataspace.rse;
 
 import java.math.BigDecimal;
 
+import biz.isphere.base.internal.BigDecimalHelper;
 import biz.isphere.base.internal.QsysObjectHelper;
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataareaeditor.QWCRDTAA;
 import biz.isphere.core.internal.ISeries;
@@ -225,7 +225,7 @@ public abstract class AbstractWrappedDataSpace {
         try {
             ((CharacterDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return handleSaveError("Failed to save character data area value.", e); //$NON-NLS-1$
         }
     }
@@ -272,7 +272,7 @@ public abstract class AbstractWrappedDataSpace {
         try {
             ((DecimalDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return handleSaveError("Failed to save decimal data area value.", e); //$NON-NLS-1$
         }
     }
@@ -318,7 +318,7 @@ public abstract class AbstractWrappedDataSpace {
         try {
             ((LogicalDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return handleSaveError("Failed to save boolean data area value.", e); //$NON-NLS-1$
         }
     }
@@ -341,8 +341,25 @@ public abstract class AbstractWrappedDataSpace {
         } else {
             return getUserSpaceBytes();
         }
-
     }
+
+    public Throwable setBytes(byte[] bytes) {
+
+        if (isDataArea()) {
+            return setDataAreaBytes(bytes);
+        } else {
+            return setUserSpaceBytes(bytes);
+        }
+    }
+
+    private Throwable setUserSpaceBytes(byte[] bytes) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    protected abstract byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception;
+
+    protected abstract void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws Exception;
 
     private byte[] getDataAreaBytes() {
 
@@ -354,27 +371,15 @@ public abstract class AbstractWrappedDataSpace {
                 bytes = loadCharacterDataAreaBytes(characterDataArea);
             } else if (DECIMAL.equals(type)) {
                 DecimalDataArea decimalDataArea = (DecimalDataArea)getOrLoadDataSpace();
-                BigDecimal decimal = decimalDataArea.read();
-                String[] parts = decimal.toString().split("\\."); //$NON-NLS-1$
-                String digits = ""; //$NON-NLS-1$
-                String fraction = ""; //$NON-NLS-1$
-                if (parts.length > 0) {
-                    digits = parts[0];
-                    if (parts.length > 1) {
-                        fraction = parts[1];
-                    }
-                }
-                int lenDigits = decimalDataArea.getLength() - decimalDataArea.getDecimalPositions();
-                int lenFraction = decimalDataArea.getDecimalPositions();
-                digits = StringHelper.getFixLengthLeading(digits, lenDigits).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-                fraction = StringHelper.getFixLength(fraction, lenFraction).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-                bytes = (digits + fraction).toString().getBytes();
+                String decimalValue = BigDecimalHelper.getFixLength(decimalDataArea.read(), decimalDataArea.getLength(),
+                    decimalDataArea.getDecimalPositions());
+                bytes = decimalValue.replaceAll("\\.", "").getBytes();
             } else if (LOGICAL.equals(type)) {
                 boolean isTrue = ((LogicalDataArea)getOrLoadDataSpace()).read();
                 if (isTrue) {
                     bytes = DE.BOOLEAN_TRUE_1.getBytes();
                 } else {
-                    bytes = DE.BOOLEAN_TRUE_1.getBytes();
+                    bytes = DE.BOOLEAN_FALSE_0.getBytes();
                 }
             } else {
                 throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
@@ -386,7 +391,32 @@ public abstract class AbstractWrappedDataSpace {
         return bytes;
     }
 
-    protected abstract byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception;
+    private Throwable setDataAreaBytes(byte[] bytes) {
+
+        try {
+            String type = getDataType();
+            if (CHARACTER.equals(type)) {
+                CharacterDataArea characterDataArea = (CharacterDataArea)getOrLoadDataSpace();
+                saveCharacterDataAreaBytes(characterDataArea, bytes);
+            } else if (DECIMAL.equals(type)) {
+                String decimalValue = BigDecimalHelper.getFixLength(bytes, getLength(), getDecimalPositions());
+                return setValue(new BigDecimal(decimalValue));
+            } else if (LOGICAL.equals(type)) {
+                String booleanValue = new String(bytes);
+                if (DE.BOOLEAN_TRUE_1.equals(booleanValue)) {
+                    setValue(Boolean.TRUE);
+                } else {
+                    setValue(Boolean.FALSE);
+                }
+            } else {
+                throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
+            }
+        } catch (Throwable e) {
+            return handleSaveError("Failed to save data area bytes", e);
+        }
+
+        return null;
+    }
 
     private byte[] getUserSpaceBytes() {
 
@@ -412,7 +442,7 @@ public abstract class AbstractWrappedDataSpace {
         }
     }
 
-    private Throwable handleSaveError(String aMessage, Exception anException) {
+    private Throwable handleSaveError(String aMessage, Throwable anException) {
         ISpherePlugin.logError(aMessage, anException);
         return anException;
     }

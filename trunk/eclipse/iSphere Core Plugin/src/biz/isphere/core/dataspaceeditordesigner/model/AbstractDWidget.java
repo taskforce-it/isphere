@@ -8,12 +8,11 @@
 
 package biz.isphere.core.dataspaceeditordesigner.model;
 
-import java.io.CharConversionException;
 import java.io.Serializable;
 import java.util.Vector;
 
 import biz.isphere.core.dataspaceeditordesigner.listener.DataModifiedEvent;
-import biz.isphere.core.dataspaceeditordesigner.listener.IDataModifiedListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
 
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -28,7 +27,7 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
     @XStreamOmitField
     private String key;
     @XStreamOmitField
-    private Vector<IDataModifiedListener> modifyListener;
+    private Vector<IWidgetModifyListener> modifyListener;
 
     AbstractDWidget(String label, int offset, int maxLength) {
         this.label = label;
@@ -57,20 +56,16 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         return length;
     }
 
-    public void addModifyListener(IDataModifiedListener listener) {
+    public void addModifyListener(IWidgetModifyListener listener) {
         if (modifyListener == null) {
-            modifyListener = new Vector<IDataModifiedListener>();
+            modifyListener = new Vector<IWidgetModifyListener>();
         }
         modifyListener.add(listener);
     }
 
     protected void fireDataModifiedEvent(DataModifiedEvent event) {
-        for (IDataModifiedListener listener : modifyListener) {
-            try {
-                listener.dataModified(event);
-            } catch (CharConversionException e) {
-                e.printStackTrace();
-            }
+        for (IWidgetModifyListener listener : modifyListener) {
+            listener.dataModified(event);
         }
     }
 
@@ -78,7 +73,7 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         if (sequence < 1) {
             return null;
         }
-        
+
         if (key == null) {
             key = "" + getSequence();
         }
