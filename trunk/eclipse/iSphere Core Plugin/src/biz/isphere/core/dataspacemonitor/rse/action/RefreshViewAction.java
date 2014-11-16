@@ -3,7 +3,7 @@ package biz.isphere.core.dataspacemonitor.rse.action;
 import org.eclipse.jface.action.Action;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataspaceeditor.rse.IDialogView;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 
 public class RefreshViewAction extends Action {
 

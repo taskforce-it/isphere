@@ -6,32 +6,28 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspacemonitor.rse;
+package biz.isphere.core.dataspaceeditordesigner.listener;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Control;
 
-import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
-public abstract class AbstractChangeWatchingListener extends SelectionAdapter {
+public class ChangeDataSpaceEditorListener extends SelectionAdapter {
 
-    private DataSpaceEditorManager manager = new DataSpaceEditorManager();
-    
-    public AbstractChangeWatchingListener() {
+    private IDialogEditor editor;
+
+    public ChangeDataSpaceEditorListener(IDialogEditor editor) {
+        this.editor = editor;
     }
 
     @Override
     public void widgetSelected(SelectionEvent event) {
-
-        setVisible(!isVisible());
+        DEditor[] editors = editor.getSelectedDataSpaceEditors();
+        if (editors.length == 0) {
+            return;
+        }
+        editor.setDataSpaceEditor(editors[0]);
     }
-
-    protected String getControlValue(Control control) {
-        return manager.getControlValue(control);
-    }
-    
-    protected abstract boolean isVisible();
-
-    protected abstract void setVisible(boolean visible);
 }

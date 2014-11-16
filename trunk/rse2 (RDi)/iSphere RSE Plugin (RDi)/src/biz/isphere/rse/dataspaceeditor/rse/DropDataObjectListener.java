@@ -8,9 +8,9 @@
 
 package biz.isphere.rse.dataspaceeditor.rse;
 
-import biz.isphere.core.dataspaceeditor.rse.AbstractDropDataObjectListerner;
-import biz.isphere.core.dataspaceeditor.rse.IDropObjectListener;
-import biz.isphere.core.dataspaceeditor.rse.IListOfRemoteObjectsReceiver;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
+import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
 
 public class DropDataObjectListener extends AbstractDropDataObjectListerner {
 
