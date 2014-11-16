@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataspaceeditor.model.DEditor;
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.internal.Size;
 
 public class SelectDataSpaceEditor extends XDialog {
