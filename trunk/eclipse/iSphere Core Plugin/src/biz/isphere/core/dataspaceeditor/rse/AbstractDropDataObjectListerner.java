@@ -16,6 +16,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.ui.part.PluginTransferData;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.RemoteObject;
 
 /**
  * Class to let the user Drag & Drop a data space object (data area or user

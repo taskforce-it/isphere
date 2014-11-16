@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 

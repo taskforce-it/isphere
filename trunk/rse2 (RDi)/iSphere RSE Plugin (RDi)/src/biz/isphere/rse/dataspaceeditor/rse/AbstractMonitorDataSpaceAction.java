@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.rse.IDialogView;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView;
 
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;

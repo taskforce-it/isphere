@@ -23,7 +23,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 import biz.isphere.core.dataspaceeditor.rse.IListOfRemoteObjectsReceiver;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;

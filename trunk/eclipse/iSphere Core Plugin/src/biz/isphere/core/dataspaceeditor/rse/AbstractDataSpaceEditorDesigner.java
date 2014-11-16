@@ -87,6 +87,7 @@ import biz.isphere.core.dataspaceeditor.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 

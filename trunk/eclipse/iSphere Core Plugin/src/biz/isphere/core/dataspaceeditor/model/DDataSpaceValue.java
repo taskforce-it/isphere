@@ -17,7 +17,7 @@ import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.CharConverter;
 

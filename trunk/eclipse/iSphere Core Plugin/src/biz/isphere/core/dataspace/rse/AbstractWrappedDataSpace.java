@@ -14,8 +14,8 @@ import biz.isphere.base.internal.QsysObjectHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataareaeditor.QWCRDTAA;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.IllegalMethodAccessException;
 
 import com.ibm.as400.access.AS400;
