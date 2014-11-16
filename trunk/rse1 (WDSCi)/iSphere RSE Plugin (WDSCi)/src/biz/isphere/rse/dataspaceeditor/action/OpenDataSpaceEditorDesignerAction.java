@@ -13,7 +13,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.common.ui.action.WorkbenchWindowActionDelegate;
 import org.eclipse.jface.action.IAction;
 
-import biz.isphere.core.dataspaceeditor.rse.OpenDataSpaceEditorDesignerHandler;
+import biz.isphere.core.dataspaceeditordesigner.rse.OpenDataSpaceEditorDesignerHandler;
 
 public class OpenDataSpaceEditorDesignerAction extends WorkbenchWindowActionDelegate {
 

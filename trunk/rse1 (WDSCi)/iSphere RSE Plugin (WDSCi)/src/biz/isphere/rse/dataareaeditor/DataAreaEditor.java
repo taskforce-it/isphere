@@ -10,7 +10,7 @@ package biz.isphere.rse.dataareaeditor;
 
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 
 public class DataAreaEditor extends AbstractDataAreaEditor {
 
