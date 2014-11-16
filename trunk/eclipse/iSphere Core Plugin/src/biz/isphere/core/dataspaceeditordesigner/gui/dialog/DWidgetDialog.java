@@ -20,9 +20,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
-import biz.isphere.core.dataspaceeditordesigner.model.DDecimal;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateWidget;
-import biz.isphere.core.dataspaceeditordesigner.model.DText;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 
 public class DWidgetDialog extends AbstractDialog {
@@ -156,7 +154,7 @@ public class DWidgetDialog extends AbstractDialog {
             setErrorMessage(textLength, "Invalid Length. Length must be greater or equal 1.");
             return false;
         }
-        
+
         clearErrorMessage(textLength);
         return true;
     }
@@ -165,7 +163,7 @@ public class DWidgetDialog extends AbstractDialog {
         if (!DataSpaceEditorManager.hasFraction(widgetClass)) {
             return true;
         }
-        
+
         clearErrorMessage(textFraction);
         return true;
     }
