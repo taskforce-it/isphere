@@ -379,7 +379,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="biz.isphere.core.dataspaceeditor.rse.OpenDataSpaceEditorDesignerHandler"
+            defaultHandler="biz.isphere.core.dataspaceeditordesigner.rse.OpenDataSpaceEditorDesignerHandler"
             id="biz.isphere.core.command.DataSpaceEditorDesigner.open"
             name="%command_DataSpace_Editor_Designer">
       </command>

@@ -16,9 +16,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import biz.isphere.core.dataspaceeditor.rse.IListOfRemoteObjectsReceiver;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
-import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.etools.iseries.core.api.ISeriesObject;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;

@@ -11,8 +11,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataspaceeditor.rse.IDialogView;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView;
 

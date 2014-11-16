@@ -9,10 +9,10 @@
 package biz.isphere.rse.dataspaceeditor.rse;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.rse.AbstractDataSpaceEditorDesigner;
-import biz.isphere.core.dataspaceeditor.rse.AbstractDropDataObjectListerner;
-import biz.isphere.core.dataspaceeditor.rse.IDropObjectListener;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDataSpaceEditorDesigner;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.dataareaeditor.WrappedDataSpace;
 
 public class DataSpaceEditorDesigner extends AbstractDataSpaceEditorDesigner {

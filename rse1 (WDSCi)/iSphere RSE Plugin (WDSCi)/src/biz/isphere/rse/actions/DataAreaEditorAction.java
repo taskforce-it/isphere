@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
