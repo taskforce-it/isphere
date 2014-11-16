@@ -308,7 +308,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         treeViewer.setContentProvider(new TreeViewContentProvider());
         treeViewer.setLabelProvider(new TreeViewLabelProvider());
         treeViewer.setSorter(new TreeViewSorter());
-        treeViewer.setInput(DataSpaceEditorRepository.getInstance().getDataSpaceEditors());
+        treeViewer.setInput(DataSpaceEditorRepository.getInstance().getCopyOfDataSpaceEditors());
         treeViewer.addDropSupport(DND.DROP_NONE, new Transfer[] {}, new DropVetoListerner());
 
         Menu treeViewerMenu = new Menu(treeViewer.getControl());

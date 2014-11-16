@@ -37,7 +37,7 @@ import biz.isphere.core.internal.Validator;
  */
 public final class DataSpaceEditorManager {
 
-    private static final String GENERATED = "*GENERATED";
+    static final String GENERATED = "*GENERATED";
 
     public DataSpaceEditorManager() {
     }

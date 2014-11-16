@@ -292,7 +292,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             separator.setLayoutData(separatorLayoutData);
 
             Composite statusLine = new Composite(parent, SWT.NONE);
-            GridLayout statusLineLayout = createGridLayoutSimple(2);
+            GridLayout statusLineLayout = createGridLayoutSimple(3);
             statusLineLayout.marginHeight = 0;
             statusLine.setLayout(statusLineLayout);
             statusLine.setLayoutData(createGridDataFillAndGrab(1));
@@ -300,6 +300,14 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             Label watchInfo = new Label(statusLine, SWT.NONE);
             watchInfo.setText(Messages.Use_the_context_menu_to_watch_an_item);
             watchInfo.setLayoutData(createGridDataFillAndGrab(1));
+
+            Label generatedEditor = new Label(statusLine, SWT.NONE);
+            if (dEditor.isGenerated()) {
+                generatedEditor.setText(Messages.Generated_editor);
+            } else {
+                generatedEditor.setText(dEditor.getNameAndDescription());
+            }
+            generatedEditor.setLayoutData(createGridDataFillAndGrab(1));
 
             labelInvalidDataWarningOrError = new Label(statusLine, SWT.BORDER);
             labelInvalidDataWarningOrError.setText(Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data);
