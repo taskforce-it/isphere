@@ -39,8 +39,8 @@ import biz.isphere.core.dataareaeditor.delegates.DecimalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataareaeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 

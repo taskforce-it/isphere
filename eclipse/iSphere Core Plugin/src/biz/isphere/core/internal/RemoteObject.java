@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspaceeditor.rse;
+package biz.isphere.core.internal;
 
 
 public class RemoteObject {

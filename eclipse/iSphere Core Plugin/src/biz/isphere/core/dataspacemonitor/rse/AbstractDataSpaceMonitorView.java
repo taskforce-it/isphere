@@ -49,11 +49,11 @@ import biz.isphere.core.dataspaceeditor.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditor.repository.DataSpaceEditorRepository;
 import biz.isphere.core.dataspaceeditor.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditor.rse.IDialogView;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.dataspacemonitor.rse.action.RefreshViewAction;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.internal.RemoteObject;
 
 public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView {
 

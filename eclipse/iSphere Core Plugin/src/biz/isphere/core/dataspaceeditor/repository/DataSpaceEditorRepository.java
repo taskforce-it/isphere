@@ -30,9 +30,9 @@ import biz.isphere.core.dataspaceeditor.model.DShortInteger;
 import biz.isphere.core.dataspaceeditor.model.DText;
 import biz.isphere.core.dataspaceeditor.model.DTinyInteger;
 import biz.isphere.core.dataspaceeditor.model.DataSpaceEditorManager;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectHelper;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 

@@ -13,7 +13,7 @@ import java.io.IOException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;

@@ -19,9 +19,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;

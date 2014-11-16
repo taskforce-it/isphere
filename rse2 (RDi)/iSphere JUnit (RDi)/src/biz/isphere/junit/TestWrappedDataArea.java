@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
-import biz.isphere.core.dataspaceeditor.rse.RemoteObject;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.IllegalMethodAccessException;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 
