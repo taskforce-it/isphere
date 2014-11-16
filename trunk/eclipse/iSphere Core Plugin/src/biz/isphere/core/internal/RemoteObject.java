@@ -8,7 +8,10 @@
 
 package biz.isphere.core.internal;
 
-
+/**
+ * The RemoteObject class is used by the RDI and WDSCi plug-in as an adapter to
+ * pass QSYSRemoteObjects (RDi) and ISeriesObjects (WDSCi) to the core plug-in.
+ */
 public class RemoteObject {
 
     private String connectionName;
@@ -44,7 +47,7 @@ public class RemoteObject {
     public String getDescription() {
         return description;
     }
-    
+
     @Override
     public String toString() {
         return connectionName + "(" + library + "/" + name + "(" + objectType + "))";
