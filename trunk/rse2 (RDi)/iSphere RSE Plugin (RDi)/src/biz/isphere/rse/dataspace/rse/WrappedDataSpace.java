@@ -8,19 +8,11 @@
 
 package biz.isphere.rse.dataspace.rse;
 
-import java.io.IOException;
-
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CharacterDataArea;
-import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.IllegalObjectTypeException;
-import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
@@ -40,18 +32,17 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
         super(remoteObject);
     }
 
-    protected AS400 getSystem(String connection) throws SystemMessageException {
+    protected AS400 getSystem(String connection) throws Exception {
         return IBMiConnection.getConnection(connection).getAS400ToolboxObject();
     }
 
-    protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws AS400SecurityException, ErrorCompletingRequestException,
-        IllegalObjectTypeException, InterruptedException, IOException, ObjectDoesNotExistException {
+    protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception {
         byte[] bytes = new byte[characterDataArea.getLength()];
         characterDataArea.read(bytes, 0, 0, characterDataArea.getLength());
         return bytes;
     }
 
-    protected void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException, IllegalObjectTypeException {
+    protected void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws Exception {
         characterDataArea.write(bytes, 0, 0, characterDataArea.getLength());
     }
 }
