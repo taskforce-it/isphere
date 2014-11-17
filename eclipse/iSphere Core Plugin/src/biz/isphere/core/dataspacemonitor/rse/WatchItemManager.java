@@ -27,7 +27,9 @@ public class WatchItemManager {
         decorator.show();
     }
 
-    public void remoteControl(IControlDecoration decorator) {
+    public void removeControl(IControlDecoration decorator) {
+        WatchedItem watchedItem = watchedItems.get(decorator.getControl());
+        watchedItem.restoreImageAndColor();
         watchedItems.remove(decorator.getControl());
         decorator.hide();
     }
@@ -43,7 +45,7 @@ public class WatchItemManager {
         checkControl(control);
         WatchedItem watchedItem = watchedItems.get(control);
         if (controlValue.equals(watchedItem.getCurrentValue())) {
-            watchedItem.restoreImage();
+            watchedItem.restoreImageAndColor();
         } else {
             watchedItem.setImageAndColor(getValueChangedImage(), getValueChangedColor());
         }

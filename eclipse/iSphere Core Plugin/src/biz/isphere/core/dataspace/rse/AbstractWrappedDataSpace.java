@@ -334,7 +334,7 @@ public abstract class AbstractWrappedDataSpace {
      * 
      * @return value of the space object as <code>byte</code>.
      */
-    public byte[] getBytes() {
+    public byte[] getBytes() throws Throwable {
 
         if (isDataArea()) {
             return getDataAreaBytes();
@@ -343,12 +343,12 @@ public abstract class AbstractWrappedDataSpace {
         }
     }
 
-    public Throwable setBytes(byte[] bytes) {
+    public void setBytes(byte[] bytes) throws Throwable {
 
         if (isDataArea()) {
-            return setDataAreaBytes(bytes);
+            setDataAreaBytes(bytes);
         } else {
-            return setUserSpaceBytes(bytes);
+            setUserSpaceBytes(bytes);
         }
     }
 
@@ -361,75 +361,62 @@ public abstract class AbstractWrappedDataSpace {
 
     protected abstract void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws Exception;
 
-    private byte[] getDataAreaBytes() {
+    private byte[] getDataAreaBytes() throws Throwable {
 
         byte[] bytes;
-        try {
-            String type = getDataType();
-            if (CHARACTER.equals(type)) {
-                CharacterDataArea characterDataArea = (CharacterDataArea)getOrLoadDataSpace();
-                bytes = loadCharacterDataAreaBytes(characterDataArea);
-            } else if (DECIMAL.equals(type)) {
-                DecimalDataArea decimalDataArea = (DecimalDataArea)getOrLoadDataSpace();
-                String decimalValue = BigDecimalHelper.getFixLength(decimalDataArea.read(), decimalDataArea.getLength(),
-                    decimalDataArea.getDecimalPositions());
-                bytes = decimalValue.replaceAll("\\.", "").getBytes();
-            } else if (LOGICAL.equals(type)) {
-                boolean isTrue = ((LogicalDataArea)getOrLoadDataSpace()).read();
-                if (isTrue) {
-                    bytes = DE.BOOLEAN_TRUE_1.getBytes();
-                } else {
-                    bytes = DE.BOOLEAN_FALSE_0.getBytes();
-                }
+        String type = getDataType();
+        if (CHARACTER.equals(type)) {
+            CharacterDataArea characterDataArea = (CharacterDataArea)getOrLoadDataSpace();
+            bytes = loadCharacterDataAreaBytes(characterDataArea);
+        } else if (DECIMAL.equals(type)) {
+            DecimalDataArea decimalDataArea = (DecimalDataArea)getOrLoadDataSpace();
+            String decimalValue = BigDecimalHelper.getFixLength(decimalDataArea.read(), decimalDataArea.getLength(), decimalDataArea
+                .getDecimalPositions());
+            bytes = decimalValue.replaceAll("\\.", "").getBytes();
+        } else if (LOGICAL.equals(type)) {
+            boolean isTrue = ((LogicalDataArea)getOrLoadDataSpace()).read();
+            if (isTrue) {
+                bytes = DE.BOOLEAN_TRUE_1.getBytes();
             } else {
-                throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
+                bytes = DE.BOOLEAN_FALSE_0.getBytes();
             }
-        } catch (Exception e) {
-            // FIXME: add error handling
-            bytes = new byte[] {};
+        } else {
+            throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
         }
+
         return bytes;
     }
 
-    private Throwable setDataAreaBytes(byte[] bytes) {
+    private Throwable setDataAreaBytes(byte[] bytes) throws Throwable {
 
-        try {
-            String type = getDataType();
-            if (CHARACTER.equals(type)) {
-                CharacterDataArea characterDataArea = (CharacterDataArea)getOrLoadDataSpace();
-                saveCharacterDataAreaBytes(characterDataArea, bytes);
-            } else if (DECIMAL.equals(type)) {
-                String decimalValue = BigDecimalHelper.getFixLength(bytes, getLength(), getDecimalPositions());
-                return setValue(new BigDecimal(decimalValue));
-            } else if (LOGICAL.equals(type)) {
-                String booleanValue = new String(bytes);
-                if (DE.BOOLEAN_TRUE_1.equals(booleanValue)) {
-                    setValue(Boolean.TRUE);
-                } else {
-                    setValue(Boolean.FALSE);
-                }
+        String type = getDataType();
+        if (CHARACTER.equals(type)) {
+            CharacterDataArea characterDataArea = (CharacterDataArea)getOrLoadDataSpace();
+            saveCharacterDataAreaBytes(characterDataArea, bytes);
+        } else if (DECIMAL.equals(type)) {
+            String decimalValue = BigDecimalHelper.getFixLength(bytes, getLength(), getDecimalPositions());
+            return setValue(new BigDecimal(decimalValue));
+        } else if (LOGICAL.equals(type)) {
+            String booleanValue = new String(bytes);
+            if (DE.BOOLEAN_TRUE_1.equals(booleanValue)) {
+                setValue(Boolean.TRUE);
             } else {
-                throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
+                setValue(Boolean.FALSE);
             }
-        } catch (Throwable e) {
-            return handleSaveError("Failed to save data area bytes", e);
+        } else {
+            throw produceIllegalMethodAccessException("getDataAreaBytes()"); //$NON-NLS-1$
         }
 
         return null;
     }
 
-    private byte[] getUserSpaceBytes() {
+    private byte[] getUserSpaceBytes() throws Throwable {
 
         byte[] bytes;
-        try {
-            UserSpace userSpace = (UserSpace)getOrLoadDataSpace();
-            bytes = new byte[userSpace.getLength()];
-            userSpace.read(bytes, 0);
-            userSpace.close();
-        } catch (Exception e) {
-            bytes = new byte[] {};
-            // FIXME: add error handling
-        }
+        UserSpace userSpace = (UserSpace)getOrLoadDataSpace();
+        bytes = new byte[userSpace.getLength()];
+        userSpace.read(bytes, 0);
+        userSpace.close();
 
         return bytes;
     }
@@ -500,8 +487,8 @@ public abstract class AbstractWrappedDataSpace {
     }
 
     private String retrieveDescription(AS400 anAS400, RemoteObject remoteObject) {
-        ObjectDescription objectDescription = new ObjectDescription(as400, remoteObject.getLibrary(), remoteObject.getName(),
-            QsysObjectHelper.getAPIObjectType(remoteObject.getObjectType()));
+        ObjectDescription objectDescription = new ObjectDescription(as400, remoteObject.getLibrary(), remoteObject.getName(), QsysObjectHelper
+            .getAPIObjectType(remoteObject.getObjectType()));
         String text;
         try {
             text = (String)objectDescription.getValue(ObjectDescription.TEXT_DESCRIPTION);

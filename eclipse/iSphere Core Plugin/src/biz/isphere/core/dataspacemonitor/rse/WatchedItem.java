@@ -3,6 +3,7 @@ package biz.isphere.core.dataspacemonitor.rse;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
+import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.IControlDecoration;
 
 public class WatchedItem {
@@ -30,13 +31,23 @@ public class WatchedItem {
         changeDecoration(valueChangedImage, color);
     }
 
-    public void restoreImage() {
+    public void restoreImageAndColor() {
         changeDecoration(originalImage, originalBackgroundColor);
     }
 
     private void changeDecoration(Image image, Color color) {
+
+        if (color.equals(ColorHelper.getDefaultBackgroundColor())) {
+            /*
+             * Ugly hack for WDSCi to reset the background color to the default
+             * color.
+             */
+            decorator.getControl().setBackground(null);
+        } else {
+            decorator.getControl().setBackground(color);
+        }
+
         decorator.setImage(image);
-        decorator.getControl().setBackground(color);
         decorator.getControl().redraw();
     }
 }

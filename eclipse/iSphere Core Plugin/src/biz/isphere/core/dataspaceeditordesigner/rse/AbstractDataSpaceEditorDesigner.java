@@ -461,8 +461,9 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
             };
             job.schedule();
 
-        } catch (Exception e) {
-            // TODO: show error message
+        } catch (Throwable e) {
+            ISpherePlugin.logError(e.getMessage(), e);
+            MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
         }
 
     }

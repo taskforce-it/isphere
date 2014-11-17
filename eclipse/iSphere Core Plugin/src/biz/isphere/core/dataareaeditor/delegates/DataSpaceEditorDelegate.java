@@ -12,14 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditordesigner.listener.DataModifiedEvent;
@@ -37,14 +40,16 @@ import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
  */
 public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate implements IWidgetModifyListener {
 
+    private Shell shell;
     private DEditor dEditor;
-    
+
     private DataSpaceEditorManager manager;
     private List<Control> controls;
     private DDataSpaceValue dataSpaceValue;
 
     public DataSpaceEditorDelegate(AbstractDataAreaEditor aDataAreaEditor, DEditor dEditor) {
         super(aDataAreaEditor);
+        this.shell = aDataAreaEditor.getSite().getShell();
         this.dEditor = dEditor;
         this.manager = new DataSpaceEditorManager();
     }
@@ -95,6 +100,7 @@ public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate impl
             }
         } catch (Throwable e) {
             ISpherePlugin.logError(e.getMessage(), e);
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
 
         // Add 'dirty' listener
@@ -105,7 +111,7 @@ public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate impl
 
     @Override
     public void doSave(IProgressMonitor aMonitor) {
-        
+
         Throwable exception = null;
         for (Control control : controls) {
             exception = manager.updateDataSpaceFromControl(control, dataSpaceValue);
@@ -113,12 +119,21 @@ public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate impl
                 break;
             }
         }
-        
+
         if (exception == null) {
-            exception = getWrappedDataSpace().setBytes(dataSpaceValue.getBytes());
+            try {
+                getWrappedDataSpace().setBytes(dataSpaceValue.getBytes());
+            } catch (Throwable e) {
+                exception = e;
+            }
         }
-        
+
         handleSaveResult(aMonitor, exception);
+
+        if (exception != null) {
+            ISpherePlugin.logError(exception.getMessage(), exception);
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, exception.getLocalizedMessage());
+        }
     }
 
     @Override
