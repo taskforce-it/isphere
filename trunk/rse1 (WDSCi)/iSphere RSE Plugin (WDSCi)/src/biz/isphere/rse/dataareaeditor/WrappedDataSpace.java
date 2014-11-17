@@ -13,6 +13,7 @@ import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.CharacterDataArea;
+import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
 /**
@@ -23,6 +24,8 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
  * made-up of 'Data Area' and 'User Space'.
  */
 public class WrappedDataSpace extends AbstractWrappedDataSpace {
+
+    String before;
 
     public WrappedDataSpace(AS400 as400, RemoteObject remoteObject) throws Exception {
         super(as400, remoteObject);
@@ -37,8 +40,14 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
     }
 
     protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception {
-        String value = characterDataArea.read(0, characterDataArea.getLength());
-        byte[] bytes = value.getBytes(characterDataArea.getSystem().getJobCCSIDEncoding());
-        return bytes;
+        QSYSObjectPathName path = new QSYSObjectPathName(characterDataArea.getPath());
+        QXXRTVDA qxxrtvda = new QXXRTVDA(characterDataArea.getSystem(), path.getLibraryName(), path.getObjectName());
+        return qxxrtvda.run(characterDataArea.getLength());
+    }
+
+    protected void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws Exception {
+        QSYSObjectPathName path = new QSYSObjectPathName(characterDataArea.getPath());
+        QXXCHGDA qxxchgda = new QXXCHGDA(characterDataArea.getSystem(), path.getLibraryName(), path.getObjectName());
+        qxxchgda.run(bytes);
     }
 }
