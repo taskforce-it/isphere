@@ -206,7 +206,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         reveiveDataUIJob.schedule();
     }
 
-    private DDataSpaceValue createDataSpaceValue(AbstractWrappedDataSpace dataSpace) throws Exception {
+    private DDataSpaceValue createDataSpaceValue(AbstractWrappedDataSpace dataSpace) throws Throwable {
         DDataSpaceValue dataSpaceValue = DDataSpaceValue.getCharacterInstance(dataSpace.getRemoteObject(), dataSpace.getCCSIDEncoding(),
             dataSpace.getBytes());
         return dataSpaceValue;
@@ -552,7 +552,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                     this.dEditor);
                 updateDataUIJob.schedule();
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 ISpherePlugin.logError(e.getMessage(), e);
                 MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
             }

@@ -670,6 +670,8 @@ public class Messages extends NLS {
 
     public static String Generated_editor;
     
+    public static String Error_logged_exception;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

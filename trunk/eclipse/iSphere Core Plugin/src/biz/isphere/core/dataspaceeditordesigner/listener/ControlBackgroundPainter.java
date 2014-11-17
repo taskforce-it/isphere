@@ -6,9 +6,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-public class ControlBackgroundPainter extends MouseTrackAdapter {
+import biz.isphere.core.internal.ColorHelper;
 
-    private static Color COLOR_BACKGROUND_DEFAULT = SWTResourceManager.getColor(255, 255, 255);
+public class ControlBackgroundPainter extends MouseTrackAdapter {
 
     private Color selectedControlBackgroundColor;
 
@@ -42,7 +42,7 @@ public class ControlBackgroundPainter extends MouseTrackAdapter {
             return;
         }
 
-        if (oldBackgroundColor.equals(COLOR_BACKGROUND_DEFAULT)) {
+        if (oldBackgroundColor.equals(ColorHelper.getDefaultBackgroundColor())) {
             /*
              * Ugly hack for WDSCi to reset the background color to the default
              * color.
