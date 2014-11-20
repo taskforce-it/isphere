@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -50,27 +51,36 @@ public class SearchForUpdates extends Job {
         newVersionAvailable = false;
 
         try {
+
             URL url = new URL(Preferences.getInstance().getURLForUpdates());
             URLConnection connection = url.openConnection();
             if (connection instanceof HttpURLConnection) {
                 ((HttpURLConnection)connection).setRequestMethod("GET");
             }
-            String[] propertyValues = getPropertyValues(connection.getInputStream(), "Bundle-Version");
-            if (propertyValues != null && propertyValues.length == 1) {
-                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
-                availableVersion = new Version(propertyValues[0]);
-                if (availableVersion.compareTo(currentVersion) > 0) {
+
+            Manifest manifest = readManifest(connection.getInputStream());
+            availableVersion = getVersion(manifest, "Bundle-Version");
+
+            currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
+            if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
+                newVersionAvailable = true;
+            }
+
+            if (!newVersionAvailable && Preferences.getInstance().isSearchForBetaVersions()) {
+                availableVersion = getVersion(manifest, "X-Beta-Version");
+                if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
                 }
             }
+
         } catch (Exception e) {
             ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
         }
 
         if (showResultAlways || newVersionAvailable) {
-
+            
             if (!showResultAlways) {
-                Version lastVersion; 
+                Version lastVersion;
                 try {
                     lastVersion = new Version(Preferences.getInstance().getLastVersionForUpdates());
                 } catch (IllegalArgumentException e) {
@@ -82,7 +92,7 @@ public class SearchForUpdates extends Job {
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                             UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null,
-                                Messages.There_is_a_new_version_available + "\n" + Messages.Current_version + ": " + currentVersion + "\n"
+                                getNewVersiontext(availableVersion) + "\n" + Messages.Current_version + ": " + currentVersion + "\n"
                                     + Messages.Available_version + ": " + availableVersion, MessageDialog.INFORMATION, new String[] { Messages.OK },
                                 0, availableVersion.toString());
                             dialog.open();
@@ -98,7 +108,7 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(Messages.There_is_a_new_version_available);
+                            tMessageBox.setMessage(getNewVersiontext(availableVersion));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -114,10 +124,51 @@ public class SearchForUpdates extends Job {
 
     }
 
-    private String[] getPropertyValues(InputStream manifestStream, String property) {
+    private String getNewVersiontext(Version version) {
+        
+        if (version.isBeta()) {
+            return Messages.There_is_a_new_beta_version_available;
+        } else {
+            return Messages.There_is_a_new_version_available;
+        }
+    }
+
+    private Version getVersion(Manifest manifest, String version) {
+
+        String[] propertyValues = getPropertyValues(manifest, version);
+        if (propertyValues != null && propertyValues.length == 1) {
+            return new Version(propertyValues[0]);
+        }
+
+        return null;
+    }
+
+    private Manifest readManifest(InputStream manifestStream) {
+
+        Manifest manifest;
+        try {
+
+            manifest = new Manifest(manifestStream);
+            return manifest;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (manifestStream != null) {
+                try {
+                    manifestStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String[] getPropertyValues(Manifest manifest, String property) {
         String[] propertyValues = null;
         try {
-            Manifest manifest = new Manifest(manifestStream);
             Properties prop = _manifestToProperties(manifest.getMainAttributes());
             String requires = prop.getProperty(property);
             if (requires != null) {
@@ -129,14 +180,6 @@ public class SearchForUpdates extends Job {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (manifestStream != null) {
-                    manifestStream.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
         return propertyValues;
     }
