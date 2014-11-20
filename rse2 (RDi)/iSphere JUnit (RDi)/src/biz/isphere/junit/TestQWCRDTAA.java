@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import biz.isphere.core.dataareaeditor.QWCRDTAA;
+import biz.isphere.core.dataspaceeditor.QWCRDTAA;
 
 import com.ibm.as400.access.AS400;
 
