@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.delegates;
+package biz.isphere.core.dataspaceeditor.delegates;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -20,9 +20,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.dataareaeditor.StatusBar;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusBar;
 
 /**
  * Abstract class that implements the basic services of a data area editor

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.events;
+package biz.isphere.core.dataspaceeditor.events;
 
 import java.util.EventObject;
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.delegates;
+package biz.isphere.core.dataspaceeditor.delegates;
 
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -36,10 +36,10 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.dataareaeditor.controls.DataAreaText;
-import biz.isphere.core.dataareaeditor.events.StatusChangedEvent;
-import biz.isphere.core.dataareaeditor.events.StatusChangedListener;
+import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.controls.DataAreaText;
+import biz.isphere.core.dataspaceeditor.events.StatusChangedEvent;
+import biz.isphere.core.dataspaceeditor.events.StatusChangedListener;
 import biz.isphere.core.internal.FontHelper;
 
 /**

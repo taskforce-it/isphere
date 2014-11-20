@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.delegates;
+package biz.isphere.core.dataspaceeditor.delegates;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 
 /**
  * Editor delegate that edits a *LGL data area.
