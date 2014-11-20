@@ -40,7 +40,7 @@ public class StatusBar {
 
     public void setMessage(String aMessage) {
         if (StringHelper.isNullOrEmpty(aMessage)) {
-            messageLabel.setText("");
+            messageLabel.setText(""); //$NON-NLS-1$
             return;
         }
         messageLabel.setText(" " + aMessage); //$NON-NLS-1$

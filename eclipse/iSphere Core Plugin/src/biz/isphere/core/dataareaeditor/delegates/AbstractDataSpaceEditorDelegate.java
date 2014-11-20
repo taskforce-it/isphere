@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataareaeditor.StatusBar;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 
@@ -31,13 +31,13 @@ import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
  * The delegate that inherits from this class is responsible for implementing
  * the specific details of a data area of a certain type.
  */
-public abstract class AbstractDataAreaEditorDelegate implements IFindReplaceTarget {
+public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTarget {
 
-    private AbstractDataAreaEditor dataAreaEditor;
+    private AbstractDataSpaceEditor dataAreaEditor;
     private StatusBar statusBar;
     private Clipboard clipboard;
 
-    public AbstractDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
+    public AbstractDataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         dataAreaEditor = aDataAreaEditor;
     }
 

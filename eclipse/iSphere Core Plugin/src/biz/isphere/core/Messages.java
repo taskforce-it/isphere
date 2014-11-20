@@ -541,6 +541,8 @@ public class Messages extends NLS {
     public static String Are_you_sure;
 
     public static String Search_for_updates;
+
+    public static String Search_for_beta_versions;
     
     public static String Failed_to_connect_to_iSphere_update_server;
 
@@ -551,6 +553,8 @@ public class Messages extends NLS {
     public static String iSphere_Search_for_updates;
 
     public static String There_is_a_new_version_available;
+
+    public static String There_is_a_new_beta_version_available;
 
     public static String There_is_no_new_version_available;
 
@@ -671,6 +675,16 @@ public class Messages extends NLS {
     public static String Generated_editor;
     
     public static String Error_logged_exception;
+    
+    public static String Auto_refresh_menu_item;
+    
+    public static String Auto_refresh_menu_item_stop;
+    
+    public static String Auto_refresh_menu_item_stop_tooltip;
+    
+    public static String Auto_refresh_menu_item_every_A_seconds;
+    
+    public static String Auto_refresh_menu_item_every_A_seconds_tooltip;
     
     static {
         // initialize resource bundle

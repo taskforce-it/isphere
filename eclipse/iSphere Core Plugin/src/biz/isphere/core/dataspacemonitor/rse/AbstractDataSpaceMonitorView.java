@@ -8,12 +8,17 @@
 
 package biz.isphere.core.dataspacemonitor.rse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -32,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -49,13 +55,15 @@ import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
-import biz.isphere.core.dataspacemonitor.rse.action.RefreshViewAction;
+import biz.isphere.core.dataspacemonitor.action.RefreshViewAction;
+import biz.isphere.core.dataspacemonitor.action.RefreshViewIntervalAction;
 import biz.isphere.core.internal.ColorHelper;
+import biz.isphere.core.internal.IJobFinishedListener;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 
-public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView {
+public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView, IJobFinishedListener {
 
     public static final String ID = "biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"; //$NON-NLS-1$ 
 
@@ -72,13 +80,18 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     private Label labelType;
     private Label labelDescription;
 
-    private Action refreshViewAction;
     private Label labelInvalidDataWarningOrError;
+
+    private Action refreshViewAction;
+    private RefreshViewIntervalAction disableRefreshViewAction;
+    private List<RefreshViewIntervalAction> refreshIntervalActions;
+    private AutoRefreshJob autoRefreshJob;
 
     public AbstractDataSpaceMonitorView() {
         manager = new DataSpaceEditorManager();
         repository = DataSpaceEditorRepository.getInstance();
         watchManager = new WatchItemManager();
+        autoRefreshJob = null;
     }
 
     @Override
@@ -91,6 +104,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         createActions();
         initializeToolBar();
+        initializeViewMenu();
     }
 
     private void createActions() {
@@ -99,12 +113,36 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         refreshViewAction.setToolTipText(Messages.Refresh_the_contents_of_this_view);
         refreshViewAction.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH));
         refreshViewAction.setEnabled(false);
+
+        disableRefreshViewAction = new RefreshViewIntervalAction(this, -1);
+
+        refreshIntervalActions = new ArrayList<RefreshViewIntervalAction>();
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 1));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 3));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 10));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
     }
 
     private void initializeToolBar() {
 
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(disableRefreshViewAction);
         toolbarManager.add(refreshViewAction);
+    }
+
+    private void initializeViewMenu() {
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+
+        MenuManager layoutSubMenu = new MenuManager(Messages.Auto_refresh_menu_item);
+        layoutSubMenu.add(disableRefreshViewAction);
+
+        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
+            layoutSubMenu.add(refreshAction);
+        }
+
+        viewMenu.add(layoutSubMenu);
     }
 
     @Override
@@ -132,12 +170,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void setData(RemoteObject[] remoteObjects) {
 
         if (!checkInputData(remoteObjects)) {
-            return;
+            return ;
         }
 
         RemoteObject remoteObject = remoteObjects[0];
         if (!checkRemoteObjectType(remoteObject)) {
-            return;
+            return ;
         }
 
         DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
@@ -150,7 +188,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
              * generate the editor. Although it might be quite ugly, generating
              * a text field for a 2000-byte character value.
              */
-            return;
+            return ;
         }
 
         /*
@@ -159,6 +197,8 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
          */
         LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, remoteObject, selectedEditor);
         loadDataJob.schedule();
+
+        return ;
     }
 
     protected boolean checkRemoteObjectType(RemoteObject remoteObject) {
@@ -391,11 +431,43 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     private void refreshEditor() {
 
         mainArea.layout();
-        if (currentDataSpaceValue != null) {
-            refreshViewAction.setEnabled(true);
-        } else {
+
+        refreshActionsEnablement();
+    }
+
+    protected void refreshActionsEnablement() {
+
+        if (currentDataSpaceValue == null || isAutoRefreshOn()) {
             refreshViewAction.setEnabled(false);
+        } else {
+            refreshViewAction.setEnabled(true);
         }
+
+        if (isAutoRefreshOn()) {
+            disableRefreshViewAction.setEnabled(true);
+        } else {
+            disableRefreshViewAction.setEnabled(false);
+        }
+
+        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
+            if (isAutoRefreshOn()) {
+                if (autoRefreshJob.getInterval() == refreshAction.getInterval()) {
+                    refreshAction.setEnabled(false);
+                } else {
+                    refreshAction.setEnabled(true);
+                }
+            } else {
+                refreshAction.setEnabled(true);
+            }
+        }
+    }
+
+    private boolean isAutoRefreshOn() {
+
+        if (autoRefreshJob != null) {
+            return true;
+        }
+        return false;
     }
 
     private void addDropSupportOnComposite(Composite dialogEditorComposite) {
@@ -445,6 +517,45 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return this.getSite().getShell();
     }
 
+    public void setRefreshInterval(int seconds) {
+
+        if (currentDataSpaceValue == null) {
+            seconds = RefreshViewIntervalAction.REFRESH_OFF;
+            return;
+        }
+
+        if (autoRefreshJob != null) {
+            if (seconds == RefreshViewIntervalAction.REFRESH_OFF) {
+                autoRefreshJob.cancel();
+            } else {
+                autoRefreshJob.setInterval(seconds);
+            }
+            return;
+        }
+
+        autoRefreshJob = new AutoRefreshJob(this, currentDataSpaceValue.getRemoteObject(), seconds);
+        autoRefreshJob.schedule();
+
+        refreshActionsEnablement();
+    }
+
+    public void jobFinished(Job job) {
+        if (job == autoRefreshJob) {
+            autoRefreshJob = null;
+            refreshActionsEnablement();
+        }
+    }
+
+    @Override
+    public void dispose() {
+
+        if (autoRefreshJob != null) {
+            autoRefreshJob.cancel();
+        }
+
+        super.dispose();
+    }
+
     protected abstract AbstractDropDataObjectListerner createDropListener(IDialogView editor);
 
     protected abstract AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception;
@@ -473,35 +584,8 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
-            if (!checkInputData(remoteObjects)) {
-                return Status.OK_STATUS;
-            }
-
-            RemoteObject remoteObject = remoteObjects[0];
-            if (!checkRemoteObjectType(remoteObject)) {
-                return Status.OK_STATUS;
-            }
-
-            DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
-            if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
-                /*
-                 * Cancel job, because we need an editor and user spaces might
-                 * be quite large. This way we do not load it for nothing, in
-                 * case we cannot find an editor. For all types of data areas we
-                 * can generate the editor. Although it might be quite ugly,
-                 * generating a text field for a 2000-byte character value.
-                 */
-                return Status.OK_STATUS;
-            }
-
-            /*
-             * Submit long term process to batch. Let the process load the data
-             * and pass it on to the UI update job.
-             */
-            LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(getName(), remoteObject, selectedEditor);
-            loadDataJob.schedule();
-
+            setData(remoteObjects);
+            
             return Status.OK_STATUS;
         }
     }
@@ -571,11 +655,17 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         private DDataSpaceValue dataSpaceValue;
         private DEditor selectedEditor;
+        private IJobFinishedListener finishedListener;
 
         public UpdateDataSpaceDataUIJob(Display jobDisplay, String name, DDataSpaceValue dataSpaceValue, DEditor selectedEditor) {
             super(jobDisplay, name);
             this.dataSpaceValue = dataSpaceValue;
             this.selectedEditor = selectedEditor;
+
+        }
+
+        public void setJobFinishedListener(IJobFinishedListener listener) {
+            this.finishedListener = listener;
         }
 
         @Override
@@ -590,7 +680,96 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             copyDataToControls(this.dataSpaceValue);
             refreshEditor();
 
+            if (finishedListener != null) {
+                finishedListener.jobFinished(this);
+            }
+
             return Status.OK_STATUS;
+        }
+    }
+
+    /**
+     * Job, that periodically refreshs the content of the view.
+     * <p>
+     * It is the third and last job in a series of three.
+     */
+    private class AutoRefreshJob extends Job implements IJobFinishedListener {
+
+        final int MILLI_SECONDS = 1000;
+
+        private IJobFinishedListener jobFinishedListener;
+        private RemoteObject remoteObject;
+        private int interval;
+
+        private UpdateDataSpaceDataUIJob updateDataUIJob;
+        private int waitTime;
+
+        public AutoRefreshJob(IJobFinishedListener listener, RemoteObject remoteObject, int seconds) {
+            super(remoteObject.getQuaifiedObject());
+            this.jobFinishedListener = listener;
+            this.remoteObject = remoteObject;
+            setInterval(seconds);
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+
+            final int SLEEP_INTERVAL = 50;
+
+            while (!monitor.isCanceled()) {
+
+                try {
+
+                    AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
+
+                    /*
+                     * Create a UI job to update the view with the new data.
+                     */
+                    updateDataUIJob = new UpdateDataSpaceDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), null);
+                    updateDataUIJob.setJobFinishedListener(this);
+                    updateDataUIJob.schedule();
+
+                    waitTime = interval;
+                    while ((!monitor.isCanceled() && waitTime > 0) || updateDataUIJob != null) {
+                        Thread.sleep(SLEEP_INTERVAL);
+                        if (waitTime > interval) {
+                            waitTime = interval;
+                        }
+                        if (waitTime > 0) {
+                            waitTime = waitTime - SLEEP_INTERVAL;
+                        }
+                    }
+
+                } catch (InterruptedException e) {
+                    // exit the thread
+                    break;
+                } catch (Throwable e) {
+                    ISpherePlugin.logError(e.getMessage(), e);
+                    MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+                    break;
+                }
+            }
+
+            jobFinishedListener.jobFinished(this);
+
+            return Status.OK_STATUS;
+        }
+
+        public int getInterval() {
+
+            return interval / MILLI_SECONDS;
+        }
+
+        public void setInterval(int seconds) {
+
+            interval = seconds * MILLI_SECONDS;
+        }
+
+        public void jobFinished(Job job) {
+
+            if (job == updateDataUIJob) {
+                updateDataUIJob = null;
+            }
         }
     }
 }

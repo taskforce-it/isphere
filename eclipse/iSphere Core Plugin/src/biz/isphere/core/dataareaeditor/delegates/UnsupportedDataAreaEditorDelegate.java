@@ -14,16 +14,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 
 /**
  * Fallback editor delegate that is used in case the is a unknown data area
  * type.
  */
-public class UnsupportedDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
+public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
-    public UnsupportedDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
+    public UnsupportedDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 

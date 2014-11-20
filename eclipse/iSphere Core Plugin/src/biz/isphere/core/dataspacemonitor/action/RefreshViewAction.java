@@ -1,4 +1,4 @@
-package biz.isphere.core.dataspacemonitor.rse.action;
+package biz.isphere.core.dataspacemonitor.action;
 
 import org.eclipse.jface.action.Action;
 
@@ -6,9 +6,9 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 
 public class RefreshViewAction extends Action {
-
-    IDialogView view;
-
+    
+    private IDialogView view;
+    
     public RefreshViewAction(IDialogView view) {
         super("Refresh");
         this.view = view;
@@ -22,5 +22,4 @@ public class RefreshViewAction extends Action {
     public void run() {
         view.refreshDataSynchronously();
     }
-
 }

@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dataspacemonitor.internal.WatchedItem;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.IControlDecoration;
 
@@ -59,7 +60,7 @@ public class WatchItemManager {
 
     private void checkControl(Control control) {
         if (!isWatchedControl(control)) {
-            throw new RuntimeException("Control not found: " + control);
+            throw new RuntimeException("Control not found: " + control); //$NON-NLS-1$
         }
     }
 
