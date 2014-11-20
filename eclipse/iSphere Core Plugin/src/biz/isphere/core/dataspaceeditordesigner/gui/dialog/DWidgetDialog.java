@@ -25,24 +25,36 @@ import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 
 public class DWidgetDialog extends AbstractDialog {
 
-    private Class<AbstractDWidget> widgetClass;
+    private Class<? extends AbstractDWidget> widgetClass;
     private DTemplateWidget widgetTemplate;
+    private AbstractDWidget widget;
 
     private Text textLabel;
     private Text textOffset;
     private Text textLength;
     private Text textFraction;
 
-    public DWidgetDialog(Shell parentShell, Class<AbstractDWidget> widgetClass) {
+    public DWidgetDialog(Shell parentShell, AbstractDWidget widget) {
+        super(parentShell);
+        this.widgetClass = widget.getClass();
+        this.widget = widget;
+    }
+
+    public DWidgetDialog(Shell parentShell, Class<? extends AbstractDWidget> widgetClass) {
         super(parentShell);
         this.widgetClass = widgetClass;
+        this.widget = null;
     }
 
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         String field = DataSpaceEditorManager.getDataType(widgetClass);
-        newShell.setText(Messages.bind(Messages.New_0_Field, field));
+        if (widget == null) {
+            newShell.setText(Messages.bind(Messages.New_0_Field, field));
+        } else {
+            newShell.setText(Messages.bind(Messages.Change_0_Field, field));
+        }
     }
 
     @Override
@@ -184,6 +196,17 @@ public class DWidgetDialog extends AbstractDialog {
             return -1;
         }
         return IntHelper.tryParseInt(text.getText());
+    }
+
+    protected void setInitialValues() {
+
+        if (widget == null) {
+            return;
+        }
+
+        textLabel.setText(widget.getLabel());
+        textOffset.setText(new Integer(widget.getOffset()).toString());
+        textLength.setText(new Integer(widget.getLength()).toString());
     }
 
     /**

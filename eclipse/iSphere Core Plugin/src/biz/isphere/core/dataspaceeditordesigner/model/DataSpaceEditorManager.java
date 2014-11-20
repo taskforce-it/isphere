@@ -160,6 +160,15 @@ public final class DataSpaceEditorManager {
         dEditor.addWidget(widget);
     }
 
+    public void changeWidget(DEditor dEditor, AbstractDWidget widget, DTemplateWidget changes) {
+        
+        widget.setLabel(changes.getLabel());
+        widget.setOffset(changes.getOffset());
+        widget.setLength(changes.getLength());
+        
+//        dEditor.changeWidget(widget);
+    }
+
     public void addControlModifyListener(Control control, IWidgetModifyListener modifyListener) {
         if (control instanceof Text) {
             Text text = (Text)control;

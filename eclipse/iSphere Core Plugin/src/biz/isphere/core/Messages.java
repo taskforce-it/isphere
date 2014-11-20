@@ -629,6 +629,8 @@ public class Messages extends NLS {
     public static String Columns_colon;
     
     public static String New_0_Field;
+    
+    public static String Change_0_Field;
 
     public static String Label_colon;
     

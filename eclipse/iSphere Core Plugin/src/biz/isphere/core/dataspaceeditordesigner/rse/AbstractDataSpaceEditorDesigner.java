@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -60,6 +61,7 @@ import biz.isphere.core.dataspaceeditordesigner.gui.designer.PopupWidget;
 import biz.isphere.core.dataspaceeditordesigner.gui.designer.TreeViewContentProvider;
 import biz.isphere.core.dataspaceeditordesigner.gui.designer.TreeViewLabelProvider;
 import biz.isphere.core.dataspaceeditordesigner.gui.designer.TreeViewSorter;
+import biz.isphere.core.dataspaceeditordesigner.gui.dialog.DWidgetDialog;
 import biz.isphere.core.dataspaceeditordesigner.listener.AddReferencedObjectListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.CollapseAllListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.ControlBackgroundPainter;
@@ -80,6 +82,7 @@ import biz.isphere.core.dataspaceeditordesigner.model.DLongInteger;
 import biz.isphere.core.dataspaceeditordesigner.model.DReferencedObject;
 import biz.isphere.core.dataspaceeditordesigner.model.DShortInteger;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateReferencedObject;
+import biz.isphere.core.dataspaceeditordesigner.model.DTemplateWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DText;
 import biz.isphere.core.dataspaceeditordesigner.model.DTinyInteger;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
@@ -142,6 +145,28 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
         // Refresh the editor
         setDataSpaceEditor(dEditor);
+    }
+
+    public void changeWidget(DEditor dEditor, AbstractDWidget widget) {
+
+        DWidgetDialog newDWidgetDialog = new DWidgetDialog(getShell(), widget);
+        if (newDWidgetDialog.open() == Dialog.OK) {
+            DTemplateWidget changes = newDWidgetDialog.getWidget();
+            
+            Control[] controls = editorComposite.getChildren();
+            for (Control control : controls) {
+                if (manager.isManagedControl(control)) {
+                    AbstractDWidget currentWidget = manager.getWidgetFromControl(control);
+                    if (currentWidget != null && currentWidget.equals(widget)) {
+                        manager.changeWidget(dEditor, currentWidget, changes);
+                        setEditorDirty(dEditor);
+                    }
+                }
+            }
+            
+            setDataSpaceEditor(dEditor);
+            refreshEditor();
+        }
     }
 
     public void deleteWidget(DEditor dEditor, AbstractDWidget widget) {
@@ -373,11 +398,11 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     private void createRightPanel(SashForm sashForm) {
-        
+
         Composite mainArea = new Composite(sashForm, SWT.BORDER);
         mainArea.setLayout(createGridLayoutWithMargin());
         mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
+
         ToolBar toolBar = new ToolBar(mainArea, SWT.FLAT | SWT.RIGHT);
         toolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
 
