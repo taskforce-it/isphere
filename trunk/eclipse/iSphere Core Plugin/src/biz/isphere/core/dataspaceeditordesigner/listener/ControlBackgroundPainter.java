@@ -4,7 +4,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import biz.isphere.core.internal.ColorHelper;
 
