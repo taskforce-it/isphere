@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.controls;
+package biz.isphere.core.dataspaceeditor.controls;
 
 import java.util.Vector;
 
@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.events.StatusChangedEvent;
-import biz.isphere.core.dataareaeditor.events.StatusChangedListener;
+import biz.isphere.core.dataspaceeditor.events.StatusChangedEvent;
+import biz.isphere.core.dataspaceeditor.events.StatusChangedListener;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.FontHelper;
 

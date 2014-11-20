@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor.delegates;
+package biz.isphere.core.dataspaceeditor.delegates;
 
 import java.math.BigDecimal;
 
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.internal.Validator;
 
 /**

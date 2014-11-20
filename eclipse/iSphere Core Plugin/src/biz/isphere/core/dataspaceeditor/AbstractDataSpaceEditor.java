@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor;
+package biz.isphere.core.dataspaceeditor;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -32,14 +32,14 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.delegates.AbstractDataSpaceEditorDelegate;
-import biz.isphere.core.dataareaeditor.delegates.CharacterDataAreaEditorDelegate;
-import biz.isphere.core.dataareaeditor.delegates.DataSpaceEditorDelegate;
-import biz.isphere.core.dataareaeditor.delegates.DecimalDataAreaEditorDelegate;
-import biz.isphere.core.dataareaeditor.delegates.LogicalDataAreaEditorDelegate;
-import biz.isphere.core.dataareaeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.SelectDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.delegates.AbstractDataSpaceEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.CharacterDataAreaEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.DataSpaceEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.DecimalDataAreaEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.RemoteObject;

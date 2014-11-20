@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor;
+package biz.isphere.core.dataspaceeditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

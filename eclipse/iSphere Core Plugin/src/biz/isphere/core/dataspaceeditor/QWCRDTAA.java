@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataareaeditor;
+package biz.isphere.core.dataspaceeditor;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.APIProgramCallDocument;
@@ -26,7 +26,7 @@ public class QWCRDTAA {
 
         try {
 
-            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400, "biz.isphere.core.dataareaeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
+            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400, "biz.isphere.core.dataspaceeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
             pcml.setQualifiedObjectName("QWCRDTAA.dataArea", aLibrary, aDataArea); //$NON-NLS-1$
             pcml.setValue("QWCRDTAA.receiverLength", new Integer((pcml.getOutputsize("QWCRDTAA.receiver")))); //$NON-NLS-1$ //$NON-NLS-2$
 
