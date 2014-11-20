@@ -12,9 +12,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.dataareaeditor.DataAreaEditorInput;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.DataAreaEditorInput;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
