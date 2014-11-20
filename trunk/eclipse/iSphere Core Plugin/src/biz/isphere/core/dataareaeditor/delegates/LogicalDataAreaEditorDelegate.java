@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
 
 /**
  * Editor delegate that edits a *LGL data area.
@@ -26,11 +26,11 @@ import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
  * The delegate implements all the specific stuff that is needed to edit a data
  * area of type *LGL.
  */
-public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
+public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
     private Button dataAreaText;
 
-    public LogicalDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
+    public LogicalDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 
@@ -41,14 +41,14 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataAreaEditorDelegat
 
         Label lblValue = new Label(editorArea, SWT.NONE);
         GridData lblValueLayoutData = new GridData();
-        lblValueLayoutData.widthHint = AbstractDataAreaEditor.VALUE_LABEL_WIDTH_HINT;
+        lblValueLayoutData.widthHint = AbstractDataSpaceEditor.VALUE_LABEL_WIDTH_HINT;
         lblValueLayoutData.verticalAlignment = GridData.BEGINNING;
         lblValue.setLayoutData(lblValueLayoutData);
         lblValue.setText(Messages.Value_colon);
 
         Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
         GridData horizontalSpacerLayoutData = new GridData();
-        horizontalSpacerLayoutData.widthHint = AbstractDataAreaEditor.SPACER_WIDTH_HINT;
+        horizontalSpacerLayoutData.widthHint = AbstractDataSpaceEditor.SPACER_WIDTH_HINT;
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 

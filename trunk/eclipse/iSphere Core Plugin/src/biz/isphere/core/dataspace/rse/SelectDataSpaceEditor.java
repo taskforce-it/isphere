@@ -33,7 +33,7 @@ import biz.isphere.core.internal.Size;
 
 public class SelectDataSpaceEditor extends XDialog {
 
-    private static final String SELECTED_EDITOR = "selectedEditor";
+    private static final String SELECTED_EDITOR = "selectedEditor"; //$NON-NLS-1$
 
     private DEditor selectedEditor;
     private DEditor[] dEditors;

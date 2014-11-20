@@ -21,13 +21,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.dataareaeditor.DataAreaEditor;
+import biz.isphere.rse.userspaceeditor.UserSpaceEditor;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
-public class DataAreaEditorAction implements IObjectActionDelegate {
+public class UserSpaceEditorAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
     protected Shell shell;
@@ -50,7 +50,7 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
         String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
         String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
-        if (qsysRemoteObject.getType().equals(ISeries.DTAARA)) {
+        if (qsysRemoteObject.getType().equals(ISeries.USRSPC)) {
 
             String dataArea = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
@@ -68,7 +68,7 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
 
                 if (as400 != null) {
                     RemoteObject remoteObject = new RemoteObject(connectionName, dataArea, library, objectType, description);
-                    DataAreaEditor.openEditor(as400, remoteObject, IEditor.EDIT);
+                    UserSpaceEditor.openEditor(as400, remoteObject, IEditor.EDIT);
                 }
             }
         }

@@ -352,11 +352,6 @@ public abstract class AbstractWrappedDataSpace {
         }
     }
 
-    private Throwable setUserSpaceBytes(byte[] bytes) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     protected abstract byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception;
 
     protected abstract void saveCharacterDataAreaBytes(CharacterDataArea characterDataArea, byte[] bytes) throws Exception;
@@ -370,9 +365,9 @@ public abstract class AbstractWrappedDataSpace {
             bytes = loadCharacterDataAreaBytes(characterDataArea);
         } else if (DECIMAL.equals(type)) {
             DecimalDataArea decimalDataArea = (DecimalDataArea)getOrLoadDataSpace();
-            String decimalValue = BigDecimalHelper.getFixLength(decimalDataArea.read(), decimalDataArea.getLength(), decimalDataArea
-                .getDecimalPositions());
-            bytes = decimalValue.replaceAll("\\.", "").getBytes();
+            String decimalValue = BigDecimalHelper.getFixLength(decimalDataArea.read(), decimalDataArea.getLength(),
+                decimalDataArea.getDecimalPositions());
+            bytes = decimalValue.replaceAll("\\.", "").getBytes(); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (LOGICAL.equals(type)) {
             boolean isTrue = ((LogicalDataArea)getOrLoadDataSpace()).read();
             if (isTrue) {
@@ -419,6 +414,15 @@ public abstract class AbstractWrappedDataSpace {
         userSpace.close();
 
         return bytes;
+    }
+
+    private Throwable setUserSpaceBytes(byte[] bytes) throws Throwable {
+
+        UserSpace userSpace = (UserSpace)getOrLoadDataSpace();
+        userSpace.write(bytes, 0, 0, bytes.length);
+        userSpace.close();
+
+        return null;
     }
 
     private int getLengthInternal(Object object) throws Exception {
@@ -487,8 +491,8 @@ public abstract class AbstractWrappedDataSpace {
     }
 
     private String retrieveDescription(AS400 anAS400, RemoteObject remoteObject) {
-        ObjectDescription objectDescription = new ObjectDescription(as400, remoteObject.getLibrary(), remoteObject.getName(), QsysObjectHelper
-            .getAPIObjectType(remoteObject.getObjectType()));
+        ObjectDescription objectDescription = new ObjectDescription(as400, remoteObject.getLibrary(), remoteObject.getName(),
+            QsysObjectHelper.getAPIObjectType(remoteObject.getObjectType()));
         String text;
         try {
             text = (String)objectDescription.getValue(ObjectDescription.TEXT_DESCRIPTION);

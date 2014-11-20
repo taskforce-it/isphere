@@ -36,7 +36,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataareaeditor.controls.DataAreaText;
 import biz.isphere.core.dataareaeditor.events.StatusChangedEvent;
 import biz.isphere.core.dataareaeditor.events.StatusChangedListener;
@@ -55,7 +55,7 @@ import biz.isphere.core.internal.FontHelper;
  * The delegate (and the DataAreaText widget) uses the FontRegistry and the ColorRegistry to paint the editor
  * </pre>
  */
-public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDelegate {
+public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
     private static final int OFFSET_LABEL_WIDTH_HINT = 55;
 
@@ -82,7 +82,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataAreaEditorDeleg
 
     private int currentWidth;
 
-    public CharacterDataAreaEditorDelegate(AbstractDataAreaEditor aDataAreaEditor) {
+    public CharacterDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 

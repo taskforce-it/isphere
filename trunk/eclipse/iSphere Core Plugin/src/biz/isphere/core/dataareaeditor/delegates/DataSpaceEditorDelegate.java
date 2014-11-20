@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.dataareaeditor.AbstractDataAreaEditor;
+import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditordesigner.listener.DataModifiedEvent;
 import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
@@ -38,7 +38,7 @@ import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
  * The delegate implements all the specific stuff that is needed to edit a data
  * area of type *LGL.
  */
-public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate implements IWidgetModifyListener {
+public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate implements IWidgetModifyListener {
 
     private Shell shell;
     private DEditor dEditor;
@@ -47,7 +47,7 @@ public class DataSpaceEditorDelegate extends AbstractDataAreaEditorDelegate impl
     private List<Control> controls;
     private DDataSpaceValue dataSpaceValue;
 
-    public DataSpaceEditorDelegate(AbstractDataAreaEditor aDataAreaEditor, DEditor dEditor) {
+    public DataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor, DEditor dEditor) {
         super(aDataAreaEditor);
         this.shell = aDataAreaEditor.getSite().getShell();
         this.dEditor = dEditor;

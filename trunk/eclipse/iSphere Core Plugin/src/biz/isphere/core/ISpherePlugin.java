@@ -55,6 +55,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_MESSAGE_FILE = "message_file.gif";
     public static final String IMAGE_MESSAGE = "message.gif";
     public static final String IMAGE_DATA_AREA = "data_area.gif";
+    public static final String IMAGE_USER_SPACE = "user_space.gif";
     public static final String IMAGE_COMPARE = "compare.gif";
     public static final String IMAGE_BINDING_DIRECTORY = "binding_directory.gif";
     public static final String IMAGE_MINUS = "minus.gif";
@@ -80,7 +81,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_USER_SPACE_MONITOR = "data_monitor.gif";
     public static final String IMAGE_VALUE_CHANGED = "value_changed.gif";
     public static final String IMAGE_SYSTEM_HELP = "systemhelp.gif";
-    
+    public static final String IMAGE_AUTO_REFRESH_OFF = "auto_refresh_off.gif";
+
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
 
@@ -187,6 +189,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_MESSAGE_FILE, getImageDescriptor(IMAGE_MESSAGE_FILE));
         reg.put(IMAGE_MESSAGE, getImageDescriptor(IMAGE_MESSAGE));
         reg.put(IMAGE_DATA_AREA, getImageDescriptor(IMAGE_DATA_AREA));
+        reg.put(IMAGE_USER_SPACE, getImageDescriptor(IMAGE_USER_SPACE));
         reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_COMPARE));
         reg.put(IMAGE_BINDING_DIRECTORY, getImageDescriptor(IMAGE_BINDING_DIRECTORY));
         reg.put(IMAGE_MINUS, getImageDescriptor(IMAGE_MINUS));
@@ -212,7 +215,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_USER_SPACE_MONITOR, getImageDescriptor(IMAGE_USER_SPACE_MONITOR));
         reg.put(IMAGE_VALUE_CHANGED, getImageDescriptor(IMAGE_VALUE_CHANGED));
         reg.put(IMAGE_SYSTEM_HELP, getImageDescriptor(IMAGE_SYSTEM_HELP));
-
+        reg.put(IMAGE_AUTO_REFRESH_OFF, getImageDescriptor(IMAGE_AUTO_REFRESH_OFF));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

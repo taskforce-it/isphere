@@ -1,4 +1,4 @@
-package biz.isphere.core.dataspacemonitor.rse;
+package biz.isphere.core.dataspacemonitor.internal;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;

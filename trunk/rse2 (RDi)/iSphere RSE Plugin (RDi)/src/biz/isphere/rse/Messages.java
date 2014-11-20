@@ -20,9 +20,11 @@ public class Messages extends NLS {
 
     public static String iSphere_Data_Area_Editor; // Only for WDSCi
 
-    public static String iSphere_User_Space_Monitor; // Only for WDSCi
+    public static String iSphere_User_Space_Editor; // Only for WDSCi
 
     public static String iSphere_Data_Area_Monitor; // Only for WDSCi
+
+    public static String iSphere_User_Space_Monitor; // Only for WDSCi
 
     public static String Right;
 
