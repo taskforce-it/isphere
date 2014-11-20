@@ -18,6 +18,6 @@ import biz.isphere.rse.Messages;
 public class MonitorDataAreaAction extends AbstractMonitorDataSpaceAction {
 
     public MonitorDataAreaAction() {
-        super(Messages.iSphere_User_Space_Monitor, ISpherePlugin.IMAGE_DATA_AREA_MONITOR, ISeries.DTAARA);
+        super(Messages.iSphere_Data_Area_Monitor, ISpherePlugin.IMAGE_DATA_AREA_MONITOR, ISeries.DTAARA);
     }
 }

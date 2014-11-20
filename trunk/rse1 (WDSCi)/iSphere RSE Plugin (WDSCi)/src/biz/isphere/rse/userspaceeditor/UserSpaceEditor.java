@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataareaeditor;
+package biz.isphere.rse.userspaceeditor;
 
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataareaeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.dataareaeditor.DataAreaEditorInput;
+import biz.isphere.core.dataareaeditor.UserSpaceEditorInput;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
@@ -21,9 +21,9 @@ import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 
 import com.ibm.as400.access.AS400;
 
-public class DataAreaEditor extends AbstractDataSpaceEditor {
+public class UserSpaceEditor extends AbstractDataSpaceEditor {
 
-    public static final String ID = "biz.isphere.rse.dataareaeditor.DataAreaEditor"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.rse.userspaceeditor.UserSpaceEditor"; //$NON-NLS-1$
 
     @Override
     protected AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception {
@@ -44,11 +44,11 @@ public class DataAreaEditor extends AbstractDataSpaceEditor {
 
         try {
 
-            DataAreaEditorInput editorInput = new DataAreaEditorInput(anAS400, remoteObject, aMode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DataAreaEditor.ID);
+            UserSpaceEditorInput editorInput = new UserSpaceEditorInput(anAS400, remoteObject, aMode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, UserSpaceEditor.ID);
 
         } catch (PartInitException e) {
-            ISpherePlugin.logError("Failed to open data area editor", e); //$NON-NLS-1$
+            ISpherePlugin.logError("Failed to open user space editor", e); //$NON-NLS-1$
         }
     }
 }

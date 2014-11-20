@@ -6,10 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataareaeditor;
+package biz.isphere.rse.dataspace.rse;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.rse.dataareaeditor.QXXCHGDA;
+import biz.isphere.rse.dataareaeditor.QXXRTVDA;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.CharacterDataArea;

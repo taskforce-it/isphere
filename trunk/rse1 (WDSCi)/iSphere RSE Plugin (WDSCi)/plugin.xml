@@ -19,7 +19,12 @@
             name=""
             icon="icons/data_area.gif"
             class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
-            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
+            id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
+      <editor
+            name=""
+            icon="icons/user_space.gif"
+            class="biz.isphere.rse.userspaceeditor.UserSpaceEditor"
+            id="biz.isphere.rse.userspaceeditor.UserSpaceEditor"/>
 	</extension>
     
 	<extension 
@@ -59,6 +64,18 @@
 			name="Data Area Editor"
 			class="biz.isphere.rse.actions.DataAreaEditorAction"
 			id="biz.isphere.rse.actions.DataAreaEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    User Space Editor Contributions
+      	  ==========================================
+      	-->
+      	
+		<dynamicPopupMenuExtension
+			name="User Space Editor"
+			class="biz.isphere.rse.actions.UserSpaceEditorAction"
+			id="biz.isphere.rse.actions.UserSpaceEditorAction">
 	    </dynamicPopupMenuExtension>
 	
       	<!--

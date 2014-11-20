@@ -34,17 +34,17 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
+public class UserSpaceEditorAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
     protected ArrayList arrayListSelection;
 
-    public DataAreaEditorAction() {
-        super(Messages.iSphere_Data_Area_Editor, "", null);
+    public UserSpaceEditorAction() {
+        super(Messages.iSphere_User_Space_Editor, "", null);
         arrayListSelection = new ArrayList();
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_DATA_AREA));
+        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_USER_SPACE));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
@@ -65,7 +65,7 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
                 ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
                 if (type.isObject()) {
                     String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase(ISeries.DTAARA)) {
+                    if (strType.equalsIgnoreCase(ISeries.USRSPC)) {
                         arrayListSelection.add(dataElement);
                     }
                 }
