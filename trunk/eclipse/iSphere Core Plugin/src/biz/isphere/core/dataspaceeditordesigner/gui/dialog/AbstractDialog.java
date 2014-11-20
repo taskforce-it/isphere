@@ -46,6 +46,8 @@ public abstract class AbstractDialog extends XDialog {
     public void create() {
         super.create();
 
+        setInitialValues();
+        
         validate();
         showError = true;
     }
@@ -58,7 +60,7 @@ public abstract class AbstractDialog extends XDialog {
         createContent(mainArea);
 
         statusLineManager = createStatusLineManager(mainArea);
-
+        
         return dialogArea;
     }
 
@@ -95,6 +97,10 @@ public abstract class AbstractDialog extends XDialog {
         return text;
     }
 
+    protected void setInitialValues() {
+        
+    }
+    
     @Override
     protected void okPressed() {
         if (!validate()) {

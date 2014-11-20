@@ -110,6 +110,12 @@ public class DEditor implements Comparable<DEditor>, Serializable {
         }
     }
 
+    void changeWidget(AbstractDWidget widget) {
+        if (widgets.containsKey(widget.getKey())) {
+            widgets.put(widget.getKey(), widget);
+        }        
+    }
+
     void removeWidget(AbstractDWidget widget) {
         if (widgets.containsKey(widget.getKey())) {
             widgets.remove(widget.getKey());

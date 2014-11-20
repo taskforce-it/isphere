@@ -23,6 +23,8 @@ public interface IDialogEditor extends IDropObjectListener {
 
     public void addWidget(DEditor dialog, AbstractDWidget widget);
 
+    public void changeWidget(DEditor dialog, AbstractDWidget widget);
+
     public void deleteWidget(DEditor dialog, AbstractDWidget widget);
 
     public void addReferencedObjectToSelectedEditors(DTemplateReferencedObject referencedObject);

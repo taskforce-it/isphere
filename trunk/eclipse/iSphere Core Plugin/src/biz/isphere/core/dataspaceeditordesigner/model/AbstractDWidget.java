@@ -55,6 +55,18 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
     public int getLength() {
         return length;
     }
+    
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+    
+    public void setLength(int length) {
+        this.length = length;
+    }
 
     public void addModifyListener(IWidgetModifyListener listener) {
         if (modifyListener == null) {

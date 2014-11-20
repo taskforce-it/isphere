@@ -18,12 +18,12 @@ import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
-public class DeleteWidgetListener extends SelectionAdapter {
+public class ChangeWidgetListener extends SelectionAdapter {
 
     private IDialogEditor editor;
     private DEditor dEditor;
 
-    public DeleteWidgetListener(IDialogEditor editor, DEditor dEditor) {
+    public ChangeWidgetListener(IDialogEditor editor, DEditor dEditor) {
         this.editor = editor;
         this.dEditor = dEditor;
     }
@@ -34,13 +34,14 @@ public class DeleteWidgetListener extends SelectionAdapter {
             MenuItem menuItem = (MenuItem)event.getSource();
             ControlPayload payload = (ControlPayload)menuItem.getData(DE.KEY_DATA_SPACE_PAYLOAD);
             if (payload != null) {
-                performDeleteWidget(dEditor, payload.getWidget());
+                performChangeWidget(dEditor, payload.getWidget());
             }
         }
     }
 
-    private void performDeleteWidget(DEditor dEditor, AbstractDWidget widget) {
+    private void performChangeWidget(DEditor dEditor, AbstractDWidget widget) {
 
-        editor.deleteWidget(dEditor, widget);
+        
+        editor.changeWidget(dEditor, widget);
     }
 }
