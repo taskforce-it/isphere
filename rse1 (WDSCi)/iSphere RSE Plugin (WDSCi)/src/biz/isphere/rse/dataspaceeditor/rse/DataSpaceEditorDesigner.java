@@ -13,7 +13,7 @@ import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDataSpaceEditorDesig
 import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.dataareaeditor.WrappedDataSpace;
+import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 
 public class DataSpaceEditorDesigner extends AbstractDataSpaceEditorDesigner {
 

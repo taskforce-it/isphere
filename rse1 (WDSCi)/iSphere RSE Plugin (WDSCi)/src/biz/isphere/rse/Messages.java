@@ -23,9 +23,11 @@ public class Messages extends NLS {
 
     public static String iSphere_Data_Area_Editor;
 
-    public static String iSphere_User_Space_Monitor;
+    public static String iSphere_User_Space_Editor;
 
     public static String iSphere_Data_Area_Monitor;
+
+    public static String iSphere_User_Space_Monitor;
 
     public static String Right;
 

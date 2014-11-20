@@ -14,7 +14,7 @@ import biz.isphere.core.dataspacemonitor.rse.AbstractDataSpaceMonitorView;
 import biz.isphere.core.dataspacemonitor.rse.WatchItemManager;
 import biz.isphere.core.internal.IControlDecoration;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.dataareaeditor.WrappedDataSpace;
+import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
 import biz.isphere.rse.internal.RSEControlDecoration;
 
