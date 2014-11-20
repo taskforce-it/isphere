@@ -32,7 +32,9 @@ import biz.isphere.core.preferences.Preferences;
 public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private Button buttonSearchForUpdates;
+    private Button buttonSearchForBetaVersions;
 	private boolean searchForUpdates;
+    private boolean searchForBetaVersions;
     private Text textURLForUpdates;
     private String urlForUpdates;
     private Button buttonStartSearchForUpdates;
@@ -50,13 +52,24 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
 		gridLayout.numColumns = 2;
 		container.setLayout(gridLayout);
 		
-		final Label labelCachingWarning = new Label(container, SWT.NONE);
-		labelCachingWarning.setText(Messages.Search_for_updates + ":");
+		final Label labelSearchForUpdates = new Label(container, SWT.NONE);
+		labelSearchForUpdates.setText(Messages.Search_for_updates + ":");
 
 		buttonSearchForUpdates = new Button(container, SWT.CHECK);
         buttonSearchForUpdates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent selectionEvent) {
                 searchForUpdates = buttonSearchForUpdates.getSelection();
+                checkError();
+            }
+        });
+        
+        final Label labelSearchForBetaVersions = new Label(container, SWT.NONE);
+        labelSearchForBetaVersions.setText(Messages.Search_for_beta_versions + ":");
+
+        buttonSearchForBetaVersions = new Button(container, SWT.CHECK);
+        buttonSearchForBetaVersions.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent selectionEvent) {
+                searchForBetaVersions = buttonSearchForBetaVersions.getSelection();
                 checkError();
             }
         });
@@ -126,23 +139,27 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
 	
     protected void setStoreToValues() {
         Preferences.getInstance().setSearchForUpdates(searchForUpdates);
+        Preferences.getInstance().setSearchForBetaVersions(searchForBetaVersions);
         Preferences.getInstance().setURLForUpdates(urlForUpdates);
     }
 
     protected void setScreenToValues() {
         searchForUpdates = Preferences.getInstance().isSearchForUpdates();
+        searchForBetaVersions = Preferences.getInstance().isSearchForBetaVersions();
         urlForUpdates = Preferences.getInstance().getURLForUpdates();
         setScreenValues();
     }
 
     protected void setScreenToDefaultValues() {
         searchForUpdates = Preferences.getInstance().getDefaultSearchForUpdates();
+        searchForBetaVersions = Preferences.getInstance().getDefaultSearchForBetaVersions();
         urlForUpdates = Preferences.getInstance().getDefaultURLForUpdates();
         setScreenValues();
     }
 
     protected void setScreenValues() {
         buttonSearchForUpdates.setSelection(searchForUpdates);
+        buttonSearchForBetaVersions.setSelection(searchForBetaVersions);
         textURLForUpdates.setText(urlForUpdates);
         setErrorMessage(null);
         setValid(true);

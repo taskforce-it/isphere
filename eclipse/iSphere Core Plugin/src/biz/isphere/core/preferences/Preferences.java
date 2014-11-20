@@ -75,6 +75,8 @@ public final class Preferences {
 
     private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
 
+    private static final String SEARCH_FOR_BETA_VERSIONS = DOMAIN + "SEARCH_FOR_BETA_VERSIONS"; //$NON-NLS-1$
+
     private static final String URL_FOR_UPDATES = DOMAIN + "URL_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String LAST_VERSION_FOR_UPDATES = DOMAIN + "LAST_VERSION_FOR_UPDATES"; //$NON-NLS-1$
@@ -127,6 +129,10 @@ public final class Preferences {
 
     public boolean isSearchForUpdates() {
         return preferenceStore.getBoolean(SEARCH_FOR_UPDATES);
+    }
+
+    public boolean isSearchForBetaVersions() {
+        return preferenceStore.getBoolean(SEARCH_FOR_BETA_VERSIONS);
     }
 
     public String getURLForUpdates() {
@@ -213,6 +219,10 @@ public final class Preferences {
         preferenceStore.setValue(SEARCH_FOR_UPDATES, aSearchForUpdates);
     }
 
+    public void setSearchForBetaVersions(boolean aSearchForUpdates) {
+        preferenceStore.setValue(SEARCH_FOR_BETA_VERSIONS, aSearchForUpdates);
+    }
+
     public void setURLForUpdates(String aURLForUpdates) {
         preferenceStore.setValue(URL_FOR_UPDATES, aURLForUpdates);
     }
@@ -281,7 +291,9 @@ public final class Preferences {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
+        
         preferenceStore.setDefault(SEARCH_FOR_UPDATES, getDefaultSearchForUpdates());
+        preferenceStore.setDefault(SEARCH_FOR_BETA_VERSIONS, getDefaultSearchForBetaVersions());
         preferenceStore.setDefault(URL_FOR_UPDATES, getDefaultURLForUpdates());
         preferenceStore.setDefault(LAST_VERSION_FOR_UPDATES, getDefaultLastVersionForUpdates());
 
@@ -338,6 +350,15 @@ public final class Preferences {
      */
     public boolean getDefaultSearchForUpdates() {
         return true;
+    }
+
+    /**
+     * Returns the default 'search for beta versions' flag.
+     * 
+     * @return default 'search for beta versions' flag.
+     */
+    public boolean getDefaultSearchForBetaVersions() {
+        return false;
     }
 
     /**
