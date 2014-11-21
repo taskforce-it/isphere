@@ -8,40 +8,53 @@
 
 package biz.isphere.core.dataspaceeditordesigner.gui.dialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
+import biz.isphere.core.dataspaceeditordesigner.model.DComment;
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 
 public class DWidgetDialog extends AbstractDialog {
 
+    private DEditor dEditor;
     private Class<? extends AbstractDWidget> widgetClass;
     private DTemplateWidget widgetTemplate;
     private AbstractDWidget widget;
 
-    private Text textLabel;
+    private Control textLabel;
     private Text textOffset;
     private Text textLength;
     private Text textFraction;
+    private Combo comboHorizontalSpan;
 
-    public DWidgetDialog(Shell parentShell, AbstractDWidget widget) {
+    public DWidgetDialog(Shell parentShell, DEditor dEditor, AbstractDWidget widget) {
         super(parentShell);
+        this.dEditor = dEditor;
         this.widgetClass = widget.getClass();
         this.widget = widget;
     }
 
-    public DWidgetDialog(Shell parentShell, Class<? extends AbstractDWidget> widgetClass) {
+    public DWidgetDialog(Shell parentShell, DEditor dEditor, Class<? extends AbstractDWidget> widgetClass) {
         super(parentShell);
+        this.dEditor = dEditor;
         this.widgetClass = widgetClass;
         this.widget = null;
     }
@@ -61,21 +74,30 @@ public class DWidgetDialog extends AbstractDialog {
     protected void createContent(Composite parent) {
 
         // Label
-        textLabel = createTextField(parent, Messages.Label_colon);
-        textLabel.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                validateLabel();
-            }
-        });
+        if (DComment.class.equals(widgetClass)) {
+            Combo combo = createComboField(parent, Messages.Label_colon, false);
+            combo.setItems(new String[] { DComment.SEPARATOR, DComment.NONE });
+            textLabel = combo;
+        } else {
+            Text text = createTextField(parent, Messages.Label_colon);
+            text.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    validateLabel();
+                }
+            });
+            textLabel = text;
+        }
 
         // Offset
-        textOffset = createNumericField(parent, Messages.Offset_colon);
-        textOffset.setText("0"); //$NON-NLS-1$
-        textOffset.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                validateOffset();
-            }
-        });
+        if (DataSpaceEditorManager.hasOffset(widgetClass)) {
+            textOffset = createNumericField(parent, Messages.Offset_colon);
+            textOffset.setText("0"); //$NON-NLS-1$
+            textOffset.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    validateOffset();
+                }
+            });
+        }
 
         // Length
         if (DataSpaceEditorManager.hasLength(widgetClass)) {
@@ -98,9 +120,19 @@ public class DWidgetDialog extends AbstractDialog {
                 }
             });
         }
+
+        comboHorizontalSpan = createComboField(parent, Messages.Horizontal_span_colon, true);
+        comboHorizontalSpan.setItems(getHorizontalSpanValues());
+        comboHorizontalSpan.select(0);
+        comboHorizontalSpan.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateHorizontalSpan();
+            }
+        });
+
     }
 
-    public DTemplateWidget getWidget() {
+    public DTemplateWidget getWidgetTemplate() {
         return widgetTemplate;
     }
 
@@ -132,9 +164,13 @@ public class DWidgetDialog extends AbstractDialog {
 
     private boolean validateLabel() {
 
-        if (StringHelper.isNullOrEmpty(textLabel.getText())) {
-            setErrorMessage(textLabel, "Label is missing. Please specify a label.");
-            return false;
+        if (DComment.class.equals(widgetClass)) {
+            // no label required
+        } else {
+            if (StringHelper.isNullOrEmpty(getLabelText())) {
+                setErrorMessage(textLabel, Messages.Label_is_missing_Please_specify_a_label);
+                return false;
+            }
         }
 
         clearErrorMessage(textLabel);
@@ -142,14 +178,17 @@ public class DWidgetDialog extends AbstractDialog {
     }
 
     private boolean validateOffset() {
+        if (!DataSpaceEditorManager.hasOffset(widgetClass)) {
+            return true;
+        }
 
         if (StringHelper.isNullOrEmpty(textOffset.getText())) {
-            setErrorMessage(textOffset, "Offset is missing. Please specify an offset.");
+            setErrorMessage(textOffset, Messages.Offset_is_missing_Please_specify_an_offset);
             return false;
         }
 
         if (getIntValue(textOffset) < 0) {
-            setErrorMessage(textOffset, "Invalid offset. Offset must be greater or equal zero.");
+            setErrorMessage(textOffset, Messages.Invalid_offset_Offset_must_be_greater_or_equal_zero);
             return false;
         }
 
@@ -163,7 +202,7 @@ public class DWidgetDialog extends AbstractDialog {
         }
 
         if (getIntValue(textLength) <= 0) {
-            setErrorMessage(textLength, "Invalid Length. Length must be greater or equal 1.");
+            setErrorMessage(textLength, Messages.Invalid_length_Length_must_be_greater_or_equal_1);
             return false;
         }
 
@@ -180,15 +219,33 @@ public class DWidgetDialog extends AbstractDialog {
         return true;
     }
 
+    private boolean validateHorizontalSpan() {
+
+        if (StringHelper.isNullOrEmpty(comboHorizontalSpan.getText())) {
+            setErrorMessage(comboHorizontalSpan, Messages.Horizontal_span_is_missing_Please_specify_a_span);
+            return false;
+        }
+
+        if (getIntValue(comboHorizontalSpan) < 0 || getIntValue(comboHorizontalSpan) > dEditor.getColumns()) {
+            setErrorMessage(comboHorizontalSpan,
+                Messages.bind(Messages.Invalid_horizontal_span_Span_must_be_between_A_and_B, new Object[] { 1, dEditor.getColumns() }));
+            return false;
+        }
+
+        clearErrorMessage(comboHorizontalSpan);
+        return true;
+    }
+
     @Override
     protected void performOKPressed() {
 
-        String label = textLabel.getText();
+        String label = getLabelText();
         int offset = getIntValue(textOffset);
         int length = getIntValue(textLength);
         int fraction = getIntValue(textFraction);
+        int horizontalSpan = getIntValue(comboHorizontalSpan);
 
-        widgetTemplate = new DTemplateWidget(widgetClass, label, offset, length, fraction);
+        widgetTemplate = new DTemplateWidget(widgetClass, label, offset, length, fraction, horizontalSpan);
     }
 
     private int getIntValue(Text text) {
@@ -198,15 +255,56 @@ public class DWidgetDialog extends AbstractDialog {
         return IntHelper.tryParseInt(text.getText());
     }
 
+    private int getIntValue(Combo combo) {
+        if (combo == null) {
+            return -1;
+        }
+        return IntHelper.tryParseInt(combo.getText());
+    }
+
     protected void setInitialValues() {
 
         if (widget == null) {
             return;
         }
 
-        textLabel.setText(widget.getLabel());
-        textOffset.setText(new Integer(widget.getOffset()).toString());
-        textLength.setText(new Integer(widget.getLength()).toString());
+        setLabelText(widget.getLabel());
+
+        if (DataSpaceEditorManager.hasOffset(widgetClass)) {
+            textOffset.setText(new Integer(widget.getOffset()).toString());
+        }
+
+        if (DataSpaceEditorManager.hasLength(widgetClass)) {
+            textLength.setText(new Integer(widget.getLength()).toString());
+        }
+
+        comboHorizontalSpan.setText(new Integer(widget.getHorizontalSpan()).toString());
+    }
+
+    public void setLabelText(String text) {
+        if (textLabel instanceof Combo) {
+            ((Combo)textLabel).setText(text);
+        } else {
+            ((Text)textLabel).setText(text);
+        }
+    }
+
+    public String getLabelText() {
+        if (textLabel instanceof Combo) {
+            return ((Combo)textLabel).getText();
+        } else {
+            return ((Text)textLabel).getText();
+        }
+    }
+
+    private String[] getHorizontalSpanValues() {
+        List<String> values = new ArrayList<String>();
+        
+        for (int i = 1; i <= dEditor.getColumns(); i++) {
+            values.add(new Integer(i).toString());
+        }
+        
+        return values.toArray(new String[values.size()]);
     }
 
     /**
@@ -215,6 +313,6 @@ public class DWidgetDialog extends AbstractDialog {
     @Override
     protected Point getDefaultSize() {
         // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        return new Point(280, 180);
+        return new Point(295, 205);
     }
 }

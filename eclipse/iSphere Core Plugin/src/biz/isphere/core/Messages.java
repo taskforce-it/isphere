@@ -413,6 +413,8 @@ public class Messages extends NLS {
     public static String Files;
 
     public static String Description;
+    
+    public static String Description_colon;
 
     public static String Export_to_Member_Filter;
 
@@ -610,6 +612,8 @@ public class Messages extends NLS {
     
     public static String Data_type_Integer_8_byte;
 
+    public static String Data_type_Comment;
+    
     public static String Expand_all; 
 
     public static String Collapse_all; 
@@ -636,6 +640,8 @@ public class Messages extends NLS {
     
     public static String Offset_colon;
 
+    public static String Horizontal_span_colon;
+    
     public static String Dropped_object_does_not_match_expected_type;
 
     public static String Only_one_data_space_object_must_be_selected_to_provide_sample_data;
@@ -699,6 +705,18 @@ public class Messages extends NLS {
     public static String Auto_refresh_menu_item_every_A_seconds;
     
     public static String Auto_refresh_menu_item_every_A_seconds_tooltip;
+    
+    public static String Label_is_missing_Please_specify_a_label;
+    
+    public static String Offset_is_missing_Please_specify_an_offset;
+    
+    public static String Invalid_offset_Offset_must_be_greater_or_equal_zero;
+    
+    public static String Invalid_length_Length_must_be_greater_or_equal_1;
+    
+    public static String Horizontal_span_is_missing_Please_specify_a_span;
+    
+    public static String Invalid_horizontal_span_Span_must_be_between_A_and_B;
     
     static {
         // initialize resource bundle

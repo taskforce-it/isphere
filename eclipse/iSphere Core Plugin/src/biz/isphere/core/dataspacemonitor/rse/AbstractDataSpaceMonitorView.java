@@ -303,20 +303,15 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         scrollableArea.setExpandHorizontal(true);
         scrollableArea.setExpandVertical(true);
 
-        int numColumns;
-        if (dEditor == null) {
-            numColumns = 2;
-        } else {
-            numColumns = dEditor.getColumns() * 2;
-        }
-        Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
+        Composite dialogEditor = manager.createDialogArea(scrollableArea, dEditor, 2);
+        int numColumns = ((GridLayout)dialogEditor.getLayout()).numColumns;
 
         if (dEditor != null) {
 
             AbstractDWidget[] widgets = dEditor.getWidgets();
             Color color = ColorHelper.getBackgroundColorOfSelectedControls();
             for (AbstractDWidget widget : widgets) {
-                Control control = manager.createReadOnlyWidgetControlAndAddToParent(dialogEditor, widget);
+                Control control = manager.createReadOnlyWidgetControlAndAddToParent(dialogEditor, 2, widget);
                 if (control instanceof Text) {
                     control.addMouseTrackListener(new ControlBackgroundPainter(color));
                 } else if (control instanceof Button) {

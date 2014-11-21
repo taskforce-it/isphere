@@ -21,11 +21,9 @@ import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 public class ChangeWidgetListener extends SelectionAdapter {
 
     private IDialogEditor editor;
-    private DEditor dEditor;
 
-    public ChangeWidgetListener(IDialogEditor editor, DEditor dEditor) {
+    public ChangeWidgetListener(IDialogEditor editor) {
         this.editor = editor;
-        this.dEditor = dEditor;
     }
 
     @Override
@@ -34,14 +32,13 @@ public class ChangeWidgetListener extends SelectionAdapter {
             MenuItem menuItem = (MenuItem)event.getSource();
             ControlPayload payload = (ControlPayload)menuItem.getData(DE.KEY_DATA_SPACE_PAYLOAD);
             if (payload != null) {
-                performChangeWidget(dEditor, payload.getWidget());
+                performChangeWidget(payload.getWidget());
             }
         }
     }
 
-    private void performChangeWidget(DEditor dEditor, AbstractDWidget widget) {
+    private void performChangeWidget(AbstractDWidget widget) {
 
-        
-        editor.changeWidget(dEditor, widget);
+        editor.changeWidget(widget);
     }
 }

@@ -21,9 +21,9 @@ public interface IDialogEditor extends IDropObjectListener {
 
     public void deleteDataSpaceEditors();
 
-    public void addWidget(DEditor dialog, AbstractDWidget widget);
+    public void addWidget(DEditor dialog, Class<? extends AbstractDWidget> widget);
 
-    public void changeWidget(DEditor dialog, AbstractDWidget widget);
+    public void changeWidget(AbstractDWidget widget);
 
     public void deleteWidget(DEditor dialog, AbstractDWidget widget);
 

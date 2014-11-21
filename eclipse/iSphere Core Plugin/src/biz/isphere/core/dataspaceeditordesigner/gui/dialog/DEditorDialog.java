@@ -52,7 +52,7 @@ public class DEditorDialog extends AbstractDialog {
         });
 
         // Description
-        textDescription = createTextField(parent, Messages.Name_colon);
+        textDescription = createTextField(parent, Messages.Description_colon);
         textDescription.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 validateDescription();

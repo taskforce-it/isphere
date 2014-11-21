@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataspaceeditordesigner.model;
 
-
 public class DTemplateWidget {
 
     private Class<? extends AbstractDWidget> widgetClass;
@@ -16,21 +15,27 @@ public class DTemplateWidget {
     private int offset;
     private int length;
     private int fraction;
+    private int horizontalSpan;
 
     public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset) {
-        this(widgetClass, label, offset, -1, -1);
+        this(widgetClass, label, offset, -1, -1, 1);
     }
 
     public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset, int length) {
-        this(widgetClass, label, offset, length, -1);
+        this(widgetClass, label, offset, length, -1, 1);
     }
 
     public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset, int length, int fraction) {
+        this(widgetClass, label, offset, length, fraction, 1);
+    }
+
+    public DTemplateWidget(Class<? extends AbstractDWidget> widgetClass, String label, int offset, int length, int fraction, int horizontalSpan) {
         this.widgetClass = widgetClass;
         this.label = label;
         this.offset = offset;
         this.length = length;
         this.fraction = fraction;
+        this.horizontalSpan = horizontalSpan;
     }
 
     public Class<? extends AbstractDWidget> getWidgetClass() {
@@ -51,6 +56,10 @@ public class DTemplateWidget {
 
     public int getFraction() {
         return fraction;
+    }
+
+    public int getHorizontalSpan() {
+        return horizontalSpan;
     }
 
     @Override

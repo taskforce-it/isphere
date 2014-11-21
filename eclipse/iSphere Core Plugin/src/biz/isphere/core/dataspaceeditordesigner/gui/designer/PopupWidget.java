@@ -14,18 +14,21 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditordesigner.listener.ChangeWidgetListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.DeleteWidgetListener;
+import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
+import biz.isphere.core.dataspaceeditordesigner.model.DComment;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
 public class PopupWidget extends MenuAdapter {
 
     private IDialogEditor editor;
-    private DEditor dialog;
+    private DEditor dEditor;
     private ControlPayload payload;
 
     private MenuItem changeWidgetMenuItem;
@@ -33,7 +36,7 @@ public class PopupWidget extends MenuAdapter {
 
     public PopupWidget(IDialogEditor editor, DEditor dialog, ControlPayload payload) {
         this.editor = editor;
-        this.dialog = dialog;
+        this.dEditor = dialog;
         this.payload = payload;
     }
 
@@ -57,17 +60,27 @@ public class PopupWidget extends MenuAdapter {
     public void createMenuItems(MenuEvent event) {
 
         Menu menuParent = (Menu)event.getSource();
-
+        AbstractDWidget widget = payload.getWidget();
+        
+        String text = widget.getLabel().trim();
+        if (DComment.class.equals(widget.getClass())) {
+            if (StringHelper.isNullOrEmpty(text)) {
+                text = Messages.Data_type_Comment;
+            } else if (DComment.SEPARATOR.equals(text) ||DComment.NONE.equals(text)) {
+                text = Messages.Data_type_Comment + " - " + text; 
+            }
+        }
+        
         changeWidgetMenuItem = new MenuItem(menuParent, SWT.NONE);
-        changeWidgetMenuItem.setText(Messages.Change + ": " + payload.getWidget().getLabel());
+        changeWidgetMenuItem.setText(Messages.Change + ": " + text);
         changeWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));
-        changeWidgetMenuItem.addSelectionListener(new ChangeWidgetListener(editor, dialog));
+        changeWidgetMenuItem.addSelectionListener(new ChangeWidgetListener(editor));
         changeWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
 
         deleteWidgetMenuItem = new MenuItem(menuParent, SWT.NONE);
-        deleteWidgetMenuItem.setText(Messages.Delete + ": " + payload.getWidget().getLabel());
+        deleteWidgetMenuItem.setText(Messages.Delete + ": " + text);
         deleteWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
-        deleteWidgetMenuItem.addSelectionListener(new DeleteWidgetListener(editor, dialog));
+        deleteWidgetMenuItem.addSelectionListener(new DeleteWidgetListener(editor, dEditor));
         deleteWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
     }
 }
