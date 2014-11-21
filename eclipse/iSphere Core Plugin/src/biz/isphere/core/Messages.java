@@ -670,6 +670,18 @@ public class Messages extends NLS {
     
     public static String DftText_Logical_value_colon;
 
+    public static String Single_filter_pool;
+
+    public static String Pool;
+
+    public static String Filter;
+    
+    public static String Profile;
+    
+    public static String No_profiles_available;
+    
+    public static String All_filter_pools;
+
     public static String Invalid_data_warning_Editor_might_not_be_suitable_for_the_data;
 
     public static String Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen;

@@ -99,7 +99,7 @@ public class RSEFilter extends AbstractResource {
 
 	@Override
 	public String getKey() {
-		return name;
+		return filterPool.getName() + ":" + name;
 	}
 
 	@Override

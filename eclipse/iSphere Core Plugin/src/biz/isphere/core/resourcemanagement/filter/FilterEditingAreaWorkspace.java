@@ -15,8 +15,8 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaWorkspace extends AbstractFilterEditingArea {
 
-	public FilterEditingAreaWorkspace(Composite parent, AbstractResource[] resources, boolean both) {
-		super(parent, resources, both);
+	public FilterEditingAreaWorkspace(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+		super(parent, resources, both, singleFilterPool);
 	}
 
 	@Override

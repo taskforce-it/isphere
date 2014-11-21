@@ -15,8 +15,8 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaBothEqual extends AbstractFilterEditingArea {
 
-	public FilterEditingAreaBothEqual(Composite parent, AbstractResource[] resources, boolean both) {
-		super(parent, resources, both);
+	public FilterEditingAreaBothEqual(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+		super(parent, resources, both, singleFilterPool);
 	}
 
 	@Override

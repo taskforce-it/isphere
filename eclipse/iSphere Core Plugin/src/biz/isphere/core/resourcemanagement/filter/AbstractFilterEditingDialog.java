@@ -21,6 +21,7 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog {
 
+    private boolean singleFilterPool;
 	private RSEFilter[] resourceWorkspace;
 	private RSEFilter[] resourceRepository;
 	private RSEFilterBoth[] resourceBothDifferent;
@@ -28,11 +29,12 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 	
 	public AbstractFilterEditingDialog(
 			Shell parentShell, 
-			boolean editWorkspace, boolean editRepository, boolean editBoth, String workspace, String repository, 
+			boolean editWorkspace, boolean editRepository, boolean editBoth, boolean singleFilterPool, String workspace, String repository, 
 			RSEFilter[] resourceWorkspace, RSEFilter[] resourceRepository, 
 			RSEFilterBoth[] resourceBothDifferent, RSEFilter[] resourceBothEqual) {
 		super(parentShell, editWorkspace, editRepository, editBoth, workspace, repository,
 				resourceWorkspace, resourceRepository, resourceBothDifferent, resourceBothEqual);
+		this.singleFilterPool = singleFilterPool;
 		this.resourceWorkspace = resourceWorkspace;
 		this.resourceRepository = resourceRepository;
 		this.resourceBothDifferent = resourceBothDifferent;
@@ -56,7 +58,7 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 
 	@Override
 	protected AbstractEditingArea getEditingAreaWorkspace(Composite container, boolean both) {
-		return new FilterEditingAreaWorkspace(container, resourceWorkspace, both);
+		return new FilterEditingAreaWorkspace(container, resourceWorkspace, both, singleFilterPool);
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 
 	@Override
 	protected AbstractEditingArea getEditingAreaRepository(Composite container, boolean both) {
-		return new FilterEditingAreaRepository(container, resourceRepository, both);
+		return new FilterEditingAreaRepository(container, resourceRepository, both, singleFilterPool);
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 
 	@Override
 	protected AbstractEditingArea getEditingAreaBothDifferent(Composite container, boolean both) {
-		return new FilterEditingAreaBothDifferent(container, resourceBothDifferent, both);
+		return new FilterEditingAreaBothDifferent(container, resourceBothDifferent, both, singleFilterPool);
 	}
 
 	@Override
@@ -101,7 +103,7 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 
 	@Override
 	protected AbstractEditingArea getEditingAreaBothEqual(Composite container, boolean both) {
-		return new FilterEditingAreaBothEqual(container, resourceBothEqual, both);
+		return new FilterEditingAreaBothEqual(container, resourceBothEqual, both, singleFilterPool);
 	}
 
 	@Override
@@ -113,9 +115,9 @@ public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog 
 	protected boolean saveRepository(String repository, ArrayList<AbstractResource> newRepository) {
 		RSEFilter[] filters = new RSEFilter[newRepository.size()];
 		newRepository.toArray(filters);
-        return saveFiltersToXML(new File(repository), filters);
+        return saveFiltersToXML(new File(repository), singleFilterPool, filters);
 	}
 
-    protected abstract boolean saveFiltersToXML(File toFile, RSEFilter[] filters);
+    protected abstract boolean saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters);
 	
 }

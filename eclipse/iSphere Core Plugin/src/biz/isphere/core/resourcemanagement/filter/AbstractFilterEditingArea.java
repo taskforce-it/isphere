@@ -20,43 +20,76 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public abstract class AbstractFilterEditingArea extends AbstractEditingArea {
 
-	public AbstractFilterEditingArea(Composite parent, AbstractResource[] resources, boolean both) {
-		super(parent, resources, both);
+    private boolean singleFilterPool;
+ 
+	public AbstractFilterEditingArea(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+		super(parent, resources, both, new FilterQualifier(singleFilterPool));
+		this.singleFilterPool = singleFilterPool;
 	}
 
+	@Override
 	public void addTableColumns(Table tableResources) {
-		
-		TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
-		columnName.setWidth(Size.getSize(150));
-		columnName.setText(Messages.Name);
-		
-		TableColumn columnType = new TableColumn(tableResources, SWT.NONE);
-		columnType.setWidth(Size.getSize(100));
-		columnType.setText(Messages.Type);
-		
-		TableColumn columnFilterStrings = new TableColumn(tableResources, SWT.NONE);
-		columnFilterStrings.setWidth(Size.getSize(400));
-		columnFilterStrings.setText(Messages.Strings);
-		
+
+	    FilterQualifier qualifier = (FilterQualifier)tableResources.getData("Qualifier");
+	    
+        if (!qualifier.isSingleFilterPool()) {
+            TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
+            columnName.setWidth(Size.getSize(150));
+            columnName.setText(Messages.Pool);
+        }
+        
+        TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
+        columnName.setWidth(Size.getSize(150));
+        columnName.setText(Messages.Filter);
+        
+        TableColumn columnType = new TableColumn(tableResources, SWT.NONE);
+        columnType.setWidth(Size.getSize(100));
+        columnType.setText(Messages.Type);
+        
+        TableColumn columnFilterStrings = new TableColumn(tableResources, SWT.NONE);
+        columnFilterStrings.setWidth(Size.getSize(400));
+        columnFilterStrings.setText(Messages.Strings);
+        
 	}
 	
+    @Override
 	public String getTableColumnText(Object resource, int columnIndex) {
-		if (columnIndex == 0) {
+
+	    int counter = 0;
+	    if (!singleFilterPool) {
+           counter++;
+           if (columnIndex == 0) {
+               return (((RSEFilter)resource).getFilterPool().getName());
+           }
+	    }
+
+		if (columnIndex == 0 + counter) {
 			return (((RSEFilter)resource).getName());
 		}
-		else if (columnIndex == 1) {
+		else if (columnIndex == 1 + counter) {
 			return RSEFilter.getTypeText((((RSEFilter)resource).getType()));
 		}
-		else if (columnIndex == 2) {
+		else if (columnIndex == 2 + counter) {
 			return (((RSEFilter)resource).getDisplayFilterString());
 		}
 		else {
 			return "";
 		}
+		
 	}
-	
+
+    @Override
 	public int compareResources(Object resource1, Object resource2) {
+	    
+	    if (!singleFilterPool) {
+	        int result = (((RSEFilter)resource1).getFilterPool().getName()).compareTo((((RSEFilter)resource2).getFilterPool().getName()));
+	        if (result != 0) {
+	            return result;
+	        }
+	    }
+	    
 		return (((RSEFilter)resource1).getName()).compareTo((((RSEFilter)resource2).getName()));
+		
 	}
 	
 }

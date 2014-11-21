@@ -269,7 +269,7 @@ public abstract class AbstractEditingDialog extends Dialog {
 	}
 	
 	protected Point getInitialSize() {
-		return getShell().computeSize(Size.getSize(1100), Size.getSize(750), true);
+		return getShell().computeSize(Size.getSize(1250), Size.getSize(750), true);
 	}
 
 	protected abstract String getTitle();
