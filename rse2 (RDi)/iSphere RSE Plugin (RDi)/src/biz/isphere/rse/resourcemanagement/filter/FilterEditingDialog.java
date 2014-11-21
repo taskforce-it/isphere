@@ -21,10 +21,10 @@ import biz.isphere.core.resourcemanagement.filter.RSEFilterBoth;
 
 public class FilterEditingDialog extends AbstractFilterEditingDialog {
 
-    public FilterEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth, String workspace,
+    public FilterEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth, boolean singleFilterPool, String workspace,
         String repository, RSEFilter[] resourceWorkspace, RSEFilter[] resourceRepository, RSEFilterBoth[] resourceBothDifferent,
         RSEFilter[] resourceBothEqual) {
-        super(parentShell, editWorkspace, editRepository, editBoth, workspace, repository, resourceWorkspace, resourceRepository, resourceBothDifferent,
+        super(parentShell, editWorkspace, editRepository, editBoth, singleFilterPool, workspace, repository, resourceWorkspace, resourceRepository, resourceBothDifferent,
             resourceBothEqual);
     }
 
@@ -41,8 +41,8 @@ public class FilterEditingDialog extends AbstractFilterEditingDialog {
     }
 
     @Override
-    protected boolean saveFiltersToXML(File toFile, RSEFilter[] filters) {
-        return XMLFilterHelper.saveFiltersToXML(toFile, filters);
+    protected boolean saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) {
+        return XMLFilterHelper.saveFiltersToXML(toFile, singleFilterPool, filters);
     }
 
 }
