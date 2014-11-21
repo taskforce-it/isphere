@@ -17,8 +17,8 @@ The <i>Data Space Editor Designer</i> is used to create <i>editors</i> for your 
 user spaces. The editors that you create here are used by the <i>iSphere Data Area-</i> and 
 <i>iSphere User Space Monitor</i> to display the data of the selected object. 
 <p>
-<img src="assets/designer.png" 
-     width="842" height="453" 
+<img src="assets/designer.gif" 
+     width="844" height="453" 
      align="middle">
 <br>
 <p>
@@ -36,7 +36,7 @@ to do is creating a new editor:
 </table>
 <p>
 <img src="assets/dialog_newdialog.gif" 
-     width="250" height="148" 
+     width="280" height="160" 
      align="middle">
 <p>
 The number of columns spinner specifies the number of columns your editor will have. The example
@@ -55,7 +55,7 @@ the offset of the data in the data space object.
 Example of a 'Text' Field:
 <p>
 <img src="assets/dialog_newtextfield.gif" 
-     width="280" height="180" 
+     width="295" height="205" 
      align="middle">
 <p>
 Notice: Some fields may require additional information, such as <i>length</i> or <i>fraction</i>.
@@ -113,6 +113,29 @@ Now the <i>iSphere Data Space Monitor</i> automatically picks up the editor, whe
 <i>iSphere Data Area Monitor</i> option from the RSE tree.
 <p>
 See: <a href="../monitor/dataspacemonitor.html">iSphere Data Space Monitor</a>
+<p>
+<h2>Comments and Fillers</h2>
+<p>
+Comment/Filler fields can be used to add comments, separators or just blank lines or areas to the 
+dialog: 
+<p>
+<img src="assets/dialog_newcommentfield.gif" 
+     width="295" height="205" 
+     align="middle">
+<p>
+For comments, just enter the comment you want to be displayed on the screen. The following special
+values are used to create a horizontal separator or a blank area:
+<p>
+<table>
+<tr><td>*SEPARATOR</td><td>-</td><td>Creates a horizontal separator</td></tr>
+<tr><td>*NONE</td><td>-</td><td>Creates a blank area</td></tr>
+</table>
+<p>
+The following example shows a more complex editor with a separator below "List of Integer Values":
+<p>
+<img src="assets/dialog_complexeditor.gif" 
+     width="861" height="474" 
+     align="middle">
 <p>
 <h2>Editors and Assigned Objects</h2>
 <p>
