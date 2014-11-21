@@ -20,61 +20,100 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaBothDifferent extends AbstractEditingArea {
 
-	public FilterEditingAreaBothDifferent(Composite parent, AbstractResource[] resources, boolean both) {
-		super(parent, resources, both);
+    private boolean singleFilterPool;
+
+	public FilterEditingAreaBothDifferent(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+		super(parent, resources, both, new FilterQualifier(singleFilterPool));
+	      this.singleFilterPool = singleFilterPool;
 	}
 
 	@Override
-	public void addTableColumns(Table tableResources) {
-		
-		TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
-		columnName.setWidth(Size.getSize(150));
-		columnName.setText(Messages.Name);
-		
-		TableColumn columnWorkspaceType = new TableColumn(tableResources, SWT.NONE);
-		columnWorkspaceType.setWidth(Size.getSize(100));
-		columnWorkspaceType.setText("Wrk.-" + Messages.Type);
-		
-		TableColumn columnRepositoryType = new TableColumn(tableResources, SWT.NONE);
-		columnRepositoryType.setWidth(Size.getSize(100));
-		columnRepositoryType.setText("Rep.-" + Messages.Type);
-		
-		TableColumn columnWorkspaceFilterStrings = new TableColumn(tableResources, SWT.NONE);
-		columnWorkspaceFilterStrings.setWidth(Size.getSize(200));
-		columnWorkspaceFilterStrings.setText("Wrk.-" + Messages.Strings);
-		
-		TableColumn columnRepositoryFilterStrings = new TableColumn(tableResources, SWT.NONE);
-		columnRepositoryFilterStrings.setWidth(Size.getSize(200));
-		columnRepositoryFilterStrings.setText("Rep.-" + Messages.Strings);
-		
-	}
+    public void addTableColumns(Table tableResources) {
+
+        FilterQualifier qualifier = (FilterQualifier)tableResources.getData("Qualifier");
+        
+        if (!qualifier.isSingleFilterPool()) {
+            TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
+            columnName.setWidth(Size.getSize(150));
+            columnName.setText(Messages.Pool);
+        }
+
+        TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
+        columnName.setWidth(Size.getSize(150));
+        columnName.setText(Messages.Filter);
+        
+        TableColumn columnWorkspaceType = new TableColumn(tableResources, SWT.NONE);
+        columnWorkspaceType.setWidth(Size.getSize(100));
+        columnWorkspaceType.setText("Wrk.-" + Messages.Type);
+        
+        TableColumn columnRepositoryType = new TableColumn(tableResources, SWT.NONE);
+        columnRepositoryType.setWidth(Size.getSize(100));
+        columnRepositoryType.setText("Rep.-" + Messages.Type);
+        
+        TableColumn columnWorkspaceFilterStrings = new TableColumn(tableResources, SWT.NONE);
+        columnWorkspaceFilterStrings.setWidth(Size.getSize(200));
+        columnWorkspaceFilterStrings.setText("Wrk.-" + Messages.Strings);
+        
+        TableColumn columnRepositoryFilterStrings = new TableColumn(tableResources, SWT.NONE);
+        columnRepositoryFilterStrings.setWidth(Size.getSize(200));
+        columnRepositoryFilterStrings.setText("Rep.-" + Messages.Strings);
+
+    }
 
 	@Override
 	public String getTableColumnText(Object resource, int columnIndex) {
-		RSEFilterBoth filterBoth = (RSEFilterBoth)resource;
-		if (columnIndex == 0) {
+	       
+        RSEFilterBoth filterBoth = (RSEFilterBoth)resource;
+
+	    int counter = 0;
+        if (!singleFilterPool) {
+           counter++;
+           if (columnIndex == 0) {
+               return ((RSEFilter)filterBoth.getResourceWorkspace()).getFilterPool().getName();
+           }
+        }
+
+		if (columnIndex == 0 + counter) {
 			return filterBoth.getName();
 		}
-		else if (columnIndex == 1) {
+		else if (columnIndex == 1 + counter) {
 			return RSEFilter.getTypeText(((RSEFilter)filterBoth.getResourceWorkspace()).getType());
 		}
-		else if (columnIndex == 2) {
+		else if (columnIndex == 2 + counter) {
 			return RSEFilter.getTypeText(((RSEFilter)filterBoth.getResourceRepository()).getType());
 		}
-		else if (columnIndex == 3) {
+		else if (columnIndex == 3 + counter) {
 			return (((RSEFilter)filterBoth.getResourceWorkspace()).getDisplayFilterString());
 		}
-		else if (columnIndex == 4) {
+		else if (columnIndex == 4 + counter) {
 			return (((RSEFilter)filterBoth.getResourceRepository()).getDisplayFilterString());
 		}
 		else {
 			return "";
 		}
+		
 	}
 
 	@Override
 	public int compareResources(Object resource1, Object resource2) {
-		return (((RSEFilterBoth)resource1).getName()).compareTo((((RSEFilterBoth)resource2).getName()));
+
+        RSEFilterBoth filterBoth1 = (RSEFilterBoth)resource1;
+        RSEFilterBoth filterBoth2 = (RSEFilterBoth)resource2;
+
+        if (!singleFilterPool) {
+            
+            RSEFilter filter1 = (RSEFilter)filterBoth1.getResourceWorkspace();
+            RSEFilter filter2 = (RSEFilter)filterBoth2.getResourceWorkspace();
+            
+            int result = filter1.getFilterPool().getName().compareTo(filter2.getFilterPool().getName());
+            if (result != 0) {
+                return result;
+            }
+            
+        }
+
+		return filterBoth1.getName().compareTo(filterBoth2.getName());
+		
 	}
 
 	@Override

@@ -110,8 +110,17 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
 	public AbstractEditingArea(Composite parent, AbstractResource[] resources, boolean both) {
 		super(parent, SWT.NONE);
-		
 		this.resources = resources;
+		createDialog(both, null);
+	}
+
+    public AbstractEditingArea(Composite parent, AbstractResource[] resources, boolean both, Object qualifier) {
+        super(parent, SWT.NONE);
+        this.resources = resources;
+        createDialog(both, qualifier);
+    }
+	
+	private void createDialog(boolean both, Object qualifier) {
 		
 		setLayout(new GridLayout(2, false));
 		
@@ -141,6 +150,10 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 		tableResources.setHeaderVisible(true);
 		tableResources.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+		if (qualifier != null) {
+		    tableResources.setData("Qualifier", qualifier);
+		}
+		
 		addTableColumns(tableResources);
 		
 		TableColumn columnAction = new TableColumn(tableResources, SWT.NONE);

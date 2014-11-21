@@ -8,57 +8,35 @@
 
 package biz.isphere.core.resourcemanagement.filter;
 
-public class RSEFilterPool {
+public class RSEProfile {
+    
+    private String name;
+    private Object origin;
 
-    private RSEProfile profile;
-	private String name;
-	private boolean _default;
-	private Object origin;
-
-	public RSEFilterPool() {
-	    profile = null;
+    public RSEProfile() {
         name = null;
-        _default = false;
         origin = null;
     }
-	
-	public RSEFilterPool(RSEProfile profile, String name, boolean _default, Object origin) {
-	    this.profile = profile;
-		this.name = name;
-		this._default = _default;
-		this.origin = origin;
-	}
-
-    public RSEProfile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(RSEProfile profile) {
-        this.profile = profile;
+    
+    public RSEProfile(String name, Object origin) {
+        this.name = name;
+        this.origin = origin;
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-	public boolean isDefault() {
-        return _default;
-    }
-
-    public void setDefault(boolean _default) {
-        this._default = _default;
-    }
-
     public Object getOrigin() {
-		return origin;
-	}
+        return origin;
+    }
 
     public void setOrigin(Object origin) {
         this.origin = origin;
     }
-	
+    
 }

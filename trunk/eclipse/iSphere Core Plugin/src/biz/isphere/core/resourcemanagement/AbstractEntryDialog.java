@@ -137,7 +137,15 @@ public abstract class AbstractEntryDialog extends XDialog {
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(shell, SWT.OK);
                 dialog.setFilterNames(new String[] { getFileSubject() });
-                dialog.setFilterExtensions(new String[] { "*." + getFileExtension() });
+                String[] fileExtensions = getFileExtensionsInternal();
+                StringBuffer extensions = new StringBuffer();
+                for (int idx = 0; idx < fileExtensions.length; idx++) {
+                    if (idx > 0) {
+                        extensions.append(";");
+                    }
+                    extensions.append("*." + fileExtensions[idx]);
+                }
+                dialog.setFilterExtensions(new String[] { extensions.toString() });
                 dialog.setFilterPath(loadRepositoryPath());
                 // dialog.setFileName("export.xls");
                 // dialog.setOverwrite(true);
@@ -160,8 +168,8 @@ public abstract class AbstractEntryDialog extends XDialog {
         return container;
 
     }
-
-    private void check() {
+    
+    public void check() {
 
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
 
@@ -194,9 +202,22 @@ public abstract class AbstractEntryDialog extends XDialog {
                 return;
             }
 
-            if (!fileName.endsWith("." + getFileExtension())) {
+            String[] fileExtensions = getFileExtensionsInternal();
+            boolean ok = false;
+            StringBuffer extensions = new StringBuffer();
+            for (int idx = 0; idx < fileExtensions.length; idx++) {
+                if (fileName.endsWith("." + fileExtensions[idx])) {
+                    ok = true;
+                    break;
+                }
+                if (idx > 0) {
+                    extensions.append(", ");
+                }
+                extensions.append("." + fileExtensions[idx]);
+            }
+            if (!ok) {
                 if (okButton != null) okButton.setEnabled(false);
-                setErrorMessage(Messages.File_name_does_not_end_with + " ." + getFileExtension());
+                setErrorMessage(Messages.File_name_does_not_end_with + " " + extensions.toString());
                 textRepository.setFocus();
                 return;
             }
@@ -302,6 +323,23 @@ public abstract class AbstractEntryDialog extends XDialog {
     protected abstract String getSubject();
 
     protected abstract String getFileExtension();
+    
+    protected String[] getFileExtensions() {
+        return new String[0];
+    }
+
+    private String[] getFileExtensionsInternal() {
+        String[] fileExtensions = null;
+        String fileExtension = getFileExtension();
+        if (fileExtension != null) {
+            fileExtensions = new String[1];
+            fileExtensions[0] = fileExtension;
+        }
+        else {
+            fileExtensions = getFileExtensions();
+        }
+        return fileExtensions;
+    }
 
     protected abstract void run();
 
