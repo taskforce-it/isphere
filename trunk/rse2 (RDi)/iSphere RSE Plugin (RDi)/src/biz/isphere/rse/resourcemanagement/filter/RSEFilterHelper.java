@@ -14,31 +14,56 @@ import java.util.Vector;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
+import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 
 import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 
 @SuppressWarnings("restriction")
 public class RSEFilterHelper {
 
-	public static RSEFilterPool[] getFilterPools() {
+    public static final String OBJECT_SUBSYSTEM_ID = "com.ibm.etools.iseries.subsystems.qsys.objects";
+    
+    public static RSEProfile[] getProfiles() {
+
+        ArrayList<RSEProfile> allProfiles = new ArrayList<RSEProfile>();
+        
+        ISystemProfile[] profiles = SystemProfileManager.getDefault().getSystemProfiles();
+        for (int idx = 0; idx < profiles.length; idx++) {
+            RSEProfile rseProfile = new RSEProfile(
+                profiles[idx].getName(),
+                profiles[idx]);
+            allProfiles.add(rseProfile);
+        }
+        
+        RSEProfile[] rseProfiles = new RSEProfile[allProfiles.size()];
+        allProfiles.toArray(rseProfiles);
+        
+        return rseProfiles;
+        
+    }
+    
+	public static RSEFilterPool[] getFilterPools(RSEProfile rseProfile) {
 
 	    ArrayList<RSEFilterPool> allFilterPools = new ArrayList<RSEFilterPool>();
 		
-		ISystemProfile[] profiles = SystemProfileManager.getDefault().getSystemProfiles();
-		for (int idx1 = 0; idx1 < profiles.length; idx1++) {
-			ISystemFilterPool[] filterPools = profiles[idx1].getFilterPools(RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration("com.ibm.etools.iseries.subsystems.qsys.objects"));
-			for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
-            	RSEFilterPool rseFilterPool = new RSEFilterPool(
-            			profiles[idx1].getName() + "." + filterPools[idx2].getName(),
-            			filterPools[idx2].isDefault(),
-            			filterPools[idx2]);
-				allFilterPools.add(rseFilterPool);
-			}
+		ISystemProfile profile = SystemProfileManager.getDefault().getSystemProfile(rseProfile.getName());
+		if (profile != null) {
+            ISystemFilterPool[] filterPools = profile.getFilterPools(RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(OBJECT_SUBSYSTEM_ID));
+            for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
+                RSEFilterPool rseFilterPool = new RSEFilterPool(
+                        rseProfile,
+                        filterPools[idx2].getName(),
+                        filterPools[idx2].isDefault(),
+                        filterPools[idx2]);
+                allFilterPools.add(rseFilterPool);
+            }
 		}
         
 		RSEFilterPool[] rseFilterPools = new RSEFilterPool[allFilterPools.size()];
@@ -48,9 +73,23 @@ public class RSEFilterHelper {
 		
 	}
 
-	public static RSEFilter[] getFilters(RSEFilterPool filterPool) {
+	public static RSEFilter[] getFilters(RSEProfile rseProfile) {
+	    ArrayList<RSEFilter> allFilters = new ArrayList<RSEFilter>();
+	    RSEFilterPool[] filterPools = getFilterPools(rseProfile);
+	    for (int idx1 = 0; idx1 < filterPools.length; idx1++) {
+	        RSEFilter[] filters = getFilters(filterPools[idx1]);
+	        for (int idx2 = 0; idx2 < filters.length; idx2++) {
+	            allFilters.add(filters[idx2]);
+	        }
+	    }
+        RSEFilter[] _filters = new RSEFilter[allFilters.size()];
+        allFilters.toArray(_filters);
+        return _filters;
+	}
+	
+	public static RSEFilter[] getFilters(RSEFilterPool rseFilterPool) {
 
-		ISystemFilter[] filters = ((ISystemFilterPool)filterPool.getOrigin()).getFilters();
+		ISystemFilter[] filters = ((ISystemFilterPool)rseFilterPool.getOrigin()).getFilters();
 
 		ArrayList<RSEFilter> rseFilters = new ArrayList<RSEFilter>();
 
@@ -73,7 +112,7 @@ public class RSEFilterHelper {
         	if (!type.equals(RSEFilter.TYPE_UNKNOWN)) {
                 
                 RSEFilter rseFilter = new RSEFilter(
-                        filterPool,
+                        rseFilterPool,
                         filters[idx].getName(),
                         type,
                         filters[idx].getFilterStrings(),
@@ -93,23 +132,49 @@ public class RSEFilterHelper {
 	}
 	 
 	public static void createFilter(RSEFilterPool filterPool, String name, String type, Vector<String> filterStrings) {
-		String newType = null;
-		if (type.equals(RSEFilter.TYPE_LIBRARY)) {
-			newType = IQSYSFilterTypes.FILTERTYPE_LIBRARY;
-		}
-		else if (type.equals(RSEFilter.TYPE_OBJECT)) {
-			newType = IQSYSFilterTypes.FILTERTYPE_OBJECT;
-		}
-		else if (type.equals(RSEFilter.TYPE_MEMBER)) {
-			newType = IQSYSFilterTypes.FILTERTYPE_MEMBER;
-		}
-		if (newType != null) {
-	        try {
-	            ((ISystemFilterPool)filterPool.getOrigin()).getSystemFilterPoolManager().createSystemFilter(((ISystemFilterPool)filterPool.getOrigin()), name, filterStrings, newType);
-	        } catch (Exception e) {
-				e.printStackTrace();
+
+        ISystemFilterPool pool = (ISystemFilterPool)filterPool.getOrigin();
+	    if (pool == null) {
+	        RSEFilterPool[] pools = getFilterPools(filterPool.getProfile());
+	        for (int idx = 0; idx < pools.length; idx++) {
+	            if (pools[idx].getName().equals(filterPool.getName())) {
+	                pool = (ISystemFilterPool)pools[idx].getOrigin();
+	            }
 	        }
-		}
+	        if (pool == null) {
+	            ISystemProfile profile = SystemProfileManager.getDefault().getSystemProfile(filterPool.getProfile().getName());
+	            if (profile != null) {
+	                ISubSystemConfiguration subSystem = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(OBJECT_SUBSYSTEM_ID);
+	                ISystemFilterPoolManager manager = subSystem.getFilterPoolManager(profile);
+	                try {
+                        pool = manager.createSystemFilterPool(filterPool.getName(), true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+	            }
+	        }
+	    }
+
+        if (pool != null) {
+            String newType = null;
+            if (type.equals(RSEFilter.TYPE_LIBRARY)) {
+                newType = IQSYSFilterTypes.FILTERTYPE_LIBRARY;
+            }
+            else if (type.equals(RSEFilter.TYPE_OBJECT)) {
+                newType = IQSYSFilterTypes.FILTERTYPE_OBJECT;
+            }
+            else if (type.equals(RSEFilter.TYPE_MEMBER)) {
+                newType = IQSYSFilterTypes.FILTERTYPE_MEMBER;
+            }
+            if (newType != null) {
+                try {
+                    pool.getSystemFilterPoolManager().createSystemFilter(pool, name, filterStrings, newType);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 	}
 	
 	public static void deleteFilter(RSEFilterPool filterPool, String name) {
