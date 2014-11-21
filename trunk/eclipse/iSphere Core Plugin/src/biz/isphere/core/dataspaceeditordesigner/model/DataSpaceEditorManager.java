@@ -61,6 +61,8 @@ public final class DataSpaceEditorManager {
             dataType = Messages.Data_type_Integer_1_byte;
         } else if (widget == DText.class) {
             dataType = Messages.Data_type_Text;
+        } else if (widget == DComment.class) {
+            dataType = Messages.Data_type_Comment;
         } else {
             throw new IllegalArgumentException("Illegal widget passed: " + widget.getClass().getName());
         }
@@ -68,9 +70,20 @@ public final class DataSpaceEditorManager {
         return dataType;
     }
 
-    public Composite createDialogArea(Composite parent, int numColumns) {
+    public Composite createDialogArea(Composite parent, DEditor dEditor, int columnsPerEditorColumn) {
+
+        int numColumns;
+        boolean makeColumnsEqual;
+        if (dEditor == null) {
+            numColumns = columnsPerEditorColumn;
+            makeColumnsEqual = false;
+        } else {
+            numColumns = dEditor.getColumns() * columnsPerEditorColumn;
+            makeColumnsEqual = dEditor.isColumnsEqualWidth();
+        }
+
         Composite dialogArea = new Composite(parent, SWT.NONE);
-        GridLayout dialogEditorAreaLayout = new GridLayout(numColumns, false);
+        GridLayout dialogEditorAreaLayout = new GridLayout(numColumns, makeColumnsEqual);
         dialogEditorAreaLayout.marginHeight = 15;
         dialogEditorAreaLayout.marginWidth = 15;
         dialogEditorAreaLayout.horizontalSpacing = 30;
@@ -82,12 +95,13 @@ public final class DataSpaceEditorManager {
         dialogAreaLayoutData.grabExcessHorizontalSpace = true;
         dialogAreaLayoutData.grabExcessVerticalSpace = true;
         dialogArea.setLayoutData(dialogAreaLayoutData);
+
         return dialogArea;
     }
 
-    public Control createReadOnlyWidgetControlAndAddToParent(Composite parent, AbstractDWidget widget) {
+    public Control createReadOnlyWidgetControlAndAddToParent(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
-        Control control = createWidgetControlAndAddToParent(parent, widget);
+        Control control = createWidgetControlAndAddToParent(parent, columnsPerEditorColumn, widget);
         ControlPayload payload = getPayloadFromControl(control);
         EventListener listener = null;
 
@@ -108,17 +122,21 @@ public final class DataSpaceEditorManager {
         return control;
     }
 
-    public Control createWidgetControlAndAddToParent(Composite parent, AbstractDWidget widget) {
+    public Control createWidgetControlAndAddToParent(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
+
         Control control = null;
         if (widget instanceof DBoolean) {
-            control = createBooleanWidget(parent, widget);
+            control = createBooleanWidget(parent, columnsPerEditorColumn, widget);
         } else if (widget instanceof DDecimal) {
-            control = createDecimalWidget(parent, widget);
+            control = createDecimalWidget(parent, columnsPerEditorColumn, widget);
         } else if (widget instanceof AbstractDInteger) {
-            control = createIntegerWidget(parent, widget);
+            control = createIntegerWidget(parent, columnsPerEditorColumn, widget);
         } else if (widget instanceof DText) {
-            control = createTextWidget(parent, widget);
+            control = createTextWidget(parent, columnsPerEditorColumn, widget);
+        } else if (widget instanceof DComment) {
+            control = createCommentWidget(parent, columnsPerEditorColumn, widget);
         }
+
         if (control != null) {
             setPayload(control, widget);
             createControlInfo(control, widget);
@@ -131,8 +149,12 @@ public final class DataSpaceEditorManager {
 
         String dataType = getDataType(widget.getClass());
 
-        String tooltip = Messages.bind(Messages.Tooltip_0_data_at_offset_1_length_2,
-            new Object[] { dataType, widget.getOffset(), widget.getLength() });
+        String tooltip;
+        if (widget instanceof DComment) {
+            tooltip = Messages.Data_type_Comment;
+        } else {
+            tooltip = Messages.bind(Messages.Tooltip_0_data_at_offset_1_length_2, new Object[] { dataType, widget.getOffset(), widget.getLength() });
+        }
 
         control.setToolTipText(tooltip);
     }
@@ -153,6 +175,11 @@ public final class DataSpaceEditorManager {
             for (DReferencedObject referencedObject : referencedObjects) {
                 referencedObject.setParent(dEditor);
             }
+
+            AbstractDWidget[] dWidgets = dEditor.getWidgets();
+            for (AbstractDWidget dWidget : dWidgets) {
+                dWidget.setParent(dEditor);
+            }
         }
     }
 
@@ -160,13 +187,12 @@ public final class DataSpaceEditorManager {
         dEditor.addWidget(widget);
     }
 
-    public void changeWidget(DEditor dEditor, AbstractDWidget widget, DTemplateWidget changes) {
-        
+    public void changeWidget(AbstractDWidget widget, DTemplateWidget changes) {
+
         widget.setLabel(changes.getLabel());
         widget.setOffset(changes.getOffset());
         widget.setLength(changes.getLength());
-        
-//        dEditor.changeWidget(widget);
+        widget.setHorizontalSpan(changes.getHorizontalSpan());
     }
 
     public void addControlModifyListener(Control control, IWidgetModifyListener modifyListener) {
@@ -219,29 +245,41 @@ public final class DataSpaceEditorManager {
         String label = template.getLabel();
         int offset = template.getOffset();
 
-        // Widget constructor: label, offset
-        if (DBoolean.class.equals(widgetClass)) {
-            return new DBoolean(template.getLabel(), template.getOffset());
+        AbstractDWidget dWidget = null;
+
+        // Widget constructor: label
+        if (DComment.class.equals(widgetClass)) {
+            dWidget = new DComment(template.getLabel());
+        } else if (DBoolean.class.equals(widgetClass)) {
+            // Widget constructor: label, offset
+            dWidget = new DBoolean(template.getLabel(), template.getOffset());
         } else if (DLongInteger.class.equals(widgetClass)) {
-            return new DLongInteger(template.getLabel(), template.getOffset());
+            dWidget = new DLongInteger(template.getLabel(), template.getOffset());
         } else if (DInteger.class.equals(widgetClass)) {
-            return new DInteger(template.getLabel(), template.getOffset());
+            dWidget = new DInteger(template.getLabel(), template.getOffset());
         } else if (DShortInteger.class.equals(widgetClass)) {
-            return new DShortInteger(template.getLabel(), template.getOffset());
+            dWidget = new DShortInteger(template.getLabel(), template.getOffset());
         } else if (DTinyInteger.class.equals(widgetClass)) {
-            return new DTinyInteger(template.getLabel(), template.getOffset());
+            dWidget = new DTinyInteger(template.getLabel(), template.getOffset());
         } else {
             // Widget constructor: label, offset, length
             int length = template.getLength();
             if (DText.class.equals(widgetClass)) {
-                return new DText(label, offset, length);
+                dWidget = new DText(label, offset, length);
             } else {
                 // Widget constructor: label, offset, length, fraction
                 int fraction = template.getFraction();
                 if (DDecimal.class.equals(widgetClass)) {
-                    return new DDecimal(label, offset, length, fraction);
+                    dWidget = new DDecimal(label, offset, length, fraction);
                 }
             }
+        }
+
+        if (dWidget != null) {
+            // Optional parameters
+            dWidget.setHorizontalSpan(template.getHorizontalSpan());
+
+            return dWidget;
         }
 
         throw new IllegalArgumentException("Illegal widget class: " + template.getClass()); //$NON-NLS-1$
@@ -300,6 +338,13 @@ public final class DataSpaceEditorManager {
         addWidgetToEditor(dEditor, dWidget);
 
         return dEditor;
+    }
+
+    public static boolean hasOffset(Class<? extends AbstractDWidget> widgetClass) {
+        if (!DComment.class.equals(widgetClass)) {
+            return true;
+        }
+        return false;
     }
 
     public static boolean hasLength(Class<? extends AbstractDWidget> widgetClass) {
@@ -527,7 +572,7 @@ public final class DataSpaceEditorManager {
         return payload.isLocked();
     }
 
-    private Button createBooleanWidget(Composite parent, AbstractDWidget widget) {
+    private Button createBooleanWidget(Composite parent, int numColumns, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
@@ -535,11 +580,12 @@ public final class DataSpaceEditorManager {
         GridData layoutData = new GridData();
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.grabExcessHorizontalSpace = true;
+        layoutData.horizontalSpan = widget.getHorizontalSpan();
         checkBox.setLayoutData(layoutData);
         return checkBox;
     }
 
-    private Text createDecimalWidget(Composite parent, AbstractDWidget widget) {
+    private Text createDecimalWidget(Composite parent, int numColumns, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
@@ -547,12 +593,13 @@ public final class DataSpaceEditorManager {
         GridData layoutData = new GridData();
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.grabExcessHorizontalSpace = true;
+        layoutData.horizontalSpan = widget.getHorizontalSpan();
         text.setLayoutData(layoutData);
         text.addVerifyListener(new NumericOnlyVerifyListener(true));
         return text;
     }
 
-    private Text createIntegerWidget(Composite parent, AbstractDWidget widget) {
+    private Text createIntegerWidget(Composite parent, int numColumns, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
@@ -560,12 +607,13 @@ public final class DataSpaceEditorManager {
         GridData layoutData = new GridData();
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.grabExcessHorizontalSpace = true;
+        layoutData.horizontalSpan = widget.getHorizontalSpan();
         text.setLayoutData(layoutData);
         text.addVerifyListener(new NumericOnlyVerifyListener());
         return text;
     }
 
-    private Text createTextWidget(Composite parent, AbstractDWidget widget) {
+    private Text createTextWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
@@ -574,9 +622,36 @@ public final class DataSpaceEditorManager {
         GridData layoutData = new GridData();
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.grabExcessHorizontalSpace = true;
+        layoutData.horizontalSpan = columnsPerEditorColumn * (widget.getHorizontalSpan() - 1) + 1;
         text.setLayoutData(layoutData);
 
         return text;
+    }
+
+    private Label createCommentWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
+
+        int style;
+        int heightHint;
+        if (DComment.SEPARATOR.equals(widget.getLabel())) {
+            style = SWT.SEPARATOR | SWT.HORIZONTAL;
+            heightHint = 10;
+        } else {
+            style = SWT.NONE;
+            heightHint = -1;
+        }
+
+        Label label = new Label(parent, style);
+        if (!DComment.NONE.equals(widget.getLabel())) {
+            label.setText(widget.getLabel());
+        }
+        GridData layoutData = new GridData();
+        layoutData.horizontalAlignment = SWT.FILL;
+        layoutData.grabExcessHorizontalSpace = true;
+        layoutData.horizontalSpan = columnsPerEditorColumn * (widget.getHorizontalSpan());
+        layoutData.heightHint = heightHint;
+        label.setLayoutData(layoutData);
+
+        return label;
     }
 
     private void createLabel(Composite parent, AbstractDWidget widget) {

@@ -23,17 +23,25 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
     private int offset;
     private int length;
     private int sequence;
+    private int horizontalSpan;
 
     @XStreamOmitField
     private String key;
     @XStreamOmitField
     private Vector<IWidgetModifyListener> modifyListener;
+    @XStreamOmitField
+    private DEditor dEditor;
+
+    AbstractDWidget() {
+        this("", 0, 0);
+    }
 
     AbstractDWidget(String label, int offset, int maxLength) {
         this.label = label;
         this.offset = offset;
         this.length = maxLength;
         this.sequence = -1;
+        this.horizontalSpan = 1;
     }
 
     public void setSequence(int sequence) {
@@ -56,16 +64,35 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         return length;
     }
     
-    public void setLabel(String label) {
+    public int getHorizontalSpan() {
+        if (horizontalSpan <= 0) {
+            return horizontalSpan = 1;
+        }
+        return horizontalSpan;
+    }
+    
+    public DEditor getParent() {
+        return dEditor;
+    }
+    
+    void setLabel(String label) {
         this.label = label;
     }
     
-    public void setOffset(int offset) {
+    void setOffset(int offset) {
         this.offset = offset;
     }
     
-    public void setLength(int length) {
+    void setLength(int length) {
         this.length = length;
+    }
+    
+    void setHorizontalSpan(int horizontalSpan) {
+        this.horizontalSpan = horizontalSpan;
+    }
+    
+    void setParent(DEditor dEditor) {
+        this.dEditor = dEditor;
     }
 
     public void addModifyListener(IWidgetModifyListener listener) {

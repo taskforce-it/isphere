@@ -25,6 +25,7 @@ public class DEditor implements Comparable<DEditor>, Serializable {
     private Map<String, DReferencedObject> referencedBy;
     private int columns;
     private String key;
+    private boolean columnsEqualWidth;
 
     DEditor(String name, int columns) {
         this(name, "", columns);
@@ -37,6 +38,7 @@ public class DEditor implements Comparable<DEditor>, Serializable {
         this.widgets = new HashMap<String, AbstractDWidget>();
         this.referencedBy = new HashMap<String, DReferencedObject>();
         this.key = UUID.randomUUID().toString();
+        this.columnsEqualWidth = false;
     }
 
     public String getKey() {
@@ -53,6 +55,10 @@ public class DEditor implements Comparable<DEditor>, Serializable {
 
     public int getColumns() {
         return columns;
+    }
+
+    public boolean isColumnsEqualWidth() {
+        return columnsEqualWidth;
     }
     
     public String getNameAndDescription() {
@@ -107,18 +113,14 @@ public class DEditor implements Comparable<DEditor>, Serializable {
 
         if (!widgets.containsKey(widget.getKey())) {
             widgets.put(widget.getKey(), widget);
+            widget.setParent(this);
         }
-    }
-
-    void changeWidget(AbstractDWidget widget) {
-        if (widgets.containsKey(widget.getKey())) {
-            widgets.put(widget.getKey(), widget);
-        }        
     }
 
     void removeWidget(AbstractDWidget widget) {
         if (widgets.containsKey(widget.getKey())) {
             widgets.remove(widget.getKey());
+            widget.setParent(null);
         }
     }
 

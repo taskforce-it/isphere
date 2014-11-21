@@ -13,7 +13,6 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -32,15 +31,13 @@ import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
 public class PopupEditor extends MenuAdapter {
 
-    private IDialogEditor editor ;
-    private Shell shell;
+    private IDialogEditor editor;
     private DEditor dialog;
 
     private MenuItem itemNew;
 
-    public PopupEditor(IDialogEditor editor, Shell shell, DEditor dialog) {
+    public PopupEditor(IDialogEditor editor, DEditor dialog) {
         this.editor = editor;
-        this.shell = shell;
         this.dialog = dialog;
     }
 
@@ -86,6 +83,6 @@ public class PopupEditor extends MenuAdapter {
         MenuItem menuItem = new MenuItem(menuNew, SWT.PUSH);
         menuItem.setText(label);
         menuItem.setData(DE.KEY_DWIDGET_CLASS, widgetClass);
-        menuItem.addSelectionListener(new NewWidgetListener(this.editor, this.shell, this.dialog));
+        menuItem.addSelectionListener(new NewWidgetListener(this.editor, this.dialog));
     }
 }

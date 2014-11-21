@@ -69,20 +69,15 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
         scrollableArea.setExpandHorizontal(true);
         scrollableArea.setExpandVertical(true);
 
-        int numColumns;
-        if (dEditor == null) {
-            numColumns = 2;
-        } else {
-            numColumns = dEditor.getColumns() * 2;
-        }
-        Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
+        int columnsPerEditorColumn = 2;
+        Composite dialogEditor = manager.createDialogArea(scrollableArea, dEditor, columnsPerEditorColumn);
         GridLayout dialogEditorLayout = (GridLayout)dialogEditor.getLayout();
         dialogEditorLayout.marginLeft = 0;
 
         AbstractDWidget[] widgets = dEditor.getWidgets();
         controls = new ArrayList<Control>();
         for (AbstractDWidget widget : widgets) {
-            Control control = manager.createWidgetControlAndAddToParent(dialogEditor, widget);
+            Control control = manager.createWidgetControlAndAddToParent(dialogEditor, columnsPerEditorColumn, widget);
             controls.add(control);
         }
 

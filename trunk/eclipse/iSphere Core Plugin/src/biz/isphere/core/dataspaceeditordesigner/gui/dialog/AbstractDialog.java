@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -90,6 +91,27 @@ public abstract class AbstractDialog extends XDialog {
 
         return textField;
     }
+    
+    protected Combo createComboField(Composite parent, String label, boolean isReadOnly) {
+        Label labelLabel = new Label(parent, SWT.NONE);
+        labelLabel.setText(label);
+
+        int style;
+        if (isReadOnly) {
+            style = SWT.READ_ONLY;
+        } else {
+            style = SWT.NONE;
+        }
+        
+        Combo combo = new Combo(parent, style);
+        GridData comboLayoutData = new GridData();
+        comboLayoutData.widthHint = 150;
+        comboLayoutData.horizontalAlignment = SWT.FILL;
+        comboLayoutData.grabExcessHorizontalSpace = true;
+        combo.setLayoutData(comboLayoutData);
+        
+        return combo;
+    }
 
     protected Text createNumericField(Composite parent, String label) {
         Text text = createTextField(parent, label);
@@ -98,7 +120,6 @@ public abstract class AbstractDialog extends XDialog {
     }
 
     protected void setInitialValues() {
-        
     }
     
     @Override
@@ -180,7 +201,6 @@ public abstract class AbstractDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
         return new Point(280, 160);
     }
 

@@ -74,6 +74,7 @@ import biz.isphere.core.dataspaceeditordesigner.listener.TreeViewerDoubleClickLi
 import biz.isphere.core.dataspaceeditordesigner.listener.TreeViewerSelectionChangedListener;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DBoolean;
+import biz.isphere.core.dataspaceeditordesigner.model.DComment;
 import biz.isphere.core.dataspaceeditordesigner.model.DDataSpaceValue;
 import biz.isphere.core.dataspaceeditordesigner.model.DDecimal;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
@@ -137,36 +138,35 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         }
     }
 
-    public void addWidget(DEditor dEditor, AbstractDWidget widget) {
+    public void addWidget(DEditor dEditor, Class<? extends AbstractDWidget> widgetClass) {
 
-        manager.createWidgetControlAndAddToParent(editorComposite, widget);
-        manager.addWidgetToEditor(dEditor, widget);
+        DWidgetDialog newDWidgetDialog = new DWidgetDialog(getShell(), dEditor, widgetClass);
+        if (newDWidgetDialog.open() != Dialog.OK) {
+            return;
+        }
+
+        AbstractDWidget dWidget = manager.createWidgetFromTemplate(newDWidgetDialog.getWidgetTemplate());
+        manager.createWidgetControlAndAddToParent(editorComposite, 3, dWidget);
+        manager.addWidgetToEditor(dEditor, dWidget);
         setEditorDirty(dEditor);
 
         // Refresh the editor
         setDataSpaceEditor(dEditor);
     }
 
-    public void changeWidget(DEditor dEditor, AbstractDWidget widget) {
+    public void changeWidget(AbstractDWidget dWidget) {
 
-        DWidgetDialog newDWidgetDialog = new DWidgetDialog(getShell(), widget);
-        if (newDWidgetDialog.open() == Dialog.OK) {
-            DTemplateWidget changes = newDWidgetDialog.getWidget();
-            
-            Control[] controls = editorComposite.getChildren();
-            for (Control control : controls) {
-                if (manager.isManagedControl(control)) {
-                    AbstractDWidget currentWidget = manager.getWidgetFromControl(control);
-                    if (currentWidget != null && currentWidget.equals(widget)) {
-                        manager.changeWidget(dEditor, currentWidget, changes);
-                        setEditorDirty(dEditor);
-                    }
-                }
-            }
-            
-            setDataSpaceEditor(dEditor);
-            refreshEditor();
+        DWidgetDialog changeDWidgetDialog = new DWidgetDialog(getShell(), dWidget.getParent(), dWidget);
+        if (changeDWidgetDialog.open() != Dialog.OK) {
+            return;
         }
+
+        DTemplateWidget changes = changeDWidgetDialog.getWidgetTemplate();
+        manager.changeWidget(dWidget, changes);
+
+        setEditorDirty(dWidget.getParent());
+        setDataSpaceEditor(dWidget.getParent());
+        refreshEditor();
     }
 
     public void deleteWidget(DEditor dEditor, AbstractDWidget widget) {
@@ -384,6 +384,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         createNewWidgetButton(buttonsArea, Messages.Data_type_Integer_4_byte, DInteger.class);
         createNewWidgetButton(buttonsArea, Messages.Data_type_Integer_2_byte, DShortInteger.class);
         createNewWidgetButton(buttonsArea, Messages.Data_type_Integer_1_byte, DTinyInteger.class);
+        createNewWidgetButton(buttonsArea, Messages.Data_type_Comment, DComment.class);
     }
 
     private void createNewWidgetButton(Composite parent, String label, Class<? extends AbstractDWidget> widgetClass) {
@@ -546,26 +547,22 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         scrollableArea.setExpandHorizontal(true);
         scrollableArea.setExpandVertical(true);
 
-        int numColumns;
-        if (dEditor == null) {
-            numColumns = 3;
-
-        } else {
-            numColumns = dEditor.getColumns() * 3;
-        }
-        Composite dialogEditor = manager.createDialogArea(scrollableArea, numColumns);
+        Composite dialogEditor = manager.createDialogArea(scrollableArea, dEditor, 3);
+        int numColumns = ((GridLayout)dialogEditor.getLayout()).numColumns;
 
         if (dEditor != null) {
             addDropSupportOnComposite(dialogEditor);
             Menu dialogAreaMenu = new Menu(dialogEditor);
-            dialogAreaMenu.addMenuListener(new PopupEditor(this, getShell(), dEditor));
+            dialogAreaMenu.addMenuListener(new PopupEditor(this, dEditor));
             dialogEditor.setMenu(dialogAreaMenu);
 
             AbstractDWidget[] widgets = dEditor.getWidgets();
             Color color = ColorHelper.getBackgroundColorOfSelectedControls();
             for (AbstractDWidget widget : widgets) {
-                Control control = manager.createWidgetControlAndAddToParent(dialogEditor, widget);
-                if (control instanceof Text) {
+                Control control = manager.createWidgetControlAndAddToParent(dialogEditor, 3, widget);
+                if (control instanceof Label) {
+                    control.addMouseTrackListener(new ControlBackgroundPainter(color));
+                } else if (control instanceof Text) {
                     control.addMouseTrackListener(new ControlBackgroundPainter(color));
                 } else if (control instanceof Button) {
                     control.addMouseTrackListener(new ControlBackgroundPainter(color));
@@ -602,6 +599,12 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     private void createOffsetAndLengthInfo(Composite parent, AbstractDWidget widget) {
+
+        if (widget instanceof DComment) {
+            // do not print offset/length information
+            return;
+        }
+
         StringBuffer sb = new StringBuffer();
         sb.append(widget.getOffset());
         sb.append(" / ");
@@ -664,7 +667,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
             button.setEnabled(hasEditor);
             removeSelectionListener(button);
             if (hasEditor) {
-                SelectionListener listener = new NewWidgetListener(this, getShell(), currentEditedEditor);
+                SelectionListener listener = new NewWidgetListener(this, currentEditedEditor);
                 button.addSelectionListener(listener);
                 button.setData(DE.KEY_SELECTION_LISTENER, listener);
             }
