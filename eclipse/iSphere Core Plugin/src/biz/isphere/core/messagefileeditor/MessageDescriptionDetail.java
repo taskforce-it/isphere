@@ -36,6 +36,7 @@ import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.Validator;
 
 import com.ibm.as400.access.AS400;
@@ -67,6 +68,7 @@ public class MessageDescriptionDetail {
     private FieldFormatViewer _fieldFormatViewer;
     private Composite compositeAdvancedOptions;
     private Button buttonHideAdvancedOptions;
+    private Text textTextLength;
 
     public MessageDescriptionDetail(AS400 as400, int actionType, MessageDescription _messageDescription) {
         this.as400 = as400;
@@ -159,8 +161,16 @@ public class MessageDescriptionDetail {
 
         final Label labelMessage = new Label(compositeHeader, SWT.NONE);
         labelMessage.setText(Messages.Message_colon);
-
-        textMessage = new Text(compositeHeader, SWT.BORDER);
+        
+        final Composite compositeMessage = new Composite(compositeHeader, SWT.NONE);
+        compositeMessage.setLayoutData(getLayoutData());
+        final GridLayout gridLayoutCompositeMessage = new GridLayout();
+        gridLayoutCompositeMessage.numColumns = 3;
+        gridLayoutCompositeMessage.marginWidth = 0;
+        gridLayoutCompositeMessage.marginHeight = 0;
+        compositeMessage.setLayout(gridLayoutCompositeMessage);
+        
+        textMessage = new Text(compositeMessage, SWT.BORDER);
         textMessage.setLayoutData(getLayoutData());
         textMessage.setTextLimit(132);
         if (actionType == DialogActionTypes.CREATE) {
@@ -172,10 +182,23 @@ public class MessageDescriptionDetail {
         if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textMessage.setEditable(false);
         }
+        textMessage.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                textTextLength.setText(Integer.toString(textMessage.getText().length()));
+            }
+        });
 
         validatorMessage = Validator.getCharInstance();
         validatorMessage.setLength(132);
 
+        Label labelTextLength = new Label(compositeMessage, SWT.NONE);
+        labelTextLength.setText(Messages.Text_length + ":");
+
+        textTextLength = new Text(compositeMessage, SWT.BORDER);
+        textTextLength.setText(Integer.toString(textMessage.getText().length()));
+        textTextLength.setEditable(false);
+        textTextLength.setLayoutData(new GridData(Size.getSize(25), SWT.DEFAULT));
+        
         // Helptext
 
         createSecondLevelTextEditor(compositeHeader);

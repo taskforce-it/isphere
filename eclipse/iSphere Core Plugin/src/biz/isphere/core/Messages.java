@@ -718,6 +718,8 @@ public class Messages extends NLS {
     
     public static String Invalid_horizontal_span_Span_must_be_between_A_and_B;
     
+    public static String Text_length;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
