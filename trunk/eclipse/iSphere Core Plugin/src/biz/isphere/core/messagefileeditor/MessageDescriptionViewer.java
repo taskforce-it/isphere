@@ -81,6 +81,8 @@ public class MessageDescriptionViewer {
                 return ((MessageDescription)element).getMessageId();
             } else if (columnIndex == 1) {
                 return ((MessageDescription)element).getMessage();
+            } else if (columnIndex == 2) {
+                return Integer.toString(((MessageDescription)element).getMessage().length());
             }
             return "*UNKNOWN";
         }
@@ -314,8 +316,12 @@ public class MessageDescriptionViewer {
         columnMessageId.setText(Messages.Message_Id);
 
         final TableColumn columnMessage = new TableColumn(_table, SWT.NONE);
-        columnMessage.setWidth(Size.getSize(900));
+        columnMessage.setWidth(Size.getSize(600));
         columnMessage.setText(Messages.Message);
+
+        final TableColumn columnTextLength = new TableColumn(_table, SWT.NONE);
+        columnTextLength.setWidth(Size.getSize(100));
+        columnTextLength.setText(Messages.Text_length);
 
         final Menu menuTableMessageDescriptions = new Menu(_table);
         menuTableMessageDescriptions.addMenuListener(new MenuAdapter() {
