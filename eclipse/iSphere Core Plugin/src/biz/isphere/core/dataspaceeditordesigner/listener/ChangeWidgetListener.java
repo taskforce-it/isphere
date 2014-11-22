@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditordesigner.gui.designer.ControlPayload;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
-import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
 public class ChangeWidgetListener extends SelectionAdapter {

@@ -11,7 +11,6 @@ package biz.isphere.core.dataspaceeditordesigner.gui.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -24,7 +23,6 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DComment;
@@ -299,11 +297,11 @@ public class DWidgetDialog extends AbstractDialog {
 
     private String[] getHorizontalSpanValues() {
         List<String> values = new ArrayList<String>();
-        
+
         for (int i = 1; i <= dEditor.getColumns(); i++) {
             values.add(new Integer(i).toString());
         }
-        
+
         return values.toArray(new String[values.size()]);
     }
 
