@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
 
@@ -90,39 +91,33 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 
                 DataElement dataElement = (DataElement)iterObjects.next();
 
-                ISeriesObject object = new ISeriesObject(dataElement);
+                ISeriesObject qsysRemoteObject = new ISeriesObject(dataElement);
 
-                if (object != null) {
+                if (qsysRemoteObject != null) {
 
-                    String library = object.getLibrary();
-                    String messageFile = object.getName();
-
-                    ISeriesConnection iseriesConnection = object.getISeriesConnection();
+                    String connectionName = qsysRemoteObject.getISeriesConnection().getSystemConnection().getAliasName();
+                    String messageFile = qsysRemoteObject.getName();
+                    String library = qsysRemoteObject.getLibrary();
+                    String objectType = qsysRemoteObject.getType();
+                    String description = qsysRemoteObject.getDescription();
+                    ISeriesConnection iseriesConnection = qsysRemoteObject.getISeriesConnection();
 
                     if (iseriesConnection != null) {
 
                         AS400 as400 = null;
-                        String host = null;
                         try {
                             as400 = iseriesConnection.getAS400ToolboxObject(getShell());
-                            host = iseriesConnection.getSystemConnection().getHostName();
                         } catch (SystemMessageException e) {
                         }
 
-                        if (as400 != null && host != null) {
+                        if (as400 != null) {
 
-                            MessageFileEditor.openEditor(as400, host, library, messageFile, IEditor.EDIT);
-
+                            RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
+                            MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
