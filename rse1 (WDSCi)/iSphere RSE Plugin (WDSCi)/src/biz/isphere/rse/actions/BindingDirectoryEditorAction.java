@@ -23,6 +23,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.Messages;
 
 import com.ibm.as400.access.AS400;
@@ -96,14 +97,14 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
 
                 if (object != null) {
 
-                    String library = object.getLibrary();
+                    String connectionName = object.getISeriesConnection().getSystemConnection().getAliasName();
                     String bindingDirectory = object.getName();
-
+                    String library = object.getLibrary();
+                    String objectType = object.getType();
+                    String description = object.getDescription();
                     ISeriesConnection iseriesConnection = object.getISeriesConnection();
 
                     if (iseriesConnection != null) {
-
-                        String host = iseriesConnection.getSystemConnection().getHostName();
 
                         AS400 as400 = null;
                         try {
@@ -119,18 +120,12 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
 
                         if (as400 != null && jdbcConnection != null) {
 
-                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, IEditor.EDIT);
-
+                            RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
+                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, remoteObject, IEditor.EDIT);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
