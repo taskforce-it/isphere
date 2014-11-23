@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 
 import com.ibm.as400.access.AS400;
@@ -37,41 +38,36 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
 
             if (object instanceof QSYSRemoteObject) {
 
-                QSYSRemoteObject remoteObject = (QSYSRemoteObject)object;
+                QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
 
-                String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-                String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+                String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
 
-                if (remoteObject.getType().equals(ISeries.MSGF)) {
+                if (qsysRemoteObject.getType().equals(ISeries.MSGF)) {
 
-                    String library = remoteObject.getLibrary();
-                    String messageFile = remoteObject.getName();
-
+                    String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+                    String messageFile = qsysRemoteObject.getName();
+                    String library = qsysRemoteObject.getLibrary();
+                    String objectType = qsysRemoteObject.getType();
+                    String description = qsysRemoteObject.getDescription();
                     IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
 
                     if (ibmiConnection != null) {
 
                         AS400 as400 = null;
-                        String host = null;
                         try {
                             as400 = ibmiConnection.getAS400ToolboxObject();
-                            host = ibmiConnection.getHost().getName();
                         } catch (SystemMessageException e) {
                         }
-                        if (as400 != null && host != null) {
+                        if (as400 != null) {
 
-                            MessageFileEditor.openEditor(as400, host, library, messageFile, IEditor.EDIT);
-
+                            RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
+                            MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
 
     public void selectionChanged(IAction action, ISelection selection) {

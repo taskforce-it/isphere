@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 import com.ibm.as400.access.AS400;
@@ -27,13 +28,12 @@ import com.ibm.as400.access.ObjectDoesNotExistException;
 public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
     private static final String OBJECT_TYPE = "BNDDIR";
-    
+
     private Connection jdbcConnection;
     private String level;
 
-    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory,
-        String mode) {
-        super(as400, connection, library, bindingDirectory, OBJECT_TYPE, mode, ISpherePlugin.IMAGE_BINDING_DIRECTORY);
+    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String mode) {
+        super(as400, remoteObject, mode, ISpherePlugin.IMAGE_BINDING_DIRECTORY);
 
         this.jdbcConnection = jdbcConnection;
         this.level = "V9R9M9";
@@ -49,6 +49,12 @@ public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
         } catch (ObjectDoesNotExistException e1) {
         }
 
+    }
+
+    // TODO: CMOne - remove constructor
+    @Deprecated
+    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
+        this(as400, jdbcConnection, new RemoteObject(connection, bindingDirectory, library, OBJECT_TYPE, ""), mode);
     }
 
     public boolean exists() {
