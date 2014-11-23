@@ -20,6 +20,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.core.internal.RemoteObject;
+
 import com.ibm.as400.access.AS400;
 
 public class BindingDirectoryEditor extends EditorPart {
@@ -77,17 +79,28 @@ public class BindingDirectoryEditor extends EditorPart {
         return false;
     }
 
-    public static void openEditor(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
+    public static void openEditor(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String mode) {
 
         try {
 
-            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connection, library, bindingDirectory, mode);
-
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, remoteObject, mode);
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
 
         } catch (PartInitException e) {
         }
-
     }
 
+    // TODO: CMOne - remove method
+    @Deprecated
+    public static void openEditor(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
+
+        try {
+
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connection, library, bindingDirectory,
+                mode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
+
+        } catch (PartInitException e) {
+        }
+    }
 }

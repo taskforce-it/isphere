@@ -40,6 +40,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
@@ -169,11 +171,15 @@ public class SearchResultViewer {
 
                     if (editor != null) {
 
-                        MessageFileEditor.openEditor(_searchResult.getAS400(), _searchResult.getHost(), _searchResult.getLibrary(),
-                            _searchResult.getMessageFile(), IEditor.EDIT);
+                        String connectionName = _searchResult.getHost();
+                        String bindingDirectory = _searchResult.getMessageFile();
+                        String library = _searchResult.getLibrary();
+                        String objectType = ISeries.MSGF;
+                        String description = _searchResult.getDescription();
 
+                        RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
+                        MessageFileEditor.openEditor(_searchResult.getAS400(), remoteObject, IEditor.EDIT);
                     }
-
                 }
             }
         });
@@ -353,13 +359,16 @@ public class SearchResultViewer {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMessageFiles[idx];
 
-                MessageFileEditor.openEditor(_searchResult.getAS400(), _searchResult.getHost(), _searchResult.getLibrary(),
-                    _searchResult.getMessageFile(), IEditor.EDIT);
+                String connectionName = _searchResult.getHost();
+                String bindingDirectory = _searchResult.getMessageFile();
+                String library = _searchResult.getLibrary();
+                String objectType = ISeries.MSGF;
+                String description = _searchResult.getDescription();
 
+                RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
+                MessageFileEditor.openEditor(_searchResult.getAS400(), remoteObject, IEditor.EDIT);
             }
-
         }
-
     }
 
     private void setMessageIds() {

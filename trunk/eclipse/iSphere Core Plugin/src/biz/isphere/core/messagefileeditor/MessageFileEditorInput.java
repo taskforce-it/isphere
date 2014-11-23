@@ -12,6 +12,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 import com.ibm.as400.access.AS400;
@@ -20,6 +21,12 @@ public class MessageFileEditorInput extends AbstractObjectEditorInput {
 
     private static final String OBJECT_TYPE = "MSGF";
 
+    public MessageFileEditorInput(AS400 anAS400, RemoteObject remoteObject, String aMode) {
+        super(anAS400, remoteObject, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
+    }
+
+    // TODO: CMOne - remove method
+    @Deprecated
     public MessageFileEditorInput(AS400 anAS400, String aConnection, String aLibrary, String aMessageFile, String aMode) {
         super(anAS400, aConnection, aLibrary, aMessageFile, OBJECT_TYPE, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
     }

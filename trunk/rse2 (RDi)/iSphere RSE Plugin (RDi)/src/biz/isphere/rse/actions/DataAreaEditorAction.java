@@ -48,10 +48,10 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
 
         String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
         String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-        String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
 
         if (qsysRemoteObject.getType().equals(ISeries.DTAARA)) {
 
+            String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
             String dataArea = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String objectType = qsysRemoteObject.getType();

@@ -18,6 +18,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.core.internal.RemoteObject;
+
 import com.ibm.as400.access.AS400;
 
 public class MessageFileEditor extends EditorPart {
@@ -75,17 +77,27 @@ public class MessageFileEditor extends EditorPart {
         return false;
     }
 
+    public static void openEditor(AS400 as400, RemoteObject remoteObject, String mode) {
+
+        try {
+
+            MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, remoteObject, mode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
+
+        } catch (PartInitException e) {
+        }
+    }
+
+    // TODO: CMOne - remove method
+    @Deprecated
     public static void openEditor(AS400 as400, String connection, String library, String messageFile, String mode) {
 
         try {
 
             MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, connection, library, messageFile, mode);
-
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
 
         } catch (PartInitException e) {
         }
-
     }
-
 }

@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -40,17 +41,18 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
             if (object instanceof QSYSRemoteObject) {
 
-                QSYSRemoteObject remoteObject = (QSYSRemoteObject)object;
+                QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
 
-                String profil = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-                String connection = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-                String host = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+                String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+                String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
 
-                if (remoteObject.getType().equals(ISeries.BNDDIR)) {
+                if (qsysRemoteObject.getType().equals(ISeries.BNDDIR)) {
 
-                    String library = remoteObject.getLibrary();
-                    String bindingDirectory = remoteObject.getName();
-
+                    String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
+                    String bindingDirectory = qsysRemoteObject.getName();
+                    String library = qsysRemoteObject.getLibrary();
+                    String objectType = qsysRemoteObject.getType();
+                    String description = qsysRemoteObject.getDescription();
                     IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
 
                     if (ibmiConnection != null) {
@@ -69,18 +71,13 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
                         if (as400 != null && jdbcConnection != null) {
 
-                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, host, library, bindingDirectory, IEditor.EDIT);
-
+                            RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
+                            BindingDirectoryEditor.openEditor(as400, jdbcConnection, remoteObject, IEditor.EDIT);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
