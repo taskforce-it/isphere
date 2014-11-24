@@ -79,6 +79,17 @@ public final class Configuration {
 
     public File getImportFile() throws JobCanceledException {
         String file = getString(IMPORT_FILE);
+        if (file.endsWith("*")) {
+            File folder = new File(file.substring(0, file.length() - 1));
+            String[] files = folder.list();
+            if (files.length <= 0) {
+                throw new JobCanceledException("No import files found in directory: " + folder.getPath());
+            } else if (files.length > 1) {
+                throw new JobCanceledException("More than 1 import file found in directory: " + folder.getPath());
+            }
+            return new File(folder + File.separator + files[0]);
+        }
+        
         file = addFileExtension(file);
         return new File(file);
     }
