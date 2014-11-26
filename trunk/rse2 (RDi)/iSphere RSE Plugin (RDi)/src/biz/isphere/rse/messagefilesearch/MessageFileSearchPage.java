@@ -59,6 +59,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
+    private static final String CONNECTION = "connection";
     private static final String MESSAGE_FILE = "messageFile";
     private static final String LIBRARY = "library";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
@@ -241,6 +242,12 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
         includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
+        if (loadValue(CONNECTION, null) != null) {
+            IBMiConnection connection = IBMiConnection.getConnection(loadValue(CONNECTION, null));
+            if (connection != null) {
+                connectionCombo.select(connection);
+            }
+        }
         messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, ""));
 
@@ -259,6 +266,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+        storeValue(CONNECTION, getConnectionName());
         storeValue(LIBRARY, getMessageFileLibrary());
         storeValue(MESSAGE_FILE, getMessageFile());
 
@@ -323,6 +331,15 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the name of the RSE connection.
+     * 
+     * @return name of the RSE connection
+     */
+    private String getConnectionName() {
+        return connectionCombo.getText();
     }
 
     /**

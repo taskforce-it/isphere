@@ -59,12 +59,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
+    private static final String CONNECTION = "connection";
     private static final String SOURCE_FILE = "sourceFile";
     private static final String SOURCE_MEMBER = "sourceMember";
     private static final String LIBRARY = "library";
     private static final String SHOW_RECORDS = "showRecords";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
-    
+
     /**
      * The MAX_END_COLUMN value specified here must match the maximum line
      * length in FNDSTR (see: LILINE).
@@ -231,6 +232,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
         showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
+        if (loadValue(CONNECTION, null) != null) {
+            IBMiConnection connection = IBMiConnection.getConnection(loadValue(CONNECTION, null));
+            if (connection != null) {
+                connectionCombo.select(connection);
+            }
+        }
         sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
         sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
         sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
@@ -245,6 +252,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
         storeValue(SHOW_RECORDS, isShowAllRecords());
+        storeValue(CONNECTION, getConnectionName());
         storeValue(LIBRARY, getSourceFileLibrary());
         storeValue(SOURCE_FILE, getSourceFile());
         storeValue(SOURCE_MEMBER, getSourceMember());
@@ -310,6 +318,15 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the name of the RSE connection.
+     * 
+     * @return name of the RSE connection
+     */
+    private String getConnectionName() {
+        return connectionCombo.getText();
     }
 
     /**
