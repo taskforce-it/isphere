@@ -77,17 +77,18 @@
 	
 	<!-- Set zip file and directory names -->
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
-	<property name="zip.base.directory" location="${workspace.home}" />
-	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (Update Site).zip" />
-	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (Update Site).zip" />
+	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
+	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (v${build.version} Update Site).zip" />
+	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (v${build.version} Update Site).zip" />
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
+	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
 	
     <!--
     * =====================================================================
     *   Controls the build process:
     *     - update version number
     * ===================================================================== -->
-	<target name="build" depends="cleanUpdateSite, updateVersionNumber, refreshProjects" description="build iSphere update site">
+	<target name="build" depends="cleanUpdateSite, updateVersionNumber, createTagFile, refreshProjects" description="build iSphere update site">
 		<echo>Finished iSphere build ${build.version}</echo>
 		<echo>Open site.xml and press [Build All] to build the iSphere update site.</echo>
 		<echo>*** Finished ***</echo>
@@ -141,6 +142,20 @@
 		
 	</target>
 
+	
+    <!--
+    * =====================================================================
+    *   Creating tag file to indicate the iSphere version
+    *   inside the zip file.
+    * ===================================================================== -->
+	<target name="createTagFile">
+		
+		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
+		
+		<touch file="${updatesite.tag.file}" />
+		
+	</target>
+	
     <!--
     * =====================================================================
     *   Downloads library ISPHERE from the System i.
@@ -226,6 +241,7 @@
 		    <fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*"/>
 		    <fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar"/>
 		    <fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar"/>
+		    <fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag"/>
 		</delete>
 		
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
@@ -254,10 +270,10 @@
     		<else>
 				<property name="zip.file.name" value="${zip.file.name.wdsc}" />
     		</else>
-    	</if>	
+    	</if>
 
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
-			<include name="${build.updatesite}/**/*"/>
+			<include name="**/*"/>
 			<exclude name="**/.project" />
 		</zip>
 		
