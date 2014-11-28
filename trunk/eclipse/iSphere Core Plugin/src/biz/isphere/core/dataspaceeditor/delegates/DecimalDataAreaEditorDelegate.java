@@ -93,6 +93,14 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         dataAreaText.addModifyListener(new TextControlModifyListener());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        dataAreaText.setEditable(isEnabled);
+    }
+
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         if (!validator.validate(dataAreaText.getText())) {

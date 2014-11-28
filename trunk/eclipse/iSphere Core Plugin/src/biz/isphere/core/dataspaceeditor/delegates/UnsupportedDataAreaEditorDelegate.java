@@ -23,6 +23,8 @@ import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
  */
 public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
+    private Composite editorArea;
+
     public UnsupportedDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
@@ -30,7 +32,7 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDe
     @Override
     public void createPartControl(Composite aParent) {
 
-        Composite editorArea = createEditorArea(aParent, 1);
+        editorArea = createEditorArea(aParent, 1);
 
         Label info1 = new Label(editorArea, SWT.NONE);
         info1.setText("Unsupported data area type. Please contact the developer.");
@@ -47,6 +49,14 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDe
         fillerLayoutData.horizontalSpan = 2;
         filler.setLayoutData(fillerLayoutData);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        // not required
     }
 
     @Override

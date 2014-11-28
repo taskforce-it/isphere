@@ -15,9 +15,11 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.DataAreaEditorInput;
+import biz.isphere.core.internal.AbstractObjectLockManager;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
+import biz.isphere.rse.internal.ObjectLockManager;
 
 import com.ibm.as400.access.AS400;
 
@@ -50,5 +52,10 @@ public class DataAreaEditor extends AbstractDataSpaceEditor {
         } catch (PartInitException e) {
             ISpherePlugin.logError("Failed to open data area editor", e); //$NON-NLS-1$
         }
+    }
+
+    @Override
+    protected AbstractObjectLockManager getObjectLockManager(int lockWaitTime) {
+        return new ObjectLockManager(lockWaitTime);
     }
 }

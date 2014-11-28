@@ -157,6 +157,14 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
      * {@inheritDoc}
      */
     @Override
+    public void setEnabled(boolean isEnabled) {
+        dataAreaText.setEditable(isEnabled);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void doSave(IProgressMonitor aMonitor) {
         Throwable exception = getWrappedDataSpace().setValue(dataAreaText.getText());
         handleSaveResult(aMonitor, exception);

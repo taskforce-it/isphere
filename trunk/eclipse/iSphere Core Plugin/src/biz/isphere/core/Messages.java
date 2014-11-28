@@ -719,6 +719,10 @@ public class Messages extends NLS {
     public static String Invalid_horizontal_span_Span_must_be_between_A_and_B;
     
     public static String Text_length;
+
+    public static String Data_cannot_be_changed;
+
+    public static String No_editor_selected_Cannot_display_any_data;
     
     static {
         // initialize resource bundle
