@@ -100,6 +100,8 @@ public class Messages extends NLS {
     public static String Specify_whether_or_not_to_include_the_second_level_message_text;
 
     public static String No_objects_found_that_match_the_selection_criteria;
+
+    public static String Failed_to_get_connection_colon;
     
     static {
         // initialize resource bundle
