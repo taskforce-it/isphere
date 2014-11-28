@@ -25,6 +25,7 @@
 	Add sub topics here:
     -->
     <topic label="Designer" href="html/dataspaces/designer/dataspaceeditordesigner.html" />
+    <topic label="Editor"  href="html/dataspaces/editor/dataspaceeditor.html" />
     <topic label="Monitor"  href="html/dataspaces/monitor/dataspacemonitor.html" />
     <topic label="Preferences"  href="html/dataspaces/preferences/preferences.html" />
   </topic>
