@@ -466,7 +466,16 @@ public abstract class AbstractWrappedDataSpace {
                     throw produceIllegalMethodAccessException("getOrLoadDataSpace()"); //$NON-NLS-1$
                 }
             } else {
-                dataSpaceObject = new UserSpace(as400, path.getPath());
+                UserSpace userSpace = new UserSpace(as400, path.getPath());
+                /*
+                 * Must use program calls to make the read() operation work.
+                 * Without using program calls, the File Server job
+                 * (QPWFSERVSO), that performs the read() operation, tries to
+                 * get a *SHRUPD lock, which it cannot get due to the *EXCLRD
+                 * lock set by the Data Space Editor.
+                 */
+                userSpace.setMustUseProgramCall(true);
+                dataSpaceObject = userSpace;
             }
         }
         return dataSpaceObject;

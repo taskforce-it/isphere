@@ -15,6 +15,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -42,6 +43,10 @@ import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
+import biz.isphere.core.internal.AbstractObjectLockManager;
+import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
@@ -54,10 +59,15 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     AbstractWrappedDataSpace wrappedDataArea;
     AbstractDataSpaceEditorDelegate editorDelegate;
     DataSpaceEditorRepository repository;
+    private AbstractObjectLockManager objectLockManager;
+    private String mode;
 
     public AbstractDataSpaceEditor() {
         isDirty = false;
+        objectLockManager = getObjectLockManager(0);
     }
+
+    protected abstract AbstractObjectLockManager getObjectLockManager(int lockWaitTime);
 
     @Override
     public void createPartControl(Composite aParent) {
@@ -82,6 +92,11 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         editorDelegate.setStatusBar(new StatusBar(editorParent));
 
         registerDelegateActions();
+
+        if (!IEditor.EDIT.equals(mode)) {
+            editorDelegate.setEnabled(false);
+            editorDelegate.setStatusMessage(getObjectLockMessage(null));
+        }
     }
 
     private void createHeadline(Composite aHeader, String aLabel, String aValue) {
@@ -123,7 +138,16 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
 
         AbstractObjectEditorInput input = (AbstractObjectEditorInput)anInput;
         try {
+
             wrappedDataArea = createDataSpaceWrapper(input.getRemoteObject());
+            ObjectLock objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
+            if (objectLock == null) {
+                mode = IEditor.BROWSE;
+                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
+            } else {
+                mode = IEditor.EDIT;
+            }
+
         } catch (Exception e) {
             throw new PartInitException(e.getMessage(), e);
         }
@@ -157,6 +181,19 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         firePropertyChange(IEditorPart.PROP_DIRTY);
     }
 
+    private String getObjectLockMessage(String secondLeveltext) {
+        String[] messages = objectLockManager.getErrorMessages();
+        if (messages.length == 0) {
+            return ""; //$NON-NLS-1$
+        }
+
+        if (secondLeveltext == null) {
+            return messages[0];
+        }
+
+        return messages[0] + "\n\n" + secondLeveltext;
+    }
+
     /**
      * Creates the editor delegate depending on the type of the data area.
      * <p>
@@ -177,7 +214,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
                 }
             }
         }
-        if (selectedEditor != null) {
+        if (selectedEditor != null || ISeries.USRSPC.equals(getWrappedDataArea().getObjectType())) {
             return new DataSpaceEditorDelegate(this, selectedEditor);
         }
 
@@ -235,6 +272,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     @Override
     public void dispose() {
         editorDelegate.dispose();
+        objectLockManager.dispose();
         super.dispose();
     }
 

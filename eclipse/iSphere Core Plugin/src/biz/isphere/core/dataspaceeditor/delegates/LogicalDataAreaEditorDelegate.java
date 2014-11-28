@@ -78,6 +78,14 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        dataAreaText.setEnabled(isEnabled);
+    }
+
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         Throwable exception = getWrappedDataSpace().setValue(dataAreaText.getSelection());

@@ -100,6 +100,8 @@ public class Messages extends NLS {
 
     public static String Loading_remote_objects;
 
+    public static String Failed_to_get_connection_colon;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

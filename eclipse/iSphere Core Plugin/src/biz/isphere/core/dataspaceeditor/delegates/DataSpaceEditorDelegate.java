@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
@@ -46,6 +47,7 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
     private DataSpaceEditorManager manager;
     private List<Control> controls;
     private DDataSpaceValue dataSpaceValue;
+    private Composite dialogEditor;
 
     public DataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor, DEditor dEditor) {
         super(aDataAreaEditor);
@@ -70,38 +72,53 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
         scrollableArea.setExpandVertical(true);
 
         int columnsPerEditorColumn = 2;
-        Composite dialogEditor = manager.createDialogArea(scrollableArea, dEditor, columnsPerEditorColumn);
+        dialogEditor = manager.createDialogArea(scrollableArea, dEditor, columnsPerEditorColumn);
         GridLayout dialogEditorLayout = (GridLayout)dialogEditor.getLayout();
         dialogEditorLayout.marginLeft = 0;
 
-        AbstractDWidget[] widgets = dEditor.getWidgets();
         controls = new ArrayList<Control>();
-        for (AbstractDWidget widget : widgets) {
-            Control control = manager.createWidgetControlAndAddToParent(dialogEditor, columnsPerEditorColumn, widget);
-            controls.add(control);
+        if (dEditor == null) {
+            
+            Label errorLabel = new Label(dialogEditor, SWT.NONE);
+            errorLabel.setText(Messages.No_editor_selected_Cannot_display_any_data);
+        } else {
+            
+            AbstractDWidget[] widgets = dEditor.getWidgets();
+            for (AbstractDWidget widget : widgets) {
+                Control control = manager.createWidgetControlAndAddToParent(dialogEditor, columnsPerEditorColumn, widget);
+                controls.add(control);
+            }
+
+            // Set screen value
+            try {
+                AbstractWrappedDataSpace dataSpace = getWrappedDataSpace();
+                byte[] bytes = getWrappedDataSpace().getBytes();
+                dataSpaceValue = DDataSpaceValue.getCharacterInstance(dataSpace.getRemoteObject(), dataSpace.getCCSIDEncoding(), bytes);
+                for (Control control : controls) {
+                    manager.setControlValue(control, dataSpaceValue);
+                }
+            } catch (Throwable e) {
+                ISpherePlugin.logError(e.getMessage(), e);
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            }
+
+            // Add 'dirty' listener
+            for (Control control : controls) {
+                manager.addControlModifyListener(control, this);
+            }
         }
 
         dialogEditor.layout();
         scrollableArea.setContent(dialogEditor);
         scrollableArea.setMinSize(dialogEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    }
 
-        // Set screen value
-        try {
-            AbstractWrappedDataSpace dataSpace = getWrappedDataSpace();
-            byte[] bytes = getWrappedDataSpace().getBytes();
-            dataSpaceValue = DDataSpaceValue.getCharacterInstance(dataSpace.getRemoteObject(), dataSpace.getCCSIDEncoding(), bytes);
-            for (Control control : controls) {
-                manager.setControlValue(control, dataSpaceValue);
-            }
-        } catch (Throwable e) {
-            ISpherePlugin.logError(e.getMessage(), e);
-            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
-        }
-
-        // Add 'dirty' listener
-        for (Control control : controls) {
-            manager.addControlModifyListener(control, this);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        dialogEditor.setEnabled(isEnabled);
     }
 
     @Override
