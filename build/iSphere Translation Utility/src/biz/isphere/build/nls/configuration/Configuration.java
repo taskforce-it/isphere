@@ -39,6 +39,9 @@ public final class Configuration {
     private static final String DEFAULT_LANGUAGE = "defaultLanguage";
     private static final String EXPORT_LANGUAGE_IDS = "exportLanguageIDs";
     private static final String IMPORT_LANGUAGE_IDS = "importLanguageIDs";
+    private static final String BUILD_PROPERTIES = "buildProperties";
+
+    private static final String BUILD_VERSION = "build.version";
 
     String fConfigurationResource;
     File fWorkspace;
@@ -74,6 +77,9 @@ public final class Configuration {
         if (i != -1) {
             file = file.substring(0, i) + "_" + getDateAsString() + file.substring(i);
         }
+        if (file.indexOf("${version}") >= 0) {
+            file = file.replaceAll("\\$\\{version}", "v" + getString(BUILD_VERSION));
+        }
         return new File(file);
     }
 
@@ -89,7 +95,7 @@ public final class Configuration {
             }
             return new File(folder + File.separator + files[0]);
         }
-        
+
         file = addFileExtension(file);
         return new File(file);
     }
@@ -155,27 +161,27 @@ public final class Configuration {
     }
 
     private String getResourcePath() throws JobCanceledException {
-            File file = new File(fConfigurationResource);
-            URI configurationURI = null;
-            if (file.exists()) {
-                configurationURI = file.toURI();
-            } else {
-                if (getClass().getResource("/" + fConfigurationResource) != null) {
-                    try {
+        File file = new File(fConfigurationResource);
+        URI configurationURI = null;
+        if (file.exists()) {
+            configurationURI = file.toURI();
+        } else {
+            if (getClass().getResource("/" + fConfigurationResource) != null) {
+                try {
                     configurationURI = getClass().getResource("/" + fConfigurationResource).toURI();
-                    } catch (URISyntaxException e) {
-                        // ignore exception
-                    }
-                } else {
-                    throw new JobCanceledException("Configuration file not found: " + fConfigurationResource);
+                } catch (URISyntaxException e) {
+                    // ignore exception
                 }
+            } else {
+                throw new JobCanceledException("Configuration file not found: " + fConfigurationResource);
             }
-            if (configurationURI == null) {
-                String message = "Configuration file not found: " + fConfigurationResource;
-                LogUtil.error(message);
-                throw new JobCanceledException(message);
-            }
-            return configurationURI.getPath();
+        }
+        if (configurationURI == null) {
+            String message = "Configuration file not found: " + fConfigurationResource;
+            LogUtil.error(message);
+            throw new JobCanceledException(message);
+        }
+        return configurationURI.getPath();
     }
 
     private String getString(String key) throws JobCanceledException {
@@ -192,16 +198,25 @@ public final class Configuration {
 
     private Properties getProperties() throws JobCanceledException {
         if (fProperties == null) {
-            fProperties = loadProperties();
+            fProperties = loadProperties(getResourcePath());
+            String buildPropsPath = getWorkspacePath() + getBuildPath();
+            Properties fBuildProperties = loadProperties(buildPropsPath);
+            String version = fBuildProperties.getProperty(BUILD_VERSION);
+            fProperties.put(BUILD_VERSION, version);
         }
         return fProperties;
     }
 
-    private Properties loadProperties() throws JobCanceledException {
+    private String getBuildPath() throws JobCanceledException {
+        String path = getString(BUILD_PROPERTIES);
+        return path;
+    }
+
+    private Properties loadProperties(String path) throws JobCanceledException {
         Properties nlsProps = new Properties();
         InputStream in = null;
         try {
-            in = new FileInputStream(getResourcePath());
+            in = new FileInputStream(path);
             nlsProps.load(in);
             in.close();
         } catch (Exception e) {
