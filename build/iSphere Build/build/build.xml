@@ -36,54 +36,55 @@
  *       get notified of the new iSphere version.
  *
  * ===================================================================== -->
-<project basedir="." default="build" >
-	
+<project basedir="." default="build">
+
 	<!-- Include Ant Contrib tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
-	  <classpath>
+		<classpath>
 	    <pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar"/>
-	  </classpath>
+		</classpath>
 	</taskdef>
-	
+
 	<!-- Load project names and new version number -->
 	<property file="build.properties" />
-	
+
 	<!-- Load ftp user name and password -->
 	<property file="ftp.properties" />
-	
+
 	<!-- Set local FTP download directory -->
 	<property name="ftp.download.directory" location="${basedir}/temp-downloads" />
 	<property name="local.savefile.name" value="ISPHERE" />
 	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
-	
+
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
 	
 	<!-- Set regular expressions and replacement values -->
 	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)" />
 	<property name="manifest.version.replace" value="\1${build.version}" />
-	
+
 	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;\s+provider-name.*?&gt;)" />
 	<property name="feature.1.version.replace" value="\1${build.version}\3" />
-	
+
 	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;\s+match.*?&gt;)" />
 	<property name="feature.2.version.replace" value="\1${build.version}\3" />
-	
+
 	<property name="site.1.version.regex" value="(&lt;feature.*_)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(\.jar)" />
 	<property name="site.1.version.replace" value="\1${build.version}\3" />
-	
+
 	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;)" />
 	<property name="site.2.version.replace" value="\1${build.version}\3" />
-	
+
 	<!-- Set zip file and directory names -->
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
 	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (v${build.version} Update Site).zip" />
 	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (v${build.version} Update Site).zip" />
+	<property name="isphere.doc" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere.doc" />
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Controls the build process:
     *     - update version number
@@ -93,8 +94,8 @@
 		<echo>Open site.xml and press [Build All] to build the iSphere update site.</echo>
 		<echo>*** Finished ***</echo>
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Updates the version numbers of the following files:
     *     - MANIFEST.MF
@@ -104,59 +105,59 @@
 	<target name="updateVersionNumber">
 
 		<echo>Updating version number to: ${build.version} ...</echo>
-		
-	    <for list="${build.projects},${build.updatesite}" delimiter="," param="project">
-	        <sequential>
-	        	
-	            <echo message="${workspace.home}\@{project}"/>
-	            	
-	        	<if>
-	        		<available file="${workspace.home}\@{project}/META-INF" />
-        			<then>
-			        	<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
-			        	    <fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF"/>
-			        	</replaceregexp>
-    				</then>
-	        	</if>	
-	        	
-	        	<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
-	        	    <fileset dir="${workspace.home}\@{project}" includes="feature.xml"/>
-	        	</replaceregexp>
-	        	
-	        	<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
-	        	    <fileset dir="${workspace.home}\@{project}" includes="feature.xml"/>
-	        	</replaceregexp>
-	        	
-	        	<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
-	        	    <fileset dir="${workspace.home}\@{project}" includes="site.xml"/>
-	        	</replaceregexp>
-	        	
-	        	<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
-	        	    <fileset dir="${workspace.home}\@{project}" includes="site.xml"/>
-	        	</replaceregexp>
-	        	
-	        </sequential>
-	    </for>		
+
+		<for list="${build.projects},${build.updatesite}" delimiter="," param="project">
+			<sequential>
+
+				<echo message="${workspace.home}\@{project}" />
+
+				<if>
+					<available file="${workspace.home}\@{project}/META-INF" />
+					<then>
+						<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
+							<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+						</replaceregexp>
+					</then>
+				</if>
+
+				<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+				</replaceregexp>
+
+			</sequential>
+		</for>
 
 		<echo>Done.</echo>
-		
+
 	</target>
 
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Creating tag file to indicate the iSphere version
     *   inside the zip file.
     * ===================================================================== -->
 	<target name="createTagFile">
-		
+
 		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
-		
+
 		<touch file="${updatesite.tag.file}" />
-		
+
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Downloads library ISPHERE from the System i.
     *   This target requires a patched version of commons-net-3.3.jar
@@ -164,9 +165,9 @@
     *   (https://issues.apache.org/jira/browse/NET-512)
     * ===================================================================== -->
 	<target name="download" depends="ftpCredentials" description="Downloads the iSphere save file">
-		
+
 		<echo>Downloading save file ${ftp.savefile.name} ...</echo>
-		
+
 		<ftp action="get"
 			 server="${ftp.server}"
 		     userid="${ftp.user}"
@@ -177,18 +178,18 @@
 			 systemTypeKey="OS/400"
 			 >
 			<fileset dir="${ftp.download.directory}" casesensitive="false">
-		    	<include name="${ftp.savefile.name}" />
-		    </fileset>
-	  	</ftp>
-		
-		<move file="${ftp.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true"/>
-		
+				<include name="${ftp.savefile.name}" />
+			</fileset>
+		</ftp>
+
+		<move file="${ftp.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
+
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
 
 	</target>
 
-    <!--
+	<!--
     * =====================================================================
     *   Asks for FTP credentials: username and password.
     *   Properties 'ftp.user' and 'ftp.password' are loaded 
@@ -200,10 +201,10 @@
 	    	message="Please enter FTP password:"
 	    	addproperty="ftp.password"
 	    	defaultvalue="" />
-		
+
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Updates the version numbers of the following files:
     *     - MANIFEST.MF
@@ -213,19 +214,19 @@
 	<target name="refreshProjects">
 
 		<echo>Refereshing projects ...</echo>
-		
-	    <for list="${build.projects},${build.updatesite}" delimiter="," param="project">
-	        <sequential>
-	        	<eclipse.refreshLocal resource="@{project}" depth="infinite" />
-	        	<echo>* @{project}</echo>
-	        </sequential>
-	    </for>		
+
+		<for list="${build.projects},${build.updatesite}" delimiter="," param="project">
+			<sequential>
+				<eclipse.refreshLocal resource="@{project}" depth="infinite" />
+				<echo>* @{project}</echo>
+			</sequential>
+		</for>
 
 		<echo>Done.</echo>
-		
+
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Removes all files from the following directories of the 
     *   update site project:
@@ -237,20 +238,20 @@
 		<echo>Removing old files from '${build.updatesite}' ...</echo>
 
 		<delete includeemptydirs="true">
-		    <fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*"/>
-		    <fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*"/>
-		    <fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar"/>
-		    <fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar"/>
-		    <fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag"/>
+			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
 		</delete>
-		
+
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
-		
+
 		<echo>Done.</echo>
-		
+
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Produces the files that must be uploaded to SourceForge:
     * ===================================================================== -->
@@ -259,43 +260,48 @@
 		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
 
 		<delete includeemptydirs="true">
-		    <fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*"/>
+			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
 		</delete>
-		
-    	<if>
-    		<equals arg1="${build.target}" arg2="RDi" />
+
+		<if>
+			<equals arg1="${build.target}" arg2="RDi" />
 			<then>
 				<property name="zip.file.name" value="${zip.file.name.rdi}" />
 			</then>
-    		<else>
+			<else>
 				<property name="zip.file.name" value="${zip.file.name.wdsc}" />
-    		</else>
-    	</if>
+			</else>
+		</if>
 
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
-			<include name="**/*"/>
+			<include name="**/*" />
 			<exclude name="**/.project" />
 		</zip>
-		
+
+		<winword file="${isphere.doc}" visible="true" >
+			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
+		</winword>
+
 		<copy file="${isphere.pdf}" todir="${build.upload.dir}" />
-		
+
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-		
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+
 		<echo>Done.</echo>
-		
+
 	</target>
-	
-    <!--
+
+	<!--
     * =====================================================================
     *   Nice to have but does not yet work.
     * ===================================================================== -->
 	<target name="buildScript">
-		
+
 		<eclipse.buildScript
 	    	elements="feature@biz.isphere.core"
 	    	buildDirectory="C:/workspaces/rdp_070/workspace/iSphere Build/build/temp" 
 			outputUpdateJars="true" />
-		
+
 	</target>
-	
+
 </project>
