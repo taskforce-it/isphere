@@ -16,6 +16,13 @@ Repository Location:
    Password: Your SourceForge password.
 
 	
+Eclipse Plug-ins:
+-----------------
+
+Install the "iSphere Ant Plugin", which is required to build the iSphere
+project.
+
+	
 Eclipse Settings:
 -----------------
 
