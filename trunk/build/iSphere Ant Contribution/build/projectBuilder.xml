@@ -26,6 +26,7 @@
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="plugin.dir" value="${basedir}" />
 	<property name="manifest.dir" value="${basedir}/META-INF" />
+	<property name="eclipse.plugin.dir" value="${workspace.home}/iSphere Eclipse Setup/plug-ins" />
 
 	<property name="release.dir" value="${workspace.home}/${build.plugin.project}/lib" />
 	<property name="release.file.jar.plugin" value="iSphere-ant-plugin.jar" />
@@ -194,7 +195,7 @@
 	<!-- ======================================================================
 		      Clean temporary directories.
 		 ================================================================== -->
-	<target name="clean" depends="cleanCompile,cleanRelease,cleanUpdateSite">
+	<target name="clean" depends="cleanCompile,cleanRelease,cleanUpdateSite" >
 	</target>
 
 
@@ -225,7 +226,7 @@
     *     - features
     *     - plugins
     * ===================================================================== -->
-	<target name="cleanUpdateSite" description="clean update site project">
+	<target name="cleanUpdateSite" >
 
 		<echo>Removing old files from '${build.updatesite}' ...</echo>
 
@@ -530,6 +531,7 @@
 
 	</target>
 
+	
 	<!--
     * =====================================================================
     *   Produces the files that must be uploaded to SourceForge:
@@ -547,8 +549,25 @@
 			<exclude name="**/.project" />
 		</zip>
 
-		<echo>Done.</echo>
+		<antcall target="copyUpdateSiteToEclipseSetup">
+		</antcall>
+		
+	</target>
 
+	
+	<!--
+    * =====================================================================
+    *   Copies the update site zip file to the iSphere Eclipse Setup 
+    *   project.
+    * ===================================================================== -->
+	<target name="copyUpdateSiteToEclipseSetup" >
+
+		<copy includeemptydirs="false" toFile="${eclipse.plugin.dir}/iSphere Ant Contribution.zip">
+			<fileset dir="${build.upload.dir}">
+				<include name="${zip.file.name}"/>
+			</fileset>
+		</copy>
+		
 	</target>
 
 </project>
