@@ -724,6 +724,10 @@ public class Messages extends NLS {
 
     public static String No_editor_selected_Cannot_display_any_data;
     
+    public static String Move_up;
+    
+    public static String Move_down;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

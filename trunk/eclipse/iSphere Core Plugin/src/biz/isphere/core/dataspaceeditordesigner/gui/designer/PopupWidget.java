@@ -20,6 +20,8 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.dataspaceeditordesigner.listener.ChangeWidgetListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.DeleteWidgetListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.MoveDownWidgetListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.MoveUpWidgetListener;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DComment;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
@@ -33,6 +35,8 @@ public class PopupWidget extends MenuAdapter {
 
     private MenuItem changeWidgetMenuItem;
     private MenuItem deleteWidgetMenuItem;
+    private MenuItem moveUpWidgetMenuItem;
+    private MenuItem moveDownWidgetMenuItem;
 
     public PopupWidget(IDialogEditor editor, DEditor dialog, ControlPayload payload) {
         this.editor = editor;
@@ -54,6 +58,14 @@ public class PopupWidget extends MenuAdapter {
 
         if (!((deleteWidgetMenuItem == null) || (deleteWidgetMenuItem.isDisposed()))) {
             deleteWidgetMenuItem.dispose();
+        }
+
+        if (!((moveUpWidgetMenuItem == null) || (moveUpWidgetMenuItem.isDisposed()))) {
+            moveUpWidgetMenuItem.dispose();
+        }
+
+        if (!((moveDownWidgetMenuItem == null) || (moveDownWidgetMenuItem.isDisposed()))) {
+            moveDownWidgetMenuItem.dispose();
         }
     }
 
@@ -82,5 +94,23 @@ public class PopupWidget extends MenuAdapter {
         deleteWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DELETE));
         deleteWidgetMenuItem.addSelectionListener(new DeleteWidgetListener(editor, dEditor));
         deleteWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
+
+        moveUpWidgetMenuItem = new MenuItem(menuParent, SWT.NONE);
+        moveUpWidgetMenuItem.setText(Messages.Move_up + ": " + text);
+        moveUpWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_UP));
+        moveUpWidgetMenuItem.addSelectionListener(new MoveUpWidgetListener(editor, dEditor));
+        moveUpWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
+        if (widget.isFirst()) {
+            moveUpWidgetMenuItem.setEnabled(false);
+        }
+
+        moveDownWidgetMenuItem = new MenuItem(menuParent, SWT.NONE);
+        moveDownWidgetMenuItem.setText(Messages.Move_down + ": " + text);
+        moveDownWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DOWN));
+        moveDownWidgetMenuItem.addSelectionListener(new MoveDownWidgetListener(editor, dEditor));
+        moveDownWidgetMenuItem.setData(DE.KEY_DATA_SPACE_PAYLOAD, payload);
+        if (widget.isLast()) {
+            moveDownWidgetMenuItem.setEnabled(false);
+        }
     }
 }

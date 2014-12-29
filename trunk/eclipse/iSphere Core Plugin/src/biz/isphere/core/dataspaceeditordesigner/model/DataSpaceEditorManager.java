@@ -209,6 +209,22 @@ public final class DataSpaceEditorManager {
         dEditor.removeWidget(widget);
     }
 
+    public void moveUpWidget(AbstractDWidget widget) {
+        moveUpWidget(widget, 1);
+    }
+
+    private void moveUpWidget(AbstractDWidget widget, int positions) {
+        widget.getParent().moveUpWidget(widget, positions);
+    }
+
+    public void moveDownWidget(AbstractDWidget widget) {
+        moveDownWidget(widget, 1);
+    }
+
+    private void moveDownWidget(AbstractDWidget widget, int positions) {
+        widget.getParent().moveDownWidget(widget, positions);
+    }
+
     public boolean validate(Control[] controls) {
         for (Control control : controls) {
             if (getPayloadFromControl(control) != null) {

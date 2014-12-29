@@ -75,6 +75,20 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         return dEditor;
     }
     
+    public boolean isFirst() {
+        if (getParent().getPreviousSibling(this) == null) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isLast() {
+        if (getParent().getNextSibling(this) == null) {
+            return true;
+        }
+        return false;
+    }
+    
     void setLabel(String label) {
         this.label = label;
     }
