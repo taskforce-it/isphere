@@ -177,6 +177,22 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         setDataSpaceEditor(dEditor);
     }
 
+    public void moveUpWidget(DEditor dEditor, AbstractDWidget widget) {
+        manager.moveUpWidget(widget);
+        setEditorDirty(dEditor);
+
+        // Refresh the editor
+        setDataSpaceEditor(dEditor);
+    }
+
+    public void moveDownWidget(DEditor dEditor, AbstractDWidget widget) {
+        manager.moveDownWidget(widget);
+        setEditorDirty(dEditor);
+
+        // Refresh the editor
+        setDataSpaceEditor(dEditor);
+    }
+
     public DEditor[] getSelectedDataSpaceEditors() {
         return getSelectedEditors();
     }

@@ -82,6 +82,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_VALUE_CHANGED = "value_changed.gif";
     public static final String IMAGE_SYSTEM_HELP = "systemhelp.gif";
     public static final String IMAGE_AUTO_REFRESH_OFF = "auto_refresh_off.gif";
+    public static final String IMAGE_UP = "up.gif";
+    public static final String IMAGE_DOWN = "down.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -216,6 +218,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_VALUE_CHANGED, getImageDescriptor(IMAGE_VALUE_CHANGED));
         reg.put(IMAGE_SYSTEM_HELP, getImageDescriptor(IMAGE_SYSTEM_HELP));
         reg.put(IMAGE_AUTO_REFRESH_OFF, getImageDescriptor(IMAGE_AUTO_REFRESH_OFF));
+        reg.put(IMAGE_UP, getImageDescriptor(IMAGE_UP));
+        reg.put(IMAGE_DOWN, getImageDescriptor(IMAGE_DOWN));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

@@ -19,6 +19,9 @@ import biz.isphere.base.internal.StringHelper;
 @SuppressWarnings("serial")
 public class DEditor implements Comparable<DEditor>, Serializable {
 
+    private static final int STEP_WIDTH = 10;
+    private static final int HALF_STEP_WIDTH = STEP_WIDTH / 2;
+    
     private String name;
     private String description;
     private Map<String, AbstractDWidget> widgets;
@@ -86,6 +89,31 @@ public class DEditor implements Comparable<DEditor>, Serializable {
         return sortedWidgets;
     }
 
+    public AbstractDWidget getPreviousSibling(AbstractDWidget widget) {
+        AbstractDWidget[] widgets = getWidgets();
+        AbstractDWidget previousSibling = null;
+        for (AbstractDWidget tWidget : widgets) {
+            if (tWidget.getSequence() < widget.getSequence()) {
+                previousSibling = tWidget;
+            } else {
+                break;
+            }
+        }
+        return previousSibling;
+    }
+
+    public AbstractDWidget getNextSibling(AbstractDWidget widget) {
+        AbstractDWidget[] widgets = getWidgets();
+        AbstractDWidget nextSibling = null;
+        for (AbstractDWidget tWidget : widgets) {
+            if (tWidget.getSequence() > widget.getSequence()) {
+                nextSibling = tWidget;
+                break;
+            }
+        }
+        return nextSibling;
+    }
+    
     public DReferencedObject[] getReferencedObjects() {
         DReferencedObject[] objects = new DReferencedObject[referencedBy.size()];
         referencedBy.values().toArray(objects);
@@ -121,6 +149,50 @@ public class DEditor implements Comparable<DEditor>, Serializable {
         if (widgets.containsKey(widget.getKey())) {
             widgets.remove(widget.getKey());
             widget.setParent(null);
+        }
+    }
+    
+    void moveUpWidget(AbstractDWidget widget, int positions) {
+        prepareToMoveWidget();
+        
+        int sequenceNumber = widget.getSequence();
+        sequenceNumber = sequenceNumber - (STEP_WIDTH * positions) - HALF_STEP_WIDTH;
+        if (sequenceNumber <= 0) {
+            sequenceNumber = HALF_STEP_WIDTH;
+        }
+        widget.setSequence(sequenceNumber);
+        
+        finishMovingWidget();
+    }
+    
+    void moveDownWidget(AbstractDWidget widget, int positions) {
+        prepareToMoveWidget();
+        
+        int sequenceNumber = widget.getSequence();
+        sequenceNumber = sequenceNumber + (STEP_WIDTH * positions) + HALF_STEP_WIDTH;
+        widget.setSequence(sequenceNumber);
+        
+        finishMovingWidget();
+    }
+    
+    private void prepareToMoveWidget() {
+        
+        int sequenceNumber = STEP_WIDTH;
+        
+        AbstractDWidget[] widgets = getWidgets();
+        for (int i = 0; i < widgets.length; i++) {
+            AbstractDWidget widget = widgets[i];
+            widget.setSequence(sequenceNumber);
+            sequenceNumber += STEP_WIDTH;
+        }
+    }
+    
+    private void finishMovingWidget() {
+        
+        AbstractDWidget[] widgets = getWidgets();
+        for (int i = 0; i < widgets.length; i++) {
+            AbstractDWidget widget = widgets[i];
+            widget.setSequence(i);
         }
     }
 
