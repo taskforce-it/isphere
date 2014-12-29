@@ -4,6 +4,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+import biz.isphere.core.Messages;
+
 public class DEditorPropertySource implements IPropertySource {
 
     private DEditor dEditor;
@@ -18,16 +20,15 @@ public class DEditorPropertySource implements IPropertySource {
     }
 
     public Object getEditableValue() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
 
-            PropertyDescriptor sizeDescriptor = new PropertyDescriptor(PROPERTY_NAME, "Name");
-            PropertyDescriptor textDescriptor = new PropertyDescriptor(PROPERTY_DESCRIPTION, "Description");
-            PropertyDescriptor columnsDescriptor = new PropertyDescriptor(PROPERTY_COLUMNS, "Columns");
+            PropertyDescriptor sizeDescriptor = new PropertyDescriptor(PROPERTY_NAME, Messages.Name);
+            PropertyDescriptor textDescriptor = new PropertyDescriptor(PROPERTY_DESCRIPTION, Messages.Description);
+            PropertyDescriptor columnsDescriptor = new PropertyDescriptor(PROPERTY_COLUMNS, Messages.Columns);
 
             propertyDescriptors = new IPropertyDescriptor[] { sizeDescriptor, textDescriptor, columnsDescriptor };
         }
