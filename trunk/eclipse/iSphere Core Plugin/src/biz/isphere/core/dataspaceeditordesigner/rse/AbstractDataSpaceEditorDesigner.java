@@ -97,7 +97,7 @@ import biz.isphere.core.internal.exception.SaveFileException;
 
 public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener {
 
-    public static final String ID = "biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner";
+    public static final String ID = "biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner";
 
     DataSpaceEditorManager manager;
     DataSpaceEditorRepository repository;
