@@ -572,42 +572,33 @@ public final class DataSpaceEditorManager {
         return payload.isLocked();
     }
 
-    private Button createBooleanWidget(Composite parent, int numColumns, AbstractDWidget widget) {
+    private Button createBooleanWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
         Button checkBox = new Button(parent, SWT.CHECK);
-        GridData layoutData = new GridData();
-        layoutData.horizontalAlignment = SWT.FILL;
-        layoutData.grabExcessHorizontalSpace = true;
-        layoutData.horizontalSpan = widget.getHorizontalSpan();
+        GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         checkBox.setLayoutData(layoutData);
         return checkBox;
     }
 
-    private Text createDecimalWidget(Composite parent, int numColumns, AbstractDWidget widget) {
+    private Text createDecimalWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
         Text text = new Text(parent, SWT.BORDER);
-        GridData layoutData = new GridData();
-        layoutData.horizontalAlignment = SWT.FILL;
-        layoutData.grabExcessHorizontalSpace = true;
-        layoutData.horizontalSpan = widget.getHorizontalSpan();
+        GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
         text.addVerifyListener(new NumericOnlyVerifyListener(true));
         return text;
     }
 
-    private Text createIntegerWidget(Composite parent, int numColumns, AbstractDWidget widget) {
+    private Text createIntegerWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         createLabel(parent, widget);
 
         Text text = new Text(parent, SWT.BORDER);
-        GridData layoutData = new GridData();
-        layoutData.horizontalAlignment = SWT.FILL;
-        layoutData.grabExcessHorizontalSpace = true;
-        layoutData.horizontalSpan = widget.getHorizontalSpan();
+        GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
         text.addVerifyListener(new NumericOnlyVerifyListener());
         return text;
@@ -619,13 +610,18 @@ public final class DataSpaceEditorManager {
 
         Text text = new Text(parent, SWT.BORDER);
         text.setTextLimit(widget.getLength());
+        GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
+        text.setLayoutData(layoutData);
+
+        return text;
+    }
+
+    protected GridData getDataWidgetLayoutData(int columnsPerEditorColumn, AbstractDWidget widget) {
         GridData layoutData = new GridData();
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.grabExcessHorizontalSpace = true;
         layoutData.horizontalSpan = columnsPerEditorColumn * (widget.getHorizontalSpan() - 1) + 1;
-        text.setLayoutData(layoutData);
-
-        return text;
+        return layoutData;
     }
 
     private Label createCommentWidget(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
