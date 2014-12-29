@@ -386,8 +386,8 @@
                id="biz.isphere.rse.dataspaceeditor.action.OpenDataSpaceEditorDesignerAction"
                definitionId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
                label="%menu_DataSpace_Editor_Designer"
+               icon="icons/data_space_editor_designer.gif"
                menubarPath="biz.isphere.core.menu.isphere/Group0"
-               toolbarPath="Group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
          </action>
       </actionSet>
