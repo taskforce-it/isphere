@@ -633,6 +633,14 @@
                   style="push"
                   tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
             </command>
+            
+            <command
+                  commandId="biz.isphere.core.command.RSEManagement.open"
+                  label="%menu_RSE_Filter_Management"
+                  icon="icons/iSphere_RSE_Management.gif"
+                  style="push"
+                  tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -643,6 +651,12 @@
             defaultHandler="biz.isphere.core.dataspaceeditordesigner.rse.OpenDataSpaceEditorDesignerHandler"
             id="biz.isphere.core.command.DataSpaceEditorDesigner.open"
             name="%command_DataSpace_Editor_Designer">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenRSEManagementHandler"
+            id="biz.isphere.core.command.RSEManagement.open"
+            name="%command_RSE_Filter_Management">
       </command>
    </extension>
 
