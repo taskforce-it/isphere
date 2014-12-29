@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -70,6 +73,7 @@ import biz.isphere.core.dataspaceeditordesigner.listener.DropVetoListerner;
 import biz.isphere.core.dataspaceeditordesigner.listener.ExpandAllListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.NewDataSpaceEditorListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.NewWidgetListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.TreeTooltipProviderListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.TreeViewerDoubleClickListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.TreeViewerSelectionChangedListener;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
@@ -95,7 +99,7 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 
-public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener {
+public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener, ISelectionProvider {
 
     public static final String ID = "biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner";
 
@@ -299,6 +303,23 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         sashForm.setWeights(new int[] { 2, 3 });
 
         setDataSpaceEditor(null);
+
+        getSite().setSelectionProvider(this);
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener arg0) {
+        treeViewer.addSelectionChangedListener(arg0);
+    }
+
+    public ISelection getSelection() {
+        return null;
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener arg0) {
+        treeViewer.removeSelectionChangedListener(arg0);
+    }
+
+    public void setSelection(ISelection arg0) {
     }
 
     private void createLeftPanel(SashForm sashForm) {
@@ -361,11 +382,12 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
          */
         treeViewer.addDoubleClickListener(new TreeViewerDoubleClickListener(this));
         treeViewer.addSelectionChangedListener(new TreeViewerSelectionChangedListener(assignToolItems, this));
+        treeViewer.getTree().addListener(SWT.MouseHover, new TreeTooltipProviderListener(treeViewer.getTree()));
         newEditorItem.addSelectionListener(new NewDataSpaceEditorListener(getShell(), this));
         expandAllItem.addSelectionListener(new ExpandAllListener(treeViewer));
         collapseAllItem.addSelectionListener(new CollapseAllListener(treeViewer));
     }
-
+    
     private void createAssignDataSpaceToolItems(ToolBar toolBar) {
 
         createAssignDataSpaceToolItem(toolBar, Messages.Assign_data_area, ISpherePlugin.IMAGE_ADD_DATA_AREA, ISeries.DTAARA);
