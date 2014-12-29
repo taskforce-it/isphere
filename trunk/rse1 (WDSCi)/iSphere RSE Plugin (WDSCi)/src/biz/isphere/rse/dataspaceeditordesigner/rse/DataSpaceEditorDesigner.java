@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataspaceeditor.rse;
+package biz.isphere.rse.dataspaceeditordesigner.rse;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDataSpaceEditorDesigner;
@@ -14,6 +14,7 @@ import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectLister
 import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
+import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
 
 public class DataSpaceEditorDesigner extends AbstractDataSpaceEditorDesigner {
 

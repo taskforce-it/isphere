@@ -13,8 +13,8 @@
 		<editor
 			name=""
 			icon="icons/data_space_editor_designer.gif"
-			class="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"
-			id="biz.isphere.rse.dataspaceeditor.rse.DataSpaceEditorDesigner"/>
+			class="biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner"
+			id="biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner"/>
       <editor
             name=""
             icon="icons/data_area.gif"
