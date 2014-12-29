@@ -75,6 +75,11 @@ public class DWidgetDialog extends AbstractDialog {
         if (DComment.class.equals(widgetClass)) {
             Combo combo = createComboField(parent, Messages.Label_colon, false);
             combo.setItems(new String[] { DComment.SEPARATOR, DComment.NONE });
+            combo.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    validateLabel();
+                }
+            });
             textLabel = combo;
         } else {
             Text text = createTextField(parent, Messages.Label_colon);
@@ -162,13 +167,9 @@ public class DWidgetDialog extends AbstractDialog {
 
     private boolean validateLabel() {
 
-        if (DComment.class.equals(widgetClass)) {
-            // no label required
-        } else {
-            if (StringHelper.isNullOrEmpty(getLabelText())) {
-                setErrorMessage(textLabel, Messages.Label_is_missing_Please_specify_a_label);
-                return false;
-            }
+        if (StringHelper.isNullOrEmpty(getLabelText())) {
+            setErrorMessage(textLabel, Messages.Label_is_missing_Please_specify_a_label);
+            return false;
         }
 
         clearErrorMessage(textLabel);
