@@ -10,7 +10,6 @@ package biz.isphere.core.internal;
 
 public interface IEditor {
 
-    public static final String OPEN = "*OPEN";
     public static final String EDIT = "*EDIT";
     public static final String BROWSE = "*BROWSE";
     
