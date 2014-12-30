@@ -24,11 +24,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
-import biz.isphere.base.swt.widgets.SelectAllFocusListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.TracedItemsValidationStatus;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractDialog extends XDialog {
 
@@ -72,50 +71,58 @@ public abstract class AbstractDialog extends XDialog {
     }
 
     protected Text createNameField(Composite parent, String label) {
-        Text textField = createTextField(parent, label);
+//        Text textField = createTextField(parent, label);
+//        textField.setTextLimit(10);
+        createLabel(parent, label);
+        
+        Text textField = WidgetFactory.createText(parent);
         textField.setTextLimit(10);
+        textField.setLayoutData(createTextFieldLayoutData());
         return textField;
     }
 
     protected Text createTextField(Composite parent, String label) {
-        Label labelLabel = new Label(parent, SWT.NONE);
-        labelLabel.setText(label);
+        createLabel(parent, label);
 
-        Text textField = new Text(parent, SWT.BORDER);
-        GridData textNameLayoutData = new GridData();
-        textNameLayoutData.widthHint = 150;
-        textNameLayoutData.horizontalAlignment = SWT.FILL;
-        textNameLayoutData.grabExcessHorizontalSpace = true;
-        textField.setLayoutData(textNameLayoutData);
-        textField.addFocusListener(new SelectAllFocusListener());
+        // Text textField = new Text(parent, SWT.BORDER);
+        // textField.addFocusListener(new SelectAllFocusListener());
+        Text textField = WidgetFactory.createText(parent);
+        textField.setLayoutData(createTextFieldLayoutData());
 
         return textField;
     }
 
-    protected Combo createComboField(Composite parent, String label, boolean isReadOnly) {
-        Label labelLabel = new Label(parent, SWT.NONE);
-        labelLabel.setText(label);
+    protected GridData createTextFieldLayoutData() {
+        GridData textNameLayoutData = new GridData();
+        textNameLayoutData.widthHint = 150;
+        textNameLayoutData.horizontalAlignment = SWT.FILL;
+        textNameLayoutData.grabExcessHorizontalSpace = true;
+        return textNameLayoutData;
+    }
 
-        int style;
+    protected Combo createComboField(Composite parent, String label, boolean isReadOnly) {
+        createLabel(parent, label);
+
+        Combo combo;
         if (isReadOnly) {
-            style = SWT.READ_ONLY;
+            combo = WidgetFactory.createReadOnlyComboField(parent);
         } else {
-            style = SWT.NONE;
+            combo = WidgetFactory.createComboField(parent);
         }
 
-        Combo combo = new Combo(parent, style);
-        GridData comboLayoutData = new GridData();
-        comboLayoutData.widthHint = 150;
-        comboLayoutData.horizontalAlignment = SWT.FILL;
-        comboLayoutData.grabExcessHorizontalSpace = true;
-        combo.setLayoutData(comboLayoutData);
+        combo.setLayoutData(createTextFieldLayoutData());
 
         return combo;
     }
 
-    protected Text createNumericField(Composite parent, String label) {
-        Text text = createTextField(parent, label);
-        text.addVerifyListener(new NumericOnlyVerifyListener());
+    protected Text createIntegerField(Composite parent, String label) {
+        // Text text = createTextField(parent, label);
+        // text.addVerifyListener(new NumericOnlyVerifyListener());
+        createLabel(parent, label);
+        
+        Text text = WidgetFactory.createIntegerText(parent);
+        text.setLayoutData(createTextFieldLayoutData());
+        
         return text;
     }
 
@@ -160,6 +167,11 @@ public abstract class AbstractDialog extends XDialog {
 
     protected void clearErrorMessage(Control control) {
         changeErrorMessage(control, null);
+    }
+
+    private void createLabel(Composite parent, String label) {
+        Label labelLabel = new Label(parent, SWT.NONE);
+        labelLabel.setText(label);
     }
 
     private void changeErrorMessage(Control control, String errorMessage) {
