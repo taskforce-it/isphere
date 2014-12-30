@@ -106,6 +106,7 @@ import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener, ISelectionProvider {
 
@@ -419,16 +420,16 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
     private void createDescriptionViewer(Composite panel) {
 
-        descriptionViewer = new Text(panel, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        descriptionViewer = WidgetFactory.createMultilineText(panel);
         descriptionViewer.setEditable(false);
         int charHeight = FontHelper.getFontCharHeight(descriptionViewer);
         final GridData layoutData = createGridDataFillAndGrab(2);
         layoutData.heightHint = (int)(charHeight * 3.0);
         descriptionViewer.setLayoutData(layoutData);
 
-        Listener scrollBarListener = new AutoScrollbarsListener();
-        descriptionViewer.addListener(SWT.Resize, scrollBarListener);
-        descriptionViewer.addListener(SWT.Modify, scrollBarListener);
+//        Listener scrollBarListener = new AutoScrollbarsListener();
+//        descriptionViewer.addListener(SWT.Resize, scrollBarListener);
+//        descriptionViewer.addListener(SWT.Modify, scrollBarListener);
 
     }
 

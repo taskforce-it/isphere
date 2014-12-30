@@ -93,7 +93,7 @@ public class DWidgetDialog extends AbstractDialog {
 
         // Offset
         if (DataSpaceEditorManager.hasOffset(widgetClass)) {
-            textOffset = createNumericField(parent, Messages.Offset_colon);
+            textOffset = createIntegerField(parent, Messages.Offset_colon);
             textOffset.setText("0"); //$NON-NLS-1$
             textOffset.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {
@@ -104,7 +104,7 @@ public class DWidgetDialog extends AbstractDialog {
 
         // Length
         if (DataSpaceEditorManager.hasLength(widgetClass)) {
-            textLength = createNumericField(parent, Messages.Length_colon);
+            textLength = createIntegerField(parent, Messages.Length_colon);
             textLength.setText("0"); //$NON-NLS-1$
             textLength.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {
@@ -115,7 +115,7 @@ public class DWidgetDialog extends AbstractDialog {
 
         // Fraction
         if (DataSpaceEditorManager.hasFraction(widgetClass)) {
-            textFraction = createNumericField(parent, Messages.Decimal_positions_colon);
+            textFraction = createIntegerField(parent, Messages.Decimal_positions_colon);
             textFraction.setText("0"); //$NON-NLS-1$
             textFraction.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {

@@ -22,6 +22,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateEditor;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class DEditorDialog extends AbstractDialog {
 
@@ -80,7 +81,7 @@ public class DEditorDialog extends AbstractDialog {
         Label labelColumns = new Label(parent, SWT.NONE);
         labelColumns.setText(Messages.Columns_colon);
 
-        spinnerColumns = new Spinner(parent, SWT.BORDER); // | SWT.READ_ONLY
+        spinnerColumns = WidgetFactory.createSpinnerField(parent);
         GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_spinner.widthHint = 25;
         spinnerColumns.setLayoutData(gd_spinner);
