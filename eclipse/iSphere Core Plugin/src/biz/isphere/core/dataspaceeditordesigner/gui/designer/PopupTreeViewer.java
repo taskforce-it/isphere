@@ -18,9 +18,11 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.listener.AddReferencedObjectListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.ChangeDataSpaceEditorListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.ChangeDataSpaceEditorPropertiesListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.DeleteDataSpaceEditorListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.NewDataSpaceEditorListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.RemoveReferencedObjectListener;
+import biz.isphere.core.dataspaceeditordesigner.listener.RenameDataSpaceEditorListener;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DReferencedObject;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
@@ -65,6 +67,11 @@ public class PopupTreeViewer extends MenuAdapter {
             itemChange.setText(Messages.Change_Editor);
             itemChange.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));
             itemChange.addSelectionListener(new ChangeDataSpaceEditorListener(editor));
+
+            MenuItem itemRename = new MenuItem(menu, SWT.NONE);
+            itemRename.setText(Messages.Rename_Editor);
+            itemRename.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_RENAME));
+            itemRename.addSelectionListener(new RenameDataSpaceEditorListener(menu.getShell(), editor));
         }
 
         if (dataSpaceEditors.length > 0) {
@@ -95,6 +102,14 @@ public class PopupTreeViewer extends MenuAdapter {
             itemRemoveRefObj.setText(Messages.Remove_referenced_objects);
             itemRemoveRefObj.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REMOVE_DATA_SPACE));
             itemRemoveRefObj.addSelectionListener(new RemoveReferencedObjectListener(menu.getShell(), editor));
+        }
+
+        if (dataSpaceEditors.length == 1) {
+            new MenuItem(menu, SWT.SEPARATOR);
+
+            MenuItem itemChangeProperties = new MenuItem(menu, SWT.NONE);
+            itemChangeProperties.setText(Messages.Properties);
+            itemChangeProperties.addSelectionListener(new ChangeDataSpaceEditorPropertiesListener(menu.getShell(), editor));
         }
     }
 }

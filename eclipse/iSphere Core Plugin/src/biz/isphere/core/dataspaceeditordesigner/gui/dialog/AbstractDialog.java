@@ -48,7 +48,7 @@ public abstract class AbstractDialog extends XDialog {
         super.create();
 
         setInitialValues();
-        
+
         validate();
         showError = true;
     }
@@ -61,7 +61,7 @@ public abstract class AbstractDialog extends XDialog {
         createContent(mainArea);
 
         statusLineManager = createStatusLineManager(mainArea);
-        
+
         return dialogArea;
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractDialog extends XDialog {
         textField.setTextLimit(10);
         return textField;
     }
-    
+
     protected Text createTextField(Composite parent, String label) {
         Label labelLabel = new Label(parent, SWT.NONE);
         labelLabel.setText(label);
@@ -91,7 +91,7 @@ public abstract class AbstractDialog extends XDialog {
 
         return textField;
     }
-    
+
     protected Combo createComboField(Composite parent, String label, boolean isReadOnly) {
         Label labelLabel = new Label(parent, SWT.NONE);
         labelLabel.setText(label);
@@ -102,14 +102,14 @@ public abstract class AbstractDialog extends XDialog {
         } else {
             style = SWT.NONE;
         }
-        
+
         Combo combo = new Combo(parent, style);
         GridData comboLayoutData = new GridData();
         comboLayoutData.widthHint = 150;
         comboLayoutData.horizontalAlignment = SWT.FILL;
         comboLayoutData.grabExcessHorizontalSpace = true;
         combo.setLayoutData(comboLayoutData);
-        
+
         return combo;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractDialog extends XDialog {
 
     protected void setInitialValues() {
     }
-    
+
     @Override
     protected void okPressed() {
         if (!validate()) {
@@ -181,7 +181,7 @@ public abstract class AbstractDialog extends XDialog {
         layoutData.horizontalSpan = columns;
         return layoutData;
     }
-    
+
     protected abstract boolean validate();
 
     protected abstract void performOKPressed();

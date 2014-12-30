@@ -15,29 +15,27 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.dataspaceeditordesigner.gui.dialog.DEditorDialog;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
-import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
+import biz.isphere.core.dataspaceeditordesigner.model.DTemplateEditor;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
-import biz.isphere.core.internal.IEditor;
 
-public class NewDataSpaceEditorListener extends SelectionAdapter {
+public class ChangeDataSpaceEditorPropertiesListener extends SelectionAdapter {
 
     private Shell shell;
     private IDialogEditor editor;
-    private DataSpaceEditorManager manager;
 
-    public NewDataSpaceEditorListener(Shell shell, IDialogEditor editor) {
+    public ChangeDataSpaceEditorPropertiesListener(Shell shell, IDialogEditor editor) {
         this.shell = shell;
         this.editor = editor;
-        this.manager = new DataSpaceEditorManager();
     }
 
     @Override
     public void widgetSelected(SelectionEvent event) {
-        DEditorDialog newDDialogDialog = new DEditorDialog(shell);
-        if (newDDialogDialog.open() == Dialog.OK) {
-            DEditor newDialog = manager.createDialogFromTemplate(newDDialogDialog.getDialog());
-            editor.addDataSpaceEditor(newDialog);
-            editor.setDataSpaceEditor(newDialog);
+
+        DEditor[] editors = editor.getSelectedDataSpaceEditors();
+        DEditorDialog renameDDialogDialog = new DEditorDialog(shell, editors[0]);
+        if (renameDDialogDialog.open() == Dialog.OK) {
+            DTemplateEditor template = renameDDialogDialog.getDialog();
+            editor.changeDataSpaceEditorProperties(editors[0], template.getDescription(), template.getColumns());
         }
     }
 }

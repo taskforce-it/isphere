@@ -13,31 +13,26 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.dataspaceeditordesigner.gui.dialog.DEditorDialog;
+import biz.isphere.core.dataspaceeditordesigner.gui.dialog.DEditorRenameDialog;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
-import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
-import biz.isphere.core.internal.IEditor;
 
-public class NewDataSpaceEditorListener extends SelectionAdapter {
+public class RenameDataSpaceEditorListener extends SelectionAdapter {
 
     private Shell shell;
     private IDialogEditor editor;
-    private DataSpaceEditorManager manager;
 
-    public NewDataSpaceEditorListener(Shell shell, IDialogEditor editor) {
+    public RenameDataSpaceEditorListener(Shell shell, IDialogEditor editor) {
         this.shell = shell;
         this.editor = editor;
-        this.manager = new DataSpaceEditorManager();
     }
 
     @Override
     public void widgetSelected(SelectionEvent event) {
-        DEditorDialog newDDialogDialog = new DEditorDialog(shell);
-        if (newDDialogDialog.open() == Dialog.OK) {
-            DEditor newDialog = manager.createDialogFromTemplate(newDDialogDialog.getDialog());
-            editor.addDataSpaceEditor(newDialog);
-            editor.setDataSpaceEditor(newDialog);
+        DEditor[] editors = editor.getSelectedDataSpaceEditors();
+        DEditorRenameDialog renameDDialogDialog = new DEditorRenameDialog(shell, editors[0].getName());
+        if (renameDDialogDialog.open() == Dialog.OK) {
+            editor.renameDataSpaceEditor(editors[0], renameDDialogDialog.getName());
         }
     }
 }

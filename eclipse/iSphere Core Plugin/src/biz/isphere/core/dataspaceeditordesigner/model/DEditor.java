@@ -33,7 +33,7 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
     private String key;
     private boolean columnsEqualWidth;
     
-    private DEditorPropertySource propertySource;
+    private transient DEditorPropertySource propertySource;
 
     DEditor(String name, int columns) {
         this(name, "", columns);
@@ -191,6 +191,18 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
         finishMovingWidget();
     }
 
+    void setName(String name) {
+        this.name = name;
+    }
+
+    void setDescription(String description) {
+        this.description = description;
+    }
+
+    void setColumns(int columns) {
+        this.columns = columns;
+    }
+    
     private void prepareToMoveWidget() {
 
         int sequenceNumber = STEP_WIDTH;

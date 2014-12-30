@@ -33,13 +33,17 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -54,6 +58,9 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import com.ibm.xslt4j.bcel.generic.GETSTATIC;
+
+import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
@@ -93,6 +100,7 @@ import biz.isphere.core.dataspaceeditordesigner.model.DTinyInteger;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.ColorHelper;
+import biz.isphere.core.internal.FontHelper;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
@@ -109,6 +117,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     Set<DEditor> deletedDialogs;
 
     private TreeViewer treeViewer;
+    private Text descriptionViewer;
     private Set<Button> newWidgetButtons;
     private Set<ToolItem> assignToolItems;
     private Composite editorArea;
@@ -129,6 +138,23 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         treeViewer.add(treeViewer.getInput(), dEditor);
         setEditorDirty(dEditor);
         setDataSpaceEditor(dEditor);
+    }
+
+    public void renameDataSpaceEditor(DEditor dEditor, String name) {
+        manager.renameEditor(dEditor, name);
+        treeViewer.refresh(dEditor);
+        setEditorDirty(dEditor);
+    }
+
+    public void changeDataSpaceEditorProperties(DEditor dEditor, String description, int columns) {
+        manager.changeEditorDescription(dEditor, description);
+        manager.changeEditorColumns(dEditor, columns);
+        descriptionViewer.setText(description);
+        treeViewer.refresh(dEditor);
+        setEditorDirty(dEditor);
+        if (dEditor.equals(currentEditedEditor)) {
+            setDataSpaceEditor(dEditor);
+        }
     }
 
     public void deleteDataSpaceEditors() {
@@ -325,10 +351,13 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     private void createLeftPanel(SashForm sashForm) {
 
         Composite panel = new Composite(sashForm, SWT.BORDER);
-        panel.setLayout(createGridLayoutWithMargin(2));
+        GridLayout layout = createGridLayoutWithMargin(2);
+        layout.verticalSpacing = 10;
+        panel.setLayout(layout);
 
         createTreeViewer(panel);
         createButtonsPanel(panel);
+        createDescriptionViewer(panel);
     }
 
     private void createTreeViewer(Composite panel) {
@@ -387,7 +416,22 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         expandAllItem.addSelectionListener(new ExpandAllListener(treeViewer));
         collapseAllItem.addSelectionListener(new CollapseAllListener(treeViewer));
     }
-    
+
+    private void createDescriptionViewer(Composite panel) {
+
+        descriptionViewer = new Text(panel, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        descriptionViewer.setEditable(false);
+        int charHeight = FontHelper.getFontCharHeight(descriptionViewer);
+        final GridData layoutData = createGridDataFillAndGrab(2);
+        layoutData.heightHint = (int)(charHeight * 3.0);
+        descriptionViewer.setLayoutData(layoutData);
+
+        Listener scrollBarListener = new AutoScrollbarsListener();
+        descriptionViewer.addListener(SWT.Resize, scrollBarListener);
+        descriptionViewer.addListener(SWT.Modify, scrollBarListener);
+
+    }
+
     private void createAssignDataSpaceToolItems(ToolBar toolBar) {
 
         createAssignDataSpaceToolItem(toolBar, Messages.Assign_data_area, ISpherePlugin.IMAGE_ADD_DATA_AREA, ISeries.DTAARA);
@@ -479,6 +523,10 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         }
 
         refreshEditor();
+    }
+
+    public void setDescription(String text) {
+        descriptionViewer.setText(text);
     }
 
     public void setDataAsync(RemoteObject[] remoteObjects) {
