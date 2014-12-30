@@ -15,9 +15,15 @@ import biz.isphere.core.dataspaceeditordesigner.model.DTemplateReferencedObject;
 
 public interface IDialogEditor extends IDropObjectListener {
 
+    public void setDescription(String text);
+
     public void setDataSpaceEditor(DEditor dialog);
 
     public void addDataSpaceEditor(DEditor dialog);
+
+    public void renameDataSpaceEditor(DEditor dialog, String name);
+
+    public void changeDataSpaceEditorProperties(DEditor dialog, String description, int columns);
 
     public void deleteDataSpaceEditors();
 

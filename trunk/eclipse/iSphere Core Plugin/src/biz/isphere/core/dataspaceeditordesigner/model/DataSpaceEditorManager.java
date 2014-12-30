@@ -169,6 +169,24 @@ public final class DataSpaceEditorManager {
         return dEditor;
     }
 
+    public void renameEditor(DEditor dEditor, String name) {
+        dEditor.setName(name);
+    }
+
+    public void changeEditorDescription(DEditor dEditor, String description) {
+        dEditor.setDescription(description);
+    }
+
+    public void changeEditorColumns(DEditor dEditor, int columns) {
+        int b4Columns = dEditor.getColumns();
+        dEditor.setColumns(columns);
+        AbstractDWidget[] widgets = dEditor.getWidgets();
+        for (AbstractDWidget widget : widgets) {
+            float div = (float)widget.getHorizontalSpan() * columns / b4Columns;
+            widget.setHorizontalSpan((int)div);
+        }
+    }
+    
     public void resolveObjectReferences(DEditor[] dEditors) {
         for (DEditor dEditor : dEditors) {
             DReferencedObject[] referencedObjects = dEditor.getReferencedObjects();

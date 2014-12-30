@@ -594,6 +594,8 @@ public class Messages extends NLS {
 
     public static String Change_Editor;
 
+    public static String Rename_Editor;
+
     public static String Delete_Editor;
     
     public static String Tooltip_0_data_at_offset_1_length_2;
@@ -729,6 +731,8 @@ public class Messages extends NLS {
     public static String Move_up;
     
     public static String Move_down;
+    
+    public static String Properties;
     
     static {
         // initialize resource bundle

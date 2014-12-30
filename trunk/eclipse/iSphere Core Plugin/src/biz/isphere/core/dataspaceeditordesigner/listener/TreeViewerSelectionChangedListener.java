@@ -4,8 +4,10 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
 
 public class TreeViewerSelectionChangedListener implements ISelectionChangedListener {
@@ -19,10 +21,19 @@ public class TreeViewerSelectionChangedListener implements ISelectionChangedList
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
-        if (editor.getSelectedDataSpaceEditors().length > 0) {
+        
+        DEditor[] selectedEditors = editor.getSelectedDataSpaceEditors();
+        
+        if (selectedEditors.length > 0) {
             setToolItemsEnablement(true);
         } else {
             setToolItemsEnablement(false);
+        }
+        
+        if (selectedEditors.length == 1) {
+            editor.setDescription(selectedEditors[0].getDescription());
+        } else {
+            editor.setDescription("");
         }
     }
 

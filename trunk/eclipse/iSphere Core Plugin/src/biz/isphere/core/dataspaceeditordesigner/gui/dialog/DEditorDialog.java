@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
+import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateEditor;
 
 public class DEditorDialog extends AbstractDialog {
@@ -34,10 +35,19 @@ public class DEditorDialog extends AbstractDialog {
         super(parentShell);
     }
 
+    public DEditorDialog(Shell parentShell, DEditor editor) {
+        super(parentShell);
+        dialogTemplate = new DTemplateEditor(editor.getName(), editor.getDescription(), editor.getColumns());
+    }
+
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.New_Editor);
+        if (dialogTemplate != null) {
+            newShell.setText(Messages.Properties);
+        } else {
+            newShell.setText(Messages.New_Editor);
+        }
     }
 
     @Override
@@ -45,6 +55,10 @@ public class DEditorDialog extends AbstractDialog {
 
         // Name
         textName = createTextField(parent, Messages.Name_colon);
+        if (dialogTemplate != null) {
+            textName.setText(dialogTemplate.getName());
+            textName.setEnabled(false);
+        }
         textName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 validateName();
@@ -53,6 +67,9 @@ public class DEditorDialog extends AbstractDialog {
 
         // Description
         textDescription = createTextField(parent, Messages.Description_colon);
+        if (dialogTemplate != null) {
+            textDescription.setText(dialogTemplate.getDescription());
+        }
         textDescription.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 validateDescription();
@@ -69,6 +86,9 @@ public class DEditorDialog extends AbstractDialog {
         spinnerColumns.setLayoutData(gd_spinner);
         spinnerColumns.setMinimum(1);
         spinnerColumns.setMaximum(5);
+        if (dialogTemplate != null) {
+            spinnerColumns.setSelection(dialogTemplate.getColumns());
+        }
         spinnerColumns.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 validateColumns();
