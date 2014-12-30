@@ -28,7 +28,7 @@ public class AutoScrollbarsListener implements Listener {
             return;
         }
         
-        if (event.type != SWT.Modify) {
+        if (event.type != SWT.Modify && event.type != SWT.Resize) {
             return;
         }
 
