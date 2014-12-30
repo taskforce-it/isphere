@@ -74,9 +74,9 @@ public class Editor implements IEditor {
 
                     if (mbr != null) {
 
-                        if (mode.equals("*OPEN")) {
+                        if (mode.equals(IEditor.EDIT)) {
                             mbr.open(editor, false, null);
-                        } else if (mode.equals("*BROWSE")) {
+                        } else if (mode.equals(IEditor.BROWSE)) {
                             mbr.open(editor, true, null);
                         }
 
