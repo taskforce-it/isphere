@@ -26,6 +26,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.extension.CustomExpandBar;
 import biz.isphere.core.swt.widgets.extension.CustomExpandItem;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import org.eclipse.swt.layout.GridLayout;
 
@@ -77,9 +78,8 @@ public abstract class AbstractEditingDialog extends Dialog {
 			labelWorkspace.setText(getWorkspaceText() + ":");
 			labelWorkspace.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 			
-			Text textWorkspace = new Text(compositeHeader, SWT.BORDER);
+			Text textWorkspace = WidgetFactory.createReadOnlyText(compositeHeader);
 			textWorkspace.setText(workspace);
-			textWorkspace.setEditable(false);
 			textWorkspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			
 		}
@@ -90,9 +90,8 @@ public abstract class AbstractEditingDialog extends Dialog {
 			labelRepository.setText(Messages.Repository + ":");
 			labelRepository.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 			
-			Text textRepository = new Text(compositeHeader, SWT.BORDER);
+			Text textRepository=WidgetFactory.createReadOnlyText(compositeHeader);
 			textRepository.setText(repository);
-			textRepository.setEditable(false);
 			textRepository.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			
 		}

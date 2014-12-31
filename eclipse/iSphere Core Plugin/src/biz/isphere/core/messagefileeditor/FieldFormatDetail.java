@@ -10,12 +10,12 @@ package biz.isphere.core.messagefileeditor;
 
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -26,12 +26,13 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class FieldFormatDetail {
 
     private int actionType;
     private FieldFormat _fieldFormat;
-    private CCombo comboType;
+    private Combo comboType;
     private Button buttonVLNo;
     private Button buttonVLYes;
     private Text textLength;
@@ -84,7 +85,7 @@ public class FieldFormatDetail {
         final Label labelType = new Label(compositeHeader, SWT.NONE);
         labelType.setText(Messages.Type_colon);
 
-        comboType = new CCombo(compositeHeader, SWT.BORDER);
+        comboType = WidgetFactory.createCombo(compositeHeader);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboType.setTextLimit(10);
         comboType.add("*QTDCHAR");
@@ -132,7 +133,7 @@ public class FieldFormatDetail {
         compositeVary.setLayout(new GridLayout(2, false));
         compositeVary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        buttonVLNo = new Button(compositeVary, SWT.RADIO);
+        buttonVLNo = WidgetFactory.createRadioButton(compositeVary);
         buttonVLNo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -141,7 +142,7 @@ public class FieldFormatDetail {
         });
         buttonVLNo.setText(Messages.No);
 
-        buttonVLYes = new Button(compositeVary, SWT.RADIO);
+        buttonVLYes = WidgetFactory.createRadioButton(compositeVary);
         buttonVLYes.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -173,7 +174,7 @@ public class FieldFormatDetail {
         labelLength = new Label(compositeHeader, SWT.NONE);
         labelLength.setText(Messages.Length_colon);
 
-        textLength = new Text(compositeHeader, SWT.BORDER);
+        textLength = WidgetFactory.createIntegerText(compositeHeader);
         textLength.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textLength.setTextLimit(5);
         if (actionType == DialogActionTypes.CREATE) {
@@ -193,7 +194,7 @@ public class FieldFormatDetail {
         labelDecimalPositions = new Label(compositeHeader, SWT.NONE);
         labelDecimalPositions.setText(Messages.Decimal_positions_colon);
 
-        textDecimalPositions = new Text(compositeHeader, SWT.BORDER);
+        textDecimalPositions = WidgetFactory.createIntegerText(compositeHeader);
         textDecimalPositions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textDecimalPositions.setTextLimit(2);
         if (actionType == DialogActionTypes.CREATE) {
@@ -217,7 +218,7 @@ public class FieldFormatDetail {
         labelBytes = new Label(compositeHeader, SWT.NONE);
         labelBytes.setText(Messages.Bytes_colon);
 
-        textBytes = new Text(compositeHeader, SWT.BORDER);
+        textBytes=WidgetFactory.createIntegerText(compositeHeader); 
         textBytes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textBytes.setTextLimit(1);
         if (actionType == DialogActionTypes.CREATE) {

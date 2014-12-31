@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class SpooledFileBaseFilterStringEditPane {
 
@@ -30,7 +31,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label userLabel = new Label(composite_prompts, SWT.NONE);
         userLabel.setText(Messages.User + ":");
-        userText = new Text(composite_prompts, SWT.BORDER);
+        userText = WidgetFactory.createText(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
         userText.setLayoutData(gd);
@@ -38,7 +39,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label outqLabel = new Label(composite_prompts, SWT.NONE);
         outqLabel.setText(Messages.Output_queue + ":");
-        outqText = new Text(composite_prompts, SWT.BORDER);
+        outqText = WidgetFactory.createText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         outqText.setLayoutData(gd);
@@ -46,7 +47,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label outqLibLabel = new Label(composite_prompts, SWT.NONE);
         outqLibLabel.setText(Messages.___Library + ":");
-        outqLibText = new Text(composite_prompts, SWT.BORDER);
+        outqLibText = WidgetFactory.createText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         outqLibText.setLayoutData(gd);
@@ -54,7 +55,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label dtaLabel = new Label(composite_prompts, SWT.NONE);
         dtaLabel.setText(Messages.User_data + ":");
-        userDataText = new Text(composite_prompts, SWT.BORDER);
+        userDataText = WidgetFactory.createText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         userDataText.setLayoutData(gd);
@@ -62,7 +63,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
         typeLabel.setText(Messages.Form_type + ":");
-        formTypeText = new Text(composite_prompts, SWT.BORDER);
+        formTypeText = WidgetFactory.createText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         formTypeText.setLayoutData(gd);

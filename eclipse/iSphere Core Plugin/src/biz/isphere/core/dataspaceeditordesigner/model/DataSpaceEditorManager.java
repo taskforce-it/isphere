@@ -31,6 +31,7 @@ import biz.isphere.core.dataspaceeditordesigner.listener.AdapterButtonModifiedLi
 import biz.isphere.core.dataspaceeditordesigner.listener.AdapterTextModifiedListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 /**
  * This class manages the data model of the 'space object editors'. it is used
@@ -610,7 +611,7 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Button checkBox = new Button(parent, SWT.CHECK);
+        Button checkBox = WidgetFactory.createCheckbox(parent);
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         checkBox.setLayoutData(layoutData);
         return checkBox;
@@ -620,10 +621,9 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Text text = new Text(parent, SWT.BORDER);
+        Text text = WidgetFactory.createDecimalText(parent);
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
-        text.addVerifyListener(new NumericOnlyVerifyListener(true));
         return text;
     }
 
@@ -631,10 +631,9 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Text text = new Text(parent, SWT.BORDER);
+        Text text = WidgetFactory.createIntegerText(parent);
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
-        text.addVerifyListener(new NumericOnlyVerifyListener());
         return text;
     }
 
@@ -642,7 +641,7 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Text text = new Text(parent, SWT.BORDER);
+        Text text = WidgetFactory.createText(parent);
         text.setTextLimit(widget.getLength());
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);

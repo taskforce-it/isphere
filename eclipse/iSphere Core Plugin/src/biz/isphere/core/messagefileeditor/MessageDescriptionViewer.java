@@ -52,6 +52,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
@@ -196,7 +197,7 @@ public class MessageDescriptionViewer {
         Label labelFilter = new Label(compositeHeader, SWT.NONE);
         labelFilter.setText(Messages.Filter_colon);
 
-        textFilter = new Text(compositeHeader, SWT.BORDER);
+        textFilter = WidgetFactory.createText(compositeHeader);
         textFilter.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent keyEvent) {
@@ -214,7 +215,7 @@ public class MessageDescriptionViewer {
         Label labelIncludeText = new Label(compositeHeader, SWT.NONE);
         labelIncludeText.setText(Messages.apply_on);
 
-        includeText = new Combo(compositeHeader, SWT.DROP_DOWN | SWT.READ_ONLY);
+        includeText = WidgetFactory.createReadOnlyCombo(compositeHeader);
         includeText.add(Messages.both_texts);
         includeText.add(Messages.first_level_text);
         includeText.add(Messages.second_level_text);
@@ -235,7 +236,7 @@ public class MessageDescriptionViewer {
         editableLayout.numColumns = 2;
         groupCaseSensitive.setLayout(editableLayout);
 
-        buttonNo = new Button(groupCaseSensitive, SWT.RADIO);
+        buttonNo = WidgetFactory.createRadioButton(groupCaseSensitive);
         buttonNo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -245,7 +246,7 @@ public class MessageDescriptionViewer {
         buttonNo.setText(Messages.No);
         buttonNo.setSelection(true);
 
-        buttonYes = new Button(groupCaseSensitive, SWT.RADIO);
+        buttonYes = WidgetFactory.createRadioButton(groupCaseSensitive);
         buttonYes.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -260,7 +261,7 @@ public class MessageDescriptionViewer {
         compositePreviewButton.setLayout(new GridLayout(1, false));
 
         if (PluginCheck.hasPlugin("biz.isphere.rse")) {
-            Button buttonMessagePreview = new Button(compositePreviewButton, SWT.PUSH);
+            Button buttonMessagePreview=WidgetFactory.createPushButton(compositePreviewButton);
             buttonMessagePreview.setText(Messages.Display_MessageDescription_Preview_View);
             buttonMessagePreview.setToolTipText(Messages.Display_MessageDescription_Preview_View_ToolTip);
             buttonMessagePreview.addSelectionListener(new TableViewerSelectionAdapter());

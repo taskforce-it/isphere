@@ -84,8 +84,6 @@ public abstract class AbstractDialog extends XDialog {
     protected Text createTextField(Composite parent, String label) {
         createLabel(parent, label);
 
-        // Text textField = new Text(parent, SWT.BORDER);
-        // textField.addFocusListener(new SelectAllFocusListener());
         Text textField = WidgetFactory.createText(parent);
         textField.setLayoutData(createTextFieldLayoutData());
 
@@ -105,9 +103,9 @@ public abstract class AbstractDialog extends XDialog {
 
         Combo combo;
         if (isReadOnly) {
-            combo = WidgetFactory.createReadOnlyComboField(parent);
+            combo = WidgetFactory.createReadOnlyCombo(parent);
         } else {
-            combo = WidgetFactory.createComboField(parent);
+            combo = WidgetFactory.createCombo(parent);
         }
 
         combo.setLayoutData(createTextFieldLayoutData());

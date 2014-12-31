@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
@@ -52,21 +53,21 @@ public class SignOn {
         final Label labelHost = new Label(compositeGeneral, SWT.NONE);
         labelHost.setText(Messages.Host_colon);
 
-        textHost = new Text(compositeGeneral, SWT.BORDER);
+        textHost = WidgetFactory.createText(compositeGeneral);
         textHost.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textHost.setText(aHostName);
 
         final Label labelUser = new Label(compositeGeneral, SWT.NONE);
         labelUser.setText(Messages.User_colon);
 
-        textUser = new Text(compositeGeneral, SWT.BORDER);
+        textUser = WidgetFactory.createText(compositeGeneral);
         textUser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textUser.setText("");
 
         final Label labelPassword = new Label(compositeGeneral, SWT.NONE);
         labelPassword.setText(Messages.Password_colon);
 
-        textPassword = new Text(compositeGeneral, SWT.PASSWORD | SWT.BORDER);
+        textPassword = WidgetFactory.createPassword(compositeGeneral);
         textPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textPassword.setText("");
 

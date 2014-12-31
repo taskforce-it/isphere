@@ -28,45 +28,46 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	private Button buttonSearchForUpdates;
+
+    private Button buttonSearchForUpdates;
     private Button buttonSearchForBetaVersions;
-	private boolean searchForUpdates;
+    private boolean searchForUpdates;
     private boolean searchForBetaVersions;
     private Text textURLForUpdates;
     private String urlForUpdates;
     private Button buttonStartSearchForUpdates;
 
-	public ISphereUpdates() {
+    public ISphereUpdates() {
         super();
         setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
-	}
+    }
 
     @Override
-	public Control createContents(Composite parent) {
+    public Control createContents(Composite parent) {
 
-		Composite container = new Composite(parent, SWT.NONE);
-		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		container.setLayout(gridLayout);
-		
-		final Label labelSearchForUpdates = new Label(container, SWT.NONE);
-		labelSearchForUpdates.setText(Messages.Search_for_updates + ":");
+        Composite container = new Composite(parent, SWT.NONE);
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+        container.setLayout(gridLayout);
 
-		buttonSearchForUpdates = new Button(container, SWT.CHECK);
+        final Label labelSearchForUpdates = new Label(container, SWT.NONE);
+        labelSearchForUpdates.setText(Messages.Search_for_updates + ":");
+
+        buttonSearchForUpdates = WidgetFactory.createCheckbox(container);
         buttonSearchForUpdates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent selectionEvent) {
                 searchForUpdates = buttonSearchForUpdates.getSelection();
                 checkError();
             }
         });
-        
+
         final Label labelSearchForBetaVersions = new Label(container, SWT.NONE);
         labelSearchForBetaVersions.setText(Messages.Search_for_beta_versions + ":");
 
-        buttonSearchForBetaVersions = new Button(container, SWT.CHECK);
+        buttonSearchForBetaVersions = WidgetFactory.createCheckbox(container);
         buttonSearchForBetaVersions.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent selectionEvent) {
                 searchForBetaVersions = buttonSearchForBetaVersions.getSelection();
@@ -77,7 +78,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         final Label labelURLForUpdates = new Label(container, SWT.NONE);
         labelURLForUpdates.setText(Messages.URL_for_updates + ":");
 
-        textURLForUpdates = new Text(container, SWT.BORDER);
+        textURLForUpdates = WidgetFactory.createText(container);
         textURLForUpdates.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -87,8 +88,8 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         });
         textURLForUpdates.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textURLForUpdates.setTextLimit(256);
-        
-        buttonStartSearchForUpdates = new Button(container, SWT.NONE);
+
+        buttonStartSearchForUpdates=WidgetFactory.createPushButton(container);
         buttonStartSearchForUpdates.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         buttonStartSearchForUpdates.setText(Messages.Search_for_updates);
         buttonStartSearchForUpdates.addSelectionListener(new SelectionAdapter() {
@@ -99,26 +100,25 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
                 search.schedule();
             }
         });
-        
-		setScreenToValues();
-		
-		return container;
-		
-	}
+
+        setScreenToValues();
+
+        return container;
+
+    }
 
     private void checkError() {
         if (urlForUpdates.equals("")) {
             setErrorMessage(Messages.The_value_in_field_URL_for_updates_is_not_valid);
             setValid(false);
             buttonStartSearchForUpdates.setEnabled(false);
-        } 
-        else {
+        } else {
             setErrorMessage(null);
             setValid(true);
             buttonStartSearchForUpdates.setEnabled(true);
         }
     }
-    
+
     @Override
     protected void performApply() {
         setStoreToValues();
@@ -136,7 +136,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         setStoreToValues();
         return super.performOk();
     }
-	
+
     protected void setStoreToValues() {
         Preferences.getInstance().setSearchForUpdates(searchForUpdates);
         Preferences.getInstance().setSearchForBetaVersions(searchForBetaVersions);

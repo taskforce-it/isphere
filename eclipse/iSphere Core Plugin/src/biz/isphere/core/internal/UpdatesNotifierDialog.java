@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class UpdatesNotifierDialog extends MessageDialog {
 
@@ -35,7 +36,7 @@ public class UpdatesNotifierDialog extends MessageDialog {
     protected Control createDialogArea(Composite parent) {
         Control rtnControl = super.createDialogArea(parent);
         
-        doNotShowAgainButton = new Button((Composite)rtnControl, SWT.CHECK);
+        doNotShowAgainButton = WidgetFactory.createCheckbox((Composite)rtnControl);
         doNotShowAgainButton.setText(Messages.Do_not_show_this_message_again);
         
         return rtnControl;

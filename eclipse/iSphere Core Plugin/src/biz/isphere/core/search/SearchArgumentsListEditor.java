@@ -19,6 +19,7 @@ import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class SearchArgumentsListEditor implements Listener {
 
@@ -53,10 +54,10 @@ public abstract class SearchArgumentsListEditor implements Listener {
         tMatchGroupLayout.marginHeight = 5;
         tMatchGroup.setLayout(tMatchGroupLayout);
 
-        rdoMatchAll = new Button(tMatchGroup, SWT.RADIO);
+        rdoMatchAll = WidgetFactory.createRadioButton(tMatchGroup);
         rdoMatchAll.setText(Messages.MatchAllConditions);
 
-        rdoMatchAny = new Button(tMatchGroup, SWT.RADIO);
+        rdoMatchAny = WidgetFactory.createRadioButton(tMatchGroup);
         rdoMatchAny.setText(Messages.MatchAnyCondition);
 
         Composite scrollableContainer = new Composite(aParent, SWT.NONE);

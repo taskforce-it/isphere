@@ -61,9 +61,9 @@ public class DataAreaText {
 
     Vector<StatusChangedListener> statusChangedListeners = new Vector<StatusChangedListener>();
 
-    public DataAreaText(Composite aParent, int aStyle, int aLineLength) {
+    public DataAreaText(Composite aParent, int aLineLength) {
 
-        textControl = new Text(aParent, aStyle);
+        textControl = new Text(aParent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         lineLength = aLineLength;
         lineLengthIcludingCR = lineLength + CRLF.length();
 

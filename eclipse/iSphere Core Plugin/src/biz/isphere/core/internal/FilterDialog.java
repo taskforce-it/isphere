@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class FilterDialog extends XDialog {
 
@@ -48,7 +49,7 @@ public class FilterDialog extends XDialog {
         labelFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
         labelFilter.setText(Messages.Filter_colon);
 
-        textFilter = new Text(compositeFilter, SWT.BORDER);
+        textFilter = WidgetFactory.createText(compositeFilter);
         textFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textFilter.setText("");
 

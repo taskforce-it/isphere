@@ -32,6 +32,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
@@ -110,7 +111,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             Label labelString = new Label(groupAttributes, SWT.NONE);
             labelString.setText(Messages.String_colon);
 
-            textString = new Text(groupAttributes, SWT.BORDER);
+            textString = WidgetFactory.createText(groupAttributes);
             textString.setText(searchString);
             textString.setTextLimit(40);
             textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -128,11 +129,11 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             editableLayout.numColumns = 2;
             groupCaseSensitive.setLayout(editableLayout);
 
-            buttonCaseNo = new Button(groupCaseSensitive, SWT.RADIO);
+            buttonCaseNo = WidgetFactory.createRadioButton(groupCaseSensitive);
             buttonCaseNo.setText(Messages.No);
             buttonCaseNo.setSelection(true);
 
-            buttonCaseYes = new Button(groupCaseSensitive, SWT.RADIO);
+            buttonCaseYes = WidgetFactory.createRadioButton(groupCaseSensitive);
             buttonCaseYes.setText(Messages.Yes);
             buttonCaseYes.setSelection(false);
 
@@ -141,7 +142,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
         labelFromColumn.setText(Messages.From_column_colon);
 
-        textFromColumn = new Text(groupAttributes, SWT.BORDER);
+        textFromColumn = WidgetFactory.createText(groupAttributes);
         textFromColumn.setTextLimit(10);
         textFromColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
         textFromColumn.addModifyListener(new ModifyListener() {
@@ -162,7 +163,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         Label labelToColumn = new Label(groupAttributes, SWT.NONE);
         labelToColumn.setText(Messages.To_column_colon);
 
-        textToColumn = new Text(groupAttributes, SWT.BORDER);
+        textToColumn = WidgetFactory.createText(groupAttributes);
         textToColumn.setTextLimit(10);
         textToColumn.setLayoutData(new GridData(50, SWT.DEFAULT));
         textToColumn.addModifyListener(new ModifyListener() {
@@ -388,7 +389,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         }
 
         saveColumnButtonsSelection();
-        
+
         saveElementValues();
     }
 
@@ -405,16 +406,20 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
     public abstract void setSearchArgument(String argument);
 
-    public void addElements(Composite container) {};
-    
-    public void loadElementValues() {};
-    
-    public void saveElementValues() {};
+    public void addElements(Composite container) {
+    };
+
+    public void loadElementValues() {
+    };
+
+    public void saveElementValues() {
+    };
 
     public boolean checkElements() {
         return true;
     }
- 
-    public void setElementsSearchOptions(SearchOptions _searchOptions) {};
-    
+
+    public void setElementsSearchOptions(SearchOptions _searchOptions) {
+    };
+
 }

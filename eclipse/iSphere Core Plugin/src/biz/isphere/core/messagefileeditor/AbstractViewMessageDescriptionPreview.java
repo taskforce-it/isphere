@@ -1,15 +1,14 @@
 package biz.isphere.core.messagefileeditor;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractViewMessageDescriptionPreview extends ViewPart {
 
@@ -23,22 +22,11 @@ public abstract class AbstractViewMessageDescriptionPreview extends ViewPart {
     @Override
     public void createPartControl(Composite parent) {
 
-        ScrolledComposite tScrollable = new ScrolledComposite(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        tScrollable.setLayout(new GridLayout(1, false));
-        tScrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
-        tScrollable.setExpandHorizontal(true);
-        tScrollable.setExpandVertical(true);
-        tScrollable.setAlwaysShowScrollBars(true);
-
-        Composite tTextArea = new Composite(tScrollable, SWT.NONE);
+        Composite tTextArea = new Composite(parent, SWT.NONE);
         tTextArea.setLayout(new FillLayout());
-        tScrollable.setContent(tTextArea);
 
-        tMessagePreview = new Text(tTextArea, SWT.MULTI);
+        tMessagePreview = WidgetFactory.createReadOnlyMultilineText(tTextArea, false, false);
         tMessagePreview.setFont(SWTResourceManager.getFont("Courier New", 10, SWT.NORMAL));
-
-        tScrollable.setMinSize(tTextArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        tTextArea.layout(true);
 
         selectionListener = registerSelectionListener(tMessagePreview);
     }

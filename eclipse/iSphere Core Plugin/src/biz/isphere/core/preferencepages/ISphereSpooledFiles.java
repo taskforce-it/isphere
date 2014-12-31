@@ -29,6 +29,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -88,7 +89,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupDefaultFormat.setLayout(gridLayoutDefaultFormat);
         groupDefaultFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        buttonDefaultFormatText = new Button(groupDefaultFormat, SWT.RADIO);
+        buttonDefaultFormatText = WidgetFactory.createRadioButton(groupDefaultFormat);
         buttonDefaultFormatText.setText(IPreferences.OUTPUT_FORMAT_TEXT);
         buttonDefaultFormatText.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -97,7 +98,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonDefaultFormatHTML = new Button(groupDefaultFormat, SWT.RADIO);
+        buttonDefaultFormatHTML = WidgetFactory.createRadioButton(groupDefaultFormat);
         buttonDefaultFormatHTML.setText(IPreferences.OUTPUT_FORMAT_HTML);
         buttonDefaultFormatHTML.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -106,7 +107,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonDefaultFormatPDF = new Button(groupDefaultFormat, SWT.RADIO);
+        buttonDefaultFormatPDF = WidgetFactory.createRadioButton(groupDefaultFormat);
         buttonDefaultFormatPDF.setText(IPreferences.OUTPUT_FORMAT_PDF);
         buttonDefaultFormatPDF.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -122,7 +123,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupConversionText.setLayout(gridLayoutConversionText);
         groupConversionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        buttonConversionTextDefault = new Button(groupConversionText, SWT.RADIO);
+        buttonConversionTextDefault = WidgetFactory.createRadioButton(groupConversionText);
         buttonConversionTextDefault.setText(Messages.Default);
         buttonConversionTextDefault.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -134,7 +135,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionTextUserDefined = new Button(groupConversionText, SWT.RADIO);
+        buttonConversionTextUserDefined = WidgetFactory.createRadioButton(groupConversionText);
         buttonConversionTextUserDefined.setText(Messages.User_defined);
         buttonConversionTextUserDefined.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -146,7 +147,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionTextTransform = new Button(groupConversionText, SWT.RADIO);
+        buttonConversionTextTransform = WidgetFactory.createRadioButton(groupConversionText);
         buttonConversionTextTransform.setText(Messages.Transform);
         buttonConversionTextTransform.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -161,7 +162,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionTextLibrary = new Label(groupConversionText, SWT.NONE);
         labelConversionTextLibrary.setText(Messages.Library_colon);
 
-        textConversionTextLibrary = new Text(groupConversionText, SWT.BORDER);
+        textConversionTextLibrary = WidgetFactory.createText(groupConversionText);
         textConversionTextLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -176,7 +177,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionTextCommand = new Label(groupConversionText, SWT.NONE);
         labelConversionTextCommand.setText(Messages.Command_colon);
 
-        textConversionTextCommand = new Text(groupConversionText, SWT.BORDER);
+        textConversionTextCommand = WidgetFactory.createText(groupConversionText);
         textConversionTextCommand.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -193,7 +194,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupConversionHTML.setLayout(gridLayoutConversionHTML);
         groupConversionHTML.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        buttonConversionHTMLDefault = new Button(groupConversionHTML, SWT.RADIO);
+        buttonConversionHTMLDefault = WidgetFactory.createRadioButton(groupConversionHTML);
         buttonConversionHTMLDefault.setText(Messages.Default);
         buttonConversionHTMLDefault.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -205,7 +206,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionHTMLUserDefined = new Button(groupConversionHTML, SWT.RADIO);
+        buttonConversionHTMLUserDefined = WidgetFactory.createRadioButton(groupConversionHTML);
         buttonConversionHTMLUserDefined.setText(Messages.User_defined);
         buttonConversionHTMLUserDefined.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -217,7 +218,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionHTMLTransform = new Button(groupConversionHTML, SWT.RADIO);
+        buttonConversionHTMLTransform = WidgetFactory.createRadioButton(groupConversionHTML);
         buttonConversionHTMLTransform.setText(Messages.Transform);
         buttonConversionHTMLTransform.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -232,7 +233,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionHTMLLibrary = new Label(groupConversionHTML, SWT.NONE);
         labelConversionHTMLLibrary.setText(Messages.Library_colon);
 
-        textConversionHTMLLibrary = new Text(groupConversionHTML, SWT.BORDER);
+        textConversionHTMLLibrary = WidgetFactory.createText(groupConversionHTML);
         textConversionHTMLLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -247,7 +248,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionHTMLCommand = new Label(groupConversionHTML, SWT.NONE);
         labelConversionHTMLCommand.setText(Messages.Command_colon);
 
-        textConversionHTMLCommand = new Text(groupConversionHTML, SWT.BORDER);
+        textConversionHTMLCommand = WidgetFactory.createText(groupConversionHTML);
         textConversionHTMLCommand.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -264,7 +265,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupConversionPDF.setLayout(gridLayoutConversionPDF);
         groupConversionPDF.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        buttonConversionPDFDefault = new Button(groupConversionPDF, SWT.RADIO);
+        buttonConversionPDFDefault = WidgetFactory.createRadioButton(groupConversionPDF);
         buttonConversionPDFDefault.setText(Messages.Default);
         buttonConversionPDFDefault.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -276,7 +277,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionPDFUserDefined = new Button(groupConversionPDF, SWT.RADIO);
+        buttonConversionPDFUserDefined = WidgetFactory.createRadioButton(groupConversionPDF);
         buttonConversionPDFUserDefined.setText(Messages.User_defined);
         buttonConversionPDFUserDefined.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -288,7 +289,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        buttonConversionPDFTransform = new Button(groupConversionPDF, SWT.RADIO);
+        buttonConversionPDFTransform = WidgetFactory.createRadioButton(groupConversionPDF);
         buttonConversionPDFTransform.setText(Messages.Transform);
         buttonConversionPDFTransform.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -303,7 +304,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionPDFLibrary = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFLibrary.setText(Messages.Library_colon);
 
-        textConversionPDFLibrary = new Text(groupConversionPDF, SWT.BORDER);
+        textConversionPDFLibrary = WidgetFactory.createText(groupConversionPDF);
         textConversionPDFLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -318,7 +319,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelConversionPDFCommand = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFCommand.setText(Messages.Command_colon);
 
-        textConversionPDFCommand = new Text(groupConversionPDF, SWT.BORDER);
+        textConversionPDFCommand = WidgetFactory.createText(groupConversionPDF);
         textConversionPDFCommand.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -335,9 +336,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupSubstitutionVariables.setLayout(gridLayoutSubstitutionVariables);
         groupSubstitutionVariables.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        Text labelSubstitutionVariable11 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable11.setText("&SPLF");
-        labelSubstitutionVariable11.setEditable(false);
+        Label labelSubstitutionVariable11 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable11.setText("&&SPLF");
 
         Label labelSubstitutionVariable12 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable12.setText(":");
@@ -345,9 +345,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable13 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable13.setText(Messages.File);
 
-        Text labelSubstitutionVariable21 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable21.setText("&SPLFNBR");
-        labelSubstitutionVariable21.setEditable(false);
+        Label labelSubstitutionVariable21 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable21.setText("&&SPLFNBR");
 
         Label labelSubstitutionVariable22 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable22.setText(":");
@@ -355,9 +354,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable23 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable23.setText(Messages.File_number);
 
-        Text labelSubstitutionVariable31 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable31.setText("&JOBNAME");
-        labelSubstitutionVariable31.setEditable(false);
+        Label labelSubstitutionVariable31 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable31.setText("&&JOBNAME");
 
         Label labelSubstitutionVariable32 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable32.setText(":");
@@ -365,9 +363,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable33 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable33.setText(Messages.Job_name);
 
-        Text labelSubstitutionVariable41 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable41.setText("&JOBUSR");
-        labelSubstitutionVariable41.setEditable(false);
+        Label labelSubstitutionVariable41 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable41.setText("&&JOBUSR");
 
         Label labelSubstitutionVariable42 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable42.setText(":");
@@ -375,9 +372,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable43 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable43.setText(Messages.Job_user);
 
-        Text labelSubstitutionVariable51 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable51.setText("&JOBNBR");
-        labelSubstitutionVariable51.setEditable(false);
+        Label labelSubstitutionVariable51 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable51.setText("&&JOBNBR");
 
         Label labelSubstitutionVariable52 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable52.setText(":");
@@ -385,9 +381,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable53 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable53.setText(Messages.Job_number);
 
-        Text labelSubstitutionVariable61 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable61.setText("&STMFDIR");
-        labelSubstitutionVariable61.setEditable(false);
+        Label labelSubstitutionVariable61 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable61.setText("&&STMFDIR");
 
         Label labelSubstitutionVariable62 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable62.setText(":");
@@ -395,9 +390,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable63 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable63.setText(Messages.Directory);
 
-        Text labelSubstitutionVariable71 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable71.setText("&STMF");
-        labelSubstitutionVariable71.setEditable(false);
+        Label labelSubstitutionVariable71 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable71.setText("&&STMF");
 
         Label labelSubstitutionVariable72 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable72.setText(":");
@@ -405,9 +399,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable73 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable73.setText(Messages.Stream_file);
 
-        Text labelSubstitutionVariable81 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable81.setText("&CODPAG");
-        labelSubstitutionVariable81.setEditable(false);
+        Label labelSubstitutionVariable81 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable81.setText("&&CODPAG");
 
         Label labelSubstitutionVariable82 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable82.setText(":");
@@ -415,9 +408,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable83 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable83.setText(Messages.Code_page);
 
-        Text labelSubstitutionVariable91 = new Text(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable91.setText("&FMT");
-        labelSubstitutionVariable91.setEditable(false);
+        Label labelSubstitutionVariable91 = new Label(groupSubstitutionVariables, SWT.NONE);
+        labelSubstitutionVariable91.setText("&&FMT");
 
         Label labelSubstitutionVariable92 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable92.setText(":");

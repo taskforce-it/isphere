@@ -42,6 +42,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
@@ -176,7 +177,7 @@ public class BindingDirectoryEntryViewer {
         compositeUpDown.setLayout(new GridLayout(1, false));
         compositeUpDown.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 1));
 
-        buttonUp = new Button(compositeUpDown, SWT.NONE);
+        buttonUp = WidgetFactory.createPushButton(compositeUpDown);
         buttonUp.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -187,7 +188,7 @@ public class BindingDirectoryEntryViewer {
         buttonUp.setText(Messages.Up);
         buttonUp.setEnabled(false);
 
-        buttonDown = new Button(compositeUpDown, SWT.NONE);
+        buttonDown = WidgetFactory.createPushButton(compositeUpDown);
         buttonDown.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
