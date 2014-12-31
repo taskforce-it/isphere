@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -32,12 +32,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -58,7 +58,7 @@ public class MessageDescriptionDetail {
     private Text textMessage;
     private Text textHelpText;
     private Text textSeveriry;
-    private CCombo comboCcsid;
+    private Combo comboCcsid;
     private Validator validatorMessageId;
     private Validator validatorMessage;
     private Validator validatorHelpText;
@@ -112,9 +112,8 @@ public class MessageDescriptionDetail {
         final Label labelConnection = new Label(compositeHeader, SWT.NONE);
         labelConnection.setText(Messages.Connection_colon);
 
-        final Text textConnection = new Text(compositeHeader, SWT.BORDER);
+        Text textConnection=WidgetFactory.createReadOnlyText(compositeHeader);
         textConnection.setText(_messageDescription.getConnection());
-        textConnection.setEditable(false);
         textConnection.setLayoutData(getLayoutData());
 
         // Library
@@ -122,9 +121,8 @@ public class MessageDescriptionDetail {
         final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
         labelLibrary.setText(Messages.Library_colon);
 
-        final Text textLibrary = new Text(compositeHeader, SWT.BORDER);
+        Text textLibrary=WidgetFactory.createReadOnlyText(compositeHeader);
         textLibrary.setText(_messageDescription.getLibrary());
-        textLibrary.setEditable(false);
         textLibrary.setLayoutData(getLayoutData());
 
         // Message file
@@ -132,9 +130,8 @@ public class MessageDescriptionDetail {
         final Label labelMessageFile = new Label(compositeHeader, SWT.NONE);
         labelMessageFile.setText(Messages.Message_file_colon);
 
-        final Text textMessageFile = new Text(compositeHeader, SWT.BORDER);
+        Text textMessageFile=WidgetFactory.createReadOnlyText(compositeHeader);
         textMessageFile.setText(_messageDescription.getMessageFile());
-        textMessageFile.setEditable(false);
         textMessageFile.setLayoutData(getLayoutData());
 
         // Message-Id.
@@ -142,7 +139,7 @@ public class MessageDescriptionDetail {
         final Label labelMessageId = new Label(compositeHeader, SWT.NONE);
         labelMessageId.setText(Messages.Message_Id_colon);
 
-        textMessageId = new Text(compositeHeader, SWT.BORDER);
+        textMessageId=WidgetFactory.createText(compositeHeader);
         textMessageId.setLayoutData(getLayoutData());
         textMessageId.setTextLimit(7);
         if (actionType == DialogActionTypes.CREATE) {
@@ -170,7 +167,7 @@ public class MessageDescriptionDetail {
         gridLayoutCompositeMessage.marginHeight = 0;
         compositeMessage.setLayout(gridLayoutCompositeMessage);
         
-        textMessage = new Text(compositeMessage, SWT.BORDER);
+        textMessage=WidgetFactory.createText(compositeMessage);
         textMessage.setLayoutData(getLayoutData());
         textMessage.setTextLimit(132);
         if (actionType == DialogActionTypes.CREATE) {
@@ -194,9 +191,8 @@ public class MessageDescriptionDetail {
         Label labelTextLength = new Label(compositeMessage, SWT.NONE);
         labelTextLength.setText(Messages.Text_length + ":");
 
-        textTextLength = new Text(compositeMessage, SWT.BORDER);
+        textTextLength=WidgetFactory.createReadOnlyText(compositeMessage);
         textTextLength.setText(Integer.toString(textMessage.getText().length()));
-        textTextLength.setEditable(false);
         textTextLength.setLayoutData(new GridData(Size.getSize(25), SWT.DEFAULT));
         
         // Helptext
@@ -210,7 +206,7 @@ public class MessageDescriptionDetail {
 
         // Advanced options
 
-        buttonHideAdvancedOptions = new Button(container, SWT.CHECK);
+        buttonHideAdvancedOptions=WidgetFactory.createCheckbox(container);
         buttonHideAdvancedOptions.setText(Messages.Advanced_options);
         buttonHideAdvancedOptions.setSelection(false);
         buttonHideAdvancedOptions.addSelectionListener(new SelectionListener() {
@@ -241,8 +237,7 @@ public class MessageDescriptionDetail {
         final Label labelSeverity = new Label(compositeAdvancedOptions, SWT.NONE);
         labelSeverity.setText(Messages.Severity_colon);
 
-        textSeveriry = new Text(compositeAdvancedOptions, SWT.BORDER);
-        textSeveriry.addVerifyListener(new NumericOnlyVerifyListener());
+        textSeveriry=WidgetFactory.createIntegerText(compositeAdvancedOptions);
         textSeveriry.setLayoutData(getLayoutData(60));
         textSeveriry.setTextLimit(2);
         textSeveriry.setText(_messageDescription.getSeverity().toString());
@@ -257,15 +252,16 @@ public class MessageDescriptionDetail {
         final Label labelCcsid = new Label(compositeAdvancedOptions, SWT.NONE);
         labelCcsid.setText(Messages.Ccsid_colon);
 
-        comboCcsid = new CCombo(compositeAdvancedOptions, SWT.BORDER);
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            comboCcsid = WidgetFactory.createReadOnlyCombo(compositeAdvancedOptions);
+        }else {
+            comboCcsid = WidgetFactory.createCombo(compositeAdvancedOptions);
+        }
         comboCcsid.setLayoutData(getLayoutData(60));
         comboCcsid.setTextLimit(5);
         comboCcsid.add(MessageDescription.CCSID_JOB);
         comboCcsid.add(MessageDescription.CCSID_HEX);
         comboCcsid.setText(_messageDescription.getCcsidAsString());
-        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
-            comboCcsid.setEditable(false);
-        }
 
         validatorCcsid = Validator.getIntegerInstance(comboCcsid.getTextLimit());
         validatorCcsid.addSpecialValue(MessageDescription.CCSID_JOB);
@@ -295,7 +291,7 @@ public class MessageDescriptionDetail {
         labelHelpText.setText(Messages.Helptext_colon);
         labelHelpText.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-        textHelpText = new Text(compositeHeader, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+        textHelpText=WidgetFactory.createMultilineText(compositeHeader, true, false);
         GridData gridData = getLayoutData();
         gridData.heightHint = 80;
         textHelpText.setLayoutData(gridData);

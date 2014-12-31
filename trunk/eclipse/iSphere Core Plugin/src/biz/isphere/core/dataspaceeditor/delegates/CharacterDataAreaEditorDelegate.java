@@ -136,7 +136,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         GridData offsetAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         offsetArea.setLayoutData(offsetAreaLayoutData);
 
-        dataAreaText = new DataAreaText(rulerArea, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL, currentWidth);
+        dataAreaText = new DataAreaText(rulerArea, currentWidth);
         dataAreaText.setTextLimit(getWrappedDataSpace().getLength());
         dataAreaText.setFont(getEditorFont());
         GridData dataAreaTextLayoutData = createRulerAndEditorLayoutData();

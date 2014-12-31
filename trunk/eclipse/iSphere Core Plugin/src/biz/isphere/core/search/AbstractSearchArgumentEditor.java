@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractSearchArgumentEditor {
 
@@ -44,7 +45,7 @@ public abstract class AbstractSearchArgumentEditor {
         gl_tContainer.horizontalSpacing = 10;
         container.setLayout(gl_tContainer);
 
-        cboCondition = new Combo(container, SWT.READ_ONLY);
+        cboCondition = WidgetFactory.createReadOnlyCombo(container);
         GridData gd_cboCondition = new GridData(SWT.LEFT, SWT.CENTER, false, false);
         gd_cboCondition.widthHint = 100;
         cboCondition.add(Messages.Contains);
@@ -58,11 +59,11 @@ public abstract class AbstractSearchArgumentEditor {
         txtSearchString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtSearchString.setSize(76, 19);
 
-        btnCaseSensitive = new Button(container, SWT.CHECK);
+        btnCaseSensitive = WidgetFactory.createCheckbox(container);
         btnCaseSensitive.setText(Messages.Case_sensitive);
         btnCaseSensitive.setToolTipText(Messages.Specify_whether_case_should_be_considered_during_search);
 
-        btnAdd = new Button(container, SWT.NONE);
+        btnAdd = WidgetFactory.createPushButton(container);
         GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_btnAdd.widthHint = 40;
         btnAdd.setLayoutData(gd_btnAdd);
@@ -71,7 +72,7 @@ public abstract class AbstractSearchArgumentEditor {
         btnAdd.setToolTipText(Messages.Add_search_condition);
         btnAdd.setData(BUTTON_ADD);
 
-        btnRemove = new Button(container, SWT.NONE);
+        btnRemove = WidgetFactory.createPushButton(container);
         GridData gd_btnRemove = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_btnRemove.widthHint = 40;
         btnRemove.setLayoutData(gd_btnRemove);

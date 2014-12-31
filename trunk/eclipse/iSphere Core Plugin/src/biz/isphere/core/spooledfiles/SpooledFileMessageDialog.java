@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400Message;
 
@@ -54,17 +55,17 @@ public class SpooledFileMessageDialog extends Dialog {
             message = spooledFile.getMessage();
             Label msgidLabel = new Label(headerGroup, SWT.NONE);
             msgidLabel.setText(Messages.Message_Id + ":");
-            Text msgidText = new Text(headerGroup, SWT.BORDER);
+            Text msgidText = WidgetFactory.createText(headerGroup);
             msgidText.setEnabled(false);
             msgidText.setText(message.getID());
             Label sevLabel = new Label(headerGroup, SWT.NONE);
             sevLabel.setText(Messages.Severity + ":");
-            Text sevText = new Text(headerGroup, SWT.BORDER);
+            Text sevText = WidgetFactory.createText(headerGroup);
             sevText.setEnabled(false);
             sevText.setText(new Integer(message.getSeverity()).toString());
             Label typeLabel = new Label(headerGroup, SWT.NONE);
             typeLabel.setText(Messages.Message_type + ":");
-            Text typeText = new Text(headerGroup, SWT.BORDER);
+            Text typeText = WidgetFactory.createText(headerGroup);
             typeText.setEnabled(false);
             switch (message.getType()) {
             case AS400Message.COMPLETION:
@@ -92,11 +93,11 @@ public class SpooledFileMessageDialog extends Dialog {
             }
             Label sentLabel = new Label(headerGroup, SWT.NONE);
             sentLabel.setText(Messages.Sent + ":");
-            Text sentText = new Text(headerGroup, SWT.BORDER);
+            Text sentText = WidgetFactory.createText(headerGroup);
             sentText.setEnabled(false);
             sentText.setText(message.getDate().getTime().toString());
 
-            Text msgText = new Text(rtnGroup, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+            Text msgText = WidgetFactory.createMultilineText(rtnGroup, true, false);
             msgText.setEditable(false);
             GridData gd = new GridData();
             gd.widthHint = 400;
@@ -104,7 +105,7 @@ public class SpooledFileMessageDialog extends Dialog {
             msgText.setLayoutData(gd);
             msgText.setText(message.getText());
 
-            Text helpText = new Text(rtnGroup, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+            Text helpText = WidgetFactory.createMultilineText(rtnGroup, true, false);
             helpText.setEditable(false);
             gd = new GridData();
             gd.widthHint = 400;
@@ -120,7 +121,7 @@ public class SpooledFileMessageDialog extends Dialog {
 
             Label replyLabel = new Label(replyGroup, SWT.NONE);
             replyLabel.setText(Messages.Reply + ":");
-            replyText = new Text(replyGroup, SWT.BORDER);
+            replyText = WidgetFactory.createText(replyGroup);
             gd = new GridData();
             gd.widthHint = 300;
             replyText.setLayoutData(gd);

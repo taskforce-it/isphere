@@ -28,6 +28,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.SearchOptions;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class SearchDialog extends AbstractSearchDialog {
 
@@ -97,7 +98,7 @@ public class SearchDialog extends AbstractSearchDialog {
         groupOptions.setLayout(new GridLayout(1, false));
 
         GridData tGridData;
-        includeFirstLevelTextButton = new Button(groupOptions, SWT.CHECK);
+        includeFirstLevelTextButton=WidgetFactory.createCheckbox(groupOptions);
         includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
         includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
         tGridData = new GridData(SWT.HORIZONTAL);
@@ -111,7 +112,7 @@ public class SearchDialog extends AbstractSearchDialog {
             }
         });
 
-        includeSecondLevelTextButton = new Button(groupOptions, SWT.CHECK);
+        includeSecondLevelTextButton=WidgetFactory.createCheckbox(groupOptions);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
         tGridData = new GridData(SWT.HORIZONTAL);

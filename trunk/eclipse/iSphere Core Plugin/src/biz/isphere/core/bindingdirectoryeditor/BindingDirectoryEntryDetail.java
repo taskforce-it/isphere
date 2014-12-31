@@ -17,6 +17,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -28,6 +29,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class BindingDirectoryEntryDetail {
 
@@ -35,10 +37,10 @@ public class BindingDirectoryEntryDetail {
     private int actionType;
     private BindingDirectoryEntry _bindingDirectoryEntry;
     private ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries;
-    private CCombo comboLibrary;
+    private Combo comboLibrary;
     private Text textObject;
-    private CCombo comboObjectType;
-    private CCombo comboActivation;
+    private Combo comboObjectType;
+    private Combo comboActivation;
     private Validator validatorLibrary;
     private Validator validatorObject;
     private Validator validatorObjectType;
@@ -86,7 +88,7 @@ public class BindingDirectoryEntryDetail {
         final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
         labelLibrary.setText(Messages.Library_colon);
 
-        comboLibrary = new CCombo(compositeHeader, SWT.BORDER);
+        comboLibrary = WidgetFactory.createCombo(compositeHeader);
         comboLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboLibrary.setTextLimit(10);
         comboLibrary.add("*LIBL");
@@ -107,7 +109,7 @@ public class BindingDirectoryEntryDetail {
         final Label labelObject = new Label(compositeHeader, SWT.NONE);
         labelObject.setText(Messages.Object_colon);
 
-        textObject = new Text(compositeHeader, SWT.BORDER);
+        textObject = WidgetFactory.createText(compositeHeader);
         textObject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textObject.setTextLimit(10);
         if (actionType == DialogActionTypes.CREATE) {
@@ -127,7 +129,7 @@ public class BindingDirectoryEntryDetail {
         final Label labelObjectType = new Label(compositeHeader, SWT.NONE);
         labelObjectType.setText(Messages.Object_type_colon);
 
-        comboObjectType = new CCombo(compositeHeader, SWT.BORDER);
+        comboObjectType = WidgetFactory.createCombo(compositeHeader);
         comboObjectType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboObjectType.setTextLimit(10);
         comboObjectType.add("*SRVPGM");
@@ -167,7 +169,7 @@ public class BindingDirectoryEntryDetail {
             final Label labelActivation = new Label(compositeHeader, SWT.NONE);
             labelActivation.setText(Messages.Activation_colon);
 
-            comboActivation = new CCombo(compositeHeader, SWT.BORDER);
+            comboActivation = WidgetFactory.createCombo(compositeHeader);
             comboActivation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             comboActivation.setTextLimit(10);
             comboActivation.add("*IMMED");

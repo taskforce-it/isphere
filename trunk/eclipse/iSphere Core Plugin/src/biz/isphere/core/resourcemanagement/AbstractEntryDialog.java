@@ -36,11 +36,12 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class AbstractEntryDialog extends XDialog {
 
     private static final String REPOSITORY_PATH = "repositoryPath";
-    
+
     private Shell shell;
     private Button buttonBoth;
     private Button buttonWorkspace;
@@ -69,7 +70,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         gridLayoutStatus.numColumns = 1;
         groupEditingArea.setLayout(gridLayoutStatus);
 
-        buttonBoth = new Button(groupEditingArea, SWT.RADIO);
+        buttonBoth = WidgetFactory.createRadioButton(groupEditingArea);
         buttonBoth.setText(Messages.Edit_workspace_and_repository + " " + getSubject());
         buttonBoth.setSelection(true);
         buttonBoth.addSelectionListener(new SelectionAdapter() {
@@ -80,7 +81,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             }
         });
 
-        buttonWorkspace = new Button(groupEditingArea, SWT.RADIO);
+        buttonWorkspace = WidgetFactory.createRadioButton(groupEditingArea);
         buttonWorkspace.setText(Messages.Edit_only_workspace + " " + getSubject());
         buttonWorkspace.setSelection(false);
         buttonWorkspace.addSelectionListener(new SelectionAdapter() {
@@ -91,7 +92,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             }
         });
 
-        buttonRepository = new Button(groupEditingArea, SWT.RADIO);
+        buttonRepository = WidgetFactory.createRadioButton(groupEditingArea);
         buttonRepository.setText(Messages.Edit_only_repository + " " + getSubject());
         buttonRepository.setSelection(false);
         buttonRepository.addSelectionListener(new SelectionAdapter() {
@@ -121,7 +122,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         labelRepository.setText(Messages.Repository + ":");
         labelRepository.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 
-        textRepository = new Text(compositeRepository, SWT.BORDER);
+        textRepository = WidgetFactory.createText(compositeRepository);
         textRepository.setText("");
         textRepository.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         textRepository.addModifyListener(new ModifyListener() {
@@ -130,7 +131,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             }
         });
 
-        Button browseRepository = new Button(compositeRepository, SWT.NONE);
+        Button browseRepository = WidgetFactory.createPushButton(compositeRepository);
         browseRepository.setText(Messages.Browse);
         browseRepository.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -168,7 +169,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         return container;
 
     }
-    
+
     public void check() {
 
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
@@ -323,7 +324,7 @@ public abstract class AbstractEntryDialog extends XDialog {
     protected abstract String getSubject();
 
     protected abstract String getFileExtension();
-    
+
     protected String[] getFileExtensions() {
         return new String[0];
     }
@@ -334,8 +335,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         if (fileExtension != null) {
             fileExtensions = new String[1];
             fileExtensions[0] = fileExtension;
-        }
-        else {
+        } else {
             fileExtensions = getFileExtensions();
         }
         return fileExtensions;
@@ -349,7 +349,7 @@ public abstract class AbstractEntryDialog extends XDialog {
      * Restores the screen values of the last search search.
      */
     protected String loadRepositoryPath() {
-        
+
         return loadValue(REPOSITORY_PATH, "C:\\");
     }
 
@@ -357,7 +357,7 @@ public abstract class AbstractEntryDialog extends XDialog {
      * Stores the screen values that are preserved for the next search.
      */
     protected void storeRepositoryPath(String path) {
-        
+
         storeValue(REPOSITORY_PATH, path);
     }
 

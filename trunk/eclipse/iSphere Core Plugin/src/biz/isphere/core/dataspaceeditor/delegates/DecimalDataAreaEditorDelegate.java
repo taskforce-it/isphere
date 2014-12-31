@@ -29,6 +29,7 @@ import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 /**
  * Editor delegate that edits a *DEC data area.
@@ -63,8 +64,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 
-        dataAreaText = new Text(editorArea, SWT.BORDER);
-        dataAreaText.addVerifyListener(new NumericOnlyVerifyListener(true));
+        dataAreaText = WidgetFactory.createDecimalText(editorArea);
         dataAreaText.setTextLimit(getWrappedDataSpace().getTextLimit());
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;

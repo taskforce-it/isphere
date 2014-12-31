@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 /**
  * Editor delegate that edits a *LGL data area.
@@ -52,7 +53,7 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 
-        dataAreaText = new Button(editorArea, SWT.CHECK);
+        dataAreaText = WidgetFactory.createCheckbox(editorArea);
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;
         dataAreaText.setLayoutData(dataAreaTextLayoutData);

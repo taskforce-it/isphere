@@ -8,17 +8,12 @@
 
 package biz.isphere.core.preferencepages;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,8 +31,11 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.TransferISphereLibrary;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
+
+    private static final int DEFAULT_FTP_PORT = 21;
 
     private Text textISphereLibrary;
     private String iSphereLibrary;
@@ -63,7 +61,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelHostName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         labelHostName.setText(Messages.Host_name_colon);
 
-        textHostName = new Text(container, SWT.BORDER);
+        textHostName = WidgetFactory.createText(container);
         textHostName.setText(Messages.Host_name_colon);
         textHostName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -71,27 +69,15 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelFtpPortNumber.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         labelFtpPortNumber.setText(Messages.FTP_port_number_colon);
 
-        textFtpPortNumber = new Text(container, SWT.BORDER);
-        textFtpPortNumber.setText("21");
+        textFtpPortNumber = WidgetFactory.createIntegerText(container);
+        textFtpPortNumber.setText(Integer.toString(DEFAULT_FTP_PORT));
+        textFtpPortNumber.setTextLimit(5);
         textFtpPortNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        textFtpPortNumber.addVerifyListener(new VerifyListener() {
-            private Pattern pattern = Pattern.compile("[0-9]{0,5}");
-
-            public void verifyText(VerifyEvent e) {
-                Matcher m = pattern.matcher(e.text);
-                if (!m.matches()) {
-                    e.doit = false;
-                }
-                if (((Text)e.widget).getText().length() + e.text.length() > 5) {
-                    e.doit = false;
-                }
-            }
-        });
 
         final Label labelISphereLibrary = new Label(container, SWT.NONE);
         labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
-        textISphereLibrary = new Text(container, SWT.BORDER);
+        textISphereLibrary = WidgetFactory.createText(container);
         textISphereLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -110,7 +96,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         validatorLibrary = Validator.getLibraryNameInstance();
 
-        Button buttonTransfer = new Button(container, SWT.NONE);
+        Button buttonTransfer = WidgetFactory.createPushButton(container);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -155,7 +141,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         // store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
-        Preferences.getInstance().setFtpPortNumber(textFtpPortNumber.getTextLimit());
+        Preferences.getInstance().setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), DEFAULT_FTP_PORT));
 
     }
 

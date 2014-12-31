@@ -81,7 +81,7 @@ public class DEditorDialog extends AbstractDialog {
         Label labelColumns = new Label(parent, SWT.NONE);
         labelColumns.setText(Messages.Columns_colon);
 
-        spinnerColumns = WidgetFactory.createSpinnerField(parent);
+        spinnerColumns = WidgetFactory.createSpinner(parent);
         GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_spinner.widthHint = 25;
         spinnerColumns.setLayoutData(gd_spinner);

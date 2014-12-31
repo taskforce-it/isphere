@@ -30,6 +30,7 @@ import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -134,6 +135,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         Preferences.dispose();
         DataSpaceEditorRepository.dispose();
+        WidgetFactory.dispose();
 
     }
 

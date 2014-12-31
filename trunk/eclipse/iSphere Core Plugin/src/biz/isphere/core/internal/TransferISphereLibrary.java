@@ -30,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400FTP;
@@ -72,7 +73,7 @@ public class TransferISphereLibrary extends Shell {
         setText(Messages.Transfer_iSphere_library);
         setSize(500, 250);
 
-        buttonStart = new Button(this, SWT.NONE);
+        buttonStart = WidgetFactory.createPushButton(this);
         buttonStart.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {

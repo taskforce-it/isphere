@@ -471,7 +471,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     private void createNewWidgetButton(Composite parent, String label, Class<? extends AbstractDWidget> widgetClass) {
-        Button button = new Button(parent, SWT.PUSH);
+        Button button = WidgetFactory.createPushButton(parent);
         button.setText(label);
         GridData newTextButtonLayoutData = createGridDataSimple();
         newTextButtonLayoutData.widthHint = 80;

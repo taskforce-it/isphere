@@ -26,11 +26,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
 
@@ -144,14 +146,14 @@ public abstract class CompareDialog extends XDialog {
             editableGroup.setLayout(editableLayout);
             editableGroup.setLayoutData(getGridData());
 
-            browseButton = new Button(editableGroup, SWT.RADIO);
+            browseButton = WidgetFactory.createRadioButton(editableGroup);
             browseButton.setText(Messages.Open_for_browse);
             browseButton.setLayoutData(getGridData());
             if (!editable || ignoreCase) {
                 browseButton.setSelection(true);
             }
 
-            editButton = new Button(editableGroup, SWT.RADIO);
+            editButton = WidgetFactory.createRadioButton(editableGroup);
             editButton.setText(Messages.Open_for_edit);
             editButton.setLayoutData(getGridData());
             editButton.addSelectionListener(new SelectionAdapter() {
@@ -173,14 +175,14 @@ public abstract class CompareDialog extends XDialog {
         considerDateGroup.setLayout(considerDateLayout);
         considerDateGroup.setLayoutData(getGridData());
 
-        dontConsiderDateButton = new Button(considerDateGroup, SWT.RADIO);
+        dontConsiderDateButton = WidgetFactory.createRadioButton(considerDateGroup);
         dontConsiderDateButton.setText(Messages.Don_t_consider_date);
         dontConsiderDateButton.setLayoutData(getGridData());
         if (!considerDate) {
             dontConsiderDateButton.setSelection(true);
         }
 
-        considerDateButton = new Button(considerDateGroup, SWT.RADIO);
+        considerDateButton = WidgetFactory.createRadioButton(considerDateGroup);
         considerDateButton.setText(Messages.Consider_date);
         considerDateButton.setLayoutData(getGridData());
         if (considerDate) {
@@ -192,14 +194,14 @@ public abstract class CompareDialog extends XDialog {
         ignoreCaseGroup.setLayout(ignoreCaseLayout);
         ignoreCaseGroup.setLayoutData(getGridData());
 
-        dontIgnoreCaseButton = new Button(ignoreCaseGroup, SWT.RADIO);
+        dontIgnoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         dontIgnoreCaseButton.setText(Messages.Don_t_ignore_case);
         dontIgnoreCaseButton.setLayoutData(getGridData());
         if (!ignoreCase) {
             dontIgnoreCaseButton.setSelection(true);
         }
 
-        ignoreCaseButton = new Button(ignoreCaseGroup, SWT.RADIO);
+        ignoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         ignoreCaseButton.setText(Messages.Ignore_case);
         ignoreCaseButton.setLayoutData(getGridData());
         ignoreCaseButton.addSelectionListener(new SelectionAdapter() {
@@ -223,7 +225,7 @@ public abstract class CompareDialog extends XDialog {
             threeWayGroup.setLayout(threeWayLayout);
             threeWayGroup.setLayoutData(getGridData());
 
-            twoWayButton = new Button(threeWayGroup, SWT.RADIO);
+            twoWayButton = WidgetFactory.createRadioButton(threeWayGroup);
             twoWayButton.setText(Messages.Two_way_compare);
             twoWayButton.setLayoutData(getGridData());
             if (!threeWay) {
@@ -238,7 +240,7 @@ public abstract class CompareDialog extends XDialog {
                 }
             });
 
-            threeWayButton = new Button(threeWayGroup, SWT.RADIO);
+            threeWayButton = WidgetFactory.createRadioButton(threeWayGroup);
             threeWayButton.setText(Messages.Three_way_compare);
             threeWayButton.setLayoutData(getGridData());
             if (threeWay) {
@@ -264,15 +266,13 @@ public abstract class CompareDialog extends XDialog {
         Label leftConnectionLabel = new Label(leftGroup, SWT.NONE);
         leftConnectionLabel.setText(Messages.Connection_colon);
 
-        leftConnectionText = new Text(leftGroup, SWT.BORDER);
-        leftConnectionText.setEditable(false);
+        leftConnectionText = WidgetFactory.createReadOnlyText(leftGroup);
         leftConnectionText.setLayoutData(getGridData());
         leftConnectionText.setText(leftMember.getConnection());
 
         Label leftLibraryLabel = new Label(leftGroup, SWT.NONE);
         leftLibraryLabel.setText(Messages.Library_colon);
-        leftLibraryText = new Text(leftGroup, SWT.BORDER);
-        leftLibraryText.setEditable(false);
+        leftLibraryText = WidgetFactory.createReadOnlyText(leftGroup);
         leftLibraryText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftLibraryText.setText(leftMember.getArchiveLibrary());
@@ -282,8 +282,7 @@ public abstract class CompareDialog extends XDialog {
 
         Label leftFileLabel = new Label(leftGroup, SWT.NONE);
         leftFileLabel.setText(Messages.File_colon);
-        leftFileText = new Text(leftGroup, SWT.BORDER);
-        leftFileText.setEditable(false);
+        leftFileText = WidgetFactory.createReadOnlyText(leftGroup);
         leftFileText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftFileText.setText(leftMember.getArchiveFile());
@@ -293,8 +292,7 @@ public abstract class CompareDialog extends XDialog {
 
         Label leftMemberLabel = new Label(leftGroup, SWT.NONE);
         leftMemberLabel.setText(Messages.Member_colon);
-        leftMemberText = new Text(leftGroup, SWT.BORDER);
-        leftMemberText.setEditable(false);
+        leftMemberText = WidgetFactory.createReadOnlyText(leftGroup);
         leftMemberText.setLayoutData(getGridData());
         if (leftMember.isArchive()) {
             leftMemberText.setText(leftMember.getArchiveMember());
@@ -305,8 +303,7 @@ public abstract class CompareDialog extends XDialog {
         if (leftMember.isArchive()) {
             Label leftTimeLabel = new Label(leftGroup, SWT.NONE);
             leftTimeLabel.setText(Messages.Archive_colon);
-            Text leftTimeText = new Text(leftGroup, SWT.BORDER);
-            leftTimeText.setEditable(false);
+            Text leftTimeText = WidgetFactory.createReadOnlyText(leftGroup);
             leftTimeText.setLayoutData(getGridData());
             leftTimeText.setText(leftMember.getArchiveDate() + " - " + leftMember.getArchiveTime());
         }
@@ -329,7 +326,7 @@ public abstract class CompareDialog extends XDialog {
                     switchPanel.setLayout(middleLayout);
                     switchPanel.setLayoutData(getGridData());
 
-                    Button switchMemberButton = new Button(switchPanel, SWT.PUSH);
+                    Button switchMemberButton = WidgetFactory.createPushButton(switchPanel);
                     switchMemberButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
                     switchMemberButton.setImage(getSwitchImage());
                     switchMemberButton.addListener(SWT.Selection, new Listener() {
@@ -349,15 +346,13 @@ public abstract class CompareDialog extends XDialog {
                 Label rightConnectionLabel = new Label(rightGroup, SWT.NONE);
                 rightConnectionLabel.setText(Messages.Connection_colon);
 
-                rightConnectionText = new Text(rightGroup, SWT.BORDER);
-                rightConnectionText.setEditable(false);
+                rightConnectionText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightConnectionText.setLayoutData(getGridData());
                 rightConnectionText.setText(rightMember.getConnection());
 
                 Label rightLibraryLabel = new Label(rightGroup, SWT.NONE);
                 rightLibraryLabel.setText(Messages.Library_colon);
-                rightLibraryText = new Text(rightGroup, SWT.BORDER);
-                rightLibraryText.setEditable(false);
+                rightLibraryText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightLibraryText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightLibraryText.setText(rightMember.getArchiveLibrary());
@@ -367,8 +362,7 @@ public abstract class CompareDialog extends XDialog {
 
                 Label rightFileLabel = new Label(rightGroup, SWT.NONE);
                 rightFileLabel.setText(Messages.File_colon);
-                rightFileText = new Text(rightGroup, SWT.BORDER);
-                rightFileText.setEditable(false);
+                rightFileText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightFileText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightFileText.setText(rightMember.getArchiveFile());
@@ -378,8 +372,7 @@ public abstract class CompareDialog extends XDialog {
 
                 Label rightMemberLabel = new Label(rightGroup, SWT.NONE);
                 rightMemberLabel.setText(Messages.Member_colon);
-                rightMemberText = new Text(rightGroup, SWT.BORDER);
-                rightMemberText.setEditable(false);
+                rightMemberText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightMemberText.setLayoutData(getGridData());
                 if (rightMember.isArchive()) {
                     rightMemberText.setText(rightMember.getArchiveMember());
@@ -390,8 +383,7 @@ public abstract class CompareDialog extends XDialog {
                 if (rightMember.isArchive()) {
                     Label rightTimeLabel = new Label(rightGroup, SWT.NONE);
                     rightTimeLabel.setText(Messages.Archive_colon);
-                    Text rightTimeText = new Text(rightGroup, SWT.BORDER);
-                    rightTimeText.setEditable(false);
+                    Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
                     rightTimeText.setLayoutData(getGridData());
                     rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime());
                 }
@@ -409,15 +401,13 @@ public abstract class CompareDialog extends XDialog {
                 Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorConnectionLabel.setText(Messages.Connection_colon);
 
-                Text ancestorConnectionText = new Text(ancestorGroup, SWT.BORDER);
-                ancestorConnectionText.setEditable(false);
+                Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
                 ancestorConnectionText.setLayoutData(getGridData());
                 ancestorConnectionText.setText(ancestorMember.getConnection());
 
                 Label ancestorLibraryLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorLibraryLabel.setText(Messages.Library_colon);
-                Text ancestorLibraryText = new Text(ancestorGroup, SWT.BORDER);
-                ancestorLibraryText.setEditable(false);
+                Text ancestorLibraryText = WidgetFactory.createReadOnlyText(ancestorGroup);
                 ancestorLibraryText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorLibraryText.setText(ancestorMember.getArchiveLibrary());
@@ -427,8 +417,7 @@ public abstract class CompareDialog extends XDialog {
 
                 Label ancestorFileLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorFileLabel.setText(Messages.File_colon);
-                Text ancestorFileText = new Text(ancestorGroup, SWT.BORDER);
-                ancestorFileText.setEditable(false);
+                Text ancestorFileText = WidgetFactory.createReadOnlyText(ancestorGroup);
                 ancestorFileText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorFileText.setText(ancestorMember.getArchiveFile());
@@ -438,8 +427,7 @@ public abstract class CompareDialog extends XDialog {
 
                 Label ancestorMemberLabel = new Label(ancestorGroup, SWT.NONE);
                 ancestorMemberLabel.setText(Messages.Member_colon);
-                Text ancestorMemberText = new Text(ancestorGroup, SWT.BORDER);
-                ancestorMemberText.setEditable(false);
+                Text ancestorMemberText = WidgetFactory.createReadOnlyText(ancestorGroup);
                 ancestorMemberText.setLayoutData(getGridData());
                 if (ancestorMember.isArchive()) {
                     ancestorMemberText.setText(ancestorMember.getArchiveMember());
@@ -450,8 +438,7 @@ public abstract class CompareDialog extends XDialog {
                 if (ancestorMember.isArchive()) {
                     Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
                     ancestorTimeLabel.setText(Messages.Archive_colon);
-                    Text ancestorTimeText = new Text(ancestorGroup, SWT.BORDER);
-                    ancestorTimeText.setEditable(false);
+                    Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup); 
                     ancestorTimeText.setLayoutData(getGridData());
                     ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime());
                 }
