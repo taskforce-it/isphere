@@ -74,6 +74,7 @@ public class Validator {
     public static Validator getIntegerInstance(int length) {
         Validator validator = new Validator(TYPE_DEC);
         validator.setLength(length);
+        validator.setPrecision(0);
         return validator;
     }
 
