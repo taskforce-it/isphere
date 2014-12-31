@@ -38,9 +38,9 @@ public class Editor implements IEditor {
 
                     ISeriesEditableSrcPhysicalFileMember mbr = null;
 
-                    if (mode.equals("*OPEN")) {
+                    if (mode.equals(IEditor.EDIT)) {
                         mbr = _member.open();
-                    } else if (mode.equals("*BROWSE")) {
+                    } else if (mode.equals(IEditor.BROWSE)) {
                         mbr = _member.browse();
                     }
 
