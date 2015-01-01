@@ -19,7 +19,7 @@ public class DReferencedObject implements Comparable<DReferencedObject>, Seriali
     private String library;
     private String type;
     private boolean isDefault;
-    
+
     @XStreamOmitField
     private DEditor parent;
 
@@ -67,22 +67,22 @@ public class DReferencedObject implements Comparable<DReferencedObject>, Seriali
         if (object == null) {
             return 1;
         }
-        
+
         int result = library.compareTo(object.getLibrary());
         if (result != 0) {
             return result;
         }
-        
+
         result = name.compareTo(object.getName());
         if (result != 0) {
             return result;
         }
-        
+
         result = type.compareTo(object.getType());
         if (result != 0) {
             return result;
         }
-        
+
         return 0;
     }
 }

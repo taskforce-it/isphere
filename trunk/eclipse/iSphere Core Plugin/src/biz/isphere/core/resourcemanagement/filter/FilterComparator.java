@@ -13,13 +13,13 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterComparator extends AbstractComparator {
 
-	public FilterComparator(AbstractResource[] resourcesWorkspaceToCompare, AbstractResource[] resourcesRepositoryToCompare) {
-		super(resourcesWorkspaceToCompare, resourcesRepositoryToCompare);
-	}
+    public FilterComparator(AbstractResource[] resourcesWorkspaceToCompare, AbstractResource[] resourcesRepositoryToCompare) {
+        super(resourcesWorkspaceToCompare, resourcesRepositoryToCompare);
+    }
 
-	@Override
-	protected AbstractResource getInstanceForBothDifferent(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
-		return new RSEFilterBoth(((RSEFilter)resourceWorkspace).getName(), (RSEFilter)resourceWorkspace, (RSEFilter)resourceRepository);
-	}
+    @Override
+    protected AbstractResource getInstanceForBothDifferent(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        return new RSEFilterBoth(((RSEFilter)resourceWorkspace).getName(), (RSEFilter)resourceWorkspace, (RSEFilter)resourceRepository);
+    }
 
 }

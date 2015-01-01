@@ -218,7 +218,7 @@ public class FieldFormatDetail {
         labelBytes = new Label(compositeHeader, SWT.NONE);
         labelBytes.setText(Messages.Bytes_colon);
 
-        textBytes=WidgetFactory.createIntegerText(compositeHeader); 
+        textBytes = WidgetFactory.createIntegerText(compositeHeader);
         textBytes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textBytes.setTextLimit(1);
         if (actionType == DialogActionTypes.CREATE) {

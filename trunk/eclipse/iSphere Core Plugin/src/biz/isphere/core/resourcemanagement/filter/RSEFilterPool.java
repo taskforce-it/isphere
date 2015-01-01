@@ -11,23 +11,23 @@ package biz.isphere.core.resourcemanagement.filter;
 public class RSEFilterPool {
 
     private RSEProfile profile;
-	private String name;
-	private boolean _default;
-	private Object origin;
+    private String name;
+    private boolean _default;
+    private Object origin;
 
-	public RSEFilterPool() {
-	    profile = null;
+    public RSEFilterPool() {
+        profile = null;
         name = null;
         _default = false;
         origin = null;
     }
-	
-	public RSEFilterPool(RSEProfile profile, String name, boolean _default, Object origin) {
-	    this.profile = profile;
-		this.name = name;
-		this._default = _default;
-		this.origin = origin;
-	}
+
+    public RSEFilterPool(RSEProfile profile, String name, boolean _default, Object origin) {
+        this.profile = profile;
+        this.name = name;
+        this._default = _default;
+        this.origin = origin;
+    }
 
     public RSEProfile getProfile() {
         return profile;
@@ -38,14 +38,14 @@ public class RSEFilterPool {
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-	public boolean isDefault() {
+    public boolean isDefault() {
         return _default;
     }
 
@@ -54,11 +54,11 @@ public class RSEFilterPool {
     }
 
     public Object getOrigin() {
-		return origin;
-	}
+        return origin;
+    }
 
     public void setOrigin(Object origin) {
         this.origin = origin;
     }
-	
+
 }

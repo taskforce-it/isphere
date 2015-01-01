@@ -101,7 +101,7 @@ public class DDataSpaceValue {
     public byte[] getBytes() {
         return bytes;
     }
-    
+
     public Boolean getBoolean(int offset, int length) {
         ensureLogicalType();
         String data = convertByteArrayToString(bytes, offset, length);

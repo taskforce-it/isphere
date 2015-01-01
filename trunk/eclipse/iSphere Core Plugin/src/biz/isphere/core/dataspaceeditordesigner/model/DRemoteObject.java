@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataspaceeditordesigner.model;
 
-
 public class DRemoteObject {
 
     private String name;
@@ -38,7 +37,7 @@ public class DRemoteObject {
     public String getType() {
         return type;
     }
-    
+
     @Override
     public String toString() {
         return connectionName + "(" + library + "/" + name + "(" + type + "))";

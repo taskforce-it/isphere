@@ -78,11 +78,11 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
 
         controls = new ArrayList<Control>();
         if (dEditor == null) {
-            
+
             Label errorLabel = new Label(dialogEditor, SWT.NONE);
             errorLabel.setText(Messages.No_editor_selected_Cannot_display_any_data);
         } else {
-            
+
             AbstractDWidget[] widgets = dEditor.getWidgets();
             for (AbstractDWidget widget : widgets) {
                 Control control = manager.createWidgetControlAndAddToParent(dialogEditor, columnsPerEditorColumn, widget);

@@ -31,8 +31,8 @@ public class TreeViewSorter extends ViewerSorter {
             DReferencedObject referencedObject1 = (DReferencedObject)object1;
             DReferencedObject referencedObject2 = (DReferencedObject)object2;
             return referencedObject1.compareTo(referencedObject2);
-        } 
+        }
         return 0;
     }
-    
+
 }

@@ -187,7 +187,7 @@ public final class DataSpaceEditorManager {
             widget.setHorizontalSpan((int)div);
         }
     }
-    
+
     public void resolveObjectReferences(DEditor[] dEditors) {
         for (DEditor dEditor : dEditors) {
             DReferencedObject[] referencedObjects = dEditor.getReferencedObjects();

@@ -40,7 +40,7 @@ public class TracedItemsValidationStatus {
         if (isValidOld == null && isValid) {
             return;
         }
-        
+
         if (isValidOld != null && isValid == isValidOld) {
             return;
         }

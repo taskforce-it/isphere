@@ -63,48 +63,48 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
     public int getLength() {
         return length;
     }
-    
+
     public int getHorizontalSpan() {
         if (horizontalSpan <= 0) {
             return horizontalSpan = 1;
         }
         return horizontalSpan;
     }
-    
+
     public DEditor getParent() {
         return dEditor;
     }
-    
+
     public boolean isFirst() {
         if (getParent().getPreviousSibling(this) == null) {
             return true;
         }
         return false;
     }
-    
+
     public boolean isLast() {
         if (getParent().getNextSibling(this) == null) {
             return true;
         }
         return false;
     }
-    
+
     void setLabel(String label) {
         this.label = label;
     }
-    
+
     void setOffset(int offset) {
         this.offset = offset;
     }
-    
+
     void setLength(int length) {
         this.length = length;
     }
-    
+
     void setHorizontalSpan(int horizontalSpan) {
         this.horizontalSpan = horizontalSpan;
     }
-    
+
     void setParent(DEditor dEditor) {
         this.dEditor = dEditor;
     }

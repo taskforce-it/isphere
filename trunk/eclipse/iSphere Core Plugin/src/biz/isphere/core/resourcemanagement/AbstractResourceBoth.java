@@ -10,21 +10,21 @@ package biz.isphere.core.resourcemanagement;
 
 public abstract class AbstractResourceBoth extends AbstractResource {
 
-	private AbstractResource resourceWorkspace;
-	private AbstractResource resourceRepository;
+    private AbstractResource resourceWorkspace;
+    private AbstractResource resourceRepository;
 
-	public AbstractResourceBoth(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
-		super(resourceWorkspace.isEditable() && resourceRepository.isEditable());
-		this.resourceWorkspace = resourceWorkspace;
-		this.resourceRepository = resourceRepository;
-	}
-	
-	public AbstractResource getResourceWorkspace() {
-		return resourceWorkspace;
-	}
+    public AbstractResourceBoth(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        super(resourceWorkspace.isEditable() && resourceRepository.isEditable());
+        this.resourceWorkspace = resourceWorkspace;
+        this.resourceRepository = resourceRepository;
+    }
 
-	public AbstractResource getResourceRepository() {
-		return resourceRepository;
-	}
+    public AbstractResource getResourceWorkspace() {
+        return resourceWorkspace;
+    }
+
+    public AbstractResource getResourceRepository() {
+        return resourceRepository;
+    }
 
 }

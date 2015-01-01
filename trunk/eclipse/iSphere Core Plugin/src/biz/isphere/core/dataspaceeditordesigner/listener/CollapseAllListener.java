@@ -13,9 +13,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 public class CollapseAllListener implements SelectionListener {
-    
+
     private TreeViewer viewer;
-    
+
     public CollapseAllListener(TreeViewer viewer) {
         this.viewer = viewer;
     }

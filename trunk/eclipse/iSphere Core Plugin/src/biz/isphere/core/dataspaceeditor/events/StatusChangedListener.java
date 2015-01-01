@@ -13,5 +13,5 @@ import java.util.EventListener;
 public interface StatusChangedListener extends EventListener {
 
     public void statusChanged(StatusChangedEvent anEvent);
-    
+
 }

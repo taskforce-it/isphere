@@ -23,7 +23,7 @@ public class ErrorLoggedException extends Exception {
     public ErrorLoggedException(String message, Throwable aCause) {
         super(message, aCause);
     }
-    
+
     @Override
     public String getLocalizedMessage() {
         return localizedText;

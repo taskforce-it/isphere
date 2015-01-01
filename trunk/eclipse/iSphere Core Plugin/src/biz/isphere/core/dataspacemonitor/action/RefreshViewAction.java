@@ -14,9 +14,9 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 
 public class RefreshViewAction extends Action {
-    
+
     private IDialogView view;
-    
+
     public RefreshViewAction(IDialogView view) {
         super("Refresh");
         this.view = view;

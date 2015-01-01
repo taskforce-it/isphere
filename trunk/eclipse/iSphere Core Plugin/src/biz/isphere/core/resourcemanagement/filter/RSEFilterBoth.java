@@ -12,25 +12,25 @@ import biz.isphere.core.resourcemanagement.AbstractResourceBoth;
 
 public class RSEFilterBoth extends AbstractResourceBoth {
 
-	private String name;
+    private String name;
 
-	public RSEFilterBoth(String name, RSEFilter workspaceFilter, RSEFilter repositoryFilter) {
-		super(workspaceFilter, repositoryFilter);
-		this.name = name;
-	}
+    public RSEFilterBoth(String name, RSEFilter workspaceFilter, RSEFilter repositoryFilter) {
+        super(workspaceFilter, repositoryFilter);
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getKey() {
-		return null;
-	}
+    @Override
+    public String getKey() {
+        return null;
+    }
 
-	@Override
-	public String getValue() {
-		return null;
-	}
-	
+    @Override
+    public String getValue() {
+        return null;
+    }
+
 }

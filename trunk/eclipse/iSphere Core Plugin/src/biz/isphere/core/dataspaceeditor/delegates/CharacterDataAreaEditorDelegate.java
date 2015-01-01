@@ -160,7 +160,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     public void setEnabled(boolean isEnabled) {
         dataAreaText.setEditable(isEnabled);
     }
-    
+
     /**
      * {@inheritDoc}
      */

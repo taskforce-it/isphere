@@ -27,7 +27,7 @@ public class DeleteDataSpaceEditorListener extends SelectionAdapter {
 
     @Override
     public void widgetSelected(SelectionEvent event) {
-        
+
         if (MessageDialog.openConfirm(shell, "Confirm delete", "Do you really want to delete the selected editors?")) {
             editor.deleteDataSpaceEditors();
         }

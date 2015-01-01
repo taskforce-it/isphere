@@ -186,7 +186,7 @@ public class SpooledFile {
         this.creationDate = creationDate;
         creationDateFormatted = null;
     }
-    
+
     private void setCreationDate(Date creationDate) {
         DateFormat formatter = new SimpleDateFormat("yyMMdd");
         Calendar calendar = Calendar.getInstance();
@@ -198,7 +198,7 @@ public class SpooledFile {
         }
         creationDateFormatted = null;
     }
-    
+
     public String getCreationTime() {
         return creationTime;
     }

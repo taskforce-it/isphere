@@ -26,6 +26,7 @@ public class CompareDifferencer extends Differencer {
     public CompareDifferencer(CompareEditorConfiguration aCompareEditorConfiguration) {
         config = aCompareEditorConfiguration;
     }
+
     @Override
     protected boolean contentsEqual(Object input1, Object input2) {
 

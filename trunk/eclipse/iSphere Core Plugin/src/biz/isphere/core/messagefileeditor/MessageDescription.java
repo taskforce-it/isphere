@@ -14,7 +14,7 @@ public class MessageDescription {
 
     public static final String CCSID_JOB = "*JOB";
     public static final String CCSID_HEX = "*HEX";
-    
+
     private String connection;
     private String library;
     private String messageFile;

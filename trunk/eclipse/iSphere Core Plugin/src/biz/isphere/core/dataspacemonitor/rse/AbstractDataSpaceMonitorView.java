@@ -170,12 +170,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void setData(RemoteObject[] remoteObjects) {
 
         if (!checkInputData(remoteObjects)) {
-            return ;
+            return;
         }
 
         RemoteObject remoteObject = remoteObjects[0];
         if (!checkRemoteObjectType(remoteObject)) {
-            return ;
+            return;
         }
 
         DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
@@ -188,7 +188,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
              * generate the editor. Although it might be quite ugly, generating
              * a text field for a 2000-byte character value.
              */
-            return ;
+            return;
         }
 
         /*
@@ -198,7 +198,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, remoteObject, selectedEditor);
         loadDataJob.schedule();
 
-        return ;
+        return;
     }
 
     protected boolean checkRemoteObjectType(RemoteObject remoteObject) {
@@ -580,7 +580,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
             setData(remoteObjects);
-            
+
             return Status.OK_STATUS;
         }
     }

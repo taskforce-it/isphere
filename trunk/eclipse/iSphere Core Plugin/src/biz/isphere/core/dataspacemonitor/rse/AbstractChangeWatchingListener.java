@@ -17,7 +17,7 @@ import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 public abstract class AbstractChangeWatchingListener extends SelectionAdapter {
 
     private DataSpaceEditorManager manager = new DataSpaceEditorManager();
-    
+
     public AbstractChangeWatchingListener() {
     }
 
@@ -30,7 +30,7 @@ public abstract class AbstractChangeWatchingListener extends SelectionAdapter {
     protected String getControlValue(Control control) {
         return manager.getControlValue(control);
     }
-    
+
     protected abstract boolean isVisible();
 
     protected abstract void setVisible(boolean visible);

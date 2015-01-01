@@ -35,7 +35,7 @@ public class XFNDSTR_search {
 
             int[] indices = new int[1];
             pcml.setIntValue("XFNDSTR_search.size", _searchOptions.getSearchArguments().size());
-            
+
             for (indices[0] = 0; indices[0] < _searchOptions.getSearchArguments().size(); indices[0]++) {
                 SearchArgument searchArgument = _searchOptions.getSearchArguments().get(indices[0]);
                 pcml.setIntValue("XFNDSTR_search.arguments.operator", indices, searchArgument.getOperator());

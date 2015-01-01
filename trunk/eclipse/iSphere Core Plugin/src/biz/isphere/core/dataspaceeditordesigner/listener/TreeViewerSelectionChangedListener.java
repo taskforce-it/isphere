@@ -29,15 +29,15 @@ public class TreeViewerSelectionChangedListener implements ISelectionChangedList
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
-        
+
         DEditor[] selectedEditors = editor.getSelectedDataSpaceEditors();
-        
+
         if (selectedEditors.length > 0) {
             setToolItemsEnablement(true);
         } else {
             setToolItemsEnablement(false);
         }
-        
+
         if (selectedEditors.length == 1) {
             editor.setDescription(selectedEditors[0].getDescription());
         } else {
