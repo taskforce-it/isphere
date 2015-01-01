@@ -38,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.adapter.swt.widgets.XFileDialog;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 import biz.isphere.lpex.tasktags.Messages;
 import biz.isphere.lpex.tasktags.preferences.Preferences;
 
@@ -164,7 +165,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         btnComposite.setLayout(rl_btnComposite);
         btnComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 
-        btnNew = new Button(btnComposite, SWT.NONE);
+        btnNew = WidgetFactory.createPushButton(btnComposite);
         btnNew.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent anEvent) {
@@ -173,7 +174,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         btnNew.setText(Messages.PreferencesPage_btnNew);
 
-        btnEdit = new Button(btnComposite, SWT.NONE);
+        btnEdit = WidgetFactory.createPushButton(btnComposite);
         btnEdit.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent anEvent) {
@@ -182,7 +183,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         btnEdit.setText(Messages.PreferencesPage_btnEdit);
 
-        btnRemove = new Button(btnComposite, SWT.NONE);
+        btnRemove = WidgetFactory.createPushButton(btnComposite);
         btnRemove.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent anEvent) {
@@ -194,7 +195,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         new Label(btnComposite, SWT.HORIZONTAL);
 
-        btnExport = new Button(btnComposite, SWT.NONE);
+        btnExport = WidgetFactory.createPushButton(btnComposite);
         btnExport.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent anEvent) {
@@ -203,7 +204,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         btnExport.setText(Messages.PreferencesPage_btnExport);
 
-        btnImport = new Button(btnComposite, SWT.NONE);
+        btnImport = WidgetFactory.createPushButton(btnComposite);
         btnImport.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent anEvent) {
@@ -212,7 +213,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         });
         btnImport.setText(Messages.PreferencesPage_btnImport);
 
-        chkEnableLPEXTaskTags = new Button(mainPanel, SWT.CHECK);
+        chkEnableLPEXTaskTags = WidgetFactory.createCheckbox(mainPanel);
         chkEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnEnableTaskTags);
         new Label(mainPanel, SWT.NONE);
         new Label(mainPanel, SWT.NONE);
