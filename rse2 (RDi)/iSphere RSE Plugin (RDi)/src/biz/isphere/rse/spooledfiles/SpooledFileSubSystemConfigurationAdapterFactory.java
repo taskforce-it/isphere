@@ -16,6 +16,7 @@ public class SpooledFileSubSystemConfigurationAdapterFactory implements IAdapter
 
     private ISubSystemConfigurationAdapter ssConfigAdapter = new SpooledFileSubSystemConfigurationAdapter();
 
+    @SuppressWarnings("rawtypes")
     public Class[] getAdapterList() {
         return new Class[] { ISubSystemConfigurationAdapter.class };
     }
@@ -24,6 +25,7 @@ public class SpooledFileSubSystemConfigurationAdapterFactory implements IAdapter
         manager.registerAdapters(this, SpooledFileSubSystemFactory.class);
     }
 
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         Object adapter = null;
         if ((adaptableObject instanceof SpooledFileSubSystemFactory)) {

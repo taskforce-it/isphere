@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.widgets.ButtonLockedListener;
-import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
