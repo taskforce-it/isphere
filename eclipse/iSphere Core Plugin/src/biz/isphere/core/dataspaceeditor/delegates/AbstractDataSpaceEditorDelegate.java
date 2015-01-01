@@ -58,7 +58,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     public void setStatusBar(StatusBar aStatusBar) {
         statusBar = aStatusBar;
     }
-    
+
     /**
      * Sets a message that is shown in the status bar.
      * 
@@ -67,7 +67,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     public void setStatusMessage(String message) {
         statusBar.setMessage(message);
     }
-    
+
     /**
      * Sets an info message that is shown in the status bar.
      * 
@@ -297,7 +297,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     public abstract void setInitialFocus();
 
     public abstract void setEnabled(boolean isEnabled);
-    
+
     protected void resetDirtyFlag() {
         dataAreaEditor.setDirty(false);
     }

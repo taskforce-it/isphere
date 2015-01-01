@@ -10,6 +10,6 @@ package biz.isphere.core.resourcemanagement;
 
 public interface IEditingArea {
 
-	public String getTitle();
+    public String getTitle();
 
 }

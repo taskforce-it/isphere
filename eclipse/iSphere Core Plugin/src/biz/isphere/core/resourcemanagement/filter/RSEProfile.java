@@ -9,7 +9,7 @@
 package biz.isphere.core.resourcemanagement.filter;
 
 public class RSEProfile {
-    
+
     private String name;
     private Object origin;
 
@@ -17,7 +17,7 @@ public class RSEProfile {
         name = null;
         origin = null;
     }
-    
+
     public RSEProfile(String name, Object origin) {
         this.name = name;
         this.origin = origin;
@@ -38,5 +38,5 @@ public class RSEProfile {
     public void setOrigin(Object origin) {
         this.origin = origin;
     }
-    
+
 }

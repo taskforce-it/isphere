@@ -15,17 +15,17 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaBothEqual extends AbstractFilterEditingArea {
 
-	public FilterEditingAreaBothEqual(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
-		super(parent, resources, both, singleFilterPool);
-	}
+    public FilterEditingAreaBothEqual(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+        super(parent, resources, both, singleFilterPool);
+    }
 
-	@Override
-	protected String[] getActions(boolean both) {
-		return getActionsBothEqual();
-	}
+    @Override
+    protected String[] getActions(boolean both) {
+        return getActionsBothEqual();
+    }
 
-	public String getTitle() {
-		return Messages.Filters + " " + getTitleBothEqual() + " " + Messages.type_and_string;
-	}
+    public String getTitle() {
+        return Messages.Filters + " " + getTitleBothEqual() + " " + Messages.type_and_string;
+    }
 
 }

@@ -13,9 +13,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 public class ExpandAllListener implements SelectionListener {
-    
+
     private TreeViewer viewer;
-    
+
     public ExpandAllListener(TreeViewer viewer) {
         this.viewer = viewer;
     }

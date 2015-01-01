@@ -89,7 +89,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         textURLForUpdates.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textURLForUpdates.setTextLimit(256);
 
-        buttonStartSearchForUpdates=WidgetFactory.createPushButton(container);
+        buttonStartSearchForUpdates = WidgetFactory.createPushButton(container);
         buttonStartSearchForUpdates.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         buttonStartSearchForUpdates.setText(Messages.Search_for_updates);
         buttonStartSearchForUpdates.addSelectionListener(new SelectionAdapter() {

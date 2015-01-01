@@ -17,9 +17,9 @@ import org.eclipse.swt.graphics.GC;
 import biz.isphere.core.ISpherePlugin;
 
 public final class FontHelper {
-    
+
     public static final String EDITOR_FIXED_SIZE = "biz.isphere.fonts.editors.fixedsize";
-    
+
     public static Font getFixedSizeFont() {
         FontRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
         return registry.get(EDITOR_FIXED_SIZE);

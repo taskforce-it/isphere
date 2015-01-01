@@ -64,19 +64,19 @@ public class ControlPayload {
     public EventListener getLockedListener() {
         return listener;
     }
-    
+
     public void setInvalidDataWarning(boolean invalidDataWarning) {
         this.invalidDataWarning = invalidDataWarning;
     }
-    
+
     public boolean hasInvalidDataWarning() {
         return invalidDataWarning;
     }
-    
+
     public void setInvalidDataError(boolean invalidDataWarning) {
         this.invalidDataError = invalidDataWarning;
     }
-    
+
     public boolean hasInvalidDataError() {
         return invalidDataError;
     }

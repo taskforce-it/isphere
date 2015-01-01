@@ -15,7 +15,7 @@ public interface IDialogView extends IDropObjectListener {
     public void setData(RemoteObject[] remoteObjects);
 
     public void refreshDataSynchronously();
-    
+
     public void setRefreshInterval(int seconds);
 
 }

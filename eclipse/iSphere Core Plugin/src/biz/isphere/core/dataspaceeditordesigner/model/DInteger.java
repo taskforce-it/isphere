@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataspaceeditordesigner.model;
 
-
 @SuppressWarnings("serial")
 public class DInteger extends AbstractDInteger {
 

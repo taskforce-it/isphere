@@ -22,7 +22,7 @@ public interface IControlDecoration {
     public Control getControl();
 
     public Image getImage();
-    
+
     public void setImage(Image image);
 
     public void hide();

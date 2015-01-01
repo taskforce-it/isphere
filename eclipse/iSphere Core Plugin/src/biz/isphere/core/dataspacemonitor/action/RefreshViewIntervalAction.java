@@ -40,7 +40,7 @@ public class RefreshViewIntervalAction extends Action {
     public int getInterval() {
         return seconds;
     }
-    
+
     @Override
     public void run() {
         view.setRefreshInterval(seconds);

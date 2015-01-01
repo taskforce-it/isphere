@@ -413,7 +413,7 @@ public class Messages extends NLS {
     public static String Files;
 
     public static String Description;
-    
+
     public static String Description_colon;
 
     public static String Export_to_Member_Filter;
@@ -545,7 +545,7 @@ public class Messages extends NLS {
     public static String Search_for_updates;
 
     public static String Search_for_beta_versions;
-    
+
     public static String Failed_to_connect_to_iSphere_update_server;
 
     public static String URL_for_updates;
@@ -567,15 +567,15 @@ public class Messages extends NLS {
     public static String Available_version;
 
     public static String Value_colon;
-    
+
     public static String Length_or_number_of_decimal_digits_on_value_not_valid;
-    
+
     public static String Mode_Insert;
 
     public static String Mode_Overwrite;
 
     public static String Offset;
-    
+
     public static String Text_colon;
 
     public static String Not_enough_space_to_insert_text;
@@ -597,55 +597,55 @@ public class Messages extends NLS {
     public static String Rename_Editor;
 
     public static String Delete_Editor;
-    
+
     public static String Tooltip_0_data_at_offset_1_length_2;
-    
+
     public static String Data_type_Text;
-    
+
     public static String Data_type_Decimal;
-    
+
     public static String Data_type_Boolean;
-    
+
     public static String Data_type_Integer_1_byte;
-    
+
     public static String Data_type_Integer_2_byte;
-    
+
     public static String Data_type_Integer_4_byte;
-    
+
     public static String Data_type_Integer_8_byte;
 
     public static String Data_type_Comment;
-    
-    public static String Expand_all; 
 
-    public static String Collapse_all; 
+    public static String Expand_all;
+
+    public static String Collapse_all;
 
     public static String Loading_sample_data;
 
     public static String Drag_drop_sample_data_from_the_RSE_tree;
-    
+
     public static String Double_click_existing_editor_for_editing_or_create_a_new_one;
-    
+
     public static String Offset_length_of_selected_data;
-    
+
     public static String Add_field_colon;
 
     public static String Name_colon;
-    
+
     public static String Columns_colon;
-    
+
     public static String Columns;
-        
+
     public static String New_0_Field;
-    
+
     public static String Change_0_Field;
 
     public static String Label_colon;
-    
+
     public static String Offset_colon;
 
     public static String Horizontal_span_colon;
-    
+
     public static String Dropped_object_does_not_match_expected_type;
 
     public static String Only_one_data_space_object_must_be_selected_to_provide_sample_data;
@@ -653,7 +653,7 @@ public class Messages extends NLS {
     public static String Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data;
 
     public static String Data_Space_Editor_Designer_Title;
-     
+
     public static String Data_Space_Editor_Designer_Tooltip;
 
     public static String Can_not_display_more_than_one_object_at_a_time;
@@ -675,9 +675,9 @@ public class Messages extends NLS {
     public static String Start_watching;
 
     public static String DftText_Character_value_colon;
-    
+
     public static String DftText_Decimal_value_colon;
-    
+
     public static String DftText_Logical_value_colon;
 
     public static String Single_filter_pool;
@@ -685,11 +685,11 @@ public class Messages extends NLS {
     public static String Pool;
 
     public static String Filter;
-    
+
     public static String Profile;
-    
+
     public static String No_profiles_available;
-    
+
     public static String All_filter_pools;
 
     public static String Invalid_data_warning_Editor_might_not_be_suitable_for_the_data;
@@ -697,43 +697,43 @@ public class Messages extends NLS {
     public static String Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen;
 
     public static String Generated_editor;
-    
+
     public static String Error_logged_exception;
-    
+
     public static String Auto_refresh_menu_item;
-    
+
     public static String Auto_refresh_menu_item_stop;
-    
+
     public static String Auto_refresh_menu_item_stop_tooltip;
-    
+
     public static String Auto_refresh_menu_item_every_A_seconds;
-    
+
     public static String Auto_refresh_menu_item_every_A_seconds_tooltip;
-    
+
     public static String Label_is_missing_Please_specify_a_label;
-    
+
     public static String Offset_is_missing_Please_specify_an_offset;
-    
+
     public static String Invalid_offset_Offset_must_be_greater_or_equal_zero;
-    
+
     public static String Invalid_length_Length_must_be_greater_or_equal_1;
-    
+
     public static String Horizontal_span_is_missing_Please_specify_a_span;
-    
+
     public static String Invalid_horizontal_span_Span_must_be_between_A_and_B;
-    
+
     public static String Text_length;
 
     public static String Data_cannot_be_changed;
 
     public static String No_editor_selected_Cannot_display_any_data;
-    
+
     public static String Move_up;
-    
+
     public static String Move_down;
-    
+
     public static String Properties;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -73,16 +73,16 @@ public class PopupWidget extends MenuAdapter {
 
         Menu menuParent = (Menu)event.getSource();
         AbstractDWidget widget = payload.getWidget();
-        
+
         String text = widget.getLabel().trim();
         if (DComment.class.equals(widget.getClass())) {
             if (StringHelper.isNullOrEmpty(text)) {
                 text = Messages.Data_type_Comment;
-            } else if (DComment.SEPARATOR.equals(text) ||DComment.NONE.equals(text)) {
-                text = Messages.Data_type_Comment + " - " + text; 
+            } else if (DComment.SEPARATOR.equals(text) || DComment.NONE.equals(text)) {
+                text = Messages.Data_type_Comment + " - " + text;
             }
         }
-        
+
         changeWidgetMenuItem = new MenuItem(menuParent, SWT.NONE);
         changeWidgetMenuItem.setText(Messages.Change + ": " + text);
         changeWidgetMenuItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_CHANGE));

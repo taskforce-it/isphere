@@ -32,7 +32,7 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
     private int columns;
     private String key;
     private boolean columnsEqualWidth;
-    
+
     private transient DEditorPropertySource propertySource;
 
     DEditor(String name, int columns) {
@@ -126,13 +126,13 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
     }
 
     public Object getAdapter(Class adapter) {
-         if (adapter == IPropertySource.class) {
-                if (propertySource == null) {
-                    // cache the buttonelementpropertysource
-                    propertySource = new DEditorPropertySource(this);
-                }
-                return propertySource;
-             }
+        if (adapter == IPropertySource.class) {
+            if (propertySource == null) {
+                // cache the buttonelementpropertysource
+                propertySource = new DEditorPropertySource(this);
+            }
+            return propertySource;
+        }
         return null;
     }
 
@@ -202,7 +202,7 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
     void setColumns(int columns) {
         this.columns = columns;
     }
-    
+
     private void prepareToMoveWidget() {
 
         int sequenceNumber = STEP_WIDTH;

@@ -15,17 +15,17 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class FilterEditingAreaRepository extends AbstractFilterEditingArea {
 
-	public FilterEditingAreaRepository(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
-		super(parent, resources, both, singleFilterPool);
-	}
+    public FilterEditingAreaRepository(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
+        super(parent, resources, both, singleFilterPool);
+    }
 
-	@Override
-	protected String[] getActions(boolean both) {
-		return getActionsRepository(both);
-	}
-	
-	public String getTitle() {
-		return Messages.Filters + " " + getTitleRepository();
-	}
+    @Override
+    protected String[] getActions(boolean both) {
+        return getActionsRepository(both);
+    }
+
+    public String getTitle() {
+        return Messages.Filters + " " + getTitleRepository();
+    }
 
 }

@@ -8,7 +8,6 @@
 
 package biz.isphere.core.search;
 
-
 public class SearchArgument {
 
     private int operator;
@@ -69,5 +68,5 @@ public class SearchArgument {
         fromColumn = aFromColumn;
         toColumn = aToColumn;
     }
-    
+
 }

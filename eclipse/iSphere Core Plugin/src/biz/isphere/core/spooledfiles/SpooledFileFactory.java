@@ -89,7 +89,7 @@ public class SpooledFileFactory {
                         ResultSet resultSet = null;
 
                         try {
-                            
+
                             preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + ISpherePlugin.getISphereLibrary()
                                 + _separator + "SPLF WHERE SFHDL = ? ORDER BY SFHDL, SFCNT", ResultSet.TYPE_SCROLL_INSENSITIVE,
                                 ResultSet.CONCUR_READ_ONLY);

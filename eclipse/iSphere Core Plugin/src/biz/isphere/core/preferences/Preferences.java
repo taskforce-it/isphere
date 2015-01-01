@@ -291,7 +291,7 @@ public final class Preferences {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
-        
+
         preferenceStore.setDefault(SEARCH_FOR_UPDATES, getDefaultSearchForUpdates());
         preferenceStore.setDefault(SEARCH_FOR_BETA_VERSIONS, getDefaultSearchForBetaVersions());
         preferenceStore.setDefault(URL_FOR_UPDATES, getDefaultURLForUpdates());

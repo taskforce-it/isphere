@@ -17,11 +17,11 @@ import biz.isphere.core.Messages;
 public class DataSpaceEditorDesignerInput implements IEditorInput {
 
     private String id;
-    
+
     public DataSpaceEditorDesignerInput() {
         id = this.getClass().getName();
     }
-    
+
     public boolean exists() {
         return false;
     }

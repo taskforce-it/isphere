@@ -261,7 +261,7 @@ public class MessageDescriptionViewer {
         compositePreviewButton.setLayout(new GridLayout(1, false));
 
         if (PluginCheck.hasPlugin("biz.isphere.rse")) {
-            Button buttonMessagePreview=WidgetFactory.createPushButton(compositePreviewButton);
+            Button buttonMessagePreview = WidgetFactory.createPushButton(compositePreviewButton);
             buttonMessagePreview.setText(Messages.Display_MessageDescription_Preview_View);
             buttonMessagePreview.setToolTipText(Messages.Display_MessageDescription_Preview_View_ToolTip);
             buttonMessagePreview.addSelectionListener(new TableViewerSelectionAdapter());

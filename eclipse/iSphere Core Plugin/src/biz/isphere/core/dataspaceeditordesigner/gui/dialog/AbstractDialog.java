@@ -71,10 +71,10 @@ public abstract class AbstractDialog extends XDialog {
     }
 
     protected Text createNameField(Composite parent, String label) {
-//        Text textField = createTextField(parent, label);
-//        textField.setTextLimit(10);
+        // Text textField = createTextField(parent, label);
+        // textField.setTextLimit(10);
         createLabel(parent, label);
-        
+
         Text textField = WidgetFactory.createText(parent);
         textField.setTextLimit(10);
         textField.setLayoutData(createTextFieldLayoutData());
@@ -117,10 +117,10 @@ public abstract class AbstractDialog extends XDialog {
         // Text text = createTextField(parent, label);
         // text.addVerifyListener(new NumericOnlyVerifyListener());
         createLabel(parent, label);
-        
+
         Text text = WidgetFactory.createIntegerText(parent);
         text.setLayoutData(createTextFieldLayoutData());
-        
+
         return text;
     }
 

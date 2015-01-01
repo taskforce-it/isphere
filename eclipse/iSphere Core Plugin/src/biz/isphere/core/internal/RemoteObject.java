@@ -47,7 +47,7 @@ public class RemoteObject {
     public String getDescription() {
         return description;
     }
-    
+
     public String getQuaifiedObject() {
         return library + "/" + name + " (" + objectType + ")";
     }

@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataspaceeditordesigner.model;
 
-
 public class DTemplateEditor {
 
     private String name;
@@ -32,7 +31,7 @@ public class DTemplateEditor {
     public String getDescription() {
         return description;
     }
-    
+
     public int getColumns() {
         return columns;
     }
