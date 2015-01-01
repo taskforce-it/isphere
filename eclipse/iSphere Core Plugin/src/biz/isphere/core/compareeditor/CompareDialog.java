@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
@@ -36,10 +35,10 @@ import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
 
-    private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY"; 
-    private static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY"; 
-    private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY"; 
-    
+    private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY";
+    private static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY";
+    private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY";
+
     private boolean selectEditable;
     private Member leftMember;
     private Member rightMember;
@@ -319,7 +318,7 @@ public abstract class CompareDialog extends XDialog {
             if (hasRight) {
 
                 if (!hasAncestor) {
-                    
+
                     Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
                     GridLayout middleLayout = new GridLayout();
                     middleLayout.numColumns = 1;
@@ -334,7 +333,7 @@ public abstract class CompareDialog extends XDialog {
                             switchLeftAndRightMember(leftMember, rightMember);
                         }
                     });
-                    
+
                 }
 
                 Group rightGroup = new Group(rtnGroup, SWT.NONE);
@@ -438,7 +437,7 @@ public abstract class CompareDialog extends XDialog {
                 if (ancestorMember.isArchive()) {
                     Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
                     ancestorTimeLabel.setText(Messages.Archive_colon);
-                    Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup); 
+                    Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
                     ancestorTimeText.setLayoutData(getGridData());
                     ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime());
                 }
@@ -454,7 +453,7 @@ public abstract class CompareDialog extends XDialog {
                 setAncestorVisible(true);
             }
         }
-        
+
         return rtnGroup;
     }
 
@@ -510,9 +509,9 @@ public abstract class CompareDialog extends XDialog {
         if (!defined) {
             threeWay = threeWayButton.getSelection();
         }
-        
+
         storeScreenValues();
-        
+
         // Close screen
         super.okPressed();
     }
@@ -559,7 +558,7 @@ public abstract class CompareDialog extends XDialog {
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
     }
-    
+
     private void storeScreenValues() {
         getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
         getDialogBoundsSettings().put(CONSIDER_DATE_PROPERTY, considerDate);
