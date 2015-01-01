@@ -22,102 +22,96 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 public abstract class AbstractFilterEditingDialog extends AbstractEditingDialog {
 
     private boolean singleFilterPool;
-	private RSEFilter[] resourceWorkspace;
-	private RSEFilter[] resourceRepository;
-	private RSEFilterBoth[] resourceBothDifferent;
-	private RSEFilter[] resourceBothEqual;
-	
-	public AbstractFilterEditingDialog(
-			Shell parentShell, 
-			boolean editWorkspace, boolean editRepository, boolean editBoth, boolean singleFilterPool, String workspace, String repository, 
-			RSEFilter[] resourceWorkspace, RSEFilter[] resourceRepository, 
-			RSEFilterBoth[] resourceBothDifferent, RSEFilter[] resourceBothEqual) {
-		super(parentShell, editWorkspace, editRepository, editBoth, workspace, repository,
-				resourceWorkspace, resourceRepository, resourceBothDifferent, resourceBothEqual);
-		this.singleFilterPool = singleFilterPool;
-		this.resourceWorkspace = resourceWorkspace;
-		this.resourceRepository = resourceRepository;
-		this.resourceBothDifferent = resourceBothDifferent;
-		this.resourceBothEqual = resourceBothEqual;
-	}
+    private RSEFilter[] resourceWorkspace;
+    private RSEFilter[] resourceRepository;
+    private RSEFilterBoth[] resourceBothDifferent;
+    private RSEFilter[] resourceBothEqual;
 
-	@Override
-	protected String getTitle() {
-		return Messages.RSE_Filter_Management;
-	}
+    public AbstractFilterEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth, boolean singleFilterPool,
+        String workspace, String repository, RSEFilter[] resourceWorkspace, RSEFilter[] resourceRepository, RSEFilterBoth[] resourceBothDifferent,
+        RSEFilter[] resourceBothEqual) {
+        super(parentShell, editWorkspace, editRepository, editBoth, workspace, repository, resourceWorkspace, resourceRepository,
+            resourceBothDifferent, resourceBothEqual);
+        this.singleFilterPool = singleFilterPool;
+        this.resourceWorkspace = resourceWorkspace;
+        this.resourceRepository = resourceRepository;
+        this.resourceBothDifferent = resourceBothDifferent;
+        this.resourceBothEqual = resourceBothEqual;
+    }
 
-	@Override
-	protected boolean isEditingAreaWorkspace() {
-		if (resourceWorkspace != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    @Override
+    protected String getTitle() {
+        return Messages.RSE_Filter_Management;
+    }
 
-	@Override
-	protected AbstractEditingArea getEditingAreaWorkspace(Composite container, boolean both) {
-		return new FilterEditingAreaWorkspace(container, resourceWorkspace, both, singleFilterPool);
-	}
+    @Override
+    protected boolean isEditingAreaWorkspace() {
+        if (resourceWorkspace != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	protected boolean isEditingAreaRepository() {
-		if (resourceRepository != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    @Override
+    protected AbstractEditingArea getEditingAreaWorkspace(Composite container, boolean both) {
+        return new FilterEditingAreaWorkspace(container, resourceWorkspace, both, singleFilterPool);
+    }
 
-	@Override
-	protected AbstractEditingArea getEditingAreaRepository(Composite container, boolean both) {
-		return new FilterEditingAreaRepository(container, resourceRepository, both, singleFilterPool);
-	}
+    @Override
+    protected boolean isEditingAreaRepository() {
+        if (resourceRepository != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	protected boolean isEditingAreaBothDifferent() {
-		if (resourceBothDifferent != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    @Override
+    protected AbstractEditingArea getEditingAreaRepository(Composite container, boolean both) {
+        return new FilterEditingAreaRepository(container, resourceRepository, both, singleFilterPool);
+    }
 
-	@Override
-	protected AbstractEditingArea getEditingAreaBothDifferent(Composite container, boolean both) {
-		return new FilterEditingAreaBothDifferent(container, resourceBothDifferent, both, singleFilterPool);
-	}
+    @Override
+    protected boolean isEditingAreaBothDifferent() {
+        if (resourceBothDifferent != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	protected boolean isEditingAreaBothEqual() {
-		if (resourceBothEqual != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    @Override
+    protected AbstractEditingArea getEditingAreaBothDifferent(Composite container, boolean both) {
+        return new FilterEditingAreaBothDifferent(container, resourceBothDifferent, both, singleFilterPool);
+    }
 
-	@Override
-	protected AbstractEditingArea getEditingAreaBothEqual(Composite container, boolean both) {
-		return new FilterEditingAreaBothEqual(container, resourceBothEqual, both, singleFilterPool);
-	}
+    @Override
+    protected boolean isEditingAreaBothEqual() {
+        if (resourceBothEqual != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	protected String getWorkspaceText() {
-		return Messages.Filter_pool;
-	}
+    @Override
+    protected AbstractEditingArea getEditingAreaBothEqual(Composite container, boolean both) {
+        return new FilterEditingAreaBothEqual(container, resourceBothEqual, both, singleFilterPool);
+    }
 
-	@Override
-	protected boolean saveRepository(String repository, ArrayList<AbstractResource> newRepository) {
-		RSEFilter[] filters = new RSEFilter[newRepository.size()];
-		newRepository.toArray(filters);
+    @Override
+    protected String getWorkspaceText() {
+        return Messages.Filter_pool;
+    }
+
+    @Override
+    protected boolean saveRepository(String repository, ArrayList<AbstractResource> newRepository) {
+        RSEFilter[] filters = new RSEFilter[newRepository.size()];
+        newRepository.toArray(filters);
         return saveFiltersToXML(new File(repository), singleFilterPool, filters);
-	}
+    }
 
     protected abstract boolean saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters);
-	
+
 }

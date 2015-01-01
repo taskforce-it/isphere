@@ -98,7 +98,7 @@ public class SearchDialog extends AbstractSearchDialog {
         groupOptions.setLayout(new GridLayout(1, false));
 
         GridData tGridData;
-        includeFirstLevelTextButton=WidgetFactory.createCheckbox(groupOptions);
+        includeFirstLevelTextButton = WidgetFactory.createCheckbox(groupOptions);
         includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
         includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
         tGridData = new GridData(SWT.HORIZONTAL);
@@ -108,11 +108,12 @@ public class SearchDialog extends AbstractSearchDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 setOKButtonEnablement();
             }
+
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
 
-        includeSecondLevelTextButton=WidgetFactory.createCheckbox(groupOptions);
+        includeSecondLevelTextButton = WidgetFactory.createCheckbox(groupOptions);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
         tGridData = new GridData(SWT.HORIZONTAL);
@@ -122,6 +123,7 @@ public class SearchDialog extends AbstractSearchDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 setOKButtonEnablement();
             }
+
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
@@ -152,8 +154,10 @@ public class SearchDialog extends AbstractSearchDialog {
     public void setElementsSearchOptions(SearchOptions _searchOptions) {
         _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-        // _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
-        // _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
+        // _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new
+        // Boolean(isIncludeFirstLevelText()));
+        // _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new
+        // Boolean(isIncludeSecondLevelText()));
     };
-    
+
 }

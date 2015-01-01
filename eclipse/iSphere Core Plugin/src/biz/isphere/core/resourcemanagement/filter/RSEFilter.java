@@ -15,114 +15,110 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class RSEFilter extends AbstractResource {
 
-	public static final String TYPE_LIBRARY = "LIBRARY";
-	public static final String TYPE_OBJECT = "OBJECT";
-	public static final String TYPE_MEMBER = "MEMBER";
-	public static final String TYPE_UNKNOWN = "UNKNOWN";
+    public static final String TYPE_LIBRARY = "LIBRARY";
+    public static final String TYPE_OBJECT = "OBJECT";
+    public static final String TYPE_MEMBER = "MEMBER";
+    public static final String TYPE_UNKNOWN = "UNKNOWN";
 
-	private RSEFilterPool filterPool;
-	private String name;
-	private String type;
-	private String[] filterStrings;
-	private Object origin;
+    private RSEFilterPool filterPool;
+    private String name;
+    private String type;
+    private String[] filterStrings;
+    private Object origin;
 
-	public RSEFilter(boolean editable) {
-		super(editable);
-		this.filterPool = null;
-		this.name = null;
-		this.type = null;
-		this.filterStrings = null;
-		this.origin = null;
-	}
-	
-	public RSEFilter(RSEFilterPool filterPool, String name, String type, String[] filterStrings, boolean editable, Object origin) {
-		super(editable);
-		this.filterPool = filterPool;
-		this.name = name;
-		this.type = type;
-		this.filterStrings = filterStrings;
-		this.origin = origin;
-		Arrays.sort(this.filterStrings);
-	}
+    public RSEFilter(boolean editable) {
+        super(editable);
+        this.filterPool = null;
+        this.name = null;
+        this.type = null;
+        this.filterStrings = null;
+        this.origin = null;
+    }
 
-	public RSEFilterPool getFilterPool() {
-		return filterPool;
-	}
+    public RSEFilter(RSEFilterPool filterPool, String name, String type, String[] filterStrings, boolean editable, Object origin) {
+        super(editable);
+        this.filterPool = filterPool;
+        this.name = name;
+        this.type = type;
+        this.filterStrings = filterStrings;
+        this.origin = origin;
+        Arrays.sort(this.filterStrings);
+    }
 
-	public void setFilterPool(RSEFilterPool filterPool) {
-		this.filterPool = filterPool;
-	}
+    public RSEFilterPool getFilterPool() {
+        return filterPool;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setFilterPool(RSEFilterPool filterPool) {
+        this.filterPool = filterPool;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String[] getFilterStrings() {
-		return filterStrings;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setFilterStrings(String[] filterStrings) {
-		this.filterStrings = filterStrings;
-	      Arrays.sort(this.filterStrings);
-	}
+    public String[] getFilterStrings() {
+        return filterStrings;
+    }
 
-	public Object getOrigin() {
-		return origin;
-	}
+    public void setFilterStrings(String[] filterStrings) {
+        this.filterStrings = filterStrings;
+        Arrays.sort(this.filterStrings);
+    }
 
-	public void setOrigin(Object origin) {
-		this.origin = origin;
-	}
+    public Object getOrigin() {
+        return origin;
+    }
 
-	public String getDisplayFilterString() {
-		StringBuffer buffer = new StringBuffer("");
-		for (int idx = 0; idx < filterStrings.length; idx++) {
-			if (idx > 0) {
-				buffer.append("     ");
-			}
-			buffer.append(filterStrings[idx]);
-		}
-		return buffer.toString();
-	}
+    public void setOrigin(Object origin) {
+        this.origin = origin;
+    }
 
-	@Override
-	public String getKey() {
-		return filterPool.getName() + ":" + name;
-	}
+    public String getDisplayFilterString() {
+        StringBuffer buffer = new StringBuffer("");
+        for (int idx = 0; idx < filterStrings.length; idx++) {
+            if (idx > 0) {
+                buffer.append("     ");
+            }
+            buffer.append(filterStrings[idx]);
+        }
+        return buffer.toString();
+    }
 
-	@Override
-	public String getValue() {
-		return type + ":" + getDisplayFilterString();
-	}
+    @Override
+    public String getKey() {
+        return filterPool.getName() + ":" + name;
+    }
 
-	public static String getTypeText(String type) {
-	    if (type.equals(TYPE_LIBRARY)) {
-	        return Messages.Library;
-	    }
-	    else if (type.equals(TYPE_OBJECT)) {
-	        return Messages.Object;
-	    }
-	    else if (type.equals(TYPE_MEMBER)) {
-	        return Messages.Member;
-	    }
-	    else if (type.equals(TYPE_UNKNOWN)) {
-	        return Messages.Unknown;
-	    }
-	    else {
-	        return "*UNKNOWN";
-	    }
-	}
-	
+    @Override
+    public String getValue() {
+        return type + ":" + getDisplayFilterString();
+    }
+
+    public static String getTypeText(String type) {
+        if (type.equals(TYPE_LIBRARY)) {
+            return Messages.Library;
+        } else if (type.equals(TYPE_OBJECT)) {
+            return Messages.Object;
+        } else if (type.equals(TYPE_MEMBER)) {
+            return Messages.Member;
+        } else if (type.equals(TYPE_UNKNOWN)) {
+            return Messages.Unknown;
+        } else {
+            return "*UNKNOWN";
+        }
+    }
+
 }

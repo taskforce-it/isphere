@@ -16,7 +16,8 @@ import java.io.ObjectOutputStream;
 public final class ObjectHelper {
 
     /**
-     * Serializes and deserializes a given object to create a deep-cloned object.
+     * Serializes and deserializes a given object to create a deep-cloned
+     * object.
      * <p>
      * Inspired by:
      * <p>
