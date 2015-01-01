@@ -420,17 +420,11 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
     private void createDescriptionViewer(Composite panel) {
 
-        descriptionViewer = WidgetFactory.createMultilineText(panel);
-        descriptionViewer.setEditable(false);
+        descriptionViewer = WidgetFactory.createReadOnlyMultilineText(panel, true, false);
         int charHeight = FontHelper.getFontCharHeight(descriptionViewer);
         final GridData layoutData = createGridDataFillAndGrab(2);
-        layoutData.heightHint = (int)(charHeight * 3.0);
+        layoutData.heightHint = charHeight * 3;
         descriptionViewer.setLayoutData(layoutData);
-
-//        Listener scrollBarListener = new AutoScrollbarsListener();
-//        descriptionViewer.addListener(SWT.Resize, scrollBarListener);
-//        descriptionViewer.addListener(SWT.Modify, scrollBarListener);
-
     }
 
     private void createAssignDataSpaceToolItems(ToolBar toolBar) {
