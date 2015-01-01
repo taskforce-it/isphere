@@ -17,6 +17,7 @@ public class SpooledFileAdapterFactory extends AbstractSystemRemoteAdapterFactor
 
     private SpooledFileResourceAdapter spooledFileAdapter = new SpooledFileResourceAdapter();
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         ISystemViewElementAdapter adapter = null;

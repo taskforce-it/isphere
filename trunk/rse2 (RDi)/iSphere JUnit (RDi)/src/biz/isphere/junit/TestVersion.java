@@ -24,7 +24,7 @@ public class TestVersion {
     public void testIllegalVersionNumbers() throws Exception {
 
         try {
-            Version a = new Version(null);
+            new Version(null);
             Assert.fail("NULL is not allowed for the constructor.");
         } catch (IllegalArgumentException e) {
             // exception see ==> OK
@@ -32,7 +32,7 @@ public class TestVersion {
         }
 
         try {
-            Version a = new Version("2.1.a");
+            new Version("2.1.a");
             Assert.fail("Version number must not contain characters.");
         } catch (IllegalArgumentException e) {
             // exception see ==> OK
@@ -40,7 +40,7 @@ public class TestVersion {
         }
 
         try {
-            Version a = new Version(".1.1");
+            new Version(".1.1");
             Assert.fail("Version number must not start with a dot.");
         } catch (IllegalArgumentException e) {
             // exception see ==> OK
@@ -48,7 +48,7 @@ public class TestVersion {
         }
 
         try {
-            Version a = new Version("2.1.1.b");
+            new Version("2.1.1.b");
             Assert.fail("Beta part must specify the beta number.");
         } catch (IllegalArgumentException e) {
             // exception see ==> OK
@@ -56,7 +56,7 @@ public class TestVersion {
         }
 
         try {
-            Version a = new Version("2.b1.1");
+            new Version("2.b1.1");
             Assert.fail("Beta part must be at the end.");
         } catch (IllegalArgumentException e) {
             // exception see ==> OK

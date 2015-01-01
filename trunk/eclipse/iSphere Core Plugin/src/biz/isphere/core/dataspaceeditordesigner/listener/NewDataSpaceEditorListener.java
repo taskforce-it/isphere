@@ -17,7 +17,6 @@ import biz.isphere.core.dataspaceeditordesigner.gui.dialog.DEditorDialog;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogEditor;
-import biz.isphere.core.internal.IEditor;
 
 public class NewDataSpaceEditorListener extends SelectionAdapter {
 

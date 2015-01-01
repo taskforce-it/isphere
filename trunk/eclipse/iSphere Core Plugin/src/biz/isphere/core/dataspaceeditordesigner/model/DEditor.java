@@ -125,10 +125,10 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
         return objects;
     }
 
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         if (adapter == IPropertySource.class) {
             if (propertySource == null) {
-                // cache the buttonelementpropertysource
                 propertySource = new DEditorPropertySource(this);
             }
             return propertySource;

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;

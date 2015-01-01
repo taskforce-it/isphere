@@ -69,6 +69,7 @@ public class SpooledFileSubSystemConfigurationAdapter extends SubSystemConfigura
         return ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE_FILTER);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected Vector getAdditionalFilterActions(ISubSystemConfiguration config, ISystemFilter selectedFilter, Shell shell) {
         Vector actions = new Vector();
