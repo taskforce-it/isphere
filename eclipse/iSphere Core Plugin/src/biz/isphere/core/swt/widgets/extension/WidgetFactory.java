@@ -83,9 +83,8 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a multi-line line text field with a border. The text is wrapped
-     * and if the text does not fit into the field, a vertical scroll bar is
-     * displayed.
+     * Produces a multi-line line text field with a border. If the text does not
+     * fit into the field, a vertical scroll bar is displayed.
      * 
      * @param parent - parent composite
      * @return multi-line text field
@@ -95,12 +94,13 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a multi-line line text field with a border. The text is wrapped
-     * and if the text does not fit into the field, a vertical scroll bar is
-     * displayed.
+     * Produces a multi-line line text field with a border. If the text does not
+     * fit into the field, a vertical scroll bar is displayed.
      * 
      * @param parent - parent composite
      * @param wordWrap - <code>true</code>, to enable word wrap
+     * @param autoSelect - <code>true</code>, to select the field content when
+     *        entering the field wit the cursor
      * @return multi-line text field
      */
     public static Text createMultilineText(Composite parent, boolean wordWrap, boolean autoSelect) {
@@ -114,9 +114,8 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a read-only multiline line text field. The text is wrapped and
-     * if the text does not fit into the field, a vertical scroll bar is
-     * displayed.
+     * Produces a read-only multiline line text field. If the text does not fit
+     * into the field, a vertical scroll bar is displayed.
      * 
      * @param parent - parent composite
      * @return read-only multi-line text field
@@ -130,12 +129,13 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a read-only multiline line text field. The text is wrapped and
-     * if the text does not fit into the field, a vertical scroll bar is
-     * displayed.
+     * Produces a read-only multiline line text field. If the text does not fit
+     * into the field, a vertical scroll bar is displayed.
      * 
      * @param parent - parent composite
      * @param wordWrap - <code>true</code>, to enable word wrap
+     * @param autoSelect - <code>true</code>, to select the field content when
+     *        entering the field wit the cursor
      * @return read-only multi-line text field
      */
     public static Text createReadOnlyMultilineText(Composite parent, boolean wordWrap, boolean autoSelect) {
