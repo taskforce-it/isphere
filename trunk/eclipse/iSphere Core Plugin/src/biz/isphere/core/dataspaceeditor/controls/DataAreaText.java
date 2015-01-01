@@ -84,7 +84,7 @@ public class DataAreaText {
     public void setEditable(boolean isEditable) {
         textControl.setEditable(isEditable);
     }
-    
+
     public void setFont(Font aFont) {
         textControl.setFont(aFont);
     }
@@ -248,21 +248,22 @@ public class DataAreaText {
         } else {
             tValue = aValue;
         }
-        
+
         return tValue.replaceAll(CR, "").replaceAll(LF, "");
-        
-//        String[] tLines = textToArray(tValue);
-//        StringBuilder stringValue = new StringBuilder();
-//        for (String line : tLines) {
-//            stringValue.append(line);
-//        }
-//
-//        // TODO: remove debug code
-//        if (!tValue.replaceAll(CR, "").replaceAll(LF, "").equals(stringValue.toString())) {
-//            throw new RuntimeException("Strings do not match as expected.");
-//        }
-//
-//        return stringValue.toString();
+
+        // String[] tLines = textToArray(tValue);
+        // StringBuilder stringValue = new StringBuilder();
+        // for (String line : tLines) {
+        // stringValue.append(line);
+        // }
+        //
+        // // TODO: remove debug code
+        // if (!tValue.replaceAll(CR, "").replaceAll(LF,
+        // "").equals(stringValue.toString())) {
+        // throw new RuntimeException("Strings do not match as expected.");
+        // }
+        //
+        // return stringValue.toString();
     }
 
     private String toScreen(String stringValue) {

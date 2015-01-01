@@ -22,29 +22,26 @@ import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class UpdatesNotifierDialog extends MessageDialog {
 
-	private String availableVersion;
-	private Button doNotShowAgainButton;
+    private String availableVersion;
+    private Button doNotShowAgainButton;
 
-    public UpdatesNotifierDialog(Shell parentShell, String dialogTitle,
-            Image dialogTitleImage, String dialogMessage, int dialogImageType,
-            String[] dialogButtonLabels, int defaultIndex, String availableVersion) {
-        super(parentShell, dialogTitle, dialogTitleImage, dialogMessage,
-                dialogImageType, dialogButtonLabels, defaultIndex);
+    public UpdatesNotifierDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType,
+        String[] dialogButtonLabels, int defaultIndex, String availableVersion) {
+        super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
         this.availableVersion = availableVersion;
     }
 
     protected Control createDialogArea(Composite parent) {
         Control rtnControl = super.createDialogArea(parent);
-        
+
         doNotShowAgainButton = WidgetFactory.createCheckbox((Composite)rtnControl);
         doNotShowAgainButton.setText(Messages.Do_not_show_this_message_again);
-        
+
         return rtnControl;
     }
-    
+
     protected void buttonPressed(int buttonId) {
-        if (doNotShowAgainButton.getSelection()) 
-            Preferences.getInstance().setLastVersionForUpdates(availableVersion);
+        if (doNotShowAgainButton.getSelection()) Preferences.getInstance().setLastVersionForUpdates(availableVersion);
         super.buttonPressed(buttonId);
     }
 

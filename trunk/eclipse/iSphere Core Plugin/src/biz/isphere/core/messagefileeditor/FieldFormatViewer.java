@@ -210,7 +210,7 @@ public class FieldFormatViewer {
         buttonUp.setText(Messages.Up);
         buttonUp.setEnabled(false);
 
-        buttonDown =WidgetFactory.createPushButton(compositeUpDown);
+        buttonDown = WidgetFactory.createPushButton(compositeUpDown);
         buttonDown.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -604,7 +604,8 @@ public class FieldFormatViewer {
 
     }
 
-    // TODO: implement algorithm to properly calculate the table height for a given number of rows.
+    // TODO: implement algorithm to properly calculate the table height for a
+    // given number of rows.
     public int getTableHeight(int visibleTableItems) {
         return 102;
     }

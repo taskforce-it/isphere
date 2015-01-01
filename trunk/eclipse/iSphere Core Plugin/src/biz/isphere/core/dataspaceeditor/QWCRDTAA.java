@@ -20,13 +20,14 @@ public class QWCRDTAA {
     public String getType(AS400 anAS400, String aLibrary, String aDataArea) {
         return run(anAS400, aLibrary, aDataArea);
     }
-    
+
     private String run(AS400 anAS400, String aLibrary, String aDataArea) {
         String type = null;
 
         try {
 
-            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400, "biz.isphere.core.dataspaceeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
+            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400,
+                "biz.isphere.core.dataspaceeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
             pcml.setQualifiedObjectName("QWCRDTAA.dataArea", aLibrary, aDataArea); //$NON-NLS-1$
             pcml.setValue("QWCRDTAA.receiverLength", new Integer((pcml.getOutputsize("QWCRDTAA.receiver")))); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -47,10 +48,10 @@ public class QWCRDTAA {
 
         } catch (PcmlException e) {
 
-//             System.out.println(e.getLocalizedMessage());
-//             e.printStackTrace();
-//             System.out.println("*** Call to QWCRDTAA failed. ***");
-//             return null;
+            // System.out.println(e.getLocalizedMessage());
+            // e.printStackTrace();
+            // System.out.println("*** Call to QWCRDTAA failed. ***");
+            // return null;
 
         }
 

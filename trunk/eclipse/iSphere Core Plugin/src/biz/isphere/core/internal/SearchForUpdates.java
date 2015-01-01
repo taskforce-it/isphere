@@ -78,7 +78,7 @@ public class SearchForUpdates extends Job {
         }
 
         if (showResultAlways || newVersionAvailable) {
-            
+
             if (!showResultAlways) {
                 Version lastVersion;
                 try {
@@ -91,10 +91,9 @@ public class SearchForUpdates extends Job {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null,
-                                getNewVersiontext(availableVersion) + "\n" + Messages.Current_version + ": " + currentVersion + "\n"
-                                    + Messages.Available_version + ": " + availableVersion, MessageDialog.INFORMATION, new String[] { Messages.OK },
-                                0, availableVersion.toString());
+                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersiontext(availableVersion)
+                                + "\n" + Messages.Current_version + ": " + currentVersion + "\n" + Messages.Available_version + ": "
+                                + availableVersion, MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -125,7 +124,7 @@ public class SearchForUpdates extends Job {
     }
 
     private String getNewVersiontext(Version version) {
-        
+
         if (version.isBeta()) {
             return Messages.There_is_a_new_beta_version_available;
         } else {
