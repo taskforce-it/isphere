@@ -260,6 +260,7 @@ public class NLSExporter {
      * getExcelCellCoordinates() to fixed 'A1' gets closer but not close enough.
      * For 'A1' Excel shows 'D4' instead of 'C4'.
      */
+    @SuppressWarnings("unused")
     private void addCellFormatting_doesNotWork(Sheet sheet, Row firstDataRow, Row lastDataRow) {
         createCellFormattingRule_doesNotWork(sheet, firstDataRow, lastDataRow);
     }

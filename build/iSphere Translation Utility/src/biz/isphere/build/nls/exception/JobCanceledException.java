@@ -9,6 +9,9 @@
 package biz.isphere.build.nls.exception;
 
 public class JobCanceledException extends Exception {
+
+    private static final long serialVersionUID = -1908156636924144824L;
+
     public JobCanceledException(String text) {
         super(text);
     }
