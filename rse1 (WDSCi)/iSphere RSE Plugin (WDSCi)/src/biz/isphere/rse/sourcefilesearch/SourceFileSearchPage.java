@@ -37,10 +37,11 @@ import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
-import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
+import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.search.SearchArgumentEditor;
@@ -147,18 +148,18 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         Composite tAllColumnsPanel = new Composite(tColumnsGroup, SWT.NONE);
         GridLayout tAllColumnsLayout = new GridLayout(1, false);
         tAllColumnsPanel.setLayout(tAllColumnsLayout);
-        allColumnsButton = new Button(tAllColumnsPanel, SWT.RADIO);
+        allColumnsButton = WidgetFactory.createRadioButton(tAllColumnsPanel);
         allColumnsButton.setText(Messages.All_columns);
         allColumnsButton.setToolTipText(Messages.Search_all_columns);
 
         Composite tBetweenColumnsPanel = new Composite(tColumnsGroup, SWT.NONE);
         GridLayout tBetweenColumnsLayout = new GridLayout(4, false);
         tBetweenColumnsPanel.setLayout(tBetweenColumnsLayout);
-        betweenColumnsButton = new Button(tBetweenColumnsPanel, SWT.RADIO);
+        betweenColumnsButton = WidgetFactory.createRadioButton(tBetweenColumnsPanel);
         betweenColumnsButton.setText(Messages.Between);
         betweenColumnsButton.setToolTipText(Messages.Search_between_specified_columns);
 
-        startColumnText = new Text(tBetweenColumnsPanel, SWT.BORDER);
+        startColumnText = WidgetFactory.createText(tBetweenColumnsPanel);
         tGridData = new GridData();
         tGridData.widthHint = 30;
         startColumnText.setLayoutData(tGridData);
@@ -168,7 +169,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         Label tAndLabel = new Label(tBetweenColumnsPanel, SWT.LEFT);
         tAndLabel.setText(Messages.and);
 
-        endColumnText = new Text(tBetweenColumnsPanel, SWT.BORDER);
+        endColumnText = WidgetFactory.createText(tBetweenColumnsPanel);
         tGridData = new GridData();
         tGridData.widthHint = 30;
         endColumnText.setLayoutData(tGridData);
@@ -188,7 +189,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tGridData.widthHint = 250;
         tOptionsGroup.setLayoutData(tGridData);
 
-        showAllRecordsButton = new Button(tOptionsGroup, SWT.CHECK);
+        showAllRecordsButton = WidgetFactory.createCheckbox(tOptionsGroup);
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
         tGridData = new GridData(SWT.HORIZONTAL);
