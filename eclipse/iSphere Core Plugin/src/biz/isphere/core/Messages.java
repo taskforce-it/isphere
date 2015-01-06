@@ -734,6 +734,10 @@ public class Messages extends NLS {
 
     public static String Properties;
 
+    public static String Pin_View;
+
+    public static String Restoring_view;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -197,7 +197,7 @@
          	</enablement>
          	
 	         <action
-                class="biz.isphere.rse.dataspaceeditor.rse.MonitorDataAreaAction"
+                class="biz.isphere.rse.actions.MonitorDataAreaAction"
                 enablesFor="*"
                 id="biz.isphere.rse.dataspaceeditor.rse.DataAreaMonitorAction"
                 label="%iSphere_Data_Area_Monitor"
@@ -224,7 +224,7 @@
          	</enablement>
          	
 	         <action
-                class="biz.isphere.rse.dataspaceeditor.rse.MonitorUserSpaceAction"
+                class="biz.isphere.rse.actions.MonitorUserSpaceAction"
                 enablesFor="*"
                 id="biz.isphere.rse.dataspaceeditor.rse.UserSpaceMonitorAction"
                 label="%iSphere_User_Space_Monitor"

@@ -9,13 +9,16 @@
 package biz.isphere.core.dataspacemonitor.rse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -62,10 +65,20 @@ import biz.isphere.core.internal.IJobFinishedListener;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.core.internal.viewmanager.PinViewAction;
 
-public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView, IJobFinishedListener {
+public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView, IPinnableView, IJobFinishedListener {
 
     public static final String ID = "biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"; //$NON-NLS-1$ 
+
+    private static final String CONNECTION_NAME = "connectionName";
+    private static final String OBJECT = "object";
+    private static final String LIBRARY = "library";
+    private static final String OBJECT_TYPE = "objectType";
+    private static final String DESCRIPTION = "description";
+    private static final String EDITOR = "editor";
 
     private DataSpaceEditorRepository repository;
     private DataSpaceEditorManager manager;
@@ -73,7 +86,10 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private Composite mainArea;
     private Composite dataSpaceEditor;
+    private DEditor currentDEditor;
     private DDataSpaceValue currentDataSpaceValue;
+    private Set<String> pinKeys;
+    private Map<String, String> pinProperties;
 
     private Label labelObject;
     private Label labelLibrary;
@@ -82,17 +98,33 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private Label labelInvalidDataWarningOrError;
 
-    private Action refreshViewAction;
+    private RefreshViewAction refreshViewAction;
     private RefreshViewIntervalAction disableRefreshViewAction;
     private List<RefreshViewIntervalAction> refreshIntervalActions;
+    private PinViewAction pinViewAction;
     private AutoRefreshJob autoRefreshJob;
 
     public AbstractDataSpaceMonitorView() {
+
         manager = new DataSpaceEditorManager();
         repository = DataSpaceEditorRepository.getInstance();
         watchManager = new WatchItemManager();
         autoRefreshJob = null;
+
+        pinKeys = new HashSet<String>();
+        pinKeys.add(CONNECTION_NAME);
+        pinKeys.add(OBJECT);
+        pinKeys.add(LIBRARY);
+        pinKeys.add(OBJECT_TYPE);
+        pinKeys.add(DESCRIPTION);
+        pinKeys.add(EDITOR);
+
+        pinProperties = new HashMap<String, String>();
+
+        getViewManager().add(this);
     }
+
+    protected abstract IViewManager getViewManager();
 
     @Override
     public void createPartControl(Composite parent) {
@@ -105,6 +137,22 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         createActions();
         initializeToolBar();
         initializeViewMenu();
+
+        if (!getViewManager().isLoadingView() && getViewManager().isPinned(this)) {
+            restoreViewData();
+        }
+    }
+
+    private void restoreViewData() {
+
+        /*
+         * The view must be restored from a UI job because otherwise the
+         * IViewManager cannot load the IRSEPersistenceManager, because the
+         * RSECorePlugin is not loaded (Maybe, because the UI thread is
+         * blocked?).
+         */
+        RestoreViewJob job = new RestoreViewJob();
+        job.schedule();
     }
 
     private void createActions() {
@@ -112,7 +160,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         refreshViewAction = new RefreshViewAction(this);
         refreshViewAction.setToolTipText(Messages.Refresh_the_contents_of_this_view);
         refreshViewAction.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH));
-        refreshViewAction.setEnabled(false);
 
         disableRefreshViewAction = new RefreshViewIntervalAction(this, -1);
 
@@ -121,11 +168,18 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 3));
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 10));
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
+
+        pinViewAction = new PinViewAction(this);
+        pinViewAction.setToolTipText("Pin View");
+        pinViewAction.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_PIN));
+
+        refreshActionsEnablement();
     }
 
     private void initializeToolBar() {
 
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(pinViewAction);
         toolbarManager.add(disableRefreshViewAction);
         toolbarManager.add(refreshViewAction);
     }
@@ -167,7 +221,25 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
     }
 
+    /**
+     * Sets the data for the view and lets the user select the desired editor.
+     * <p>
+     * This method is used, when a user space or data area is selected from the
+     * RSE tree or when the object is dropped into the view.
+     */
     public void setData(RemoteObject[] remoteObjects) {
+        setData(remoteObjects, null);
+    }
+
+    /**
+     * Sets the data for the view and specified the editor to use.
+     * <p>
+     * This method is used when a pinned view is restored.
+     * 
+     * @param remoteObjects - data that is displayed
+     * @param editorName - name of the editor
+     */
+    public void setData(RemoteObject[] remoteObjects, String editorName) {
 
         if (!checkInputData(remoteObjects)) {
             return;
@@ -178,17 +250,22 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             return;
         }
 
-        DEditor selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
-        if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
-            /*
-             * Cancel job, because we need an editor and user spaces might be
-             * quite large. This way we do not load it for nothing, in case we
-             * cannot find an editor. For all types of data areas we can
-             * generate the editor. Although it might be quite ugly, generating
-             * a text field for a 2000-byte character value.
-             */
-            return;
+        DEditor selectedEditor = null;
+        if (editorName == null) {
+            selectedEditor = loadEditorForDataSpaceObject(getShell(), remoteObject);
+            if (selectedEditor == null && ISeries.USRSPC.equals(remoteObject.getObjectType())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_matching_editor_found);
+                /*
+                 * Cancel job, because we need an editor and user spaces might
+                 * be quite large. This way we do not load it for nothing, in
+                 * case we cannot find an editor. For all types of data areas we
+                 * can generate the editor. Although it might be quite ugly,
+                 * generating a text field for a 2000-byte character value.
+                 */
+                return;
+            }
+        } else if (!DataSpaceEditorManager.GENERATED.equals(editorName)) {
+            selectedEditor = repository.getDataSpaceEditorsForObject(remoteObject, editorName);
         }
 
         /*
@@ -363,6 +440,8 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         addDropSupportOnComposite(dialogEditor);
 
+        currentDEditor = dEditor;
+
         return dialogEditor;
     }
 
@@ -389,6 +468,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         boolean hasInvalidDataWarning = false;
         boolean hasInvalidDataError = false;
+        String errorItem = ""; //$NON-NLS-1$
 
         currentDataSpaceValue = dataSpaceValue;
 
@@ -396,21 +476,25 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         for (Control control : controls) {
             if (manager.isManagedControl(control)) {
                 setControlValue(dataSpaceValue, control);
-                if (!hasInvalidDataWarning) {
-                    hasInvalidDataWarning = manager.hasInvalidDataWarning(control);
-                }
                 if (!hasInvalidDataError) {
-                    hasInvalidDataError = manager.hasInvalidDataError(control);
+                    if (manager.hasInvalidDataError(control)) {
+                        hasInvalidDataError = manager.hasInvalidDataError(control);
+                        errorItem = manager.getPayloadFromControl(control).getWidget().getLabel();
+                    } else if (!hasInvalidDataWarning && manager.hasInvalidDataWarning(control)) {
+                        hasInvalidDataWarning = manager.hasInvalidDataWarning(control);
+                        errorItem = manager.getPayloadFromControl(control).getWidget().getLabel();
+                    }
                 }
             }
         }
 
         if (hasInvalidDataError) {
-            labelInvalidDataWarningOrError.setText(Messages.Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen);
+            labelInvalidDataWarningOrError.setText(errorItem
+                + ": " + Messages.Invalid_data_error_An_exception_was_thrown_when_copying_the_data_to_the_screen); //$NON-NLS-1$
             labelInvalidDataWarningOrError.setBackground(SWTResourceManager.getColor(SWT.COLOR_RED));
             labelInvalidDataWarningOrError.setVisible(true);
         } else if (hasInvalidDataWarning) {
-            labelInvalidDataWarningOrError.setText(Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data);
+            labelInvalidDataWarningOrError.setText(errorItem + ": " + Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data); //$NON-NLS-1$
             labelInvalidDataWarningOrError.setBackground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
             labelInvalidDataWarningOrError.setVisible(true);
         }
@@ -454,6 +538,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             } else {
                 refreshAction.setEnabled(true);
             }
+        }
+
+        if (currentDataSpaceValue == null) {
+            pinViewAction.setEnabled(false);
+        } else {
+            pinViewAction.setEnabled(true);
         }
     }
 
@@ -541,12 +631,54 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
     }
 
+    public void setPinned(boolean pinned) {
+        pinViewAction.setChecked(pinned);
+        updatePinProperties();
+    }
+
+    public boolean isPinned() {
+        return pinViewAction.isChecked();
+    }
+
+    public String getContentId() {
+        if (currentDataSpaceValue == null) {
+            return null;
+        }
+        RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
+        return remoteObject.getAbsoluteName();
+    }
+
+    public Map<String, String> getPinProperties() {
+        return pinProperties;
+    }
+
+    private void updatePinProperties() {
+        if (isPinned()) {
+            RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
+            pinProperties.put(CONNECTION_NAME, remoteObject.getConnectionName());
+            pinProperties.put(OBJECT, remoteObject.getName());
+            pinProperties.put(LIBRARY, remoteObject.getLibrary());
+            pinProperties.put(OBJECT_TYPE, remoteObject.getObjectType());
+            pinProperties.put(DESCRIPTION, remoteObject.getDescription());
+            pinProperties.put(EDITOR, currentDEditor.getName());
+        } else {
+            pinProperties.put(CONNECTION_NAME, null);
+            pinProperties.put(OBJECT, null);
+            pinProperties.put(LIBRARY, null);
+            pinProperties.put(OBJECT_TYPE, null);
+            pinProperties.put(DESCRIPTION, null);
+            pinProperties.put(EDITOR, null);
+        }
+    }
+
     @Override
     public void dispose() {
 
         if (autoRefreshJob != null) {
             autoRefreshJob.cancel();
         }
+
+        getViewManager().remove(this);
 
         super.dispose();
     }
@@ -674,6 +806,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
             copyDataToControls(this.dataSpaceValue);
             refreshEditor();
+            updatePinProperties();
 
             if (finishedListener != null) {
                 finishedListener.jobFinished(this);
@@ -684,9 +817,49 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     }
 
     /**
-     * Job, that periodically refreshs the content of the view.
-     * <p>
-     * It is the third and last job in a series of three.
+     * Job, that restores a pinned view.
+     */
+    private class RestoreViewJob extends UIJob {
+
+        public RestoreViewJob() {
+            super(Messages.Restoring_view);
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+
+            pinViewAction.setChecked(false);
+
+            IViewManager viewManager = getViewManager();
+            if (!viewManager.isInitialized(5000)) {
+                ISpherePlugin.logError("Could not restore view. View manager did not initialize within 5 seconds.", null);
+                return Status.OK_STATUS;
+            }
+
+            pinProperties = viewManager.getPinProperties(AbstractDataSpaceMonitorView.this, pinKeys);
+
+            String connectionName = pinProperties.get(CONNECTION_NAME);
+            String name = pinProperties.get(OBJECT);
+            String library = pinProperties.get(LIBRARY);
+            String objectType = pinProperties.get(OBJECT_TYPE);
+            String description = pinProperties.get(DESCRIPTION);
+            String editorName = pinProperties.get(EDITOR);
+
+            if (connectionName == null || name == null || library == null || objectType == null || editorName == null) {
+                return Status.OK_STATUS;
+            }
+
+            RemoteObject remoteObject = new RemoteObject(connectionName, name, library, objectType, description);
+            setData(new RemoteObject[] { remoteObject }, editorName);
+
+            pinViewAction.setChecked(true);
+
+            return Status.OK_STATUS;
+        }
+    }
+
+    /**
+     * Job, that periodically refreshes the content of the view.
      */
     private class AutoRefreshJob extends Job implements IJobFinishedListener {
 

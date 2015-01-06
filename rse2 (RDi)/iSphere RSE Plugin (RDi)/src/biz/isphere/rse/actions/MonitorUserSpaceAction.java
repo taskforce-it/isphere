@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataspaceeditor.rse;
+package biz.isphere.rse.actions;
 
 import biz.isphere.core.internal.ISeries;
 
-public class MonitorDataAreaAction extends AbstractMonitorDataSpaceAction {
+public class MonitorUserSpaceAction extends AbstractMonitorDataSpaceAction {
 
-    public MonitorDataAreaAction() {
-        super(ISeries.DTAARA);
+    public MonitorUserSpaceAction() {
+        super(ISeries.USRSPC);
     }
 }
