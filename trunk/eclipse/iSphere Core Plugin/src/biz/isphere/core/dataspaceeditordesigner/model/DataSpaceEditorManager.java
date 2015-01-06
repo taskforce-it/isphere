@@ -40,7 +40,7 @@ import biz.isphere.core.swt.widgets.extension.WidgetFactory;
  */
 public final class DataSpaceEditorManager {
 
-    static final String GENERATED = "*GENERATED";
+    public static final String GENERATED = "*GENERATED";
 
     public DataSpaceEditorManager() {
     }

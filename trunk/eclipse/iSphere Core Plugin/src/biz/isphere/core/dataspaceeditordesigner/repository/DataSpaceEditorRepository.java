@@ -141,6 +141,17 @@ public final class DataSpaceEditorRepository {
         return dSelectedEditors.toArray(new DEditor[dSelectedEditors.size()]);
     }
 
+    public DEditor getDataSpaceEditorsForObject(RemoteObject remoteObject, String editorName) {
+
+        for (DEditor dEditor : getDataSpaceEditorsInternal(false)) {
+            if (editorSupportsObject(dEditor, remoteObject) && dEditor.getName().equals(editorName)) {
+                return dEditor;
+            }
+        }
+
+        return null;
+    }
+
     private boolean editorSupportsObject(DEditor dEditor, RemoteObject remoteObject) {
         DReferencedObject[] referencedObjects = dEditor.getReferencedObjects();
         for (DReferencedObject dReferencedObject : referencedObjects) {
