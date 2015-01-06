@@ -13,6 +13,8 @@ package biz.isphere.rse;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
@@ -23,9 +25,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import biz.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
+import biz.isphere.rse.internal.ViewManager;
 import biz.isphere.rse.search.SearchArgumentsListEditorProvider;
 import biz.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
 import biz.isphere.rse.spooledfiles.SpooledFileResource;
@@ -40,9 +44,12 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 
     private static URL installURL;
 
+    private Map<String, IViewManager> viewManagers;
+
     public ISphereRSEPlugin() {
         super();
         plugin = this;
+        viewManagers = new HashMap<String, IViewManager>();
     }
 
     @Override
@@ -85,6 +92,17 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         IAdapterManager manager = Platform.getAdapterManager();
         SpooledFileAdapterFactory spooledFactory = new SpooledFileAdapterFactory();
         manager.registerAdapters(spooledFactory, SpooledFileResource.class);
+    }
+
+    public IViewManager getViewManager(String name) {
+
+        IViewManager viewManager = viewManagers.get(name);
+        if (viewManager == null) {
+            viewManager = new ViewManager(name);
+            viewManagers.put(name, viewManager);
+        }
+
+        return viewManager;
     }
 
     /**

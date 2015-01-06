@@ -201,7 +201,8 @@
             class="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
             category="biz.isphere.core.views.categories"
             name="%iSphere_Data_Space_Monitor"
-            id="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"/>
+            id="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
+            allowMultiple="true"/>
    </extension> 
       	
       	<!--
@@ -382,8 +383,8 @@
             </separator>
          </menu>
          <action
-               class="biz.isphere.rse.dataspaceeditor.action.OpenDataSpaceEditorDesignerAction"
-               id="biz.isphere.rse.dataspaceeditor.action.OpenDataSpaceEditorDesignerAction"
+               class="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
+               id="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
                definitionId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
                label="%menu_DataSpace_Editor_Designer"
                icon="icons/data_space_editor_designer.gif"
@@ -392,8 +393,8 @@
          </action>
          
          <action
-               class="biz.isphere.rse.dataspaceeditor.action.OpenRSEFilterManagementAction"
-               id="biz.isphere.rse.dataspaceeditor.action.OpenRSEFilterManagementAction"
+               class="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
+               id="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
                definitionId="biz.isphere.core.command.RSEManagement.open"
                label="%menu_RSE_Filter_Management"
                icon="icons/iSphere_RSE_Management.gif"
