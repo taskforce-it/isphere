@@ -250,20 +250,6 @@ public class DataAreaText {
         }
 
         return tValue.replaceAll(CR, "").replaceAll(LF, "");
-
-        // String[] tLines = textToArray(tValue);
-        // StringBuilder stringValue = new StringBuilder();
-        // for (String line : tLines) {
-        // stringValue.append(line);
-        // }
-        //
-        // // TODO: remove debug code
-        // if (!tValue.replaceAll(CR, "").replaceAll(LF,
-        // "").equals(stringValue.toString())) {
-        // throw new RuntimeException("Strings do not match as expected.");
-        // }
-        //
-        // return stringValue.toString();
     }
 
     private String toScreen(String stringValue) {

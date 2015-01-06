@@ -26,9 +26,6 @@ public class SpooledFileBaseResourceAdapter {
 
     public boolean handleDoubleClick(SpooledFile splf) {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // String defaultFormat =
-        // ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT");
         String defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
         String message = splf.open(defaultFormat);
@@ -126,9 +123,9 @@ public class SpooledFileBaseResourceAdapter {
         if ("Output_priority".equals(propKey)) return splf.getOutputPriority();
         if ("User_data".equals(propKey)) return splf.getUserData();
         if ("Form_type".equals(propKey)) return splf.getFormType();
-        if ("Copies".equals(propKey)) return new Integer(splf.getCopies()); // Integer.toString(splf.getCopies());
-        if ("pages".equals(propKey)) return new Integer(splf.getPages()); // Integer.toString(splf.getPages());
-        if ("Current_page".equals(propKey)) return new Integer(splf.getCurrentPage()); // Integer.toString(splf.getCurrentPage());
+        if ("Copies".equals(propKey)) return new Integer(splf.getCopies());
+        if ("pages".equals(propKey)) return new Integer(splf.getPages());
+        if ("Current_page".equals(propKey)) return new Integer(splf.getCurrentPage());
         if ("Creation_timestamp".equals(propKey)) return splf.getCreationTimestampFormatted();
         return null;
     }
