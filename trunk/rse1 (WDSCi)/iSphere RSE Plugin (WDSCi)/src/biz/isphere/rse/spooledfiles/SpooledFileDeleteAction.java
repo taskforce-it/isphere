@@ -56,43 +56,7 @@ public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
             new DeleteExec().execute(spooledFileResources, postRun);
         }
 
-        // TODO: Remove disabled statements
-        // SpooledFile[] _spooledFiles = new SpooledFile[spooledFiles.size()];
-        // spooledFiles.toArray(_spooledFiles);
-        //		
-        // ConfirmDeletionSpooledFiles dialog = new
-        // ConfirmDeletionSpooledFiles(getShell(), _spooledFiles);
-        // if (dialog.open() == Dialog.OK) {
-        //			
-        // for (int index = 0; index < _spooledFiles.length; index++) {
-        //				
-        // String message = _spooledFiles[index].delete();
-        //				
-        // if (message == null) {
-        // SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
-        // Vector<SpooledFileResource> spooledFileVector = new
-        // Vector<SpooledFileResource>();
-        // spooledFileVector.addElement((SpooledFileResource)_spooledFiles[index].getData());
-        // sr.fireRemoteResourceChangeEvent(
-        // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED,
-        // spooledFileVector,
-        // null,
-        // null,
-        // null,
-        // null);
-        // }
-        // else {
-        //
-        // return message;
-        //					
-        // }
-        //				
-        // }
-        //			
-        // }
-
         return null;
-
     }
 
 }
