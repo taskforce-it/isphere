@@ -14,13 +14,15 @@ import java.util.Iterator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView;
 
@@ -99,20 +101,19 @@ public abstract class AbstractMonitorDataSpaceAction extends ISeriesSystemBaseAc
     protected void openMonitorForObject(DataElement dataElement, IWorkbenchPage page) {
         try {
 
-            page.showView(DataSpaceMonitorView.ID, null, IWorkbenchPage.VIEW_CREATE);
-            IViewPart justActivated = page.showView(DataSpaceMonitorView.ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-            if (justActivated instanceof IDialogView) {
+            String connection = ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(dataElement).getAliasName()).getConnectionName();
+            ISeriesObject qsysRemoteObject = new ISeriesObject(dataElement);
+            String name = qsysRemoteObject.getName();
+            String library = qsysRemoteObject.getLibrary();
+            String type = qsysRemoteObject.getType();
+            String description = qsysRemoteObject.getDescription();
+            RemoteObject remoteObject = new RemoteObject(connection, name, library, type, description);
 
-                ISeriesObject qsysRemoteObject = new ISeriesObject(dataElement);
-                String connection = ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(dataElement).getAliasName())
-                    .getConnectionName();
-                String name = qsysRemoteObject.getName();
-                String library = qsysRemoteObject.getLibrary();
-                String type = qsysRemoteObject.getType();
-                String description = qsysRemoteObject.getDescription();
-                RemoteObject remoteObject = new RemoteObject(connection, name, library, type, description);
-
-                ((IDialogView)justActivated).setData(new RemoteObject[] { remoteObject });
+            String contentId = remoteObject.getAbsoluteName();
+            IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_SPACE_MONITOR_VIEWS);
+            IPinnableView view = (IPinnableView)viewManager.getView(DataSpaceMonitorView.ID, contentId);
+            if (view instanceof IDialogView && !contentId.equals(view.getContentId())) {
+                ((IDialogView)view).setData(new RemoteObject[] { remoteObject });
             }
 
         } catch (Exception e) {
