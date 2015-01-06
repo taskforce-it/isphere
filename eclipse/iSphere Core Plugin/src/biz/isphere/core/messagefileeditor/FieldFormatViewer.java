@@ -129,7 +129,9 @@ public class FieldFormatViewer {
 
         Group groupFieldFormats = new Group(container, SWT.NONE);
         groupFieldFormats.setText(Messages.Field_formats);
-        groupFieldFormats.setLayout(new GridLayout(2, false));
+        GridLayout groupFieldFormatsLayout = new GridLayout(2, false);
+        groupFieldFormatsLayout.verticalSpacing = 25;
+        groupFieldFormats.setLayout(groupFieldFormatsLayout);
         GridData groupFieldFormatsGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
         groupFieldFormatsGridData.heightHint = getTableHeight(4);
         groupFieldFormats.setLayoutData(groupFieldFormatsGridData);
