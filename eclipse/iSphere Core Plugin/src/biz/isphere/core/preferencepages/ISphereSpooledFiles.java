@@ -505,37 +505,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setStoreToValues() {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT",
-        // defaultFormat);
         Preferences.getInstance().setSpooledFileDefaultFormat(defaultFormat);
 
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT",
-        // conversionText);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY",
-        // conversionTextLibrary);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND",
-        // conversionTextCommand);
         Preferences.getInstance().setSpooledFileConversionText(conversionText);
         Preferences.getInstance().setSpooledFileConversionLibraryText(conversionTextLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandText(conversionTextCommand);
 
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML",
-        // conversionHTML);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY",
-        // conversionHTMLLibrary);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND",
-        // conversionHTMLCommand);
         Preferences.getInstance().setSpooledFileConversionHTML(conversionHTML);
         Preferences.getInstance().setSpooledFileConversionLibraryHTML(conversionHTMLLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandHTML(conversionHTMLCommand);
 
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF",
-        // conversionPDF);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY",
-        // conversionPDFLibrary);
-        // store.setValue("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND",
-        // conversionPDFCommand);
         Preferences.getInstance().setSpooledFileConversionPDF(conversionPDF);
         Preferences.getInstance().setSpooledFileConversionLibraryPDF(conversionPDFLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandPDF(conversionPDFCommand);
@@ -544,37 +523,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToValues() {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // defaultFormat =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT");
         defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
-        // conversionText =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT");
-        // conversionTextLibrary =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
-        // conversionTextCommand =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
         conversionText = Preferences.getInstance().getSpooledFileConversionText();
         conversionTextLibrary = Preferences.getInstance().getSpooledFileConversionTextLibrary();
         conversionTextCommand = Preferences.getInstance().getSpooledFileConversionTextCommand();
 
-        // conversionHTML =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML");
-        // conversionHTMLLibrary =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
-        // conversionHTMLCommand =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
         conversionHTML = Preferences.getInstance().getSpooledFileConversionHTML();
         conversionHTMLLibrary = Preferences.getInstance().getSpooledFileConversionHTMLLibrary();
         conversionHTMLCommand = Preferences.getInstance().getSpooledFileConversionHTMLCommand();
 
-        // conversionPDF =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF");
-        // conversionPDFLibrary =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
-        // conversionPDFCommand =
-        // store.getString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
         conversionPDF = Preferences.getInstance().getSpooledFileConversionPDF();
         conversionPDFLibrary = Preferences.getInstance().getSpooledFileConversionPDFLibrary();
         conversionPDFCommand = Preferences.getInstance().getSpooledFileConversionPDFCommand();
@@ -585,37 +543,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToDefaultValues() {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // defaultFormat =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT");
         defaultFormat = Preferences.getInstance().getDefaultSpooledFileConversionDefaultFormat();
 
-        // conversionText =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT");
-        // conversionTextLibrary =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY");
-        // conversionTextCommand =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND");
         conversionText = Preferences.getInstance().getDefaultSpooledFileConversionText();
         conversionTextLibrary = Preferences.getInstance().getDefaultSpooledFileConversionTextLibrary();
         conversionTextCommand = Preferences.getInstance().getDefaultSpooledFileConversionTextCommand();
 
-        // conversionHTML =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML");
-        // conversionHTMLLibrary =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY");
-        // conversionHTMLCommand =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND");
         conversionHTML = Preferences.getInstance().getDefaultSpooledFileConversionHTML();
         conversionHTMLLibrary = Preferences.getInstance().getDefaultSpooledFileConversionHTMLLibrary();
         conversionHTMLCommand = Preferences.getInstance().getDefaultSpooledFileConversionHTMLCommand();
 
-        // conversionPDF =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF");
-        // conversionPDFLibrary =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY");
-        // conversionPDFCommand =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND");
         conversionPDF = Preferences.getInstance().getDefaultSpooledFileConversionPDF();
         conversionPDFLibrary = Preferences.getInstance().getDefaultSpooledFileConversionPDFLibrary();
         conversionPDFCommand = Preferences.getInstance().getDefaultSpooledFileConversionPDFCommand();

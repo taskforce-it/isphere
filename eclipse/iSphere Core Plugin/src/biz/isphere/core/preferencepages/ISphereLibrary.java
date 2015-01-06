@@ -137,8 +137,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     protected void setStoreToValues() {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // store.setValue("DE.TASKFORCE.ISPHERE.LIBRARY", iSphereLibrary);
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
         Preferences.getInstance().setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), DEFAULT_FTP_PORT));
@@ -148,8 +146,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     protected void setScreenToValues() {
 
         ISpherePlugin.getDefault();
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // iSphereLibrary = store.getString("DE.TASKFORCE.ISPHERE.LIBRARY");
         iSphereLibrary = Preferences.getInstance().getISphereLibrary();
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getFtpPortNumber());
@@ -160,9 +156,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     protected void setScreenToDefaultValues() {
 
-        // TODO: Remove disabled statements 'DE.TASKFORCE'
-        // iSphereLibrary =
-        // store.getDefaultString("DE.TASKFORCE.ISPHERE.LIBRARY");
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getDefaultFtpPortNumber());

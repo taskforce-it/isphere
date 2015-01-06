@@ -103,9 +103,6 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         installURL = context.getBundle().getEntry("/");
 
-        // TODO: Remove procedure
-        // initializePreferenceStoreDefaults();
-
         spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
         if (!spooledFilesDirectory.exists()) spooledFilesDirectory.mkdirs();
 
@@ -238,48 +235,11 @@ public class ISpherePlugin extends AbstractUIPlugin {
         }
     }
 
-    // TODO: Remove procedure
-    // protected void initializePreferenceStoreDefaults(){
-
-    // Delegated to PreferencesInitializer
-    // See also: plugin.xml
-
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.LIBRARY",
-    // "ISPHERE");
-
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.DEFAULT_FORMAT",
-    // "*TEXT");
-
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT",
-    // "*DFT");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.LIBRARY",
-    // "");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_TEXT.COMMAND",
-    // "");
-
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML",
-    // "*DFT");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.LIBRARY",
-    // "");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_HTML.COMMAND",
-    // "");
-
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF",
-    // "*DFT");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.LIBRARY",
-    // "");
-    // getPreferenceStore().setDefault("DE.TASKFORCE.ISPHERE.SPOOLED_FILES.CONVERSION_PDF.COMMAND",
-    // "");
-
-    // }
-
     public static URL getInstallURL() {
         return installURL;
     }
 
     public static String getISphereLibrary() {
-        // return
-        // ISpherePlugin.getDefault().getPreferenceStore().getString("DE.TASKFORCE.ISPHERE.LIBRARY");
         return Preferences.getInstance().getISphereLibrary();
     }
 
