@@ -75,6 +75,9 @@
 	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;)" />
 	<property name="site.2.version.replace" value="\1${build.version}\3" />
 
+	<property name="copyright.1.version.regex" value="^(Version: )([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(.*)?" />
+	<property name="copyright.1.version.replace" value="\1${build.version}\3" />
+
 	<!-- Set zip file and directory names -->
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
@@ -116,6 +119,15 @@
 					<then>
 						<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
 							<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+						</replaceregexp>
+					</then>
+				</if>
+
+				<if>
+					<available file="${workspace.home}\@{project}/html" />
+					<then>
+						<replaceregexp match="${copyright.1.version.regex}" replace="${copyright.1.version.replace}" byline="true">
+							<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
 						</replaceregexp>
 					</then>
 				</if>
@@ -243,6 +255,7 @@
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="logs.zip" />
 		</delete>
 
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
@@ -255,13 +268,9 @@
     * =====================================================================
     *   Produces the files that must be uploaded to SourceForge:
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" description="create SourceForge files">
+	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile" description="create SourceForge files">
 
 		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
-
-		<delete includeemptydirs="true">
-			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
-		</delete>
 
 		<if>
 			<equals arg1="${build.target}" arg2="RDi" />
@@ -278,10 +287,6 @@
 			<exclude name="**/.project" />
 		</zip>
 
-		<winword file="${isphere.doc}" visible="true" >
-			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
-		</winword>
-
 		<copy file="${isphere.pdf}" todir="${build.upload.dir}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
@@ -289,6 +294,31 @@
 
 		<echo>Done.</echo>
 
+	</target>
+	
+	<target name="cleanUploadDir" >
+		
+		<echo>Cleaning upload directory ...</echo>
+		
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
+		</delete>
+		
+	</target>
+	
+	<target name="updatePdfFile" unless="pdf.isUpToDate">
+		
+		<echo>Updating iSphere PDF file ...</echo>
+		
+		<winword file="${isphere.doc}" visible="true" >
+			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
+		</winword>
+	</target>
+	
+	<target name="checkPdfFile" >
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+		<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
+		<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
 	</target>
 
 	<!--
