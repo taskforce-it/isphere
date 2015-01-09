@@ -737,6 +737,10 @@ public class Messages extends NLS {
     public static String Pin_View;
 
     public static String Restoring_view;
+
+    public static String Remove;
+
+    public static String Invert_selection;
     
     static {
         // initialize resource bundle

@@ -19,7 +19,13 @@ import jxl.write.WriteException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
@@ -35,11 +41,14 @@ import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
-public class ViewSearchResults extends ViewPart {
+public class ViewSearchResults extends ViewPart implements ISelectionChangedListener {
+
+    private static final String TAB_DATA_VIEWER = "Viewer";
 
     private Action actionExportToMemberFilter;
     private Action actionExportToExcel;
     private Action actionRemoveTabItem;
+    private Action actionRemoveSelectedItems;
     private TabFolder tabFolderSearchResults;
     private Shell shell;
 
@@ -90,10 +99,20 @@ public class ViewSearchResults extends ViewPart {
         actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
         actionRemoveTabItem.setEnabled(false);
 
+        actionRemoveSelectedItems = new Action("") {
+            @Override
+            public void run() {
+                removeSelectedItem();
+            }
+        };
+        actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REMOVE));
+        actionRemoveSelectedItems.setEnabled(false);
+
     }
 
     private void initializeToolBar() {
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(actionRemoveSelectedItems);
         toolbarManager.add(actionExportToMemberFilter);
         toolbarManager.add(actionExportToExcel);
         toolbarManager.add(actionRemoveTabItem);
@@ -117,17 +136,34 @@ public class ViewSearchResults extends ViewPart {
 
         SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
         _searchResultViewer.createContents(compositeSearchResult);
+        _searchResultViewer.addSelectionChangedListener(this);
 
         tabItemSearchResult.setControl(compositeSearchResult);
-        tabItemSearchResult.setData("Viewer", _searchResultViewer);
+        tabItemSearchResult.setData(TAB_DATA_VIEWER, _searchResultViewer);
 
         TabItem[] tabItemToBeSelected = new TabItem[1];
         tabItemToBeSelected[0] = tabItemSearchResult;
         tabFolderSearchResults.setSelection(tabItemToBeSelected);
 
-        actionExportToMemberFilter.setEnabled(true);
-        actionExportToExcel.setEnabled(true);
-        actionRemoveTabItem.setEnabled(true);
+        setActionEnablement();
+
+        tabFolderSearchResults.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setActionEnablement();
+            }
+        });
+
+        tabFolderSearchResults.addFocusListener(new FocusListener() {
+
+            public void focusLost(FocusEvent arg0) {
+                setActionEnablement();
+            }
+
+            public void focusGained(FocusEvent arg0) {
+                setActionEnablement();
+            }
+        });
     }
 
     public void exportToMemberFilter() {
@@ -140,7 +176,7 @@ public class ViewSearchResults extends ViewPart {
 
             if (selectedTabItem >= 0) {
 
-                SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+                SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
 
                 if (_searchResultViewer != null) {
 
@@ -171,7 +207,7 @@ public class ViewSearchResults extends ViewPart {
 
         if (selectedTabItem >= 0) {
 
-            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData("Viewer");
+            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
 
             if (_searchResultViewer != null) {
 
@@ -265,8 +301,55 @@ public class ViewSearchResults extends ViewPart {
                 actionExportToMemberFilter.setEnabled(false);
                 actionExportToExcel.setEnabled(false);
                 actionRemoveTabItem.setEnabled(false);
+                actionRemoveSelectedItems.setEnabled(false);
             }
         }
     }
 
+    public void removeSelectedItem() {
+
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+
+        if (selectedTabItem >= 0) {
+            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
+            if (_searchResultViewer != null) {
+                _searchResultViewer.removeSelectedItems();
+            }
+        }
+
+    }
+
+    private void setActionEnablement() {
+        selectionChanged(null);
+    }
+
+    public void selectionChanged(SelectionChangedEvent event) {
+
+        SearchResultViewer viewer;
+        int index = tabFolderSearchResults.getSelectionIndex();
+        if (index < 0) {
+            viewer = null;
+        } else {
+            viewer = (SearchResultViewer)tabFolderSearchResults.getItem(index).getData(
+                TAB_DATA_VIEWER);
+        }
+
+        boolean hasViewer;
+        boolean hasItems;
+        boolean hasSelectedItems;
+        if (viewer == null) {
+            hasViewer = false;
+            hasItems = false;
+            hasSelectedItems = false;
+        } else {
+            hasViewer = true;
+            hasItems = viewer.hasItems();
+            hasSelectedItems = viewer.hasSelectedItems();
+        }
+
+        actionRemoveSelectedItems.setEnabled(hasSelectedItems);
+        actionExportToMemberFilter.setEnabled(hasItems);
+        actionExportToExcel.setEnabled(hasItems);
+        actionRemoveTabItem.setEnabled(hasViewer);
+    }
 }
