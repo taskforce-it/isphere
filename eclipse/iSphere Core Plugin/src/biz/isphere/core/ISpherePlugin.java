@@ -87,6 +87,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_DOWN = "down.gif";
     public static final String IMAGE_RENAME = "rename.gif";
     public static final String IMAGE_PIN = "pin.gif";
+    public static final String IMAGE_REMOVE = "remove.gif";
+    public static final String IMAGE_INVERT_SELECTION = "invert_selection.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -223,6 +225,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_DOWN, getImageDescriptor(IMAGE_DOWN));
         reg.put(IMAGE_RENAME, getImageDescriptor(IMAGE_RENAME));
         reg.put(IMAGE_PIN, getImageDescriptor(IMAGE_PIN));
+        reg.put(IMAGE_REMOVE, getImageDescriptor(IMAGE_REMOVE));
+        reg.put(IMAGE_INVERT_SELECTION, getImageDescriptor(IMAGE_INVERT_SELECTION));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {
