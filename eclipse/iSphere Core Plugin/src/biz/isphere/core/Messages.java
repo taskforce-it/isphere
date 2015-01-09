@@ -740,7 +740,11 @@ public class Messages extends NLS {
 
     public static String Remove;
 
+    public static String Tooltip_Remove;
+
     public static String Invert_selection;
+
+    public static String Tooltip_Invert_selection;
     
     static {
         // initialize resource bundle
