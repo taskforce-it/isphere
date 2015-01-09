@@ -18,6 +18,7 @@ import jxl.write.WriteException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -49,6 +50,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionExportToExcel;
     private Action actionRemoveTabItem;
     private Action actionRemoveSelectedItems;
+    private Action actionInvertSelectedItems;
     private TabFolder tabFolderSearchResults;
     private Shell shell;
 
@@ -105,16 +107,30 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 removeSelectedItem();
             }
         };
+        actionRemoveSelectedItems.setToolTipText(Messages.Tooltip_Remove);
         actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REMOVE));
         actionRemoveSelectedItems.setEnabled(false);
+
+        actionInvertSelectedItems = new Action("") {
+            @Override
+            public void run() {
+                invertSelection();
+            }
+        };
+        actionInvertSelectedItems.setToolTipText(Messages.Tooltip_Invert_selection);
+        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
+        actionInvertSelectedItems.setEnabled(false);
 
     }
 
     private void initializeToolBar() {
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
         toolbarManager.add(actionRemoveSelectedItems);
+        toolbarManager.add(actionInvertSelectedItems);
+        toolbarManager.add(new Separator());
         toolbarManager.add(actionExportToObjectFilter);
         toolbarManager.add(actionExportToExcel);
+        toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveTabItem);
     }
 
@@ -319,6 +335,19 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     }
 
+    public void invertSelection() {
+
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+
+        if (selectedTabItem >= 0) {
+            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
+            if (_searchResultViewer != null) {
+                _searchResultViewer.invertSelectedItems();
+            }
+        }
+
+    }
+
     private void setActionEnablement() {
         selectionChanged(null);
     }
@@ -348,6 +377,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
+        actionInvertSelectedItems.setEnabled(hasSelectedItems);
         actionExportToObjectFilter.setEnabled(hasItems);
         actionExportToExcel.setEnabled(hasItems);
         actionRemoveTabItem.setEnabled(hasViewer);

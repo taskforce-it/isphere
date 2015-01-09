@@ -493,4 +493,8 @@ public class SearchResultViewer {
     public void removeSelectedItems() {
         executeMenuItemRemoveSelectedItems();
     }
+
+    public void invertSelectedItems() {
+        executeMenuItemInvertSelectedItems();
+    }
 }
