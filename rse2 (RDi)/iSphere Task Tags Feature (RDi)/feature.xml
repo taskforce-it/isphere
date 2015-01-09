@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.tasks"
       label="iSphere Task Tags for RDi 8.0+ (optional)"
-      version="2.5.0.b4"
+      version="2.5.0.b5"
       provider-name="iSphere Project Owners">
 
    <description url="https://sourceforge.net/projects/isphere/">
