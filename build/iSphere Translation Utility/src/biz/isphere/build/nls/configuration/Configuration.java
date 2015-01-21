@@ -10,6 +10,7 @@ package biz.isphere.build.nls.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -87,7 +88,15 @@ public final class Configuration {
         String file = getString(IMPORT_FILE);
         if (file.endsWith("*")) {
             File folder = new File(file.substring(0, file.length() - 1));
-            String[] files = folder.list();
+            String[] files = folder.list(new FilenameFilter() {
+
+                public boolean accept(File dir, String name) {
+                    if (name.toLowerCase().endsWith(".xls")) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
             if (files.length <= 0) {
                 throw new JobCanceledException("No import files found in directory: " + folder.getPath());
             } else if (files.length > 1) {
