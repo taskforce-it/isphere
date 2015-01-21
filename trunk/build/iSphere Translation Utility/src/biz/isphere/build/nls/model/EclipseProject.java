@@ -60,6 +60,15 @@ public class EclipseProject {
         fNLSBundle.put(bundle.getRelativePath(), bundle);
     }
 
+    public NLSResourceBundle getOrCreateBundle(String relativePath) {
+        NLSResourceBundle bundle = fNLSBundle.get(relativePath);
+        if (bundle == null) {
+            bundle = new NLSResourceBundle(relativePath);
+            addBundle(bundle);
+        }
+        return bundle;
+    }
+
     public void loadNLSPropertiesFiles(FileSelectionEntry[] files) throws JobCanceledException {
         for (FileSelectionEntry selectedFile : files) {
             loadFileAndCreateBundle(this, selectedFile.getPath(), selectedFile.getPattern(), selectedFile.isSubdirectories());
@@ -72,7 +81,8 @@ public class EclipseProject {
         }
     }
 
-    private void loadFileAndCreateBundle(EclipseProject project, String relativePath, String pattern, boolean searchSubDirectories) throws JobCanceledException {
+    private void loadFileAndCreateBundle(EclipseProject project, String relativePath, String pattern, boolean searchSubDirectories)
+        throws JobCanceledException {
         File[] files = new File(project.getPath() + relativePath).listFiles();
         String regex = pattern.replace("?", ".?").replace("*", ".*?").replace("\\", "\\\\");
         for (File file : files) {
@@ -81,7 +91,7 @@ public class EclipseProject {
                 NLSResourceBundle bundle = fNLSBundle.get(nlsFile.getResourceNameWithoutLanguageID());
                 if (bundle == null) {
                     bundle = new NLSResourceBundle(nlsFile.getResourceNameWithoutLanguageID());
-                    fNLSBundle.put(nlsFile.getResourceNameWithoutLanguageID(), bundle);
+                    fNLSBundle.put(bundle.getRelativePath(), bundle);
                 }
                 bundle.add(nlsFile);
             } else if (file.isDirectory() && searchSubDirectories) {

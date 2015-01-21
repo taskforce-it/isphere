@@ -95,7 +95,7 @@ public class NLSImporter {
         throws JobCanceledException {
 
         String relativePath = firstDataRow.getCell(0).getStringCellValue();
-        NLSResourceBundle bundle = new NLSResourceBundle(relativePath);
+        NLSResourceBundle bundle = project.getOrCreateBundle(relativePath);
 
         String[] languageKeys = getLanguagesKeys(sheet);
         for (String languageKey : languageKeys) {
@@ -112,8 +112,6 @@ public class NLSImporter {
                 nlsFile.setProperty(key, values[x]);
             }
         }
-
-        project.addBundle(bundle);
     }
 
     private String getKey(Row row) {
@@ -162,7 +160,7 @@ public class NLSImporter {
                 }
             }
         }
-        return firstDataRow;
+        return lastRow;
     }
 
     private boolean isHeadLineRow(Row row) {
