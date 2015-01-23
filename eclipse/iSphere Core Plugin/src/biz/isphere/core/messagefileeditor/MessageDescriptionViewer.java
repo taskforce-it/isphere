@@ -9,6 +9,9 @@
 package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -110,6 +113,14 @@ public class MessageDescriptionViewer {
         }
 
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        }
+
+        public void addElement(TableViewer viewer, MessageDescription element) {
+
+            List<Object> tmpList = new LinkedList<Object>(Arrays.asList(messageDescriptions));
+            tmpList.add(element);
+            messageDescriptions = tmpList.toArray();
+            ((TableViewer)viewer).add(element);
         }
     }
 
@@ -565,7 +576,8 @@ public class MessageDescriptionViewer {
         MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400, DialogActionTypes.CREATE,
             _messageDescription);
         if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
-            _tableViewer.add(_messageDescription);
+            ((ContentProviderTableViewer)_tableViewer.getContentProvider()).addElement(_tableViewer, _messageDescription);
+            _tableViewer.setSelection(new StructuredSelection(_messageDescription), true);
         }
 
         deSelectAllItems();
