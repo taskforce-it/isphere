@@ -66,7 +66,7 @@ public class SearchForUpdates extends Job {
                 newVersionAvailable = true;
             }
 
-            if (!newVersionAvailable && Preferences.getInstance().isSearchForBetaVersions()) {
+            if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
                 availableVersion = getVersion(manifest, "X-Beta-Version");
                 if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
@@ -75,6 +75,17 @@ public class SearchForUpdates extends Job {
 
         } catch (Exception e) {
             ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
+            if (showResultAlways) {
+                new UIJob("ISPHERE_UPDATES") {
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                        MessageDialog.openError(parent, "iSphere", Messages.Failed_to_connect_to_iSphere_update_server);
+                        return Status.OK_STATUS;
+                    }
+                }.schedule();
+            }
+            return Status.OK_STATUS;
         }
 
         if (showResultAlways || newVersionAvailable) {
@@ -91,9 +102,8 @@ public class SearchForUpdates extends Job {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersiontext(availableVersion)
-                                + "\n" + Messages.Current_version + ": " + currentVersion + "\n" + Messages.Available_version + ": "
-                                + availableVersion, MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
+                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
+                                availableVersion), MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -107,7 +117,7 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(getNewVersiontext(availableVersion));
+                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -120,16 +130,19 @@ public class SearchForUpdates extends Job {
         }
 
         return Status.OK_STATUS;
-
     }
 
-    private String getNewVersiontext(Version version) {
+    private String getNewVersionText(Version currentVersion, Version availableVersion) {
 
-        if (version.isBeta()) {
-            return Messages.There_is_a_new_beta_version_available;
+        String text;
+        if (availableVersion.isBeta()) {
+            text = Messages.There_is_a_new_beta_version_available;
         } else {
-            return Messages.There_is_a_new_version_available;
+            text = Messages.There_is_a_new_version_available;
         }
+
+        text = text + "\n" + Messages.Current_version + ": " + currentVersion + "\n" + Messages.Available_version + ": " + availableVersion;
+        return text;
     }
 
     private Version getVersion(Manifest manifest, String version) {
