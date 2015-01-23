@@ -60,6 +60,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         buttonSearchForUpdates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent selectionEvent) {
                 searchForUpdates = buttonSearchForUpdates.getSelection();
+                setButtonEnablement();
                 checkError();
             }
         });
@@ -71,6 +72,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         buttonSearchForBetaVersions.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent selectionEvent) {
                 searchForBetaVersions = buttonSearchForBetaVersions.getSelection();
+                setButtonEnablement();
                 checkError();
             }
         });
@@ -83,6 +85,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
             @Override
             public void keyReleased(KeyEvent e) {
                 urlForUpdates = textURLForUpdates.getText().trim();
+                setButtonEnablement();
                 checkError();
             }
         });
@@ -161,8 +164,18 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         buttonSearchForUpdates.setSelection(searchForUpdates);
         buttonSearchForBetaVersions.setSelection(searchForBetaVersions);
         textURLForUpdates.setText(urlForUpdates);
+        setButtonEnablement();
         setErrorMessage(null);
         setValid(true);
+    }
+    
+    private void setButtonEnablement() {
+        
+        if (buttonSearchForUpdates.getSelection()) {
+            buttonSearchForBetaVersions.setEnabled(true);
+        } else {
+            buttonSearchForBetaVersions.setEnabled(false);
+        }
     }
 
     public void init(IWorkbench workbench) {
