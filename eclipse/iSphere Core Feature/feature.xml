@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.core"
       label="iSphere Core (required)"
-      version="2.5.0.b6"
+      version="2.5.0.b7"
       provider-name="iSphere Project Owners">
 
    <description url="https://sourceforge.net/projects/isphere/">
