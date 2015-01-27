@@ -10,10 +10,12 @@ package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -48,6 +50,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.UIPlugin;
 
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
@@ -55,6 +58,8 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
+import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVMResult;
 import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
@@ -103,8 +108,16 @@ public class MessageDescriptionViewer {
     private class ContentProviderTableViewer implements IStructuredContentProvider {
         public Object[] getElements(Object inputElement) {
             if (messageDescriptions == null) {
-                QMHRTVM qmhrtvm = new QMHRTVM();
-                messageDescriptions = qmhrtvm.run(as400, connection, library, messageFile, "*ALL");
+                
+                try {
+
+                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400);
+                    iqmhrtvm.setMessageFile(messageFile, library);
+                    messageDescriptions = iqmhrtvm.retrieveAllMessageDescriptions();
+
+                } catch (Throwable e) {
+                    ISpherePlugin.logError("Fails to call the iSphere IQMHRTVM API", e);
+                }
             }
             return messageDescriptions;
         }

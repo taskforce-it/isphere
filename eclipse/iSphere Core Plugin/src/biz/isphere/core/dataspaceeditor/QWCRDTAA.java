@@ -9,7 +9,7 @@
 package biz.isphere.core.dataspaceeditor;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.APIProgramCallDocument;
+import biz.isphere.core.internal.PcmlProgramCallDocument;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -26,7 +26,7 @@ public class QWCRDTAA {
 
         try {
 
-            APIProgramCallDocument pcml = new APIProgramCallDocument(anAS400,
+            PcmlProgramCallDocument pcml = new PcmlProgramCallDocument(anAS400,
                 "biz.isphere.core.dataspaceeditor.QWCRDTAA", getClass().getClassLoader()); //$NON-NLS-1$
             pcml.setQualifiedObjectName("QWCRDTAA.dataArea", aLibrary, aDataArea); //$NON-NLS-1$
             pcml.setValue("QWCRDTAA.receiverLength", new Integer((pcml.getOutputsize("QWCRDTAA.receiver")))); //$NON-NLS-1$ //$NON-NLS-2$
