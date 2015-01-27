@@ -9,7 +9,7 @@
 package biz.isphere.rse.dataareaeditor;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.APIProgramCallDocument;
+import biz.isphere.core.internal.PcmlProgramCallDocument;
 import biz.isphere.core.internal.exception.ErrorLoggedException;
 
 import com.ibm.as400.access.AS400;
@@ -29,7 +29,7 @@ public class QXXCHGDA {
 
     public void run(byte[] bytes) throws Exception {
 
-        APIProgramCallDocument pcml = new APIProgramCallDocument(system, "biz.isphere.rse.dataareaeditor.QXXCHGDA", getClass().getClassLoader()); //$NON-NLS-1$
+        PcmlProgramCallDocument pcml = new PcmlProgramCallDocument(system, "biz.isphere.rse.dataareaeditor.QXXCHGDA", getClass().getClassLoader()); //$NON-NLS-1$
         pcml.setQualifiedObjectName("QXXCHGDA.dataArea", library, dataArea); //$NON-NLS-1$
         pcml.setValue("QXXCHGDA.start", new Integer(1)); //$NON-NLS-1$
         pcml.setValue("QXXCHGDA.length", new Integer(bytes.length)); //$NON-NLS-1$
