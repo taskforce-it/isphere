@@ -9,7 +9,7 @@
 package biz.isphere.rse.dataareaeditor;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.APIProgramCallDocument;
+import biz.isphere.core.internal.PcmlProgramCallDocument;
 import biz.isphere.core.internal.exception.ErrorLoggedException;
 
 import com.ibm.as400.access.AS400;
@@ -29,7 +29,7 @@ public class QXXRTVDA {
 
     public byte[] run(int length) throws Exception {
 
-        APIProgramCallDocument pcml = new APIProgramCallDocument(system, "biz.isphere.rse.dataareaeditor.QXXRTVDA", getClass().getClassLoader()); //$NON-NLS-1$
+        PcmlProgramCallDocument pcml = new PcmlProgramCallDocument(system, "biz.isphere.rse.dataareaeditor.QXXRTVDA", getClass().getClassLoader()); //$NON-NLS-1$
         pcml.setQualifiedObjectName("QXXRTVDA.dataArea", library, dataArea); //$NON-NLS-1$
         pcml.setValue("QXXRTVDA.start", new Integer(1)); //$NON-NLS-1$
         pcml.setValue("QXXRTVDA.length", new Integer(length)); //$NON-NLS-1$
