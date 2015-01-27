@@ -319,6 +319,9 @@
             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4') +
                          LIB(&PRDLIB) OBJ(*DFT) +
                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO5') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create programs: Wrapper FNDSTR                 */
@@ -386,6 +389,14 @@
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
              STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003009') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create programs: iSphere Retrieve Message API   */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQMHRTVM') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
