@@ -28,6 +28,8 @@ import com.ibm.as400.access.ProgramParameter;
  */
 public class IQMHRTVM extends APIProgramCallDocument {
 
+    public static final int ALL_MESSAGES = -1;
+
     public static final String RETRIEVE_FIRST = "*FIRST";
     public static final String RETRIEVE_NEXT = "*NEXT";
     public static final String RETRIEVE_MSGID = "*MSGID";
@@ -77,12 +79,12 @@ public class IQMHRTVM extends APIProgramCallDocument {
             // long numCalls = 0;
 
             int bufferSize = 1024 * 1024 * 1 / 2;
-            IQMHRTVMResult result = retrieveMessageDescriptions(-1, bufferSize);
+            IQMHRTVMResult result = retrieveMessageDescriptions(ALL_MESSAGES, bufferSize);
 
             while (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() > 0) {
                 // numCalls++;
                 messages.addAll(result.getMessages());
-                result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_NEXT, result.getLastMessageIdReturned(), -1, bufferSize);
+                result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_NEXT, result.getLastMessageIdReturned(), ALL_MESSAGES, bufferSize);
             }
 
             // System.out.println("mSecs for " + messageFile +
@@ -108,9 +110,9 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * Retrieves a given number of message descriptions, starting at the first
      * description.
      * 
-     * @param numMessages - number of messages to retrieve or -1 for all
-     *        messages. The method may return less messages than specified, if
-     *        the buffer is not large enough.
+     * @param numMessages - number of messages to retrieve or
+     *        {@link #ALL_MESSAGES} for all messages. The method may return less
+     *        messages than specified, if the buffer is not large enough.
      * @param bufferSize - buffer to return the message descriptions
      * @return result of the retrieve operation
      * @throws Exception
@@ -129,9 +131,9 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @param messageID - message that defines the starting point. This
      *        parameter is ignored when <i>retrieveOption</i> is set to
      *        {@link #RETRIEVE_FIRST}.
-     * @param numMessages - number of messages to retrieve or -1 for all
-     *        messages. The method may return less messages than specified, if
-     *        the buffer is not large enough.
+     * @param numMessages - number of messages to retrieve or
+     *        {@link #ALL_MESSAGES} for all messages. The method may return less
+     *        messages than specified, if the buffer is not large enough.
      * @param bufferSize - buffer to return the message descriptions
      * @return result of the retrieve operation
      * @throws Exception
@@ -159,9 +161,9 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @param messageID - message that defines the starting point. This
      *        parameter is ignored when <i>retrieveOption</i> is set to
      *        {@link #RETRIEVE_FIRST}.
-     * @param numMessages - number of messages to retrieve or -1 for all
-     *        messages. The method may return less messages than specified, if
-     *        the buffer is not large enough.
+     * @param numMessages - number of messages to retrieve or
+     *        {@link #ALL_MESSAGES} for all messages. The method may return less
+     *        messages than specified, if the buffer is not large enough.
      * @param bufferSize - buffer to return the message descriptions
      * @return parameter list
      * @throws Exception

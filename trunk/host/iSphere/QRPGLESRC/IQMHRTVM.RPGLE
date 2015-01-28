@@ -100,7 +100,7 @@
          if (%parms() >= p_numMsgRtn and %addr(gi_numMsgRtn) <> *null);
             numMsgRtn = gi_numMsgRtn;
          else;
-            numMsgRtn = IQMHRTVM_RETURN_ALL;
+            numMsgRtn = IQMHRTVM_ALL;
          endif;
 
          if (%parms() >= p_ccsidText and %addr(gi_ccsidText) <> *null);
@@ -232,13 +232,13 @@
                else;
                   // exit, when the buffer is full, in case
                   // the caller wants to get all messages
-                  if (i_numMsgRtn = IQMHRTVM_RETURN_ALL);
+                  if (i_numMsgRtn = IQMHRTVM_ALL);
                      leave;
                   endif;
                endif;
 
                // exit, when the specified number of messages are reached
-               if (i_numMsgRtn <> IQMHRTVM_RETURN_ALL and
+               if (i_numMsgRtn <> IQMHRTVM_ALL and
                    numMessages >= i_numMsgRtn);
                   leave;
                endif;
