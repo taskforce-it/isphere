@@ -12,6 +12,7 @@ import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
@@ -78,7 +79,8 @@ public class IQMHRTVM extends APIProgramCallDocument {
             // long startTime = System.currentTimeMillis();
             // long numCalls = 0;
 
-            int bufferSize = 1024 * 1024 * 1 / 2;
+            // int bufferSize = 1024 * 1024 * 1 / 2;
+            int bufferSize = Buffer.size("512 kByte");
             IQMHRTVMResult result = retrieveMessageDescriptions(ALL_MESSAGES, bufferSize);
 
             while (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() > 0) {
@@ -99,7 +101,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
             // e.printStackTrace();
             // System.out.println("*** Call to QMHRTVM failed. ***");
             // return null;
-            ISpherePlugin.logError("Fails to call the iSphere IQMHRTVM API", e);
+            ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e);
 
         }
 
@@ -146,9 +148,9 @@ public class IQMHRTVM extends APIProgramCallDocument {
 
         AS400Message[] msgList = getMessageList();
         for (int j = 0; j < msgList.length; j++) {
-            System.out.println(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
+            ISpherePlugin.logError(msgList[j].getID() + " - " + msgList[j].getText(), null); //$NON-NLS-1$
         }
-
+        ISpherePlugin.logError("*** Call to IQMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
         return null;
     }
 

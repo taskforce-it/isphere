@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditorInput;
@@ -712,7 +713,8 @@ public class SpooledFile {
             in = new IFSFileInputStream(as400, source);
             out = new FileOutputStream(new File(target));
 
-            byte[] buffer = new byte[8 * 1024];
+            // byte[] buffer = new byte[8 * 1024];
+            byte[] buffer = new byte[Buffer.size("8k")];
             int count = 0;
             do {
                 count = in.read(buffer, 0, buffer.length);

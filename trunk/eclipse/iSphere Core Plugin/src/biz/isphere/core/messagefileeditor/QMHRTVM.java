@@ -10,6 +10,8 @@ package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
 
+import biz.isphere.core.ISpherePlugin;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
@@ -52,9 +54,9 @@ public class QMHRTVM {
 
                     AS400Message[] msgs = pcml.getMessageList("QMHRTVM");
                     for (int idx = 0; idx < msgs.length; idx++) {
-                        System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                        ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                     }
-                    System.out.println("*** Call to QMHRTVM failed. See messages above ***");
+                    ISpherePlugin.logError("*** Call to QMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
                     return null;
 
                 } else {
@@ -123,6 +125,7 @@ public class QMHRTVM {
             // e.printStackTrace();
             // System.out.println("*** Call to QMHRTVM failed. ***");
             // return null;
+            ISpherePlugin.logError("Failed calling the QMHRTVM API.", e);
 
         }
 

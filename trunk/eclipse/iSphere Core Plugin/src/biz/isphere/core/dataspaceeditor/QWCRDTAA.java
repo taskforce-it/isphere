@@ -52,6 +52,7 @@ public class QWCRDTAA {
             // e.printStackTrace();
             // System.out.println("*** Call to QWCRDTAA failed. ***");
             // return null;
+            ISpherePlugin.logError("Failed calling the QWCRDTAA API.", e);
 
         }
 
