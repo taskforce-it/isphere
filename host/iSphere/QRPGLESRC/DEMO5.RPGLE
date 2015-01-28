@@ -1,6 +1,6 @@
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      //* Copyright (c) 2012-2015 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
       //* are made available under the terms of the Common Public License v1.0                     *
       //* which accompanies this distribution, and is available at                                 *
@@ -54,9 +54,10 @@
      D msgInfSize      s             10i 0 inz
      D header          ds                  likeds(iqmhrtvm_header_t)
      D                                     based(pHeader)
-     D msgDesc         ds          4096    qualified based(pMsgDesc)
+     D msgDesc         ds          8192    qualified based(pMsgDesc)
      D  bytRtn                       10i 0
 
+     D numMsgToRead    s             10i 0 inz(20000)
      D msgText         s            128a   varying
 
       /copy qcpysrc,RTVM0300
@@ -66,7 +67,7 @@
 
          *INLR = *On;
 
-         msgInfSize = 1024 * 1024 * 14;
+         msgInfSize = 1024 * 1024 * 14; // 14 MB buffer, roughly 20000 messages
          pMsgInf = %alloc(msgInfSize);
          pHeader = pMsgInf;
 
@@ -74,7 +75,8 @@
          qMsgF.lib  = 'QSYS';
 
          IQMHRTVM(msgInf: msgInfSize: 'RTVM0300'
-                  : '': qMsgF: '*YES': errCode: IQMHRTVM_FIRST: 20000);
+                  : '': qMsgF: '*YES': errCode:
+                  IQMHRTVM_FIRST: numMsgToRead);
 
          dow (header.numMsgRtn > 0);
 
@@ -86,6 +88,7 @@
                RTVM0300 = %subst(msgDesc: 1: msgDesc.bytRtn);
                msgText = %subst(RTVM0300: RTVMOffMsg + 1: RTVMLenMsgRtn);
 
+               // Display the first 3 messages of the chunk
                if (i <= 3);
                   sndMsg(RTVMMsgId + ': ' + msgText);
                endif;
@@ -93,10 +96,17 @@
                pMsgDesc = pMsgDesc + RTVMByteRtn;
             endfor;
 
+            // Display the last messages of the chunk
             sndMsg(RTVMMsgId + ': ' + msgText);
 
+            // Display some statistics
+            sndMsg('Number of messages returned: ' + %char(header.numMsgRtn));
+            sndMsg('Bytes returned:              ' + %char(header.bytRtn));
+            sndMsg('Bytes available:             ' + %char(header.bytAvl));
+
             IQMHRTVM(msgInf: msgInfSize: 'RTVM0300'
-                     : RTVMMsgId: qMsgF: '*YES': errCode: IQMHRTVM_NEXT: -1);
+                     : RTVMMsgId: qMsgF: '*YES': errCode
+                     : IQMHRTVM_NEXT: numMsgToRead);
          enddo;
 
          dealloc(n) pMsgInf;

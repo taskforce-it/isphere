@@ -1,6 +1,8 @@
+      /if not defined(iqmhrtvm)
+      /define iqmhrtvm
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      //* Copyright (c) 2012-2015 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
       //* are made available under the terms of the Common Public License v1.0                     *
       //* which accompanies this distribution, and is available at                                 *
@@ -9,6 +11,9 @@
       //*------------------------------------------------------------------------------------------*
 
       /copy qcpysrc,types
+
+     d IQMHRTVM_RETURN_ALL...
+     d                 c                   -1
 
      d IQMHRTVM_FIRST...
      d                 c                   '*FIRST'
@@ -33,11 +38,23 @@
 
      d iqmhrtvm_header_t...
      d                 ds                  qualified based(pTemplate)
-     d  bytRtn                       10i 0
-     d  bytAvl                       10i 0
-     d  numMsgRtn                    10i 0
-     d  firstMsgId                    7a
-     d  lastMsgId                     7a
-     d  reserved                      2a
-     d  offsFirstMsgD                10i 0
+     D  bytRtn                 1      4i 0
+     d  bytAvl                 5      8i 0
+     d  numMsgRtn              9     12i 0
+     d  firstMsgId            13     19a
+     d  lastMsgId             20     26a
+     d  reserved              27     28a
+     d  offsFirstMsgD         29     32i 0
 
+     d HEADER_MIN_SIZE...
+     d                 c                   8
+     d OFFSET_NUM_MSG_RTN...
+     d                 c                   12
+     d OFFSET_FIRST_MSG_ID...
+     d                 c                   19
+     d OFFSET_LAST_MSG_ID...
+     d                 c                   26
+     d OFFSET_FIRST_MSG_DESC...
+     d                 c                   28
+
+      /endif
