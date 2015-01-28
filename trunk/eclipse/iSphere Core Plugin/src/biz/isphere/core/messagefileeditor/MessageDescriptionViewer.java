@@ -111,7 +111,7 @@ public class MessageDescriptionViewer {
                 
                 try {
 
-                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400);
+                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connection);
                     iqmhrtvm.setMessageFile(messageFile, library);
                     messageDescriptions = iqmhrtvm.retrieveAllMessageDescriptions();
 
