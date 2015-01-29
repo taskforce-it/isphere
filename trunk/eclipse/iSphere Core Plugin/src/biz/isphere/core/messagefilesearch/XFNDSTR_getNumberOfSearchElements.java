@@ -8,6 +8,8 @@
 
 package biz.isphere.core.messagefilesearch;
 
+import biz.isphere.core.ISpherePlugin;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
@@ -32,9 +34,9 @@ public class XFNDSTR_getNumberOfSearchElements {
 
                 AS400Message[] msgs = pcml.getMessageList("XFNDSTR_getNumberOfSearchElements");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
                 }
-                System.out.println("*** Call to XFNDSTR_getNumberOfSearchElements failed. See messages above ***");
+                ISpherePlugin.logError("*** Call to XFNDSTR_getNumberOfSearchElements failed. See messages above ***", null);
 
                 numberOfSearchElements = -1;
 
@@ -52,7 +54,7 @@ public class XFNDSTR_getNumberOfSearchElements {
             // e.printStackTrace();
             // System.out.println("*** Call to XFNDSTR_getNumberOfSearchElements failed. ***");
             // return null;
-
+            ISpherePlugin.logError("*** Call to XFNDSTR_getNumberOfSearchElements failed. See messages above ***", e);
         }
 
         return numberOfSearchElements;

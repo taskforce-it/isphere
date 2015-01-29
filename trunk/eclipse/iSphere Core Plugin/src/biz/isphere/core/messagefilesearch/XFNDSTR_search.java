@@ -8,6 +8,7 @@
 
 package biz.isphere.core.messagefilesearch;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 
@@ -76,9 +77,9 @@ public class XFNDSTR_search {
 
                 AS400Message[] msgs = pcml.getMessageList("XFNDSTR_search");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
                 }
-                System.out.println("*** Call to XFNDSTR_search failed. See messages above ***");
+                ISpherePlugin.logError("*** Call to XFNDSTR_search failed. See messages above ***", null);
 
                 errno = -1;
 
@@ -96,7 +97,7 @@ public class XFNDSTR_search {
             // e.printStackTrace();
             // System.out.println("*** Call to XFNDSTR_search failed. ***");
             // return null;
-
+            ISpherePlugin.logError("*** Call to XFNDSTR_search failed. See messages above ***", e);
         }
 
         return errno;
