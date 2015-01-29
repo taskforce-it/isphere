@@ -15,6 +15,9 @@
  *     - On the AS/400 compile and execute command BUILD.
  *     - On the PC update minimum server version number in iSpherePlugin.
  *
+ *     - On the PC search java sources for missing copyright header.
+ *       Menu: Search -> File -> (?s)\A((?!copyright).)*\Z
+ *             Check: Regular expression
  *     - On the PC update document iSphere.doc.
  *     - On the PC print iSphere.doc to 'iSphere for WDSCi 7.0-RDi 8.0+.pdf'.
  *     - On the PC set version number (build.version) in build.properties.
