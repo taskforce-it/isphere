@@ -8,6 +8,8 @@
 
 package biz.isphere.core.spooledfiles;
 
+import biz.isphere.core.ISpherePlugin;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
@@ -31,9 +33,9 @@ public class SPLF_setUser {
 
                 AS400Message[] msgs = pcml.getMessageList("SPLF_setUser");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
                 }
-                System.out.println("*** Call to SPLF_setUser failed. See messages above ***");
+                ISpherePlugin.logError("*** Call to SPLF_setUser failed. See messages above ***", null);
 
                 errno = -1;
 
@@ -51,7 +53,7 @@ public class SPLF_setUser {
             // e.printStackTrace();
             // System.out.println("*** Call to SPLF_setUser failed. ***");
             // return null;
-
+            ISpherePlugin.logError("*** Call to SPLF_setUser failed. See messages above ***", e);
         }
 
         return errno;

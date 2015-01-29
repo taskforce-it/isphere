@@ -64,9 +64,9 @@ public class FNDSTR_search {
 
                 AS400Message[] msgs = pcml.getMessageList("FNDSTR_search");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    System.out.println(msgs[idx].getID() + " - " + msgs[idx].getText());
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
                 }
-                System.out.println("*** Call to FNDSTR_search failed. See messages above ***");
+                ISpherePlugin.logError("*** Call to FNDSTR_search failed. See messages above ***", null);
 
                 errno = -1;
 
@@ -80,7 +80,7 @@ public class FNDSTR_search {
 
             errno = -1;
 
-            ISpherePlugin.logError("Error on source file search: " + e.getLocalizedMessage(), e);
+            ISpherePlugin.logError("*** Call to FNDSTR_search failed. See messages above ***", e);
         }
 
         return errno;
