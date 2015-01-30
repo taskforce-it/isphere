@@ -1,4 +1,4 @@
-     hCopyright('(C) Copyright iSphere Project Owners')
+     hCopyright('v2.5.0 - Copyright (c) 2012-2015 iSphere Project Team')
 
       /if defined(VERSION_INFO)
      D ISPHERE_SERVER_VERSION...

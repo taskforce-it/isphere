@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Help Core
 Bundle-SymbolicName: biz.isphere.core.help;singleton:=true
 Bundle-Version: 2.5.0.b8
-Bundle-Vendor: iSphere Project Owners
+Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.help,
  biz.isphere.base.help

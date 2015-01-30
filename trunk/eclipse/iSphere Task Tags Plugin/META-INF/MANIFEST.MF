@@ -4,7 +4,7 @@ Bundle-Name: iSphere Task Tags
 Bundle-SymbolicName: biz.isphere.lpex.tasks;singleton:=true
 Bundle-Version: 2.5.0.b8
 Bundle-Activator: biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin
-Bundle-Vendor: iSphere Project
+Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,

@@ -4,7 +4,7 @@ Bundle-Name: ISphere Base (required)
 Bundle-SymbolicName: biz.isphere.base;singleton:=true
 Bundle-Version: 2.5.0.b8
 Bundle-Activator: biz.isphere.base.ISphereBasePlugin
-Bundle-Vendor: iSphere Project Owners
+Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

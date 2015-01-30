@@ -5,3 +5,4 @@ Bundle-SymbolicName: biz.isphere.lpex.tasks.help;singleton:=true
 Bundle-Version: 2.5.0.b8
 Require-Bundle: org.eclipse.help,
  biz.isphere.base.help
+Bundle-Vendor: iSphere Project Team
