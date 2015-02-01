@@ -50,42 +50,58 @@ public class SearchForUpdates extends Job {
 
         newVersionAvailable = false;
 
-        try {
+        int numTries;
+        if (showResultAlways) {
+            numTries = 1;
+        } else {
+            numTries = 3;
+        }
 
-            URL url = new URL(Preferences.getInstance().getURLForUpdates());
-            URLConnection connection = url.openConnection();
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection)connection).setRequestMethod("GET");
-            }
+        while (numTries > 0) {
 
-            Manifest manifest = readManifest(connection.getInputStream());
-            availableVersion = getVersion(manifest, "Bundle-Version");
+            try {
 
-            currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
-            if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
-                newVersionAvailable = true;
-            }
+                URL url = new URL(Preferences.getInstance().getURLForUpdates());
+                URLConnection connection = url.openConnection();
+                if (connection instanceof HttpURLConnection) {
+                    ((HttpURLConnection)connection).setRequestMethod("GET");
+                }
 
-            if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
-                availableVersion = getVersion(manifest, "X-Beta-Version");
+                Manifest manifest = readManifest(connection.getInputStream());
+                availableVersion = getVersion(manifest, "Bundle-Version");
+
+                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
                 if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
                 }
+
+                if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
+                    availableVersion = getVersion(manifest, "X-Beta-Version");
+                    if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
+                        newVersionAvailable = true;
+                    }
+                }
+
+                numTries = 0;
+
+            } catch (Exception e) {
+                numTries--;
+                if (numTries == 0) {
+                    ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
+                    if (showResultAlways) {
+                        new UIJob("ISPHERE_UPDATES") {
+                            @Override
+                            public IStatus runInUIThread(IProgressMonitor monitor) {
+                                Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                                MessageDialog.openError(parent, "iSphere", Messages.Failed_to_connect_to_iSphere_update_server);
+                                return Status.OK_STATUS;
+                            }
+                        }.schedule();
+                    }
+                }
+                return Status.OK_STATUS;
             }
 
-        } catch (Exception e) {
-            ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
-            if (showResultAlways) {
-                new UIJob("ISPHERE_UPDATES") {
-                    @Override
-                    public IStatus runInUIThread(IProgressMonitor monitor) {
-                        Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                        MessageDialog.openError(parent, "iSphere", Messages.Failed_to_connect_to_iSphere_update_server);
-                        return Status.OK_STATUS;
-                    }
-                }.schedule();
-            }
-            return Status.OK_STATUS;
         }
 
         if (showResultAlways || newVersionAvailable) {
