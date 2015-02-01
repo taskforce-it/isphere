@@ -8,6 +8,11 @@
 
 package biz.isphere.core.preferencepages;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -19,10 +24,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -30,7 +37,7 @@ import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
-public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferencePage {
+public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferencePage, IJobChangeListener {
 
     private Button buttonSearchForUpdates;
     private Button buttonSearchForBetaVersions;
@@ -39,6 +46,8 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
     private Text textURLForUpdates;
     private String urlForUpdates;
     private Button buttonStartSearchForUpdates;
+    private Display display;
+    private boolean isSearchingForUpdates;
 
     public ISphereUpdates() {
         super();
@@ -98,7 +107,9 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         buttonStartSearchForUpdates.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                
                 SearchForUpdates search = new SearchForUpdates(true);
+                search.addJobChangeListener(ISphereUpdates.this);
                 search.setUser(false);
                 search.schedule();
             }
@@ -106,20 +117,20 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
 
         setScreenToValues();
 
+        display = ISphereUpdates.this.getShell().getDisplay();
+        
         return container;
-
     }
 
     private void checkError() {
-        if (urlForUpdates.equals("")) {
-            setErrorMessage(Messages.The_value_in_field_URL_for_updates_is_not_valid);
-            setValid(false);
-            buttonStartSearchForUpdates.setEnabled(false);
-        } else {
+        if (checkUpdateURL()) {
             setErrorMessage(null);
             setValid(true);
-            buttonStartSearchForUpdates.setEnabled(true);
+        } else {
+            setErrorMessage(Messages.The_value_in_field_URL_for_updates_is_not_valid);
+            setValid(false);
         }
+        setButtonEnablement();
     }
 
     @Override
@@ -168,9 +179,15 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         setErrorMessage(null);
         setValid(true);
     }
-    
+
     private void setButtonEnablement() {
-        
+
+        if (checkUpdateURL() && !isSearchingForUpdates) {
+            buttonStartSearchForUpdates.setEnabled(true);
+        } else {
+            buttonStartSearchForUpdates.setEnabled(false);
+        }
+
         if (buttonSearchForUpdates.getSelection()) {
             buttonSearchForBetaVersions.setEnabled(true);
         } else {
@@ -178,7 +195,47 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         }
     }
 
+    protected boolean checkUpdateURL() {
+        return (urlForUpdates != null && urlForUpdates.trim().length() > 0);
+    }
+
     public void init(IWorkbench workbench) {
+
+        isSearchingForUpdates = false;
+    }
+
+    /*
+     * IJobChangeListener methods
+     */
+
+    public void aboutToRun(IJobChangeEvent event) {
+    }
+
+    public void awake(IJobChangeEvent event) {
+    }
+
+    public void done(IJobChangeEvent event) {
+        UIJob job = new UIJob(display, "") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                isSearchingForUpdates = false;
+                setButtonEnablement();
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+    }
+
+    public void running(IJobChangeEvent event) {
+    }
+
+    public void scheduled(IJobChangeEvent event) {
+        isSearchingForUpdates = true;
+        setButtonEnablement();
+    }
+
+    public void sleeping(IJobChangeEvent event) {
     }
 
 }
