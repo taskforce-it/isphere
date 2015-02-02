@@ -232,7 +232,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     }
 
     /**
-     * Sets the data for the view and specified the editor to use.
+     * Sets the data for the view and specifies the editor to use.
      * <p>
      * This method is used when a pinned view is restored.
      * 
