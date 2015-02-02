@@ -98,10 +98,9 @@ public class SearchForUpdates extends Job {
                             }
                         }.schedule();
                     }
+                    return Status.OK_STATUS;
                 }
-                return Status.OK_STATUS;
             }
-
         }
 
         if (showResultAlways || newVersionAvailable) {
