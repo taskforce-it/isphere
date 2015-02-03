@@ -124,8 +124,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         getViewManager().add(this);
     }
 
-    protected abstract IViewManager getViewManager();
-
     @Override
     public void createPartControl(Composite parent) {
 
@@ -239,7 +237,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * @param remoteObjects - data that is displayed
      * @param editorName - name of the editor
      */
-    public void setData(RemoteObject[] remoteObjects, String editorName) {
+    private void setData(RemoteObject[] remoteObjects, String editorName) {
 
         if (!checkInputData(remoteObjects)) {
             return;
@@ -278,7 +276,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return;
     }
 
-    protected boolean checkRemoteObjectType(RemoteObject remoteObject) {
+    private boolean checkRemoteObjectType(RemoteObject remoteObject) {
 
         if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
@@ -289,7 +287,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return true;
     }
 
-    protected boolean checkInputData(RemoteObject[] remoteObjects) {
+    private boolean checkInputData(RemoteObject[] remoteObjects) {
 
         if (remoteObjects == null || remoteObjects.length == 0) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Dropped_object_does_not_match_expected_type);
@@ -339,7 +337,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         dataSpaceEditor = createDataSpaceEditor(mainArea, dEditor);
     }
 
-    protected void createDataSpaceSpaceEditorLabels(Composite parent, DDataSpaceValue dataSpaceValue) {
+    private void createDataSpaceSpaceEditorLabels(Composite parent, DDataSpaceValue dataSpaceValue) {
         Composite labelArea = new Composite(parent, SWT.NONE);
         GridLayout layout = createGridLayoutSimple(8);
         labelArea.setLayout(layout);
@@ -500,7 +498,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
     }
 
-    protected void setControlValue(DDataSpaceValue dataSpaceValue, Control control) {
+    private void setControlValue(DDataSpaceValue dataSpaceValue, Control control) {
         manager.setControlValue(control, dataSpaceValue);
         if (watchManager.isWatchedControl(control)) {
             watchManager.setCurrentValue(control, manager.getControlValue(control));
@@ -514,7 +512,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         refreshActionsEnablement();
     }
 
-    protected void refreshActionsEnablement() {
+    private void refreshActionsEnablement() {
 
         if (currentDataSpaceValue == null || isAutoRefreshOn()) {
             refreshViewAction.setEnabled(false);
@@ -682,6 +680,8 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         super.dispose();
     }
+
+    protected abstract IViewManager getViewManager();
 
     protected abstract AbstractDropDataObjectListerner createDropListener(IDialogView editor);
 
