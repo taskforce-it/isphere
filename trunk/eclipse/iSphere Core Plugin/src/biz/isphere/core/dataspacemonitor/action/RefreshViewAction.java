@@ -11,6 +11,7 @@ package biz.isphere.core.dataspacemonitor.action;
 import org.eclipse.jface.action.Action;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 
 public class RefreshViewAction extends Action {
@@ -21,7 +22,7 @@ public class RefreshViewAction extends Action {
         super("Refresh");
         this.view = view;
 
-        setToolTipText("Refresh the content of the display object");
+        setToolTipText(Messages.Refresh_the_contents_of_this_view);
         setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH));
         setEnabled(false);
     }
