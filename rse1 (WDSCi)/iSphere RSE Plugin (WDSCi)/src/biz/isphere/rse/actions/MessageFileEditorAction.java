@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
@@ -112,8 +113,11 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 
                         if (as400 != null) {
 
-                            RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
-                            MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
+                            if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+                                RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
+                                MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
+                            }
+
                         }
                     }
                 }
