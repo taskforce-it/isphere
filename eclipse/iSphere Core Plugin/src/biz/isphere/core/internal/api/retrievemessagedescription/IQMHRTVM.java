@@ -47,7 +47,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @throws PropertyVetoException
      */
     public IQMHRTVM(AS400 system, String connectionName) throws PropertyVetoException {
-        super(system, "IQMHRTVM", "ISPHEREDVP");
+        super(system, "IQMHRTVM", ISpherePlugin.getISphereLibrary());
 
         this.connectionName = connectionName;
     }
