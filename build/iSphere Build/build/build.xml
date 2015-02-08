@@ -312,11 +312,11 @@
 	<target name="updatePdfFile" unless="pdf.isUpToDate">
 		
 		<echo>Updating iSphere PDF file ...</echo>
-		<!--
+		
 		<winword file="${isphere.doc}" visible="true" >
 			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
 		</winword>
-		-->
+		
 	</target>
 	
 	<target name="checkPdfFile" >
