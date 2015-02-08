@@ -61,6 +61,7 @@
 
      D gi_dataArea     s             21a   varying
      D iSphere         ds           256    dtaara(*var: gi_dataArea) inz
+     D                                     qualified
      D  server_id              1      7a   inz('Server:')
      D  server_ver             8     13a
      D  client_id             15     21a   inz('Client:')
