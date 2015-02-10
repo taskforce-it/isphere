@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -73,8 +74,11 @@ public abstract class AbstractViewManager implements IViewManager {
                 super.perspectiveChanged(page, perspective, partRef, changeId);
                 if (IWorkbenchPage.CHANGE_VIEW_HIDE.equals(changeId)) {
                     IViewReference viewRef = (IViewReference)partRef;
-                    IPinnableView view = (IPinnableView)viewRef.getView(false);
-                    view.setPinned(false);
+                    IViewPart viewPart = viewRef.getView(false);
+                    if (viewPart instanceof IPinnableView) {
+                        IPinnableView view = (IPinnableView)viewPart;
+                        view.setPinned(false);
+                    }
                 }
             }
         });
