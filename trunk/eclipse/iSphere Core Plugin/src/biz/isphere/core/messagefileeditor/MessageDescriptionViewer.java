@@ -104,7 +104,7 @@ public class MessageDescriptionViewer {
     private class ContentProviderTableViewer implements IStructuredContentProvider {
         public Object[] getElements(Object inputElement) {
             if (messageDescriptions == null) {
-                
+
                 try {
 
                     IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connection);
@@ -318,6 +318,7 @@ public class MessageDescriptionViewer {
             @Override
             public void keyReleased(KeyEvent keyEvent) {
                 if (keyEvent.keyCode == 127) {
+                    retrieveSelectedTableItems();
                     String[] validMenuItems = investigateValidMenuItems();
                     for (int idx = 0; idx < validMenuItems.length; idx++) {
                         if (validMenuItems[idx].equals("*DELETE")) {
