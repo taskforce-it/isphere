@@ -126,8 +126,9 @@ public class IQMHRTVMResult extends APIFormat {
             ArrayList<FieldFormat> fieldFormats = new ArrayList<FieldFormat>();
 
             SubstitutionVariable variable = new SubstitutionVariable(getSystem(), getBytes());
-            int offsetVariable = rtvm0300.getOffsetSubstitutionVariables();
+            int offsetFirstSubstitutionVariable = offset + rtvm0300.getOffsetSubstitutionVariables();
 
+            int offsetVariable = offsetFirstSubstitutionVariable;
             for (int f = 0; f < rtvm0300.getNumberOfSubstitutionVariables(); f++) {
 
                 variable.setOffset(offsetVariable);
@@ -135,16 +136,18 @@ public class IQMHRTVMResult extends APIFormat {
                 FieldFormat fieldFormat = new FieldFormat();
 
                 fieldFormat.setType(variable.getType());
-                if (variable.getLength() == -1) {
+                if (variable.getLengthOfReplacementData() == -1) {
                     fieldFormat.setVary(true);
                     fieldFormat.setBytes(variable.getDecimalPositions());
                 } else {
                     fieldFormat.setVary(false);
-                    fieldFormat.setLength(variable.getLength());
+                    fieldFormat.setLength(variable.getLengthOfReplacementData());
                     fieldFormat.setDecimalPositions(variable.getDecimalPositions());
                 }
 
                 fieldFormats.add(fieldFormat);
+                
+                offsetVariable = offsetVariable + rtvm0300.getLengthOfSubstitutionVariableFormatElement();
             }
 
             String helpText = rtvm0300.getMessageHelp();
