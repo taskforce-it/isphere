@@ -63,7 +63,7 @@ public class SubstitutionVariable extends APIFormat {
      * 
      * @return length of the substitution variable
      */
-    public int getLength() {
+    public int getLengthOfReplacementData() {
         return getInt4Value(LENGTH_OF_REPLACEMENT_DATA);
     }
 

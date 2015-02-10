@@ -33,6 +33,8 @@ public class RTVM0300 extends APIFormat {
     private static final String LENGTH_MESSAGE_HELP_RETURNED = "lengthMessageHelpReturned"; //$NON-NLS-1$
     private static final String OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS = "offsetOfSubstitutionVariableFormats"; //$NON-NLS-1$
     private static final String LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_RETURNED = "lengthOfSubstitutionVariableFormatsReturned"; //$NON-NLS-1$
+    private static final String LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_AVAILABLE = "lengthOfSubstitutionVariableFormatsAvailable"; //$NON-NLS-1$
+    private static final String LENGTH_OF_SUBSTITUTION_VARIABLE_FORMAT_ELEMENT = "lengthOfSubstitutionVariableFormatElement"; //$NON-NLS-1$
 
     /**
      * Constructs a RTVM0300 object.
@@ -157,6 +159,15 @@ public class RTVM0300 extends APIFormat {
     }
 
     /**
+     * Returns the length of the substitution variable format element.
+     * 
+     * @return length of substitution variable format
+     */
+    public int getLengthOfSubstitutionVariableFormatElement() {
+        return getInt4Value(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMAT_ELEMENT);
+    }
+
+    /**
      * Creates the RTVM0300 structure.
      */
     private void createStructure() {
@@ -173,5 +184,7 @@ public class RTVM0300 extends APIFormat {
         addInt4Field(LENGTH_MESSAGE_HELP_RETURNED, 80);
         addInt4Field(OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS, 88);
         addInt4Field(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_RETURNED, 92);
+        addInt4Field(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_AVAILABLE, 96);
+        addInt4Field(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMAT_ELEMENT, 100);
     }
 }
