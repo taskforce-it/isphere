@@ -3,3 +3,4 @@ Thomas
 resizable
 editable
 pinnable
+typo
