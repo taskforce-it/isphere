@@ -74,7 +74,9 @@ public class MessageDescriptionDetail {
         this.as400 = as400;
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
-        if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+        
+        if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
+            || actionType == DialogActionTypes.DISPLAY) {
             refresh(_messageDescription);
         }
     }
@@ -348,30 +350,30 @@ public class MessageDescriptionDetail {
         switch (actionType) {
         case DialogActionTypes.CREATE: {
             convertData();
-            if (checkData()) {
-                transferData();
+            if (checkDataAndExecuteAction()) {
+                reloadMessageDescription();
                 return true;
             }
             return false;
         }
         case DialogActionTypes.CHANGE: {
             convertData();
-            if (checkData()) {
-                transferData();
+            if (checkDataAndExecuteAction()) {
+                reloadMessageDescription();
                 return true;
             }
             return false;
         }
         case DialogActionTypes.COPY: {
             convertData();
-            if (checkData()) {
-                transferData();
+            if (checkDataAndExecuteAction()) {
+                reloadMessageDescription();
                 return true;
             }
             return false;
         }
         case DialogActionTypes.DELETE: {
-            if (checkData()) {
+            if (checkDataAndExecuteAction()) {
                 return true;
             }
             return false;
@@ -387,7 +389,7 @@ public class MessageDescriptionDetail {
         textMessageId.setText(textMessageId.getText().toUpperCase().trim());
     }
 
-    protected boolean checkData() {
+    protected boolean checkDataAndExecuteAction() {
 
         if (actionType != DialogActionTypes.DELETE) {
 
@@ -547,7 +549,12 @@ public class MessageDescriptionDetail {
         return stringWithQuotes.toString();
     }
 
-    protected void transferData() {
+    protected void reloadMessageDescription() {
+
+        if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY) {
+            _messageDescription.setMessageId(textMessageId.getText());
+        }
+
         refresh(_messageDescription);
     }
 
@@ -556,10 +563,6 @@ public class MessageDescriptionDetail {
     }
 
     public void refresh(MessageDescription _messageDescription) {
-
-        if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY) {
-            _messageDescription.setMessageId(textMessageId.getText());
-        }
 
         QMHRTVM qmhrtvm = new QMHRTVM();
         MessageDescription[] _description = qmhrtvm.run(as400, _messageDescription.getConnection(), _messageDescription.getLibrary(),
