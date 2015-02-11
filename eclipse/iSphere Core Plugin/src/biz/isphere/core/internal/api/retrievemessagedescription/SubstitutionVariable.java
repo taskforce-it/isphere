@@ -23,7 +23,7 @@ public class SubstitutionVariable extends APIFormat {
 
     private static final String LENGTH_OF_REPLACEMENT_DATA = "lengthOfReplacementData";
     private static final String FIELD_SIZE_OR_DECIMAL_POSITIONS = "fieldSizeOrDecimalPositions";
-    private static final String SUBSTItUTION_VARIABLE_TYPE = "substitutionVariableType";
+    private static final String SUBSTITUTION_VARIABLE_TYPE = "substitutionVariableType";
 
     /**
      * Constructs a SubstitutionVariable object.
@@ -95,7 +95,7 @@ public class SubstitutionVariable extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public String getType() throws UnsupportedEncodingException {
-        return getCharValue(SUBSTItUTION_VARIABLE_TYPE);
+        return getCharValue(SUBSTITUTION_VARIABLE_TYPE);
     }
 
     /**
@@ -105,6 +105,6 @@ public class SubstitutionVariable extends APIFormat {
 
         addInt4Field(LENGTH_OF_REPLACEMENT_DATA, 0);
         addInt4Field(FIELD_SIZE_OR_DECIMAL_POSITIONS, 4);
-        addCharField(SUBSTItUTION_VARIABLE_TYPE, 8, 10);
+        addCharField(SUBSTITUTION_VARIABLE_TYPE, 8, 10);
     }
 }
