@@ -35,8 +35,6 @@ import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private static final int DEFAULT_FTP_PORT = 21;
-
     private Text textISphereLibrary;
     private String iSphereLibrary;
     private Validator validatorLibrary;
@@ -70,7 +68,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelFtpPortNumber.setText(Messages.FTP_port_number_colon);
 
         textFtpPortNumber = WidgetFactory.createIntegerText(container);
-        textFtpPortNumber.setText(Integer.toString(DEFAULT_FTP_PORT));
+        textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         textFtpPortNumber.setTextLimit(5);
         textFtpPortNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -139,7 +137,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
-        Preferences.getInstance().setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), DEFAULT_FTP_PORT));
+        Preferences.getInstance().setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
 
     }
 

@@ -8,7 +8,6 @@
 
 package biz.isphere.core.internal;
 
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
@@ -51,18 +51,20 @@ public class TransferISphereLibrary extends Shell {
 
     public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aHostName, int aFtpPort) {
         super(display, style);
-        createContents();
-        setLayout(new GridLayout());
 
+        setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32).createImage());
+        
         iSphereLibrary = anISphereLibrary;
         hostName = aHostName;
         setFtpPort(aFtpPort);
 
+        createContents();
+        setLayout(new GridLayout());
     }
 
     private void setFtpPort(int aFtpPort) {
         if (aFtpPort <= 0) {
-            ftpPort = 21;
+            ftpPort = Preferences.getInstance().getDefaultFtpPortNumber();
         } else {
             ftpPort = aFtpPort;
         }
@@ -87,7 +89,7 @@ public class TransferISphereLibrary extends Shell {
                         setStatus("!!!   " + Messages.bind(Messages.File_A_in_library_QGPL_does_already_exist, iSphereLibrary) + "   !!!");
                     } else {
                         setStatus(Messages.bind(Messages.Creating_save_file_A_in_library_QGPL, iSphereLibrary));
-                        if (!executeCommand("CRTSAVF FILE(QGPL/" + iSphereLibrary + ") TEXT('iSphere')").equals("")) {
+                        if (!executeCommand("CRTSAVF FILE(QGPL/" + iSphereLibrary + ") TEXT('iSphere')", true).equals("")) {
                             setStatus("!!!   " + Messages.bind(Messages.Could_not_create_save_file_A_in_library_QGPL, iSphereLibrary) + "   !!!");
                         } else {
                             URL fileUrl;
@@ -98,11 +100,13 @@ public class TransferISphereLibrary extends Shell {
                                 fileUrl = null;
                             }
                             if (fileUrl != null) {
+
                                 File file = new File(fileUrl.getPath() + "Server\\ISPHERE");
                                 setStatus(Messages.Sending_save_file_to_host);
                                 setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
                                 boolean ok = false;
                                 AS400FTP client = new AS400FTP(as400);
+
                                 try {
                                     client.setPort(ftpPort);
                                     client.setDataTransferType(FTP.BINARY);
@@ -111,17 +115,18 @@ public class TransferISphereLibrary extends Shell {
                                         client.disconnect();
                                         ok = true;
                                     }
-                                } catch (IOException e) {
-                                } catch (PropertyVetoException e) {
-                                    e.printStackTrace();
+                                } catch (Throwable e) {
+                                    ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
+                                    setStatus(e.getLocalizedMessage());
                                 }
+
                                 if (!ok) {
                                     setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
                                 } else {
                                     setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
-                                    if (!executeCommand(
-                                        "RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/" + iSphereLibrary + ") RSTLIB(" + iSphereLibrary + ")").equals(
-                                        "")) {
+                                    String cpfMsg = executeCommand("RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/" + iSphereLibrary + ") RSTLIB("
+                                        + iSphereLibrary + ")", true);
+                                    if (!cpfMsg.equals("")) {
                                         setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
                                     } else {
                                         setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
@@ -134,6 +139,7 @@ public class TransferISphereLibrary extends Shell {
                 }
             }
         });
+
         buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         buttonStart.setText(Messages.Start_Transfer);
 
@@ -157,12 +163,19 @@ public class TransferISphereLibrary extends Shell {
     }
 
     private String executeCommand(String command) {
+        return executeCommand(command, false);
+    }
+
+    private String executeCommand(String command, boolean logError) {
         try {
             commandCall.run(command);
             AS400Message[] messageList = commandCall.getMessageList();
             if (messageList.length > 0) {
                 for (int idx = 0; idx < messageList.length; idx++) {
                     if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                        if (logError) {
+                            setStatus(messageList[idx].getID() + ": " + messageList[idx].getText());
+                        }
                         return messageList[idx].getID();
                     }
                 }
@@ -183,6 +196,9 @@ public class TransferISphereLibrary extends Shell {
                     as400.connectService(AS400.COMMAND);
                     commandCall = new CommandCall(as400);
                     if (commandCall != null) {
+                        hostName = as400.getSystemName();
+                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_to_host_B_using_port_C,
+                            new String[] { iSphereLibrary.trim(), hostName, Integer.toString(ftpPort) }));
                         buttonStart.setEnabled(true);
                         return true;
                     }
