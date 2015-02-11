@@ -641,6 +641,20 @@
                   style="push"
                   tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
             </command>
+            
+            <separator
+                  name="biz.isphere.core.menu.isphere.transferlibrary"
+                  visible="true">
+            </separator>
+            
+            <command
+                  commandId="biz.isphere.core.command.iSphereLibrary.transfer"
+                  label="%menu_Transfer_iSphere_library"
+                  icon="icons/transfer_library_16.gif"
+                  style="push"
+                  tooltip="%menu_Tooltip_Transfer_iSphere_library">
+            </command>
+            
          </menu>
       </menuContribution>
    </extension>
@@ -657,6 +671,12 @@
             defaultHandler="biz.isphere.rse.handler.OpenRSEManagementHandler"
             id="biz.isphere.core.command.RSEManagement.open"
             name="%command_RSE_Filter_Management">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.core.internal.handler.TransferLibraryHandler"
+            id="biz.isphere.core.command.iSphereLibrary.transfer"
+            name="%command_Transfer_iSphere_library">
       </command>
    </extension>
 

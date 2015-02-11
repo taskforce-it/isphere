@@ -745,6 +745,10 @@ public class Messages extends NLS {
     public static String Invert_selection;
 
     public static String Tooltip_Invert_selection;
+
+    public static String About_to_transfer_library_A_to_host_B_using_port_C;
+    
+    public static String iSphere_library_not_set_in_preferences;
     
     static {
         // initialize resource bundle
