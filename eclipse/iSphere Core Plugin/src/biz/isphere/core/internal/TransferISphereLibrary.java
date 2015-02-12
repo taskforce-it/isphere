@@ -9,18 +9,22 @@
 package biz.isphere.core.internal;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -35,7 +39,6 @@ import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400FTP;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.FTP;
 
@@ -45,6 +48,7 @@ public class TransferISphereLibrary extends Shell {
     private CommandCall commandCall;
     private Table tableStatus;
     private Button buttonStart;
+    private Button buttonClose;
     private String iSphereLibrary;
     private int ftpPort;
     private String hostName;
@@ -53,13 +57,12 @@ public class TransferISphereLibrary extends Shell {
         super(display, style);
 
         setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32).createImage());
-        
+
         iSphereLibrary = anISphereLibrary;
         hostName = aHostName;
         setFtpPort(aFtpPort);
 
         createContents();
-        setLayout(new GridLayout());
     }
 
     private void setFtpPort(int aFtpPort) {
@@ -72,74 +75,16 @@ public class TransferISphereLibrary extends Shell {
 
     protected void createContents() {
 
+        GridLayout gl_shell = new GridLayout();
+        gl_shell.marginTop = 10;
+        gl_shell.verticalSpacing = 10;
+        setLayout(gl_shell);
+
         setText(Messages.Transfer_iSphere_library);
-        setSize(500, 250);
+        setSize(500, 300);
 
         buttonStart = WidgetFactory.createPushButton(this);
-        buttonStart.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent event) {
-                buttonStart.setEnabled(false);
-                setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
-                if (!executeCommand("CHKOBJ OBJ(QSYS/" + iSphereLibrary + ") OBJTYPE(*LIB)").equals("CPF9801")) {
-                    setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
-                } else {
-                    setStatus(Messages.bind(Messages.Checking_file_A_in_library_QGPL_for_existence, iSphereLibrary));
-                    if (!executeCommand("CHKOBJ OBJ(QGPL/" + iSphereLibrary + ") OBJTYPE(*FILE)").equals("CPF9801")) {
-                        setStatus("!!!   " + Messages.bind(Messages.File_A_in_library_QGPL_does_already_exist, iSphereLibrary) + "   !!!");
-                    } else {
-                        setStatus(Messages.bind(Messages.Creating_save_file_A_in_library_QGPL, iSphereLibrary));
-                        if (!executeCommand("CRTSAVF FILE(QGPL/" + iSphereLibrary + ") TEXT('iSphere')", true).equals("")) {
-                            setStatus("!!!   " + Messages.bind(Messages.Could_not_create_save_file_A_in_library_QGPL, iSphereLibrary) + "   !!!");
-                        } else {
-                            URL fileUrl;
-                            try {
-                                fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
-                            } catch (IOException e) {
-                                setStatus("!!!   Internal Error at checkpoint 1   !!!");
-                                fileUrl = null;
-                            }
-                            if (fileUrl != null) {
-
-                                File file = new File(fileUrl.getPath() + "Server\\ISPHERE");
-                                setStatus(Messages.Sending_save_file_to_host);
-                                setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
-                                boolean ok = false;
-                                AS400FTP client = new AS400FTP(as400);
-
-                                try {
-                                    client.setPort(ftpPort);
-                                    client.setDataTransferType(FTP.BINARY);
-                                    if (client.connect()) {
-                                        client.put(file, "/QSYS.LIB/QGPL.LIB/" + iSphereLibrary + ".FILE");
-                                        client.disconnect();
-                                        ok = true;
-                                    }
-                                } catch (Throwable e) {
-                                    ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
-                                    setStatus(e.getLocalizedMessage());
-                                }
-
-                                if (!ok) {
-                                    setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
-                                } else {
-                                    setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
-                                    String cpfMsg = executeCommand("RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/" + iSphereLibrary + ") RSTLIB("
-                                        + iSphereLibrary + ")", true);
-                                    if (!cpfMsg.equals("")) {
-                                        setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
-                                    } else {
-                                        setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
-                                    }
-                                }
-                            }
-                        }
-                        executeCommand("DLTF FILE(QGPL/" + iSphereLibrary + ")");
-                    }
-                }
-            }
-        });
-
+        buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
         buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         buttonStart.setText(Messages.Start_Transfer);
 
@@ -148,7 +93,29 @@ public class TransferISphereLibrary extends Shell {
         tableStatus.setLayoutData(gd_tableStatus);
 
         final TableColumn columnStatus = new TableColumn(tableStatus, SWT.NONE);
-        columnStatus.setWidth(500);
+        columnStatus.setWidth(getSize().x);
+
+        tableStatus.addControlListener(new ControlAdapter() {
+            public void controlResized(ControlEvent event) {
+                Table table = (Table)event.getSource();
+                if (table.getClientArea().width > 0) {
+                    // Resize the column to the width of the table
+                    columnStatus.setWidth(table.getClientArea().width);
+                }
+            }
+        });
+
+        buttonClose = WidgetFactory.createPushButton(this);
+        buttonClose.setText(Messages.btnLabel_Close);
+        buttonClose.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                close();
+            }
+        });
+
+        GridData gd_buttonClose = new GridData(GridData.CENTER, GridData.CENTER, true, false);
+        buttonClose.setLayoutData(gd_buttonClose);
     }
 
     @Override
@@ -160,6 +127,96 @@ public class TransferISphereLibrary extends Shell {
         TableItem itemStatus = new TableItem(tableStatus, SWT.BORDER);
         itemStatus.setText(status);
         tableStatus.update();
+    }
+
+    private boolean checkLibraryPrecondition(String iSphereLibrary) {
+
+        while (libraryExists(iSphereLibrary)) {
+            if (!MessageDialog.openQuestion(
+                getShell(),
+                Messages.msgBox_headline_Delete_Object,
+                Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "\n\n"
+                    + Messages.bind(Messages.Do_you_want_to_delete_library_A, iSphereLibrary))) {
+                return false;
+            }
+            setStatus(Messages.bind(Messages.Deleting_library_A, iSphereLibrary));
+            deleteLibrary(iSphereLibrary, true);
+        }
+
+        return true;
+    }
+
+    private boolean libraryExists(String iSphereLibrary) {
+
+        if (executeCommand("CHKOBJ OBJ(QSYS/" + iSphereLibrary + ") OBJTYPE(*LIB)").equals("CPF9801")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean deleteLibrary(String iSphereLibrary, boolean logErrors) {
+
+        if (!executeCommand("DLTLIB LIB(" + iSphereLibrary + ")", logErrors).equals("")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
+
+        while (saveFileExists(workLibrary, saveFileName)) {
+            if (!MessageDialog.openQuestion(
+                getShell(),
+                Messages.msgBox_headline_Delete_Object,
+                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n"
+                    + Messages.bind(Messages.Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
+                return false;
+            }
+            setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
+            deleteSaveFile(workLibrary, saveFileName, true);
+        }
+
+        return true;
+    }
+
+    private boolean saveFileExists(String workLibrary, String saveFileName) {
+
+        if (executeCommand("CHKOBJ OBJ(" + workLibrary + "/" + saveFileName + ") OBJTYPE(*FILE)").equals("CPF9801")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean deleteSaveFile(String workLibrary, String saveFileName, boolean logErrors) {
+
+        if (!executeCommand("DLTF FILE(" + workLibrary + "/" + saveFileName + ")", logErrors).equals("")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean createSaveFile(String workLibrary, String saveFileName, boolean logErrors) {
+
+        if (!executeCommand("CRTSAVF FILE(" + workLibrary + "/" + saveFileName + ") TEXT('iSphere')", logErrors).equals("")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean restoreLibrary(String workLibrary, String saveFileName, String iSphereLibrary) {
+
+        String cpfMsg = executeCommand("RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary
+            + ")", true);
+        if (!cpfMsg.equals("")) {
+            return false;
+        }
+
+        return true;
     }
 
     private String executeCommand(String command) {
@@ -187,7 +244,9 @@ public class TransferISphereLibrary extends Shell {
     }
 
     public boolean connect() {
+        as400 = new AS400(hostName, "RADDATZ2", "TOOLS400");
         buttonStart.setEnabled(false);
+        buttonClose.setEnabled(false);
         SignOnDialog signOnDialog = new SignOnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), hostName);
         if (signOnDialog.open() == Dialog.OK) {
             as400 = signOnDialog.getAS400();
@@ -197,17 +256,95 @@ public class TransferISphereLibrary extends Shell {
                     commandCall = new CommandCall(as400);
                     if (commandCall != null) {
                         hostName = as400.getSystemName();
-                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_to_host_B_using_port_C,
-                            new String[] { iSphereLibrary.trim(), hostName, Integer.toString(ftpPort) }));
+                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_to_host_B_using_port_C, new String[] { iSphereLibrary.trim(),
+                            hostName, Integer.toString(ftpPort) }));
                         buttonStart.setEnabled(true);
+                        buttonClose.setEnabled(true);
                         return true;
                     }
-                } catch (AS400SecurityException e) {
-                } catch (IOException e) {
+                } catch (Throwable e) {
+                    ISpherePlugin.logError("Failed to connect to host: " + hostName, e);
                 }
             }
         }
         return false;
     }
 
+    private class TransferLibrarySelectionAdapter extends SelectionAdapter {
+        @Override
+        public void widgetSelected(final SelectionEvent event) {
+
+            buttonStart.setEnabled(false);
+            buttonClose.setEnabled(false);
+            boolean successfullyTransfered = false;
+
+            String workLibrary = "QGPL";
+            String saveFileName = iSphereLibrary;
+
+            setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
+            if (!checkLibraryPrecondition(iSphereLibrary)) {
+                setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
+            } else {
+                setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
+                if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
+                    setStatus("!!!   " + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName })
+                        + "   !!!");
+                } else {
+
+                    setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
+                    if (!createSaveFile(workLibrary, saveFileName, true)) {
+                        setStatus("!!!   "
+                            + Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName })
+                            + "   !!!");
+                    } else {
+
+                        try {
+
+                            setStatus(Messages.Sending_save_file_to_host);
+                            setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
+                            AS400FTP client = new AS400FTP(as400);
+
+                            URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
+                            File file = new File(fileUrl.getPath() + "Server\\ISPHERE");
+                            client.setPort(ftpPort);
+                            client.setDataTransferType(FTP.BINARY);
+                            if (client.connect()) {
+                                client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
+                                client.disconnect();
+                            }
+
+                            setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
+                            if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary)) {
+                                setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
+                            } else {
+                                setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
+                                successfullyTransfered = true;
+                            }
+
+                        } catch (Throwable e) {
+                            ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
+
+                            setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
+                            setStatus(e.getLocalizedMessage());
+                        } finally {
+
+                            setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
+                            deleteSaveFile(workLibrary, saveFileName, true);
+                        }
+
+                    }
+                }
+            }
+
+            if (successfullyTransfered) {
+                buttonStart.setEnabled(false);
+                buttonClose.setEnabled(true);
+                buttonClose.setFocus();
+            } else {
+                buttonStart.setEnabled(true);
+                buttonClose.setEnabled(true);
+                buttonClose.setFocus();
+            }
+        }
+    }
 }
