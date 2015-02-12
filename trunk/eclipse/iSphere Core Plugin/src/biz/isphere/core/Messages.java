@@ -262,13 +262,13 @@ public class Messages extends NLS {
 
     public static String Library_A_does_already_exist;
 
-    public static String Checking_file_A_in_library_QGPL_for_existence;
+    public static String Checking_file_B_in_library_A_for_existence;
 
-    public static String File_A_in_library_QGPL_does_already_exist;
+    public static String File_B_in_library_A_does_already_exist;
 
-    public static String Creating_save_file_A_in_library_QGPL;
+    public static String Creating_save_file_B_in_library_A;
 
-    public static String Could_not_create_save_file_A_in_library_QGPL;
+    public static String Could_not_create_save_file_B_in_library_A;
 
     public static String Sending_save_file_to_host;
 
@@ -749,6 +749,18 @@ public class Messages extends NLS {
     public static String About_to_transfer_library_A_to_host_B_using_port_C;
     
     public static String iSphere_library_not_set_in_preferences;
+
+    public static String msgBox_headline_Delete_Object;
+    
+    public static String Do_you_want_to_delete_library_A;
+    
+    public static String Do_you_want_to_delete_object_A_B_type_C;
+
+    public static String Deleting_library_A;
+
+    public static String Deleting_object_A_B_of_type_C;
+
+    public static String btnLabel_Close;
     
     static {
         // initialize resource bundle
