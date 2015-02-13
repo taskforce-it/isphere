@@ -1,0 +1,36 @@
+Comment: Do not remove biz.isphere.adapter, because
+ it is required by the PropertyTester classes
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere for RDi 8.0+
+Bundle-SymbolicName: biz.isphere.rse;singleton:=true
+Bundle-Version: 2.5.0
+Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.compare,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.rse.files.ui,
+ org.eclipse.rse.services,
+ org.eclipse.search,
+ com.ibm.etools.iseries.rse.ui,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.systems.editor,
+ biz.isphere.core,
+ biz.isphere.adapter,
+ biz.isphere.base,
+ org.eclipse.rse.useractions,
+ org.eclipse.jface.text
+Bundle-ActivationPolicy: lazy
+Export-Package: biz.isphere.rse,
+ biz.isphere.rse.actions,
+ biz.isphere.rse.compareeditor,
+ biz.isphere.rse.internal,
+ biz.isphere.rse.spooledfiles

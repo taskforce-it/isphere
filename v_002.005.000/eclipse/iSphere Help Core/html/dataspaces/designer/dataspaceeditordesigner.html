@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Data Space Editor Designer</title>
+</head>
+
+<body>
+<h1>Data Space Editor Designer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/dataspaceeditordesigner.png" 
+     width="64" height="64" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The <i>Data Space Editor Designer</i> is used to create <i>editors</i> for your data areas and
+user spaces. The editors that you create here are used by the <i>iSphere Data Area-</i> and 
+<i>iSphere User Space Monitor</i> to display the data of the selected object. 
+<p>
+<img src="assets/designer.gif" 
+     width="844" height="453" 
+     align="middle">
+<br>
+<p>
+When you start the designer for the first time, the left panel is empty. So the first thing you may want
+to do is creating a new editor:
+<p>
+<table>
+<tr>
+<td>Create Editor</td>
+<td><img src="assets/icon_newdialog.gif" 
+     width="16" height="16" 
+     align="middle">
+</td>
+</tr>
+</table>
+<p>
+<img src="assets/dialog_newdialog.gif" 
+     width="280" height="160" 
+     align="middle">
+<p>
+The number of columns spinner specifies the number of columns your editor will have. The example
+above shows a 2-column editors with numerous fields.
+<p>
+Clicking the OK button creates the editor. The new editor is loaded into the right area and the
+<i>Add Field</i> buttons are enabled.
+<p>
+Now it is up to you to add the fields you need to the area. For each field you need to specify a label and
+the offset of the data in the data space object.
+<p>
+<table>
+<tr><td class="notice" >Remember: A data space object is a data area or a user space.</td></tr>
+</table>
+<p>
+Example of a 'Text' Field:
+<p>
+<img src="assets/dialog_newtextfield.gif" 
+     width="295" height="205" 
+     align="middle">
+<p>
+Notice: Some fields may require additional information, such as <i>length</i> or <i>fraction</i>.
+<p>
+<img src="assets/dialog_editorwodata.gif" 
+     width="451" height="320" 
+     align="middle">
+<p>
+In order to verify your work, you can drag & drop the data space object, you create the editor for,
+from the RSE tree into the designer. The current values show up immediately provided you created the
+fields properly: 
+<p>
+<img src="assets/dialog_editorwithdata.gif" 
+     width="451" height="320" 
+     align="middle">
+<p>
+The data displayed here come from the TSTDTAARA1 data area that you can find in your iSphere product 
+library. Maybe that you need to "compile" it from source member ISPHERE/QDTAARASRC.TSTDTAARA1:
+<p>
+<table>
+<tr>
+<td class="code" >CRTCLPGM PGM(QTEMP/TSTDTAARA1) SRCFILE(ISPHERE/QDTAARASRC) SRCMBR(TSTDTAARA1)</td>
+</tr>
+<tr>
+<td class="code" >CALL PGM(QTEMP/TSTDTAARA1) PARM('ISPHERE' 'TSTDTAARA1')</td>
+</tr>
+</table>
+<p>
+In order to complete your work, you need to assign the data space objects, you create the editor for, to
+the editor.
+<p>
+<table>
+<tr>
+<td>Assign Data Area</td>
+<td><img src="assets/icon_add_data_area.gif" 
+     width="16" height="16" 
+     align="middle">
+</td>
+</tr>
+<tr>
+<td>Assign User Space</td>
+<td><img src="assets/icon_add_user_space.gif" 
+     width="16" height="16" 
+     align="middle">
+</td>
+</tr>
+</table>
+<p>
+
+<img src="assets/dialog_add_data_area.gif" 
+     width="280" height="160" 
+     align="middle">
+<p>
+Now the <i>iSphere Data Space Monitor</i> automatically picks up the editor, when you select the 
+<i>iSphere Data Area Monitor</i> option from the RSE tree.
+<p>
+See: <a href="../monitor/dataspacemonitor.html">iSphere Data Space Monitor</a>
+<p>
+<h2>Comments and Fillers</h2>
+<p>
+Comment/Filler fields can be used to add comments, separators or just blank lines or areas to the 
+dialog: 
+<p>
+<img src="assets/dialog_newcommentfield.gif" 
+     width="295" height="205" 
+     align="middle">
+<p>
+For comments, just enter the comment you want to be displayed on the screen. The following special
+values are used to create a horizontal separator or a blank area:
+<p>
+<table>
+<tr><td>*SEPARATOR</td><td>-</td><td>Creates a horizontal separator</td></tr>
+<tr><td>*NONE</td><td>-</td><td>Creates a blank area</td></tr>
+</table>
+<p>
+The following example shows a more complex editor with a separator below "List of Integer Values":
+<p>
+<img src="assets/dialog_complexeditor.gif" 
+     width="861" height="474" 
+     align="middle">
+<p>
+<h2>Editors and Assigned Objects</h2>
+<p>
+It is possible to assign a given data space object to one or more editors. That is
+useful, in case you want to see just a subset of the data of the object. For example
+a data space might store a huge amount of data. But when you work on one task you may 
+need to see other data than when working on another task. In this case just create
+as may editors as you like and select the right one when starting the monitor.
+<p>
+<h2>Location of The Editors</h2>
+<p>
+The editors that you create with the designer are stored in directory:
+<p>
+<table>
+<tr>
+<td>[workspace]/.metadata/.plugins/biz.isphere.core/dataSpaceEditors</td>
+</tr>
+</table>
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
