@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/biz.isphere.antcontrib_1.0.0.b5.jar" id="biz.isphere.antcontrib" version="1.0.0.b5">
+      <category name="biz.isphere.antcontrib"/>
+   </feature>
+   <category-def name="biz.isphere.antcontrib" label="iSphere Ant Contribution"/>
+</site>

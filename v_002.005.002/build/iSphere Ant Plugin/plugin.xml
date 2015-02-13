@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ant.core.antTasks">
+      <antTask name="winword" class="biz.isphere.antcontrib.taskdef.Winword" library="lib/iSphere-ant-plugin.jar"
+       headless="true" eclipseRuntime="true" />
+   </extension> 
+
+	<extension point="org.eclipse.ant.core.extraClasspathEntries">
+		<extraClasspathEntry library="lib/jacob.jar"/>
+		<extraClasspathEntry library="lib/iSphere-ant-runtime.jar"/>
+	</extension>
+
+</plugin>

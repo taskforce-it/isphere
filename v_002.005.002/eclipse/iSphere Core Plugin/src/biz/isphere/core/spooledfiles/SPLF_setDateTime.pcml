@@ -1,0 +1,8 @@
+<pcml version="4.0">
+   <program name="SPLF_setDateTime" path="/QSYS.LIB/%LIBL%.LIB/W003009.PGM">
+      <data name="startDate" type="zoned" length="8" precision="0" usage="input" />
+      <data name="startTime" type="zoned" length="6" precision="0" usage="input" />
+      <data name="endDate" type="zoned" length="8" precision="0" usage="input" />
+      <data name="endTime" type="zoned" length="6" precision="0" usage="input" />
+   </program>
+</pcml>
