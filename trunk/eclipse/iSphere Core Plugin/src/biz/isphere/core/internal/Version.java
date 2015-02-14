@@ -13,71 +13,128 @@ package biz.isphere.core.internal;
 
 import biz.isphere.base.internal.StringHelper;
 
+/**
+ * This class represents a version number. It is mainly used for comparing
+ * versions, e.g. by the {@link SearchForUpdates} task.
+ * <p>
+ * A version consists of 4 parts, delimited by dots:
+ * <ul>
+ * <li>major - version number (integer value)</li>
+ * <li>minor - version number (integer value)</li>
+ * <li>micro - version number (integer value)</li>
+ * <li>qualifier - qualifier of the version number. Often the qualifier is the
+ * timestamp of the build.</li>
+ * </ul>
+ * The iSphere version enforces the following rules for the <i>qualifier</i> of
+ * the version number, in order to ensure, that we can distinguish between beta
+ * and release versions numbers.
+ * <p>
+ * <u>Beta Version Qualifier</u>
+ * <p>
+ * The qualifier of a beta version starts with the letter 'b', followed by a 3
+ * digit integer value. For example: 1.3.1.b004
+ * 
+ * @author Thomas Raddatz
+ */
 public class Version implements Comparable<Version> {
 
     private static final String BETA_PREFIX = "b";
-    private String version;
-    private boolean isChecked;
+    private static final String RELEASE_INDICATOR = "r";
+    private static final String DELIMITER = ".";
+    private static final int LENGTH_OF_QUALIFIER = 3;
+
+    private String originalVersion;
+    private String parsedVersion;
     private boolean isBeta;
 
+    private int major;
+    private int minor;
+    private int micro;
+    private String qualifier;
+
     public Version(String version) {
+
         if (version == null) {
             throw new IllegalArgumentException("Version can not be null");
         }
-        if (!version.matches("[0-9]+(\\.[0-9]+)*" + "(\\.b[0-9]+)?")) {
+
+        if ("2.4.0".equals(version) || "2.5.0".equals(version) || "2.5.1".equals(version) || "2.5.2".equals(version)) {
+            version = version + ".r";
+        }
+
+        if (!version.matches("[0-9]+(\\.[0-9]+)*" + "(\\.(b[0-9]{1," + LENGTH_OF_QUALIFIER + "}|r)){1}")) {
             throw new IllegalArgumentException("Invalid version format");
         }
-        this.version = version;
-        this.isChecked = false;
-        this.isBeta = false;
+
+        this.originalVersion = version;
+        parsedVersion = parseVersion(this.originalVersion);
     }
 
     public final String get() {
-        if (!isChecked) {
-            this.version = checkAndFixParts(this.version);
-        }
-        return this.version;
+        return parsedVersion;
     }
 
     public final String toString() {
-        return get();
+        return parsedVersion;
     }
 
     public boolean isBeta() {
-        if (!isChecked) {
-            this.version = checkAndFixParts(this.version);
-        }
         return isBeta;
     }
 
-    private String checkAndFixParts(String version) {
+    private String parseVersion(String version) {
+
         isBeta = false;
+        StringBuilder parsedVersion = new StringBuilder();
         String[] parts = splitt(version);
-        StringBuilder fixed = new StringBuilder();
+        int count = 0;
         for (String part : parts) {
-            if (fixed.length() > 0) {
-                fixed.append(".");
+            if (isQualifier(part)) {
+                isBeta = isBetaPart(part);
+                qualifier = fixQualifierSegment(part);
+                addSegment(parsedVersion, part);
+                break;
+            } else {
+                switch (count) {
+                case 0:
+                    major = Integer.parseInt(part);
+                    addSegment(parsedVersion, part);
+                    break;
+                case 1:
+                    minor = Integer.parseInt(part);
+                    addSegment(parsedVersion, part);
+                    break;
+                case 2:
+                    micro = Integer.parseInt(part);
+                    addSegment(parsedVersion, part);
+                    break;
+                }
+                count++;
             }
-            String fixedPart = removeLeadingZeros(part);
-            if (!isBeta) {
-                isBeta = checkForBeta(fixedPart);
-            }
-            fixed.append(fixedPart);
         }
-        return fixed.toString();
+
+        return parsedVersion.toString();
     }
 
-    private boolean checkForBeta(String part) {
-        if (part.toLowerCase().startsWith(BETA_PREFIX)) {
-            return true;
+    private void addSegment(StringBuilder parsedVersion, String part) {
+
+        if (parsedVersion.length() > 0) {
+            parsedVersion.append(DELIMITER);
         }
-        return false;
+
+        parsedVersion.append(removeLeadingZeros(part));
     }
 
     private String removeLeadingZeros(String part) {
-        if (part.startsWith(BETA_PREFIX)) {
-            return BETA_PREFIX + removeLeadingZeros(part.substring(1));
+
+        if (isReleasePart(part)) {
+            return part;
         }
+
+        if (isBetaPart(part)) {
+            return part;
+        }
+
         String fixed = part.replaceAll("^0+", "");
         if (StringHelper.isNullOrEmpty(fixed)) {
             return "0";
@@ -85,45 +142,55 @@ public class Version implements Comparable<Version> {
         return fixed;
     }
 
-    public int compareTo(Version that) {
-        if (that == null) return 1;
-        String[] thisParts = splitt(this.get());
-        String[] thatParts = splitt(that.get());
-        int length = Math.max(thisParts.length, thatParts.length);
-        for (int i = 0; i < length; i++) {
-            int thisPart = getPart(thisParts, thatParts, i);
-            int thatPart = getPart(thatParts, thisParts, i);
+    private String fixQualifierSegment(String part) {
 
-            if (thisPart < thatPart) return -1;
-            if (thisPart > thatPart) return 1;
+        if (isReleasePart(part)) {
+            return part;
         }
-        return 0;
+
+        String prefix = part.substring(0, 0);
+        part = part.substring(1);
+
+        while (part.length() < LENGTH_OF_QUALIFIER) {
+            part = "0" + part;
+        }
+
+        return prefix + part;
+    }
+
+    public int compareTo(Version that) {
+
+        int result = 0;
+
+        if (that == null) {
+            return 1;
+        }
+
+        result = this.major - that.major;
+        if (result == 0) {
+            result = this.minor - that.minor;
+            if (result == 0) {
+                result = this.micro - that.micro;
+                if (result == 0) {
+                    result = this.qualifier.compareTo(that.qualifier);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private boolean isQualifier(String part) {
+
+        if (isBetaPart(part) || isReleasePart(part)) {
+            return true;
+        }
+
+        return false;
     }
 
     private String[] splitt(String version) {
         return version.split("\\.");
-    }
-
-    private int getPart(String[] thisParts, String[] thatParts, int i) {
-        if (thisParts.length < thatParts.length && i >= thisParts.length) {
-            if (isBetaPart(thatParts[i])) {
-                return Integer.MAX_VALUE;
-            } else {
-                return 0;
-            }
-        }
-        int part = parseInteger(thisParts[i]);
-        if (part == Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Illegal release number. Release number must not contain: " + Integer.MAX_VALUE);
-        }
-        return part;
-    }
-
-    private int parseInteger(String part) {
-        if (isBetaPart(part)) {
-            return Integer.parseInt(part.substring(1));
-        }
-        return Integer.parseInt(part);
     }
 
     private boolean isBetaPart(String part) {
@@ -131,6 +198,13 @@ public class Version implements Comparable<Version> {
             return false;
         }
         return part.startsWith(BETA_PREFIX);
+    }
+
+    private boolean isReleasePart(String part) {
+        if (StringHelper.isNullOrEmpty(part)) {
+            return false;
+        }
+        return part.startsWith(RELEASE_INDICATOR);
     }
 
     @Override
