@@ -45,7 +45,7 @@
 	<!-- Include Ant Contrib tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
-	    <pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar"/>
+			<pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 
@@ -61,19 +61,26 @@
 	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
 
 	<!-- Set SourceForge FTP upload directories -->
-	<property name="sf.ftp.dir.updatesite.site.rdi" value="/home/project-web/isphere/htdocs/eclipse/rdi8.0/" />
-	<property name="sf.ftp.dir.updatesite.site.wdsc" value="/home/project-web/isphere/htdocs/eclipse/wdsci7.0/" />
-	<property name="sf.ftp.dir.updatesite.files.rdi" value="/home/pfs/project/isphere/beta version/eclipse/rdi8.0" />
-	<property name="sf.ftp.dir.updatesite.files.wdsc" value="/home/pfs/project/isphere/beta version/eclipse/wdsci7.0" />
-	<property name="sf.ftp.dir.updatesite.zip.rdi" value="/home/pfs/project/isphere/beta version/" />
-	<property name="sf.ftp.dir.updatesite.zip.wdsc" value="/home/pfs/project/isphere/beta version/" />
+	<property name="sf.ftp.dir.updatesite.web" value="/home/project-web/isphere/htdocs/" />
+	<property name="sf.ftp.dir.updatesite.files" value="/home/pfs/project/isphere/" />
 	
-	<property name="sf.site.url.rdi" value="http://downloads.sourceforge.net/project/isphere/beta%20version/eclipse/rdi8.0/" />
-	<property name="sf.site.url.wdsci" value="http://downloads.sourceforge.net/project/isphere/beta%20version/eclipse/wdsci7.0/" />
 	
+	<property name="sf.ftp.dir.updatesite.web.rdi" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/rdi8.0/" />
+	<property name="sf.ftp.dir.updatesite.web.wdsc" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/wdsci7.0/" />
+	<property name="sf.ftp.dir.updatesite.files.rdi" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/rdi8.0" />
+	<property name="sf.ftp.dir.updatesite.files.wdsc" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/wdsci7.0" />
+	<property name="sf.ftp.dir.updatesite.zip.rdi" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/" />
+	<property name="sf.ftp.dir.updatesite.zip.wdsc" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/" />
+
+	<property name="sf.site.target.rdi" value="rdi8.0" />
+	<property name="sf.site.target.wdsci" value="wdsci7.0" />
+
+	<property name="sf.site.url.rdi" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.rdi}/" />
+	<property name="sf.site.url.wdsci" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.wdsci}/" />
+
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
-	
+
 	<!-- Set regular expressions and replacement values -->
 	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)" />
 	<property name="manifest.version.replace" value="\1${build.version}" />
@@ -92,13 +99,18 @@
 
 	<property name="copyright.1.version.regex" value="^(Version: )([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(.*)?" />
 	<property name="copyright.1.version.replace" value="\1${build.version}\3" />
-	
+
 	<property name="site.xml.url.regex" value="(?:(&lt;site)(&gt;))" />
 	<property name="site.xml.url.replace.rdi" value="\1 url=&quot;${sf.site.url.rdi}&quot;\2" />
 	<property name="site.xml.url.replace.wdsci" value="\1 url=&quot;${sf.site.url.wdsci}&quot;\2" />
 
 	<!-- Set zip file and directory names -->
-	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
+	<property name="build.dir" location="${workspace.home}/${build.project.name}/build" />
+	<property name="build.template.dir.web" location="${build.dir}/template_updatesite_web" />
+	<property name="build.template.dir.files" location="${build.dir}/template_no_beta_version" />
+	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" /> 
+	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files" />
+	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
 	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (v${build.version} Update Site).zip" />
 	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (v${build.version} Update Site).zip" />
@@ -195,19 +207,11 @@
     *   where bug NET-512 has been fixed.
     *   (https://issues.apache.org/jira/browse/NET-512)
     * ===================================================================== -->
-	<target name="download" depends="ftpCredentialsIBMi" >
+	<target name="download" depends="ftpCredentialsIBMi">
 
 		<echo>Downloading save file ${IBMi.ftp.savefile.name} ...</echo>
 
-		<ftp action="get"
-			 server="${IBMi.ftp.server}"
-		     userid="${IBMi.ftp.user}"
-		     password="${IBMi.ftp.password}"
-			 binary="true" 
-		     verbose="true" 
-			 remotedir="${IBMi.ftp.savefile.library}"
-			 systemTypeKey="OS/400"
-			 >
+		<ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400">
 			<fileset dir="${local.ftp.download.directory}" casesensitive="false">
 				<include name="${IBMi.ftp.savefile.name}" />
 			</fileset>
@@ -227,10 +231,7 @@
     * ===================================================================== -->
 	<target name="ftpCredentialsIBMi" unless="IBMi.ftp.password">
 
-		<input
-	    	message="Please enter FTP password:"
-	    	addproperty="IBMi.ftp.password"
-	    	defaultvalue="" />
+		<input message="Please enter FTP password:" addproperty="IBMi.ftp.password" defaultvalue="" />
 
 	</target>
 
@@ -263,7 +264,7 @@
     *     - features
     *     - plugins
     * ===================================================================== -->
-	<target name="cleanUpdateSite" >
+	<target name="cleanUpdateSite">
 
 		<echo>Removing old files from '${build.updatesite}' ...</echo>
 
@@ -293,56 +294,99 @@
 		<if>
 			<equals arg1="${build.target}" arg2="RDi" />
 			<then>
+				<property name="sf.site.target" value="${sf.site.target.rdi}" />
 				<property name="zip.file.name" value="${zip.file.name.rdi}" />
-				<property name="sf.site.url" value="${sf.site.url.rdi}"/>
-				<property name="site.xml.url.replace" value="${site.xml.url.replace.rdi}"/>
+				<property name="sf.site.url" value="${sf.site.url.rdi}" />
+				<property name="site.xml.url.replace" value="${site.xml.url.replace.rdi}" />
+				<property name="exclude.site.xml" value = "site.xml" />
 			</then>
 			<else>
+				<property name="sf.site.target" value="${sf.site.target.wdsci}" />
 				<property name="zip.file.name" value="${zip.file.name.wdsc}" />
-				<property name="sf.site.url" value="${sf.site.url.wdsci}"/>
-				<property name="site.xml.url.replace" value="${site.xml.url.replace.wdsci}"/>
+				<property name="sf.site.url" value="${sf.site.url.wdsci}" />
+				<property name="site.xml.url.replace" value="${site.xml.url.replace.wdsci}" />
+				<property name="exclude.site.xml" value = "" />
 			</else>
 		</if>
 
-		<replaceregexp match="${site.xml.url.regex}" replace="${site.xml.url.replace}" byline="false">
-			<fileset dir="${workspace.home}\${build.updatesite}" includes="site.xml" />
-		</replaceregexp>
+		<echo>Preparing directory structure ...</echo>
+		<mkdir dir="${build.upload.dir.files}" />
+		<mkdir dir="${build.upload.dir.files}/${sf.ftp.beta.dir}/eclipse" />
+		<mkdir dir="${build.upload.dir.files}/${sf.ftp.beta.dir}/eclipse/${sf.site.target}" />
+		<mkdir dir="${build.upload.dir.web}" />
 
-		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
+		<echo>Copying zip and pdf files ...</echo>
+		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${sf.ftp.beta.dir}\${zip.file.name}">
 			<include name="**/*" />
 			<exclude name="**/.project" />
 		</zip>
+		<copy file="${isphere.pdf}" todir="${build.upload.dir.files}\${sf.ftp.beta.dir}" />
 
-		<copy file="${isphere.pdf}" todir="${build.upload.dir}" />
+		<echo>Copying Eclipse update site files ...</echo>
+		<copy todir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" >
+			<fileset dir="${workspace.home}\${build.updatesite}" >
+				<exclude name="*.log"/>
+				<exclude name="${exclude.site.xml}" />
+			</fileset>
+		</copy>
 
+		<echo>Creating Eclipse web folder ...</echo>
+		<echo>Copying templates directory ...</echo>
+		<copy todir="${build.upload.dir.web}/${sf.ftp.beta.dir}" >
+			<fileset dir="${build.template.dir.web}" >
+			</fileset>
+		</copy>
+		
+		<move todir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}">
+			<fileset dir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\build_target" />
+		</move>
+		
+		<move tofile="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess">
+			<fileset file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\template_htaccess"/>
+		</move>
+
+		<if>
+			<equals arg1="${sf.ftp.beta.dir}" arg2="." />
+			<then>
+				<copy todir="${build.upload.dir.files}/${sf.ftp.beta.dir.name}" >
+					<fileset dir="${build.template.dir.files}" >
+					</fileset>
+				</copy>
+			</then>
+		</if>
+
+		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="@BUILD_TARGET@" value="${sf.site.target}"/>
+		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="@BETA_VERSION@" value="${sf.ftp.beta.dir}"/>
+		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="/./" value="/"/>
+		
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
 
 		<echo>Done.</echo>
 
 	</target>
-	
-	<target name="cleanUploadDir" >
-		
+
+	<target name="cleanUploadDir">
+
 		<echo>Cleaning upload directory ...</echo>
-		
+
 		<delete includeemptydirs="true">
 			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
 		</delete>
-		
+
 	</target>
-	
+
 	<target name="updatePdfFile" unless="pdf.isUpToDate">
-		
+
 		<echo>Updating iSphere PDF file ...</echo>
-		
-		<winword file="${isphere.doc}" visible="true" >
+
+		<winword file="${isphere.doc}" visible="true">
 			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
 		</winword>
-		
+
 	</target>
-	
-	<target name="checkPdfFile" >
+
+	<target name="checkPdfFile">
 		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
 		<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
 		<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
@@ -359,44 +403,31 @@
 		<if>
 			<equals arg1="${build.target}" arg2="RDi" />
 			<then>
-				<property name="sf.ftp.dir.updatesite.site" value="${sf.ftp.dir.updatesite.site.rdi}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.rdi}"/>
-				<property name="sf.ftp.dir.updatesite.zip" value="${sf.ftp.dir.updatesite.zip.rdi}"/>
+				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.rdi}" />
+				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.rdi}" />
+				<property name="sf.ftp.dir.updatesite.zip" value="${sf.ftp.dir.updatesite.zip.rdi}" />
 			</then>
 			<else>
-				<property name="sf.ftp.dir.updatesite.site" value="${sf.ftp.dir.updatesite.site.wdsc}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.wdsci}"/>
-				<property name="sf.ftp.dir.updatesite.zip" value="${sf.ftp.dir.updatesite.zip.wdsci}"/>
+				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.wdsc}" />
+				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.wdsci}" />
+				<property name="sf.ftp.dir.updatesite.zip" value="${sf.ftp.dir.updatesite.zip.wdsci}" />
 			</else>
 		</if>
-		
-		<!--
-		<echo>Uploading: site.xml ...</echo>
-		<scp sftp="true" trust="true" password="${sf.ftp.password}" 
-			 todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.web}:${sf.ftp.dir.updatesite.site}" >
-			<fileset dir="${workspace.home}\${build.updatesite}\" >
-				<include name="site.xml"/>
+
+		<echo>Uploading files to SourceForge ...</echo>
+
+		<echo>Uploading: Update site to web folder ...</echo>
+		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.web}:${sf.ftp.dir.updatesite.web}">
+			<fileset dir="${build.upload.dir.web}\">
 			</fileset>
 		</scp>
 
-		<echo>Uploading: update site jar files ...</echo>
-		<scp sftp="true" trust="true" password="${sf.ftp.password}" 
-			 todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.files}:${sf.ftp.dir.updatesite.files}" >
-			<fileset dir="${workspace.home}\${build.updatesite}\" >
-				<include name="**/*.jar"/>
+		<echo>Uploading: Update site to files folder ...</echo>
+		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.files}:${sf.ftp.dir.updatesite.files}">
+			<fileset dir="${build.upload.dir.files}\">
 			</fileset>
 		</scp>
-		-->
 
-		<echo>Uploading: zip files ...</echo>
-		<scp sftp="true" trust="true" password="${sf.ftp.password}" 
-			 todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.files}:${sf.ftp.dir.updatesite.zip}" >
-			<fileset dir="${build.upload.dir}\" >
-				<include name="**/*.zip"/>
-				<include name="**/*.pdf"/>
-			</fileset>
-		</scp>
-		
 	</target>
 
 	<!--
@@ -406,23 +437,17 @@
     * ===================================================================== -->
 	<target name="ftpCredentialsSourceForge" unless="sf.ftp.password">
 
-		<input
-	    	message="Please enter the SourceForge FTP password:"
-	    	addproperty="sf.ftp.password"
-	    	defaultvalue="" />
+		<input message="Please enter the SourceForge FTP password:" addproperty="sf.ftp.password" defaultvalue="" />
 
 	</target>
-	
+
 	<!--
     * =====================================================================
     *   Nice to have but does not yet work.
     * ===================================================================== -->
 	<target name="buildScript">
 
-		<eclipse.buildScript
-	    	elements="feature@biz.isphere.core"
-	    	buildDirectory="C:/workspaces/rdp_070/workspace/iSphere Build/build/temp" 
-			outputUpdateJars="true" />
+		<eclipse.buildScript elements="feature@biz.isphere.core" buildDirectory="C:/workspaces/rdp_070/workspace/iSphere Build/build/temp" outputUpdateJars="true" />
 
 	</target>
 

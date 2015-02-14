@@ -1,0 +1,6 @@
+# Enable URL rewriting
+RewriteEngine On
+# Redirect the root requests to the master site
+RewriteRule ^([^/]*)$ http://master.dl.sourceforge.net/project/isphere/eclipse/@BUILD_TARGET@/$1 [L]
+# The rest goes to the auto-mirror location
+RewriteRule (.*) http://downloads.sourceforge.net/project/isphere/eclipse/@BUILD_TARGET@/$1 [L]
