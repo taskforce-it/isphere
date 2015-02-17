@@ -51,7 +51,7 @@
              ENDDO
 
              CRTDTAQ    DTAQ(&LIB/&OBJ) TYPE(*STD) MAXLEN(&LENGTH) +
-                          SEQ(*LIFO) SENDERID(*YES) +
+                          SEQ(*LIFO) SENDERID(*NO) +
                           AUTORCL(*YES) SIZE(32 16) +
                           TEXT('iSphere Test Data Queue - Sequention LIFO')
 LOOP:
