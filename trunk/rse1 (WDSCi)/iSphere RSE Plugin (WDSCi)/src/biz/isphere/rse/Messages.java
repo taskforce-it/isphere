@@ -28,6 +28,8 @@ public class Messages extends NLS {
     public static String iSphere_Data_Area_Monitor;
 
     public static String iSphere_User_Space_Monitor;
+    
+    public static String iSphere_Data_Queue_Monitor;
 
     public static String Right;
 
