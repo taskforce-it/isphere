@@ -127,7 +127,7 @@ public class APIFormat {
     protected int getInt4Value(String name) {
 
         APIInt4FieldDescription field = getInt4FieldDescription(name);
-        return getInt4Converter().toInt(bytes, offset + field.getOffset());
+        return getInt4Converter().toInt(bytes, getFieldOffset(field));
     }
 
     /**
@@ -139,7 +139,7 @@ public class APIFormat {
     protected void setInt4Value(String name, int value) {
 
         APIInt4FieldDescription field = getInt4FieldDescription(name);
-        getInt4Converter().toBytes(value, getBytes(), offset + field.getOffset());
+        getInt4Converter().toBytes(value, getBytes(), getFieldOffset(field));
     }
 
     /**
@@ -151,7 +151,7 @@ public class APIFormat {
     protected String getCharValue(String name) throws UnsupportedEncodingException {
 
         APICharFieldDescription field = getCharFieldDescription(name);
-        return getCharConverter().byteArrayToString(bytes, offset + field.getOffset(), field.getLength());
+        return getCharConverter().byteArrayToString(bytes, getFieldOffset(field), field.getLength());
     }
 
     /**
@@ -163,7 +163,7 @@ public class APIFormat {
     protected void setCharValue(String name, String value) throws CharConversionException, UnsupportedEncodingException {
 
         APICharFieldDescription field = getCharFieldDescription(name);
-        getCharConverter().stringToByteArray(value, getBytes(), offset + field.getOffset(), field.getLength());
+        getCharConverter().stringToByteArray(value, getBytes(), getFieldOffset(field), field.getLength());
     }
 
     /**
@@ -181,13 +181,8 @@ public class APIFormat {
         ObjectDoesNotExistException {
 
         APIDateTimeFieldDescription field = getDateTimeFieldDescription(name);
-
-        // byte[] subBytes = new byte[field.getLength()];
-        // ByteBuffer.wrap(bytes, field.getOffset(),
-        // field.getLength()).get(subBytes, 0, field.getLength()).array();
-
-        byte[] subBytes = getBytesAt(getFinalOffset(field), field.getLength());
-
+        byte[] subBytes = getBytesAt(getFieldOffset(field), field.getLength());
+        
         if (isDateTimeSet(subBytes)) {
             return getDateTimeConverter().convert(subBytes, field.getFormat());
         }
@@ -212,7 +207,7 @@ public class APIFormat {
         APIDateTimeFieldDescription field = getDateTimeFieldDescription(name);
         byte[] dateBytes = getDateTimeConverter().convert(value, field.getFormat());
 
-        int offset = getFinalOffset(field);
+        int offset = getFieldOffset(field);
         byte[] bytes = getBytes();
 
         for (byte b : dateBytes) {
@@ -231,7 +226,7 @@ public class APIFormat {
     protected byte[] getBytesAt(int offset, int length) {
 
         byte[] subBytes = new byte[length];
-        ByteBuffer.wrap(bytes, this.offset + offset, length).get(subBytes, 0, length).array();
+        ByteBuffer.wrap(bytes, offset, length).get(subBytes, 0, length).array();
 
         return subBytes;
     }
@@ -282,11 +277,21 @@ public class APIFormat {
         return (APIDateTimeFieldDescription)addField(new APIDateTimeFieldDescription(name, offset, length, format));
     }
 
-    private int getFinalOffset(APIDateTimeFieldDescription field) {
+    protected boolean isOverflow(String fieldName, int maxLength) {
+        
+        AbstractAPIFieldDescription field = getField(fieldName);
+        if (field.getOffset() + field.getLength() > maxLength) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    private int getFieldOffset(AbstractAPIFieldDescription field) {
         return offset + field.getOffset();
     }
 
-    private AbstractAPIFieldDescription getField(String name) {
+    protected AbstractAPIFieldDescription getField(String name) {
         return fields.get(name);
     }
 

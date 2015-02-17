@@ -21,6 +21,7 @@ import org.eclipse.ui.PartInitException;
 public interface IViewManager {
 
     public static final String DATA_SPACE_MONITOR_VIEWS = "DataSpaceMonitorViews";
+    public static final String DATA_QUEUE_MONITOR_VIEWS = "DataQueueMonitorViews";
 
     public void add(IPinnableView view);
 

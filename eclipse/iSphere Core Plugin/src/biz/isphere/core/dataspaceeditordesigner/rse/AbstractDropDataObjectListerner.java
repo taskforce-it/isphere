@@ -78,6 +78,6 @@ public abstract class AbstractDropDataObjectListerner extends DropTargetAdapter 
     protected abstract void loadRemoteObjectsAsync(String[] objects, IListOfRemoteObjectsReceiver receiver, String jobName);
 
     public void setRemoteObjects(RemoteObject[] objects) {
-        editor.setDataAsync(objects);
+        editor.dropData(objects);
     }
 }

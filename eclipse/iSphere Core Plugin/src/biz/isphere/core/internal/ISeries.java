@@ -14,6 +14,8 @@ public interface ISeries {
 
     public static final String USRSPC = "*USRSPC"; //$NON-NLS-1$
 
+    public static final String DTAQ = "*DTAQ"; //$NON-NLS-1$
+
     public static final String MSGF = "*MSGF"; //$NON-NLS-1$
 
     public static final String BNDDIR = "*BNDDIR"; //$NON-NLS-1$

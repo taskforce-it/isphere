@@ -1,0 +1,38 @@
+package biz.isphere.rse.dataqueue.rse;
+
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.swt.events.ControlEvent;
+
+import biz.isphere.core.dataqueue.rse.AbstractDataQueueMonitorView;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
+import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
+public class DataQueueMonitorView extends AbstractDataQueueMonitorView {
+
+    @Override
+    protected AbstractDropDataObjectListerner createDropListener(IDialogView editor) {
+        return new DropDataObjectListener(editor);
+    }
+
+    @Override
+    protected IViewManager getViewManager() {
+        return ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_QUEUE_MONITOR_VIEWS);
+    }
+
+    @Override
+    protected AS400 getSystem(String connectionName) {
+        
+        try {
+            IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+            return connection.getAS400ToolboxObject();
+        } catch (SystemMessageException e) {
+            return null;
+        }
+    }
+}

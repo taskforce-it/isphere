@@ -518,7 +518,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
 
-    public void setDataAsync(RemoteObject[] remoteObjects) {
+    public void dropData(RemoteObject[] remoteObjects) {
         if (remoteObjects == null || remoteObjects.length == 0) {
             MessageDialogAsync.displayError(getShell(), Messages.Dropped_object_does_not_match_expected_type);
             return;

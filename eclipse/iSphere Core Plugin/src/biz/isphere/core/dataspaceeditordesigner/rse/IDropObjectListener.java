@@ -12,6 +12,6 @@ import biz.isphere.core.internal.RemoteObject;
 
 public interface IDropObjectListener {
 
-    public void setDataAsync(RemoteObject[] objects);
+    public void dropData(RemoteObject[] objects);
 
 }
