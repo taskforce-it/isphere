@@ -105,7 +105,7 @@ public class CheckNLSMessages {
 
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
-            assertFalse(messageText.endsWith(" "));
+            assertFalse("NLS String must not end with spaces.", messageText.endsWith(" "));
             assertNotNull("Message text must not be [null]. Missing property: " + nlsMessageConstant + "(" + nlsMessagesObject.getClass().getName()
                 + ")", messageText);
             assertTrue("Length of message must be greater than zero. Property: " + nlsMessageConstant, messageText.length() > 0);
