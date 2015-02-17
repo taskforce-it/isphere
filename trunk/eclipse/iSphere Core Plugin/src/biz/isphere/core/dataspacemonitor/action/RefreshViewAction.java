@@ -29,6 +29,6 @@ public class RefreshViewAction extends Action {
 
     @Override
     public void run() {
-        view.refreshDataSynchronously();
+        view.refreshData();
     }
 }

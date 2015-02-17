@@ -762,6 +762,42 @@ public class Messages extends NLS {
 
     public static String btnLabel_Close;
     
+    public static String Text;
+
+    public static String Number_of_messages;
+    
+    public static String Keyed;
+    
+    public static String Maximum_number_of_messages_allowed;
+    
+    public static String Maximum_number_of_messages_specified;
+    
+    public static String Sequence;
+    
+    public static String Force_to_storage;
+    
+    public static String Automatically_reclaimed;
+    
+    public static String Key_length;
+    
+    public static String Last_reclaimed_at;
+    
+    public static String Selected_object_does_not_match_expected_type;
+    
+    public static String The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
+
+    public static String A_messages_retrieved;
+    
+    public static String Retrieved_up_to_A_bytes_of_message_data; 
+    
+    public static String Enqueued;
+    
+    public static String Message_key;
+    
+    public static String Sender_ID;
+
+    public static String Message_text;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

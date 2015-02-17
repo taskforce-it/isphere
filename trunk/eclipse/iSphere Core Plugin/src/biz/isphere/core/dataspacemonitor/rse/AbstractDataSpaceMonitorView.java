@@ -168,7 +168,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
 
         pinViewAction = new PinViewAction(this);
-        pinViewAction.setToolTipText("Pin View");
+        pinViewAction.setToolTipText(Messages.Pin_View);
         pinViewAction.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_PIN));
 
         refreshActionsEnablement();
@@ -207,7 +207,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * current displayed data space. For example, it is called from
      * {@link RefreshViewAction#run()}.
      */
-    public void refreshDataSynchronously() {
+    public void refreshData() {
         try {
 
             LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, currentDataSpaceValue.getRemoteObject());
@@ -309,7 +309,13 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * For example it is called by
      * {@link AbstractDropDataObjectListerner#setRemoteObjects(RemoteObject[])}.
      */
-    public void setDataAsync(RemoteObject[] remoteObjects) {
+    public void dropData(RemoteObject[] remoteObjects) {
+
+        if (isPinned()) {
+            MessageDialogAsync.displayError(getShell(),
+                Messages.The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
+            return;
+        }
 
         currentDataSpaceValue = null;
 
@@ -317,7 +323,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
          * Create a UI job to check the input and to let the user select the
          * editor. Afterwards create a batch job, to load and set the data.
          */
-        ReceiveAsyncDataUIJob reveiveDataUIJob = new ReceiveAsyncDataUIJob(getShell().getDisplay(), remoteObjects);
+        DropDataUIJob reveiveDataUIJob = new DropDataUIJob(getShell().getDisplay(), remoteObjects);
         reveiveDataUIJob.schedule();
     }
 
@@ -629,27 +635,6 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         }
     }
 
-    public void setPinned(boolean pinned) {
-        pinViewAction.setChecked(pinned);
-        updatePinProperties();
-    }
-
-    public boolean isPinned() {
-        return pinViewAction.isChecked();
-    }
-
-    public String getContentId() {
-        if (currentDataSpaceValue == null) {
-            return null;
-        }
-        RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
-        return remoteObject.getAbsoluteName();
-    }
-
-    public Map<String, String> getPinProperties() {
-        return pinProperties;
-    }
-
     private void updatePinProperties() {
         if (isPinned()) {
             RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
@@ -667,6 +652,39 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             pinProperties.put(DESCRIPTION, null);
             pinProperties.put(EDITOR, null);
         }
+    }
+
+    /**
+     * Implements {@link IPinnableView#setPinned(boolean)}
+     */
+    public void setPinned(boolean pinned) {
+        pinViewAction.setChecked(pinned);
+        updatePinProperties();
+    }
+
+    /**
+     * Implements {@link IPinnableView#isPinned()}
+     */
+    public boolean isPinned() {
+        return pinViewAction.isChecked();
+    }
+
+    /**
+     * Implements {@link IPinnableView#getContentId()}
+     */
+    public String getContentId() {
+        if (currentDataSpaceValue == null) {
+            return null;
+        }
+        RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
+        return remoteObject.getAbsoluteName();
+    }
+
+    /**
+     * Implements {@link IPinnableView#getPinProperties()}
+     */
+    public Map<String, String> getPinProperties() {
+        return pinProperties;
     }
 
     @Override
@@ -693,17 +711,17 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     /**
      * Job, that receives data that has been passed by
-     * {@link IDialogView#setData}. It performs error checking on the UI thread
-     * and then passed the remote object and the selected editor to the next
-     * job.
+     * {@link IDialogView#dropData(RemoteObject[])}. It performs error
+     * checking on the UI thread and then passed the remote object and the
+     * selected editor to the next job.
      * <p>
      * It is the first job in a series of three.
      */
-    private class ReceiveAsyncDataUIJob extends UIJob {
+    private class DropDataUIJob extends UIJob {
 
         private RemoteObject[] remoteObjects;
 
-        public ReceiveAsyncDataUIJob(Display jobDisplay, RemoteObject[] remoteObjects) {
+        public DropDataUIJob(Display jobDisplay, RemoteObject[] remoteObjects) {
             super(jobDisplay, Messages.Loading_remote_objects);
             this.remoteObjects = remoteObjects;
         }
@@ -759,7 +777,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                 /*
                  * Create a UI job to update the view with the new data.
                  */
-                UIJob updateDataUIJob = new UpdateDataSpaceDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace),
+                UIJob updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace),
                     this.dEditor);
                 updateDataUIJob.schedule();
 
@@ -778,13 +796,13 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * <p>
      * It is the third and last job in a series of three.
      */
-    private class UpdateDataSpaceDataUIJob extends UIJob {
+    private class UpdateDataUIJob extends UIJob {
 
         private DDataSpaceValue dataSpaceValue;
         private DEditor selectedEditor;
         private IJobFinishedListener finishedListener;
 
-        public UpdateDataSpaceDataUIJob(Display jobDisplay, String name, DDataSpaceValue dataSpaceValue, DEditor selectedEditor) {
+        public UpdateDataUIJob(Display jobDisplay, String name, DDataSpaceValue dataSpaceValue, DEditor selectedEditor) {
             super(jobDisplay, name);
             this.dataSpaceValue = dataSpaceValue;
             this.selectedEditor = selectedEditor;
@@ -832,7 +850,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
             IViewManager viewManager = getViewManager();
             if (!viewManager.isInitialized(5000)) {
-                ISpherePlugin.logError("Could not restore view. View manager did not initialize within 5 seconds.", null);
+                ISpherePlugin.logError("Could not restore view. View manager did not initialize within 5 seconds.", null); //$NON-NLS-1$
                 return Status.OK_STATUS;
             }
 
@@ -869,7 +887,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         private RemoteObject remoteObject;
         private int interval;
 
-        private UpdateDataSpaceDataUIJob updateDataUIJob;
+        private UpdateDataUIJob updateDataUIJob;
         private int waitTime;
 
         public AutoRefreshJob(IJobFinishedListener listener, RemoteObject remoteObject, int seconds) {
@@ -893,7 +911,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                     /*
                      * Create a UI job to update the view with the new data.
                      */
-                    updateDataUIJob = new UpdateDataSpaceDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), null);
+                    updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), null);
                     updateDataUIJob.setJobFinishedListener(this);
                     updateDataUIJob.schedule();
 

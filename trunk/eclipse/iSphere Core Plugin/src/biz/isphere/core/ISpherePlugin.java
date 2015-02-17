@@ -80,6 +80,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_WATCHING = "watching.gif";
     public static final String IMAGE_DATA_AREA_MONITOR = "data_monitor.gif";
     public static final String IMAGE_USER_SPACE_MONITOR = "data_monitor.gif";
+    public static final String IMAGE_DATA_QUEUE_MONITOR = "data_monitor.gif";
     public static final String IMAGE_VALUE_CHANGED = "value_changed.gif";
     public static final String IMAGE_SYSTEM_HELP = "systemhelp.gif";
     public static final String IMAGE_AUTO_REFRESH_OFF = "auto_refresh_off.gif";
@@ -90,6 +91,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_REMOVE = "remove.gif";
     public static final String IMAGE_INVERT_SELECTION = "invert_selection.gif";
     public static final String IMAGE_TRANSFER_LIBRARY_32 = "transfer_library_32.gif";
+    public static final String IMAGE_KEY = "key.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -219,6 +221,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_WATCHING, getImageDescriptor(IMAGE_WATCHING));
         reg.put(IMAGE_DATA_AREA_MONITOR, getImageDescriptor(IMAGE_DATA_AREA_MONITOR));
         reg.put(IMAGE_USER_SPACE_MONITOR, getImageDescriptor(IMAGE_USER_SPACE_MONITOR));
+        reg.put(IMAGE_DATA_QUEUE_MONITOR, getImageDescriptor(IMAGE_DATA_QUEUE_MONITOR));
         reg.put(IMAGE_VALUE_CHANGED, getImageDescriptor(IMAGE_VALUE_CHANGED));
         reg.put(IMAGE_SYSTEM_HELP, getImageDescriptor(IMAGE_SYSTEM_HELP));
         reg.put(IMAGE_AUTO_REFRESH_OFF, getImageDescriptor(IMAGE_AUTO_REFRESH_OFF));
@@ -229,6 +232,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_REMOVE, getImageDescriptor(IMAGE_REMOVE));
         reg.put(IMAGE_INVERT_SELECTION, getImageDescriptor(IMAGE_INVERT_SELECTION));
         reg.put(IMAGE_TRANSFER_LIBRARY_32, getImageDescriptor(IMAGE_TRANSFER_LIBRARY_32));
+        reg.put(IMAGE_KEY, getImageDescriptor(IMAGE_KEY));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

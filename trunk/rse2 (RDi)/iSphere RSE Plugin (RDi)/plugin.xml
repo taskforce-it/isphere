@@ -185,7 +185,7 @@
       	  ==========================================
       	-->
       	
-      	<!-- Right-click: message file -->
+      	<!-- Right-click: data area -->
       	<objectContribution
              objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
              id="biz.isphere.core.menu.dtaara.monitor">
@@ -212,7 +212,7 @@
       	  ==========================================
       	-->
       	
-      	<!-- Right-click: message file -->
+      	<!-- Right-click: user space -->
       	<objectContribution
              objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
              id="biz.isphere.core.menu.usrspc.monitor">
@@ -228,6 +228,33 @@
                 enablesFor="*"
                 id="biz.isphere.rse.dataspaceeditor.rse.UserSpaceMonitorAction"
                 label="%iSphere_User_Space_Monitor"
+                icon="icons/data_monitor.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Data Queue Monitor Contributions
+      	  ==========================================
+      	-->
+         
+      	<!-- Right-click: data queue -->
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="biz.isphere.core.menu.dtaq">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*DTAQ"/>
+            	</and>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.MonitorDataQueueAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.MonitorDataQueueAction"
+                label="iSphere Data Queue Monitor"
                 icon="icons/data_monitor.gif"
                 menubarPath="additions">
 	         </action>
@@ -440,17 +467,18 @@
             name="%iSphere_Message_Description_Preview"
             id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
       <view
-            icon="icons/message_file_preview.gif"
-            class="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"
-            category="biz.isphere.core.views.categories"
-            name="%iSphere_Message_Description_Preview"
-            id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
-      <view
             icon="icons/data_monitor.gif"
             class="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
             category="biz.isphere.core.views.categories"
             name="%iSphere_Data_Space_Monitor"
             id="biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"
+            allowMultiple="true"/>
+      <view
+            icon="icons/data_monitor.gif"
+            class="biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Data_Queue_Monitor"
+            id="biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"
             allowMultiple="true"/>
    </extension> 
 	      	
