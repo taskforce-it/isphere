@@ -73,12 +73,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     public static final String ID = "biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView"; //$NON-NLS-1$ 
 
-    private static final String CONNECTION_NAME = "connectionName";
-    private static final String OBJECT = "object";
-    private static final String LIBRARY = "library";
-    private static final String OBJECT_TYPE = "objectType";
-    private static final String DESCRIPTION = "description";
-    private static final String EDITOR = "editor";
+    private static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
+    private static final String OBJECT = "object"; //$NON-NLS-1$
+    private static final String LIBRARY = "library"; //$NON-NLS-1$
+    private static final String OBJECT_TYPE = "objectType"; //$NON-NLS-1$
+    private static final String DESCRIPTION = "description"; //$NON-NLS-1$
+    private static final String EDITOR = "editor"; //$NON-NLS-1$
 
     private DataSpaceEditorRepository repository;
     private DataSpaceEditorManager manager;
@@ -217,6 +217,13 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             ISpherePlugin.logError(e.getMessage(), e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * This method is called from objects, that want to change the display mode,
+     * such as "display in hex" or "display end of data".
+     */
+    public void changeDisplayMode() {
     }
 
     /**
@@ -540,7 +547,11 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                     refreshAction.setEnabled(true);
                 }
             } else {
-                refreshAction.setEnabled(true);
+                if (currentDataSpaceValue == null) {
+                    refreshAction.setEnabled(false);
+                } else {
+                    refreshAction.setEnabled(true);
+                }
             }
         }
 
@@ -711,9 +722,9 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     /**
      * Job, that receives data that has been passed by
-     * {@link IDialogView#dropData(RemoteObject[])}. It performs error
-     * checking on the UI thread and then passed the remote object and the
-     * selected editor to the next job.
+     * {@link IDialogView#dropData(RemoteObject[])}. It performs error checking
+     * on the UI thread and then passed the remote object and the selected
+     * editor to the next job.
      * <p>
      * It is the first job in a series of three.
      */
@@ -777,8 +788,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                 /*
                  * Create a UI job to update the view with the new data.
                  */
-                UIJob updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace),
-                    this.dEditor);
+                UIJob updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), this.dEditor);
                 updateDataUIJob.schedule();
 
             } catch (Throwable e) {

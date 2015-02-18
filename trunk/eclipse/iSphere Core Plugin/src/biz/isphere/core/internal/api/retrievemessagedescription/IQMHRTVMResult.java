@@ -146,15 +146,15 @@ public class IQMHRTVMResult extends APIFormat {
                 }
 
                 fieldFormats.add(fieldFormat);
-                
+
                 offsetVariable = offsetVariable + rtvm0300.getLengthOfSubstitutionVariableFormatElement();
             }
 
             String helpText = rtvm0300.getMessageHelp();
             if (helpText == null || helpText.trim().length() == 0) {
-                helpText = "*NONE"; //$NON-NLS-1$
+                helpText = MessageDescription.TEXT_NONE;
             }
-            
+
             MessageDescription messageDescription = new MessageDescription();
             messageDescription.setConnection(connectionName);
             messageDescription.setLibrary(library);

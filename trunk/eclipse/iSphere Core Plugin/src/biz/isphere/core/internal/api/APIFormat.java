@@ -65,6 +65,15 @@ public class APIFormat {
     }
 
     /**
+     * Returns the system the format was created for.
+     * 
+     * @return system
+     */
+    public AS400 getSystem() {
+        return system;
+    }
+
+    /**
      * Returns the 8-character format name.
      * 
      * @return name of the format
@@ -83,6 +92,15 @@ public class APIFormat {
     }
 
     /**
+     * Sets the byte value of the format.
+     * 
+     * @param bytes - array of bytes with the byte value of the format
+     */
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    /**
      * Returns the value of the format as an array of bytes.
      * 
      * @return byte array
@@ -97,25 +115,21 @@ public class APIFormat {
     }
 
     /**
-     * Returns the system the format was created for.
+     * Sets the offset of the format.
      * 
-     * @return system
+     * @param offset - offset this format starts in the byte buffer
      */
-    public AS400 getSystem() {
-        return system;
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     /**
-     * Sets the byte value of the format.
+     * Returns the offset of this format.
      * 
-     * @param bytes - array of bytes with the byte value of the format
+     * @return offset this format starts in the byte buffer
      */
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public int getOffset() {
+        return offset;
     }
 
     /**
@@ -127,7 +141,7 @@ public class APIFormat {
     protected int getInt4Value(String name) {
 
         APIInt4FieldDescription field = getInt4FieldDescription(name);
-        return getInt4Converter().toInt(bytes, getFieldOffset(field));
+        return getInt4Converter().toInt(bytes, getAbsoluteFieldOffset(field));
     }
 
     /**
@@ -139,7 +153,7 @@ public class APIFormat {
     protected void setInt4Value(String name, int value) {
 
         APIInt4FieldDescription field = getInt4FieldDescription(name);
-        getInt4Converter().toBytes(value, getBytes(), getFieldOffset(field));
+        getInt4Converter().toBytes(value, getBytes(), getAbsoluteFieldOffset(field));
     }
 
     /**
@@ -151,7 +165,7 @@ public class APIFormat {
     protected String getCharValue(String name) throws UnsupportedEncodingException {
 
         APICharFieldDescription field = getCharFieldDescription(name);
-        return getCharConverter().byteArrayToString(bytes, getFieldOffset(field), field.getLength());
+        return getCharConverter().byteArrayToString(bytes, getAbsoluteFieldOffset(field), field.getLength());
     }
 
     /**
@@ -163,7 +177,7 @@ public class APIFormat {
     protected void setCharValue(String name, String value) throws CharConversionException, UnsupportedEncodingException {
 
         APICharFieldDescription field = getCharFieldDescription(name);
-        getCharConverter().stringToByteArray(value, getBytes(), getFieldOffset(field), field.getLength());
+        getCharConverter().stringToByteArray(value, getBytes(), getAbsoluteFieldOffset(field), field.getLength());
     }
 
     /**
@@ -181,8 +195,8 @@ public class APIFormat {
         ObjectDoesNotExistException {
 
         APIDateTimeFieldDescription field = getDateTimeFieldDescription(name);
-        byte[] subBytes = getBytesAt(getFieldOffset(field), field.getLength());
-        
+        byte[] subBytes = retrieveBytesFromBuffer(getAbsoluteFieldOffset(field), field.getLength());
+
         if (isDateTimeSet(subBytes)) {
             return getDateTimeConverter().convert(subBytes, field.getFormat());
         }
@@ -207,28 +221,13 @@ public class APIFormat {
         APIDateTimeFieldDescription field = getDateTimeFieldDescription(name);
         byte[] dateBytes = getDateTimeConverter().convert(value, field.getFormat());
 
-        int offset = getFieldOffset(field);
+        int offset = getAbsoluteFieldOffset(field);
         byte[] bytes = getBytes();
 
         for (byte b : dateBytes) {
             bytes[offset] = b;
             offset++;
         }
-    }
-
-    /**
-     * Returns the bytes starting at a given offset and length.
-     * 
-     * @param offset - offset to start from
-     * @param length - number of bytes to return
-     * @return byte array
-     */
-    protected byte[] getBytesAt(int offset, int length) {
-
-        byte[] subBytes = new byte[length];
-        ByteBuffer.wrap(bytes, offset, length).get(subBytes, 0, length).array();
-
-        return subBytes;
     }
 
     /**
@@ -244,27 +243,6 @@ public class APIFormat {
         return getCharConverter().byteArrayToString(bytes);
     }
 
-    protected AS400Bin4 getInt4Converter() {
-        if (int4Conv == null) {
-            int4Conv = new AS400Bin4();
-        }
-        return int4Conv;
-    }
-
-    protected CharConverter getCharConverter() throws UnsupportedEncodingException {
-        if (charConv == null) {
-            charConv = new CharConverter(system.getCcsid(), system);
-        }
-        return charConv;
-    }
-
-    protected DateTimeConverter getDateTimeConverter() {
-        if (dateTimeConv == null) {
-            dateTimeConv = new DateTimeConverter(system);
-        }
-        return dateTimeConv;
-    }
-
     protected APICharFieldDescription addCharField(String name, int offset, int length) {
         return (APICharFieldDescription)addField(new APICharFieldDescription(name, offset, length));
     }
@@ -277,22 +255,67 @@ public class APIFormat {
         return (APIDateTimeFieldDescription)addField(new APIDateTimeFieldDescription(name, offset, length, format));
     }
 
+    protected AbstractAPIFieldDescription getField(String name) {
+        return fields.get(name);
+    }
+
     protected boolean isOverflow(String fieldName, int maxLength) {
-        
+
         AbstractAPIFieldDescription field = getField(fieldName);
         if (field.getOffset() + field.getLength() > maxLength) {
             return true;
         }
-        
+
         return false;
     }
 
-    private int getFieldOffset(AbstractAPIFieldDescription field) {
-        return offset + field.getOffset();
+    /**
+     * Returns the bytes starting at a given offset and length relative to where
+     * this format starts in the byte buffer.
+     * 
+     * @param offset - offset to start from
+     * @param length - number of bytes to return
+     * @return byte array
+     */
+    protected byte[] getBytesAt(int offset, int length) {
+
+        byte[] subBytes = new byte[length];
+        ByteBuffer.wrap(bytes, offset + this.offset, length).get(subBytes, 0, length).array();
+
+        return subBytes;
     }
 
-    protected AbstractAPIFieldDescription getField(String name) {
-        return fields.get(name);
+    private byte[] retrieveBytesFromBuffer(int offset, int length) {
+
+        byte[] subBytes = new byte[length];
+        ByteBuffer.wrap(bytes, offset, length).get(subBytes, 0, length).array();
+
+        return subBytes;
+    }
+
+    private AS400Bin4 getInt4Converter() {
+        if (int4Conv == null) {
+            int4Conv = new AS400Bin4();
+        }
+        return int4Conv;
+    }
+
+    private CharConverter getCharConverter() throws UnsupportedEncodingException {
+        if (charConv == null) {
+            charConv = new CharConverter(system.getCcsid(), system);
+        }
+        return charConv;
+    }
+
+    private DateTimeConverter getDateTimeConverter() {
+        if (dateTimeConv == null) {
+            dateTimeConv = new DateTimeConverter(system);
+        }
+        return dateTimeConv;
+    }
+
+    private int getAbsoluteFieldOffset(AbstractAPIFieldDescription field) {
+        return offset + field.getOffset();
     }
 
     private AbstractAPIFieldDescription addField(AbstractAPIFieldDescription field) {
@@ -303,7 +326,7 @@ public class APIFormat {
         }
 
         if (fields.containsKey(name)) {
-            throw new RuntimeException("A field with name '" + name + " does already exist.");
+            throw new RuntimeException("A field with name '" + name + " does already exist."); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         fields.put(field.getName(), field);

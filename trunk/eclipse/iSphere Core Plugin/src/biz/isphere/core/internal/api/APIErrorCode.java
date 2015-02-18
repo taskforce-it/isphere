@@ -19,11 +19,11 @@ import com.ibm.as400.access.AS400;
  */
 public class APIErrorCode extends APIFormat {
 
-    private static final String BYTES_PROVIDED = "bytesProvides";
-    private static final String BYTES_AVAILABLE = "bytesAvailable";
-    private static final String EXCEPTION_ID = "exceptionID";
-    private static final String RESERVED_1 = "reserved_1";
-    private static final String EXCEPTION_DATA = "exceptionData";
+    private static final String BYTES_PROVIDED = "bytesProvides"; //$NON-NLS-1$
+    private static final String BYTES_AVAILABLE = "bytesAvailable"; //$NON-NLS-1$
+    private static final String EXCEPTION_ID = "exceptionID"; //$NON-NLS-1$
+    private static final String RESERVED_1 = "reserved_1"; //$NON-NLS-1$
+    private static final String EXCEPTION_DATA = "exceptionData"; //$NON-NLS-1$
 
     /**
      * Constructs an APIErrorCode object, that does not return error
@@ -53,7 +53,7 @@ public class APIErrorCode extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public APIErrorCode(AS400 system, boolean returnErrorInformation) throws UnsupportedEncodingException {
-        super(system, "ERROR_CODE");
+        super(system, "ERROR_CODE"); //$NON-NLS-1$
 
         createStructure(returnErrorInformation);
 

@@ -22,7 +22,8 @@ public class RefreshViewIntervalAction extends Action {
     private int seconds;
 
     public RefreshViewIntervalAction(IDialogView view, int seconds) {
-        super("Refresh");
+        super("");
+        
         this.view = view;
         this.seconds = seconds;
 
@@ -34,6 +35,7 @@ public class RefreshViewIntervalAction extends Action {
             setText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_seconds, seconds));
             setToolTipText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_seconds_tooltip, seconds));
         }
+        
         setEnabled(false);
     }
 

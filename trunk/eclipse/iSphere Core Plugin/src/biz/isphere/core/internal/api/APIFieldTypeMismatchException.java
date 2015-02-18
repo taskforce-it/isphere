@@ -15,7 +15,7 @@ public class APIFieldTypeMismatchException extends RuntimeException {
     private String message;
 
     public APIFieldTypeMismatchException(String name) {
-        this.message = "Field " + name + "does not match expected field type.";
+        this.message = "Field " + name + "does not match expected field type."; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

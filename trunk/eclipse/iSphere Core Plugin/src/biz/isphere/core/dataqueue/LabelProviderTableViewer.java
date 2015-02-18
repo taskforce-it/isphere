@@ -12,16 +12,22 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dataqueue.action.DisplayEndOfDataAction;
+import biz.isphere.core.dataqueue.action.ViewInHexAction;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 
-public class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
+public class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider, IPropertyChangeListener {
 
     private static final int COLUMN_ENTRY_TYPE = 0;
     private static final int COLUMN_KEY = 1;
@@ -30,9 +36,11 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
     private static final int COLUMN_MESSAGE_TEXT = 4;
 
     private static final int NUM_COLUMNS = 5;
-    
+
     private int visibleColumns[] = new int[NUM_COLUMNS];
     private DateFormat dateFormatter;
+    private boolean isHexView;
+    private boolean isDisplayEndOfData;
 
     private RDQD0100 rdqd0100;
 
@@ -40,18 +48,20 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
 
         this.rdqd0100 = rdqd0100;
 
-        visibleColumns = new int[NUM_COLUMNS];
+        this.visibleColumns = new int[NUM_COLUMNS];
         for (int i = 0; i < NUM_COLUMNS; i++) {
-            visibleColumns[i] = -1;
+            this.visibleColumns[i] = -1;
         }
-        
-        dateFormatter = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+
+        this.dateFormatter = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        setHexMode(true);
+        setDisplayEndOfData(false);
     }
 
     public static int getNumColumns() {
         return NUM_COLUMNS;
     }
-    
+
     public void setEntryTypeColumnIndex(int index) {
         visibleColumns[COLUMN_ENTRY_TYPE] = index;
     }
@@ -102,13 +112,35 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
                     return dateFormatter.format(date);
                 }
             } else if (columnIndex == visibleColumns[COLUMN_KEY]) {
-                return StringHelper.trimR(messageDescription.getKeyText());
+                if (isHexView) {
+                    return ByteHelper.getHexString(messageDescription.getKeyBytes());
+                } else {
+                    return StringHelper.trimR(messageDescription.getKeyText());
+                }
             } else if (columnIndex == visibleColumns[COLUMN_SENDER_ID]) {
                 return StringHelper.trimR(messageDescription.getSenderID().toString());
             } else if (columnIndex == visibleColumns[COLUMN_MESSAGE_TEXT_LENGTH]) {
-                return Integer.toString(messageDescription.getEnqueuedMesageEntryLength()).trim();
+                return Integer.toString(messageDescription.getEnqueuedMesageEntryLength());
             } else if (columnIndex == visibleColumns[COLUMN_MESSAGE_TEXT]) {
-                return StringHelper.trimR(messageDescription.getMessageText(!rdqd0100.isSenderIDIncludedInMessageText()));
+
+                String label;
+                if (isHexView) {
+                    label = ByteHelper.getHexString(messageDescription.getMessageBytes(!rdqd0100.isSenderIDIncludedInMessageText()));
+                } else {
+                    label = messageDescription.getMessageText(!rdqd0100.isSenderIDIncludedInMessageText());
+
+                    if (messageDescription.getEnqueuedMesageEntryLength() > messageDescription.getRDQM0200().getMaximumMessageTextLengthRequested()) {
+                        label = label + " ..."; //$NON-NLS-1$
+                    } else {
+                        if (isDisplayEndOfData) {
+                            label = label + "«"; //$NON-NLS-1$
+                        } else {
+                            label = StringHelper.trimR(label);
+                        }
+                    }
+                }
+
+                return label;
             }
 
         } catch (Exception e) {
@@ -128,5 +160,23 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
         } else {
             return null;
         }
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+        if (event.getSource() instanceof ViewInHexAction) {
+            Action action = (Action)event.getSource();
+            setHexMode(action.isChecked());
+        } else if (event.getSource() instanceof DisplayEndOfDataAction) {
+            Action action = (Action)event.getSource();
+            setDisplayEndOfData(action.isChecked());
+        }
+    }
+
+    private void setHexMode(boolean isHexMode) {
+        this.isHexView = isHexMode;
+    }
+
+    private void setDisplayEndOfData(boolean isDisplayEndOfData) {
+        this.isDisplayEndOfData = isDisplayEndOfData;
     }
 }

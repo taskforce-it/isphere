@@ -736,6 +736,8 @@ public class Messages extends NLS {
 
     public static String Pin_View;
 
+    public static String Tooltip_Pin_View;
+
     public static String Restoring_view;
 
     public static String Remove;
@@ -747,13 +749,13 @@ public class Messages extends NLS {
     public static String Tooltip_Invert_selection;
 
     public static String About_to_transfer_library_A_to_host_B_using_port_C;
-    
+
     public static String iSphere_library_not_set_in_preferences;
 
     public static String msgBox_headline_Delete_Object;
-    
+
     public static String Do_you_want_to_delete_library_A;
-    
+
     public static String Do_you_want_to_delete_object_A_B_type_C;
 
     public static String Deleting_library_A;
@@ -761,43 +763,53 @@ public class Messages extends NLS {
     public static String Deleting_object_A_B_of_type_C;
 
     public static String btnLabel_Close;
-    
+
     public static String Text;
 
     public static String Number_of_messages;
     
+    public static String Number_of_messages_to_retrieve_colon;
+
     public static String Keyed;
-    
+
     public static String Maximum_number_of_messages_allowed;
-    
+
     public static String Maximum_number_of_messages_specified;
-    
+
     public static String Sequence;
-    
+
     public static String Force_to_storage;
-    
+
     public static String Automatically_reclaimed;
-    
+
     public static String Key_length;
-    
+
     public static String Last_reclaimed_at;
-    
+
     public static String Selected_object_does_not_match_expected_type;
-    
+
     public static String The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
 
-    public static String A_messages_retrieved;
-    
-    public static String Retrieved_up_to_A_bytes_of_message_data; 
-    
+    public static String A_of_B_messages_retrieved;
+
+    public static String Retrieved_up_to_A_bytes_of_message_data;
+
     public static String Enqueued;
-    
+
     public static String Message_key;
-    
+
     public static String Sender_ID;
 
     public static String Message_text;
-    
+
+    public static String View_in_Hex;
+
+    public static String Tooltip_View_in_Hex;
+
+    public static String Display_End_Of_Data;
+
+    public static String Tooltip_Display_End_Of_Data;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
