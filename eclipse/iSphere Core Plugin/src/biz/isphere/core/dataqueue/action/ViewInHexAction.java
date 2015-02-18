@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspacemonitor.action;
+package biz.isphere.core.dataqueue.action;
 
 import org.eclipse.jface.action.Action;
 
@@ -14,21 +14,27 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 
-public class RefreshViewAction extends Action {
+/**
+ * Action, that is used to change the 'view mode' of the
+ * "Data Queue Monitor View" view. The view mode can be either 'text' or 'hex'.
+ * 
+ * @author Thomas Raddatz
+ */
+public class ViewInHexAction extends Action {
 
     private IDialogView view;
 
-    public RefreshViewAction(IDialogView view) {
-        super(Messages.Refresh);
+    public ViewInHexAction(IDialogView view) {
+        super(Messages.View_in_Hex, Action.AS_CHECK_BOX); //$NON-NLS-1$
+
         this.view = view;
 
-        setToolTipText(Messages.Refresh_the_contents_of_this_view);
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH));
-        setEnabled(false);
+        setToolTipText(Messages.Tooltip_View_in_Hex);
+        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_VIEW_IN_HEX));
     }
 
     @Override
     public void run() {
-        view.refreshData();
+        view.changeDisplayMode();
     }
 }

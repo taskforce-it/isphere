@@ -61,6 +61,6 @@ public abstract class AbstractAPIFieldDescription {
 
     @Override
     public String toString() {
-        return name + "(" + offset + ": " + length + ")";
+        return name + "(" + offset + ": " + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

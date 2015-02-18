@@ -33,7 +33,6 @@ public class RDQM0200MessageEntry extends APIFormat {
     private static final String MESSAGE_ENQUEUE_DATE_AND_TIME = "messageEnqueueDateAndTime"; //$NON-NLS-1$
     private static final String ENQUEUED_MESSAGE_ENTRY_LENGTH = "enqueuedMessageEntryLength"; //$NON-NLS-1$
 
-    private int offset;
     private RDQM0200 rdqm0200;
 
     /**
@@ -49,8 +48,7 @@ public class RDQM0200MessageEntry extends APIFormat {
     public RDQM0200MessageEntry(AS400 system, int offset, RDQM0200 rdqm0200) throws UnsupportedEncodingException {
         super(system, "RDQM0200MessageEntry"); //$NON-NLS-1$
         setOffset(offset);
-                
-        this.offset = offset;
+
         this.rdqm0200 = rdqm0200;
 
         createStructure(0);
@@ -173,14 +171,29 @@ public class RDQM0200MessageEntry extends APIFormat {
         return convertToText(getMessageBytes(includeSenderID));
     }
 
+    /**
+     * Returns the sender ID.
+     * 
+     * @return sender ID
+     * @throws UnsupportedEncodingException
+     */
     public RDQM0200SenderID getSenderID() throws UnsupportedEncodingException {
 
         if (!rdqm0200.isSenderIDIncluded()) {
             return null;
         }
 
-        return new RDQM0200SenderID(getSystem(), this.offset + LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY + rdqm0200.getMessageKeyLengthReturned(),
+        return new RDQM0200SenderID(getSystem(), getOffset() + LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY + rdqm0200.getMessageKeyLengthReturned(),
             rdqm0200);
+    }
+
+    /**
+     * Returns the RDQM0200 format this message entry is associated to.
+     * 
+     * @return RDQM0200 format
+     */
+    public RDQM0200 getRDQM0200() {
+        return rdqm0200;
     }
 
     /**
@@ -192,7 +205,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     private int getOffsetMessageText(boolean includeSenderID) {
 
-        int offset = LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY + this.offset + rdqm0200.getMessageKeyLengthReturned();
+        int offset = LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY + rdqm0200.getMessageKeyLengthReturned();
 
         if (mustExcludeSenderID(includeSenderID)) {
             offset = offset + RDQM0200SenderID.LENGTH_OF_SENDER_ID;
@@ -211,11 +224,11 @@ public class RDQM0200MessageEntry extends APIFormat {
     private int getLengthMessageText(boolean includeSenderID) {
 
         int length = rdqm0200.getMaximumMessageTextLengthRequested();
-        
+
         if (length > getEnqueuedMesageEntryLength()) {
             length = getEnqueuedMesageEntryLength();
         }
-        
+
         if (length > rdqm0200.getMaximumMessageTextLengthAvailable()) {
             length = rdqm0200.getMaximumMessageTextLengthAvailable();
         }
@@ -234,7 +247,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     private int getOffsetMessageKey() {
 
-        return LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY + this.offset;
+        return LENGTH_OF_FIRST_FIELDS_OF_MESSSAGE_ENTRY;
     }
 
     /**

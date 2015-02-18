@@ -10,6 +10,9 @@ package biz.isphere.core.internal.viewmanager;
 
 import org.eclipse.jface.action.Action;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
+
 /**
  * Action, that is used to change the 'pinned' state of a pinnable view. A
  * pinnable view must implement the {@link IPinnableView} interface and it must
@@ -22,8 +25,12 @@ public class PinViewAction extends Action {
     private IPinnableView view;
 
     public PinViewAction(IPinnableView view) {
-        super("PinView", Action.AS_CHECK_BOX);
+        super(Messages.Pin_View, Action.AS_CHECK_BOX);
+
         this.view = view;
+
+        setToolTipText(Messages.Tooltip_Pin_View);
+        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_PIN));
     }
 
     @Override

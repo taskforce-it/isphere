@@ -15,7 +15,7 @@ package biz.isphere.core.internal.api;
  */
 public class APIDateTimeFieldDescription extends AbstractAPIFieldDescription {
 
-    public static final String DTS = "*DTS";
+    public static final String DTS = "*DTS"; //$NON-NLS-1$
 
     private String format;
 

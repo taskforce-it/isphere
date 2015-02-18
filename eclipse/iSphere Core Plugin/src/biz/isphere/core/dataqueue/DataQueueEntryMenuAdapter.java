@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.UIPlugin;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;

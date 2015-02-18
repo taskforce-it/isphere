@@ -98,10 +98,10 @@ public abstract class APIProgramCallDocument {
      * @return object path
      */
     protected String getPath(String object, String library, String type) {
-        if (type.startsWith("*")) {
+        if (type.startsWith("*")) { //$NON-NLS-1$
             type = type.substring(1);
         }
-        return "/QSYS.LIB/" + library + ".LIB/" + object + "." + type;
+        return "/QSYS.LIB/" + library + ".LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     /**
