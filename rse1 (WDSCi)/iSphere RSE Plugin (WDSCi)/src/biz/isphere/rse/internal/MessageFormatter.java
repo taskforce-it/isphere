@@ -16,7 +16,11 @@ import com.ibm.etools.iseries.comm.interfaces.IISeriesMessageDescription;
 public class MessageFormatter extends AbstractMessageFormatter {
 
     public String format(MessageDescription aMessageDescription) {
-        return format(aMessageDescription.getMessage(), aMessageDescription.getHelpText());
+        String messageHelp = aMessageDescription.getHelpText();
+        if (MessageDescription.TEXT_NONE.equals(messageHelp)) {
+            messageHelp = "";
+        }
+        return format(aMessageDescription.getMessage(), messageHelp);
     }
 
     public String format(IISeriesMessageDescription aMessageDescription) {
