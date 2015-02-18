@@ -82,7 +82,7 @@ public class CheckNLSMessages {
             System.out.println("  Locale: " + resourcePath);
 
             Properties properties = getPropertyResourceBundle(nlsMessagesObject, resourcePath);
-            checkMessagesForLocale(resourcePath, nlsMessagesObject, properties);
+            checkMessagesForLocale(locale, resourcePath, nlsMessagesObject, properties);
         }
     }
 
@@ -95,8 +95,11 @@ public class CheckNLSMessages {
      * @param locale
      * @throws IllegalAccessException
      */
-    private void checkMessagesForLocale(String resourcePath, Object nlsMessagesObject, Properties properties) throws Exception {
+    private void checkMessagesForLocale(String locale, String resourcePath, Object nlsMessagesObject, Properties properties) throws Exception {
+
         Field[] fields = nlsMessagesObject.getClass().getFields();
+        String localeInfo = " (" + locale + ") ";
+
         for (Field field : fields) {
 
             // Prepare
@@ -105,14 +108,18 @@ public class CheckNLSMessages {
 
             // Check
             System.out.println("Testing: " + nlsMessageConstant);
-            assertFalse("NLS String must not end with spaces.", messageText.endsWith(" "));
-            assertNotNull("Message text must not be [null]. Missing property: " + nlsMessageConstant + "(" + nlsMessagesObject.getClass().getName()
-                + ")", messageText);
-            assertTrue("Length of message must be greater than zero. Property: " + nlsMessageConstant, messageText.length() > 0);
+            assertTrue("ERROR:" + localeInfo + "NLS string must not be NULL or empty: " + nlsMessageConstant, messageText != null
+                && messageText.trim().length() > 0);
+            assertFalse("ERROR:" + localeInfo + "NLS String must not end with spaces: " + nlsMessageConstant, messageText.endsWith(" "));
+            assertNotNull("ERROR:" + localeInfo + "Message text must not be [null]. Missing property: " + nlsMessageConstant + "("
+                + nlsMessagesObject.getClass().getName() + ")", messageText);
+            assertTrue("ERROR:" + localeInfo + "Length of message must be greater than zero. Property: " + nlsMessageConstant,
+                messageText.length() > 0);
             try {
-            assertEquals("Assigned message text must match text in properties file.", messageText, field.get(null));
+                assertEquals("ERROR:" + localeInfo + "Assigned message text must match text in properties file: " + nlsMessageConstant, messageText,
+                    field.get(null));
             } catch (NullPointerException e) {
-                assertTrue("Error: 'static' modifier missing for: " + field.getName(), false);
+                assertTrue("ERROR:" + localeInfo + "'static' modifier missing for: " + field.getName(), false);
             }
             properties.remove(nlsMessageConstant);
         }
@@ -125,7 +132,8 @@ public class CheckNLSMessages {
             }
         }
 
-        assertEquals("Properties must be empty. Otherwise there are more properties than message constants.", 0, properties.size());
+        assertEquals("ERROR:" + localeInfo + "Properties must be empty. Otherwise there are more properties than message constants.", 0,
+            properties.size());
     }
 
     /**
