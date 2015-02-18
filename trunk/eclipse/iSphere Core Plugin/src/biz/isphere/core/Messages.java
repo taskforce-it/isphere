@@ -790,6 +790,8 @@ public class Messages extends NLS {
 
     public static String The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
 
+    public static String The_object_cannot_be_dropped_because_auto_refresh_is_active;
+
     public static String A_of_B_messages_retrieved;
 
     public static String Retrieved_up_to_A_bytes_of_message_data;

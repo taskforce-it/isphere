@@ -37,6 +37,8 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -113,6 +115,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     private static final boolean DEFAULT_VIEW_IN_HEX = true;
     private static final boolean DEFAULT_DISPLAY_END_OF_DATA = false;
+    private static final int DEFAULT_NUMBER_OF_MESSAGES = 1;
 
     private Composite mainArea;
     private RemoteObject remoteObject;
@@ -143,6 +146,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     private TableViewer tableViewer;
 
     private int numberOfMessagesToRetrieve;
+
+    private Combo comboNumberOfMessagesToRetrieve;
 
     public AbstractDataQueueMonitorView() {
 
@@ -375,6 +380,11 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             return;
         }
 
+        if (isAutoRefreshOn()) {
+            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_dropped_because_auto_refresh_is_active);
+            return;
+        }
+
         /*
          * Create a UI job to check the input. Afterwards create a batch job, to
          * load and set the data.
@@ -396,19 +406,20 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         Label labelNumMessages = new Label(optionsArea, SWT.NONE);
         labelNumMessages.setText(Messages.Number_of_messages_to_retrieve_colon);
 
-        Combo comboNumberOfMessagesToRetrieve = WidgetFactory.createCombo(optionsArea);
+        comboNumberOfMessagesToRetrieve = WidgetFactory.createCombo(optionsArea);
         comboNumberOfMessagesToRetrieve.setItems(new String[] { "1", "5", "10", "50", "100", "5000" });
-        comboNumberOfMessagesToRetrieve.select(1);
+        comboNumberOfMessagesToRetrieve.select(DEFAULT_NUMBER_OF_MESSAGES);
         GridData numMessagesLayoutData = createGridDataSimple();
         numMessagesLayoutData.widthHint = 40;
         comboNumberOfMessagesToRetrieve.setLayoutData(numMessagesLayoutData);
+        setNumberOfMessagesToRetrieve();
+
         comboNumberOfMessagesToRetrieve.addVerifyListener(new NumericOnlyVerifyListener());
         comboNumberOfMessagesToRetrieve.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
-                Combo combo = (Combo)event.getSource();
-                if (remoteObject != null) {
-                    setNumberOfMessagesToRetrieve(combo.getText());
+                setNumberOfMessagesToRetrieve();
+                if (remoteObject != null && !isAutoRefreshOn()) {
                     refreshViewAction.run();
                 }
             }
@@ -422,17 +433,23 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             }
 
             public void keyPressed(KeyEvent event) {
-                Combo combo = (Combo)event.getSource();
                 if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
-                    if (!StringHelper.isNullOrEmpty(combo.getText())) {
-                        combo.setText("" + setNumberOfMessagesToRetrieve(combo.getText()));
+                    setNumberOfMessagesToRetrieve();
+                    if (remoteObject != null && !isAutoRefreshOn()) {
                         refreshViewAction.run();
                     }
                 }
             }
         });
+        comboNumberOfMessagesToRetrieve.addFocusListener(new FocusListener() {
 
-        setNumberOfMessagesToRetrieve(comboNumberOfMessagesToRetrieve.getText());
+            public void focusLost(FocusEvent event) {
+                setNumberOfMessagesToRetrieve();
+            }
+
+            public void focusGained(FocusEvent paramFocusEvent) {
+            }
+        });
     }
 
     private void createDataQueueEditorLabels(Composite parent, RemoteObject remoteObject) {
@@ -485,7 +502,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             labelProvider.setHexMode(viewInHexAction.isChecked());
             labelProvider.setDisplayEndOfData(displayEndOfDataAction.isChecked());
             tableViewer.setLabelProvider(labelProvider);
-            
+
             if (rdqd0100 != null) {
                 tableViewer.setContentProvider(new ContentProviderTableViewer(rdqm0200));
             }
@@ -793,13 +810,13 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
     }
 
-    private int setNumberOfMessagesToRetrieve(String text) {
+    private void setNumberOfMessagesToRetrieve() {
         try {
-            numberOfMessagesToRetrieve = Integer.parseInt(text);
+            numberOfMessagesToRetrieve = Integer.parseInt(comboNumberOfMessagesToRetrieve.getText());
         } catch (Throwable e) {
-            numberOfMessagesToRetrieve = 5;
+            comboNumberOfMessagesToRetrieve.select(DEFAULT_NUMBER_OF_MESSAGES);
+            numberOfMessagesToRetrieve = Integer.parseInt(comboNumberOfMessagesToRetrieve.getText());
         }
-        return numberOfMessagesToRetrieve;
     }
 
     private int getNumberOfMessagesToRetrieve() {
@@ -998,23 +1015,9 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
             try {
 
-                AS400 as400 = getSystem(remoteObject.getConnectionName());
-
-                QMHQRDQD qmhqrdqd = new QMHQRDQD(as400);
-                RDQD0100 rdqd0100 = qmhqrdqd.retrieveDescription(remoteObject.getName(), remoteObject.getLibrary());
-
-                QMHRDQM qmhrdqm = new QMHRDQM(as400);
-                qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());
-
-                int numberOfMessages = getNumberOfMessagesToRetrieve();
-                int messageLength = getMessageLengthToRetrieve(rdqd0100);
-
-                RDQM0200 rdqm0200;
-                if (rdqd0100.isKeyed()) {
-                    rdqm0200 = qmhrdqm.retrieveMessagesByKey(RDQS0200.ORDER_GE, "", numberOfMessages, messageLength, rdqd0100.getKeyLength()); //$NON-NLS-1$
-                } else {
-                    rdqm0200 = qmhrdqm.retrieveMessages(RDQS0100.SELECT_ALL, numberOfMessages, messageLength);
-                }
+                MessageLoader messageLoader = new MessageLoader(remoteObject);
+                RDQD0100 rdqd0100 = messageLoader.getDescription();
+                RDQM0200 rdqm0200 = messageLoader.loadMessages(rdqd0100);
 
                 /*
                  * Create a UI job to update the view with the new data.
@@ -1179,6 +1182,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         private RemoteObject remoteObject;
         private int interval;
 
+        private MessageLoader messageLoader;
         private UpdateDataUIJob updateDataUIJob;
         private int waitTime;
 
@@ -1186,6 +1190,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             super(remoteObject.getQuaifiedObject());
             this.jobFinishedListener = listener;
             this.remoteObject = remoteObject;
+            this.messageLoader = new MessageLoader(remoteObject);
             setInterval(seconds);
         }
 
@@ -1198,23 +1203,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
                 try {
 
-                    AS400 as400 = getSystem(remoteObject.getConnectionName());
-
-                    QMHQRDQD qmhqrdqd = new QMHQRDQD(as400);
-                    RDQD0100 rdqd0100 = qmhqrdqd.retrieveDescription(remoteObject.getName(), remoteObject.getLibrary());
-
-                    QMHRDQM qmhrdqm = new QMHRDQM(as400);
-                    qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());
-
-                    int numberOfMessages = getNumberOfMessagesToRetrieve();
-                    int messageLength = getMessageLengthToRetrieve(rdqd0100);
-
-                    RDQM0200 rdqm0200;
-                    if (rdqd0100.isKeyed()) {
-                        rdqm0200 = qmhrdqm.retrieveMessagesByKey(RDQS0200.ORDER_GE, "", numberOfMessages, messageLength, rdqd0100.getKeyLength()); //$NON-NLS-1$
-                    } else {
-                        rdqm0200 = qmhrdqm.retrieveMessages(RDQS0100.SELECT_ALL, numberOfMessages, messageLength);
-                    }
+                    RDQD0100 rdqd0100 = messageLoader.getDescription();
+                    RDQM0200 rdqm0200 = messageLoader.loadMessages(rdqd0100);
 
                     /*
                      * Create a UI job to update the view with the new data.
@@ -1265,5 +1255,44 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
                 updateDataUIJob = null;
             }
         }
+    }
+
+    private class MessageLoader {
+
+        private RemoteObject remoteObject;
+        private AS400 as400;
+
+        public MessageLoader(RemoteObject remoteObject) {
+
+            this.remoteObject = remoteObject;
+            this.as400 = getSystem(remoteObject.getConnectionName());
+        }
+
+        public RDQD0100 getDescription() throws Throwable {
+
+            QMHQRDQD qmhqrdqd = new QMHQRDQD(as400);
+            RDQD0100 rdqd0100 = qmhqrdqd.retrieveDescription(remoteObject.getName(), remoteObject.getLibrary());
+
+            return rdqd0100;
+        }
+
+        public RDQM0200 loadMessages(RDQD0100 rdqd0100) throws Throwable {
+
+            QMHRDQM qmhrdqm = new QMHRDQM(as400);
+            qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());
+
+            int numberOfMessages = getNumberOfMessagesToRetrieve();
+            int messageLength = getMessageLengthToRetrieve(rdqd0100);
+
+            RDQM0200 rdqm0200;
+            if (rdqd0100.isKeyed()) {
+                rdqm0200 = qmhrdqm.retrieveMessagesByKey(RDQS0200.ORDER_GE, "", numberOfMessages, messageLength, rdqd0100.getKeyLength()); //$NON-NLS-1$
+            } else {
+                rdqm0200 = qmhrdqm.retrieveMessages(RDQS0100.SELECT_ALL, numberOfMessages, messageLength);
+            }
+
+            return rdqm0200;
+        }
+
     }
 }
