@@ -59,7 +59,7 @@ public abstract class AbstractMessageFormatter {
         int i;
 
         // include leading spaces
-        if (aMessage.startsWith(" ")) {
+         if (aMessage.startsWith(" ")) {
             i = includeSpaces(aMessage, p);
         } else {
             i = p + 1;
@@ -96,17 +96,17 @@ public abstract class AbstractMessageFormatter {
         if (FMT_CTRL_CHAR_N.equals(tToken)) {
             formatted.append("\n");
             formatted.append(INDENT_N);
-            lineLength = indent.length();
+            lineLength = INDENT_N.length();
             indent = POSITION_4;
         } else if (FMT_CTRL_CHAR_P.equals(tToken)) {
             formatted.append("\n");
             formatted.append(INDENT_P);
-            lineLength = indent.length();
+            lineLength = INDENT_P.length();
             indent = POSITION_4;
         } else if (FMT_CTRL_CHAR_B.equals(tToken)) {
             formatted.append("\n");
             formatted.append(INDENT_B);
-            lineLength = indent.length();
+            lineLength = INDENT_B.length();
             indent = POSITION_6;
         } else {
             if (lineLength + tToken.trim().length() > width) {
@@ -140,9 +140,18 @@ public abstract class AbstractMessageFormatter {
     }
 
     public static void main(String[] args) {
+        
         AbstractMessageFormatter main = new AbstractMessageFormatter() {
         };
-        String tMessage = "&N Cause . . . . . :   The application running requires a later version of CSP/AE. &N Recovery  . . . :   Contact the application developer to generate the application for the level of CSP/AE installed. Or, contact your system administrator to determine the correct level of CSP/AE required to run the generated application. &N Technical description . . . . . . . . :   Consult the Program Directory of your current CSP/AD product to determine the level of CSP/AE required to run the generated application.";
+        
+        String tMessage ;
+        
+        tMessage = "&N Cause . . . . . :   The application running requires a later version of CSP/AE. &N Recovery  . . . :   Contact the application developer to generate the application for the level of CSP/AE installed. Or, contact your system administrator to determine the correct level of CSP/AE required to run the generated application. &N Technical description . . . . . . . . :   Consult the Program Directory of your current CSP/AD product to determine the level of CSP/AE required to run the generated application.";
+        System.out.println(main.format(tMessage));
+        
+        System.out.println();
+        
+        tMessage = "&N Cause . . . . . :   A significant part of a number (not the decimal positions) is lost because the field to receive the number is too short. Application processing ends. &N Message CAE0021, issued when the application ended, gives the number of the statement causing the error. &N Recovery  . . . :   Contact the application developer to correct this problem. &N Technical description . . . . . . . . :   Change the application by increasing the size of the target data item to avoid overflow.  Or, have the application handle overflow conditions using the EZEOVER and EZEOVERS special function words.*NONE";
         System.out.println(main.format(tMessage));
     }
 

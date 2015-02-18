@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 public class MessageDescription {
 
+    public static final String TEXT_NONE = "*NONE";
+
     public static final String CCSID_JOB = "*JOB";
     public static final String CCSID_HEX = "*HEX";
 
