@@ -324,6 +324,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             return;
         }
 
+        if (isAutoRefreshOn()) {
+            MessageDialogAsync.displayError(getShell(),
+                Messages.The_object_cannot_be_dropped_because_auto_refresh_is_active);
+            return;
+        }
+
         currentDataSpaceValue = null;
 
         /*
