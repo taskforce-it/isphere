@@ -482,7 +482,10 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
             // Set the content and label providers
             LabelProviderTableViewer labelProvider = new LabelProviderTableViewer(rdqd0100);
+            labelProvider.setHexMode(viewInHexAction.isChecked());
+            labelProvider.setDisplayEndOfData(displayEndOfDataAction.isChecked());
             tableViewer.setLabelProvider(labelProvider);
+            
             if (rdqd0100 != null) {
                 tableViewer.setContentProvider(new ContentProviderTableViewer(rdqm0200));
             }

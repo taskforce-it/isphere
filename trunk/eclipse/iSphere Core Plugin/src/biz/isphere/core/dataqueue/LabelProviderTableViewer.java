@@ -172,11 +172,11 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
         }
     }
 
-    private void setHexMode(boolean isHexMode) {
+    public void setHexMode(boolean isHexMode) {
         this.isHexView = isHexMode;
     }
 
-    private void setDisplayEndOfData(boolean isDisplayEndOfData) {
+    public void setDisplayEndOfData(boolean isDisplayEndOfData) {
         this.isDisplayEndOfData = isDisplayEndOfData;
     }
 }
