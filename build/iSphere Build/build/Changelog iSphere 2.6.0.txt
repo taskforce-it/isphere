@@ -2,7 +2,6 @@ Changelog: iSphere 2.6.0
 ------------------------
 
  • Added data queue view.
- • No dropping an object on a pinned view is rejected.
  • Added option to delete existing objects to the iSphere library uploader.
  • Added Eclipse update sites:
  
@@ -13,5 +12,6 @@ Changelog: iSphere 2.6.0
    WDSCi: http://isphere.sourceforge.net/beta-version/eclipse/wdsci7.0/
    
  • Fixed formatting problem in message preview view.
+ • Now dropping an object on a pinned view is rejected.
  • Now dropping a data space object is rejected when auto-refresh is on.
  • Now properly disabling auto-refresh options when there is no object in a view.
