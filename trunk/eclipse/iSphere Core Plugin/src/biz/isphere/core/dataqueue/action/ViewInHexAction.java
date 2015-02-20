@@ -10,6 +10,7 @@ package biz.isphere.core.dataqueue.action;
 
 import org.eclipse.jface.action.Action;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
@@ -22,6 +23,9 @@ import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
  */
 public class ViewInHexAction extends Action {
 
+    private static final String VIEW_HEX = "*HEX"; //$NON-NLS-1$
+    private static final String VIEW_STRING = "*STRING"; //$NON-NLS-1$
+    
     private IDialogView view;
 
     public ViewInHexAction(IDialogView view) {
@@ -36,5 +40,23 @@ public class ViewInHexAction extends Action {
     @Override
     public void run() {
         view.changeDisplayMode();
+    }
+
+    public static boolean viewInHexToBoolean(String text) {
+
+        if (VIEW_HEX.equals(text)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String viewInHexToString(boolean isViewInHex) {
+
+        if (isViewInHex) {
+            return VIEW_HEX;
+        } else {
+            return VIEW_STRING;
+        }
     }
 }

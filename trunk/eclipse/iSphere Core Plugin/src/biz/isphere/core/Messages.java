@@ -769,6 +769,8 @@ public class Messages extends NLS {
     public static String Number_of_messages;
     
     public static String Number_of_messages_to_retrieve_colon;
+    
+    public static String Tooltip_Number_of_messages_to_retrieve;
 
     public static String Keyed;
 
@@ -788,9 +790,9 @@ public class Messages extends NLS {
 
     public static String Selected_object_does_not_match_expected_type;
 
-    public static String The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
+    public static String The_object_cannot_be_monitored_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
 
-    public static String The_object_cannot_be_dropped_because_auto_refresh_is_active;
+    public static String The_object_cannot_be_monitored_because_auto_refresh_is_active;
 
     public static String A_of_B_messages_retrieved;
 
@@ -811,7 +813,41 @@ public class Messages extends NLS {
     public static String Display_End_Of_Data;
 
     public static String Tooltip_Display_End_Of_Data;
+    
+    public static String Display_End_Of_Data_colon;
 
+    public static String Drag_drop_data_queue_from_RSE_tree; 
+    
+    public static String Maximum_message_length_menu_item;
+    
+    public static String Maximum_message_length_menu_item_A_bytes;
+    
+    public static String Maximum_message_length_menu_item_A_bytes_tooltip;
+    
+    public static String Maximum_message_length_menu_item_no_max;
+    
+    public static String Maximum_message_length_menu_item_no_max_tooltip;
+
+    public static String Maximum_message_length_colon;
+    
+    public static String Tooltip_Maximum_message_length;
+    
+    public static String Data_queue;
+    
+    public static String Display_mode_colon;
+    
+    public static String Tooltip_Display_data_mode;
+    
+    public static String Value_is_out_of_range_The_valid_range_is_A_to_B;
+
+    public static String Copy_message_as_text;
+
+    public static String Copy_message_as_hex;
+
+    public static String Copy_message_as_hex_formatted;
+    
+    public static String Save_message;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

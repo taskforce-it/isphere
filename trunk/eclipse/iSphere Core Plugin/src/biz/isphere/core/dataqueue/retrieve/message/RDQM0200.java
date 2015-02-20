@@ -61,6 +61,21 @@ public class RDQM0200 extends APIFormat {
      * Constructs a RDQM0200 object for a given system.
      * 
      * @param system - system used to create the data converter
+     * @param numMessages - number of messages to retrieve
+     * @param messageLength - message length
+     * @param isSenderIdIncludedInMessageText - specifies whether or not to the
+     *        sender ID is included in the message text
+     * @param keyLength - key length
+     * @throws UnsupportedEncodingException
+     */
+    public RDQM0200(AS400 system, int numMessages, int messageLength, boolean isSenderIdIncludedInMessageText, int keyLength) throws UnsupportedEncodingException {
+        this(system, getMessageBufferSize(numMessages, messageLength + keyLength, isSenderIdIncludedInMessageText), isSenderIdIncludedInMessageText);
+    }
+
+    /**
+     * Constructs a RDQM0200 object for a given system.
+     * 
+     * @param system - system used to create the data converter
      * @param messageBufferSize
      * @throws UnsupportedEncodingException
      */

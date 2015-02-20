@@ -8,10 +8,13 @@
 
 package biz.isphere.core.preferences;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.preferencepages.IPreferences;
 
 /**
@@ -80,6 +83,16 @@ public final class Preferences {
     private static final String URL_FOR_UPDATES = DOMAIN + "URL_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String LAST_VERSION_FOR_UPDATES = DOMAIN + "LAST_VERSION_FOR_UPDATES"; //$NON-NLS-1$
+
+    private static final String MONITOR = DOMAIN + "MONITOR."; //$NON-NLS-1$
+
+    private static final String MONITOR_DTAQ = MONITOR + "DTAQ."; //$NON-NLS-1$
+
+    public static final String MONITOR_DTAQ_LENGTH = MONITOR_DTAQ + "LENGTH"; //$NON-NLS-1$
+
+    public static final String MONITOR_DTAQ_VIEW_IN_HEX = MONITOR_DTAQ + "VIEW_IN_HEX"; //$NON-NLS-1$
+
+    public static final String MONITOR_DTAQ_DISPLAY_END_OF_DATA = MONITOR_DTAQ + "DISPLAY_END_OF_DATA"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -199,6 +212,18 @@ public final class Preferences {
         return directory;
     }
 
+    public int getDataQueueMaximumMessageLength() {
+        return preferenceStore.getInt(MONITOR_DTAQ_LENGTH);
+    }
+    
+    public boolean isDataQueueViewInHex() {
+        return preferenceStore.getBoolean(MONITOR_DTAQ_VIEW_IN_HEX);
+    }
+    
+    public boolean isDataQueueDisplayEndOfData() {
+        return preferenceStore.getBoolean(MONITOR_DTAQ_DISPLAY_END_OF_DATA);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -283,6 +308,18 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_SAVE_DIRECTORY, aDirectory);
     }
 
+    public void setDataQueueMaximumMessageLength(int length) {
+        preferenceStore.setValue(MONITOR_DTAQ_LENGTH, length);
+    }
+
+    public void setDataQueueViewInHex(boolean viewInHex) {
+        preferenceStore.setValue(MONITOR_DTAQ_VIEW_IN_HEX, viewInHex);
+    }
+
+    public void setDataQueueDisplayEndOfData(boolean viewInHex) {
+        preferenceStore.setValue(MONITOR_DTAQ_DISPLAY_END_OF_DATA, viewInHex);
+    }
+    
     /*
      * Preferences: Default Initializer
      */
@@ -310,6 +347,10 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF, getDefaultSpooledFileConversionPDF());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_COMMAND, getDefaultSpooledFileConversionPDFCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_LIBRARY, getDefaultSpooledFileConversionPDFLibrary());
+
+        preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
+        preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
+        preferenceStore.setDefault(MONITOR_DTAQ_DISPLAY_END_OF_DATA, getDefaultDataQueueDisplayEndOfData());
     }
 
     /*
@@ -474,5 +515,51 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileConversionPDFCommand() {
         return "";
+    }
+
+    /**
+     * Return the default command for user defined spooled file to PDF
+     * conversion.
+     * 
+     * @return command for user defined spooled file to PDF conversion
+     */
+    public int getDefaultDataQueueMaximumMessageLength() {
+        return 2048;
+    }
+
+    public boolean getDefaultDataQueueViewInHex() {
+        return true;
+    }
+
+    public boolean getDefaultDataQueueDisplayEndOfData() {
+        return false;
+    }
+    
+    /**
+     * Returns an arrays of maximum lengths values for retrieving data queue
+     * entries.
+     * 
+     * @return message length values
+     */
+    public int[] getDataQueueMaximumMessageLengthValues() {
+
+        int[] lengths = new int[6];
+        lengths[0] = -1;
+        lengths[1] = 64;
+        lengths[2] = 512;
+        lengths[3] = 2048;
+        lengths[4] = 8196;
+        lengths[5] = MessageLengthAction.MAX_LENGTH;
+
+        Arrays.sort(lengths);
+        if (Arrays.binarySearch(lengths, getDataQueueMaximumMessageLength()) < 0) {
+            lengths[0] = getDataQueueMaximumMessageLength();
+            Arrays.sort(lengths);
+            return lengths;
+        }
+
+        int[] lengths2 = new int[lengths.length - 1];
+        System.arraycopy(lengths, 1, lengths2, 0, lengths2.length);
+        return lengths2;
     }
 }
