@@ -210,6 +210,14 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void refreshData() {
         try {
 
+            if (noObjectAvailable()) {
+                return;
+            }
+
+            if (isAutoRefreshOn()) {
+                return;
+            }
+
             LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, currentDataSpaceValue.getRemoteObject());
             loadDataJob.schedule();
 
@@ -233,6 +241,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * RSE tree or when the object is dropped into the view.
      */
     public void setData(RemoteObject[] remoteObjects) {
+
+        if (isAutoRefreshOn()) {
+            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
+            return;
+        }
+
         setData(remoteObjects, null);
     }
 
@@ -309,6 +323,10 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
         return true;
     }
 
+    private boolean noObjectAvailable() {
+        return currentDataSpaceValue == null;
+    }
+
     /**
      * This method is intended to be called by batch jobs to set the data space
      * that is displayed in the view.
@@ -320,13 +338,12 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         if (isPinned()) {
             MessageDialogAsync.displayError(getShell(),
-                Messages.The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
+                Messages.The_object_cannot_be_monitored_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
             return;
         }
 
         if (isAutoRefreshOn()) {
-            MessageDialogAsync.displayError(getShell(),
-                Messages.The_object_cannot_be_dropped_because_auto_refresh_is_active);
+            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
             return;
         }
 
@@ -533,7 +550,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private void refreshActionsEnablement() {
 
-        if (currentDataSpaceValue == null || isAutoRefreshOn()) {
+        if (noObjectAvailable() || isAutoRefreshOn()) {
             refreshViewAction.setEnabled(false);
         } else {
             refreshViewAction.setEnabled(true);
@@ -553,7 +570,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                     refreshAction.setEnabled(true);
                 }
             } else {
-                if (currentDataSpaceValue == null) {
+                if (noObjectAvailable()) {
                     refreshAction.setEnabled(false);
                 } else {
                     refreshAction.setEnabled(true);
@@ -561,7 +578,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             }
         }
 
-        if (currentDataSpaceValue == null) {
+        if (noObjectAvailable()) {
             pinViewAction.setEnabled(false);
         } else {
             pinViewAction.setEnabled(true);
@@ -625,7 +642,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     public void setRefreshInterval(int seconds) {
 
-        if (currentDataSpaceValue == null) {
+        if (noObjectAvailable()) {
             seconds = RefreshViewIntervalAction.REFRESH_OFF;
             return;
         }
@@ -690,7 +707,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * Implements {@link IPinnableView#getContentId()}
      */
     public String getContentId() {
-        if (currentDataSpaceValue == null) {
+        if (noObjectAvailable()) {
             return null;
         }
         RemoteObject remoteObject = currentDataSpaceValue.getRemoteObject();
