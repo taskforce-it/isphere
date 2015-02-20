@@ -111,6 +111,10 @@
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
 
+	<fileset dir="${build.dir}" id="build.changelog.files">
+		<include name="Changelog iSphere*.txt" />
+	</fileset>
+	
 	<!--
     * =====================================================================
     *   Controls the build process:
@@ -119,6 +123,13 @@
 	<target name="build" depends="cleanUpdateSite, updateVersionNumber, createTagFile, refreshProjects" description="build iSphere update site">
 		<echo>Finished iSphere build ${build.version}</echo>
 		<echo>Open site.xml and press [Build All] to build the iSphere update site.</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>|  Right-click 'site.xml' and select 'PDE Tools' ->    |</echo>
+		<echo>|  'Build Site' to build the update site.              |</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Then proceed with:   createSourceForgeFiles         |</echo>
+		<echo>|                       uploadSourceForgeFiles         |</echo>
+		<echo>+------------------------------------------------------+</echo>
 		<echo>*** Finished ***</echo>
 	</target>
 
@@ -379,6 +390,13 @@
 					</fileset>
 				</copy>
 			</then>
+			<else>
+				<echo>Copying "Changelog iSphere.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}/${sf.ftp.beta.dir.name}" > 
+					<fileset refid="build.changelog.files" >
+					</fileset>
+				</copy>
+			</else>	
 		</if>
 
 		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="@BUILD_TARGET@" value="${sf.site.target}"/>
@@ -388,7 +406,12 @@
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
 
-		<echo>Done.</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Then proceed with:   uploadSourceForgeFiles         |</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>*** Finished ***</echo>
 
 	</target>
 
