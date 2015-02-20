@@ -148,4 +148,17 @@ public class XFileDialog implements IFileDialog {
     public void setFilterExtensions(String[] aFilterExtensions) {
         fileDialog.setFilterExtensions(aFilterExtensions);
     }
+
+    /**
+     * Returns the directory path that the dialog will use, or an empty string
+     * if this is not set. File names in this path will appear in the dialog,
+     * filtered according to the filter extensions.
+     * 
+     * @return the directory path string
+     * 
+     * @see #setFilterExtensions
+     */
+    public String getFilterPath() {
+        return fileDialog.getFilterPath();
+    }
 }
