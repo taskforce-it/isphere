@@ -10,7 +10,11 @@ package biz.isphere.base.internal;
 
 import java.io.File;
 
+import org.eclipse.swt.SWT;
+
 public final class FileHelper {
+
+    private static String platform = SWT.getPlatform();
 
     public static String getFileExtension(String fileName) {
         String extension = "";
@@ -47,4 +51,31 @@ public final class FileHelper {
         return true;
     }
 
+    public static String getDefaultRootDirectory() {
+
+        if (platform.equals("win32") || platform.equals("wpf")) {
+            return "c:\\"; //$NON-NLS-1$
+        } else {
+            return "/"; //$NON-NLS-1$
+        }
+
+    }
+
+    public static String getAllFilesFilter() {
+
+        if (isWin32Notation()) {
+            return "*.*"; //$NON-NLS-1$
+        } else {
+            return "*"; //$NON-NLS-1$
+        }
+
+    }
+
+    public static String getAllFilesText() {
+        return "All Files (*.*)"; //$NON-NLS-1$
+    }
+
+    private static boolean isWin32Notation() {
+        return platform.equals("win32") || platform.equals("wpf");
+    }
 }
