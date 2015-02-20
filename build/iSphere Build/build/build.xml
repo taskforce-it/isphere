@@ -77,6 +77,8 @@
 	<property name="workspace.home" location="${basedir}/../.." />
 
 	<!-- Set regular expressions and replacement values -->
+	<property name="validate.version.regex" value="([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?)$"/>
+	
 	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)" />
 	<property name="manifest.version.replace" value="\1${build.version}" />
 
@@ -127,7 +129,7 @@
     *     - feature.xml
     *     - site.xml
     * ===================================================================== -->
-	<target name="updateVersionNumber">
+	<target name="updateVersionNumber" depends="validateVersionNumber">
 
 		<echo>Updating version number to: ${build.version} ...</echo>
 
@@ -177,6 +179,41 @@
 
 	</target>
 
+	<target name="validateVersionNumber">
+
+		<echo>Validating version number to: ${build.version} ...</echo>
+
+	    <propertyregex property="validated.version"
+	              input="${build.version}"
+	              regexp="${validate.version.regex}"
+	              select="\1"
+	              casesensitive="true" />
+		
+		<if>
+			<equals arg1="${build.version}" arg2="${validated.version}" />
+			<then>
+				<echo>Version number validated: OK</echo>
+			</then>
+			<else>
+				<echo>+------------------------------------------------------+</echo>
+				<echo>| Version number does not match expected pattern!      |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| Pattern:                                             |</echo>
+				<echo>| major.minor.micro.qualifier                          |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| major - major version number (requested)             |</echo>
+				<echo>| minor - minor version number (recommended)           |</echo>
+				<echo>| micro - micro version number (optional)              |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| The possible qualifiers are:                         |</echo>
+				<echo>| r     - release version                              |</echo>
+			    <echo>| bnnn  - beta version, where nnn between 001 and 999  |</echo>
+				<echo>+------------------------------------------------------+</echo>
+				<fail>*** ERROR: Invalid version number. ***</fail>
+			</else>
+		</if>
+		
+	</target>
 
 	<!--
     * =====================================================================
