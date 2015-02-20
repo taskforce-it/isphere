@@ -54,16 +54,80 @@
                           SEQ(*FIFO) SENDERID(*YES) +
                           AUTORCL(*YES) SIZE(32 16) +
                           TEXT('iSphere Test Data Queue - Sequention FIFO')
-LOOP:
+PGM_STYLE:
+             CHGVAR     VAR(&LENGTH) VALUE(34)
+             CHGVAR     VAR(&DATA) VALUE('Some Elements of Programming Style')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(37)
+             CHGVAR     VAR(&DATA) VALUE('Write clearly -- don''t be too clever.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(39)
+             CHGVAR     VAR(&DATA) VALUE('Say what you mean, simply and directly.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(39)
+             CHGVAR     VAR(&DATA) VALUE('Use variable names that mean something.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(41)
+             CHGVAR     VAR(&DATA) VALUE('Use statement labels that mean something.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(50)
+             CHGVAR     VAR(&DATA) VALUE('Format a program to help the reader understand it.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(40)
+             CHGVAR     VAR(&DATA) VALUE('Make it right before you make it faster.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(40)
+             CHGVAR     VAR(&DATA) VALUE('Make it clear before you make it faster.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(44)
+             CHGVAR     VAR(&DATA) VALUE('Make it fail-safe before you make it faster.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(33)
+             CHGVAR     VAR(&DATA) VALUE('Keep it simple to make it faster.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(40)
+             CHGVAR     VAR(&DATA) VALUE('Keep it right when you make it faster.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(40)
+             CHGVAR     VAR(&DATA) VALUE('Don''t sacrifice clarity +
+                                          for small gains in efficiency.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(35)
+             CHGVAR     VAR(&DATA) VALUE('Don''t patch bad code -- rewrite it.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(37)
+             CHGVAR     VAR(&DATA) VALUE('Don''t comment bad code -- rewrite it.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+             CHGVAR     VAR(&LENGTH) VALUE(46)
+             CHGVAR     VAR(&DATA) VALUE('Make sure your code does "nothing" gracefully.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
+
+WORLD:
+             CHGVAR     VAR(&LENGTH) VALUE(32)
              CHGVAR     VAR(&COUNT) VALUE(&COUNT + 1)
              CHGVAR     VAR(&COUNT_A) VALUE(&COUNT)
              CHGVAR     VAR(&DATA) VALUE(&COUNT_A *CAT ' - Hello World')
              CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
 
              IF         COND(&COUNT *LT 5) THEN(DO)
-                GOTO       CMDLBL(LOOP)
+                GOTO       CMDLBL(WORLD)
              ENDDO
 
+EXIT:
              RETURN
 
              /* --------------------------------------------------- */
