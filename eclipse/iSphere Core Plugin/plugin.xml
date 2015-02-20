@@ -134,6 +134,11 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Updates"
             id="biz.isphere.core.preferencepages.ISphereUpdates"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereMonitors"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Monitors"
+            id="biz.isphere.core.preferencepages.MonitorDefaults"/>
    </extension>
    
    <extension

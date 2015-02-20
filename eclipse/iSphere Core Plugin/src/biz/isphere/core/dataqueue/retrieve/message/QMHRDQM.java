@@ -130,7 +130,7 @@ public class QMHRDQM extends APIProgramCallDocument {
         RDQS0200 rdqs0200 = new RDQS0200(getSystem(), key, keyLengthToRetrieve, messageLengthToRetrieve);
         rdqs0200.setKeySearchOrder(keySearchOrder);
 
-        RDQM0200 rdqm0200 = new RDQM0200(getSystem(), numMessages, messageLengthToRetrieve, isSenderIdIncluded);
+        RDQM0200 rdqm0200 = new RDQM0200(getSystem(), numMessages, messageLengthToRetrieve, isSenderIdIncluded, keyLengthToRetrieve);
 
         if (execute(createParameterList(rdqm0200, rdqs0200))) {
             rdqm0200.setBytes(getParameterList()[0].getOutputData());

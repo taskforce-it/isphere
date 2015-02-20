@@ -25,6 +25,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -37,8 +39,6 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -74,6 +74,7 @@ import biz.isphere.core.dataqueue.DataQueueEntryMenuAdapter;
 import biz.isphere.core.dataqueue.DataQueuePropertySource;
 import biz.isphere.core.dataqueue.LabelProviderTableViewer;
 import biz.isphere.core.dataqueue.action.DisplayEndOfDataAction;
+import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.dataqueue.action.ViewInHexAction;
 import biz.isphere.core.dataqueue.retrieve.description.QMHQRDQD;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
@@ -93,6 +94,7 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
@@ -101,8 +103,6 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     IAdaptable, ControlListener {
 
     public static final String ID = "biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"; //$NON-NLS-1$ 
-
-    private static final int MAXIMUM_MESSAGE_LENGTH_TO_RETRIEVE = 2048; // 2048;
 
     private static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
     private static final String OBJECT = "object"; //$NON-NLS-1$
@@ -141,6 +141,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     private PinViewAction pinViewAction;
     private DisplayEndOfDataAction displayEndOfDataAction;
     private AutoRefreshJob autoRefreshJob;
+    private List<MessageLengthAction> messageLengthActions;
 
     private Composite tableViewerArea;
     private TableViewer tableViewer;
@@ -177,6 +178,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         super.init(site);
 
         getSite().setSelectionProvider(this);
+
+        ISpherePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new PreferencesChangeListener());
     }
 
     @Override
@@ -185,7 +188,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         mainArea = new Composite(parent, SWT.NONE);
         mainArea.setLayout(createGridLayoutSimple(2));
 
-        createDataQueueEditorLabels(mainArea, null);
+        createDataQueueEditorLabelsAndControls(mainArea, null);
         createRetrieveOptions(mainArea);
 
         tableViewerArea = new Composite(mainArea, SWT.NONE);
@@ -196,7 +199,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         tableViewerAreaLayoutData.grabExcessVerticalSpace = true;
         tableViewerArea.setLayoutData(tableViewerAreaLayoutData);
 
-        createActions();
+        createActions(comboNumberOfMessagesToRetrieve);
         initializeToolBar();
         initializeViewMenu();
 
@@ -223,10 +226,10 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         job.schedule();
     }
 
-    private void createActions() {
+    private void createActions(Combo messageLengthListener) {
 
         viewInHexAction = new ViewInHexAction(this);
-        viewInHexAction.setChecked(DEFAULT_VIEW_IN_HEX);
+        viewInHexAction.setChecked(Preferences.getInstance().isDataQueueViewInHex());
 
         refreshViewAction = new RefreshViewAction(this);
         refreshViewAction.setToolTipText(Messages.Refresh_the_contents_of_this_view);
@@ -239,6 +242,19 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 3));
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 10));
         refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
+
+        messageLengthActions = new ArrayList<MessageLengthAction>();
+        int[] lengthValues = Preferences.getInstance().getDataQueueMaximumMessageLengthValues();
+        for (int length : lengthValues) {
+            MessageLengthAction action = new MessageLengthAction(this, length);
+            action.setEnabled(true);
+            if (action.getLength() == Preferences.getInstance().getDataQueueMaximumMessageLength()) {
+                action.setChecked(true);
+            } else {
+                action.setChecked(false);
+            }
+            messageLengthActions.add(action);
+        }
 
         pinViewAction = new PinViewAction(this);
 
@@ -263,6 +279,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         IMenuManager viewMenu = actionBars.getMenuManager();
 
         viewMenu.add(createAuoRefreshSubMenu());
+        viewMenu.add(createMessageLengthSubMenu());
         viewMenu.add(viewInHexAction);
         viewMenu.add(displayEndOfDataAction);
     }
@@ -279,6 +296,17 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         return autoRefreshSubMenu;
     }
 
+    private MenuManager createMessageLengthSubMenu() {
+
+        MenuManager messageLengthSubMenu = new MenuManager(Messages.Maximum_message_length_menu_item);
+
+        for (MessageLengthAction messageLengthAction : messageLengthActions) {
+            messageLengthSubMenu.add(messageLengthAction);
+        }
+
+        return messageLengthSubMenu;
+    }
+
     @Override
     public void setFocus() {
         // nothing to set here
@@ -291,6 +319,14 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
      */
     public void refreshData() {
         try {
+
+            if (noObjectAvailable()) {
+                return;
+            }
+            
+            if (isAutoRefreshOn()) {
+                return;
+            }
 
             LoadAsyncDataJob loadDataJob = new LoadAsyncDataJob(Messages.Loading_remote_objects, remoteObject);
             loadDataJob.schedule();
@@ -317,6 +353,11 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
      * when the object is dropped into the view.
      */
     public void setData(RemoteObject[] remoteObjects) {
+
+        if (isAutoRefreshOn()) {
+            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
+            return;
+        }
 
         if (!checkInputData(remoteObjects)) {
             return;
@@ -365,6 +406,10 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         return true;
     }
 
+    private boolean noObjectAvailable() {
+        return remoteObject == null;
+    }
+
     /**
      * This method is intended to be called by batch jobs to set the data space
      * that is displayed in the view.
@@ -376,12 +421,12 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
         if (isPinned()) {
             MessageDialogAsync.displayError(getShell(),
-                Messages.The_object_cannot_be_dropped_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
+                Messages.The_object_cannot_be_monitored_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
             return;
         }
 
         if (isAutoRefreshOn()) {
-            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_dropped_because_auto_refresh_is_active);
+            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
             return;
         }
 
@@ -407,7 +452,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         labelNumMessages.setText(Messages.Number_of_messages_to_retrieve_colon);
 
         comboNumberOfMessagesToRetrieve = WidgetFactory.createCombo(optionsArea);
-        comboNumberOfMessagesToRetrieve.setItems(new String[] { "1", "5", "10", "50", "100", "5000" });
+        comboNumberOfMessagesToRetrieve.setToolTipText(Messages.Tooltip_Number_of_messages_to_retrieve);
+        comboNumberOfMessagesToRetrieve.setItems(new String[] { "1", "5", "10", "50", "100" });
         comboNumberOfMessagesToRetrieve.select(DEFAULT_NUMBER_OF_MESSAGES);
         GridData numMessagesLayoutData = createGridDataSimple();
         numMessagesLayoutData.widthHint = 40;
@@ -419,9 +465,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
             public void widgetSelected(SelectionEvent event) {
                 setNumberOfMessagesToRetrieve();
-                if (remoteObject != null && !isAutoRefreshOn()) {
-                    refreshViewAction.run();
-                }
+                refreshViewAction.run();
             }
 
             public void widgetDefaultSelected(SelectionEvent event) {
@@ -430,29 +474,21 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         comboNumberOfMessagesToRetrieve.addKeyListener(new KeyListener() {
 
             public void keyReleased(KeyEvent event) {
+                if (Character.isDigit(event.character)) {
+                    setNumberOfMessagesToRetrieve();
+                }
             }
 
             public void keyPressed(KeyEvent event) {
                 if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
                     setNumberOfMessagesToRetrieve();
-                    if (remoteObject != null && !isAutoRefreshOn()) {
-                        refreshViewAction.run();
-                    }
+                    refreshViewAction.run();
                 }
-            }
-        });
-        comboNumberOfMessagesToRetrieve.addFocusListener(new FocusListener() {
-
-            public void focusLost(FocusEvent event) {
-                setNumberOfMessagesToRetrieve();
-            }
-
-            public void focusGained(FocusEvent paramFocusEvent) {
             }
         });
     }
 
-    private void createDataQueueEditorLabels(Composite parent, RemoteObject remoteObject) {
+    private void createDataQueueEditorLabelsAndControls(Composite parent, RemoteObject remoteObject) {
 
         Composite labelArea = new Composite(parent, SWT.NONE);
         GridLayout layout = createGridLayoutSimple(8);
@@ -494,20 +530,21 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
         try {
 
-            // Create the table viewer
-            tableViewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
-
-            // Set the content and label providers
+            // Create the label provider
             LabelProviderTableViewer labelProvider = new LabelProviderTableViewer(rdqd0100);
             labelProvider.setHexMode(viewInHexAction.isChecked());
             labelProvider.setDisplayEndOfData(displayEndOfDataAction.isChecked());
-            tableViewer.setLabelProvider(labelProvider);
+            viewInHexAction.addPropertyChangeListener(labelProvider);
+            displayEndOfDataAction.addPropertyChangeListener(labelProvider);
 
+            // Create the table viewer and ...
+            tableViewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+            tableViewer.setLabelProvider(labelProvider);
             if (rdqd0100 != null) {
                 tableViewer.setContentProvider(new ContentProviderTableViewer(rdqm0200));
             }
 
-            // Set up the table
+            // ... set up the table
             int columnIndex = -1;
             tableViewer.getTable().setLayoutData(createGridDataFillAndGrab());
 
@@ -554,14 +591,12 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             tableViewer.getTable().setLinesVisible(true);
 
             tableViewer.getTable().addControlListener(new ControlListenerTableViewer(labelProvider));
-            viewInHexAction.addPropertyChangeListener(labelProvider);
-            displayEndOfDataAction.addPropertyChangeListener(labelProvider);
 
             Menu dataQueueEntryPopup = new Menu(tableViewer.getTable());
-            dataQueueEntryPopup.addMenuListener(new DataQueueEntryMenuAdapter(dataQueueEntryPopup, tableViewer.getTable()));
+            dataQueueEntryPopup.addMenuListener(new DataQueueEntryMenuAdapter(dataQueueEntryPopup, tableViewer));
             tableViewer.getTable().setMenu(dataQueueEntryPopup);
 
-            // Create status line
+            // Create the status line
             Composite statusLine = new Composite(parent, SWT.NONE);
             GridLayout statusLineLayout = createGridLayoutSimple(2);
             statusLineLayout.marginHeight = 0;
@@ -572,6 +607,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             labelInfoMessage = new Label(statusLine, SWT.NONE);
             labelInfoMessage.setLayoutData(createGridDataFillAndGrab(1));
             labelInfoMessage.setVisible(false);
+
+            setInfoMessage(Messages.Drag_drop_data_queue_from_RSE_tree);
 
             labelInvalidDataWarningOrError = new Label(statusLine, SWT.BORDER);
             labelInvalidDataWarningOrError.setLayoutData(createGridDataFillAndGrab(1));
@@ -589,6 +626,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         propertySource = null;
 
         deleteDataQueueEditor();
+
+        refreshActionsEnablement();
     }
 
     private void deleteDataQueueEditor() {
@@ -650,10 +689,24 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     private void refreshActionsEnablement() {
 
-        if (remoteObject == null || isAutoRefreshOn()) {
+        if (noObjectAvailable()) {
+            viewInHexAction.setEnabled(false);
+            pinViewAction.setEnabled(false);
+        } else {
+            viewInHexAction.setEnabled(true);
+            pinViewAction.setEnabled(true);
+        }
+
+        if (noObjectAvailable() || isAutoRefreshOn()) {
             refreshViewAction.setEnabled(false);
         } else {
             refreshViewAction.setEnabled(true);
+        }
+
+        if (noObjectAvailable() || viewInHexAction.isChecked()) {
+            displayEndOfDataAction.setEnabled(false);
+        } else {
+            displayEndOfDataAction.setEnabled(true);
         }
 
         if (isAutoRefreshOn()) {
@@ -670,26 +723,12 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
                     refreshAction.setEnabled(true);
                 }
             } else {
-                if (remoteObject == null) {
+                if (noObjectAvailable()) {
                     refreshAction.setEnabled(false);
                 } else {
                     refreshAction.setEnabled(true);
                 }
             }
-        }
-
-        if (remoteObject == null) {
-            viewInHexAction.setEnabled(false);
-            pinViewAction.setEnabled(false);
-        } else {
-            viewInHexAction.setEnabled(true);
-            pinViewAction.setEnabled(true);
-        }
-
-        if (remoteObject == null || viewInHexAction.isChecked()) {
-            displayEndOfDataAction.setEnabled(false);
-        } else {
-            displayEndOfDataAction.setEnabled(true);
         }
     }
 
@@ -750,7 +789,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     public void setRefreshInterval(int seconds) {
 
-        if (remoteObject == null) {
+        if (noObjectAvailable()) {
             seconds = RefreshViewIntervalAction.REFRESH_OFF;
             return;
         }
@@ -825,7 +864,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     private int getMessageLengthToRetrieve(RDQD0100 rdqd0100) {
 
-        int messageLengthToRetrieve = MAXIMUM_MESSAGE_LENGTH_TO_RETRIEVE;
+        int messageLengthToRetrieve = getMaximumMessageLengthToRetrieve();
         if (rdqd0100 != null && rdqd0100.getMessageLength() < messageLengthToRetrieve) {
             messageLengthToRetrieve = rdqd0100.getMessageLength();
             if (isSenderIdIncluded(rdqd0100)) {
@@ -834,6 +873,16 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
 
         return messageLengthToRetrieve;
+    }
+
+    private int getMaximumMessageLengthToRetrieve() {
+
+        for (MessageLengthAction action : messageLengthActions) {
+            if (action.isChecked()) {
+                return action.getLength();
+            }
+        }
+        return 2048;
     }
 
     private boolean isSenderIdIncluded(RDQD0100 rdqd0100) {
@@ -864,7 +913,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
      * Implements {@link IPinnableView#getContentId()}
      */
     public String getContentId() {
-        if (remoteObject == null) {
+        if (noObjectAvailable()) {
             return null;
         }
         return remoteObject.getAbsoluteName();
@@ -1257,6 +1306,9 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
     }
 
+    /**
+     * Basic class that loads the data queue entries from the host.
+     */
     private class MessageLoader {
 
         private RemoteObject remoteObject;
@@ -1282,6 +1334,10 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());
 
             int numberOfMessages = getNumberOfMessagesToRetrieve();
+            if (numberOfMessages > rdqd0100.getNumberOfMessages()) {
+                numberOfMessages = rdqd0100.getNumberOfMessages();
+            }
+
             int messageLength = getMessageLengthToRetrieve(rdqd0100);
 
             RDQM0200 rdqm0200;
@@ -1294,5 +1350,40 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             return rdqm0200;
         }
 
+    }
+
+    /**
+     * Listens for preferences changes and updates the maximum message length to
+     * retrieve, given that:
+     * <p>
+     * <ul>
+     * <li>the view is not pinned and</li>
+     * <li>there is no data queue assigned to the view</li>
+     * </ul>
+     */
+    private class PreferencesChangeListener implements IPropertyChangeListener {
+
+        public void propertyChange(PropertyChangeEvent event) {
+
+            if (isPinned() | remoteObject != null) {
+                return;
+            }
+
+            if (Preferences.MONITOR_DTAQ_LENGTH == event.getProperty()) {
+                for (MessageLengthAction messageLengthAction : messageLengthActions) {
+                    if (messageLengthAction.getLength() == Preferences.getInstance().getDataQueueMaximumMessageLength()) {
+                        messageLengthAction.setChecked(true);
+                    } else {
+                        messageLengthAction.setChecked(false);
+                    }
+                }
+            } else if (Preferences.MONITOR_DTAQ_VIEW_IN_HEX == event.getProperty()) {
+                boolean isViewInHex = (Boolean)event.getNewValue();
+                viewInHexAction.setChecked(isViewInHex);
+            } else if (Preferences.MONITOR_DTAQ_DISPLAY_END_OF_DATA == event.getProperty()) {
+                boolean isDisplayEndOfData = (Boolean)event.getNewValue();
+                displayEndOfDataAction.setChecked(isDisplayEndOfData);
+            }
+        }
     }
 }

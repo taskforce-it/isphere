@@ -29,4 +29,11 @@
     <topic label="Monitor"  href="html/dataspaces/monitor/dataspacemonitor.html" />
     <topic label="Preferences"  href="html/dataspaces/preferences/preferences.html" />
   </topic>
+  <topic label="Data Queues" href="html/dataqueues/dataqueues.html"> 
+    <!--
+	Add sub topics here:
+    -->
+    <topic label="Monitor"  href="html/dataqueues/monitor/dataqueuemonitor.html" />
+    <topic label="Preferences"  href="html/dataqueues/preferences/preferences.html" />
+  </topic>
 </toc> 

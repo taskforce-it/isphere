@@ -29,6 +29,9 @@ import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 
 public class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider, IPropertyChangeListener {
 
+    private static final String END_OF_DATA = "«"; //$NON-NLS-1$
+    private static final String CONTINUE = " ..."; //$NON-NLS-1$
+
     private static final int COLUMN_ENTRY_TYPE = 0;
     private static final int COLUMN_KEY = 1;
     private static final int COLUMN_SENDER_ID = 2;
@@ -130,10 +133,10 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
                     label = messageDescription.getMessageText(!rdqd0100.isSenderIDIncludedInMessageText());
 
                     if (messageDescription.getEnqueuedMesageEntryLength() > messageDescription.getRDQM0200().getMaximumMessageTextLengthRequested()) {
-                        label = label + " ..."; //$NON-NLS-1$
+                        label = label + CONTINUE;
                     } else {
                         if (isDisplayEndOfData) {
-                            label = label + "«"; //$NON-NLS-1$
+                            label = label + END_OF_DATA;
                         } else {
                             label = StringHelper.trimR(label);
                         }
