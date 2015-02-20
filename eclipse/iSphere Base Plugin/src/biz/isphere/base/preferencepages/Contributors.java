@@ -44,6 +44,29 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         final GridLayout gridLayout = new GridLayout();
         container.setLayout(gridLayout);
 
+        createSectionTaskForce(container);
+        createSeparator(container);
+        createSectionTools400(container);
+        createSeparator(container);
+        createSectionTranslators(container);
+
+        // Compute size
+        Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+        // Set the child as the scrolled content of the ScrolledComposite
+        sc.setContent(container);
+
+        // Set the minimum size
+        sc.setMinSize(point.x, point.y);
+
+        // Expand both horizontally and vertically
+        sc.setExpandHorizontal(true);
+        sc.setExpandVertical(true);
+
+        return _container;
+    }
+
+    private void createSectionTaskForce(Composite container) {
         final Label labelTaskForceImage = new Label(container, SWT.NONE);
         labelTaskForceImage.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         labelTaskForceImage.setImage(ISphereBasePlugin.getDefault().getImageRegistry().get(ISphereBasePlugin.IMAGE_TASKFORCE));
@@ -92,11 +115,15 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         cI2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         cI2.setText(Messages.Internet + ": <a href=\"www.taskforce-it.de\">www.taskforce-it.de</a>");
         cI2.addSelectionListener(new LinkSelectionListener());
+    }
 
+    private void createSeparator(Composite container) {
         final Label labelSeparator1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
         final GridData gd_labelSeparator1 = new GridData(SWT.FILL, SWT.CENTER, true, false);
         labelSeparator1.setLayoutData(gd_labelSeparator1);
+    }
 
+    private void createSectionTools400(Composite container) {
         final Label labelTools400Image = new Label(container, SWT.NONE);
         labelTools400Image.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         labelTools400Image.setImage(ISphereBasePlugin.getDefault().getImageRegistry().get(ISphereBasePlugin.IMAGE_TOOLS400));
@@ -117,21 +144,26 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         labelTools400Internet.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         labelTools400Internet.setText(Messages.Internet + ": <a href=\"www.tools400.de\">www.tools400.de</a>");
         labelTools400Internet.addSelectionListener(new LinkSelectionListener());
+    }
 
-        // Compute size
-        Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+    private void createSectionTranslators(Composite container) {
 
-        // Set the child as the scrolled content of the ScrolledComposite
-        sc.setContent(container);
+        Composite translators = new Composite(container, SWT.NONE);
+        translators.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        GridLayout layout = new GridLayout(2, false);
+        layout.horizontalSpacing = 30;
+        translators.setLayout(layout);
 
-        // Set the minimum size
-        sc.setMinSize(point.x, point.y);
+        Label labelDutch = new Label(translators, SWT.NONE);
+        labelDutch.setText("Dutch:");
+        Label peterColpaert = new Label(translators, SWT.NONE);
+        peterColpaert.setText("Peter Colpaert");
 
-        // Expand both horizontally and vertically
-        sc.setExpandHorizontal(true);
-        sc.setExpandVertical(true);
+        Label labelItalian = new Label(translators, SWT.NONE);
+        labelItalian.setText("Italian:");
+        Label nicolaBrion = new Label(translators, SWT.NONE);
+        nicolaBrion.setText("Nicola Brion");
 
-        return _container;
     }
 
     public void init(IWorkbench workbench) {
