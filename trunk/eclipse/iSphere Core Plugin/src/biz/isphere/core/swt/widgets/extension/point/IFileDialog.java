@@ -17,7 +17,8 @@ public interface IFileDialog {
      * 
      * @return a string describing the absolute path of the first selected file,
      *         or null if the dialog was cancelled or an error occurred
-     * @throws SWTException <ul>
+     * @throws SWTException
+     *         <ul>
      *         <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
      *         <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread
      *         that created the dialog</li>
@@ -100,4 +101,14 @@ public interface IFileDialog {
      */
     public void setFilterExtensions(String[] aFilterExtensions);
 
+    /**
+     * Returns the directory path that the dialog will use, or an empty string
+     * if this is not set. File names in this path will appear in the dialog,
+     * filtered according to the filter extensions.
+     * 
+     * @return the directory path string
+     * 
+     * @see #setFilterExtensions
+     */
+    public String getFilterPath();
 }
