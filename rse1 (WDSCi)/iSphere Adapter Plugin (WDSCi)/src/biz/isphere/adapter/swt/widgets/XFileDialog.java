@@ -12,6 +12,7 @@ import java.io.File;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -21,9 +22,12 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class XFileDialog implements IFileDialog {
 
+    private static String platform = SWT.getPlatform();
+
     private FileDialog fileDialog;
 
     private boolean overwrite;
+    private String filterPath;
 
     /**
      * Constructs a new instance of this class given its parent and a style
@@ -94,6 +98,11 @@ public class XFileDialog implements IFileDialog {
                 tCanOverwrite = true;
             }
         }
+
+        if (tFileName != null) {
+            filterPath = retrieveFilterPath(tFileName);
+        }
+
         return tFileName;
     }
 
@@ -153,6 +162,7 @@ public class XFileDialog implements IFileDialog {
      * @param aFilterPath - the directory path
      */
     public void setFilterPath(String aFilterPath) {
+        filterPath = aFilterPath;
         fileDialog.setFilterPath(aFilterPath);
     }
 
@@ -184,5 +194,41 @@ public class XFileDialog implements IFileDialog {
      */
     public void setFilterExtensions(String[] aFilterExtensions) {
         fileDialog.setFilterExtensions(aFilterExtensions);
+    }
+
+    /**
+     * Returns the directory path that the dialog will use, or an empty string
+     * if this is not set. File names in this path will appear in the dialog,
+     * filtered according to the filter extensions.
+     * 
+     * @return the directory path string
+     * 
+     * @see #setFilterExtensions
+     */
+    public String getFilterPath() {
+        return filterPath;
+    }
+
+    /*
+     *  private methods
+     */
+    
+    private String retrieveFilterPath(String fileName) {
+
+        int p = fileName.lastIndexOf(File.separator);
+        if (p >= 0) {
+            return fileName.substring(p + 1);
+        }
+
+        return getDefaultRootDirectory();
+    }
+
+    private String getDefaultRootDirectory() {
+
+        if (platform.equals("win32") || platform.equals("wpf")) {
+            return "c:\\"; //$NON-NLS-1$
+        } else {
+            return "/"; //$NON-NLS-1$
+        }
     }
 }

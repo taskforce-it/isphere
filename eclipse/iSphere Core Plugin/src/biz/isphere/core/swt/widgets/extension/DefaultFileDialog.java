@@ -8,6 +8,7 @@
 
 package biz.isphere.core.swt.widgets.extension;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -23,6 +24,8 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
  */
 public class DefaultFileDialog implements IFileDialog {
 
+    private static String platform = SWT.getPlatform();
+    
     private FileDialog dialog = null;
 
     public DefaultFileDialog(Shell aParent, int aStyle) {
@@ -61,5 +64,12 @@ public class DefaultFileDialog implements IFileDialog {
     public void setFilterExtensions(String[] aFilterExtensions) {
         dialog.setFilterExtensions(aFilterExtensions);
     }
-
+    
+    public String getFilterPath() {
+        if (platform.equals("win32") || platform.equals("wpf")) {
+            return "c:\\"; //$NON-NLS-1$
+        } else {
+            return "/"; //$NON-NLS-1$
+        }
+    }
 }

@@ -21,7 +21,6 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -35,6 +34,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 import biz.isphere.core.internal.IDialogSettingsManager;
+import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
@@ -317,7 +318,9 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
     private String getFileName() {
 
-        FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IFileDialog dialog = factory.getFileDialog(getShell(), SWT.SAVE);
+
         String[] filterNames = new String[] { "Data queue (*.dtaq)", FileHelper.getAllFilesText() }; //$NON-NLS-1$
         String[] filterExtensions = new String[] { "*.dtaq;", FileHelper.getAllFilesFilter() }; //$NON-NLS-1$
         String filterPath = getLastSavePath();
