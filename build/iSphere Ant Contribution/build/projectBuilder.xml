@@ -33,7 +33,7 @@
 	<property name="release.file.jar.runtime" value="iSphere-ant-runtime.jar" />
 	<property name="release.file.jar.standalone" value="iSphere-ant-standalone.jar" />
 
-	<property name="compile.dir" value="${basedir}/compile" />
+	<property name="temp.compile.dir" value="${basedir}/compile" />
 	<property name="compile.version" value="1.5" />
 	<property name="compile.debug" value="source,lines,vars" />
 
@@ -187,7 +187,7 @@
 	</target>
 
 	<target name="initialize">
-		<mkdir dir="${compile.dir}" />
+		<mkdir dir="${temp.compile.dir}" />
 		<mkdir dir="${release.dir}" />
 	</target>
 	
@@ -195,7 +195,7 @@
 	<!-- ======================================================================
 		      Clean temporary directories.
 		 ================================================================== -->
-	<target name="clean" depends="cleanCompile,cleanRelease,cleanUpdateSite" >
+	<target name="clean" depends="cleanRelease,cleanUpdateSite" >
 	</target>
 
 
@@ -205,7 +205,7 @@
 		 ================================================================== -->
 	<target name="cleanCompile">
 		<delete includeemptydirs="true" failonerror="false" >
-			<fileset dir="${compile.dir}" includes="**/*" />
+			<fileset dir="${temp.compile.dir}" includes="**/*" />
 		</delete>
 	</target>
 
@@ -289,12 +289,10 @@
 	<!-- ======================================================================
 		      JARS the plug-in contribution jar.
 		 ================================================================== -->
-	<target name="jarPlugin" depends="checkPluginJar" unless="jarPluginUpToDate">
+	<target name="jarPlugin" depends="checkPluginJar,compilePlugin" unless="jarPluginUpToDate">
 		<echo message="${application.title} : creating plug-in jar at ${build.date}" />
 
-		<antcall target="compilePlugin" />
-
-		<jar destfile="${release.dir}/${release.file.jar.plugin}" basedir="${compile.dir}">
+		<jar destfile="${release.dir}/${release.file.jar.plugin}" basedir="${temp.compile.dir}">
 			<manifest>
 				<attribute name="Built-By" value="${application.provider}" /> 
 				<section name="${src.java.mainpackage}">
@@ -305,8 +303,6 @@
 				</section>
 			</manifest>
 		</jar>
-
-		<antcall target="cleanUpdateSite" />
 		
 	</target>
 
@@ -319,7 +315,7 @@
 
 		<antcall target="compileRuntime" />
 
-		<jar destfile="${release.dir}/${release.file.jar.runtime}" basedir="${compile.dir}">
+		<jar destfile="${release.dir}/${release.file.jar.runtime}" basedir="${temp.compile.dir}">
 			<manifest>
 				<attribute name="Built-By" value="${application.provider}" />
 				<section name="${src.java.mainpackage}">
@@ -344,7 +340,7 @@
 
 		<antcall target="compileStandalone" />
 
-		<jar destfile="${release.dir}/${release.file.jar.standalone}" basedir="${compile.dir}">
+		<jar destfile="${release.dir}/${release.file.jar.standalone}" basedir="${temp.compile.dir}">
 			<manifest>
 				<attribute name="Built-By" value="${application.provider}" />
 				<section name="${src.java.mainpackage}">
@@ -362,11 +358,11 @@
 	<!-- ======================================================================
 		      Compiles the plug-in contribution classes.
 		 ================================================================== -->
-	<target name="compilePlugin" depends="prepareCompilePlugin">
+	<target name="compilePlugin" depends="prepareCompilePlugin" unless="jarPluginUpToDate">
 		<echo message="${application.title} : compiling plug-in classes at ${build.date}" />
 
-		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
-			<src path="${compile.dir}" />
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${temp.compile.dir}" target="${compile.version}">
+			<src path="${temp.compile.dir}" />
 			<classpath refid="compile.plugin.classpath" />
 		</javac>
 
@@ -381,10 +377,11 @@
 		      Prepares compiling the plug-in contribution classes.
 		 ================================================================== -->
 	<target name="prepareCompilePlugin">
+		<echo message="${application.title} : preparing to compile plug-in classes at ${build.date}" />
 
 		<antcall target="cleanCompile" />
 
-		<copy includeemptydirs="false" todir="${compile.dir}">
+		<copy includeemptydirs="false" todir="${temp.compile.dir}">
 			<fileset refid="src-files-plugin" />
 		</copy>
 
@@ -397,8 +394,8 @@
 	<target name="compileRuntime" depends="prepareCompileRuntime">
 		<echo message="${application.title} : compiling runtime classes at ${build.date}" />
 
-		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
-			<src path="${compile.dir}" />
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${temp.compile.dir}" target="${compile.version}">
+			<src path="${temp.compile.dir}" />
 			<classpath refid="compile.runtime.classpath" />
 		</javac>
 
@@ -409,10 +406,11 @@
 		      Prepares compiling the runtime classes.
 		 ================================================================== -->
 	<target name="prepareCompileRuntime">
+		<echo message="${application.title} : preparing to compile runtime classes at ${build.date}" />
 
 		<antcall target="cleanCompile" />
 
-		<copy includeemptydirs="false" todir="${compile.dir}">
+		<copy includeemptydirs="false" todir="${temp.compile.dir}">
 			<fileset refid="src-files-runtime" />
 		</copy>
 
@@ -425,16 +423,16 @@
 	<target name="compileStandalone" depends="prepareCompileStandalone">
 		<echo message="${application.title} : compiling standalone classes at ${build.date}" />
 
-		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
-			<src path="${compile.dir}" />
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${temp.compile.dir}" target="${compile.version}">
+			<src path="${temp.compile.dir}" />
 			<classpath refid="compile.runtime.classpath" />
 		</javac>
 
-		<copy includeemptydirs="false" todir="${compile.dir}">
+		<copy includeemptydirs="false" todir="${temp.compile.dir}">
 			<fileset refid="src-files-antlib" />
 		</copy>
 
-		<copy includeemptydirs="false" todir="${compile.dir}/lib/">
+		<copy includeemptydirs="false" todir="${temp.compile.dir}/lib/">
 			<fileset refid="lib-files-jacob" />
 		</copy>
 
@@ -445,10 +443,11 @@
 		      Prepares compiling the standalone classes.
 		 ================================================================== -->
 	<target name="prepareCompileStandalone">
+		<echo message="${application.title} : preparing to compile standalone classes at ${build.date}" />
 
 		<antcall target="cleanCompile" />
 
-		<copy includeemptydirs="false" todir="${compile.dir}">
+		<copy includeemptydirs="false" todir="${temp.compile.dir}">
 			<fileset refid="src-files-standalone" />
 		</copy>
 
@@ -460,6 +459,7 @@
 		      that of the java source          
 		 ================================================================== -->
 	<target name="checkPluginJar">
+		<echo message="${application.title} : checking file ${release.file.jar.plugin}" />
 
 		<uptodate property="jarPluginUpToDate" targetfile="${release.dir}/${release.file.jar.plugin}">
 			<srcfiles refid="src-files-plugin" />

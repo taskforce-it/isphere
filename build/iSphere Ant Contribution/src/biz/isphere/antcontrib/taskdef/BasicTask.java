@@ -32,10 +32,13 @@ public abstract class BasicTask {
             executeTask();
 
         } catch (ConfigurationException e) {
-            throw new BuildException("Failed to run 'winword' task.", e);
+            Logger.logError("Failed to execute task: " + getName(), e);
+            throw new BuildException("Failed to execute 'winword' task.", e);
         } catch (BuildException e) {
-            throw e;
+            Logger.logError("Failed to execute task: " + getName(), e);
+           throw e;
         } catch (Throwable e) {
+            Logger.logError("Failed to execute task: " + getName(), e);
             throw new BuildException(e);
         } finally {
             terminate();
