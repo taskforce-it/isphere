@@ -24,7 +24,11 @@
 	<property name="workspace.home" location="${basedir}/.." />
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="plugin.src.dir" value="${workspace.home}/${build.plugin.project}/src" />
+	<property name="plugin.lib.dir" value="${workspace.home}/${build.plugin.project}/lib" />
+	<!--
 	<property name="plugin.dir" value="${basedir}" />
+	-->
 	<property name="manifest.dir" value="${basedir}/META-INF" />
 	<property name="eclipse.plugin.dir" value="${workspace.home}/iSphere Eclipse Setup/plug-ins" />
 
@@ -52,7 +56,7 @@
 	</patternset>
 
 	<patternset id="src-files-plugin-patternset">
-		<patternset refid="src-files-taskdef-patternset" />
+		<include name="biz/isphere/antcontrib/**" />
 	</patternset>
 
 	<patternset id="src-files-runtime-patternset">
@@ -85,7 +89,7 @@
 		<patternset refid="src-files-taskdef-patternset" />
 	</fileset>
 
-	<fileset dir="${src.dir}" id="src-files-plugin">
+	<fileset dir="${plugin.src.dir}" id="src-files-plugin">
 		<patternset refid="src-files-plugin-patternset" />
 	</fileset>
 
@@ -154,6 +158,7 @@
 	<path id="compile.plugin.classpath">
 		<path refid="Plug-in Dependencies.libraryclasspath" />
 		<pathelement location="bin" />
+		<pathelement location="${plugin.lib.dir}/iSphere-ant-runtime.jar" />
 	</path>
 
 	<!-- Set regular expressions and replacement values -->
@@ -182,7 +187,7 @@
 	<!-- ======================================================================
 		      Build the project.
 		 ================================================================== -->
-	<target name="build" depends="initialize,clean,updateVersionNumber,jarPlugin,jarRuntime,jarStandalone">
+	<target name="build" depends="initialize,clean,updateVersionNumber,jarRuntime,jarStandalone,jarPlugin">
 		<echo message="${application.title} : finished on ${build.date}" />
 	</target>
 
@@ -196,6 +201,7 @@
 		      Clean temporary directories.
 		 ================================================================== -->
 	<target name="clean" depends="cleanRelease,cleanUpdateSite" >
+		<echo>*** Finished. ***</echo>
 	</target>
 
 
@@ -215,7 +221,7 @@
 		 ================================================================== -->
 	<target name="cleanRelease">
 		<delete includeemptydirs="true">
-			<fileset dir="${release.dir}" includes="**/*" />
+			<fileset dir="${release.dir}" includes="**/iSphere*.jar" />
 		</delete>
 	</target>
 
@@ -304,6 +310,8 @@
 			</manifest>
 		</jar>
 		
+		<echo message="*** Plugin: Finished ***" />
+
 	</target>
 
 
@@ -326,8 +334,8 @@
 				</section>
 			</manifest>
 		</jar>
-
-		<antcall target="cleanUpdateSite" />
+		
+		<echo message="*** Runtime: Finished ***" />
 
 	</target>
 
@@ -351,6 +359,8 @@
 				</section>
 			</manifest>
 		</jar>
+		
+		<echo message="*** Standalone: Finished ***" />
 
 	</target>
 
