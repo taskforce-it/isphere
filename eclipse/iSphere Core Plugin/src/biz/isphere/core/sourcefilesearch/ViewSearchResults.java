@@ -39,6 +39,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
@@ -51,6 +52,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionRemoveTabItem;
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
+    private DisableEditAction actionDisableEdit;
     private TabFolder tabFolderSearchResults;
     private Shell shell;
 
@@ -66,7 +68,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         createActions();
         initializeToolBar();
         initializeMenu();
-
     }
 
     private void createActions() {
@@ -121,10 +122,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
+        actionDisableEdit = new DisableEditAction();
+        actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
+        actionDisableEdit.setEnabled(false);
+
     }
 
     private void initializeToolBar() {
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(actionDisableEdit);
+        toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveSelectedItems);
         toolbarManager.add(actionInvertSelectedItems);
         toolbarManager.add(new Separator());
@@ -151,6 +158,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         tabItemSearchResult.setText(connectionName + "/" + searchString);
 
         SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
+        _searchResultViewer.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         _searchResultViewer.createContents(compositeSearchResult);
         _searchResultViewer.addSelectionChangedListener(this);
 
@@ -188,119 +196,100 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         if (creator != null) {
 
-            int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+            SearchResultViewer _searchResultViewer = getSelectedViewer();
+            if (_searchResultViewer != null) {
 
-            if (selectedTabItem >= 0) {
+                FilterDialog dialog = new FilterDialog(shell);
+                if (dialog.open() == Dialog.OK) {
+                    if (!creator.createMemberFilter(_searchResultViewer.getConnection(), dialog.getFilter(), _searchResultViewer.getSearchResults())) {
 
-                SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
-
-                if (_searchResultViewer != null) {
-
-                    FilterDialog dialog = new FilterDialog(shell);
-                    if (dialog.open() == Dialog.OK) {
-                        if (!creator.createMemberFilter(_searchResultViewer.getConnection(), dialog.getFilter(),
-                            _searchResultViewer.getSearchResults())) {
-
-                            MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-                            errorBox.setText(Messages.E_R_R_O_R);
-                            errorBox.setMessage(Messages.The_filter_could_not_be_created);
-                            errorBox.open();
-
-                        }
+                        MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                        errorBox.setText(Messages.E_R_R_O_R);
+                        errorBox.setMessage(Messages.The_filter_could_not_be_created);
+                        errorBox.open();
                     }
-
                 }
-
             }
-
         }
-
     }
 
     public void exportToExcel() {
 
-        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+        if (_searchResultViewer != null) {
 
-        if (selectedTabItem >= 0) {
+            SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
 
-            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
+            WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+            IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
 
-            if (_searchResultViewer != null) {
+            dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
+            dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
+            dialog.setFilterPath("C:\\");
+            dialog.setFileName("export.xls");
+            dialog.setOverwrite(true);
+            String file = dialog.open();
 
-                SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
+            if (file != null) {
 
-                WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
-                IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
+                try {
 
-                dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
-                dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
-                dialog.setFilterPath("C:\\");
-                dialog.setFileName("export.xls");
-                dialog.setOverwrite(true);
-                String file = dialog.open();
+                    WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
 
-                if (file != null) {
+                    WritableSheet sheet;
 
-                    try {
+                    sheet = workbook.createSheet(Messages.Members_with_statements, 0);
 
-                        WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
+                    sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
+                    sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
+                    sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
+                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
+                    sheet.addCell(new jxl.write.Label(4, 0, Messages.Line));
+                    sheet.addCell(new jxl.write.Label(5, 0, Messages.Statement));
 
-                        WritableSheet sheet;
+                    int line = 1;
 
-                        sheet = workbook.createSheet(Messages.Members_with_statements, 0);
+                    for (int index1 = 0; index1 < _searchResults.length; index1++) {
 
-                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
-                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-                        sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
-                        sheet.addCell(new jxl.write.Label(4, 0, Messages.Line));
-                        sheet.addCell(new jxl.write.Label(5, 0, Messages.Statement));
+                        SearchResultStatement[] _statements = _searchResults[index1].getStatements();
 
-                        int line = 1;
+                        for (int index2 = 0; index2 < _statements.length; index2++) {
 
-                        for (int index1 = 0; index1 < _searchResults.length; index1++) {
-
-                            SearchResultStatement[] _statements = _searchResults[index1].getStatements();
-
-                            for (int index2 = 0; index2 < _statements.length; index2++) {
-
-                                sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
-                                sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile()));
-                                sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember()));
-                                sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription()));
-                                sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement())));
-                                sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine()));
-
-                                line++;
-
-                            }
+                            sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
+                            sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile()));
+                            sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember()));
+                            sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription()));
+                            sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement())));
+                            sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine()));
 
                             line++;
+
                         }
 
-                        sheet = workbook.createSheet(Messages.Members, 0);
-
-                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
-                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-                        sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
-
-                        for (int index = 0; index < _searchResults.length; index++) {
-                            sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
-                            sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile()));
-                            sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember()));
-                            sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription()));
-                        }
-
-                        workbook.write();
-                        workbook.close();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (WriteException e) {
-                        e.printStackTrace();
+                        line++;
                     }
 
+                    sheet = workbook.createSheet(Messages.Members, 0);
+
+                    sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
+                    sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
+                    sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
+                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
+
+                    for (int index = 0; index < _searchResults.length; index++) {
+                        sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
+                        sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile()));
+                        sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember()));
+                        sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription()));
+                    }
+
+                    workbook.write();
+                    workbook.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (WriteException e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -324,28 +313,18 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     public void removeSelectedItem() {
 
-        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-
-        if (selectedTabItem >= 0) {
-            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
-            if (_searchResultViewer != null) {
-                _searchResultViewer.removeSelectedItems();
-            }
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+        if (_searchResultViewer != null) {
+            _searchResultViewer.removeSelectedItems();
         }
-
     }
 
     public void invertSelection() {
 
-        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-
-        if (selectedTabItem >= 0) {
-            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
-            if (_searchResultViewer != null) {
-                _searchResultViewer.invertSelectedItems();
-            }
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+        if (_searchResultViewer != null) {
+            _searchResultViewer.invertSelectedItems();
         }
-
     }
 
     private void setActionEnablement() {
@@ -354,26 +333,21 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     public void selectionChanged(SelectionChangedEvent event) {
 
-        SearchResultViewer viewer;
-        int index = tabFolderSearchResults.getSelectionIndex();
-        if (index < 0) {
-            viewer = null;
-        } else {
-            viewer = (SearchResultViewer)tabFolderSearchResults.getItem(index).getData(
-                TAB_DATA_VIEWER);
-        }
-
         boolean hasViewer;
         boolean hasItems;
         boolean hasSelectedItems;
-        if (viewer == null) {
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+
+        if (_searchResultViewer == null) {
             hasViewer = false;
             hasItems = false;
             hasSelectedItems = false;
+            actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         } else {
             hasViewer = true;
-            hasItems = viewer.hasItems();
-            hasSelectedItems = viewer.hasSelectedItems();
+            hasItems = _searchResultViewer.hasItems();
+            hasSelectedItems = _searchResultViewer.hasSelectedItems();
+            actionDisableEdit.setEditEnabled(_searchResultViewer.isEditEnabled());
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
@@ -381,5 +355,57 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToMemberFilter.setEnabled(hasItems);
         actionExportToExcel.setEnabled(hasItems);
         actionRemoveTabItem.setEnabled(hasViewer);
+        actionDisableEdit.setEnabled(hasItems);
+    }
+
+    private SearchResultViewer getSelectedViewer() {
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+        if (selectedTabItem >= 0) {
+            return (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
+        } else {
+            return null;
+        }
+    }
+
+    private class DisableEditAction extends Action {
+
+        private boolean isEditMode;
+
+        public DisableEditAction() {
+            super(Messages.Disable_edit_action, SWT.CHECK);
+
+            setToolTipText(Messages.Tooltip_Disable_edit_action);
+            setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EDIT_DISABLED));
+        }
+
+        @Override
+        public void run() {
+            updateViewer(isEditMode);
+        }
+
+        /**
+         * Sets the edit mode. (Called by the application for easier
+         * understanding.)
+         */
+        public void setEditEnabled(boolean isEditMode) {
+            this.isEditMode = isEditMode;
+            super.setChecked(!isEditMode);
+        }
+
+        /**
+         * Called by the Eclipse Framework when the button is clicked.
+         */
+        public void setChecked(boolean checked) {
+            super.setChecked(checked);
+            this.isEditMode = !checked;
+        };
+
+        public void updateViewer(boolean isEditMode) {
+
+            SearchResultViewer _searchResultViewer = getSelectedViewer();
+            if (_searchResultViewer != null) {
+                _searchResultViewer.setEditEnabled(isEditMode);
+            }
+        }
     }
 }

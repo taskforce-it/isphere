@@ -94,6 +94,10 @@ public final class Preferences {
 
     public static final String MONITOR_DTAQ_DISPLAY_END_OF_DATA = MONITOR_DTAQ + "DISPLAY_END_OF_DATA"; //$NON-NLS-1$
 
+    private static final String SOURCE_FILE_SEARCH_RESULTS = DOMAIN + "SOURCE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -215,13 +219,17 @@ public final class Preferences {
     public int getDataQueueMaximumMessageLength() {
         return preferenceStore.getInt(MONITOR_DTAQ_LENGTH);
     }
-    
+
     public boolean isDataQueueViewInHex() {
         return preferenceStore.getBoolean(MONITOR_DTAQ_VIEW_IN_HEX);
     }
-    
+
     public boolean isDataQueueDisplayEndOfData() {
         return preferenceStore.getBoolean(MONITOR_DTAQ_DISPLAY_END_OF_DATA);
+    }
+
+    public boolean isSourceFileSearchResultsEditEnabled() {
+        return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
     /*
@@ -319,7 +327,11 @@ public final class Preferences {
     public void setDataQueueDisplayEndOfData(boolean viewInHex) {
         preferenceStore.setValue(MONITOR_DTAQ_DISPLAY_END_OF_DATA, viewInHex);
     }
-    
+
+    public void setSourceFileSearchResultsEditEnabled(boolean editable) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, editable);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -351,6 +363,7 @@ public final class Preferences {
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
         preferenceStore.setDefault(MONITOR_DTAQ_DISPLAY_END_OF_DATA, getDefaultDataQueueDisplayEndOfData());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
     }
 
     /*
@@ -527,14 +540,33 @@ public final class Preferences {
         return 2048;
     }
 
+    /**
+     * Returns the default 'view hex' flag of the data queue view.
+     * 
+     * @return default 'view hex' flag.
+     */
     public boolean getDefaultDataQueueViewInHex() {
         return true;
     }
 
+    /**
+     * Returns the default 'display end of data' flag of the data queue view.
+     * 
+     * @return default 'display end of data' flag.
+     */
     public boolean getDefaultDataQueueDisplayEndOfData() {
         return false;
     }
-    
+
+    /**
+     * Returns the default 'is edit mode' flag of the view search results view.
+     * 
+     * @return default 'is edit mode' flag.
+     */
+    public boolean getDefaultSourceFileSearchResultsEditEnabled() {
+        return true;
+    }
+
     /**
      * Returns an arrays of maximum lengths values for retrieving data queue
      * entries.

@@ -847,6 +847,16 @@ public class Messages extends NLS {
     public static String Copy_message_as_hex_formatted;
     
     public static String Save_message;
+
+    public static String Source_file_search;
+
+    public static String Lpex_editor_mode;
+
+    public static String Tooltip_Lpex_editor_mode;
+
+    public static String Disable_edit_action;
+    
+    public static String Tooltip_Disable_edit_action;
     
     static {
         // initialize resource bundle
