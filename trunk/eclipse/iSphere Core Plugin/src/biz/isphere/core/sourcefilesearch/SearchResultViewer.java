@@ -55,6 +55,7 @@ public class SearchResultViewer {
     private TableViewer tableViewerStatements;
     private Table tableStatements;
     private String[] statements;
+    private boolean isEditMode;
 
     private class LabelProviderTableViewerMembers extends LabelProvider implements ITableLabelProvider {
 
@@ -168,7 +169,8 @@ public class SearchResultViewer {
 
                     if (editor != null) {
 
-                        editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, IEditor.EDIT);
+                        editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
+                            getEditMode());
 
                     }
 
@@ -315,7 +317,7 @@ public class SearchResultViewer {
                         if (editor != null) {
 
                             editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
-                                statementLine, IEditor.EDIT);
+                                statementLine, getEditMode());
 
                         }
 
@@ -341,6 +343,15 @@ public class SearchResultViewer {
 
         sashFormSearchResult.setWeights(new int[] { 1, 1 });
 
+    }
+
+    private String getEditMode() {
+        
+        if (isEditMode) {
+            return IEditor.EDIT;
+        } else {
+            return IEditor.BROWSE;
+        }
     }
 
     private void retrieveSelectedTableItems() {
@@ -385,7 +396,7 @@ public class SearchResultViewer {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
 
-                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, IEditor.EDIT);
+                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0, getEditMode());
 
             }
 
@@ -474,5 +485,13 @@ public class SearchResultViewer {
 
     public void invertSelectedItems() {
         executeMenuItemInvertSelectedItems();
+    }
+
+    public void setEditEnabled(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+    }
+
+    public boolean isEditEnabled() {
+        return this.isEditMode;
     }
 }

@@ -139,6 +139,12 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Monitors"
             id="biz.isphere.core.preferencepages.MonitorDefaults"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereSearch"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Search"
+            id="biz.isphere.core.preferencepages.ISphereSearch"/>
+    	
    </extension>
    
    <extension

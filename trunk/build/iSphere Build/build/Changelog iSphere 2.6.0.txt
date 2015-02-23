@@ -3,6 +3,8 @@ Changelog: iSphere 2.6.0
 
  • Added data queue view.
  • Added option to delete existing objects to the iSphere library uploader.
+ • Added option to the result view of the iSphere Source File Search to specify 
+   the mode (*EDIT/*BROWSE) the Lpex editor is started for.
  • Added Eclipse update sites:
  
    RDi:   http://isphere.sourceforge.net/eclipse/rdi8.0/
