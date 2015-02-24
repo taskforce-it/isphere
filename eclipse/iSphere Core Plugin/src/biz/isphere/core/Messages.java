@@ -857,7 +857,9 @@ public class Messages extends NLS {
     public static String Disable_edit_action;
     
     public static String Tooltip_Disable_edit_action;
-    
+
+    public static String Open_viewer;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -94,6 +94,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_KEY = "key.gif";
     public static final String IMAGE_VIEW_IN_HEX = "view_as_hex.gif"; 
     public static final String IMAGE_EDIT_DISABLED = "edit_disabled.gif";
+    public static final String IMAGE_OPEN_VIEWER = "open_viewer.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -237,6 +238,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_KEY, getImageDescriptor(IMAGE_KEY));
         reg.put(IMAGE_VIEW_IN_HEX, getImageDescriptor(IMAGE_VIEW_IN_HEX));
         reg.put(IMAGE_EDIT_DISABLED, getImageDescriptor(IMAGE_EDIT_DISABLED));
+        reg.put(IMAGE_OPEN_VIEWER, getImageDescriptor(IMAGE_OPEN_VIEWER));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {
