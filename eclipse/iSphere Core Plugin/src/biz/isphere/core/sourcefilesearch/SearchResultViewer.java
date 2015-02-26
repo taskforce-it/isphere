@@ -427,8 +427,6 @@ public class SearchResultViewer {
         
         if (selectedItemsMembers != null && selectedItemsMembers.length == 1) {
 
-            SearchResult _searchResult = (SearchResult)selectedItemsMembers[0];
-
             if (tableViewerStatements.getSelection() instanceof IStructuredSelection) {
 
                 IStructuredSelection structuredSelection = (IStructuredSelection)tableViewerStatements.getSelection();
