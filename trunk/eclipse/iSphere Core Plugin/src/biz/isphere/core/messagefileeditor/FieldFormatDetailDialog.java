@@ -81,7 +81,7 @@ public class FieldFormatDetailDialog extends XDialog {
     }
 
     /**
-     * Overriden to let {@link XDialog} store the state of this dialog in a
+     * Overridden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
     @Override
