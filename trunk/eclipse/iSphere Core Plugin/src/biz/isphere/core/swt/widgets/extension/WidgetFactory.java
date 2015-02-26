@@ -272,13 +272,26 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a push button field.
+     * Produces a push button.
      * 
      * @param parent - parent composite
-     * @return push button field
+     * @return push button
      */
     public static Button createPushButton(Composite parent) {
         return WidgetFactory.getInstance().producePushButton(parent);
+    }
+
+    /**
+     * Produces a push button with a label.
+     * 
+     * @param parent - parent composite
+     * @param string - button label
+     * @return push button
+     */
+    public static Button createPushButton(Composite parent, String label) {
+        Button button = WidgetFactory.getInstance().producePushButton(parent);
+        button.setText(label);
+        return button;
     }
 
     /**
