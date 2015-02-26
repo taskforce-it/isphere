@@ -7,6 +7,6 @@
   	Add sub topics here:
     <topic label="..." href="html/tasktags/..." />
     -->
-    <topic label="Preferences" href="html/tasktags/preferences.html" />
+    <topic label="Preferences" href="html/tasktags/preferences/preferences.html" />
   </topic>
 </toc> 
