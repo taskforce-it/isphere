@@ -9,6 +9,7 @@ Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.compare,
  org.eclipse.core.runtime,
