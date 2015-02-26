@@ -8,11 +8,17 @@
     <topic label="..." href="html/tasktags/..." />
     -->
   </topic>
+  <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
+    <!--
+	Add sub topics here:
+    -->
+    <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
+  </topic>
   <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
     <!--
 	Add sub topics here:
     -->
-    <topic label="Preferences" href="html/decorator/preferences.html" />
+    <topic label="Preferences" href="html/decorator/preferences/preferences.html" />
   </topic>
   <topic label="Data Area Editor"  href="html/dataareaeditor/dataareaeditor.html"> 
     <!--

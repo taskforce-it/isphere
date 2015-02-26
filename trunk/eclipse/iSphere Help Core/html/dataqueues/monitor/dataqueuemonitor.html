@@ -43,16 +43,32 @@ The available options are:
 The following options are available for a selected message queue entry:
 <p>
 <img src="assets\popup_menu.gif" 
-     width="212" height="78" 
+     width="213" height="96" 
      align="middle">
-
 <p>
 <table>
+<tr><td valign="top">Display</td><td valign="top">-</td><td valign="top">Displays the selected message(s).</td></tr>
 <tr><td valign="top">Copy message as text</td><td valign="top">-</td><td valign="top">Copies the message text as displayed in the table to the clipboard.</td></tr>
 <tr><td valign="top">Copy message as hex</td><td valign="top">-</td><td valign="top">Copies the message text as a string of hex values to the clipboard.</td></tr>
 <tr><td valign="top">Copy message as hex (formatted)</td><td valign="top">-</td><td valign="top">Copies the message text as a string of hex values to the clipboard. 
         The text is formatted into packages for easier reading.</td></tr>
-<tr><td valign="top">Save message</td><td valign="top">-</td><td valign="top">Saves the message data as received from the host to a file.</td></tr>
+<tr><td valign="top">Save message</td><td valign="top">-</td><td valign="top">Saves the pure message bytes, without key and sender ID, as received from the host to a 
+        file.</td></tr>
+</table>
+<p>
+<h2>Displaying a Message</h2>
+<p>
+The message viewer is started with a double-click on a message or from the context menu of one or more selected messages.
+<p>
+<img src="assets\message_viewer.gif" 
+     align="middle">
+<p>
+The <i>Previous</i> and <i>Next</i> buttons at the bottom of the viewer let you move forth and back in the list of messages. The operation mode of these buttons 
+depends on how the viewer was started: 
+<p>
+<table>
+<tr><td valign="top">Double-click</td><td valign="top">-</td><td valign="top">The buttons operate on all messages of the list.</td></tr>
+<tr><td valign="top">Context menu</td><td valign="top">-</td><td valign="top">The buttons move forth and back within the selected messages.</td></tr>
 </table>
 <p>
 <h2>Data Truncation Warning</h2>

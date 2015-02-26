@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Source File Search</title>
+</head>
+
+<body>
+<h1>Source File Search</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/sourcefilesearch.png" 
+     style="float:right; margin-left:60px;   margin-right:20px;  margin-bottom:40px" border=0></a>
+The Source File Search feature gives you the ability to search extremely fast source files on a 
+server. Searching a member filter in the Remote Systems Explorer with iSphere Source File Search 
+is about 60 times faster than searching with the original RSE Search. The first time after an IPL 
+using iSphere Source File Search can take a little bit more time. But after the second time you 
+should see the improvement.
+<p>
+To search source files on a server do the following. 
+<p>
+<ul>
+<li>In the Remote Systems Explorer open the context menu for a library filter, a member filter or a source physical file member.</li>
+<li>Select menu item "iSphere Source File Search".</li>
+<li>Enter the search string, start and end column of the member to search and if the search is case sensitive or not and click "OK".</li>
+</ul>
+<p>
+<img src="assets\sourcefilesearch_dialog.gif" 
+     align="middle">
+</p>
+After the search finished on the host, the result is presented in the "iSphere Source File Search" view:
+<p>
+<img src="assets\sourcefilesearch_result.gif" 
+     align="middle">
+<p>
+Click on the left side on a member and a preview of the statements containing the search string within the member appears.
+<p>
+Double click on a member or statement entry to open the Lpex editor.
+<p>
+Right click on a member or statement entry to open a context menu.
+<p>
+<img src="assets\member_context_menu.gif" 
+     align="middle">
+<p>
+The additional icons at the top at of the view and their meanings are:
+<p>
+<table>
+<tr><td><img src="assets\edit_disabled.gif" align="top"/></td><td> - </td><td>Starts the Lpex editor in browse mode when double-clicking a source member.</td></tr>
+<tr><td><img src="assets\excel.png" align="top"/></td><td> - </td><td>Exports the content of the member frame to Excel.</td></tr>
+<tr><td><img src="assets\member_filter.gif" align="top"/></td><td> - </td><td>Creates a member filter for the items of the member frame add adds the filter to the RSE tree.</td></tr>
+<tr><td><img src="assets\minus.gif" align="top"/></td><td> - </td><td>Closes the active tab.</td></tr>
+</table>
+<p>
+<h2>Search Pop-up (CTRL-H)</h2>
+<p>
+The iSphere Source File Search can also be started from the Eclipse Search Pop-up window. Use CTRL-H or the "Search" menu, option "Search..." 
+to open the iSphere Source File Search dialog.
+<p>
+<img src="assets\global_sourcefilesearch.png" 
+     align="middle">
+<p>
+The aditional options are:
+<p>
+<table>
+<tr><td valign="top">Connection</td><td valign="top">-</td><td valign="top">Specifies the connection that is used to connect to the host.</td></tr>
+<tr><td valign="top">Target</td><td valign="top">-</td><td valign="top">Specifies the library, source file and member(s) that are searched. Each item accepts *generic* strings.</td></tr>
+<tr><td valign="top">Show all statements</td><td valign="top">-</td><td valign="top">Specifies whether all matching records of a source member are returned.</td></tr>
+</table>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
