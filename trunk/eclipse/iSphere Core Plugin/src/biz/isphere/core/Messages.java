@@ -860,6 +860,16 @@ public class Messages extends NLS {
 
     public static String Open_viewer;
 
+    public static String MessageKey_colon;
+
+    public static String No_data_available;
+    
+    public static String Data_Queue_Entry;
+    
+    public static String Previous;
+    
+    public static String Next;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

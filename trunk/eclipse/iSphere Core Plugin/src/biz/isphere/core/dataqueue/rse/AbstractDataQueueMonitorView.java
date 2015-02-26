@@ -27,9 +27,12 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -80,9 +83,11 @@ import biz.isphere.core.dataqueue.retrieve.description.QMHQRDQD;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
 import biz.isphere.core.dataqueue.retrieve.message.QMHRDQM;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200;
+import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200SenderID;
 import biz.isphere.core.dataqueue.retrieve.message.RDQS0100;
 import biz.isphere.core.dataqueue.retrieve.message.RDQS0200;
+import biz.isphere.core.dataqueue.viewer.DataQueueEntryViewer;
 import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.dataspacemonitor.action.RefreshViewAction;
@@ -323,7 +328,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             if (noObjectAvailable()) {
                 return;
             }
-            
+
             if (isAutoRefreshOn()) {
                 return;
             }
@@ -596,6 +601,17 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             dataQueueEntryPopup.addMenuListener(new DataQueueEntryMenuAdapter(dataQueueEntryPopup, tableViewer));
             tableViewer.getTable().setMenu(dataQueueEntryPopup);
 
+            tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+                public void doubleClick(DoubleClickEvent event) {
+                    if (tableViewer.getSelection() instanceof IStructuredSelection) {
+                        if (!tableViewer.getSelection().isEmpty()) {
+                            performDisplayMessage((StructuredSelection)tableViewer.getSelection());
+                        }
+
+                    }
+                }
+            });
+
             // Create the status line
             Composite statusLine = new Composite(parent, SWT.NONE);
             GridLayout statusLineLayout = createGridLayoutSimple(2);
@@ -618,6 +634,29 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         } catch (Throwable e) {
             ISpherePlugin.logError("Failed to create data queue view.", e); //$NON-NLS-1$
         }
+    }
+
+    private void performDisplayMessage(StructuredSelection selection) {
+
+        RDQM0200MessageEntry[] messages;
+        if (selection.size() == 1) {
+            messages = ((RDQM0200)tableViewer.getInput()).getMessages();
+        } else {
+            List<RDQM0200MessageEntry> tmpMessages = new ArrayList<RDQM0200MessageEntry>();
+            for (Object item : selection.toArray()) {
+                if (item instanceof RDQM0200MessageEntry) {
+                    tmpMessages.add((RDQM0200MessageEntry) item);
+                }
+            }
+            messages = tmpMessages.toArray(new RDQM0200MessageEntry[tmpMessages.size()]);
+        }
+
+        RDQM0200MessageEntry messageEntry = (RDQM0200MessageEntry)selection.getFirstElement();
+
+        DataQueueEntryViewer viewer = new DataQueueEntryViewer(getShell());
+        viewer.setMessages(messages);
+        viewer.setSelectedItem(messageEntry);
+        viewer.open();
     }
 
     private void clearData() {
@@ -1144,7 +1183,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             }
 
             setInfoMessage(Messages.bind(Messages.A_of_B_messages_retrieved,
-                new Object[] { rdqm0200.getNumberOfMessagesReturned(), rdqd0100.getNumberOfMessages() }));
+                new Object[] { rdqm0200.getMessages().length, rdqd0100.getNumberOfMessages() }));
 
             refreshActionsEnablement();
 

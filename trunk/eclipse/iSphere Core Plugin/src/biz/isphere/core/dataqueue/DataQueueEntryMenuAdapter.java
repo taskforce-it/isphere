@@ -10,8 +10,8 @@ package biz.isphere.core.dataqueue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -29,10 +29,12 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.FileHelper;
-import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.HexFormatter;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.dataqueue.retrieve.message.RDQM0200;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
+import biz.isphere.core.dataqueue.viewer.DataQueueEntryViewer;
 import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
@@ -41,17 +43,11 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
     private static final String LAST_USED_SAVE_PATH = "lastUsedSavePath"; //$NON-NLS-1$
 
-    private static final String OFFSET_DELIMITER = ":   "; //$NON-NLS-1$
-    private static final String HEX_PACKAGE_DELIMITER = " "; //$NON-NLS-1$
-    private static final String TEXT_DELIMITER = "   - "; //$NON-NLS-1$
-    private static final String NEW_LINE = "\n"; //$NON-NLS-1$
-    private static final String DECIMAL_NUMBER_FORMAT = "00000"; //$NON-NLS-1$
-
     private IDialogSettingsManager dialogSettingsManager = null;
-    private DecimalFormat formatter;
 
     private Menu menu;
     private TableViewer tableViewer;
+    private MenuItem menuItemDisplayMessage;
     private MenuItem menuItemCopyMessageAsText;
     private MenuItem menuItemCopyMessageAsHex;
     private MenuItem menuItemCopyMessageAsHexFormatted;
@@ -70,6 +66,10 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
     }
 
     private void destroyMenuItems() {
+
+        if (!((menuItemDisplayMessage == null) || (menuItemDisplayMessage.isDisposed()))) {
+            menuItemDisplayMessage.dispose();
+        }
 
         if (!((menuItemCopyMessageAsText == null) || (menuItemCopyMessageAsText.isDisposed()))) {
             menuItemCopyMessageAsText.dispose();
@@ -90,12 +90,32 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
     private void createMenuItems() {
 
+        if (getSelectionCount() >= 1) {
+            createMenuItemDisplayMessage();
+        }
+
         if (getSelectionCount() == 1) {
             createMenuItemCopyMessageAsText();
             createMenuItemCopyMessageAsHex();
             createMenuItemCopyMessageAsHexFormatted();
             createMenuItemSaveMessage();
         }
+    }
+
+    public void createMenuItemDisplayMessage() {
+
+        menuItemDisplayMessage = new MenuItem(menu, SWT.NONE);
+        menuItemDisplayMessage.setText(Messages.Display);
+        menuItemDisplayMessage.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                performDisplayMessage(getItems(), getSelectedItem());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
+
+            }
+        });
     }
 
     public void createMenuItemCopyMessageAsText() {
@@ -162,6 +182,18 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
         });
     }
 
+    private void performDisplayMessage(RDQM0200MessageEntry[] messages, RDQM0200MessageEntry messageEntry) {
+
+        if (messageEntry == null) {
+            return;
+        }
+
+        DataQueueEntryViewer viewer = new DataQueueEntryViewer(getShell());
+        viewer.setMessages(messages);
+        viewer.setSelectedItem(messageEntry);
+        viewer.open();
+    }
+
     private void performCopyAsText(RDQM0200MessageEntry messageEntry) {
 
         if (messageEntry == null) {
@@ -196,39 +228,15 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
         try {
 
-            int hexOffset = 0;
-            int textOffset = 0;
-            int hexLength = 32;
-            int textLength = hexLength / 2;
+            HexFormatter formatter = new HexFormatter();
 
-            String hexString = ByteHelper.getHexString(messageEntry.getMessageBytes());
-            String textString = messageEntry.getMessageText();
-            StringBuilder formattedHexString = new StringBuilder();
+            byte[] messageBytes = messageEntry.getMessageBytes();
+            String messageText = messageEntry.getMessageText();
 
-            while (hexOffset < hexString.length()) {
+            String formattedHexString = formatter.createFormattedHexText(messageBytes, messageText);
 
-                textOffset = hexOffset / 2;
+            ClipboardHelper.setText(formattedHexString);
 
-                String tmpHexString;
-                String tmpTextString;
-                if ((hexOffset + hexLength) <= hexString.length()) {
-                    tmpHexString = hexString.substring(hexOffset, hexOffset + hexLength);
-                    tmpTextString = textString.substring(textOffset, textOffset + textLength);
-                } else {
-                    tmpHexString = hexString.substring(hexOffset);
-                    tmpTextString = textString.substring(hexOffset / 2);
-                }
-
-                if (tmpHexString.length() < hexLength) {
-                    tmpHexString = StringHelper.getFixLength(tmpHexString, hexLength);
-                    tmpTextString = StringHelper.getFixLength(tmpTextString, textLength);
-                }
-
-                appendLine(formattedHexString, hexOffset, tmpTextString, tmpHexString);
-                hexOffset = hexOffset + hexLength;
-            }
-
-            ClipboardHelper.setText(formattedHexString.toString());
         } catch (Throwable e) {
             handleError(e);
         }
@@ -262,40 +270,6 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
         }
     }
 
-    private void appendLine(StringBuilder formattedHexString, int offset, String textString, String hexString) {
-
-        formattedHexString.append(getFormatter().format(offset));
-        formattedHexString.append(OFFSET_DELIMITER);
-
-        String packageDelimiter = null;
-        int packageWidth = 8;
-        int count = hexString.length() / packageWidth;
-        int tempOffset = 0;
-        while (count > 0) {
-
-            if (packageDelimiter != null) {
-                formattedHexString.append(packageDelimiter);
-            }
-
-            formattedHexString.append(hexString.substring(tempOffset, tempOffset + packageWidth));
-            packageDelimiter = HEX_PACKAGE_DELIMITER;
-
-            tempOffset = tempOffset + packageWidth;
-            count--;
-        }
-
-        formattedHexString.append(TEXT_DELIMITER);
-        formattedHexString.append(textString);
-        formattedHexString.append(NEW_LINE);
-    }
-
-    private NumberFormat getFormatter() {
-        if (formatter == null) {
-            formatter = new DecimalFormat(DECIMAL_NUMBER_FORMAT);
-        }
-        return formatter;
-    }
-
     private StructuredSelection getSelection() {
 
         ISelection selection = tableViewer.getSelection();
@@ -314,6 +288,27 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
     private int getSelectionCount() {
         return getSelection().size();
+    }
+
+    private RDQM0200MessageEntry[] getItems() {
+
+        if (getSelectionCount() == 1) {
+            Object object = tableViewer.getInput();
+            if (object instanceof RDQM0200) {
+                RDQM0200 rdqm0200 = (RDQM0200)tableViewer.getInput();
+                return rdqm0200.getMessages();
+            }
+        } else {
+            List<RDQM0200MessageEntry> tmpMessages = new ArrayList<RDQM0200MessageEntry>();
+            for (Object item : getSelection().toArray()) {
+                if (item instanceof RDQM0200MessageEntry) {
+                    tmpMessages.add((RDQM0200MessageEntry) item);
+                }
+            }
+            return tmpMessages.toArray(new RDQM0200MessageEntry[tmpMessages.size()]);
+        }
+
+        return new RDQM0200MessageEntry[0];
     }
 
     private String getFileName() {

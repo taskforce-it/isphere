@@ -11,8 +11,8 @@ package biz.isphere.core.dataqueue;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200;
+import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 
 public class ContentProviderTableViewer implements IStructuredContentProvider {
 
@@ -24,17 +24,11 @@ public class ContentProviderTableViewer implements IStructuredContentProvider {
 
     public Object[] getElements(Object inputElement) {
 
-        Object[] elements = new Object[] {};
-
         if (rdqm0200 != null) {
-            try {
-                return rdqm0200.getMessages();
-            } catch (Throwable e) {
-                ISpherePlugin.logError("Failed to get data queue messages.", e); //$NON-NLS-1$
-            }
+            return rdqm0200.getMessages();
         }
 
-        return elements;
+        return new RDQM0200MessageEntry[0];
     }
 
     public void dispose() {

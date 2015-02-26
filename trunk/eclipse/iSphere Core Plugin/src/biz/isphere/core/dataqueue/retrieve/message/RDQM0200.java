@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIFormat;
 
 import com.ibm.as400.access.AS400;
@@ -42,6 +43,7 @@ public class RDQM0200 extends APIFormat {
     private boolean isSenderIDIncluded;
     private RDQM0200MessageEntry[] messages;
     private int maximumMessageLength;
+    private int numMessagesToRetrieve;
 
     /**
      * Constructs a RDQM0200 object for a given system.
@@ -54,7 +56,7 @@ public class RDQM0200 extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public RDQM0200(AS400 system, int numMessages, int messageLength, boolean isSenderIdIncludedInMessageText) throws UnsupportedEncodingException {
-        this(system, getMessageBufferSize(numMessages, messageLength, isSenderIdIncludedInMessageText), isSenderIdIncludedInMessageText);
+        this(system, getMessageBufferSize(numMessages, messageLength, isSenderIdIncludedInMessageText), isSenderIdIncludedInMessageText, numMessages);
     }
 
     /**
@@ -68,8 +70,10 @@ public class RDQM0200 extends APIFormat {
      * @param keyLength - key length
      * @throws UnsupportedEncodingException
      */
-    public RDQM0200(AS400 system, int numMessages, int messageLength, boolean isSenderIdIncludedInMessageText, int keyLength) throws UnsupportedEncodingException {
-        this(system, getMessageBufferSize(numMessages, messageLength + keyLength, isSenderIdIncludedInMessageText), isSenderIdIncludedInMessageText);
+    public RDQM0200(AS400 system, int numMessages, int messageLength, boolean isSenderIdIncludedInMessageText, int keyLength)
+        throws UnsupportedEncodingException {
+        this(system, getMessageBufferSize(numMessages, messageLength + keyLength, isSenderIdIncludedInMessageText), isSenderIdIncludedInMessageText,
+            numMessages);
     }
 
     /**
@@ -79,12 +83,13 @@ public class RDQM0200 extends APIFormat {
      * @param messageBufferSize
      * @throws UnsupportedEncodingException
      */
-    public RDQM0200(AS400 system, int messageBufferSize, boolean isSenderIdIncluded) throws UnsupportedEncodingException {
+    private RDQM0200(AS400 system, int messageBufferSize, boolean isSenderIdIncluded, int numMessages) throws UnsupportedEncodingException {
         super(system, "RDQM0200"); //$NON-NLS-1$
 
         this.isSenderIDIncluded = isSenderIdIncluded;
         this.messages = null;
         this.maximumMessageLength = -1;
+        this.numMessagesToRetrieve = numMessages;
 
         createStructure(messageBufferSize);
     }
@@ -184,7 +189,7 @@ public class RDQM0200 extends APIFormat {
      * 
      * @return offset first message entry
      */
-    public int getOffsetFirstMesageEntry() {
+    public int getOffsetFirstMessageEntry() {
         return getInt4Value(OFFSET_TO_FIRST_MESSAGE_ENTRY);
     }
 
@@ -207,10 +212,15 @@ public class RDQM0200 extends APIFormat {
      * @return messages retrieved
      * @throws UnsupportedEncodingException
      */
-    public RDQM0200MessageEntry[] getMessages() throws UnsupportedEncodingException {
+    public RDQM0200MessageEntry[] getMessages() {
 
         if (messages == null) {
-            messages = collectMessage();
+            try {
+                messages = collectMessage();
+            } catch (Throwable e) {
+                ISpherePlugin.logError("Failed to get data queue messages.", e); //$NON-NLS-1$
+                messages = new RDQM0200MessageEntry[0];
+            }
         }
 
         return messages;
@@ -239,8 +249,9 @@ public class RDQM0200 extends APIFormat {
 
         List<RDQM0200MessageEntry> messages = new ArrayList<RDQM0200MessageEntry>();
 
-        int offset = getOffsetFirstMesageEntry();
-        while (offset > 0) {
+        int count = numMessagesToRetrieve;
+        int offset = getOffsetFirstMessageEntry();
+        while (offset > 0 && count > 0) {
 
             RDQM0200MessageEntry messageEntry = new RDQM0200MessageEntry(getSystem(), offset, this);
             messages.add(messageEntry);
@@ -250,6 +261,7 @@ public class RDQM0200 extends APIFormat {
             }
 
             offset = messageEntry.getOffsetToNextMessageEntry();
+            count --;
         }
 
         return messages.toArray(new RDQM0200MessageEntry[messages.size()]);
