@@ -8,11 +8,19 @@
 
 package biz.isphere.rse.internal;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
 
@@ -32,14 +40,12 @@ public class Editor implements IEditor {
             try {
 
                 IQSYSMember _member = _connection.getMember(library, file, member, null);
-
                 if (_member != null) {
-
-                    Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
                     String editor = "com.ibm.etools.systems.editor";
 
-                    if (statement == 0) {
+                    QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
+                    if (statement == 0 && !isOpenInEditor(mbr)) {
 
                         String _editor = null;
                         if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
@@ -50,12 +56,12 @@ public class Editor implements IEditor {
 
                         if (_editor != null) {
 
+                            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                             MessageDialog dialog = new MessageDialog(shell, Messages.Choose_Editor, null,
                                 Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION, new String[] { _editor,
                                     "LPEX Editor" }, 0);
 
                             final int dialogResult = dialog.open();
-
                             if (dialogResult == 0) {
 
                                 if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
@@ -70,14 +76,24 @@ public class Editor implements IEditor {
 
                     }
 
-                    QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
-
                     if (mbr != null) {
 
-                        if (mode.equals(IEditor.EDIT)) {
-                            mbr.open(editor, false, null);
-                        } else if (mode.equals(IEditor.BROWSE)) {
-                            mbr.open(editor, true, null);
+                        if (!isOpenInEditor(mbr)) {
+                            if (mode.equals(IEditor.EDIT)) {
+                                mbr.open(editor, false, null);
+                            } else if (mode.equals(IEditor.BROWSE)) {
+                                mbr.open(editor, true, null);
+                            }
+                        } else {
+                            /*
+                             * Hack, to keep the editor read-only due to a bug
+                             * in
+                             * QSYSEditableRemoteSourceFileMember.internalOpen
+                             * (String strEditorID, boolean readOnly, int
+                             * lineNumber, IProgressMonitor monitor).
+                             */
+                            IEditorPart editorPart = findEditorPart(mbr);
+                            mbr.setEditor(editorPart);
                         }
 
                         if (statement != 0) {
@@ -95,14 +111,41 @@ public class Editor implements IEditor {
 
             }
 
-            catch (SystemMessageException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            catch (Throwable e) {
+                ISpherePlugin.logError("Failed to open Lpex editor.", e); //$NON-NLS-1$
             }
 
         }
 
+    }
+
+    private boolean isOpenInEditor(QSYSEditableRemoteSourceFileMember mbr) throws CoreException {
+        return !(mbr.checkOpenInEditor() == -1);
+    }
+
+    private IEditorPart findEditorPart(QSYSEditableRemoteSourceFileMember member) {
+
+        IFile localFileResource = member.getLocalResource();
+        if (localFileResource == null) {
+            return null;
+        }
+
+        // See:
+        // http://stackoverflow.com/questions/516704/enumerating-all-my-eclipse-editors
+        for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+            for (IWorkbenchPage page : window.getPages()) {
+                for (IEditorReference editor : page.getEditorReferences()) {
+                    IEditorPart part = editor.getEditor(false);
+                    IEditorInput input = part.getEditorInput();
+                    IFileEditorInput fileInput = (IFileEditorInput)input;
+                    if (localFileResource.equals(fileInput.getFile())) {
+                        return part;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
 }
