@@ -3,7 +3,7 @@ Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Ant Plugin
 Bundle-SymbolicName: biz.isphere.antcontrib;singleton:=true
-Bundle-Version: 1.0.0.b8
+Bundle-Version: 1.0.0.b9
 Bundle-Activator: biz.isphere.antcontrib.ISphereAntPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.core.runtime,
@@ -17,3 +17,4 @@ Bundle-ClassPath: .,
  lib/iSphere-ant-runtime.jar,
  lib/jacob.jar
 Export-Package: biz.isphere.antcontrib
+Eclipse-LazyStart: true

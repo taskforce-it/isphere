@@ -63,6 +63,7 @@
 		<include name="biz/isphere/antcontrib/configuration/**" />
 		<include name="biz/isphere/antcontrib/internal/**" />
 		<include name="biz/isphere/antcontrib/logger/**" />
+		<include name="biz/isphere/antcontrib/taskdef/**" />
 		<include name="biz/isphere/antcontrib/winword/**" />
 	</patternset>
 

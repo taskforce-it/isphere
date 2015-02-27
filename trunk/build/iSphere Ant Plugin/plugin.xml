@@ -3,7 +3,7 @@
 <plugin>
 
    <extension point="org.eclipse.ant.core.antTasks">
-      <antTask name="winword" class="biz.isphere.antcontrib.taskdef.Winword" library="lib/iSphere-ant-plugin.jar"
+      <antTask name="winword" class="biz.isphere.antcontrib.taskdef.Winword" library="lib/iSphere-ant-runtime.jar"
        headless="true" eclipseRuntime="true" />
    </extension> 
 
