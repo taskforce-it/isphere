@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.antcontrib"
       label="iSphere Ant Contribution"
-      version="1.0.0.b8"
+      version="1.0.0.b9"
       provider-name="iSphere Project Team">
 
    <description url="https://sourceforge.net/projects/isphere/">
