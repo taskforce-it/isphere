@@ -110,9 +110,9 @@ public class SearchForUpdates extends Job {
                 try {
                     lastVersion = new Version(Preferences.getInstance().getLastVersionForUpdates());
                 } catch (IllegalArgumentException e) {
-                    lastVersion = new Version("0");
+                    lastVersion = null;
                 }
-                if (lastVersion.compareTo(availableVersion) != 0) {
+                if (lastVersion == null || lastVersion.compareTo(availableVersion) != 0) {
                     new UIJob("ISPHERE_UPDATES") {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
