@@ -362,6 +362,7 @@
 			<fileset dir="${workspace.home}\${build.updatesite}" >
 				<exclude name="*.log"/>
 				<exclude name="${exclude.site.xml}" />
+				<exclude name=".project" />
 			</fileset>
 		</copy>
 
