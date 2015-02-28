@@ -1,4 +1,12 @@
 
+Changelog: iSphere 2.6.0 beta 3
+-------------------------------
+
+ • Fixed problem that a source member is not opened for "read-only" from 
+   the iSphere Source File Search view. This problem is related to a bug 
+   in QSYSEditableRemoteSourceFileMember.
+
+
 Changelog: iSphere 2.6.0 beta 2
 -------------------------------
 
