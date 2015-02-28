@@ -22,7 +22,17 @@ Eclipse Plug-ins:
 Install the "iSphere Ant Plugin", which is required to build the iSphere
 project.
 
-	
+For WDSCi set the Ant home diretory to:
+
+   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
+
+For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
+
+   Preferences - Java - Build path - Classpath variables
+   
+   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
+
+
 Eclipse Settings:
 -----------------
 
