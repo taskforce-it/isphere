@@ -430,7 +430,7 @@ public final class Preferences {
      * @return default last version for updates.
      */
     public String getDefaultLastVersionForUpdates() {
-        return "000000";
+        return "0.0.0.r";
     }
 
     /**
