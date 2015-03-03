@@ -25,6 +25,8 @@ import com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief;
  */
 public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
+    public static final String ID = "biz.isphere.core.decorators.RSEHostObjectDecorator";
+    
     /**
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
      *      org.eclipse.jface.viewers.IDecoration)

@@ -31,11 +31,9 @@ import com.ibm.etools.systems.editor.SystemTextEditor;
 
 public class Editor implements IEditor {
 
-    public void openEditor(Object connection, String library, String file, String member, int statement, String mode) {
+    public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 
-        if (connection instanceof IBMiConnection) {
-
-            IBMiConnection _connection = (IBMiConnection)connection;
+            IBMiConnection _connection = IBMiConnection.getConnection(connectionName);
 
             try {
 
@@ -115,7 +113,6 @@ public class Editor implements IEditor {
                 ISpherePlugin.logError("Failed to open Lpex editor.", e); //$NON-NLS-1$
             }
 
-        }
 
     }
 

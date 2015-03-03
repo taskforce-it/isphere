@@ -18,16 +18,13 @@ public class SearchPostRun implements ISearchPostRun {
     private class ShowView extends Thread {
 
         private IWorkbenchWindow _workbenchWindow;
-        private Object _connection;
         private String _connectionName;
         private String _searchString;
         private SearchResult[] _searchResults;
 
-        public ShowView(IWorkbenchWindow _workbenchWindow, Object _connection, String _connectionName, String _searchString,
-            SearchResult[] _searchResults) {
+        public ShowView(IWorkbenchWindow _workbenchWindow, String _connectionName, String _searchString, SearchResult[] _searchResults) {
 
             this._workbenchWindow = _workbenchWindow;
-            this._connection = _connection;
             this._connectionName = _connectionName;
             this._searchString = _searchString;
             this._searchResults = _searchResults;
@@ -40,8 +37,8 @@ public class SearchPostRun implements ISearchPostRun {
                 public void run() {
                     try {
                         ViewSearchResults viewSearchResults = (ViewSearchResults)(_workbenchWindow.getActivePage()
-                            .showView("biz.isphere.core.sourcefilesearch.ViewSearchResults"));
-                        viewSearchResults.addTabItem(_connection, _connectionName, _searchString, _searchResults);
+                            .showView("biz.isphere.core.sourcefilesearch.ViewSearchResults")); //$NON-NLS-1$
+                        viewSearchResults.addTabItem(_connectionName, _searchString, _searchResults);
                     } catch (PartInitException e) {
                         e.printStackTrace();
                     }
@@ -102,7 +99,7 @@ public class SearchPostRun implements ISearchPostRun {
 
             for (int idx = 0; idx < _searchResults.length; idx++) {
 
-                String key = _searchResults[idx].getLibrary() + "-" + _searchResults[idx].getFile() + "-" + _searchResults[idx].getMember();
+                String key = _searchResults[idx].getLibrary() + "-" + _searchResults[idx].getFile() + "-" + _searchResults[idx].getMember(); //$NON-NLS-1$ //$NON-NLS-2$
                 SearchElement _searchElement = _searchElements.get(key);
                 if (_searchElement != null) {
                     _searchResults[idx].setDescription(_searchElement.getDescription());
@@ -110,7 +107,7 @@ public class SearchPostRun implements ISearchPostRun {
 
             }
 
-            new ShowView(_workbenchWindow, _connection, _connectionName, _searchString, _searchResults).start();
+            new ShowView(_workbenchWindow, _connectionName, _searchString, _searchResults).start();
 
         }
 

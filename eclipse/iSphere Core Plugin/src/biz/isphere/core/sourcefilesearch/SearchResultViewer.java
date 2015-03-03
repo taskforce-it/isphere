@@ -45,8 +45,8 @@ import biz.isphere.core.internal.IEditor;
 
 public class SearchResultViewer {
 
-    private Object connection;
-    // private String searchString;
+    private String connectionName;
+    private String searchString;
     private SearchResult[] _searchResults;
     private TableViewer tableViewerMembers;
     private Table tableMembers;
@@ -59,12 +59,14 @@ public class SearchResultViewer {
 
     private class LabelProviderTableViewerMembers extends LabelProvider implements ITableLabelProvider {
 
+        private static final String UNKNOWN = "*UNKNOWN"; //$NON-NLS-1$
+
         public String getColumnText(Object element, int columnIndex) {
             if (columnIndex == 0) {
-                return ((SearchResult)element).getLibrary() + "-" + ((SearchResult)element).getFile() + "(" + ((SearchResult)element).getMember()
-                    + ")" + " - \"" + ((SearchResult)element).getDescription() + "\"";
+                return ((SearchResult)element).getLibrary() + "-" + ((SearchResult)element).getFile() + "(" + ((SearchResult)element).getMember() //$NON-NLS-1$ //$NON-NLS-2$
+                    + ")" + " - \"" + ((SearchResult)element).getDescription() + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            return "*UNKNOWN";
+            return UNKNOWN;
         }
 
         public Image getColumnImage(Object element, int columnIndex) {
@@ -105,11 +107,13 @@ public class SearchResultViewer {
 
     private class LabelProviderStatements extends LabelProvider implements ITableLabelProvider {
 
+        private static final String UNKNOWN = "*UNKNOWN"; //$NON-NLS-1$
+
         public String getColumnText(Object element, int columnIndex) {
             if (columnIndex == 0) {
                 return (String)element;
             }
-            return "*UNKNOWN";
+            return UNKNOWN;
         }
 
         public Image getColumnImage(Object element, int columnIndex) {
@@ -131,7 +135,7 @@ public class SearchResultViewer {
         }
 
     }
-    
+
     private class TableMembersMenuAdapter extends MenuAdapter {
 
         private Menu menuTableMembers;
@@ -145,7 +149,7 @@ public class SearchResultViewer {
         public TableMembersMenuAdapter(Menu menuTableMembers) {
             this.menuTableMembers = menuTableMembers;
         }
-        
+
         @Override
         public void menuShown(MenuEvent event) {
             retrieveSelectedTableItems();
@@ -186,7 +190,7 @@ public class SearchResultViewer {
                         executeMenuItemOpenEditor(0);
                     }
                 });
-                
+
                 menuItemOpenViewer = new MenuItem(menuTableMembers, SWT.NONE);
                 menuItemOpenViewer.setText(Messages.Open_for_browse);
                 menuItemOpenViewer.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN_VIEWER));
@@ -244,7 +248,7 @@ public class SearchResultViewer {
 
         }
     }
-    
+
     private class TableStatementsMenuAdapter extends MenuAdapter {
 
         private Menu menuTableStatements;
@@ -254,7 +258,7 @@ public class SearchResultViewer {
         public TableStatementsMenuAdapter(Menu menuTableStatements) {
             this.menuTableStatements = menuTableStatements;
         }
-        
+
         @Override
         public void menuShown(MenuEvent event) {
             retrieveSelectedTableItems();
@@ -283,7 +287,7 @@ public class SearchResultViewer {
                         executeMenuItemOpenEditor(getStatementLine());
                     }
                 });
-                
+
                 menuItemOpenViewer = new MenuItem(menuTableStatements, SWT.NONE);
                 menuItemOpenViewer.setText(Messages.Open_for_browse);
                 menuItemOpenViewer.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN_VIEWER));
@@ -296,10 +300,10 @@ public class SearchResultViewer {
             }
         }
     }
-    
-    public SearchResultViewer(Object connection, String searchString, SearchResult[] _searchResults) {
-        this.connection = connection;
-        // this.searchString = searchString;
+
+    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults) {
+        this.connectionName = connectionName;
+        this.searchString = searchString;
         this._searchResults = _searchResults;
     }
 
@@ -334,7 +338,7 @@ public class SearchResultViewer {
 
                     if (editor != null) {
 
-                        editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
+                        editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
                             getEditMode());
 
                     }
@@ -388,7 +392,7 @@ public class SearchResultViewer {
 
                         if (editor != null) {
 
-                            editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
+                            editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
                                 statementLine, getEditMode());
 
                         }
@@ -422,9 +426,9 @@ public class SearchResultViewer {
     }
 
     private int getStatementLine() {
-        
+
         int statementLine = 0;
-        
+
         if (selectedItemsMembers != null && selectedItemsMembers.length == 1) {
 
             if (tableViewerStatements.getSelection() instanceof IStructuredSelection) {
@@ -443,12 +447,12 @@ public class SearchResultViewer {
                 }
             }
         }
-        
+
         return statementLine;
     }
-    
+
     private String getEditMode() {
-        
+
         if (isEditMode) {
             return IEditor.EDIT;
         } else {
@@ -493,11 +497,12 @@ public class SearchResultViewer {
         IEditor editor = ISpherePlugin.getEditor();
 
         if (editor != null) {
-            
+
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement, IEditor.EDIT);
+                editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
+                    IEditor.EDIT);
             }
         }
     }
@@ -511,7 +516,8 @@ public class SearchResultViewer {
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                editor.openEditor(connection, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement, IEditor.BROWSE);
+                editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
+                    IEditor.BROWSE);
             }
         }
     }
@@ -550,7 +556,7 @@ public class SearchResultViewer {
             SearchResultStatement[] _statements = _searchResult.getStatements();
             statements = new String[_statements.length];
             for (int idx = 0; idx < _statements.length; idx++) {
-                statements[idx] = "(" + Integer.toString(_statements[idx].getStatement()) + ") " + _statements[idx].getLine();
+                statements[idx] = "(" + Integer.toString(_statements[idx].getStatement()) + ") " + _statements[idx].getLine(); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else {
             statements = new String[1];
@@ -560,8 +566,12 @@ public class SearchResultViewer {
 
     }
 
-    public Object getConnection() {
-        return connection;
+    public String getConnectionName() {
+        return connectionName;
+    }
+
+    public String getSearchString() {
+        return searchString;
     }
 
     public SearchResult[] getSearchResults() {
