@@ -81,8 +81,8 @@ public class IQMHRTVM extends APIProgramCallDocument {
 
             // int bufferSize = 1024 * 1024 * 1 / 2;
             int bufferSize = Buffer.size("512 kByte");
-            IQMHRTVMResult result = retrieveMessageDescriptions(ALL_MESSAGES, bufferSize);
-
+            IQMHRTVMResult result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_FIRST, "", ALL_MESSAGES, bufferSize);
+            
             while (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() > 0) {
                 // numCalls++;
                 messages.addAll(result.getMessages());
@@ -109,21 +109,6 @@ public class IQMHRTVM extends APIProgramCallDocument {
     }
 
     /**
-     * Retrieves a given number of message descriptions, starting at the first
-     * description.
-     * 
-     * @param numMessages - number of messages to retrieve or
-     *        {@link #ALL_MESSAGES} for all messages. The method may return less
-     *        messages than specified, if the buffer is not large enough.
-     * @param bufferSize - buffer to return the message descriptions
-     * @return result of the retrieve operation
-     * @throws Exception
-     */
-    public IQMHRTVMResult retrieveMessageDescriptions(int numMessages, int bufferSize) throws Exception {
-        return retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_FIRST, "", numMessages, bufferSize);
-    }
-
-    /**
      * Retrieves a given number of message descriptions, starting at a specified
      * message ID description.
      * 
@@ -140,7 +125,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @return result of the retrieve operation
      * @throws Exception
      */
-    public IQMHRTVMResult retrieveMessageDescriptions(String retrieveOption, String messageID, int numMessages, int bufferSize) throws Exception {
+    private IQMHRTVMResult retrieveMessageDescriptions(String retrieveOption, String messageID, int numMessages, int bufferSize) throws Exception {
 
         if (execute(createParameterList(retrieveOption, messageID, numMessages, bufferSize))) {
             return new IQMHRTVMResult(getSystem(), connectionName, messageFile, library, getParameterList()[0].getOutputData());
