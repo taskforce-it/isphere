@@ -23,44 +23,40 @@ import com.ibm.etools.systems.editor.SystemTextEditor;
 
 public class Editor implements IEditor {
 
-    public void openEditor(Object connection, String library, String file, String member, int statement, String mode) {
+    public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 
-        if (connection instanceof ISeriesConnection) {
+        ISeriesConnection _connection = ISeriesConnection.getConnection(connectionName);
 
-            ISeriesConnection _connection = (ISeriesConnection)connection;
+        try {
 
-            try {
+            ISeriesMember _member = _connection.getISeriesMember(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), library, file,
+                member);
 
-                ISeriesMember _member = _connection.getISeriesMember(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), library, file,
-                    member);
+            if (_member != null) {
 
-                if (_member != null) {
+                ISeriesEditableSrcPhysicalFileMember mbr = null;
 
-                    ISeriesEditableSrcPhysicalFileMember mbr = null;
+                if (mode.equals(IEditor.EDIT)) {
+                    mbr = _member.open();
+                } else if (mode.equals(IEditor.BROWSE)) {
+                    mbr = _member.browse();
+                }
 
-                    if (mode.equals(IEditor.EDIT)) {
-                        mbr = _member.open();
-                    } else if (mode.equals(IEditor.BROWSE)) {
-                        mbr = _member.browse();
-                    }
-
-                    if (mbr != null && statement != 0) {
-                        if (!mbr.openIsCanceled()) {
-                            SystemTextEditor systemTextEditor = mbr.getEditor();
-                            if (systemTextEditor != null) {
-                                systemTextEditor.gotoLine(statement);
-                            }
+                if (mbr != null && statement != 0) {
+                    if (!mbr.openIsCanceled()) {
+                        SystemTextEditor systemTextEditor = mbr.getEditor();
+                        if (systemTextEditor != null) {
+                            systemTextEditor.gotoLine(statement);
                         }
                     }
-
                 }
 
             }
 
-            catch (SystemMessageException e) {
-                e.printStackTrace();
-            }
+        }
 
+        catch (SystemMessageException e) {
+            e.printStackTrace();
         }
 
     }
