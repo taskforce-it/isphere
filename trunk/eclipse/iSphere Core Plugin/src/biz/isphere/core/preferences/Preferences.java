@@ -8,14 +8,17 @@
 
 package biz.isphere.core.preferences;
 
+import java.io.File;
 import java.util.Arrays;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.preferencepages.IPreferences;
+import biz.isphere.core.sourcefilesearch.SearchResultManager;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -97,6 +100,18 @@ public final class Preferences {
     private static final String SOURCE_FILE_SEARCH_RESULTS = DOMAIN + "SOURCE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = SOURCE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = SOURCE_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
+
+    public static final String SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE = SOURCE_FILE_SEARCH_RESULTS + "AUTO_SAVE_FILE"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_DIRECTORY = "sourceFileSearch"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_FILE_NAME = "SourceFileSearchResult"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -232,6 +247,44 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
+    public String getSourceFileSearchResultsSaveDirectory() {
+        String directory = preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
+        if (!directory.endsWith(File.separator)) {
+            directory = directory + File.separator;
+        }
+        return directory;
+    }
+
+    public String getSourceFileSearchResultsLastUsedFileName() {
+        String filename = preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME);
+        if (!StringHelper.isNullOrEmpty(filename)) {
+            File file = new File(filename);
+            if (!file.exists()) {
+                filename = null;
+            } else {
+                if (file.isDirectory()) {
+                    filename = filename + SOURCE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+                }
+            }
+        } else {
+            filename = null;
+        }
+
+        if (filename == null) {
+            return getDefaultSourceFileSearchResultsSaveDirectory() + SOURCE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+        }
+
+        return filename;
+    }
+
+    public boolean isSourceFileSearchResultsAutoSaveEnabled() {
+        return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
+    }
+
+    public String getSourceFileSearchResultsAutoSaveFileName() {
+        return preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -332,6 +385,22 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, editable);
     }
 
+    public void setSourceFileSearchResultsSaveDirectory(String directory) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, directory);
+    }
+
+    public void setSourceFileSearchResultsLastUsedFileName(String directory) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, directory);
+    }
+
+    public void setSourceFileSearchResultsAutoSaveEnabled(boolean enabled) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, enabled);
+    }
+
+    public void setSourceFileSearchResultsAutoSaveFileName(String filename) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -363,7 +432,12 @@ public final class Preferences {
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
         preferenceStore.setDefault(MONITOR_DTAQ_DISPLAY_END_OF_DATA, getDefaultDataQueueDisplayEndOfData());
+
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultSourceFileSearchResultsSaveDirectory());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultSourceFileSearchResultsLastUsedFileName());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultSourceFileSearchResultsAutoSaveEnabled());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultSourceFileSearchResultsAutoSaveFileName());
     }
 
     /*
@@ -565,6 +639,54 @@ public final class Preferences {
      */
     public boolean getDefaultSourceFileSearchResultsEditEnabled() {
         return true;
+    }
+
+    /**
+     * Returns the default 'source file search save path'.
+     * 
+     * @return default path for saving source file search results
+     */
+    public String getDefaultSourceFileSearchResultsSaveDirectory() {
+
+        String path = ISpherePlugin.getDefault().getStateLocation().toFile().getAbsolutePath();
+        path = path + File.separator + SOURCE_FILE_SEARCH_DIRECTORY + File.separator;
+
+        try {
+            FileHelper.ensureDirectory(path);
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to create directory: " + path, e); //$NON-NLS-1$
+        }
+
+        return path;
+    }
+
+    /**
+     * Returns the default 'save path' that was last selected to save source
+     * file search results.
+     * 
+     * @return default path last used for saving
+     */
+    public String getDefaultSourceFileSearchResultsLastUsedFileName() {
+        return "";
+    }
+
+    /**
+     * Returns the default 'is auto save' flag of the view search results view.
+     * 
+     * @return default 'is auto save' flag.
+     */
+    public boolean getDefaultSourceFileSearchResultsAutoSaveEnabled() {
+        return false;
+    }
+
+    /**
+     * Returns the default 'source file search auto save file name'.
+     * 
+     * @return default file name for saving search results
+     */
+    public String getDefaultSourceFileSearchResultsAutoSaveFileName() {
+
+        return "iSphereSourceFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
     }
 
     /**

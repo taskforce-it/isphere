@@ -3,6 +3,11 @@ Changelog: iSphere 2.6.0 beta 3
 -------------------------------
 
  • Fix invalid default value for "last version for updates".
+ • Added view menu to the iSphere Source File Search view with options for 
+   loading and saving search results.
+ • Added option to the preferences page and the iSphere Source File Search 
+   view for automatically saving search results when the view is closed.
+ • Added preferences page for label decorations of the RSE tree.
 
 
 Changelog: iSphere 2.6.0 beta 2

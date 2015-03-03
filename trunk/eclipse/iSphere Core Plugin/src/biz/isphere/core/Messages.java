@@ -767,9 +767,9 @@ public class Messages extends NLS {
     public static String Text;
 
     public static String Number_of_messages;
-    
+
     public static String Number_of_messages_to_retrieve_colon;
-    
+
     public static String Tooltip_Number_of_messages_to_retrieve;
 
     public static String Keyed;
@@ -813,31 +813,31 @@ public class Messages extends NLS {
     public static String Display_End_Of_Data;
 
     public static String Tooltip_Display_End_Of_Data;
-    
+
     public static String Display_End_Of_Data_colon;
 
-    public static String Drag_drop_data_queue_from_RSE_tree; 
-    
+    public static String Drag_drop_data_queue_from_RSE_tree;
+
     public static String Maximum_message_length_menu_item;
-    
+
     public static String Maximum_message_length_menu_item_A_bytes;
-    
+
     public static String Maximum_message_length_menu_item_A_bytes_tooltip;
-    
+
     public static String Maximum_message_length_menu_item_no_max;
-    
+
     public static String Maximum_message_length_menu_item_no_max_tooltip;
 
     public static String Maximum_message_length_colon;
-    
+
     public static String Tooltip_Maximum_message_length;
-    
+
     public static String Data_queue;
-    
+
     public static String Display_mode_colon;
-    
+
     public static String Tooltip_Display_data_mode;
-    
+
     public static String Value_is_out_of_range_The_valid_range_is_A_to_B;
 
     public static String Copy_message_as_text;
@@ -845,17 +845,17 @@ public class Messages extends NLS {
     public static String Copy_message_as_hex;
 
     public static String Copy_message_as_hex_formatted;
-    
+
     public static String Save_message;
 
     public static String Source_file_search;
 
-    public static String Lpex_editor_mode;
+    public static String Lpex_editor_mode_colon;
 
     public static String Tooltip_Lpex_editor_mode;
 
     public static String Disable_edit_action;
-    
+
     public static String Tooltip_Disable_edit_action;
 
     public static String Open_viewer;
@@ -863,12 +863,42 @@ public class Messages extends NLS {
     public static String MessageKey_colon;
 
     public static String No_data_available;
-    
+
     public static String Data_Queue_Entry;
-    
+
     public static String Previous;
-    
+
     public static String Next;
+
+    public static String Failed_to_load_file;
+
+    public static String Load;
+    
+    public static String Save;
+    
+    public static String Save_all;
+    
+    public static String Auto_save;
+
+    public static String Save_results_to_colon;
+    
+    public static String Tooltip_Specifies_the_folder_to_save_source_file_search_results_to;
+
+    public static String Auto_save_enabled_colon;
+    
+    public static String Auto_save_enabled_Tooltip;
+    
+    public static String Auto_save_file_name_colon;
+    
+    public static String Auto_save_file_name_Tooltip;
+
+    public static String Question;
+
+    public static String Question_replace_search_results;
+
+    public static String Label_Decorations_RSE_host_objects;
+    
+    public static String Label_Decorations_RSE_host_objects_Description;
     
     static {
         // initialize resource bundle

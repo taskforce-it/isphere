@@ -41,7 +41,7 @@ public class SearchExec {
         public Search(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
             ISearchPostRun _searchPostRun) {
 
-            super("iSphere Source File Search");
+            super("iSphere Source File Search"); //$NON-NLS-1$
 
             this._as400 = _as400;
             this._jdbcConnection = _jdbcConnection;
@@ -84,7 +84,7 @@ public class SearchExec {
 
                         int _numberOfSearchElements = new FNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
-                        monitor.beginTask("Searching", _numberOfSearchElements);
+                        monitor.beginTask("Searching", _numberOfSearchElements); //$NON-NLS-1$
 
                         new DoSearch(_as400, _handle, _searchOptions, monitor).start();
 
@@ -122,7 +122,7 @@ public class SearchExec {
                         monitor.done();
 
                         if (!_cancel) {
-                            _searchResults = SearchResult.getSearchResults(_jdbcConnection, _handle);
+                            _searchResults = getSearchResults(_jdbcConnection, _handle);
                         }
 
                         new FNDSTR_clear().run(_as400, _handle);
@@ -146,25 +146,134 @@ public class SearchExec {
 
         }
 
+        private SearchResult[] getSearchResults(Connection jdbcConnection, int handle) {
+
+            String _separator;
+            try {
+                _separator = jdbcConnection.getMetaData().getCatalogSeparator();
+            } catch (SQLException e) {
+                _separator = "."; //$NON-NLS-1$
+                e.printStackTrace();
+            }
+
+            ArrayList<SearchResult> arrayListSearchResults = new ArrayList<SearchResult>();
+
+            PreparedStatement preparedStatementSelect = null;
+            ResultSet resultSet = null;
+
+            try {
+
+                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + ISpherePlugin.getISphereLibrary() + _separator //$NON-NLS-1$
+                    + "FNDSTRO WHERE XOHDL = ? ORDER BY XOHDL, XOLIB, XOFILE, XOMBR", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); //$NON-NLS-1$
+                preparedStatementSelect.setString(1, Integer.toString(handle));
+                resultSet = preparedStatementSelect.executeQuery();
+
+                String _library = ""; //$NON-NLS-1$
+                String _file = ""; //$NON-NLS-1$
+                String _member = ""; //$NON-NLS-1$
+
+                String library;
+                String file;
+                String member;
+
+                SearchResult _searchResult = null;
+                ArrayList<SearchResultStatement> alStatements = null;
+
+                while (resultSet.next()) {
+
+                    library = resultSet.getString("XOLIB").trim(); //$NON-NLS-1$
+                    file = resultSet.getString("XOFILE").trim(); //$NON-NLS-1$
+                    member = resultSet.getString("XOMBR").trim(); //$NON-NLS-1$
+
+                    if (!_library.equals(library) || !_file.equals(file) || !_member.equals(member)) {
+
+                        if (_searchResult != null) {
+
+                            SearchResultStatement[] _statements = new SearchResultStatement[alStatements.size()];
+                            alStatements.toArray(_statements);
+
+                            _searchResult.setStatements(_statements);
+
+                            arrayListSearchResults.add(_searchResult);
+
+                        }
+
+                        _library = library;
+                        _file = file;
+                        _member = member;
+
+                        _searchResult = new SearchResult();
+                        _searchResult.setLibrary(library);
+                        _searchResult.setFile(file);
+                        _searchResult.setMember(member);
+
+                        alStatements = new ArrayList<SearchResultStatement>();
+
+                    }
+
+                    SearchResultStatement statement = new SearchResultStatement();
+                    statement.setStatement(resultSet.getInt("XOSTMT")); //$NON-NLS-1$
+                    statement.setLine(resultSet.getString("XOLINE")); //$NON-NLS-1$
+                    alStatements.add(statement);
+
+                }
+
+                if (_searchResult != null) {
+
+                    SearchResultStatement[] _statements = new SearchResultStatement[alStatements.size()];
+                    alStatements.toArray(_statements);
+
+                    _searchResult.setStatements(_statements);
+
+                    arrayListSearchResults.add(_searchResult);
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (preparedStatementSelect != null) {
+                try {
+                    preparedStatementSelect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            SearchResult[] _searchResults = new SearchResult[arrayListSearchResults.size()];
+            arrayListSearchResults.toArray(_searchResults);
+            return _searchResults;
+
+        }
+
         private void getStatus() {
 
             String _separator;
             try {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
-                _separator = ".";
+                _separator = "."; //$NON-NLS-1$
                 e.printStackTrace();
             }
 
             PreparedStatement preparedStatementSelect = null;
             ResultSet resultSet = null;
             try {
-                preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT XSCNT, XSCNL FROM " + iSphereLibrary + _separator
-                    + "FNDSTRS WHERE XSHDL = ?");
+                preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT XSCNT, XSCNL FROM " + iSphereLibrary + _separator //$NON-NLS-1$
+                    + "FNDSTRS WHERE XSHDL = ?"); //$NON-NLS-1$
                 preparedStatementSelect.setInt(1, _handle);
                 resultSet = preparedStatementSelect.executeQuery();
                 if (resultSet.next()) {
-                    _counter = resultSet.getInt("XSCNT");
+                    _counter = resultSet.getInt("XSCNT"); //$NON-NLS-1$
                 }
             } catch (SQLException e) {
             }
@@ -189,14 +298,14 @@ public class SearchExec {
             try {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
-                _separator = ".";
+                _separator = "."; //$NON-NLS-1$
                 e.printStackTrace();
             }
 
             PreparedStatement preparedStatementUpdate = null;
             try {
-                preparedStatementUpdate = _jdbcConnection.prepareStatement("UPDATE " + iSphereLibrary + _separator
-                    + "FNDSTRS SET XSCNL = '*YES' WHERE XSHDL = ?");
+                preparedStatementUpdate = _jdbcConnection.prepareStatement("UPDATE " + iSphereLibrary + _separator //$NON-NLS-1$ 
+                    + "FNDSTRS SET XSCNL = '*YES' WHERE XSHDL = ?"); //$NON-NLS-1$
                 preparedStatementUpdate.setInt(1, _handle);
                 preparedStatementUpdate.executeUpdate();
             } catch (SQLException e) {

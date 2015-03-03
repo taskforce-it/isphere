@@ -8,14 +8,17 @@
 
 package biz.isphere.core.sourcefilesearch;
 
-public class SearchResultStatement {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class SearchResultStatement implements Serializable {
 
     private int statement;
     private String line;
 
     public SearchResultStatement() {
         statement = 0;
-        line = "";
+        line = ""; //$NON-NLS-1$
     }
 
     public int getStatement() {

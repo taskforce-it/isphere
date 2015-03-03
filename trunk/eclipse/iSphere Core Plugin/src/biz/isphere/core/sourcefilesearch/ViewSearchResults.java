@@ -17,9 +17,14 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -33,19 +38,25 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.internal.exception.LoadFileException;
+import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class ViewSearchResults extends ViewPart implements ISelectionChangedListener {
 
-    private static final String TAB_DATA_VIEWER = "Viewer";
+    private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
+    private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
 
     private Action actionExportToMemberFilter;
     private Action actionExportToExcel;
@@ -53,8 +64,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
     private DisableEditAction actionDisableEdit;
+    private Action actionLoadSearchResult;
+    private Action actionSaveSearchResult;
+    private Action actionSaveAllSearchResults;
+    private Action actionEnableAutoSave;
+
     private TabFolder tabFolderSearchResults;
     private Shell shell;
+    private SearchResultManager manager;
+
+    private SearchResultTabFolder searchResultTabFolder;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -62,17 +81,23 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         container.setLayout(new FillLayout());
 
         shell = parent.getShell();
+        manager = new SearchResultManager();
+        searchResultTabFolder = new SearchResultTabFolder();
 
         tabFolderSearchResults = new TabFolder(container, SWT.NONE);
 
         createActions();
         initializeToolBar();
         initializeMenu();
+
+        loadSearchResults();
+
+        setActionEnablement();
     }
 
     private void createActions() {
 
-        actionExportToMemberFilter = new Action("") {
+        actionExportToMemberFilter = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 exportToMemberFilter();
@@ -82,7 +107,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToMemberFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MEMBER_FILTER));
         actionExportToMemberFilter.setEnabled(false);
 
-        actionExportToExcel = new Action("") {
+        actionExportToExcel = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 exportToExcel();
@@ -92,17 +117,17 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
         actionExportToExcel.setEnabled(false);
 
-        actionRemoveTabItem = new Action("") {
+        actionRemoveTabItem = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
-                removeTabItem();
+                removeSelectedTabItem();
             }
         };
         actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
         actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
         actionRemoveTabItem.setEnabled(false);
 
-        actionRemoveSelectedItems = new Action("") {
+        actionRemoveSelectedItems = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 removeSelectedItem();
@@ -112,7 +137,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REMOVE));
         actionRemoveSelectedItems.setEnabled(false);
 
-        actionInvertSelectedItems = new Action("") {
+        actionInvertSelectedItems = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 invertSelection();
@@ -126,6 +151,34 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         actionDisableEdit.setEnabled(false);
 
+        actionLoadSearchResult = new Action(Messages.Load) {
+            @Override
+            public void run() {
+                loadSearchResult();
+            };
+        };
+        actionLoadSearchResult.setEnabled(false);
+
+        actionSaveSearchResult = new Action(Messages.Save) {
+            @Override
+            public void run() {
+                saveSearchResult();
+            };
+        };
+        actionSaveSearchResult.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SAVE));
+        actionSaveSearchResult.setEnabled(false);
+
+        actionSaveAllSearchResults = new Action(Messages.Save_all) {
+            @Override
+            public void run() {
+                saveAllSearchResults();
+            };
+        };
+        actionSaveAllSearchResults.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SAVE_ALL));
+        actionSaveAllSearchResults.setEnabled(false);
+
+        actionEnableAutoSave = new EnableAutoSaveAction();
+        actionEnableAutoSave.setEnabled(false);
     }
 
     private void initializeToolBar() {
@@ -142,22 +195,30 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     }
 
     private void initializeMenu() {
-        // IMenuManager menuManager =
-        // getViewSite().getActionBars().getMenuManager();
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+
+        viewMenu.add(actionLoadSearchResult);
+        viewMenu.add(new Separator());
+        viewMenu.add(actionSaveSearchResult);
+        viewMenu.add(actionSaveAllSearchResults);
+        viewMenu.add(new Separator());
+        viewMenu.add(actionEnableAutoSave);
     }
 
     @Override
     public void setFocus() {
     }
 
-    public void addTabItem(Object connection, String connectionName, String searchString, SearchResult[] searchResults) {
+    public void addTabItem(String connectionName, String searchString, SearchResult[] searchResults) {
         Composite compositeSearchResult = new Composite(tabFolderSearchResults, SWT.NONE);
         compositeSearchResult.setLayout(new FillLayout());
 
         TabItem tabItemSearchResult = new TabItem(tabFolderSearchResults, SWT.NONE);
-        tabItemSearchResult.setText(connectionName + "/" + searchString);
+        tabItemSearchResult.setText(connectionName + "/" + searchString); //$NON-NLS-1$
 
-        SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
+        SearchResultViewer _searchResultViewer = new SearchResultViewer(connectionName, searchString, searchResults);
         _searchResultViewer.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         _searchResultViewer.createContents(compositeSearchResult);
         _searchResultViewer.addSelectionChangedListener(this);
@@ -188,9 +249,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 setActionEnablement();
             }
         });
+
+        SearchResultTab searchResultTab = new SearchResultTab(connectionName, searchString, searchResults);
+        searchResultTabFolder.addTab(searchResultTab);
+        tabItemSearchResult.setData(TAB_PERSISTENCE_DATA, searchResultTab);
     }
 
-    public void exportToMemberFilter() {
+    private void exportToMemberFilter() {
 
         ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
 
@@ -201,7 +266,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                 FilterDialog dialog = new FilterDialog(shell);
                 if (dialog.open() == Dialog.OK) {
-                    if (!creator.createMemberFilter(_searchResultViewer.getConnection(), dialog.getFilter(), _searchResultViewer.getSearchResults())) {
+                    if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
+                        _searchResultViewer.getSearchResults())) {
 
                         MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
                         errorBox.setText(Messages.E_R_R_O_R);
@@ -213,7 +279,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         }
     }
 
-    public void exportToExcel() {
+    private void exportToExcel() {
 
         SearchResultViewer _searchResultViewer = getSelectedViewer();
         if (_searchResultViewer != null) {
@@ -223,10 +289,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
             IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
 
-            dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
-            dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
-            dialog.setFilterPath("C:\\");
-            dialog.setFileName("export.xls");
+            dialog.setFilterNames(new String[] { "Excel Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$ //$NON-NLS-2$
+            dialog.setFilterExtensions(new String[] { "*.xls", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ //$NON-NLS-2$
+            dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
+            dialog.setFileName("export.xls"); //$NON-NLS-1$
             dialog.setOverwrite(true);
             String file = dialog.open();
 
@@ -298,20 +364,37 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     }
 
-    public void removeTabItem() {
-        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-        if (selectedTabItem >= 0) {
-            tabFolderSearchResults.getItem(selectedTabItem).dispose();
-            if (tabFolderSearchResults.getItemCount() == 0) {
-                actionExportToMemberFilter.setEnabled(false);
-                actionExportToExcel.setEnabled(false);
-                actionRemoveTabItem.setEnabled(false);
-                actionRemoveSelectedItems.setEnabled(false);
-            }
+    private void removeAllTabItems() {
+
+        TabItem[] tabItems = tabFolderSearchResults.getItems();
+        for (TabItem tabItem : tabItems) {
+            removeTabItem(tabItem);
         }
     }
 
-    public void removeSelectedItem() {
+    private void removeSelectedTabItem() {
+        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
+        if (selectedTabItem >= 0) {
+            TabItem tabItemSearchResult = tabFolderSearchResults.getItem(selectedTabItem);
+            removeTabItem(tabItemSearchResult);
+        }
+    }
+
+    private void removeTabItem(TabItem tabItem) {
+        SearchResultTab searchResultTab = (SearchResultTab)tabItem.getData(TAB_PERSISTENCE_DATA);
+        searchResultTabFolder.removeTab(searchResultTab);
+
+        tabItem.dispose();
+        setActionEnablement();
+        // if (tabFolderSearchResults.getItemCount() == 0) {
+        // actionExportToMemberFilter.setEnabled(false);
+        // actionExportToExcel.setEnabled(false);
+        // actionRemoveTabItem.setEnabled(false);
+        // actionRemoveSelectedItems.setEnabled(false);
+        // }
+    }
+
+    private void removeSelectedItem() {
 
         SearchResultViewer _searchResultViewer = getSelectedViewer();
         if (_searchResultViewer != null) {
@@ -319,12 +402,124 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         }
     }
 
-    public void invertSelection() {
+    private void invertSelection() {
 
         SearchResultViewer _searchResultViewer = getSelectedViewer();
         if (_searchResultViewer != null) {
             _searchResultViewer.invertSelectedItems();
         }
+    }
+
+    private void saveSearchResult() {
+
+        String file = selectFile(SWT.SAVE);
+        if (file == null) {
+            return;
+        }
+
+        SearchResultViewer viewer = getSelectedViewer();
+        if (viewer != null) {
+            SearchResultTabFolder searchResults = new SearchResultTabFolder();
+            searchResults.addTab(new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults()));
+            try {
+                manager.saveToXml(file, searchResults);
+            } catch (SaveFileException e) {
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            }
+        }
+    }
+
+    private void saveAllSearchResults() {
+
+        String file = selectFile(SWT.SAVE);
+        if (file == null) {
+            return;
+        }
+
+        saveAllSearchResults(file);
+    }
+
+    private void saveAllSearchResults(String fileName) {
+
+        // TabItem[] tabItems = tabFolderSearchResults.getItems();
+        // for (TabItem tabItem : tabItems) {
+        // SearchResultViewer viewer = getViewer(tabItem);
+        // if (viewer != null) {
+        // searchResultTabFolder.addTab(new
+        // SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(),
+        // viewer.getSearchResults()));
+        // }
+        // }
+
+        try {
+            manager.saveToXml(fileName, searchResultTabFolder);
+        } catch (SaveFileException e) {
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+        }
+    }
+
+    private void loadSearchResult() {
+
+        String file = selectFile(SWT.OPEN);
+        if (file == null) {
+            return;
+        }
+
+        loadSearchResult(file, false);
+    }
+
+    private void loadSearchResult(String fileName, boolean replace) {
+
+        SearchResultTabFolder searchResults = null;
+        try {
+
+            searchResults = manager.loadFromXml(fileName);
+            if (searchResults == null || searchResults.getNumTabs() <= 0) {
+                return;
+            }
+
+            if (!replace && searchResults.getNumTabs() > 1 && tabFolderSearchResults.getItemCount() > 0) {
+                if (MessageDialog.openQuestion(shell, Messages.Question,
+                    Messages.bind(Messages.Question_replace_search_results, searchResults.getNumTabs()))) {
+                    removeAllTabItems();
+                    ;
+                }
+            }
+
+            for (SearchResultTab tab : searchResults.getTabs()) {
+                String connectionName = tab.getConnectionName();
+                String searchString = tab.getSearchString();
+                SearchResult[] searchResult = tab.getSearchResult();
+                addTabItem(connectionName, searchString, searchResult);
+            }
+
+        } catch (LoadFileException e) {
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            return;
+        }
+    }
+
+    private String selectFile(int style) {
+
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IFileDialog dialog = factory.getFileDialog(shell, style);
+
+        String[] filterNames = new String[] {
+            "Search file search result (*." + SearchResultManager.FILE_EXTENSION + ")", FileHelper.getAllFilesText() }; //$NON-NLS-1$ //$NON-NLS-2$
+        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION + ";", FileHelper.getAllFilesFilter() }; //$NON-NLS-1$  //$NON-NLS-2$
+        String filename = Preferences.getInstance().getSourceFileSearchResultsLastUsedFileName();
+
+        dialog.setFilterNames(filterNames);
+        dialog.setFilterExtensions(filterExtensions);
+        dialog.setFileName(filename);
+        dialog.setOverwrite(true);
+
+        String selectedFileName = dialog.open();
+        if (!StringHelper.isNullOrEmpty(selectedFileName) && !filename.equals(selectedFileName) ) {
+            Preferences.getInstance().setSourceFileSearchResultsLastUsedFileName(selectedFileName);
+        }
+        
+        return selectedFileName;
     }
 
     private void setActionEnablement() {
@@ -334,37 +529,95 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     public void selectionChanged(SelectionChangedEvent event) {
 
         boolean hasViewer;
-        boolean hasItems;
+        boolean hasTabItems;
+        boolean hasMultipleTabItems;
         boolean hasSelectedItems;
         SearchResultViewer _searchResultViewer = getSelectedViewer();
 
         if (_searchResultViewer == null) {
             hasViewer = false;
-            hasItems = false;
+            hasTabItems = false;
+            hasMultipleTabItems = false;
             hasSelectedItems = false;
             actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         } else {
             hasViewer = true;
-            hasItems = _searchResultViewer.hasItems();
+            hasTabItems = tabFolderSearchResults.getItemCount() > 0;
+            hasMultipleTabItems = tabFolderSearchResults.getItemCount() > 1;
             hasSelectedItems = _searchResultViewer.hasSelectedItems();
             actionDisableEdit.setEditEnabled(_searchResultViewer.isEditEnabled());
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
         actionInvertSelectedItems.setEnabled(hasSelectedItems);
-        actionExportToMemberFilter.setEnabled(hasItems);
-        actionExportToExcel.setEnabled(hasItems);
+        actionExportToMemberFilter.setEnabled(hasTabItems);
+        actionExportToExcel.setEnabled(hasTabItems);
         actionRemoveTabItem.setEnabled(hasViewer);
-        actionDisableEdit.setEnabled(hasItems);
+        actionDisableEdit.setEnabled(hasTabItems);
+
+        actionSaveSearchResult.setEnabled(hasTabItems);
+        actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
+        actionLoadSearchResult.setEnabled(true);
+        actionEnableAutoSave.setEnabled(true);
     }
 
     private SearchResultViewer getSelectedViewer() {
+        return getViewer(getSelectedTab());
+    }
+
+    private TabItem getSelectedTab() {
         int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
         if (selectedTabItem >= 0) {
-            return (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
+            return tabFolderSearchResults.getItem(selectedTabItem);
         } else {
             return null;
         }
+    }
+
+    private SearchResultViewer getViewer(TabItem tabItem) {
+        if (tabItem != null) {
+            return (SearchResultViewer)tabItem.getData(TAB_DATA_VIEWER);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 
+     */
+    private void loadSearchResults() {
+
+        try {
+
+            Preferences preferences = Preferences.getInstance();
+
+            if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
+                String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                loadSearchResult(fileName, true);
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to load source file search results.", e); //$NON-NLS-1$
+        }
+    }
+
+    @Override
+    public void dispose() {
+
+        try {
+
+            Preferences preferences = Preferences.getInstance();
+
+            if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
+                String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                saveAllSearchResults(fileName);
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to save source file search results.", e); //$NON-NLS-1$
+        }
+
+        super.dispose();
     }
 
     private class DisableEditAction extends Action {
@@ -406,6 +659,32 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             if (_searchResultViewer != null) {
                 _searchResultViewer.setEditEnabled(isEditMode);
             }
+        }
+    }
+
+    private class EnableAutoSaveAction extends Action {
+
+        public EnableAutoSaveAction() {
+            super(Messages.Auto_save, SWT.CHECK);
+
+            setChecked(Preferences.getInstance().isSourceFileSearchResultsAutoSaveEnabled());
+            addPreferencesChangeListener();
+        }
+
+        public void run() {
+            Preferences.getInstance().setSourceFileSearchResultsAutoSaveEnabled(isChecked());
+        };
+
+        private void addPreferencesChangeListener() {
+            IPreferenceStore preferenceStore = ISpherePlugin.getDefault().getPreferenceStore();
+            preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent event) {
+                    if (event.getProperty() == Preferences.SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED) {
+                        boolean enabled = (Boolean)event.getNewValue();
+                        setChecked(enabled);
+                    }
+                }
+            });
         }
     }
 }
