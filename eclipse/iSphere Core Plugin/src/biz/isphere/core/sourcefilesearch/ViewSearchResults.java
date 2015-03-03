@@ -90,7 +90,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         initializeToolBar();
         initializeMenu();
 
-        loadSearchResults();
+        loadAutoSaveSearchResults();
 
         setActionEnablement();
     }
@@ -266,8 +266,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                 FilterDialog dialog = new FilterDialog(shell);
                 if (dialog.open() == Dialog.OK) {
-                    if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
-                        _searchResultViewer.getSearchResults())) {
+                    if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(), _searchResultViewer
+                        .getSearchResults())) {
 
                         MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
                         errorBox.setText(Messages.E_R_R_O_R);
@@ -436,10 +436,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             return;
         }
 
-        saveAllSearchResults(file);
+        autoSaveAllSearchResults(file);
     }
 
-    private void saveAllSearchResults(String fileName) {
+    private void autoSaveAllSearchResults(String fileName) {
 
         // TabItem[] tabItems = tabFolderSearchResults.getItems();
         // for (TabItem tabItem : tabItems) {
@@ -479,8 +479,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
 
             if (!replace && searchResults.getNumTabs() > 1 && tabFolderSearchResults.getItemCount() > 0) {
-                if (MessageDialog.openQuestion(shell, Messages.Question,
-                    Messages.bind(Messages.Question_replace_search_results, searchResults.getNumTabs()))) {
+                if (MessageDialog.openQuestion(shell, Messages.Question, Messages.bind(Messages.Question_replace_search_results, searchResults
+                    .getNumTabs()))) {
                     removeAllTabItems();
                     ;
                 }
@@ -515,10 +515,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         dialog.setOverwrite(true);
 
         String selectedFileName = dialog.open();
-        if (!StringHelper.isNullOrEmpty(selectedFileName) && !filename.equals(selectedFileName) ) {
+        if (!StringHelper.isNullOrEmpty(selectedFileName) && !filename.equals(selectedFileName)) {
             Preferences.getInstance().setSourceFileSearchResultsLastUsedFileName(selectedFileName);
         }
-        
+
         return selectedFileName;
     }
 
@@ -585,7 +585,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     /**
      * 
      */
-    private void loadSearchResults() {
+    private void loadAutoSaveSearchResults() {
 
         try {
 
@@ -593,7 +593,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
                 String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
-                loadSearchResult(fileName, true);
+                File file = new File(fileName);
+                if (file.exists()) {
+                    loadSearchResult(fileName, true);
+                }
             }
 
         } catch (Throwable e) {
@@ -610,7 +613,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
                 String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
-                saveAllSearchResults(fileName);
+                autoSaveAllSearchResults(fileName);
             }
 
         } catch (Throwable e) {
