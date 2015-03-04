@@ -159,7 +159,6 @@ public class NLSExporter {
                 for (NLSTextEntry value : bundle.getValues(key)) {
                     addLanguageCell(dataRow, value.getText(), value.isProtected());
                 }
-                ;
             }
         }
 
@@ -490,7 +489,7 @@ public class NLSExporter {
         if (e < 0) {
             return unformatted;
         }
-        
+
         String part1 = unformatted.substring(0, s);
         String part2 = unformatted.substring(s + 1, e);
         String part3;
@@ -501,8 +500,8 @@ public class NLSExporter {
         }
 
         formattings.add(new FontFormatting(s - 1, e - 1, underlineFont));
-        
-        return collectFontFormattings(formattings, part1 + part2+ part3, formatChar, underlineFont);
+
+        return collectFontFormattings(formattings, part1 + part2 + part3, formatChar, underlineFont);
     }
 
     private HSSFRichTextString applyFormattings(List<IFormatting> formattings, String formatted) {
@@ -512,11 +511,11 @@ public class NLSExporter {
         }
         return richTextString;
     }
-    
+
     private interface IFormatting {
         public void applyFormatting(RichTextString richTextString);
     }
-    
+
     private class FontFormatting implements IFormatting {
 
         private int start;
