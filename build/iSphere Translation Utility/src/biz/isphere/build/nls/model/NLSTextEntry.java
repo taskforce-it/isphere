@@ -17,11 +17,11 @@ package biz.isphere.build.nls.model;
 public class NLSTextEntry {
 
     private String fText;
-    private boolean fIsProtected;
+    private NLSLanguage fLanguage;
 
-    public NLSTextEntry(String text, boolean isProtected) {
+    public NLSTextEntry(String text, NLSLanguage language) {
         fText = text;
-        fIsProtected = isProtected;
+        fLanguage = language;
     }
 
     public String getText() {
@@ -29,7 +29,11 @@ public class NLSTextEntry {
     }
 
     public boolean isProtected() {
-        return fIsProtected;
+        return fLanguage.isProtected();
+    }
+
+    public boolean isDefaultLanguage() {
+        return fLanguage.isDefaultLanguage();
     }
 
     @Override
