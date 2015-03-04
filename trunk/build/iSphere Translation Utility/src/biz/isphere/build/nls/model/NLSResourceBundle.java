@@ -96,7 +96,7 @@ public class NLSResourceBundle {
         for (String languageKey : getLanguageKeys()) {
             NLSPropertiesFile nlsFile = getNLSFile(languageKey);
             String value = nlsFile.getText(key);
-            values.add(new NLSTextEntry(value, nlsFile.getLanguage().isProtected()));
+            values.add(new NLSTextEntry(value, nlsFile.getLanguage()));
         }
         return values.toArray(new NLSTextEntry[values.size()]);
     }
@@ -157,7 +157,7 @@ public class NLSResourceBundle {
      * @return Boolean value indicating whether or not the language must be
      *         imported.
      */
-    private boolean isSelectedForImport(NLSLanguage language, String[] importLanguageIDs) {
+    public boolean isSelectedForImport(NLSLanguage language, String[] importLanguageIDs) {
         if (importLanguageIDs.length == 1 && "*".equals(importLanguageIDs[0])) {
             return true;
         }

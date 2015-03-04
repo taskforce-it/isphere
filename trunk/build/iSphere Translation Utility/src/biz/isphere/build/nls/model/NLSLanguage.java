@@ -22,10 +22,12 @@ public class NLSLanguage {
 
     private String fLanguageID;
     private boolean fIsProtected;
+    private boolean fIsDefaultLanguage;
 
     public NLSLanguage(String languageID) throws JobCanceledException {
         fLanguageID = languageID;
-        fIsProtected = Configuration.getInstance().getDefaultLanguageID().equalsIgnoreCase(languageID);
+        fIsDefaultLanguage = Configuration.getInstance().getDefaultLanguageID().equalsIgnoreCase(languageID);
+        fIsProtected = fIsDefaultLanguage;
     }
 
     public String getLanguageID() {
@@ -34,6 +36,10 @@ public class NLSLanguage {
 
     public boolean isProtected() {
         return fIsProtected;
+    }
+
+    public boolean isDefaultLanguage() {
+        return fIsDefaultLanguage;
     }
 
     @Override

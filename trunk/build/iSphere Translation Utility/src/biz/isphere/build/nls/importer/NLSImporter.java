@@ -109,7 +109,12 @@ public class NLSImporter {
 
             for (int x = 0; x < languageKeys.length; x++) {
                 NLSPropertiesFile nlsFile = bundle.getNLSFile(languageKeys[x]);
-                nlsFile.setProperty(key, values[x]);
+                if (bundle.isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
+                    if (nlsFile.getText(key) != null && !nlsFile.getText(key).equals(values[x])) {
+                        nlsFile.setProperty(key, values[x]);
+                        System.out.println("   " + key + ": " + values[x]);
+                    }
+                }
             }
         }
     }
