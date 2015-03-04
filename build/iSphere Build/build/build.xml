@@ -117,8 +117,9 @@
 
 	<!-- Set zip file and directory names -->
 	<property name="build.dir" location="${workspace.home}/${build.project.name}/build" />
-	<property name="build.template.dir.web" location="${build.dir}/template_updatesite_web" />
-	<property name="build.template.dir.files" location="${build.dir}/template_no_beta_version" />
+	<property name="build.template.dir" location="${build.dir}/templates" />
+	<property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
+	<property name="build.template.dir.files" location="${build.template.dir}/template_no_beta_version" />
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" /> 
 	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files" />
 	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/" />
