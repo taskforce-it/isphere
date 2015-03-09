@@ -34,6 +34,18 @@ h2 { color: #000000; line-height: 1.6em; font-weight: bold; }
 h3 { color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic; }
 
 /*
+ *  Beta Version Highlighter.
+ */
+
+.beta { padding:2px; padding-left: 25px; background: #FF3300; color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic; }
+
+/*
+ *  Release Version Highlighter.
+ */
+
+.release { padding:2px; padding-left: 25px; background: #4EB9BA; color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic; }
+
+/*
  *  Default body style.
  */
 
