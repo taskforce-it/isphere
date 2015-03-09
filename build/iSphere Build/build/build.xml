@@ -368,6 +368,16 @@
 				<property name="update.site.url" value="${update.site.url.wdsci}"/>
 			</else>
 		</if>
+		
+		<if>
+			<equals arg1="${release.flag}" arg2="r" />
+			<then>
+				<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version&lt;/div&gt;"/>
+			</then>
+			<else>
+			 	<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version&lt;/div&gt;"/>
+			</else>
+		</if>
 
 		<echo>Preparing directory structure ...</echo>
 		<mkdir dir="${build.upload.dir.files}" />
@@ -404,6 +414,10 @@
 		</replace>
 
 		<replace dir="${build.upload.dir.web}" token="@UPDATE_SITE_URL@" value="${update.site.url}" >
+			<include name="**/*.html"/>
+		</replace>
+
+		<replace dir="${build.upload.dir.web}" token="@VERSION_INFO@" value="${version.info}" >
 			<include name="**/*.html"/>
 		</replace>
 
