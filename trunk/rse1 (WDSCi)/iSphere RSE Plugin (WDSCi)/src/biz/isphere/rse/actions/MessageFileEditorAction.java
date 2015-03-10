@@ -113,10 +113,8 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 
                         if (as400 != null) {
 
-                            if (ISphereHelper.checkISphereLibrary(shell, as400)) {
-                                RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
-                                MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
-                            }
+                            RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
+                            MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
 
                         }
                     }
