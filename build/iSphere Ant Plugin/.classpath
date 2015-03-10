@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/jsch-0.1.51.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jzlib-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/iSphere-ant-plugin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/iSphere-ant-runtime.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacob.jar"/>
