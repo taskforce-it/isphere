@@ -1,16 +1,16 @@
 <html>
     <head>
         <meta http-equiv="cache-control" content="no-cache">
-        <meta name="description" content="iSphere Plug-In Update Site">
+        <meta name="description" content="iSphere Plug-in Update Site">
         <meta name="author" content="iSphere Project Team">
         <meta name="keywords" content="iSphere, Plugin, RDP, RDI, WDSCI, Eclipse, AS400">
         <link href="assets/stylesheet.css" rel="stylesheet" type="text/css" />
-        <title>iSphere Update Site</title>
+        <title>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
     </head>
     <body>
-    	<a href="http://www.tools400.de"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="98" height="97" border="0" align="left" style="padding-right:10px;"/></a>
-        <h1>iSphere Plug-In Update Site</h1>
-        <p>Hi, this is the iSphere plug-in update site for @IDE_PRODUCT_NAME@.</p>
+    	<a href="@ISPHERE_HOME@"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="98" height="97" border="0" align="left" style="padding-right:10px;"/></a>
+        <h1>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
+        <p>Hi, this is the <a href="@ISPHERE_HOME@">iSphere</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
         <br>
         <br>
         @VERSION_INFO@
@@ -28,7 +28,7 @@
         Then click the [Finish] button and follow the instructions given on the following pages.
         <h3>Using a Local Update Directory</h3>
         <p>
-        Go to the iSphere <a href="https://sourceforge.net/projects/isphere/" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        Go to the iSphere <a href="@ISPHERE_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
         <p>
         The follow these steps to create your local update site:
         <p>
@@ -40,7 +40,7 @@
         <br>
         <h3>Using a Local Update Archive</h3>
         <p>
-        Go to the iSphere <a href="https://sourceforge.net/projects/isphere/" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        Go to the iSphere <a href="@ISPHERE_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
         <p>
         The follow these steps to create your local update site:
         <p>
@@ -54,8 +54,13 @@
         <p>
 		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
 		<ul>
-		<li>@IDE_PRODUCT_NAME@</li>
+		<li>@IDE_PRODUCT_NAME_LONG@</li>
 		</ul>        
-        <p>
+        <br>
+        <hr>
+        <table border="0" class="copyright">
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @YEAR@, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        </table>
+        <br>
     </body>
 </html>
