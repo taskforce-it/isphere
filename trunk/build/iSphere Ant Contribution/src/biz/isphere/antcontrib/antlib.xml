@@ -5,4 +5,8 @@
 	<taskdef name="winword"
 		classname="biz.isphere.antcontrib.taskdef.Winword"
 		onerror="fail" />
+
+	<taskdef name="SF"
+		classname="biz.isphere.antcontrib.taskdef.SF"
+		onerror="fail" />
 </antlib>

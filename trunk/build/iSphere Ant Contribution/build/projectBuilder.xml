@@ -63,6 +63,7 @@
 		<include name="biz/isphere/antcontrib/configuration/**" />
 		<include name="biz/isphere/antcontrib/internal/**" />
 		<include name="biz/isphere/antcontrib/logger/**" />
+		<include name="biz/isphere/antcontrib/sf/**" />
 		<include name="biz/isphere/antcontrib/taskdef/**" />
 		<include name="biz/isphere/antcontrib/winword/**" />
 	</patternset>
@@ -76,6 +77,11 @@
 	<patternset id="lib-files-jacob-patternset">
 		<include name="*.dll" />
 		<include name="jacob.jar" />
+	</patternset>
+
+	<patternset id="lib-files-sf-patternset">
+		<include name="jsch*.jar" />
+		<include name="jzlib*.jar" />
 	</patternset>
 
 	<fileset dir="${build.dir}" id="project-builder-files">
@@ -106,50 +112,56 @@
 		<patternset refid="lib-files-jacob-patternset" />
 	</fileset>
 
+	<fileset dir="${lib.dir}" id="lib-files-sf">
+		<patternset refid="lib-files-sf-patternset" />
+	</fileset>
+
 	<path id="Plug-in Dependencies.libraryclasspath">
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.runtime_3.6.0.v20100505.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.osgi_3.6.3.R36x_v20110629.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/com.ibm.cds_2.1.0.201009130929.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.osgi.nl1_3.6.2.v201111132303.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.common_3.6.0.v20100503.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.jobs_3.5.1.R36x_v20100824.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.runtime.compatibility.registry_3.3.0.v20100520/runtime_registry_compatibility.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.registry_3.5.0.v20100503.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.registry.nl1_3.5.0.v201111132303.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.preferences_3.3.1.R36x_v20110302.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.contenttype_3.4.100.v20100505-1235.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.app_1.3.1.R36x_v20100803.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.core.runtime_3.6.0.v20100505.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.osgi_3.6.3.R36x_v20110629.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/com.ibm.cds_2.1.0.201009130929.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.osgi.nl1_3.6.2.v201111132303.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.equinox.common_3.6.0.v20100503.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.core.jobs_3.5.1.R36x_v20100824.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.core.runtime.compatibility.registry_3.3.0.v20100520/runtime_registry_compatibility.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.equinox.registry_3.5.0.v20100503.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.equinox.registry.nl1_3.5.0.v201111132303.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.equinox.preferences_3.3.1.R36x_v20110302.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.core.contenttype_3.4.100.v20100505-1235.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.equinox.app_1.3.1.R36x_v20100803.jar" />
         <pathelement location="../../../../org.eclipse.ui.workbench "/>
-        <pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-antlr.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bcel.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bsf.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-log4j.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-oro.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-regexp.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-resolver.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-logging.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-net.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jai.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-javamail.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jdepend.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jmf.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jsch.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-junit.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-launcher.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-netrexx.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-nodeps.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-starteam.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-stylebook.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-swing.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-trax.jar" />
-		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-weblogic.jar" />
+        <pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-antlr.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bcel.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bsf.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-log4j.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-oro.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-regexp.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-resolver.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-logging.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-net.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jai.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-javamail.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jdepend.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jmf.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jsch.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-junit.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-launcher.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-netrexx.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-nodeps.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-starteam.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-stylebook.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-swing.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-trax.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-weblogic.jar" />
 	</path>
 
 	<path id="Jacob Dependencies.libraryclasspath">
+		<pathelement location="lib/jsch-0.1.51.jar" />
+		<pathelement location="lib/jzlib-1.1.3.jar" />
 		<pathelement location="lib/jacob.jar" />
-        <pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
+        <pathelement location="../../../../Programme_x86/IBM/SDP_Shared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
 	</path>
 
 	<path id="compile.runtime.classpath">
@@ -379,6 +391,7 @@
 
 		<copy includeemptydirs="false" todir="${release.dir}">
 			<fileset refid="lib-files-jacob" />
+			<fileset refid="lib-files-sf" />
 		</copy>
 		
 	</target>
@@ -445,6 +458,10 @@
 
 		<copy includeemptydirs="false" todir="${temp.compile.dir}/lib/">
 			<fileset refid="lib-files-jacob" />
+		</copy>
+
+		<copy includeemptydirs="false" todir="${temp.compile.dir}/lib/">
+			<fileset refid="lib-files-sf" />
 		</copy>
 
 	</target>

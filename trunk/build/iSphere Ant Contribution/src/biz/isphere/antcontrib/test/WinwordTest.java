@@ -3,8 +3,8 @@ package biz.isphere.antcontrib.test;
 import java.io.File;
 import java.util.Properties;
 
-import biz.isphere.antcontrib.winword.WdDocument;
 import biz.isphere.antcontrib.winword.WdApplication;
+import biz.isphere.antcontrib.winword.WdDocument;
 import biz.isphere.antcontrib.winword.WdSaveFormat;
 
 public class WinwordTest {
