@@ -5,6 +5,9 @@
  *   'template_ftp.properties' to 'ftp.properties' and change the
  *   properties to meet your needs.
  *
+ *   In order to use all features of the script, you need to
+ *   have the 'iSphere Ant Plugin' installed.
+ *
  *   Here are the steps to create an iSphere update site:
  *
  *     - On the PC run the 'CheckNLSMessages' JUnit test to check
@@ -58,7 +61,7 @@
 
 	<!-- Set date and time -->
 	<tstamp>
-		<format property="today.timestamp" pattern="dd.MM.yyyy - hh:mm:ss" locale="de,DE"/>
+		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE"/>
 	</tstamp>
 	
 	<tstamp>
@@ -111,14 +114,16 @@
 
 	<property name="sf.site.target.rdi" value="rdi8.0" />
 	<property name="sf.site.target.wdsci" value="wdsci7.0" />
-	<property name="sf.ftp.dir.updatesite.web" value="/home/project-web/isphere/htdocs/" />
-	<property name="sf.ftp.dir.updatesite.files" value="/home/pfs/project/isphere/" />
-	<property name="sf.ftp.dir.updatesite.web.rdi" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/${sf.site.target.rdi}/" />
-	<property name="sf.ftp.dir.updatesite.web.wdsc" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/${sf.site.target.wdsci}/" />
-	<property name="sf.ftp.dir.updatesite.files.rdi" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.rdi}" />
-	<property name="sf.ftp.dir.updatesite.files.wdsc" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.wdsci}" />
+	<property name="sf.ftp.dir.updatesite.web.root" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/" />
+	<property name="sf.ftp.dir.updatesite.files.root" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/" />
+	<!--
+	<property name="sf.ftp.dir.updatesite.web.rdi" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.rdi}/" />
+	<property name="sf.ftp.dir.updatesite.web.wdsc" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.wdsci}/" />
+	<property name="sf.ftp.dir.updatesite.files.rdi" value="${sf.ftp.dir.updatesite.files.root}${sf.site.target.rdi}/" />
+	<property name="sf.ftp.dir.updatesite.files.wdsc" value="${sf.ftp.dir.updatesite.files.root}${sf.site.target.wdsci}/" />
 	<property name="sf.site.url.rdi" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.rdi}/" />
 	<property name="sf.site.url.wdsci" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.wdsci}/" />
+	-->
 
 	<!-- iSphere Update Sites -->
 	<property name="update.site.url.rdi" value="http://isphere.sourceforge.net/eclipse/${sf.site.target.rdi}/" />
@@ -363,9 +368,9 @@
 
 		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
 
-		<antcall target="createSourceForgeDownloadFiles" />
+		<antcall target="createSourceForgeDownloadAreaFiles" />
 
-		<antcall target="createSourceForgeUpdateSite" />
+		<antcall target="createSourceForgeUpdateSiteWebPage" />
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
@@ -398,10 +403,16 @@
     * ===================================================================== -->
 	<target name="setSourceForgeParameters">
 
+		<property name="dryrun" value="false"/>
+		
 		<if>
 			<equals arg1="${build.target}" arg2="RDi" />
 			<then>
 				<property name="sf.site.target" value="${sf.site.target.rdi}" />
+				<!--
+				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.rdi}" />
+				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.rdi}" />
+				-->
 				<property name="zip.file.name" value="${zip.file.name.rdi}" />
 				<property name="exclude.site.xml" value="site.xml" />
 				<property name="exclude.web.files" value="**/wdsci*.*" />
@@ -411,6 +422,10 @@
 			</then>
 			<else>
 				<property name="sf.site.target" value="${sf.site.target.wdsci}" />
+				<!--
+				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.wdsc}" />
+				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.wdsci}" />
+				-->
 				<property name="zip.file.name" value="${zip.file.name.wdsc}" />
 				<property name="exclude.site.xml" value="" />
 				<property name="exclude.web.files" value="**/rdi*.*" />
@@ -426,7 +441,7 @@
     * =====================================================================
     *   Create the SourceForge download files.
     * ===================================================================== -->
-	<target name="createSourceForgeDownloadFiles" depends="setSourceForgeParameters" >
+	<target name="createSourceForgeDownloadAreaFiles" depends="setSourceForgeParameters" >
 
 		<echo>Creating SourceForge download folders ...</echo>
 		
@@ -478,7 +493,7 @@
     * =====================================================================
     *   Create the SourceForge Eclipse update site.
     * ===================================================================== -->
-	<target name="createSourceForgeUpdateSite" depends="setSourceForgeParameters" >
+	<target name="createSourceForgeUpdateSiteWebPage" depends="setSourceForgeParameters" >
 
 		<echo>Creating Eclipse web folders ...</echo>
 		
@@ -533,6 +548,36 @@
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		
 	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the SourceForge Eclipse update site.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeUpdateSite" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
+
+		<echo>Removing files from the SourceForge Eclipse web folders ...</echo>
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
+			<Rmdir dir="${sf.site.target}" subDirs="true" />
+		</SF>
+		
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the SourceForge download files.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
+
+		<echo>Removing files from the SourceForge download directory ...</echo>
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.files.root}">
+			<Rmdir dir="${sf.site.target}" subDirs="true" />
+		</SF>
+		
+	</target>
 	
 	<!--
     * =====================================================================
@@ -568,38 +613,63 @@
     * =====================================================================
     *   Uploads the iSphere update site to SourceForge
     * ===================================================================== -->
-	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge" description="Uploads the project files to SourceForge">
+	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" description="Uploads the project files to SourceForge">
 
 		<echo>Uploading files to SourceForge ...</echo>
 
-		<if>
-			<equals arg1="${build.target}" arg2="RDi" />
-			<then>
-				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.rdi}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.rdi}" />
-			</then>
-			<else>
-				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.wdsc}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.wdsci}" />
-			</else>
-		</if>
+		<echo>Deleting: web folder of the iSphere update site ...</echo>
+		<antcall target="cleanSourceForgeUpdateSite" />
 
-		<echo>Deleting: Upload web folder ...</echo>
+		<echo>Uploading: web folder of the iSphere update site ...</echo>
+		<antcall target="uploadSourceForgeUpdateSite" />
 
-		<echo>Uploading: Upload web folder ...</echo>
+		<echo>Deleting: download folder of the iSphere update site ...</echo>
+		<antcall target="cleanSourceForgeDownloadFiles"></antcall>
+
+		<echo>Uploading: download folder of the iSphere update site ...</echo>
+		<antcall target="uploadSourceForgeDownloadFiles" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the iSphere update site web page to SourceForge
+    * ===================================================================== -->
+	<target name="uploadSourceForgeUpdateSite" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
+		
+		<!--
 		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.web}:${sf.ftp.dir.updatesite.web}">
 			<fileset dir="${build.upload.dir.web}\">
 			</fileset>
 		</scp>
+		-->
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
+			<copydir dir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="${sf.site.target}" subDirs="true" />
+		</SF>
+		
+	</target>
 
-		<echo>Deleting: Upload files folder ...</echo>
-
-		<echo>Uploading: Upload files folder ...</echo>
+	<!--
+    * =====================================================================
+    *   Uploads the files of the iSphere update site to 
+    *   the SourceForge download area.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
+		
+		<!--
 		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.files}:${sf.ftp.dir.updatesite.files}">
 			<fileset dir="${build.upload.dir.files}\">
 			</fileset>
 		</scp>
-
+		-->
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
+			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="${sf.site.target}" subDirs="true" />
+		</SF>
+		
 	</target>
 
 	<!--
