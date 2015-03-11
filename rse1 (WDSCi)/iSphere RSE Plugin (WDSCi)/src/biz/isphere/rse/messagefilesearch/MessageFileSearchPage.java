@@ -59,6 +59,8 @@ import com.ibm.etools.systems.model.SystemConnection;
 
 public class MessageFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
+    public static final String ID = "biz.isphere.rse.messagefilesearch.MessageFileSearchPage";
+    
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
     private static final String CONNECTION = "connection";
