@@ -16,5 +16,4 @@ public abstract class SFAbstractCmd {
     }
 
     protected abstract void executeCmd(SFClient client) throws SFException;
-
 }

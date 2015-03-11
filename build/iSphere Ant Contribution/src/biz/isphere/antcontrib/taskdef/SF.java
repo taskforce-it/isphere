@@ -3,6 +3,7 @@ package biz.isphere.antcontrib.taskdef;
 import java.util.Vector;
 
 import biz.isphere.antcontrib.sf.SFClient;
+import biz.isphere.antcontrib.utils.FileUtil;
 
 public class SF {
 
@@ -89,7 +90,7 @@ public class SF {
     }
 
     public void setRemoteDir(String remoteDir) {
-        this.remoteDir = remoteDir;
+        this.remoteDir = FileUtil.trimDirectory(remoteDir);
     }
 
     public void setTrust(boolean trust) {
