@@ -8,6 +8,15 @@ Changelog: iSphere 2.6.0 beta 3
  • Added option to the preferences page and the iSphere Source File Search 
    view for automatically saving search results when the view is closed.
  • Added preferences page for label decorations of the RSE tree.
+ • Added key bindings (Ctrl+I,M) and (Ctrl+I,S) for the iSphere source file
+   and message file search dialogs.
+ • Added commands:
+     Data Space Editor Designer
+     RSE Filter Management
+     Transfer iSphere Library
+     Open Message File Search dialog
+     Open Source File Search dialog
+ • Now the iSphere search dialogs show up in the Eclipse "Search" menu.
 
 
 Changelog: iSphere 2.6.0 beta 2

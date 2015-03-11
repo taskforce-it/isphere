@@ -58,6 +58,8 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
+    public static final String ID = "biz.isphere.rse.sourcefilesearch.SourceFileSearchPage";
+
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
     private static final String CONNECTION = "connection";
