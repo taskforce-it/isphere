@@ -115,7 +115,8 @@
 	<property name="sf.site.target.rdi" value="rdi8.0" />
 	<property name="sf.site.target.wdsci" value="wdsci7.0" />
 	<property name="sf.ftp.dir.updatesite.web.root" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/" />
-	<property name="sf.ftp.dir.updatesite.files.root" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/" />
+	<property name="sf.ftp.dir.updatesite.files.root" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/" />
+	<property name="sf.ftp.dir.updatesite.files.eclipse" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/" />
 	<!--
 	<property name="sf.ftp.dir.updatesite.web.rdi" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.rdi}/" />
 	<property name="sf.ftp.dir.updatesite.web.wdsc" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.wdsci}/" />
@@ -574,7 +575,8 @@
 		
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.files.root}">
-			<Rmdir dir="${sf.site.target}" subDirs="true" />
+			<Rmdir dir="." subDirs="false" />
+			<Rmdir dir="./eclipse/${sf.site.target}" subDirs="true" />
 		</SF>
 		
 	</target>
@@ -666,8 +668,9 @@
 		-->
 		
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
-			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
-			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="${sf.site.target}" subDirs="true" />
+			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.files.root}">
+			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}" toDir="." subDirs="false" />
+			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="./eclipse/${sf.site.target}" subDirs="true" />
 		</SF>
 		
 	</target>
