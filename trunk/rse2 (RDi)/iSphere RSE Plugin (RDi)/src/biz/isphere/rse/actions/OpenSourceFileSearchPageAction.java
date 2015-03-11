@@ -12,30 +12,32 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.handler.OpenRSEManagementHandler;
+import biz.isphere.rse.handler.OpenSourceFileSearchPageHandler;
 
-public class RSEManagementAction implements IViewActionDelegate {
-    
-	public void init(IViewPart viewPart) {
-	}
+public class OpenSourceFileSearchPageAction implements IWorkbenchWindowActionDelegate {
 
-	public void run(IAction action) {
+    public static final String ID = "biz.isphere.rse.actions.OpenSourceFileSearchPageAction";
 
+    public void run(IAction action) {
         try {
-
-            OpenRSEManagementHandler handler = new OpenRSEManagementHandler();
+            OpenSourceFileSearchPageHandler handler = new OpenSourceFileSearchPageHandler();
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
-
         } catch (ExecutionException e) {
-            ISpherePlugin.logError("Failed to open the RSE filter management.", e);
+            ISpherePlugin.logError("Failed to open the iSphere source file search dialog.", e);
         }
-	}
+    }
 
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
+    public void selectionChanged(IAction action, ISelection selection) {
+    }
+
+    public void dispose() {
+    }
+
+    public void init(IWorkbenchWindow window) {
+    }
 }
