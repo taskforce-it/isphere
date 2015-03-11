@@ -4,6 +4,7 @@ import biz.isphere.antcontrib.sf.SFAbstractCmd;
 import biz.isphere.antcontrib.sf.SFClient;
 import biz.isphere.antcontrib.sf.SFException;
 import biz.isphere.antcontrib.sf.SFFileListener;
+import biz.isphere.antcontrib.utils.FileUtil;
 
 import com.jcraft.jsch.SftpException;
 
@@ -23,7 +24,7 @@ public class Copydir extends SFAbstractCmd implements SFFileListener {
             throw new SFException("Invalid directory name: '" + dir + "'");
         }
 
-        this.dir = dir;
+        this.dir = FileUtil.trimDirectory(dir);
     }
 
     public void setToDir(String toDir) throws SFException {
@@ -32,7 +33,7 @@ public class Copydir extends SFAbstractCmd implements SFFileListener {
             throw new SFException("Invalid directory name: '" + toDir + "'");
         }
 
-        this.toDir = toDir;
+        this.toDir = FileUtil.trimDirectory(toDir);
     }
 
     public void setSubDirs(boolean subDirs) {

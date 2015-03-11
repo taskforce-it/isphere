@@ -35,10 +35,10 @@
 
 		<echo>Testing SF ...</echo>
 
-		<SF user="tools400,isphere" password="${user.password}" trust="true" dryrun="false" 
-			host="frs.sourceforge.net" remoteDir="/home/pfs/project/isphere/test/">
-			<Rmdir dir="features" subDirs="true" />
-			<Copydir dir="doc" toDir="features" subDirs="true" />
+		<SF user="tools400,isphere" password="${user.password}" trust="true" dryrun="true" 
+			host="frs.sourceforge.net" remoteDir="/home/pfs/project/isphere/beta-version/">
+			<Rmdir dir="." subDirs="false" />
+			<Rmdir dir="./eclipse/rdi8.0/" subDirs="true" />
 		</SF>
 
 	</target>

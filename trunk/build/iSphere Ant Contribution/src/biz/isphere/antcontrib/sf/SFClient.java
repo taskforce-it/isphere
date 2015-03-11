@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Stack;
 import java.util.Vector;
 
+import biz.isphere.antcontrib.utils.FileUtil;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -198,10 +200,10 @@ public class SFClient {
         }
 
         if (directory.startsWith(".")) {
-            return getRemoteDir() + "/" + directory.substring(1);
+            return FileUtil.trimDirectory(getRemoteDir() + directory.substring(1));
         }
 
-        return getRemoteDir() + "/" + directory;
+        return FileUtil.trimDirectory(getRemoteDir() + "/" + directory);
     }
 
     private boolean isIgnoredDirectory(String entry) {
@@ -240,6 +242,14 @@ public class SFClient {
     }
 
     private void deleteRemoteDirectory(String directory) throws SftpException {
+
+        if (directory == null) {
+            return;
+        }
+
+        if (directory.equals(channel.pwd())) {
+            return;
+        }
 
         if (!isDryRun()) {
             channel.rmdir(directory);

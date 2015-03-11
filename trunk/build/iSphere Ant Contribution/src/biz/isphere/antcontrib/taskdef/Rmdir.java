@@ -4,6 +4,7 @@ import biz.isphere.antcontrib.sf.SFAbstractCmd;
 import biz.isphere.antcontrib.sf.SFClient;
 import biz.isphere.antcontrib.sf.SFException;
 import biz.isphere.antcontrib.sf.SFFileListener;
+import biz.isphere.antcontrib.utils.FileUtil;
 
 import com.jcraft.jsch.SftpException;
 
@@ -18,11 +19,11 @@ public class Rmdir extends SFAbstractCmd implements SFFileListener {
 
     public void setDir(String dir) throws SFException {
 
-        if (".".equals(dir) || "..".equals(dir)) {
+        if ("..".equals(dir)) {
             throw new SFException("Invalid directory name: '" + dir + "'");
         }
 
-        this.dir = dir;
+        this.dir = FileUtil.trimDirectory(dir);
     }
 
     public void setSubDirs(boolean subDirs) {
