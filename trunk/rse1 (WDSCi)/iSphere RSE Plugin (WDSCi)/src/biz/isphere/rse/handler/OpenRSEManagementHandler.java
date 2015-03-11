@@ -20,8 +20,10 @@ import biz.isphere.rse.resourcemanagement.filter.FilterEntryDialog;
 public class OpenRSEManagementHandler extends AbstractHandler implements IHandler {
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
+        
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         new FilterEntryDialog(shell).open();
+        
         return null;
     }
 

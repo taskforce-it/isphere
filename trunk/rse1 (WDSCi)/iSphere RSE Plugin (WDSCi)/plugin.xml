@@ -370,7 +370,7 @@
          </menu> 
          <action
             id="biz.isphere.rse.actions.RSEManagementAction" 
-            label="&amp;%iSphere_RSE_Filter_Management" 
+            label="%iSphere_RSE_Filter_Management" 
             menubarPath="biz.isphere.rse.menu/group1" 
             toolbarPath="Normal/additions"
             style="push"
@@ -390,16 +390,15 @@
    
    <extension
          point="org.eclipse.ui.actionSets">
+         
       <actionSet
             id="biz.isphere.core.actionSet"
-            label="iSphere Action Set"
+            label="%menu_iSphere_Menu"
             visible="true">
+            
          <menu
                id="biz.isphere.core.menu.isphere"
                label="%menu_iSphere">
-            <separator
-                  name="Group0">
-            </separator>
          </menu>
          <action
                class="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
@@ -439,19 +438,120 @@
       </actionSet>
    </extension>
 
+      	<!--
+      	  ==========================================
+      	    iSphere Search Menu Contribution
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.actionSets">
+         
+      <actionSet
+            id="biz.isphere.rse.menu.SearchPages"
+            label="%menu_iSphere_Search"
+            visible="true">
+            
+         <menu
+               label="%menu_Search"
+               path="navigate"
+               id="org.eclipse.search.menu">
+         </menu>
+         
+         <action
+               class="biz.isphere.rse.actions.OpenMessageFileSearchPageAction"
+               id="biz.isphere.rse.actions.OpenMessageFileSearchPageAction"
+               definitionId="biz.isphere.core.command.MessageFileSearchPage.open"
+               label="%menu_iSphere_Message_File_Search"
+               icon="icons/message_file_search.png"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               tooltip="%menu_Tooltip_iSphere_Message_File_Search">
+         </action>
+         
+         <action
+               class="biz.isphere.rse.actions.OpenSourceFileSearchPageAction"
+               id="biz.isphere.rse.actions.OpenSourceFileSearchPageAction"
+               definitionId="biz.isphere.core.command.SourceFileSearchPage.open"
+               label="%menu_iSphere_Source_File_Search"
+               icon="icons/source_file_search.gif"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               tooltip="%menu_Tooltip_iSphere_Source_File_Search">
+         </action>
+         
+      </actionSet>
+   </extension>
+   
+      	<!--
+      	  ==========================================
+      	    iSphere Key Bindings
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.bindings">
+   
+      <key 
+        sequence="Ctrl+I S"
+        commandId="biz.isphere.core.command.SourceFileSearchPage.open"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
+   
+      <key 
+        sequence="Ctrl+I M"
+        commandId="biz.isphere.core.command.MessageFileSearchPage.open"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
+            
+   </extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Commands
+      	  ==========================================
+      	-->
+
    <extension
          point="org.eclipse.ui.commands">
+         
+      <category
+            name="iSphere"
+            id="biz.isphere.category.Commands">
+      </category>
+         
       <command
             defaultHandler="biz.isphere.core.dataspaceeditordesigner.rse.OpenDataSpaceEditorDesignerHandler"
             id="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+            categoryId="biz.isphere.category.Commands"
             name="%command_DataSpace_Editor_Designer">
       </command>
       
       <command
             defaultHandler="biz.isphere.rse.handler.OpenRSEManagementHandler"
             id="biz.isphere.core.command.RSEManagement.open"
+            categoryId="biz.isphere.category.Commands"
             name="%command_RSE_Filter_Management">
       </command>
+      
+      <command
+            defaultHandler="biz.isphere.core.internal.handler.TransferLibraryHandler"
+            id="biz.isphere.core.command.iSphereLibrary.transfer"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Transfer_iSphere_library">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenMessageFileSearchPageHandler"
+            id="biz.isphere.core.command.MessageFileSearchPage.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Open_iSphere_Message_File_Search_Page">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenSourceFileSearchPageHandler"
+            id="biz.isphere.core.command.SourceFileSearchPage.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Open_iSphere_Source_File_Search_Page">
+      </command>
+      
    </extension>
 
 </plugin>
