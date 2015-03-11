@@ -10,6 +10,7 @@ package biz.isphere.core.helpbuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -66,7 +67,15 @@ public class HelpBuilder {
             for (Project project : projects) {
                 File srcDir = new File(project.getHelpDirectory());
                 File destDir = new File(outputDirectory);
-                FileUtils.copyDirectory(srcDir, destDir);
+                FileUtils.copyDirectory(srcDir, destDir, new FileFilter() {
+
+                    public boolean accept(File pathname) {
+                        if (pathname.getPath().endsWith(".svn")) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
             }
 
         } catch (IOException e) {
