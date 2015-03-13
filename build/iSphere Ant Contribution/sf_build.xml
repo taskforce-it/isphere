@@ -36,9 +36,13 @@
 		<echo>Testing SF ...</echo>
 
 		<SF user="tools400,isphere" password="${user.password}" trust="true" dryrun="true" 
-			host="frs.sourceforge.net" remoteDir="/home/pfs/project/isphere/beta-version/">
-			<Rmdir dir="." subDirs="false" />
+			host="frs.sourceforge.net" remoteDir="/home/pfs/project/isphere/ant-test/">
+			<Rmdir dir="." subDirs="false" >
+				<IgnoreFile pattern="*rdi*.zip" ignoreCase="true" />
+			</Rmdir>
+			<!--
 			<Rmdir dir="./eclipse/rdi8.0/" subDirs="true" />
+			-->
 		</SF>
 
 	</target>

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Stack;
 import java.util.Vector;
 
+import biz.isphere.antcontrib.taskdef.IgnoreFile;
 import biz.isphere.antcontrib.utils.FileUtil;
 
 import com.jcraft.jsch.Channel;
@@ -97,7 +98,7 @@ public class SFClient {
         return channel.pwd();
     }
 
-    public void rmDir(SFClient c, String directory, boolean subDirs) throws SftpException {
+    public void rmDir(SFClient c, String directory, boolean subDirs, IgnoreFile[] ignoredFiles) throws SftpException {
 
         directory = getRemoteDirectory(directory);
 
@@ -126,7 +127,7 @@ public class SFClient {
                         if (attrs.isDir()) {
 
                             if (subDirs) {
-                                rmDir(c, directory + "/" + lsEntry.getFilename(), subDirs);
+                                rmDir(c, directory + "/" + lsEntry.getFilename(), subDirs, ignoredFiles);
                             }
 
                         } else {
@@ -144,7 +145,7 @@ public class SFClient {
                                 // fireDeleteFileListener(lsEntry.getFilename(),
                                 // "(Link)");
                             } else if (attrs.isReg()) {
-                                deleteRemoteFile(directory + "/" + lsEntry.getFilename(), "(Reg)");
+                                deleteRemoteFile(directory + "/" + lsEntry.getFilename(), "(Reg)", ignoredFiles);
                             } else if (attrs.isSock()) {
                                 // fireDeleteFileListener(lsEntry.getFilename(),
                                 // "(Sock)");
@@ -215,6 +216,17 @@ public class SFClient {
         return false;
     }
 
+    private boolean isIgnoredFile(IgnoreFile[] ignoredFiles, String filename) {
+
+        for (IgnoreFile ignoreFile : ignoredFiles) {
+            if (ignoreFile.matches(filename)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void ensureRemoteDirectory(String toDirectory) throws SftpException, SFException {
 
         try {
@@ -258,7 +270,12 @@ public class SFClient {
         fireDeleteFileListener(directory, "(Dir)");
     }
 
-    private void deleteRemoteFile(String filename, String info) throws SftpException {
+    private void deleteRemoteFile(String filename, String info, IgnoreFile[] ignoredFiles) throws SftpException {
+
+        if (isIgnoredFile(ignoredFiles, filename)) {
+            fireIgnoreFileListener(filename, info);
+            return;
+        }
 
         if (!isDryRun()) {
             channel.rm(filename);
@@ -303,5 +320,9 @@ public class SFClient {
             SFFileListener listener = fileListener.peek();
             listener.executingFileCommand(command, filename, info);
         }
+    }
+
+    private void fireIgnoreFileListener(String filename, String info) {
+        fireFileListener(SFFileListener.IGNORED, filename, info);
     }
 }
