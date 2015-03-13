@@ -28,7 +28,7 @@
  *        and plugin.xml by build target 'updateVersionNumber'.)
  *
  *   Repeat for RDi and WDSC:
- *     - On the PC run target 'download'.
+ *     - On the PC run target 'downloadISphereLibrary'.
  *     - On the PC run target 'build' using lauch for RDP or WDSC.
  *     - On the PC right click 'site.xml', 
  *       select 'PDE Tools' -> 'Build Site'.
@@ -61,23 +61,15 @@
 
 	<!-- Set date and time -->
 	<tstamp>
-		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE"/>
+		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
 	</tstamp>
-	
+
 	<tstamp>
-		<format property="today.year" pattern="yyyy" locale="de,DE"/>
+		<format property="today.year" pattern="yyyy" locale="de,DE" />
 	</tstamp>
-	
-	<!-- Set the iSphere home at SourceForge -->
-	<property name="isphere.home" value="https://sourceforge.net/projects/isphere/" />
-	
-	<!-- Set local FTP download directory -->
-	<property name="local.ftp.download.directory" location="${basedir}/temp-downloads" />
-	<property name="local.savefile.name" value="ISPHERE" />
-	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
 
 	<!-- Set regular expressions and replacement values -->
-	<property name="validate.version.regex" value="([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?)$" />
+	<property name="validate.version.regex" value="^([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?)$" />
 	<property name="release.flag.regex" value="^(?:[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|(r)))?)$" />
 
 	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)" />
@@ -104,69 +96,163 @@
 		<equals arg1="${release.flag}" arg2="r" />
 		<then>
 			<echo>Building a RELEASE version.</echo>
-			<property name="sf.ftp.beta.dir" value="." />
+			<property name="is.beta.version" value="false" />
+			<property name="beta.dir" value="." />
+			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
 		</then>
 		<else>
 			<echo>Building a BETA version.</echo>
-			<property name="sf.ftp.beta.dir" value="${sf.ftp.beta.dir.name}" />
+			<property name="is.beta.version" value="true" />
+			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
+			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
 		</else>
 	</if>
 
-	<property name="sf.site.target.rdi" value="rdi8.0" />
-	<property name="sf.site.target.wdsci" value="wdsci7.0" />
-	<property name="sf.ftp.dir.updatesite.web.root" value="/home/project-web/isphere/htdocs/${sf.ftp.beta.dir}/eclipse/" />
-	<property name="sf.ftp.dir.updatesite.files.root" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/" />
-	<property name="sf.ftp.dir.updatesite.files.eclipse" value="/home/pfs/project/isphere/${sf.ftp.beta.dir}/eclipse/" />
-	<!--
-	<property name="sf.ftp.dir.updatesite.web.rdi" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.rdi}/" />
-	<property name="sf.ftp.dir.updatesite.web.wdsc" value="${sf.ftp.dir.updatesite.web.root}${sf.site.target.wdsci}/" />
-	<property name="sf.ftp.dir.updatesite.files.rdi" value="${sf.ftp.dir.updatesite.files.root}${sf.site.target.rdi}/" />
-	<property name="sf.ftp.dir.updatesite.files.wdsc" value="${sf.ftp.dir.updatesite.files.root}${sf.site.target.wdsci}/" />
-	<property name="sf.site.url.rdi" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.rdi}/" />
-	<property name="sf.site.url.wdsci" value="http://downloads.sourceforge.net/project/isphere/${sf.ftp.beta.dir}/eclipse/${sf.site.target.wdsci}/" />
-	-->
-
-	<!-- iSphere Update Sites -->
-	<property name="update.site.url.rdi" value="http://isphere.sourceforge.net/eclipse/${sf.site.target.rdi}/" />
-	<property name="update.site.url.wdsci" value="http://isphere.sourceforge.net/eclipse/${sf.site.target.wdsci}/" />
-
-	<!-- IDE Product Name -->
-	<property name="ide.product.name.long.rdi" value="IBM Rational Developer for i" />
-	<property name="ide.product.name.short.rdi" value="RDi 8.0+" />
-	<property name="ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
-	<property name="ide.product.name.short.wdsci" value="WDSCi 7.0" />
+	<!-- Enable/disable changes to SourceForge -->
+	<property name="sf.dryrun" value="false" />
 
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
 
+	<!-- Set build home directory -->
+	<property name="build.home" location="${basedir}" />
+
+	<!-- Set the iSphere home at SourceForge -->
+	<property name="isphere.home" value="https://sourceforge.net/projects/isphere/" />
+
+	<!-- Set local FTP properties -->
+	<property name="local.download.directory" location="${basedir}/temp-downloads" />
+	<property name="local.savefile.name" value="ISPHERE" />
+	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
+
+	<!-- Set remote FTP properties (SourceForge) -->
+	<property name="sf.dir.updatesite.web.root" value="/home/project-web/isphere/htdocs/${beta.dir}/eclipse/" />
+	<property name="sf.dir.updatesite.files.root" value="/home/pfs/project/isphere/${beta.dir}/" />
+	<property name="sf.dir.updatesite.help.root" value="/home/project-web/isphere/htdocs/${beta.dir}/" />
+	<property name="sf.dir.updatesite.help.dir" value="help" />
+
 	<!-- Set zip file and directory names -->
-	<property name="build.dir" location="${workspace.home}/${build.project.name}/build" />
-	<property name="build.template.dir" location="${build.dir}/templates" />
+	<property name="build.template.dir" location="${build.home}/templates" />
 	<property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
 	<property name="build.template.dir.files" location="${build.template.dir}/template_no_beta_version" />
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
-	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files" />
-	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/" />
+	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
+	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
+	<property name="build.upload.dir.web.eclipse" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.help" location="${build.upload.dir}/sf-help/${beta.dir}/help" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
-	<property name="zip.file.name.rdi" value="iSphere for RDi 8.0+ (v${build.version} Update Site).zip" />
-	<property name="zip.file.name.wdsc" value="iSphere for WDSCi 7.0 (v${build.version} Update Site).zip" />
 	<property name="isphere.doc" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere.doc" />
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
 	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
 
-	<fileset dir="${build.dir}" id="build.changelog.files">
+	<fileset dir="${build.home}" id="build.changelog.files">
 		<include name="Changelog iSphere*.txt" />
 	</fileset>
 
+	<!-- Set build target dependant parameters -->
+	<if>
+		<equals arg1="${build.target}" arg2="RDi" />
+		<then>
+			<property name="target.ide.ide.product.name.long" value="IBM Rational Developer for i" />
+			<property name="target.ide.ide.product.name.short" value="RDi 8.0+" />
+			<property name="target.ide.sf.dir" value="rdi8.0" />
+			<property name="target.ide.exclude.site.xml" value="site.xml" />
+			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
+		</then>
+		<else>
+			<property name="target.ide.ide.product.name.long" value="Websphere Development Studio Client for iSeries" />
+			<property name="target.ide.ide.product.name.short" value="WDSCi 7.0" />
+			<property name="target.ide.sf.dir" value="wdsci7.0" />
+			<property name="target.ide.exclude.site.xml" value="" />
+			<property name="target.ide.exclude.web.files" value="**/rdi*.*" />
+		</else>
+	</if>
+
+	<property name="target.ide.zip.file.name" value="iSphere for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
+
+	<if>
+		<equals arg1="${is.beta.version}" arg2="true" />
+		<then>
+			<property name="target.ide.update.site.url" value="http://isphere.sourceforge.net/${beta.dir}/eclipse/${target.ide.sf.dir}/" />
+			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+		</then>
+		<else>
+			<property name="target.ide.update.site.url" value="http://isphere.sourceforge.net/eclipse/${target.ide.sf.dir}/" />
+			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+		</else>
+	</if>
+
+	<!-- Check what shall be build -->
+	<if>
+		<equals arg1="${build.files.enabled}" arg2="true" />
+		<then>
+			<!-- build files for download area -->
+			<echo>Building iSphere download files ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.files" value="true" />
+			<echo>IGNORED: iSphere Download Files</echo>
+		</else>
+	</if>
+
+	<if>
+		<equals arg1="${build.web.enabled}" arg2="true" />
+		<then>
+			<!-- build files of update site -->
+			<echo>Building web pages of iSphere update site ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.web" value="true" />
+			<echo>IGNORED: iSphere Update Site</echo>
+		</else>
+	</if>
+
+	<if>
+		<equals arg1="${build.help.enabled}" arg2="true" />
+		<then>
+			<!-- build help pages -->
+			<echo>Building iSphere help web pages ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.help" value="true" />
+			<echo>IGNORED: iSphere Help</echo>
+		</else>
+	</if>
+
 	<!--
     * =====================================================================
-    *   Controls the build process:
-    *     - update version number
+    *   Downloads library ISPHERE from the System i.
+    *   This target requires a patched version of commons-net-3.3.jar
+    *   where bug NET-512 has been fixed.
+    *   (https://issues.apache.org/jira/browse/NET-512)
     * ===================================================================== -->
-	<target name="build" depends="cleanUpdateSite, updateVersionNumber, createTagFile, refreshProjects" description="build iSphere update site">
-		<echo>Finished iSphere build ${build.version}</echo>
-		<echo>Open site.xml and press [Build All] to build the iSphere update site.</echo>
+	<target name="downloadISphereLibrary" depends="ftpCredentialsIBMi" description="Download iSphere library from IBM i">
+
+		<echo>Downloading save file ${ftp.savefile.name} ...</echo>
+
+		<ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400">
+			<fileset dir="${local.download.directory}" casesensitive="false">
+				<include name="${ftp.savefile.name}" />
+			</fileset>
+		</ftp>
+
+		<move file="${local.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Controls the build process.
+    * ===================================================================== -->
+	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
+
 		<echo>+------------------------------------------------------+</echo>
+		<echo>+  Finished iSphere build ${build.version}             |</echo>
+		<echo>|                                                      |</echo>
 		<echo>|  Right-click 'site.xml' and select 'PDE Tools' ->    |</echo>
 		<echo>|  'Build Site' to build the update site.              |</echo>
 		<echo>|                                                      |</echo>
@@ -174,6 +260,377 @@
 		<echo>|                       uploadSourceForgeFiles         |</echo>
 		<echo>+------------------------------------------------------+</echo>
 		<echo>*** Finished ***</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Produces the files that must be uploaded to SourceForge.
+    * ===================================================================== -->
+	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp" description="Create SourceForge files and web pages">
+
+		<echo>+------------------------------------------------------+</echo>
+		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Then proceed with:   uploadSourceForgeFiles         |</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>*** Finished ***</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the entire project files to SourceForge.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge" description="Uploads the entire project to SourceForge">
+
+		<echo>Uploading files to SourceForge ...</echo>
+
+		<antcall target="cleanSourceForgeDownloadFiles" />
+
+		<antcall target="cleanSourceForgeWebPages" />
+
+		<antcall target="cleanSourceForgeHelp" />
+
+		<antcall target="uploadSourceForgeDownloadFiles" />
+
+		<antcall target="uploadSourceForgeWebPages" />
+
+		<antcall target="uploadSourceForgeHelp" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all generated files from the local 
+    *   'iSphere Update Site' folder.
+    * ===================================================================== -->
+	<target name="cleanUpdateSite">
+
+		<echo>Removing old files from '${build.updatesite}' ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="logs.zip" />
+		</delete>
+
+		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+
+		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the local 'upload' directory.
+    * ===================================================================== -->
+	<target name="cleanUploadDir">
+
+		<echo>Cleaning upload directory ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
+		</delete>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the files of the iSphere download area on SourceForge.
+    * ===================================================================== -->
+	<target name="createSourceForgeDownloadFiles" unless="ignore.build.files">
+
+		<echo>Creating SourceForge download folders ...</echo>
+
+		<echo>Preparing directory structure ...</echo>
+		<mkdir dir="${build.upload.dir.files}" />
+		<mkdir dir="${build.upload.dir.files}/eclipse" />
+		<mkdir dir="${build.upload.dir.files}/eclipse/${target.ide.sf.dir}" />
+
+		<echo>Copying zip and pdf files ...</echo>
+		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
+			<include name="**/*" />
+			<exclude name="**/.project" />
+		</zip>
+		<copy file="${isphere.pdf}" todir="${build.upload.dir.files}" />
+
+		<echo>Copying Eclipse update site files ...</echo>
+		<copy todir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+			<fileset dir="${workspace.home}\${build.updatesite}">
+				<exclude name="*.log" />
+				<exclude name="${target.ide.exclude.site.xml}" />
+				<exclude name=".project" />
+			</fileset>
+		</copy>
+
+		<echo>Copying release/beta version dependant files ...</echo>
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<echo>Copying "Not yet available.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}">
+					<fileset dir="${build.template.dir.files}" />
+				</copy>
+			</then>
+			<else>
+				<echo>Copying "Changelog iSphere.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}">
+					<fileset refid="build.changelog.files" />
+				</copy>
+			</else>
+		</if>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Create the web pages of the iSphere update site.
+    * ===================================================================== -->
+	<target name="createSourceForgeWebPages" unless="ignore.build.web">
+
+		<echo>Creating Eclipse web folders ...</echo>
+
+		<echo>Preparing directory structure ...</echo>
+		<mkdir dir="${build.upload.dir.web}" />
+
+		<echo>Copying templates directory ...</echo>
+		<copy todir="${build.upload.dir.web}">
+			<fileset dir="${build.template.dir.web}">
+				<exclude name="${target.ide.exclude.web.files}" />
+			</fileset>
+		</copy>
+
+		<echo>Renaming ${target.ide.sf.dir} ...</echo>
+		<move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}">
+			<fileset dir="${build.upload.dir.web.eclipse}\build_target" />
+		</move>
+
+		<echo>Renaming index.html ...</echo>
+		<move file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\${build.target}_index.html" tofile="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" />
+
+		<echo>Renaming .htaccess ...</echo>
+		<move file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\_htaccess" tofile="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" />
+
+		<echo>Replacing '@' variables ...</echo>
+
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BUILD_TARGET@" value="${target.ide.sf.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BETA_VERSION@" value="${sf.ftp.beta.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="/./" value="/" />
+
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_INFO@" value="${version.info}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@IDE_PRODUCT_NAME_LONG@" value="${target.ide.ide.product.name.long}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@UPDATE_SITE_URL@" value="${target.ide.update.site.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@HELP_SITE_URL@" value="${target.ide.help.site.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@YEAR@" value="${today.year}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the iSphere help pages.
+    *   This target call the build script of the 'iSphere Help Builder'
+    *   project to create the web folder.
+    * ===================================================================== -->
+	<target name="createSourceForgeHelp" unless="ignore.build.help">
+
+		<echo>Creating iSphere help ...</echo>
+
+		<ant inheritAll="false" inheritrefs="false" antfile="${workspace.home}/${build.help.builder}/build/build.xml" target="build">
+		</ant>
+
+		<copy todir="${build.upload.dir.help}">
+			<fileset dir="${workspace.home}/${build.help.builder}/upload" />
+		</copy>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the iSphere download area on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
+
+		<echo>Deleting SourceForge: files (download area) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
+			<Rmdir dir="." subDirs="false" />
+			<Rmdir dir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the iSphere update site web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeWebPages" depends="ftpCredentialsSourceForge" unless="ignore.build.web">
+
+		<echo>Deleting: web pages (update site) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			<Rmdir dir="./${sf.site.target}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the iSphere help pages web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeHelp" depends="ftpCredentialsSourceForge" unless="ignore.build.help">
+
+		<echo>Deleting SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
+			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the iSphere files to the SourceForge download area.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
+
+		<echo>Uploading SourceForge: files (download area) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
+			<copydir dir="${build.upload.dir.files}" toDir="." subDirs="false" />
+			<copydir dir="${build.upload.dir.files.eclipse}\${sf.site.target}" toDir="./eclipse/${sf.site.target}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the iSphere web pages of the Eclipse update site 
+    *   to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeWebPages" depends="ftpCredentialsSourceForge" unless="ignore.build.web">
+
+		<echo>Uploading: web pages (update site) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			<copydir dir="${build.upload.dir.web.eclipse}\${sf.site.target}" toDir="./${sf.site.target}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the iSphere help pages to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeHelp" depends="ftpCredentialsSourceForge" unless="ignore.build.help">
+
+		<echo>Uploading SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.help.root}">
+			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the tag file to indicate the iSphere version 
+    *   of the zip file.
+    * ===================================================================== -->
+	<target name="createTagFile">
+
+		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
+
+		<touch file="${updatesite.tag.file}" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Checks whether the PDF file is up to date.
+    * ===================================================================== -->
+	<target name="checkPdfFile">
+
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+
+		<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
+
+		<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the PDF file from 'iSphere.doc'.
+    * ===================================================================== -->
+	<target name="updatePdfFile" unless="pdf.isUpToDate">
+
+		<echo>Updating iSphere PDF file ...</echo>
+
+		<winword file="${isphere.doc}" visible="true">
+			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
+		</winword>
+
+		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Validates the version number to ensure, that it matches
+    *   the required format.
+    * ===================================================================== -->
+	<target name="validateVersionNumber">
+
+		<echo>Validating version number to: ${build.version} ...</echo>
+
+		<propertyregex property="validated.version" input="${build.version}" regexp="${validate.version.regex}" select="\1" casesensitive="true" />
+
+		<if>
+			<equals arg1="${build.version}" arg2="${validated.version}" />
+			<then>
+				<echo>Version number validated: OK</echo>
+			</then>
+			<else>
+				<echo>+------------------------------------------------------+</echo>
+				<echo>| Version number does not match expected pattern!      |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| Pattern:                                             |</echo>
+				<echo>| major.minor.micro.qualifier                          |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| major - major version number (requested)             |</echo>
+				<echo>| minor - minor version number (recommended)           |</echo>
+				<echo>| micro - micro version number (optional)              |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| The possible qualifiers are:                         |</echo>
+				<echo>| r     - release version                              |</echo>
+				<echo>| bnnn  - beta version, where nnn between 001 and 999  |</echo>
+				<echo>+------------------------------------------------------+</echo>
+				<fail>*** ERROR: Invalid version number. ***</fail>
+			</else>
+		</if>
+
 	</target>
 
 	<!--
@@ -233,75 +690,6 @@
 
 	</target>
 
-	<target name="validateVersionNumber">
-
-		<echo>Validating version number to: ${build.version} ...</echo>
-
-		<propertyregex property="validated.version" input="${build.version}" regexp="${validate.version.regex}" select="\1" casesensitive="true" />
-
-		<if>
-			<equals arg1="${build.version}" arg2="${validated.version}" />
-			<then>
-				<echo>Version number validated: OK</echo>
-			</then>
-			<else>
-				<echo>+------------------------------------------------------+</echo>
-				<echo>| Version number does not match expected pattern!      |</echo>
-				<echo>|                                                      |</echo>
-				<echo>| Pattern:                                             |</echo>
-				<echo>| major.minor.micro.qualifier                          |</echo>
-				<echo>|                                                      |</echo>
-				<echo>| major - major version number (requested)             |</echo>
-				<echo>| minor - minor version number (recommended)           |</echo>
-				<echo>| micro - micro version number (optional)              |</echo>
-				<echo>|                                                      |</echo>
-				<echo>| The possible qualifiers are:                         |</echo>
-				<echo>| r     - release version                              |</echo>
-				<echo>| bnnn  - beta version, where nnn between 001 and 999  |</echo>
-				<echo>+------------------------------------------------------+</echo>
-				<fail>*** ERROR: Invalid version number. ***</fail>
-			</else>
-		</if>
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Creating tag file to indicate the iSphere version
-    *   inside the zip file.
-    * ===================================================================== -->
-	<target name="createTagFile">
-
-		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
-
-		<touch file="${updatesite.tag.file}" />
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Downloads library ISPHERE from the System i.
-    *   This target requires a patched version of commons-net-3.3.jar
-    *   where bug NET-512 has been fixed.
-    *   (https://issues.apache.org/jira/browse/NET-512)
-    * ===================================================================== -->
-	<target name="download" depends="ftpCredentialsIBMi">
-
-		<echo>Downloading save file ${IBMi.ftp.savefile.name} ...</echo>
-
-		<ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400">
-			<fileset dir="${local.ftp.download.directory}" casesensitive="false">
-				<include name="${IBMi.ftp.savefile.name}" />
-			</fileset>
-		</ftp>
-
-		<move file="${local.ftp.download.directory}/${IBMi.ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
-
-		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
-
-	</target>
-
 	<!--
     * =====================================================================
     *   Asks for FTP credentials: username and password.
@@ -315,10 +703,18 @@
 
 	<!--
     * =====================================================================
-    *   Updates the version numbers of the following files:
-    *     - MANIFEST.MF
-    *     - feature.xml
-    *     - site.xml
+    *   Asks for FTP credentials: username and password.
+    *   Properties 'sf.ftp.user' is loaded from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="ftpCredentialsSourceForge" unless="sf.ftp.password">
+
+		<input message="Please enter the SourceForge FTP password:" addproperty="sf.ftp.password" defaultvalue="" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Refreshs the projects listed in 'build.properties'.
     * ===================================================================== -->
 	<target name="refreshProjects">
 
@@ -332,357 +728,6 @@
 		</for>
 
 		<echo>Done.</echo>
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Removes all files from the following directories of the 
-    *   update site project:
-    *     - features
-    *     - plugins
-    * ===================================================================== -->
-	<target name="cleanUpdateSite">
-
-		<echo>Removing old files from '${build.updatesite}' ...</echo>
-
-		<delete includeemptydirs="true">
-			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
-			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
-			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
-			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
-			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
-			<fileset dir="${workspace.home}\${build.updatesite}" includes="logs.zip" />
-		</delete>
-
-		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
-
-		<echo>Done.</echo>
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Produces the files that must be uploaded to SourceForge:
-    * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile" description="create SourceForge files">
-
-		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
-
-		<antcall target="createSourceForgeDownloadAreaFiles" />
-
-		<antcall target="createSourceForgeUpdateSiteWebPage" />
-
-		<echo>+------------------------------------------------------+</echo>
-		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
-		<echo>|                                                      |</echo>
-		<echo>|  Then proceed with:   uploadSourceForgeFiles         |</echo>
-		<echo>+------------------------------------------------------+</echo>
-		<echo>*** Finished ***</echo>
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Removes all files from the 'upload' directory.
-    * ===================================================================== -->
-	<target name="cleanUploadDir">
-
-		<echo>Cleaning upload directory ...</echo>
-
-		<delete includeemptydirs="true">
-			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
-		</delete>
-
-		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Sets the parameters required for creating the SourceForge files.
-    * ===================================================================== -->
-	<target name="setSourceForgeParameters">
-
-		<property name="dryrun" value="false"/>
-		
-		<if>
-			<equals arg1="${build.target}" arg2="RDi" />
-			<then>
-				<property name="sf.site.target" value="${sf.site.target.rdi}" />
-				<!--
-				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.rdi}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.rdi}" />
-				-->
-				<property name="zip.file.name" value="${zip.file.name.rdi}" />
-				<property name="exclude.site.xml" value="site.xml" />
-				<property name="exclude.web.files" value="**/wdsci*.*" />
-				<property name="ide.product.name.long" value="${ide.product.name.long.rdi}"/>
-				<property name="ide.product.name.short" value="${ide.product.name.short.rdi}"/>
-				<property name="update.site.url" value="${update.site.url.rdi}"/>
-			</then>
-			<else>
-				<property name="sf.site.target" value="${sf.site.target.wdsci}" />
-				<!--
-				<property name="sf.ftp.dir.updatesite.web" value="${sf.ftp.dir.updatesite.web.wdsc}" />
-				<property name="sf.ftp.dir.updatesite.files" value="${sf.ftp.dir.updatesite.files.wdsci}" />
-				-->
-				<property name="zip.file.name" value="${zip.file.name.wdsc}" />
-				<property name="exclude.site.xml" value="" />
-				<property name="exclude.web.files" value="**/rdi*.*" />
-				<property name="ide.product.name.long" value="${ide.product.name.long.wdsci}"/>
-				<property name="ide.product.name.short" value="${ide.product.name.short.wdsci}"/>
-				<property name="update.site.url" value="${update.site.url.wdsci}"/>
-			</else>
-		</if>
-		
-	</target>
-	
-	<!--
-    * =====================================================================
-    *   Create the SourceForge download files.
-    * ===================================================================== -->
-	<target name="createSourceForgeDownloadAreaFiles" depends="setSourceForgeParameters" >
-
-		<echo>Creating SourceForge download folders ...</echo>
-		
-		<echo>Preparing directory structure ...</echo>
-		<mkdir dir="${build.upload.dir.files}" />
-		<mkdir dir="${build.upload.dir.files}/${sf.ftp.beta.dir}/eclipse" />
-		<mkdir dir="${build.upload.dir.files}/${sf.ftp.beta.dir}/eclipse/${sf.site.target}" />
-
-		<echo>Copying zip and pdf files ...</echo>
-		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${sf.ftp.beta.dir}\${zip.file.name}">
-			<include name="**/*" />
-			<exclude name="**/.project" />
-		</zip>
-		<copy file="${isphere.pdf}" todir="${build.upload.dir.files}\${sf.ftp.beta.dir}" />
-
-		<echo>Copying Eclipse update site files ...</echo>
-		<copy todir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}">
-			<fileset dir="${workspace.home}\${build.updatesite}">
-				<exclude name="*.log" />
-				<exclude name="${exclude.site.xml}" />
-				<exclude name=".project" />
-			</fileset>
-		</copy>
-
-		<echo>Copying release/beta version dependant files ...</echo>
-		<if>
-			<equals arg1="${sf.ftp.beta.dir}" arg2="." />
-			<then>
-				<echo>Copying "Not yet available.txt" ...</echo>
-				<copy todir="${build.upload.dir.files}/${sf.ftp.beta.dir}">
-					<fileset dir="${build.template.dir.files}">
-					</fileset>
-				</copy>
-			</then>
-			<else>
-				<echo>Copying "Changelog iSphere.txt" ...</echo>
-				<copy todir="${build.upload.dir.files}/${sf.ftp.beta.dir}">
-					<fileset refid="build.changelog.files">
-					</fileset>
-				</copy>
-			</else>
-		</if>
-
-		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Create the SourceForge Eclipse update site.
-    * ===================================================================== -->
-	<target name="createSourceForgeUpdateSiteWebPage" depends="setSourceForgeParameters" >
-
-		<echo>Creating Eclipse web folders ...</echo>
-		
-		<echo>Preparing directory structure ...</echo>
-		<mkdir dir="${build.upload.dir.web}" />
-		
-		<echo>Copying templates directory ...</echo>
-		<copy todir="${build.upload.dir.web}/${sf.ftp.beta.dir}">
-			<fileset dir="${build.template.dir.web}">
-				<exclude name="${exclude.web.files}" />
-			</fileset>
-		</copy>
-		
-		<echo>Renaming ${sf.site.target} ...</echo>
-		<move todir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}">
-			<fileset dir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\build_target" />
-		</move>
-
-		<echo>Renaming index.html ...</echo>
-		<move file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\${build.target}_index.html" 
-			tofile="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" />
-
-		<echo>Renaming .htaccess ...</echo>
-		<move file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\_htaccess" 
-			tofile="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" />
-
-		<echo>Replacing '@' variables ...</echo>
-		
-		<if>
-			<equals arg1="${release.flag}" arg2="r" />
-			<then>
-				<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;"/>
-			</then>
-			<else>
-			 	<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;"/>
-			</else>
-		</if>
-      
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="@BUILD_TARGET@" value="${sf.site.target}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="@BETA_VERSION@" value="${sf.ftp.beta.dir}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\.htaccess" token="/./" value="/" />
-
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@VERSION_INFO@" value="${version.info}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@IDE_PRODUCT_NAME_LONG@" value="${ide.product.name.long}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${ide.product.name.short}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@UPDATE_SITE_URL@" value="${update.site.url}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@TODAY@" value="${today.timestamp}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@YEAR@" value="${today.year}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
-		<replace file="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}\index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
-		
-		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Cleans the SourceForge Eclipse update site.
-    * ===================================================================== -->
-	<target name="cleanSourceForgeUpdateSite" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
-
-		<echo>Removing files from the SourceForge Eclipse web folders ...</echo>
-		
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
-			host="${sf.ftp.server.web}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
-			<Rmdir dir="${sf.site.target}" subDirs="true" />
-		</SF>
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Cleans the SourceForge download files.
-    * ===================================================================== -->
-	<target name="cleanSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
-
-		<echo>Removing files from the SourceForge download directory ...</echo>
-		
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
-			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.files.root}">
-			<Rmdir dir="." subDirs="false" />
-			<Rmdir dir="./eclipse/${sf.site.target}" subDirs="true" />
-		</SF>
-		
-	</target>
-	
-	<!--
-    * =====================================================================
-    *   Update the PDF file from 'iSphere.doc'.
-    * ===================================================================== -->
-	<target name="updatePdfFile" unless="pdf.isUpToDate">
-
-		<echo>Updating iSphere PDF file ...</echo>
-
-		<winword file="${isphere.doc}" visible="true">
-			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
-		</winword>
-
-		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Check whether the PDF file is up to date.
-    * ===================================================================== -->
-	<target name="checkPdfFile">
-		
-		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
-		
-		<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
-		
-		<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Uploads the iSphere update site to SourceForge
-    * ===================================================================== -->
-	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" description="Uploads the project files to SourceForge">
-
-		<echo>Uploading files to SourceForge ...</echo>
-
-		<echo>Deleting: web folder of the iSphere update site ...</echo>
-		<antcall target="cleanSourceForgeUpdateSite" />
-
-		<echo>Uploading: web folder of the iSphere update site ...</echo>
-		<antcall target="uploadSourceForgeUpdateSite" />
-
-		<echo>Deleting: download folder of the iSphere update site ...</echo>
-		<antcall target="cleanSourceForgeDownloadFiles"></antcall>
-
-		<echo>Uploading: download folder of the iSphere update site ...</echo>
-		<antcall target="uploadSourceForgeDownloadFiles" />
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Uploads the iSphere update site web page to SourceForge
-    * ===================================================================== -->
-	<target name="uploadSourceForgeUpdateSite" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
-		
-		<!--
-		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.web}:${sf.ftp.dir.updatesite.web}">
-			<fileset dir="${build.upload.dir.web}\">
-			</fileset>
-		</scp>
-		-->
-		
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
-			host="${sf.ftp.server.web}" remoteDir="${sf.ftp.dir.updatesite.web.root}">
-			<copydir dir="${build.upload.dir.web}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="${sf.site.target}" subDirs="true" />
-		</SF>
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Uploads the files of the iSphere update site to 
-    *   the SourceForge download area.
-    * ===================================================================== -->
-	<target name="uploadSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge,setSourceForgeParameters" >
-		
-		<!--
-		<scp sftp="true" trust="true" password="${sf.ftp.password}" todir="${sf.ftp.user},${sf.ftp.project}@${sf.ftp.server.files}:${sf.ftp.dir.updatesite.files}">
-			<fileset dir="${build.upload.dir.files}\">
-			</fileset>
-		</scp>
-		-->
-		
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
-			host="${sf.ftp.server.files}" remoteDir="${sf.ftp.dir.updatesite.files.root}">
-			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}" toDir="." subDirs="false" />
-			<copydir dir="${build.upload.dir.files}\${sf.ftp.beta.dir}\eclipse\${sf.site.target}" toDir="./eclipse/${sf.site.target}" subDirs="true" />
-		</SF>
-		
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Asks for FTP credentials: username and password.
-    *   Properties 'sf.ftp.user' is loaded from 'ftp.properties'.
-    * ===================================================================== -->
-	<target name="ftpCredentialsSourceForge" unless="sf.ftp.password">
-
-		<input message="Please enter the SourceForge FTP password:" addproperty="sf.ftp.password" defaultvalue="" />
 
 	</target>
 
