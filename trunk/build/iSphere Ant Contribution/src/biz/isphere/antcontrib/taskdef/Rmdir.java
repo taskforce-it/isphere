@@ -1,5 +1,7 @@
 package biz.isphere.antcontrib.taskdef;
 
+import java.util.Vector;
+
 import biz.isphere.antcontrib.sf.SFAbstractCmd;
 import biz.isphere.antcontrib.sf.SFClient;
 import biz.isphere.antcontrib.sf.SFException;
@@ -13,8 +15,12 @@ public class Rmdir extends SFAbstractCmd implements SFFileListener {
     private String dir;
     private boolean subDirs;
 
+    private Vector<IgnoreFile> ignoreFiles;
+
     public Rmdir(SF sf) {
         super(sf);
+
+        this.ignoreFiles = new Vector<IgnoreFile>();
     }
 
     public void setDir(String dir) throws SFException {
@@ -30,13 +36,25 @@ public class Rmdir extends SFAbstractCmd implements SFFileListener {
         this.subDirs = subDirs;
     }
 
+    public IgnoreFile createIgnoreFile() {
+
+        IgnoreFile ignoreFile = new IgnoreFile(this);
+        ignoreFiles.add(ignoreFile);
+
+        return ignoreFile;
+    }
+    
+    public IgnoreFile[] getIgnoredFiles() {
+        return ignoreFiles.toArray(new IgnoreFile[ignoreFiles.size()]);
+    }
+
     protected void executeCmd(SFClient client) throws SFException {
 
         client.pushFileListener(this);
 
         try {
 
-            client.rmDir(client, dir, subDirs);
+            client.rmDir(client, dir, subDirs, getIgnoredFiles());
 
         } catch (SftpException e) {
             throw new SFException("Failed to remove directory.", e);

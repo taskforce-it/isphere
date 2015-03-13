@@ -2,10 +2,12 @@ package biz.isphere.antcontrib.taskdef;
 
 import java.util.Vector;
 
+import org.apache.tools.ant.Task;
+
 import biz.isphere.antcontrib.sf.SFClient;
 import biz.isphere.antcontrib.utils.FileUtil;
 
-public class SF {
+public class SF extends Task {
 
     private String user;
     private String password;

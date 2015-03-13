@@ -1,12 +1,13 @@
 package biz.isphere.antcontrib.taskdef;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 import biz.isphere.antcontrib.configuration.Configuration;
 import biz.isphere.antcontrib.configuration.ConfigurationException;
 import biz.isphere.antcontrib.logger.Logger;
 
-public abstract class BasicTask {
+public abstract class BasicTask extends Task {
 
     private Configuration config;
     private String jacobDllPath;
@@ -33,10 +34,10 @@ public abstract class BasicTask {
 
         } catch (ConfigurationException e) {
             Logger.logError("Failed to execute task: " + getName(), e);
-            throw new BuildException("Failed to execute 'winword' task.", e);
+            throw new BuildException("Failed to execute task.", e);
         } catch (BuildException e) {
             Logger.logError("Failed to execute task: " + getName(), e);
-           throw e;
+            throw e;
         } catch (Throwable e) {
             Logger.logError("Failed to execute task: " + getName(), e);
             throw new BuildException(e);
