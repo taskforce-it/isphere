@@ -486,7 +486,7 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
-			<Rmdir dir="./${sf.site.target}" subDirs="true" />
+			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" />
 		</SF>
 
 	</target>
@@ -517,7 +517,7 @@
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
 			<copydir dir="${build.upload.dir.files}" toDir="." subDirs="false" />
-			<copydir dir="${build.upload.dir.files.eclipse}\${sf.site.target}" toDir="./eclipse/${sf.site.target}" subDirs="true" />
+			<copydir dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" toDir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
 		</SF>
 
 	</target>
@@ -533,7 +533,7 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
-			<copydir dir="${build.upload.dir.web.eclipse}\${sf.site.target}" toDir="./${sf.site.target}" subDirs="true" />
+			<copydir dir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
 		</SF>
 
 	</target>
