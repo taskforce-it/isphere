@@ -470,7 +470,9 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
-			<Rmdir dir="." subDirs="false" />
+			<Rmdir dir="." subDirs="false" >
+				<IgnoreFile pattern="*${build.target}*.zip" ignoreCase="true" />
+			</Rmdir>
 			<Rmdir dir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
 		</SF>
 
