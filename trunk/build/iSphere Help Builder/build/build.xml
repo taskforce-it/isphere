@@ -25,15 +25,12 @@
     *     - update version number
     * ===================================================================== -->
 	<target name="build" depends="cleanUpload,runHelpBuilder" description="build iSphere update site">
-		<echo>+------------------------------------------------------+</echo>
-		<echo>|  Proceed with:   uploadSourceForgeFiles              |</echo>
-		<echo>+------------------------------------------------------+</echo>
-		<echo>*** Finished ***</echo>
+		<echo>*** Finished iSphere help build ***</echo>
 	</target>
 
 	<target name="cleanUpload" >
 
-		<echo>Cleaning upload directory ...</echo>
+		<echo>Cleaning help builder upload directory ...</echo>
 
 		<delete includeEmptyDirs="true">
 			<fileset dir="${build.upload.dir}" includes="**/*" />
