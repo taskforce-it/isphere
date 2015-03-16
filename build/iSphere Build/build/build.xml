@@ -108,9 +108,6 @@
 		</else>
 	</if>
 
-	<!-- Enable/disable changes to SourceForge -->
-	<property name="sf.dryrun" value="false" />
-
 	<!-- Set workspace home directory -->
 	<property name="workspace.home" location="${basedir}/../.." />
 
@@ -468,7 +465,7 @@
 
 		<echo>Deleting SourceForge: files (download area) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
 			<Rmdir dir="." subDirs="false" >
 				<IgnoreFile pattern="*${build.target}*.zip" ignoreCase="true" />
@@ -486,7 +483,7 @@
 
 		<echo>Deleting: web pages (update site) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
 			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" />
 		</SF>
@@ -501,7 +498,7 @@
 
 		<echo>Deleting SourceForge: web pages (help) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
 			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
 		</SF>
@@ -533,7 +530,7 @@
 
 		<echo>Uploading: web pages (update site) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
 			<copydir dir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
 		</SF>
@@ -548,7 +545,7 @@
 
 		<echo>Uploading SourceForge: web pages (help) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${sf.dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.help.root}">
 			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
 		</SF>
