@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Install the iSphere Library</title>
+</head>
+
+<body>
+<h1>Install the iSphere Library</h1>
+<p>
+Although it is recommend to use the integrated upload feature to install the iSphere library on the host system,
+you can do it by hand, of course. Both processes are described below.  
+<p>
+<h2>Using the Integrated Upload Feature</h2>
+<ul>
+<li>Start WDSCi 7.0 / RDi 8.0+.</li>
+<li>Click on "Windows / Preferences".</li>
+<li>Expand item "iSphere".</li>
+<li>Click "Library".</li>
+<li>Check the FTP port number and the name of the iSphere library. The default values should be: Port 21 and ISPHERE.</li>
+<li>Click "Transfer iSphere library" and enter the name of your host system and the user and password that shall be used to connect to the host.
+	<p>
+	<img src="./assets/signon.gif" />
+	<p>
+</li>
+<li>Click the "OK" button to proceed.</li>
+<li>On the following dialog, click "Start Transfer" to start the FTP transfer.
+	<p>
+	<img src="./assets/transfer_start.gif" />
+	<p>
+</li>
+<li>In case that you are going to update an existing iSphere library, you will be asked to delete it:
+	<p>
+	<img src="./assets/delete_lib.gif" />
+	<p>
+</li>
+<li>At the end of the install process you can close the transfer dialog:
+	<p>
+	<img src="./assets/transfer_end.gif" />
+	<p>
+</li>
+</ul>
+<p>
+<h2>Doing it By Hand</h2>
+<ul>
+<li>Unzip biz.isphere.core_x.x.x.jar from the iSphere Update Site zip file.</li>
+<li>Unzip file ISPHERE from directory /Server of biz.isphere.core_x.x.x.jar.</li>
+<li>Create an empty save file in QGPL:
+<p>
+<div class="code">CRTSAVF FILE(QGPL/ISPHERE) TEXT('iSphere')</div>
+</p>
+</li>
+<li>Start a FTP session and transfer the local ISPHERE file into the ISPHERE save file on your host using binary mode.</li>
+<li>Restore library ISPHERE from the save file QGPL/ISPHERE:
+<p>
+<div class="code">RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/ISPHERE) RSTLIB(ISPHERE)</div>
+</p>
+</li>
+</ul>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
