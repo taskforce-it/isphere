@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Build iSphere</title>
+</head>
+
+<body>
+<h1>Build iSphere</h1>
+<p>
+The iSphere build process is controlled by Ant build files. The main build file is "build.xml" of
+the "iSphere Build" project. This files performs the following main steps:
+<p>
+<ul>
+<li>Downloading the iSphere library from the host.</li>
+<li>Building the iSphere plug-ins.</li>
+<li>Creating the SourceForge files.</li>
+<li>Uploading the SourceForge files.</li>
+</ul>
+<p>
+The most current build instructions can be found at the top of the build script.
+<p>
+The second build file is "build.xml" of the "iSphere Help Builder" project. It is used to create the
+iSphere Internet help pages from the iSphere help projects. This way we can use the same help pages 
+for the Eclipse help as well as for the Internet help.
+<p>
+This build script is run from the main build script. But it can also be run stand-alone to execute
+the following main build steps:
+<p>
+The build process is controlled by two configurations files. Both files are located in the "iSphere Build"
+project.
+<p>
+<ul>
+<li>Call the HelpBuilder Java class to create the Internet help.</li>
+</ul>
+<p>
+<u>build.properties</u>
+<p>
+This properties file configures what is build and what projects are used to build the iSphere plug-in.
+The properties file contains a detailed description of each property.
+<p>
+<u>ftp.properties</u>
+<p>
+This properties file describes the properties that are required to download the iSphere library from the
+host and the properties used for uploading files to SourceForge. Each property is decribed in the
+properties file.
+<p>
+<table>
+<tr><td class="important" >Please also notice the "build.dryrun" property of the "build.properties" file. 
+                  When set to <i>true</i> nothing is deleted or uploaded. It is just simulated.</td></tr>
+</table>
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

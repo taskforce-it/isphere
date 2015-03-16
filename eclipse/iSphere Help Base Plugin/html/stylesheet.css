@@ -13,7 +13,7 @@ u { text-decoration: underline; }
 /*
  *  Program code.
  */
-.code { font-family: monospace; font-size: 0.9em; font-weight: normal; font-style: normal; }
+.code { font-family: monospace; font-size: 1.0em; font-weight: normal; font-style: normal; }
 
 /*
  *  Headline of a topic.
@@ -28,6 +28,12 @@ h1 { font-size: 1.8em; color: #f26721; line-height: 1.4em; }
 h2 { color: #000000; line-height: 1.6em; font-weight: bold; }
 
 /*
+ *  Sub hHeadline within a topic.
+ */
+
+h3 { color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic; }
+
+/*
  *  Default body style.
  */
 
@@ -37,14 +43,20 @@ body {
 	color: #000000; 
 	font-style: normal;
 	font-size: 0.8em;
-	margin-left: 32px, 16px, 16px, 16px;
+	margin-left: 16px;
+}
+
+iframe { 
+	margin-left: -16px;
 }
 
 /*
  *  Indention of images that appear between paragraphs.
  */
 img {
-    margin-left:25px;
+    margin-left: 25px;
+    margin-top: 5px;
+    margin-botton: 5px;
 }
 
 /*
@@ -56,11 +68,20 @@ table {
 }
 
 /*
+ *  Indention of code that appear between paragraphs.
+ */
+
+.codeIndent {
+    margin-left:25px;
+	 font-family: monospace;
+}
+
+/*
  *  Font of code examples.
  */
 
 .code {
-    font-family: monospace
+    font-family: monospace;
 }
 
 /*

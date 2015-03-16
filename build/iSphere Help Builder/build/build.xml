@@ -28,8 +28,14 @@
 		<echo>*** Finished iSphere help build ***</echo>
 	</target>
 
+	
+	<!--
+    * =====================================================================
+    *   Cleans the 'upload' directory.
+    * ===================================================================== -->
 	<target name="cleanUpload" >
 
+		
 		<echo>Cleaning help builder upload directory ...</echo>
 
 		<delete includeEmptyDirs="true">
@@ -40,6 +46,11 @@
 		
 	</target>
 
+	<!--
+    * =====================================================================
+    *   Calls the HelpBuilder Java class to build the help pages
+    *   from the iSphere help projects.
+    * ===================================================================== -->
 	<target name="runHelpBuilder" >
 
 		<echo>Copying template files and folders ...</echo>
