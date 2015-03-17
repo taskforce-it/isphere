@@ -29,30 +29,41 @@ requiring administrator rights when installing plug-ins.
 <u>For example:</u>
 <p>
 <table>
-<tr><td nowarp>Installation Manager:</td><td nowrap>C:\IBM\Installation Manager\eclipse</td></tr>
-<tr><td nowarp>Shared Resources:</td><td nowrap>C:\IBM\SDPShared</td></tr>
-<tr><td nowrap>Installation Folder:</td><td nowrap>C:\IBM\SDP_8.0</td></tr>
+<tr><td nowrap>Installation Manager:</td><td>C:\IBM\Installation Manager\eclipse</td></tr>
+<tr><td nowrap>Shared Resources:</td><td>C:\IBM\SDPShared</td></tr>
+<tr><td nowrap>Installation Folder:</td><td>C:\IBM\SDP_8.0</td></tr>
 </table>
 <p>
-You do not necessarily install al the stuff. It is suficient to install the "RPG- and COBOL Development Tools for i".
+You do not necessarily install all the stuff. It is sufficient to install the "RPG- and COBOL Development Tools for i".
 <p>
 <img alt="Install RDP 8.0" src="./assets/install_rdp8.0.gif">
 <p>
-Eventually applay the license code to finish the basic installation of the Integrated development Environment (IDE).
+Eventually apply the license code to finish the basic installation of the Integrated development Environment (IDE).
 <p>
-Next you can install the SVN adapter to access the iSphere repository at SourceForge. Start RDP 8.0 and when it asks for
-a workspace, select a workspace near to the root directory in order to avoid problems with long file names:
+<h2>Setting the Workspace</h2>
+<p>
+Start RDP 8.0 and when it asks for a workspace, select a workspace near to the root directory in order to avoid problems with 
+long file names:
 <p>
 <img alt="RDP: Select workspace" src="./assets/select_workspace.gif">
 <p>
-Select "Help -> Install New Software..." to open the "Install" dialog. Click "Available Software Sites" and enable the Eclipse 
+<h2>Installing the SVN Adapter</h2>
+<p>
+Next you can install the SVN adapter to access the iSphere repository at SourceForge.
+<p>
+<table>
+<tr><td class="notice" >WDSCi: You need to install the Subclipse SVN Team provider. You can 
+    <a href="https://sourceforge.net/p/isphere/code/HEAD/tree/trunk/eclipse/iSphere%20Eclipse%20Setup/plug-ins/subclipse-local-update-site-1.8.22.zip" target="_blank">download</a> it from the iSphere repository at SourceForge.</td></tr>
+</table>
+<p>
+Select "Help -&gt; Install New Software..." to open the "Install" dialog. Click "Available Software Sites" and enable the Eclipse 
 <i>Helios</i> update site at: <a href="http://download.eclipse.org/releases/helios">http://download.eclipse.org/releases/helios</a>.
 <p>
 Open "Collaboration" and select the "Subversive SVN Team Provider":
 <p>
 <img alt="Select the Subversive SVN Team Provider" src="./assets/select_subversive.gif">
 <p>
-After having restarted RDP, select "Window -> Preferences -> Team" and click "SVN". Select the "SVN Kit 1.3.5" and click "Finish" 
+After having restarted RDP, select "Window -&gt; Preferences -&gt; Team" and click "SVN". Select the "SVN Kit 1.3.5" and click "Finish" 
 to install the SVN Adapter. 
 <p>
 <img alt="Select the Subversive SVN Team Provider" src="./assets/select_svn_connector.gif">

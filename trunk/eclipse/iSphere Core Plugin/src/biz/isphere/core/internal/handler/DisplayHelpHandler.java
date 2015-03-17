@@ -16,6 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class DisplayHelpHandler extends AbstractHandler implements IHandler {
 
+    private static boolean isInitialized = false;
+
     public static final String ID = "biz.isphere.core.internal.handler.DisplayHelpHandler";
 
     /*
@@ -26,8 +28,14 @@ public class DisplayHelpHandler extends AbstractHandler implements IHandler {
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
+        // Hack, to open the iSphere book on first call (RDP, RDi?).
+        if (!isInitialized) {
+            PlatformUI.getWorkbench().getHelpSystem().displayDynamicHelp();
+            isInitialized = true;
+        }
+
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.base.help/html/introduction/introduction.html");
-        
+
         return null;
     }
 }

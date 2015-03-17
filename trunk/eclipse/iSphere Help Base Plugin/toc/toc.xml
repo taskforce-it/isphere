@@ -17,10 +17,10 @@
    <topic label="Reference">
      <anchor id="reference" />
    </topic>
-   <topic label="Links" href="html/links/links.html" />
-   <topic label="Contributions" href="html/contributions/contributions.html" >
+   <topic label="Contribution" href="html/contributions/contributions.html" >
       <topic label="Setting up RDP and SVN" href="html/contributions/setup/setup_rdp_svn.html" />
       <topic label="Setting up iSphere" href="html/contributions/setup/setup_isphere.html" />
       <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
    </topic>
+   <topic label="Links" href="html/links/links.html" />
 </toc>

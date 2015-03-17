@@ -10,6 +10,8 @@
 <body>
 <h1>Build iSphere</h1>
 <p>
+<h2>Ant Build</h2>
+<p>
 The iSphere build process is controlled by Ant build files. The main build file is "build.xml" of
 the "iSphere Build" project. This files performs the following main steps:
 <p>
@@ -49,8 +51,29 @@ properties file.
 <p>
 <table>
 <tr><td class="important" >Please also notice the "build.dryrun" property of the "build.properties" file. 
-                  When set to <i>true</i> nothing is deleted or uploaded. It is just simulated.</td></tr>
+When set to <i>true</i> nothing is deleted or uploaded. It is just simulated.</td></tr>
 </table>
+<p>
+<h2>Version Numbering</h2>
+<p>
+The iSphere version numbers must match the following pattern:
+<p>
+<table>
+<tr><td colspan="2">major.minor.micro.qualifier</tr>
+</table>
+<p>
+The qualifier must be set to <i>r</i> for a release version or <i>bnnn</i> for a beta version, where <i>n</i> is
+any positive number between 0 and 9.
+<p>
+<u>Examples:</u>
+<table>
+<tr><td nowrap>2.6.0.r</td><td>-</td><td>Release version number.</td></tr>
+<tr><td nowrap>2.6.0.b004</td><td>-</td><td>Version number of the fourth beta version.</td></tr>
+</table>
+<p>
+The Eclipse version comparator treats the major, minor and micro part as integer values. But the
+qualifier is compared using a string comparator. Therefore we choosed the <i>r</i> for the release and the
+<i>b</i> for the beta version to make sure that the release version number is higher than the beta version number.
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
