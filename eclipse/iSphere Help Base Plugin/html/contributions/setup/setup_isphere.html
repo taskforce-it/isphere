@@ -10,6 +10,7 @@
 <body>
 <h1>Setting up iSphere</h1>
 <p>
+<a name="connect_to_sourceforge"></a>
 <h2>Connecting to SourceForge</h2>
 <p>
 Open the "SVN Repository Exploring" perspective and click the "New Repository Location" icon on the
@@ -125,6 +126,24 @@ The folders below the <i>trunk</i> contains the following project types:
 Usually there is no need for checking out all projects. For example you may not want to check out the WDSCi related projects
 if your IDE is RDP or RDi. There is also no need for checking out the four Ant projects of the <i>build</i> folder. These projects
 are only needed when there is something to change in the <i>iSphere Ant Contribution</i> plug-in.
+<p>
+<a name="host_project"></a>
+<h2>The iSphere Host Project</h2>
+<p>
+Checking out the <i>iSphere</i> host project is a bit different from checking out the other projects, because
+you need to specify the name of your iSphere library at the project properties after you checked it out.
+<p>
+If you did not yet connect to SourceForge, refer to <a href="../setup/setup_rdp_svn.html#install_svn_adapter">Installing the SVN Adapter</a> 
+to learn how to install the SVN adapter. Then right-click the <i>iSphere</i> project and check it out to your workspace:  
+<p>
+<img alt="Checking out the iSphere host project" src="./assets/checkout_isphere.gif">
+<p>
+Now switch to the <i>i Projects</i> perspective and right-click the <i>iSphere</i> project. Select <i>Properties</i> and <i>i Project</i>
+and specify the connection to your host and the name of your iSphere library:
+<p>
+<img alt="Checking out the iSphere host project" src="./assets/isphere_iproject.gif">
+<p>
+We use ISPHEREDVP for developing iSphere and ISPHERE for the production library.
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0" ></iframe>
 </body>
