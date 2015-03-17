@@ -10,7 +10,7 @@
 <body>
 <h1>Build iSphere</h1>
 <p>
-<h2>Ant Build</h2>
+<h2>Ant Plug-in Build</h2>
 <p>
 The iSphere build process is controlled by Ant build files. The main build file is "build.xml" of
 the "iSphere Build" project. This files performs the following main steps:
@@ -53,6 +53,28 @@ properties file.
 <tr><td class="important" >Please also notice the "build.dryrun" property of the "build.properties" file. 
 When set to <i>true</i> nothing is deleted or uploaded. It is just simulated.</td></tr>
 </table>
+<p>
+<h2>Library Build</h2>
+<p>
+The iSphere library is built from an IBM i command line with the iSphere BUILD command. If you did not yet 
+check out the <i>iSphere</i> project from the repository, refer to
+<a href="../setup/setup_rdp_svn.html#install_svn_adapter">Installing the SVN Adapter</a> to learn how to install the 
+SVN adapter. Then open <a href="../setup/setup_isphere.html#connect_to_sourceforge">Connecting to SourceForge</a> 
+to connect to SourceForge and eventually checkout the project, as desribed in 
+<a href="../setup/setup_isphere.html#host_project">The iSphere Host Project</a>.
+<p>
+The iSphere BUILD command is compiled as shown below:
+<p>
+<div class="codeCommand">CRTCMD CMD(ISPHEREDVP/BUILD) PGM(*REXX)<br>
+SRCFILE(ISPHEREDVP/QBUILD) SRCMBR(BUILD)<br>
+REXSRCFILE(QBUILD) REXSRCMBR(BUILD1) REXCMDENV(*COMMAND)</div> 
+<p>
+And this is how to execute it:
+<p>
+<img alt="Executing the iSphere BUILD command" src="./assets/isphere_build_cmd.gif">
+<p>
+This way you create library <i>ISPHERE</i> from library <i>ISPHEREDVP</i>. But you can also use the command
+to compile your iSphere library "in place" when you specify the same library name twice.
 <p>
 <h2>Version Numbering</h2>
 <p>
