@@ -17,8 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
- biz.isphere.base,
- org.eclipse.help;bundle-version="3.5.0"
+ org.eclipse.help,
+ biz.isphere.base
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/jxl.jar,
