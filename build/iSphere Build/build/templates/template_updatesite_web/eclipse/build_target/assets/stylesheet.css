@@ -13,41 +13,49 @@ u { text-decoration: underline; }
 /*
  *  Program code.
  */
-.code { font-family: monospace; font-size: 1.0em; font-weight: normal; font-style: normal; }
+.code {
+    font-family: monospace; font-size: 1.0em; font-weight: normal; font-style: normal;
+}
 
 /*
  *  Headline of a topic.
  */
 
-h1 { font-size: 1.8em; color: #f26721; line-height: 1.4em; }
+h1 {
+    font-size: 1.8em; color: #f26721; line-height: 1.4em;
+}
 
 /*
  *  Headline within a topic.
  */
 
-h2 { color: #000000; line-height: 1.6em; font-weight: bold; }
+h2 {
+    color: #000000; line-height: 1.6em; font-weight: bold;
+}
 
 /*
- *  Sub hHeadline within a topic.
+ *  Sub headline within a topic.
  */
 
-h3 { color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic; }
+h3 {
+    color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
+}
 
 /*
  *  Default body style.
  */
 
-body { 
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	background-color: #ffffff; 
-	color: #000000; 
-	font-style: normal;
-	font-size: 0.8em;
-	margin-left: 16px;
+body {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    font-style: normal;
+    font-size: 0.8em;
+    margin-left: 16px;
 }
 
-iframe { 
-	margin-left: -16px;
+iframe {
+    margin-left: -16px;
 }
 
 /*
@@ -56,7 +64,7 @@ iframe {
 img {
     margin-left: 25px;
     margin-top: 5px;
-    margin-botton: 5px;
+    margin-bottom: 5px;
 }
 
 /*
@@ -64,7 +72,8 @@ img {
  */
 
 table {
-    margin-left:25px;
+    margin-left: 10px;
+    border-spacing: 15px 5px;
 }
 
 /*
@@ -73,7 +82,7 @@ table {
 
 .codeIndent {
     margin-left:25px;
-	 font-family: monospace;
+    font-family: monospace;
 }
 
 /*
@@ -86,7 +95,7 @@ table {
 
 /*
  *  "Messages Boxes":
- *  
+ *
  *  <table>
  *  <tr><td class="notice" >Notice: Example message text.</td></tr>
  *  </table>
@@ -94,7 +103,7 @@ table {
  */
 
 .info {
-    border: thin; 
+    border: thin;
     border-style: solid;
     padding:10px;
     color: #000000;
@@ -102,7 +111,7 @@ table {
 }
 
 .notice {
-    border: thin; 
+    border: thin;
     border-style: solid;
     padding:10px;
     color: #000000;
@@ -110,7 +119,7 @@ table {
 }
 
 .important {
-    border: thin; 
+    border: thin;
     border-style: solid;
     padding:10px;
     color: #000000;
@@ -121,4 +130,6 @@ table {
  *  Copyright notice.
  */
 
-.copyright { font-style:italic; }
+.copyright {
+    font-style:italic;
+}

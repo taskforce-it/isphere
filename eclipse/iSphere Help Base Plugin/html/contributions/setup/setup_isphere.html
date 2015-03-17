@@ -15,18 +15,13 @@
 Open the "SVN Repository Exploring" perspective and click the "New Repository Location" icon on the
 "SVN Repositories" view.
 <p>
-Now enter the URL of the location of the iSphere repository at SourceForge:
+Now enter the URL of iSphere repository at SourceForge <a href="https://svn.code.sf.net/p/isphere/code" target="_blank">https://svn.code.sf.net/p/isphere/code</a>:
 <p>
 <img alt="iSphere repository location at SourceForge" src="./assets/isphere_repository_location.gif">
 <p>
-Click the "Finish" button. Now should see the iSphere repository like this:
+Click the "Finish" button. Now you should see the iSphere repository like this:
 <p>
 <img alt="iSphere repository at SourceForge" src="./assets/isphere_repository.gif">
-<p>
-<table>
-<tr><td class="notice" >WDSCi: You need to install the Subclipse SVN Team provider. You can 
-    <a href="https://sourceforge.net/p/isphere/code/HEAD/tree/trunk/eclipse/iSphere%20Eclipse%20Setup/plug-ins/subclipse-local-update-site-1.8.22.zip" target="_blank">download</a> it from the iSphere repository at SourceForge.</td></tr>
-</table>
 <p>
 <h2>Checking out the iSphere Eclipse Setup Project</h2>
 <p>
@@ -39,7 +34,7 @@ the project to your workspace.
 <h2>Installing the iSphere Ant Plug-in</h2>
 <p>
 Next we want to install the "iSphere Ant Plugin", which provides some Ant tasks that we need to build the 
-plug-in. Open "Help -> Install New Software..." and click the "Add" button. Enter a descriptive name, such
+plug-in. Open "Help -&gt; Install New Software..." and click the "Add" button. Enter a descriptive name, such
 as <i>iSphere Ant Plugin</i> and the location of the "iSphere Ant Contribution" zip file that you can find
 in directory "plug-ins" of the "iSphere Eclipse Setup" project.
 <p>
@@ -50,7 +45,7 @@ in directory "plug-ins" of the "iSphere Eclipse Setup" project.
 Now we need to set the Java JRE that we need to compile the iSphere plug-in. Since we want to be compatible with 
 WDSCi 7.0, we use that JRE to compile the classes. 
 <p>
-Open "Windows -> Preferences -> Java -> Installed JREs". Click the "Add" button, select "Standard VM" and click "Next".
+Open "Windows -&gt; Preferences -&gt; Java -&gt; Installed JREs". Click the "Add" button, select "Standard VM" and click "Next".
 Now select the WDSCi 7.0 JRE and give it the name "JRE 1.5.0 IBM J9". Please enter the same as shown. Do not change it.
 Usually the JRE is located in the <i>jdk</i> directory of the WDSCi <i>SDP</i> folder, e.g.:
 <div class="codeIndent">C:\IBM\SDP_070\jdk</div>
@@ -101,11 +96,35 @@ to automatically clean up and format our Java source files. Please set your save
 <h2>Useful settings</h2>
 <p>
 <ul>
-<li>Preferences -> General -> Show heap status (enable)</li>
-<li>Preferences -> General -> Editors -> Text Editors -> Spelling (disable for slow PCs)</li>
-<li>Preferences -> General -> Keys: Filter for UNDO and copy entry "Ctrl+Z" to "Ctrl+Backspace".</li>
-<li>Preferences -> General -> Keys: Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].<br>(Otherwise CTRL-ALT-Q does not work to get the '@'.)</li>
+<li>Preferences -&gt; General -&gt; Show heap status (enable)</li>
+<li>Preferences -&gt; General -&gt; Editors -&gt; Text Editors -&gt; Spelling (disable for slow PCs)</li>
+<li>Preferences -&gt; General -&gt; Keys: Filter for UNDO and copy entry "Ctrl+Z" to "Ctrl+Backspace".</li>
+<li>Preferences -&gt; General -&gt; Keys: Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].<br>(Otherwise CTRL-ALT-Q does not work to get the '@'.)</li>
 </ul>
+<p>
+<h2>The iSphere Projects</h2>
+<p>
+The iSphere SVN repository follows the standard SVN naming convention. The <i>trunk</i> folder contains the actual development
+code. The <i>branches</i> folder is used in rare cases, when it is required to do something that cannot be done with the
+current code base in the <i>trunk</i> folder, for example someone wants to try out something new, that at the end may or may not 
+go into the project. Last but not least the <i>tags</i> folder is used to create tags of the iSphere releases. With a tag it is 
+easy to check out a specific version of the project.
+<p>
+<img alt="The iSphere repository" src="./assets/svn_repository.gif">
+<p>
+The folders below the <i>trunk</i> contains the following project types:
+<p>
+<table>
+<tr><td>build</td><td>-</td><td>Projects that are used to build the iSphere plug-in<td></tr>
+<tr><td>eclipse</td><td>-</td><td>Projects commonly used by RDi and WDSCi<td></tr>
+<tr><td>host</td><td>-</td><td>IBM i library<td></tr>
+<tr><td>rse1</td><td>-</td><td>WDSCi related projects<td></tr>
+<tr><td>rse2</td><td>-</td><td>RDi related projects<td></tr>
+</table>
+<p>
+Usually there is no need for checking out all projects. For example you may not want to check out the WDSCi related projects
+if your IDE is RDP or RDi. There is also no need for checking out the four Ant projects of the <i>build</i> folder. These projects
+are only needed when there is something to change in the <i>iSphere Ant Contribution</i> plug-in.
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0" ></iframe>
 </body>
