@@ -21,6 +21,13 @@ public class SF extends Task {
 
     public SF() {
 
+        // required attributes
+        this.user = null;
+        this.password = null;
+        this.host = null;
+
+        // optional attributes
+        this.remoteDir = ".";
         this.port = 22;
         this.trust = false;
         this.dryRun = true;
@@ -51,8 +58,10 @@ public class SF extends Task {
 
             client.connect();
 
-            if (remoteDir != null) {
+            if (".".equals(remoteDir)) {
                 client.cd(remoteDir);
+            } else {
+                remoteDir = client.getRemoteDir();
             }
 
             for (Object action : actions) {

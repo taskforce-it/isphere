@@ -98,7 +98,7 @@ public class SFClient {
         return channel.pwd();
     }
 
-    public void rmDir(SFClient c, String directory, boolean subDirs, IgnoreFile[] ignoredFiles) throws SftpException {
+    public void rmDir(SFClient c, String directory, boolean subDirs, IgnoreFile[] ignoredFiles) throws SftpException, SFException {
 
         directory = getRemoteDirectory(directory);
 
@@ -216,7 +216,7 @@ public class SFClient {
         return false;
     }
 
-    private boolean isIgnoredFile(IgnoreFile[] ignoredFiles, String filename) {
+    private boolean isIgnoredFile(IgnoreFile[] ignoredFiles, String filename) throws SFException {
 
         for (IgnoreFile ignoreFile : ignoredFiles) {
             if (ignoreFile.matches(filename)) {
@@ -262,6 +262,10 @@ public class SFClient {
         if (directory.equals(channel.pwd())) {
             return;
         }
+        
+        if (!isDirectoryEmpty(directory)) {
+            return;
+        }
 
         if (!isDryRun()) {
             channel.rmdir(directory);
@@ -270,7 +274,7 @@ public class SFClient {
         fireDeleteFileListener(directory, "(Dir)");
     }
 
-    private void deleteRemoteFile(String filename, String info, IgnoreFile[] ignoredFiles) throws SftpException {
+    private void deleteRemoteFile(String filename, String info, IgnoreFile[] ignoredFiles) throws SftpException, SFException {
 
         if (isIgnoredFile(ignoredFiles, filename)) {
             fireIgnoreFileListener(filename, info);
@@ -324,5 +328,16 @@ public class SFClient {
 
     private void fireIgnoreFileListener(String filename, String info) {
         fireFileListener(SFFileListener.IGNORED, filename, info);
+    }
+    
+    private boolean isDirectoryEmpty(String directory) throws SftpException {
+        
+        Vector vv = channel.ls(directory);
+        if (vv == null || vv.size() == 0) {
+            return true;
+        }
+        
+        return false;
+        
     }
 }
