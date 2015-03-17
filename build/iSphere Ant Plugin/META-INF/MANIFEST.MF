@@ -3,7 +3,7 @@ Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Ant Plugin
 Bundle-SymbolicName: biz.isphere.antcontrib;singleton:=true
-Bundle-Version: 1.0.0.b016
+Bundle-Version: 1.0.0.b017
 Bundle-Activator: biz.isphere.antcontrib.ISphereAntPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.core.runtime,
