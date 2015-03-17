@@ -9,4 +9,16 @@
 	<taskdef name="SF"
 		classname="biz.isphere.antcontrib.taskdef.SF"
 		onerror="fail" />
+		
+	<typedef name="copyDir"
+        classname="biz.isphere.antcontrib.taskdef.Copydir"
+		onerror="fail" />
+		
+	<typedef name="rmDir"
+        classname="biz.isphere.antcontrib.taskdef.Rmdir"
+		onerror="fail" />
+		
+	<typedef name="ignoreFile"
+        classname="biz.isphere.antcontrib.taskdef.IgnoreFile"
+		onerror="fail" />
 </antlib>

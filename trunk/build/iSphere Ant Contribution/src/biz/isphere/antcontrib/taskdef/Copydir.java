@@ -16,11 +16,16 @@ public class Copydir extends SFAbstractCmd implements SFFileListener {
 
     public Copydir(SF sf) {
         super(sf);
+        
+        // optional attributes
+        this.dir = ".";
+        this.toDir = ".";
+        this.subDirs = false;
     }
 
     public void setDir(String dir) throws SFException {
 
-        if (".".equals(dir) || "..".equals(dir)) {
+        if ("..".equals(dir)) {
             throw new SFException("Invalid directory name: '" + dir + "'");
         }
 

@@ -198,13 +198,41 @@
 	<property name="updatesite.tag.file"	location="${workspace.home}/${build.updatesite}/${build.updatesite} v${build.version}.tag" />
 
 
-	<!-- ======================================================================
-		      Build the project.
-		 ================================================================== -->
+	<!--
+    * =====================================================================
+    *   Build the project.
+    * ===================================================================== -->
 	<target name="build" depends="initialize,clean,updateVersionNumber,jarRuntime,jarStandalone,jarPlugin">
 		<echo message="${application.title} : finished on ${build.date}" />
 	</target>
 
+	
+	<!--
+    * =====================================================================
+    *   Produces the files that must be uploaded to SourceForge:
+    * ===================================================================== -->
+	<target name="createSourceForgeFiles" description="create SourceForge files">
+
+		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${build.upload.dir}" includes="**/*" />
+		</delete>
+
+		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
+			<include name="**/*" />
+			<exclude name="**/.project" />
+		</zip>
+
+		<antcall target="copyUpdateSiteToEclipseSetup">
+		</antcall>
+		
+	</target>
+
+	
+	<!-- ======================================================================
+		      Inizializes the build process.
+		 ================================================================== -->
 	<target name="initialize">
 		<mkdir dir="${temp.compile.dir}" />
 		<mkdir dir="${release.dir}" />
@@ -558,29 +586,6 @@
 			</else>
 		</if>
 
-	</target>
-
-	
-	<!--
-    * =====================================================================
-    *   Produces the files that must be uploaded to SourceForge:
-    * ===================================================================== -->
-	<target name="createSourceForgeFiles" description="create SourceForge files">
-
-		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
-
-		<delete includeemptydirs="true">
-			<fileset dir="${build.upload.dir}" includes="**/*" />
-		</delete>
-
-		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
-			<include name="**/*" />
-			<exclude name="**/.project" />
-		</zip>
-
-		<antcall target="copyUpdateSiteToEclipseSetup">
-		</antcall>
-		
 	</target>
 
 	

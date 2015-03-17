@@ -14,12 +14,14 @@ public class Rmdir extends SFAbstractCmd implements SFFileListener {
 
     private String dir;
     private boolean subDirs;
-
     private Vector<IgnoreFile> ignoreFiles;
 
     public Rmdir(SF sf) {
         super(sf);
 
+        // optional attributes
+        this.dir = ".";
+        this.subDirs = false;
         this.ignoreFiles = new Vector<IgnoreFile>();
     }
 

@@ -1,5 +1,6 @@
 package biz.isphere.antcontrib.taskdef;
 
+import biz.isphere.antcontrib.sf.SFException;
 import biz.isphere.antcontrib.utils.StringUtil;
 
 public class IgnoreFile {
@@ -13,6 +14,11 @@ public class IgnoreFile {
         super();
 
         this.rmDir = rmDir;
+        
+        // required attributes
+        this.pattern = null;
+        
+        // optional attributes
         this.ignoreCase = true;
     }
 
@@ -32,7 +38,12 @@ public class IgnoreFile {
         this.ignoreCase = ignoreCase;
     }
 
-    public boolean matches(String filename) {
+    public boolean matches(String filename) throws SFException {
+        
+        if (pattern == null) {
+            throw new SFException("Attribute 'pattern' not set.");
+        }
+        
         return StringUtil.matchWildcard(pattern, filename, ignoreCase);
     }
 }
