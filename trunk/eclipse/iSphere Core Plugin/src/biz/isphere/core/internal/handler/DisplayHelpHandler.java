@@ -6,26 +6,28 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.handler;
+package biz.isphere.core.internal.handler;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.rse.ISphereRSEPlugin;
-import biz.isphere.rse.sourcefilesearch.SourceFileSearchPage;
+public class DisplayHelpHandler extends AbstractHandler implements IHandler {
 
-public class OpenSourceFileSearchPageHandler extends AbstractHandler implements IHandler {
+    public static final String ID = "biz.isphere.core.internal.handler.DisplayHelpHandler";
 
-    public static final String ID = "biz.isphere.rse.handler.OpenSourceFileSearchPageHandler";
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
+     * ExecutionEvent)
+     */
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 
-    public Object execute(ExecutionEvent arg0) throws ExecutionException {
-
-        NewSearchUI.openSearchDialog(ISphereRSEPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow(), SourceFileSearchPage.ID);
-
+        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.base.help/html/introduction/introduction.html");
+        
         return null;
     }
-
 }
