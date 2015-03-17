@@ -1,4 +1,12 @@
 
+
+Changelog: iSphere 2.6.0 beta 4
+-------------------------------
+
+ • Added menu option "Help" to the iSphere menu.
+ • Added additional iSphere help pages.
+
+
 Changelog: iSphere 2.6.0 beta 3
 -------------------------------
 
