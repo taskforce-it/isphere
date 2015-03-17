@@ -92,15 +92,15 @@
 
      D i               s             10i 0
      D splitted        ds                  likeds(splitted_t) inz
-     D server_ver      s             16a   varying inz
-     D client_ver      s             16a   varying inz
+     D server_version  s             16a   varying inz
+     D client_version  s             16a   varying inz
       /free
 
          splitted = splitt(i_server_ver);
 
          i = 1;
          dow (i <= %elem(splitted.value) and splitted.value(i) <> '');
-            server_ver += format(splitted.value(i));
+            server_version += format(splitted.value(i));
             i = i + 1;
          enddo;
 
@@ -108,15 +108,15 @@
 
          i = 1;
          dow (i <= %elem(splitted.value) and splitted.value(i) <> '');
-            client_ver += format(splitted.value(i));
+            client_version += format(splitted.value(i));
             i = i + 1;
          enddo;
 
          gi_dataArea = %trim(i_prdlib) + '/' + 'ISPHERE';
          in *lock iSphere;
          reset iSphere;
-         iSphere.server_ver = server_ver;
-         iSphere.client_ver = client_ver;
+         iSphere.server_ver = server_version;
+         iSphere.client_ver = client_version;
          out iSphere;
 
       /end-free
