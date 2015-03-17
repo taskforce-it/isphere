@@ -56,6 +56,7 @@
                 IF         COND(&OBJ_ODOBTP *EQ '*PGM') THEN(DO)
                    CHGPGM     PGM(&OBJ_ODLBNM/&OBJ_ODOBNM) +
                                 RMVOBS(*DBGDTA)
+                   MONMSG     MSGID(CPF0541)
                 ENDDO
 
                 IF         COND(&OBJ_ODOBTP *EQ '*SRVPGM') THEN(DO)
