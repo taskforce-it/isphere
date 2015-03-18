@@ -14,6 +14,12 @@
     -->
     <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
   </topic>
+  <topic label="Message File Search"  href="html/messagefilesearch/messagefilesearch.html"> 
+    <!--
+	Add sub topics here:
+    -->
+    <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
+  </topic>
   <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
     <!--
 	Add sub topics here:
