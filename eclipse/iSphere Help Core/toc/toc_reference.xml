@@ -18,7 +18,6 @@
     <!--
 	Add sub topics here:
     -->
-    <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
   </topic>
   <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
     <!--
@@ -30,7 +29,7 @@
     <!--
 	Add sub topics here:
     -->
-    <topic label="Preferences" href="html/dataareaeditor/preferences.html" />
+    <topic label="Preferences" href="html/dataareaeditor/preferences/preferences.html" />
   </topic>
   <topic label="Data Spaces" href="html/dataspaces/dataspaces.html"> 
     <!--
