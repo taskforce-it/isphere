@@ -211,7 +211,7 @@ public abstract class AbstractDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return new Point(280, 160);
+        return new Point(280, 180);
     }
 
     /**

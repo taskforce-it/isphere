@@ -187,7 +187,7 @@ public class SelectDataSpaceEditor extends XDialog {
     @Override
     protected Point getDefaultSize() {
         // Point point = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        return new Point(250, 300);
+        return new Point(285, 300);
     }
 
     /**
