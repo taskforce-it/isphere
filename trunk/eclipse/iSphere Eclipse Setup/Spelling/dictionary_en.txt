@@ -4,3 +4,8 @@ resizable
 editable
 pinnable
 typo
+download
+zip
+decorator
+checkbox
+Lpex
