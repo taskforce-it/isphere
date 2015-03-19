@@ -16,8 +16,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class DisplayHelpHandler extends AbstractHandler implements IHandler {
 
-    private static boolean isInitialized = false;
-
     public static final String ID = "biz.isphere.core.internal.handler.DisplayHelpHandler";
 
     /*
@@ -28,12 +26,12 @@ public class DisplayHelpHandler extends AbstractHandler implements IHandler {
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
-        // Hack, to open the iSphere book on first call (RDP, RDi?).
-        if (!isInitialized) {
-            PlatformUI.getWorkbench().getHelpSystem().displayDynamicHelp();
-            isInitialized = true;
-        }
-
+        /*
+         * When the help displayed for the first time after a restart of RDP,
+         * the iSphere topic is displayed, but not linked to the menu to the
+         * left. For now, there is no idea how to get around that. The problem
+         * does not exist in WDSCi.
+         */
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.base.help/html/introduction/introduction.html");
 
         return null;
