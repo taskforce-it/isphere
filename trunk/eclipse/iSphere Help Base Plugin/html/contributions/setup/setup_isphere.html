@@ -10,7 +10,7 @@
 <body>
 <h1>Setting up iSphere</h1>
 <p>
-<a name="connect_to_sourceforge"></a>
+<a id="connect_to_sourceforge"></a>
 <h2>Connecting to SourceForge</h2>
 <p>
 Open the "SVN Repository Exploring" perspective and click the "New Repository Location" icon on the
@@ -127,7 +127,7 @@ Usually there is no need for checking out all projects. For example you may not 
 if your IDE is RDP or RDi. There is also no need for checking out the four Ant projects of the <i>build</i> folder. These projects
 are only needed when there is something to change in the <i>iSphere Ant Contribution</i> plug-in.
 <p>
-<a name="host_project"></a>
+<a id="host_project"></a>
 <h2>The iSphere Host Project</h2>
 <p>
 Checking out the <i>iSphere</i> host project is a bit different from checking out the other projects, because
@@ -143,12 +143,8 @@ and specify the connection to your host and the name of your iSphere library:
 <p>
 <img alt="Checking out the iSphere host project" src="./assets/isphere_iproject.gif">
 <p>
-We use ISPHEREDVP for developing iSphere and ISPHERE for the production library.
-<p>
-Let us continue and push the source code to the host. Select <i>Remote Actions</i> and then <i>Push Selected</i> from the context
-menu of the <i>iSphere</i> project to push the source code to your host:
-<p>
-<img alt="Push selected changes tot he host" src="./assets/push_selected.gif">
+We use ISPHEREDVP for developing iSphere and ISPHERE for the production library. Library ISPHERE is built
+with the iSphere BUILD command from the command line as described in <a href="../build/build_isphere.html#library_build">Library Build</a>.
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0" ></iframe>
 </body>
