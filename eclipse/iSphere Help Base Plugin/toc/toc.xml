@@ -11,7 +11,7 @@
    </topic>
    <topic label="Uninstall Instructions" >
       <topic label="Uninstall WDSC" href="html/uninstall/uninstall_wdsci.html" />
-      <topic label="Uninstall RDi" href="html/uninstall/uninstall_wdsci.html" />
+      <topic label="Uninstall RDi" href="html/uninstall/uninstall_rdi.html" />
       <topic label="Uninstall Library" href="html/uninstall/uninstall_library.html" />
    </topic>
    <topic label="Reference">
