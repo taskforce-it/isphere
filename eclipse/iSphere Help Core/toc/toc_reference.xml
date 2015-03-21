@@ -29,4 +29,6 @@
   <topic label="Host Object Decorator"  href="html/decorator/hostobjectdecorator.html"> 
     <topic label="Preferences" href="html/decorator/preferences/preferences.html" />
   </topic>
+  <topic label="RSE Filter Management"  href="html/filtermanagement/filtermanagement.html"> 
+  </topic>
 </toc> 
