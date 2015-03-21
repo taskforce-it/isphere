@@ -5,6 +5,8 @@ Changelog: iSphere 2.6.0 beta 4
 
  • Added menu option "Help" to the iSphere menu.
  • Added additional iSphere help pages.
+ • Removed the need for data area QGPL/ISPHERE. The release level of
+   the operating system is retrieved with the QSZRTVPR API, now.
 
 
 Changelog: iSphere 2.6.0 beta 3
