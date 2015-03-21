@@ -25,17 +25,19 @@
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
      /*-----------------------------------------------------------------------*/
-             PGM        PARM(&I_PRDLIB &I_DEVLIB &I_TMPLIB &I_TGTRLS)
+             PGM        PARM(&I_PRDLIB &I_DEVLIB &I_TMPLIB &I_TGTRLS &I_OWNER)
 
              DCL        VAR(&I_PRDLIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_DEVLIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TMPLIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+             DCL        VAr(&I_OWNER  ) TYPE(*CHAR) LEN(10)
 
              DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
              DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHEREDVP')
              DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
              DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
+             DCL        VAR(&OWNER    ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
 
              DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
              DCL        VAR(&BUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
@@ -72,6 +74,11 @@
              ENDDO
 
              CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+             MONMSG     MSGID(MCH3601) EXEC(DO)
+                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+             ENDDO
+
+             CHGVAR     VAR(&OWNER) VALUE(&I_OWNER)
              MONMSG     MSGID(MCH3601) EXEC(DO)
                 RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
              ENDDO
@@ -450,7 +457,9 @@
                           LIB(&TMPLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
-             CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB 'QPGMR')
+             IF         COND(&OWNER *NE '*SAME') THEN(DO)
+                CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB &OWNER)
+             ENDDO
 
              /* ----------------------------------------------- */
              /* Remove debug information                        */

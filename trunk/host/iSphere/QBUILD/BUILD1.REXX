@@ -19,7 +19,8 @@ DUMMY2 "(" DEVLIB ")",
 DUMMY3 "(" TMPLIB ")",
 DUMMY4 "(" PREPRC ")",
 DUMMY5 "(" ISPHERE")",
-DUMMY6 "(" TGTRLS")";
+DUMMY6 "(" TGTRLS ")",
+DUMMY7 "(" OWNER  ")";
 
 /* Change current library to iSphere development library */
 "CHGCURLIB ",
@@ -37,6 +38,12 @@ END;
 IF ISPHERE = "*YES" THEN;
 DO;
 
+   /* Help panel group of BUILD command */
+   "CRTPNLGRP ",
+   "PNLGRP(&DEVLIB/BUILD_HLP) ",
+   "SRCFILE(QBUILD) ",
+   "SRCMBR(BUILD_HLP) ";
+
    /* Create Main Builder */
    "CRTBNDCL ",
    "PGM(&DEVLIB/BUILD_CRT) ",
@@ -47,7 +54,7 @@ DO;
    /* Create iSphere */
    "CALL ",
    "PGM(BUILD_CRT) ",
-   "PARM(&PRDLIB &DEVLIB &TMPLIB &TGTRLS)";
+   "PARM(&PRDLIB &DEVLIB &TMPLIB &TGTRLS &OWNER)";
 
 END;
 

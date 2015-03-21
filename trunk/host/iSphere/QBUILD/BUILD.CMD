@@ -12,8 +12,13 @@
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* This command has to be created by the executing the following command */
+     /* This command has to be created by the executing the following commands*/
      /* ===================================================================== */
+     /*                                                                       */
+     /* CRTPNLGRP                                                             */
+     /* PNLGRP(ISPHEREDVP/BUILD_HLP)                                          */
+     /* SRCFILE(ISPHEREDVP/QBUILD)                                            */
+     /* SRCMBR(BUILD_HLP)                                                     */
      /*                                                                       */
      /* CRTCMD                                                                */
      /* CMD(ISPHEREDVP/BUILD)                                                 */
@@ -23,6 +28,8 @@
      /* REXSRCFILE(QBUILD)                                                    */
      /* REXSRCMBR(BUILD1)                                                     */
      /* REXCMDENV(*COMMAND)                                                   */
+     /* HLPPNLGRP(BUILD_HLP)                                                  */
+     /* HLPID(BUILD)                                                          */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /* STRPREPRC Compile Options:                                            */
@@ -34,6 +41,8 @@
      /*         >>PARM<<   REXSRCFILE(QBUILD);                                */
      /*         >>PARM<<   REXSRCMBR(BUILD1);                                 */
      /*         >>PARM<<   REXCMDENV(*COMMAND);                               */
+     /*         >>PARM<<   HLPPNLGRP(&LI/BUILD_HLP);                          */
+     /*         >>PARM<<   HLPID(BUILD);                                      */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -50,12 +59,19 @@
              PARM       KWD(TMPLIB) TYPE(*NAME) LEN(10) DFT(QTEMP) +
                           PROMPT('Temporary library')
 
-             PARM       KWD(PREPRC) TYPE(*CHAR) LEN(10) RSTD(*YES) DFT(*YES) +
-                          SPCVAL((*YES) (*NO)) PROMPT('Create preprocessor')
+             PARM       KWD(PREPRC) TYPE(*CHAR) LEN(10) DFT(*YES) +
+                          RSTD(*YES) SPCVAL((*YES) (*NO)) +
+                          PROMPT('Create preprocessor')
 
-             PARM       KWD(ISPHERE) TYPE(*CHAR) LEN(10) RSTD(*YES) DFT(*YES) +
-                          SPCVAL((*YES) (*NO)) PROMPT('Create iSphere')
+             PARM       KWD(ISPHERE) TYPE(*CHAR) LEN(10) DFT(*YES) +
+                          RSTD(*YES) SPCVAL((*YES) (*NO)) +
+                          PROMPT('Create iSphere')
 
-             PARM       KWD(TGTRLS) TYPE(*CHAR) LEN(10) DFT(V5R3M0) PROMPT('Target +
-                          release')
+             PARM       KWD(TGTRLS) TYPE(*CHAR) LEN(10) DFT(V5R3M0) +
+                          SPCVAL((*CURRENT)) +
+                          PROMPT('Target release')
+
+             PARM       KWD(OWNER) TYPE(*NAME) LEN(10) DFT(QPGMR) +
+                          SPCVAL(*SAME) +
+                          PROMPT('Object owner')
 
