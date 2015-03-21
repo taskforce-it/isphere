@@ -218,6 +218,15 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
         }
     };
 
+    protected String checkFilterPool() {
+
+        if (getFilterPool() == null) {
+            return Messages.No_filter_pool_selected + ".";
+        } else {
+            return null;
+        }
+    }
+
     private RSEProfile getProfile() {
         if (profiles.length > 0 && comboViewerProfile.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection structuredSelection = (IStructuredSelection)comboViewerProfile.getSelection();
