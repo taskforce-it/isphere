@@ -67,13 +67,45 @@ The properties file contains a detailed description of each property.
 <u>ftp.properties</u>
 <p>
 This properties file describes the properties that are required to download the iSphere library from the
-host and the properties used for uploading files to SourceForge. Each property is decribed in the
+host and the properties used for uploading files to SourceForge. Each property is described in the
 properties file.
 <p>
 <table>
 <tr><td class="important" >Please also notice the "build.dryrun" property of the "build.properties" file. 
 When set to <i>true</i> nothing is deleted or uploaded. It is just simulated.</td></tr>
 </table>
+<p>
+<a id="object_build"></a>
+<h2>Object Build</h2>
+<p>
+iSphere objects are compiled from the <i>i Projects</i>. But instead of the predefined IBM compile commands, we
+use the STRPREPRC utility to compile iSphere objects. This way we can store object specific compile options 
+in the source member instead of changing the compile command each time the object is created.
+<p>
+The STRPREPRC command can be created by the iSphere BUILD command, which is described below in section 
+<i>Library Build</i>.
+<p>
+So whenever you want to compile a new object type, you first need to add the STRPREPRC compile command
+to that object type. For that, open the context menu of the source member that you are going to compile.
+Select <i>Remote Actions</i> and <i>Work With Compile Commands...</i>. Click <i>New command</i> 
+underneath <i>Compile Commands</i> and add a label, e.g. <i>iSphere</i> and the <i>STRPREPRC</i> command:
+<p>
+<div class="codeCommand">STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) CHGOBJD(*NO) OBJTYPE(*PGM) LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) TGTRLS(*CURRENT) USER0(&X)</div> 
+<p>
+Do not add line breaks to the command string! I does not work.
+<p>
+<img alt="Add iSphere compile command" src="./assets/add_compile_command.png">
+<p>
+Click the <i>Create</i> button to add the new compile option.
+<p>
+<img alt="Add iSphere compile command" src="./assets/add_compile_command.png">
+<p>
+Now use compile option <i>iSphere</i> each time you compile the object.
+<p>
+<img alt="Using the iSphere compile command" src="./assets/use_compile_command.png">
+<p>
+Do the same each time you compile an object type for the first time. The <i>STRPREPRC</i>
+command is the same for all object types.
 <p>
 <a id="library_build"></a>
 <h2>Library Build</h2>
@@ -82,7 +114,7 @@ The iSphere library is built from an IBM i command line with the iSphere BUILD c
 check out the <i>iSphere</i> project from the repository, refer to
 <a href="../setup/setup_rdp_svn.html#install_svn_adapter">Installing the SVN Adapter</a> to learn how to install the 
 SVN adapter. Then open <a href="../setup/setup_isphere.html#connect_to_sourceforge">Connecting to SourceForge</a> 
-to connect to SourceForge and eventually checkout the project, as desribed in 
+to connect to SourceForge and eventually checkout the project, as described in 
 <a href="../setup/setup_isphere.html#host_project">The iSphere Host Project</a>.
 <p>
 Switch to the <i>i Projects</i> perspective and select <i>Remote Actions -&gt; Push Selected</i> from the context
@@ -100,7 +132,11 @@ HLPPNLGRP(ISPHEREDVP/BUILD_HLP) HLPID(BUILD)</div>
 <div class="codeCommand">CRTPNLGRP PNLGRP(ISPHEREDVP/BUILD_HLP)<br>
 SRCFILE(ISPHEREDVP/QBUILD) SRCMBR(BUILD_HLP)</div> 
 <p>
-And this is how to execute it:
+Add library ISPHEREDVP to your library list:
+<p>
+<div class="codeCommand">ADDLIBLE LIB(ISPHEREDVP)</div> 
+<p>
+And eventually execute the BUILD command:
 <p>
 <img alt="Executing the iSphere BUILD command" src="./assets/isphere_build_cmd.gif">
 <p>
