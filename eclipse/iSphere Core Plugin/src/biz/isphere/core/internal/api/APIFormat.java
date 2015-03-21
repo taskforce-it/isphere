@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import biz.isphere.base.internal.StringHelper;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400SecurityException;
@@ -177,7 +179,8 @@ public class APIFormat {
     protected void setCharValue(String name, String value) throws CharConversionException, UnsupportedEncodingException {
 
         APICharFieldDescription field = getCharFieldDescription(name);
-        getCharConverter().stringToByteArray(value, getBytes(), getAbsoluteFieldOffset(field), field.getLength());
+        getCharConverter().stringToByteArray(StringHelper.getFixLength(value, field.getLength()), getBytes(), getAbsoluteFieldOffset(field),
+            field.getLength());
     }
 
     /**

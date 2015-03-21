@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,14 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.SearchForUpdates;
+import biz.isphere.core.internal.api.retrieveproductinformation.PRDI0100;
+import biz.isphere.core.internal.api.retrieveproductinformation.PRDR0100;
+import biz.isphere.core.internal.api.retrieveproductinformation.QSZRTVPR;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+
+import com.ibm.as400.access.AS400;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -323,5 +328,25 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     public static void setSearchArgumentsListEditorProvider(ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider) {
         ISpherePlugin.searchArgumentsListEditorProvider = searchArgumentsListEditorProvider;
+    }
+
+    public String getIBMiRelease(AS400 system) {
+
+        try {
+
+            PRDI0100 prdi0100 = new PRDI0100(system);
+            PRDR0100 prdr0100 = new PRDR0100(system);
+            QSZRTVPR main = new QSZRTVPR(system);
+            if (!main.execute(prdr0100, prdi0100)) {
+                logError(main.getMessageList()[0].getText(), null);
+            }
+
+            return prdr0100.getReleaseLevel();
+
+        } catch (Throwable e) {
+            logError(e.getLocalizedMessage(), e);
+        }
+
+        return "V0R0M0";
     }
 }
