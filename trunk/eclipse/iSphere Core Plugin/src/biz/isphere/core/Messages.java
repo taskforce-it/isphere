@@ -873,23 +873,23 @@ public class Messages extends NLS {
     public static String Failed_to_load_file;
 
     public static String Load;
-    
+
     public static String Save;
-    
+
     public static String Save_all;
-    
+
     public static String Auto_save;
 
     public static String Save_results_to_colon;
-    
+
     public static String Tooltip_Specifies_the_folder_to_save_source_file_search_results_to;
 
     public static String Auto_save_enabled_colon;
-    
+
     public static String Auto_save_enabled_Tooltip;
-    
+
     public static String Auto_save_file_name_colon;
-    
+
     public static String Auto_save_file_name_Tooltip;
 
     public static String Question;
@@ -897,9 +897,11 @@ public class Messages extends NLS {
     public static String Question_replace_search_results;
 
     public static String Label_Decorations_RSE_host_objects;
-    
+
     public static String Label_Decorations_RSE_host_objects_Description;
-    
+
+    public static String No_filter_pool_selected;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
