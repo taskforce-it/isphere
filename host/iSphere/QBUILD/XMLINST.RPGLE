@@ -217,6 +217,7 @@
      D                 PR          2000A          varying
      D  i_string                   2000A   value  varying
       *--------------------------------------------------------------------
+     D rmvSrcLib       s               N   inz(*OFF)
      D vrcvar          s            145
      D qm_msgid        s              7
      D qm_msgtxt       s            500
@@ -338,6 +339,9 @@
      C                   eval      bldexc = 'RMVLIBLE LIB('+
      C                             %trimr(ParseSrcLib) + ')'
      C                   callp(e)  qcmdexc(bldexc:%len(%trimr(bldexc)))
+     C                   if        %error
+     C                   eval      rmvSrcLib = *ON
+     C                   endif
       *
      C                   eval      bldexc = 'ADDLIBLE LIB('+
      C                             %trimr(ParseSrcLib) + ') POSITION(*FIRST)'
@@ -547,6 +551,12 @@
      C                   enddo
       *
      C                   exsr      srSQLEnd
+     C                   if        rmvSrcLib
+     C                   eval      rmvSrcLib = *OFF
+     C                   eval      bldexc = 'RMVLIBLE LIB('+
+     C                             %trimr(ParseSrcLib) + ')'
+     C                   callp(e)  qcmdexc(bldexc:%len(%trimr(bldexc)))
+     C                   endif
      C                   eval      *inlr=*on
      C                   return
       *--------------------------------------------------------------------
@@ -1171,4 +1181,4 @@
       *
      P uCase...
      P                 E
- 
+

@@ -11,7 +11,7 @@
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Erstellen iSphere Bibliothek - Ändern Eigner                          */
+     /* Build iSphere Library - Change owner                                  */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /* STRPREPRC Compile Options:                                            */
@@ -19,7 +19,8 @@
      /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
      /*       >>COMPILE<<                                                     */
-     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DFTACTGRP(*NO);                                    */
+     /*         >>PARM<<   ACTGRP(*NEW);                                      */
      /*         >>PARM<<   DBGVIEW(*LIST);                                    */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
@@ -31,16 +32,16 @@
              DCL        VAR(&TMPLIB  ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&OWNER   ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&TMPFILE ) TYPE(*CHAR) LEN(10) VALUE('BUILD_OWN')
+             DCL        VAR(&TMPFILE ) TYPE(*CHAR) LEN(10) VALUE('BUILD_OBJD')
              DCL        VAR(&NUM_RCDS) TYPE(*DEC)  LEN(10 0)
 
              DCLF       FILE(QADSPOBJ) OPNID(OBJ)
 
-             OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/BUILD_OWN) OVRSCOPE(*CALLLVL)
+             OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/&TMPFILE) OVRSCOPE(*CALLLVL)
 
              DSPOBJD    OBJ(&PRDLIB/*ALL) OBJTYPE(*ALL) DETAIL(*BASIC) +
-                          OUTPUT(*OUTFILE) OUTFILE(&TMPLIB/&TMPFILE) OUTMBR(*FIRST +
-                          *REPLACE)
+                          OUTPUT(*OUTFILE) OUTFILE(&TMPLIB/&TMPFILE) +
+                          OUTMBR(*FIRST *REPLACE)
              RTVMBRD    FILE(&TMPLIB/&TMPFILE) NBRCURRCD(&NUM_RCDS)
 
              OPNDBF     FILE(&TMPLIB/&TMPFILE) OPTION(*INP) +

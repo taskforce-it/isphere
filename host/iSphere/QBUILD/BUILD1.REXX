@@ -8,7 +8,7 @@
 /*                                                                       */
 /*-----------------------------------------------------------------------*/
 /*                                                                       */
-/* iSphere Build                                                         */
+/* Build iSphere Library - Command processor (CPP)                       */
 /*                                                                       */
 /*-----------------------------------------------------------------------*/
 
@@ -38,7 +38,7 @@ END;
 IF ISPHERE = "*YES" THEN;
 DO;
 
-   /* Help panel group of BUILD command */
+   /* Create help panel group of BUILD command */
    "CRTPNLGRP ",
    "PNLGRP(&DEVLIB/BUILD_HLP) ",
    "SRCFILE(QBUILD) ",

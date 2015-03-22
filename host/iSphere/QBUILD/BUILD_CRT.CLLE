@@ -11,7 +11,7 @@
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Erstellen iSphere Bibliothek - Erstellen Objekte                      */
+     /* Build iSphere Library - Create objects                                */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /* STRPREPRC Compile Options:                                            */
@@ -57,6 +57,10 @@
              DCL        VAR(&VERSION  ) TYPE(*CHAR) LEN( 8)
              DCL        VAR(&PRDTEXT  ) TYPE(*CHAR) LEN(50)
 
+             DCL        VAR(&TRUE     ) TYPE(*LGL ) VALUE('1')
+             DCL        VAR(&FALSE    ) TYPE(*LGL ) VALUE('1')
+             DCL        VAR(&RSTLIBL  ) TYPE(*LGL )
+
 
              CHGVAR     VAR(&PRDLIB) VALUE(&I_PRDLIB)
              MONMSG     MSGID(MCH3601) EXEC(DO)
@@ -93,6 +97,15 @@
 
              CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
                           TEXT('*BUILD_IN_PROGRESS')
+
+             /* ----------------------------------------------- */
+             /* Add product library to library list             */
+             /* ----------------------------------------------- */
+             CHGVAR     VAR(&RSTLIBL) VALUE(&TRUE)
+             ADDLIBLE   LIB(&PRDLIB)
+             MONMSG     MSGID(CPF2103) EXEC(DO)
+                CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
+             ENDDO
 
              /* ----------------------------------------------- */
              /* Create STRPREPRC utility                        */
@@ -494,5 +507,13 @@
              SNDPGMMSG  MSG('Created iSphere save file' *BCAT &SAVF *BCAT 'in +
                           library' *BCAT &PRDLIB *TCAT '.') TOPGMQ(*PRV (*CTLBDY)) +
                           MSGTYPE(*INFO)
+
+             /* ----------------------------------------------- */
+             /* Restore library list                            */
+             /* ----------------------------------------------- */
+             IF         COND(&RSTLIBL) THEN(DO)
+                RMVLIBLE   LIB(&PRDLIB)
+                CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
+             ENDDO
 
              ENDPGM
