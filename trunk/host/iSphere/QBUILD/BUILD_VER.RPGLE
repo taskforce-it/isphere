@@ -11,7 +11,7 @@
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Erstellen iSphere Bibliothek - Eintragen Version                                         *
+      //* Build iSphere Library - Set version number                                               *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
       //* STRPREPRC Compile Options:                                                               *
