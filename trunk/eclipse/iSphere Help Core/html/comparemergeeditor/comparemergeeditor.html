@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Source File Compare/Merge Editor</title>
+</head>
+
+<body>
+<h1>Source File Compare/Merge Editor</h1>
+<p>
+The Compare/Merge Editor gives you the ability to compare/merge source physical 
+file members.
+<p>
+To compare/merge source physical file members do the following.
+<p>
+<ul>
+<li>In the Remote Systems Explorer open the context menu for a source physical 
+file member.</li>
+<li>Select menu item "iSphere Compare Editor".</li>
+</ul>
+<p>
+<img src="assets/compare_merge_select.png" 
+     align="middle">
+<p>
+Enter the name of the source member that you want to compare the selected source 
+member with and click the <i>OK</i> button.
+<p>
+It is also possible to select both source members from the RSE tree at once.
+<p>
+<img src="assets/compare_merge_editor.png" 
+     align="middle">
+<p>
+Today there are a couple of restriction to know:
+<p>
+<table>
+<tr><td class="notice" >Notice: The date of the source lines are set to the current 
+date, if the <i>Ignore Date</i> option is selected. That cannot be change for today, 
+due to restrictions in the Eclipse compare support.</td></tr>
+</table>
+<p>
+<table>
+<tr><td class="notice" >Notice: It is impossible to exclude a range of columns from 
+source compare, due to restrictions in the Eclipse compare support.</td></tr>
+</table>
+<p>
+It might be possible to fix both issues with the next release of RDi, provided that 
+IBM/Rational updates the Eclipse version.
+<p>
+See these links for more details:
+<p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=382427" target="_blank">https://bugs.eclipse.org/bugs/show_bug.cgi?id=382427</a>
+<br>
+<a href="https://git.eclipse.org/r/#/c/9004" target="_blank">https://git.eclipse.org/r/#/c/9004</a>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
