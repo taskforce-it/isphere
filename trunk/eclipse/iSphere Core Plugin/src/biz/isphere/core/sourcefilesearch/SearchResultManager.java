@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.OutputStream;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.exception.LoadFileException;
@@ -21,7 +22,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class SearchResultManager {
-    
+
     public static final String FILE_EXTENSION = "srcfsr"; //$NON-NLS-1$
 
     public void saveToXml(String fileName, SearchResultTabFolder searchResults) throws SaveFileException {
@@ -31,7 +32,7 @@ public class SearchResultManager {
         try {
             file = new File(fileName);
             FileOutputStream stream = new FileOutputStream(file);
-            stream.write(serialize(searchResults).getBytes("utf-8")); //$NON-NLS-1$
+            serialize(searchResults, stream);
             stream.flush();
             stream.close();
         } catch (Exception e) {
@@ -61,9 +62,9 @@ public class SearchResultManager {
         }
     }
 
-    private String serialize(SearchResultTabFolder searchResults) {
+    private void serialize(SearchResultTabFolder searchResults, OutputStream stream) {
         XStream xstream = getXStream();
-        return xstream.toXML(searchResults);
+        xstream.toXML(searchResults, stream);
     }
 
     private XStream getXStream() {
