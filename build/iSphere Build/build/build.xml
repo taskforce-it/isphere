@@ -419,7 +419,7 @@
 		<echo>Replacing '@' variables ...</echo>
 
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BUILD_TARGET@" value="${target.ide.sf.dir}" />
-		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BETA_VERSION@" value="${sf.ftp.beta.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BETA_VERSION@" value="${beta.dir}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="/./" value="/" />
 
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_INFO@" value="${version.info}" />
