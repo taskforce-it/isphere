@@ -29,12 +29,10 @@ Use the context menu to edit a message description:
 <img src="assets/context_menu.png" 
      align="middle">
 <p>
-With IBM i V6R1M0 IBM has added the parameter value "Activation" to parameter OBJ of command ADDBNDDIRE. If on a 
-server is not installed at least V6R1M0 you have to execute the following command on this server in order to work 
-with this feature of the iSphere plug-in. You have to replace the value VxRxMx with the installed release on this 
-server. For example V5R4M0.
-<p>
-<div class="codeIndent">CRTDTAARA DTAARA(QGPL/ISPHERE) TYPE(*CHAR) LEN(6) VALUE('VxRxMx') TEXT('iSphere')</div>
+<table>
+<tr><td class="notice" >Notice: Starting with iSphere v2.6.0 data area QGPL/ISPHERE 
+is no longer needed and can be safely deleted.</td></tr>
+</table>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
