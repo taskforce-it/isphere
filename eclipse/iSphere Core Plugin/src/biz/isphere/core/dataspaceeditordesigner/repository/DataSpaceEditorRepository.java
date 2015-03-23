@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -191,7 +192,7 @@ public final class DataSpaceEditorRepository {
         try {
             file = new File(getFileName(dEditor));
             FileOutputStream stream = new FileOutputStream(file);
-            stream.write(serialize(dEditor).getBytes("utf-8"));
+            serialize(dEditor, stream);
             stream.flush();
             stream.close();
         } catch (Exception e) {
@@ -288,9 +289,9 @@ public final class DataSpaceEditorRepository {
         }
     }
 
-    private String serialize(DEditor dEditor) {
+    private void serialize(DEditor dEditor, OutputStream stream) {
         XStream xstream = getXStream();
-        return xstream.toXML(dEditor);
+        xstream.toXML(dEditor, stream);
     }
 
     private XStream getXStream() {

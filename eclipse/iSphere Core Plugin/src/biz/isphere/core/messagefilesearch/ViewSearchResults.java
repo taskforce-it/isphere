@@ -23,6 +23,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,8 +35,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.core.ISpherePlugin;
@@ -45,13 +47,13 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 public class ViewSearchResults extends ViewPart implements ISelectionChangedListener {
 
     private static final String TAB_DATA_VIEWER = "Viewer";
-    
+
     private Action actionExportToObjectFilter;
     private Action actionExportToExcel;
     private Action actionRemoveTabItem;
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
-    private TabFolder tabFolderSearchResults;
+    private CTabFolder tabFolderSearchResults;
     private Shell shell;
 
     @Override
@@ -61,7 +63,15 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         shell = parent.getShell();
 
-        tabFolderSearchResults = new TabFolder(container, SWT.NONE);
+        tabFolderSearchResults = new CTabFolder(container, SWT.NONE);
+        tabFolderSearchResults.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            public void close(CTabFolderEvent event) {
+                if (event instanceof CTabFolderEvent) {
+                    CTabFolderEvent folderEvent = (CTabFolderEvent)event;
+                    removeTabItem((CTabItem)folderEvent.item);
+                }
+            }
+        });
 
         createActions();
         initializeToolBar();
@@ -94,7 +104,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionRemoveTabItem = new Action("") {
             @Override
             public void run() {
-                removeTabItem();
+                removeSelectedTabItem();
             }
         };
         actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
@@ -147,7 +157,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         Composite compositeSearchResult = new Composite(tabFolderSearchResults, SWT.NONE);
         compositeSearchResult.setLayout(new FillLayout());
 
-        TabItem tabItemSearchResult = new TabItem(tabFolderSearchResults, SWT.NONE);
+        CTabItem tabItemSearchResult = new CTabItem(tabFolderSearchResults, SWT.CLOSE);
         tabItemSearchResult.setText(connectionName + "/" + searchString);
 
         SearchResultViewer _searchResultViewer = new SearchResultViewer(connection, searchString, searchResults);
@@ -157,14 +167,12 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         tabItemSearchResult.setControl(compositeSearchResult);
         tabItemSearchResult.setData(TAB_DATA_VIEWER, _searchResultViewer);
 
-        TabItem[] tabItemToBeSelected = new TabItem[1];
-        tabItemToBeSelected[0] = tabItemSearchResult;
-        tabFolderSearchResults.setSelection(tabItemToBeSelected);
+        tabFolderSearchResults.setSelection(tabItemSearchResult);
 
         actionExportToObjectFilter.setEnabled(true);
         actionExportToExcel.setEnabled(true);
         actionRemoveTabItem.setEnabled(true);
-        
+
         setActionEnablement();
 
         tabFolderSearchResults.addSelectionListener(new SelectionAdapter() {
@@ -309,17 +317,18 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     }
 
-    public void removeTabItem() {
+    public void removeSelectedTabItem() {
         int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
         if (selectedTabItem >= 0) {
-            tabFolderSearchResults.getItem(selectedTabItem).dispose();
-            if (tabFolderSearchResults.getItemCount() == 0) {
-                actionExportToObjectFilter.setEnabled(false);
-                actionExportToExcel.setEnabled(false);
-                actionRemoveTabItem.setEnabled(false);
-                actionRemoveSelectedItems.setEnabled(false);
-            }
+            CTabItem tabItemSearchResult = tabFolderSearchResults.getItem(selectedTabItem);
+            removeTabItem(tabItemSearchResult);
         }
+    }
+
+    private void removeTabItem(CTabItem tabItem) {
+
+        tabItem.dispose();
+        setActionEnablement();
     }
 
     public void removeSelectedItem() {
@@ -359,8 +368,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         if (index < 0) {
             viewer = null;
         } else {
-            viewer = (SearchResultViewer)tabFolderSearchResults.getItem(index).getData(
-                TAB_DATA_VIEWER);
+            viewer = (SearchResultViewer)tabFolderSearchResults.getItem(index).getData(TAB_DATA_VIEWER);
         }
 
         boolean hasViewer;

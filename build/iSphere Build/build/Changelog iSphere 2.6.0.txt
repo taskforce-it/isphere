@@ -1,12 +1,24 @@
 
 
+Changelog: iSphere 2.6.0 beta 5
+-------------------------------
+
+ • Removed the need for data area QGPL/ISPHERE. The release level of
+   the operating system is retrieved with the QSZRTVPR API, now.
+ • Fixed problem that search results and the designer repository were not 
+   properly saved as UTF-8 stream.
+ • Added menu option "Help" to the iSphere menu.
+ • Added menu option "Help" to the iSphere menu.
+ • Added additional iSphere help pages.
+ • Added 'Close' button to source file and message file search result views.
+
+
 Changelog: iSphere 2.6.0 beta 4
 -------------------------------
 
- • Added menu option "Help" to the iSphere menu.
  • Added additional iSphere help pages.
- • Removed the need for data area QGPL/ISPHERE. The release level of
-   the operating system is retrieved with the QSZRTVPR API, now.
+ • Fixed problem that the version of the iSphere library was not checked,
+   when the message file editor was opened by CMOne.
 
 
 Changelog: iSphere 2.6.0 beta 3
