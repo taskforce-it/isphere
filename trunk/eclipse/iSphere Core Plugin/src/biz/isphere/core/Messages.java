@@ -902,6 +902,8 @@ public class Messages extends NLS {
 
     public static String No_filter_pool_selected;
 
+    public static String Copy_selected;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

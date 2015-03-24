@@ -102,6 +102,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_OPEN_VIEWER = "open_viewer.gif";
     public static final String IMAGE_SAVE = "save.gif";
     public static final String IMAGE_SAVE_ALL = "save_all.gif";
+    public static final String IMAGE_COPY_TO_CLIPBOARD = "copy_to_clipboard.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -248,6 +249,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_OPEN_VIEWER, getImageDescriptor(IMAGE_OPEN_VIEWER));
         reg.put(IMAGE_SAVE, getImageDescriptor(IMAGE_SAVE));
         reg.put(IMAGE_SAVE_ALL, getImageDescriptor(IMAGE_SAVE_ALL));
+        reg.put(IMAGE_COPY_TO_CLIPBOARD, getImageDescriptor(IMAGE_COPY_TO_CLIPBOARD));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

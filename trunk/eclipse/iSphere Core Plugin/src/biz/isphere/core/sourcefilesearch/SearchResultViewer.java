@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.IEditor;
@@ -144,6 +145,7 @@ public class SearchResultViewer {
         private MenuItem menuItemSelectAll;
         private MenuItem menuItemDeselectAll;
         private MenuItem menuItemInvertSelection;
+        private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
 
         public TableMembersMenuAdapter(Menu menuTableMembers) {
@@ -172,6 +174,9 @@ public class SearchResultViewer {
             }
             if (!((menuItemInvertSelection == null) || (menuItemInvertSelection.isDisposed()))) {
                 menuItemInvertSelection.dispose();
+            }
+            if (!((menuCopySelected == null) || (menuCopySelected.isDisposed()))) {
+                menuCopySelected.dispose();
             }
             if (!((menuItemRemove == null) || (menuItemRemove.isDisposed()))) {
                 menuItemRemove.dispose();
@@ -232,6 +237,16 @@ public class SearchResultViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         executeMenuItemInvertSelectedItems();
+                    }
+                });
+
+                menuCopySelected = new MenuItem(menuTableMembers, SWT.NONE);
+                menuCopySelected.setText(Messages.Copy_selected);
+                menuCopySelected.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_TO_CLIPBOARD));
+                menuCopySelected.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemCopySelectedItems();
                     }
                 });
 
@@ -532,6 +547,37 @@ public class SearchResultViewer {
             allItems.removeAll(Arrays.asList(selectedItemsMembers));
             executeMenuItemDeselectAll();
             tableViewerMembers.setSelection(new StructuredSelection(allItems), true);
+        }
+    }
+
+    private void executeMenuItemCopySelectedItems() {
+
+        IEditor editor = ISpherePlugin.getEditor();
+
+        if (editor != null) {
+            if (selectedItemsMembers.length > 0) {
+                StringBuilder list = new StringBuilder();
+                list.append(Messages.Library);
+                list.append("\t");
+                list.append(Messages.File);
+                list.append("\t");
+                list.append(Messages.Member);
+                list.append("\t");
+                list.append(Messages.Description);
+                list.append("\n");
+                for (Object item : selectedItemsMembers) {
+                    SearchResult searchResult = (SearchResult)item;
+                    list.append(searchResult.getLibrary());
+                    list.append("\t");
+                    list.append(searchResult.getFile());
+                    list.append("\t");
+                    list.append(searchResult.getMember());
+                    list.append("\t");
+                    list.append(searchResult.getDescription());
+                    list.append("\n");
+                }
+                ClipboardHelper.setText(list.toString());
+            }
         }
     }
 
