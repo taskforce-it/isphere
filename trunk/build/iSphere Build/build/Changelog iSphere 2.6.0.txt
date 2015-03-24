@@ -1,5 +1,12 @@
 
 
+Changelog: iSphere 2.6.0 beta 6
+-------------------------------
+
+ • Fixed problem the editor was not brought to front, when clicking on
+   a statement of the iSphere source file search view.
+
+
 Changelog: iSphere 2.6.0 beta 5
 -------------------------------
 
