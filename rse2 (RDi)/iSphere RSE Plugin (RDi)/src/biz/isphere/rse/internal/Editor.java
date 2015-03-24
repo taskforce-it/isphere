@@ -97,6 +97,7 @@ public class Editor implements IEditor {
                         if (statement != 0) {
                             if (!mbr.openIsCanceled()) {
                                 SystemTextEditor systemTextEditor = mbr.getEditor();
+                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(mbr.getEditorPart());
                                 if (systemTextEditor != null) {
                                     systemTextEditor.gotoLine(statement);
                                 }
