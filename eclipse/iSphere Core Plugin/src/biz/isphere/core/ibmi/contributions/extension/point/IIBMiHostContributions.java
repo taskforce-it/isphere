@@ -14,12 +14,38 @@ import com.ibm.as400.access.AS400;
 
 public interface IIBMiHostContributions {
 
+    /**
+     * Returns an AS400 object for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return AS400 object that is associated to the connection
+     */
     public AS400 getSystem(String connectionName);
 
+    /**
+     * Returns an AS400 object for a given profile and connection name.
+     * 
+     * @param profile - name of the profile, that hosts the connection
+     * @param connectionName - connection name to identify the connection
+     * @return AS400 object that is associated to the connection
+     */
     public AS400 getSystem(String profile, String connectionName);
 
+    /**
+     * Returns a JDBC connection for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return JDBC connection that is associated to the connection
+     */
     public Connection getJdbcConnection(String connectionName);
 
+    /**
+     * Returns a JDBC connection for a given profile and connection name.
+     * 
+     * @param profile - name of the profile, that hosts the connection
+     * @param connectionName - connection name to identify the connection
+     * @return JDBC connection that is associated to the connection
+     */
     public Connection getJdbcConnection(String profile, String connectionName);
 
 }
