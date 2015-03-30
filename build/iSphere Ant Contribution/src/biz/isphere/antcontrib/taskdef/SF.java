@@ -59,9 +59,9 @@ public class SF extends Task {
             client.connect();
 
             if (".".equals(remoteDir)) {
-                client.cd(remoteDir);
+            	remoteDir = client.getRemoteDir();
             } else {
-                remoteDir = client.getRemoteDir();
+            	client.cd(remoteDir);
             }
 
             for (Object action : actions) {
