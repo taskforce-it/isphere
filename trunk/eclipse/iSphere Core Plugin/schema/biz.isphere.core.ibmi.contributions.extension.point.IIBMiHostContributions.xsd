@@ -3,7 +3,7 @@
 <schema targetNamespace="biz.isphere.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="biz.isphere.core" id="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions" name="RDi Contributions: IRDiContributions"/>
+         <meta.schema plugin="biz.isphere.core" id="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions" name="IBMi Host Contributions: IIBMiHostContributions"/>
       </appInfo>
       <documentation>
          This extension point allows plugins to contribute extensions that are specific to RDi/WDSCi.
