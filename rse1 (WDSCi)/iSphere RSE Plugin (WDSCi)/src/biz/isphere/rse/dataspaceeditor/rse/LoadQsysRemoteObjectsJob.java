@@ -46,21 +46,20 @@ public class LoadQsysRemoteObjectsJob extends Job {
         for (DataElement qsysRemoteObject : qsysRemoteObjects) {
 
             ISeriesObject iSeriesObject = new ISeriesObject(qsysRemoteObject);
-            String connection = getConnection(qsysRemoteObject);
+            String connectionName = getConnectionName(qsysRemoteObject);
             String name = iSeriesObject.getName();
             String library = iSeriesObject.getLibrary();
             String type = iSeriesObject.getType();
             String description = iSeriesObject.getDescription();
-            remoteObjects.add(new RemoteObject(connection, name, library, type, description));
+            remoteObjects.add(new RemoteObject(connectionName, name, library, type, description));
         }
         receiver.setRemoteObjects(remoteObjects.toArray(new RemoteObject[remoteObjects.size()]));
 
         return Status.OK_STATUS;
     }
 
-    private String getConnection(DataElement object) {
-        String connection = ISeriesDataElementUtil.getConnection(object).getAliasName();
-        return connection;
+    private String getConnectionName(DataElement object) {
+        return ISeriesDataElementUtil.getConnection(object).getAliasName();
     }
 
     private ArrayList<DataElement> getRSESourceObjects(String[] droppedObjects) {

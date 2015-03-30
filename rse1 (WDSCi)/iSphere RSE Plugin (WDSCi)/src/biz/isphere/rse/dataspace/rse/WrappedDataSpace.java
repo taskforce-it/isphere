@@ -37,8 +37,8 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
         super(remoteObject);
     }
 
-    protected AS400 getSystem(String connection) throws Exception {
-        return ISeriesConnection.getConnection(connection).getAS400ToolboxObject(null);
+    protected AS400 getSystem(String connectionName) throws Exception {
+        return ISeriesConnection.getConnection(connectionName).getAS400ToolboxObject(null);
     }
 
     protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception {

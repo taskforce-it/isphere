@@ -17,7 +17,7 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
 public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchObjectFilterCreator {
 
-    public boolean createObjectFilter(Object connection, String filterName, SearchResult[] searchResults) {
+    public boolean createObjectFilter(String connectionName, String filterName, SearchResult[] searchResults) {
 
         ISeriesObjectFilterString[] filterStrings = new ISeriesObjectFilterString[searchResults.length];
 
@@ -32,7 +32,8 @@ public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchO
 
         }
 
-        if (RSEHelper.createObjectFilter((ISeriesConnection)connection, filterName, filterStrings) == null) {
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        if (RSEHelper.createObjectFilter(connection, filterName, filterStrings) == null) {
             return false;
         } else {
             return true;
