@@ -578,7 +578,7 @@
 
 		<echo>Uploading SourceForge: files (download area) ...</echo>
 
-		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${dryrun}" 
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
 			<copydir dir="${build.upload.dir.files}" toDir="." subDirs="false" />
 			<copydir dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" toDir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
