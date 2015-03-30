@@ -4,6 +4,19 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere RDi Contributions
+      	  ==========================================
+      	-->
+
+	<extension
+		point="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions">
+		<client
+            class="biz.isphere.rse.ibmi.contributions.extension.point.XRDiContributions">
+		</client>
+	</extension>
+      	
+      	<!--
+      	  ==========================================
       	    iSphere Editors
       	  ==========================================
       	-->

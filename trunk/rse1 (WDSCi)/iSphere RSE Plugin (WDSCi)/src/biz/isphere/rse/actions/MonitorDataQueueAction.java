@@ -99,13 +99,13 @@ public class MonitorDataQueueAction extends ISeriesSystemBaseAction implements I
     protected void openMonitorForObject(DataElement dataElement, IWorkbenchPage page) {
         try {
 
-            String connection = ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(dataElement).getAliasName()).getConnectionName();
+            String connectionName = ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(dataElement).getAliasName()).getConnectionName();
             ISeriesObject qsysRemoteObject = new ISeriesObject(dataElement);
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String type = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            RemoteObject remoteObject = new RemoteObject(connection, name, library, type, description);
+            RemoteObject remoteObject = new RemoteObject(connectionName, name, library, type, description);
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_QUEUE_MONITOR_VIEWS);

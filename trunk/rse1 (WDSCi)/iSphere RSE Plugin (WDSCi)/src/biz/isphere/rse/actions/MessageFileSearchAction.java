@@ -211,11 +211,11 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
         }
 
         AS400 as400 = null;
-        String host = null;
+        String connectionName = null;
         Connection jdbcConnection = null;
         try {
             as400 = _connection.getAS400ToolboxObject(shell);
-            host = _connection.getSystemConnection().getHostName();
+            connectionName = _connection.getSystemConnection().getAliasName();
             jdbcConnection = _connection.getJDBCConnection(null, false);
         } catch (SystemMessageException e) {
             e.printStackTrace();
@@ -223,7 +223,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
             e.printStackTrace();
         }
 
-        if (as400 != null && host != null && jdbcConnection != null) {
+        if (as400 != null && connectionName != null && jdbcConnection != null) {
 
             if (ISphereHelper.checkISphereLibrary(shell, as400)) {
 
@@ -237,7 +237,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(as400, host, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
+                    new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
                         .values()), postRun);
 
                 }
