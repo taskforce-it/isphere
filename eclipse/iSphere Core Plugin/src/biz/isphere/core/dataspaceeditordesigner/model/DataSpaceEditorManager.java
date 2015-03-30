@@ -30,7 +30,7 @@ import biz.isphere.core.dataspaceeditordesigner.listener.AdapterButtonModifiedLi
 import biz.isphere.core.dataspaceeditordesigner.listener.AdapterTextModifiedListener;
 import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
 import biz.isphere.core.internal.Validator;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 /**
  * This class manages the data model of the 'space object editors'. it is used

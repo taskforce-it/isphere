@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 /**
  * Editor delegate that edits a *LGL data area.

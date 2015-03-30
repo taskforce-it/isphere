@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,9 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
 
     // TODO: CMOne - remove constructor
     @Deprecated
-    public AbstractObjectEditorInput(AS400 anAS400, String aConnection, String aLibrary, String anObjectName, String anObjectType, String aMode,
+    public AbstractObjectEditorInput(AS400 anAS400, String aConnectionName, String aLibrary, String anObjectName, String anObjectType, String aMode,
         String anImageID) {
-        this(anAS400, new RemoteObject(aConnection, anObjectName, aLibrary, anObjectType, ""), aMode, anImageID);
+        this(anAS400, new RemoteObject(aConnectionName, anObjectName, aLibrary, anObjectType, ""), aMode, anImageID);
     }
 
     public AS400 getAS400() {

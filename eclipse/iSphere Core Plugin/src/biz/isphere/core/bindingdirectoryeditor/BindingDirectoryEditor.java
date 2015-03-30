@@ -92,11 +92,11 @@ public class BindingDirectoryEditor extends EditorPart {
 
     // TODO: CMOne - remove method
     @Deprecated
-    public static void openEditor(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
+    public static void openEditor(AS400 as400, Connection jdbcConnection, String connectionName, String library, String bindingDirectory, String mode) {
 
         try {
 
-            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connection, library, bindingDirectory,
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connectionName, library, bindingDirectory,
                 mode);
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
 

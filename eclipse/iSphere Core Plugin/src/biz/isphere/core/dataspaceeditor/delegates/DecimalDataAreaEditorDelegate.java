@@ -29,7 +29,7 @@ import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.internal.Validator;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 /**
  * Editor delegate that edits a *DEC data area.

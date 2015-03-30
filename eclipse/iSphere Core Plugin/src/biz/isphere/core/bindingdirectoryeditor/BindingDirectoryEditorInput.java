@@ -35,8 +35,8 @@ public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
     // TODO: CMOne - remove constructor
     @Deprecated
-    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, String connection, String library, String bindingDirectory, String mode) {
-        this(as400, jdbcConnection, new RemoteObject(connection, bindingDirectory, library, OBJECT_TYPE, ""), mode);
+    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, String connectionName, String library, String bindingDirectory, String mode) {
+        this(as400, jdbcConnection, new RemoteObject(connectionName, bindingDirectory, library, OBJECT_TYPE, ""), mode);
     }
 
     public boolean exists() {

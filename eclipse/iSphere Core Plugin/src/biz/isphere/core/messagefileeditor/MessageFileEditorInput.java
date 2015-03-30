@@ -27,8 +27,8 @@ public class MessageFileEditorInput extends AbstractObjectEditorInput {
 
     // TODO: CMOne - remove method
     @Deprecated
-    public MessageFileEditorInput(AS400 anAS400, String aConnection, String aLibrary, String aMessageFile, String aMode) {
-        super(anAS400, aConnection, aLibrary, aMessageFile, OBJECT_TYPE, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
+    public MessageFileEditorInput(AS400 anAS400, String aConnectionName, String aLibrary, String aMessageFile, String aMode) {
+        super(anAS400, aConnectionName, aLibrary, aMessageFile, OBJECT_TYPE, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
     }
 
     public boolean exists() {

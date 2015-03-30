@@ -28,7 +28,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.SearchOptions;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class SearchDialog extends AbstractSearchDialog {
 

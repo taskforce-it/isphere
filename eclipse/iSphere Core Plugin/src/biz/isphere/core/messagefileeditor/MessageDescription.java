@@ -17,7 +17,7 @@ public class MessageDescription {
     public static final String CCSID_JOB = "*JOB";
     public static final String CCSID_HEX = "*HEX";
 
-    private String connection;
+    private String connectionName;
     private String library;
     private String messageFile;
     private String messageId;
@@ -28,7 +28,7 @@ public class MessageDescription {
     private ArrayList<FieldFormat> fieldFormats;
 
     public MessageDescription() {
-        connection = "";
+        connectionName = "";
         library = "";
         messageFile = "";
         messageId = "";
@@ -40,11 +40,11 @@ public class MessageDescription {
     }
 
     public String getConnection() {
-        return connection;
+        return connectionName;
     }
 
-    public void setConnection(String connection) {
-        this.connection = connection;
+    public void setConnection(String connectionName) {
+        this.connectionName = connectionName;
     }
 
     public String getLibrary() {

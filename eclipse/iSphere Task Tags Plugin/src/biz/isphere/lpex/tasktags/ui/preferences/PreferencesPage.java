@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.adapter.swt.widgets.XFileDialog;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.lpex.tasktags.Messages;
 import biz.isphere.lpex.tasktags.preferences.Preferences;
 

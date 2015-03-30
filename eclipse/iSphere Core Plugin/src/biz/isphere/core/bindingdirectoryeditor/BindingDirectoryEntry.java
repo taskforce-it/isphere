@@ -10,14 +10,14 @@ package biz.isphere.core.bindingdirectoryeditor;
 
 public class BindingDirectoryEntry {
 
-    private String connection;
+    private String connectionName;
     private String library;
     private String object;
     private String objectType;
     private String activation;
 
     public BindingDirectoryEntry() {
-        connection = "";
+        connectionName = "";
         library = "";
         object = "";
         objectType = "";
@@ -25,11 +25,11 @@ public class BindingDirectoryEntry {
     }
 
     public String getConnection() {
-        return connection;
+        return connectionName;
     }
 
-    public void setConnection(String connection) {
-        this.connection = connection;
+    public void setConnection(String connectionName) {
+        this.connectionName = connectionName;
     }
 
     public String getLibrary() {

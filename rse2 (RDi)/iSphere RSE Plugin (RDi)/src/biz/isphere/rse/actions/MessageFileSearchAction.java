@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,11 +171,11 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
             }
 
             AS400 as400 = null;
-            String host = null;
+            String connectionName = null;
             Connection jdbcConnection = null;
             try {
                 as400 = _connection.getAS400ToolboxObject();
-                host = _connection.getHost().getName();
+                connectionName = _connection.getConnectionName();
                 jdbcConnection = _connection.getJDBCConnection(null, false);
             } catch (SystemMessageException e) {
                 e.printStackTrace();
@@ -183,7 +183,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                 e.printStackTrace();
             }
 
-            if (as400 != null && host != null && jdbcConnection != null) {
+            if (as400 != null && connectionName != null && jdbcConnection != null) {
 
                 if (ISphereHelper.checkISphereLibrary(shell, as400)) {
 
@@ -199,7 +199,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                         new SearchExec().execute(
                             as400, 
-                            host, 
+                            connectionName, 
                             jdbcConnection, 
                             dialog.getSearchOptions(), 
                             new ArrayList<SearchElement>(_searchElements.values()), 

@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400FTP;

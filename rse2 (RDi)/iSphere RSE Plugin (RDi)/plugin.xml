@@ -4,6 +4,19 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere RDi Contributions
+      	  ==========================================
+      	-->
+
+	<extension
+		point="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions">
+		<client
+            class="biz.isphere.rse.ibmi.contributions.extension.point.XRDiContributions">
+		</client>
+	</extension>
+      	
+      	<!--
+      	  ==========================================
       	    iSphere Editors
       	  ==========================================
       	-->
@@ -254,7 +267,7 @@
                 class="biz.isphere.rse.actions.MonitorDataQueueAction"
                 enablesFor="1"
                 id="biz.isphere.rse.actions.MonitorDataQueueAction"
-                label="iSphere Data Queue Monitor"
+                label="%iSphere_Data_Queue_Monitor"
                 icon="icons/data_monitor.gif"
                 menubarPath="additions">
 	         </action>

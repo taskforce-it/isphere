@@ -18,16 +18,14 @@ public class SearchPostRun implements ISearchPostRun {
     private class ShowView extends Thread {
 
         private IWorkbenchWindow _workbenchWindow;
-        private Object _connection;
         private String _connectionName;
         private String _searchString;
         private SearchResult[] _searchResults;
 
-        public ShowView(IWorkbenchWindow _workbenchWindow, Object _connection, String _connectionName, String _searchString,
+        public ShowView(IWorkbenchWindow _workbenchWindow, String _connectionName, String _searchString,
             SearchResult[] _searchResults) {
 
             this._workbenchWindow = _workbenchWindow;
-            this._connection = _connection;
             this._connectionName = _connectionName;
             this._searchString = _searchString;
             this._searchResults = _searchResults;
@@ -41,7 +39,7 @@ public class SearchPostRun implements ISearchPostRun {
                     try {
                         ViewSearchResults viewSearchResults = (ViewSearchResults)(_workbenchWindow.getActivePage()
                             .showView("biz.isphere.core.messagefilesearch.ViewSearchResults"));
-                        viewSearchResults.addTabItem(_connection, _connectionName, _searchString, _searchResults);
+                        viewSearchResults.addTabItem(_connectionName, _searchString, _searchResults);
                     } catch (PartInitException e) {
                         e.printStackTrace();
                     }
@@ -110,7 +108,7 @@ public class SearchPostRun implements ISearchPostRun {
 
             }
 
-            new ShowView(_workbenchWindow, _connection, _connectionName, _searchString, _searchResults).start();
+            new ShowView(_workbenchWindow, _connectionName, _searchString, _searchResults).start();
 
         }
 

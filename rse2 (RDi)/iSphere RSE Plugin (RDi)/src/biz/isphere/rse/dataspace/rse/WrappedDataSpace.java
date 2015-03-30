@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,8 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
         super(remoteObject);
     }
 
-    protected AS400 getSystem(String connection) throws Exception {
-        return IBMiConnection.getConnection(connection).getAS400ToolboxObject();
+    protected AS400 getSystem(String connectionName) throws Exception {
+        return IBMiConnection.getConnection(connectionName).getAS400ToolboxObject();
     }
 
     protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception {

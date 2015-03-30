@@ -55,7 +55,7 @@ public abstract class AbstractWrappedDataSpace {
         this.dataSpaceObject = getOrLoadDataSpace();
     }
 
-    protected abstract AS400 getSystem(String connection) throws Exception;
+    protected abstract AS400 getSystem(String connectionName) throws Exception;
 
     public String getConnection() {
         return remoteObject.getConnectionName();

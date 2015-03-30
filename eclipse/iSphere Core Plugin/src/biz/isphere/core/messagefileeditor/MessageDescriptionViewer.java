@@ -56,14 +56,14 @@ import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
 public class MessageDescriptionViewer {
 
     private AS400 as400;
-    private String connection;
+    private String connectionName;
     private String library;
     private String messageFile;
     private String mode;
@@ -107,7 +107,7 @@ public class MessageDescriptionViewer {
 
                 try {
 
-                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connection);
+                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connectionName);
                     iqmhrtvm.setMessageFile(messageFile, library);
                     messageDescriptions = iqmhrtvm.retrieveAllMessageDescriptions();
 
@@ -189,9 +189,9 @@ public class MessageDescriptionViewer {
         }
     }
 
-    public MessageDescriptionViewer(AS400 as400, String connection, String library, String messageFile, String mode, IWorkbenchPartSite site) {
+    public MessageDescriptionViewer(AS400 as400, String connectionName, String library, String messageFile, String mode, IWorkbenchPartSite site) {
         this.as400 = as400;
-        this.connection = connection;
+        this.connectionName = connectionName;
         this.library = library;
         this.messageFile = messageFile;
         this.mode = mode;
@@ -580,7 +580,7 @@ public class MessageDescriptionViewer {
     private void executeMenuItemNew() {
 
         MessageDescription _messageDescription = new MessageDescription();
-        _messageDescription.setConnection(connection);
+        _messageDescription.setConnection(connectionName);
         _messageDescription.setLibrary(library);
         _messageDescription.setMessageFile(messageFile);
         MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400, DialogActionTypes.CREATE,
@@ -618,7 +618,7 @@ public class MessageDescriptionViewer {
             if (selectedItems[idx] instanceof MessageDescription) {
 
                 MessageDescription _messageDescription = new MessageDescription();
-                _messageDescription.setConnection(connection);
+                _messageDescription.setConnection(connectionName);
                 _messageDescription.setLibrary(library);
                 _messageDescription.setMessageFile(messageFile);
                 _messageDescription.setMessageId(((MessageDescription)selectedItems[idx]).getMessageId());

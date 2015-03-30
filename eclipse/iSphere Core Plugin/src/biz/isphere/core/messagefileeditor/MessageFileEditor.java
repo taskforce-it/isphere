@@ -92,11 +92,11 @@ public class MessageFileEditor extends EditorPart {
 
     // TODO: CMOne - remove method
     @Deprecated
-    public static void openEditor(AS400 as400, String connection, String library, String messageFile, String mode) {
+    public static void openEditor(AS400 as400, String connectionName, String library, String messageFile, String mode) {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
             try {
 
-                MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, connection, library, messageFile, mode);
+                MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, connectionName, library, messageFile, mode);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
 
             } catch (PartInitException e) {

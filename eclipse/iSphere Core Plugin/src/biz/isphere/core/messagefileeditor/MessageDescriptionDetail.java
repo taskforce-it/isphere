@@ -37,7 +37,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.Validator;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;

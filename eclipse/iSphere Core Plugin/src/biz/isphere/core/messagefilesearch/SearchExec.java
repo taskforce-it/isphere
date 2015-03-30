@@ -35,7 +35,8 @@ public class SearchExec {
     private class Search extends Job {
 
         private AS400 _as400;
-        private String _host;
+        private String _hostName;
+        private String _connectionName;
         private Connection _jdbcConnection;
         private SearchOptions _searchOptions;
         private ArrayList<SearchElement> _searchElements;
@@ -44,13 +45,26 @@ public class SearchExec {
         private int _counter;
         private String iSphereLibrary;
 
-        public Search(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
-            ISearchPostRun _searchPostRun) {
+        public Search(AS400 _as400, String _connectionName, Connection _jdbcConnection, SearchOptions _searchOptions,
+            ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
+
+            this(_as400, _connectionName, null, _jdbcConnection, _searchOptions, _searchElements, _searchPostRun);
+        }
+
+        public Search(AS400 _as400, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
+            ArrayList<SearchElement> _searchElements) {
+
+            this(_as400, null, _hostName, _jdbcConnection, _searchOptions, _searchElements, null);
+        }
+
+        private Search(AS400 _as400, String _connectionName, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
+            ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
 
             super("iSphere Message File Search");
 
             this._as400 = _as400;
-            this._host = _host;
+            this._hostName = _hostName;
+            this._connectionName = _connectionName;
             this._jdbcConnection = _jdbcConnection;
             this._searchOptions = _searchOptions;
             this._searchElements = _searchElements;
@@ -127,7 +141,7 @@ public class SearchExec {
                         monitor.done();
 
                         if (!_cancel) {
-                            _searchResults = SearchResult.getSearchResults(_jdbcConnection, _handle, _as400, _host);
+                            _searchResults = SearchResult.getSearchResults(_jdbcConnection, _handle, _as400, _connectionName, _hostName);
                         }
 
                         new XFNDSTR_clear().run(_as400, _handle);
@@ -239,10 +253,10 @@ public class SearchExec {
     private SearchResult[] _searchResults;
 
     // This method will be used by CMOne
-    public SearchResult[] executeJoin(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions _searchOptions,
+    public SearchResult[] executeJoin(AS400 _as400, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
         ArrayList<SearchElement> _searchElements) {
 
-        Search search = new Search(_as400, _host, _jdbcConnection, _searchOptions, _searchElements, null);
+        Search search = new Search(_as400, _hostName, _jdbcConnection, _searchOptions, _searchElements);
         search.setUser(true);
         search.schedule();
 
@@ -259,10 +273,10 @@ public class SearchExec {
 
     }
 
-    public void execute(AS400 _as400, String _host, Connection _jdbcConnection, SearchOptions searchOptions,
+    public void execute(AS400 _as400, String _connectionName, Connection _jdbcConnection, SearchOptions searchOptions,
         ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
 
-        Search search = new Search(_as400, _host, _jdbcConnection, searchOptions, _searchElements, _searchPostRun);
+        Search search = new Search(_as400, _connectionName, _jdbcConnection, searchOptions, _searchElements, _searchPostRun);
         search.setUser(true);
         search.schedule();
 

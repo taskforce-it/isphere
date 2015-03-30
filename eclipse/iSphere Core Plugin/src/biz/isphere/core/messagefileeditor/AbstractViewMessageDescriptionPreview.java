@@ -16,7 +16,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractViewMessageDescriptionPreview extends ViewPart {
 

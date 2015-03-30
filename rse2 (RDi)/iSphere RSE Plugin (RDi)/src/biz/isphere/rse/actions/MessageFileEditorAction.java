@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,17 +40,16 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
 
                 QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
 
-                String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-                String connection = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-
                 if (qsysRemoteObject.getType().equals(ISeries.MSGF)) {
+                    
+                    String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+                    String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
 
-                    String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost().getName();
                     String messageFile = qsysRemoteObject.getName();
                     String library = qsysRemoteObject.getLibrary();
                     String objectType = qsysRemoteObject.getType();
                     String description = qsysRemoteObject.getDescription();
-                    IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connection);
+                    IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connectionName);
 
                     if (ibmiConnection != null) {
 

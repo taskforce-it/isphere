@@ -54,8 +54,8 @@ import biz.isphere.core.messagefileeditor.QMHRTVM;
 
 public class SearchResultViewer {
 
-    private Object connection;
-    // private String searchString;
+    private String connectionName;
+    private String searchString;
     private SearchResult[] _searchResults;
     private TableViewer tableViewerMessageFiles;
     private Table tableMessageFiles;
@@ -139,9 +139,9 @@ public class SearchResultViewer {
 
     }
 
-    public SearchResultViewer(Object connection, String searchString, SearchResult[] _searchResults) {
-        this.connection = connection;
-        // this.searchString = searchString;
+    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults) {
+        this.connectionName = connectionName;
+        this.searchString = searchString;
         this._searchResults = _searchResults;
     }
 
@@ -176,7 +176,7 @@ public class SearchResultViewer {
 
                     if (editor != null) {
 
-                        String connectionName = _searchResult.getHost();
+                        String connectionName = _searchResult.getConnectionName();
                         String bindingDirectory = _searchResult.getMessageFile();
                         String library = _searchResult.getLibrary();
                         String objectType = ISeries.MSGF;
@@ -328,7 +328,7 @@ public class SearchResultViewer {
                         SearchResultMessageId _searchResultMessageId = (SearchResultMessageId)structuredSelection.getFirstElement();
 
                         QMHRTVM qmhrtvm = new QMHRTVM();
-                        MessageDescription[] _messageDescription = qmhrtvm.run(_searchResult.getAS400(), _searchResult.getHost(),
+                        MessageDescription[] _messageDescription = qmhrtvm.run(_searchResult.getAS400(), _searchResult.getConnectionName(),
                             _searchResult.getLibrary(), _searchResult.getMessageFile(), _searchResultMessageId.getMessageId());
                         if (_messageDescription.length == 1) {
 
@@ -408,7 +408,7 @@ public class SearchResultViewer {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMessageFiles[idx];
 
-                String connectionName = _searchResult.getHost();
+                String connectionName = _searchResult.getConnectionName();
                 String bindingDirectory = _searchResult.getMessageFile();
                 String library = _searchResult.getLibrary();
                 String objectType = ISeries.MSGF;
@@ -510,8 +510,12 @@ public class SearchResultViewer {
 
     }
 
-    public Object getConnection() {
-        return connection;
+    public String getConnectionName() {
+        return connectionName;
+    }
+
+    public String getSearchString() {
+        return searchString;
     }
 
     public SearchResult[] getSearchResults() {
