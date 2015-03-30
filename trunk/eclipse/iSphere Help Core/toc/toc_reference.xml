@@ -5,11 +5,12 @@
   <topic label="iSphere Core" href="html/core/core.html"> 
   </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
-    <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
+    <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
   <topic label="Source File Compare/Merge Editor" href="html/comparemergeeditor/comparemergeeditor.html">
   </topic>
   <topic label="Message File Search"  href="html/messagefilesearch/messagefilesearch.html"> 
+    <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
   <topic label="Message File Editor"  href="html/messagefileeditor/messagefileeditor.html"> 
   </topic>
