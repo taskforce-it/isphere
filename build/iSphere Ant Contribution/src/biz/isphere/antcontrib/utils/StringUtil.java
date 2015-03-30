@@ -6,64 +6,6 @@ public final class StringUtil {
     private static final String QUESTION_MARK = "?";
     private static final String ASTERISK = "*";
 
-    public static void main(String[] args) {
-        StringUtil main = new StringUtil();
-        main.run(args);
-    }
-
-    /**
-     * Procedure with test pattern for {@link #matchWildcard(String, String)}
-     * <p>
-     * Set VM arguments to <b>-enableassertions</b> or <b>-ea</b> to enable Java
-     * assertions.
-     * 
-     * @param args
-     */
-    private void run(String[] args) {
-
-        /*
-         * Test matchWildcardString()
-         */
-
-        // Positive null values Tests
-        assert matchWildcard(null, null);
-        assert matchWildcard(null, "");
-        assert matchWildcard("", "");
-        assert matchWildcard(null, "abc");
-        assert matchWildcard("", " ");
-        assert matchWildcard(null, " ");
-
-        // Negative null values Tests
-        assert !matchWildcard("*?", null);
-        assert !matchWildcard(" ", "");
-        assert !matchWildcard(" ", null);
-
-        // Positive Tests
-        assert matchWildcard("*", "");
-        assert matchWildcard("?", " ");
-        assert matchWildcard("*", "a");
-        assert matchWildcard("*", "ab");
-        assert matchWildcard("?", "a");
-        assert matchWildcard("*?", "abc");
-        assert matchWildcard("?*", "abc");
-        assert matchWildcard("*abc", "abc");
-        assert matchWildcard("*abc*", "abc");
-        assert matchWildcard("*a*bc*", "aXXXbc");
-
-        // Negative Tests
-        assert !matchWildcard("*a", "");
-        assert !matchWildcard("a*", "");
-        assert !matchWildcard("?", "");
-        assert !matchWildcard("*b*", "a");
-        assert !matchWildcard("b*a", "ab");
-        assert !matchWildcard("??", "a");
-        assert !matchWildcard("*?", "");
-        assert !matchWildcard("??*", "a");
-        assert !matchWildcard("*abc", "abX");
-        assert !matchWildcard("*abc*", "Xbc");
-        assert !matchWildcard("*a*bc*", "ac");
-    }
-
     /**
      * Checks a given string for the <code>null</code> value and <i>empty</i>. A
      * string is considered to be empty if its length is zero. A string of
@@ -169,10 +111,6 @@ public final class StringUtil {
             } else {
                 return false;
             }
-        } else if (tPattern.length() == 0) {
-            return true;
-        } else if (tPattern.length() == 0) {
-            return false;
         } else if (tPattern.startsWith(QUESTION_MARK)) {
             return matchWildcard(tPattern.substring(1), tString.substring(1));
         } else if (tPattern.endsWith(QUESTION_MARK)) {
