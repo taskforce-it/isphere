@@ -8,6 +8,15 @@
  *   In order to use all features of the script, you need to
  *   have the 'iSphere Ant Plugin' installed.
  *
+ *   The main switches to control the build process are:
+ *
+ *     build.files.enabled - specifies whether to build the plug-in
+ *     build.web.enabled   - specifies whether to build the update site html file
+ *     build.help.enabled  - specifies whether to build the iSphere help pages
+ *     build.dryrun        - specifies whether to apply changes to SourceForge
+ *
+ *   See also: build.properties
+ *
  *   Here are the steps to create an iSphere update site:
  *
  *     - On the PC run the 'CheckNLSMessages' JUnit test to check
@@ -156,6 +165,7 @@
 			<property name="target.ide.sf.dir" value="rdi8.0" />
 			<property name="target.ide.exclude.site.xml" value="site.xml" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
+			<property name="target.ide.exclude.download.files" value="*wdsci*"/>
 		</then>
 		<else>
 			<property name="target.ide.ide.product.name.long" value="Websphere Development Studio Client for iSeries" />
@@ -163,6 +173,7 @@
 			<property name="target.ide.sf.dir" value="wdsci7.0" />
 			<property name="target.ide.exclude.site.xml" value="" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*" />
+			<property name="target.ide.exclude.download.files" value="*rdi*"/>
 		</else>
 	</if>
 
@@ -243,7 +254,9 @@
 
 	<!--
     * =====================================================================
-    *   Controls the build process.
+    *   Main build procedure. Cleans folders, updates the version number
+    *   and creates the version tag file.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
 	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
 
@@ -263,6 +276,9 @@
 	<!--
     * =====================================================================
     *   Produces the files that must be uploaded to SourceForge.
+    *   This target creates all files that must be uploaded to SourceForge.
+    *   It must be run, after the update site has been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
 	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp" description="Create SourceForge files and web pages">
 
@@ -278,6 +294,8 @@
 	<!--
     * =====================================================================
     *   Uploads the entire project files to SourceForge.
+    *   This target must be run, after the SourceForge files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
 	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge" description="Uploads the entire project to SourceForge">
 
@@ -300,7 +318,9 @@
 	<!--
     * =====================================================================
     *   Removes all generated files from the local 
-    *   'iSphere Update Site' folder.
+    *   'iSphere Update Site' folder. This target is indented to be called
+    *   before the update site is build from the context menu of the
+    *   'iSphere Update Site' project.
     * ===================================================================== -->
 	<target name="cleanUpdateSite">
 
@@ -324,6 +344,7 @@
 	<!--
     * =====================================================================
     *   Removes all files from the local 'upload' directory.
+    *   This target is intended to be called before any build is done. 
     * ===================================================================== -->
 	<target name="cleanUploadDir">
 
@@ -340,6 +361,17 @@
 	<!--
     * =====================================================================
     *   Creates the files of the iSphere download area on SourceForge.
+    *   This target creates the files, that go to the SourceForge
+    *   download area.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *   This target is intended to be called only from the 'build' target.
+    *
+    *   Set the build properties as shown below, if you want to update the
+    *   download area only:
+    * 
+    *     build.files.enabled=true
+    *     build.web.enabled=false
+    *     build.help.enabled=false
     * ===================================================================== -->
 	<target name="createSourceForgeDownloadFiles" unless="ignore.build.files">
 
@@ -390,6 +422,22 @@
 	<!--
     * =====================================================================
     *   Create the web pages of the iSphere update site.
+    *   This target creates the html page and the .htaccess file that
+    *   go to the iSphere update site.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *
+    *   Set the build properties as shown below, if you want to update 
+    *   index.html and .htaccess only:
+    * 
+    *     build.files.enabled=false
+    *     build.web.enabled=true
+    *     build.help.enabled=false
+    *
+    *   You can also update the update site like this:
+    *     cleanUploadDir
+    *     createSourceForgeWebPages
+    *     cleanSourceForgeWebPages
+    *     uploadSourceForgeWebPages
     * ===================================================================== -->
 	<target name="createSourceForgeWebPages" unless="ignore.build.web">
 
@@ -441,6 +489,23 @@
     *   Creates the iSphere help pages.
     *   This target call the build script of the 'iSphere Help Builder'
     *   project to create the web folder.
+    *   This target creates the html help pages that go to the iSphere 
+    *   web folder.
+    *   This target is not specific to RDi/WDSCi. It does not matter for 
+    *   what target it is called.
+    *
+    *   Set the build properties as shown below, if you want to update 
+    *   index.html and .htaccess only:
+    * 
+    *     build.files.enabled=false
+    *     build.web.enabled=false
+    *     build.help.enabled=true
+    *
+    *   You can also update the help pages like this:
+    *     cleanUploadDir
+    *     createSourceForgeHelpPages
+    *     cleanSourceForgeHelpPages
+    *     uploadSourceForgeHelpPages
     * ===================================================================== -->
 	<target name="createSourceForgeHelp" unless="ignore.build.help">
 
@@ -468,7 +533,7 @@
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
 			<Rmdir dir="." subDirs="false" >
-				<IgnoreFile pattern="*${build.target}*.zip" ignoreCase="true" />
+				<IgnoreFile pattern="${target.ide.exclude.download.files}.zip" ignoreCase="true" />
 			</Rmdir>
 			<Rmdir dir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
 		</SF>
