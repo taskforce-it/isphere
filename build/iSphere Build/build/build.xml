@@ -187,7 +187,7 @@
 		</then>
 		<else>
 			<property name="target.ide.update.site.url" value="http://isphere.sourceforge.net/eclipse/${target.ide.sf.dir}/" />
-			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${sf.dir.updatesite.help.dir}/" />
 		</else>
 	</if>
 
