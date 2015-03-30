@@ -15,41 +15,76 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public class SearchResult {
 
-    private AS400 as400;
-    private String host;
+    private String connectionName;
+    private String hostName;
     private String library;
     private String messageFile;
     private String description;
     private SearchResultMessageId[] messageIds;
 
+    @XStreamOmitField
+    private AS400 as400;
+
     public SearchResult() {
-        as400 = null;
-        host = "";
+        connectionName = "";
+        hostName = "";
         library = "";
         messageFile = "";
         description = "";
         messageIds = null;
+
+        as400 = null;
     }
 
     public AS400 getAS400() {
+
+        if (as400 == null) {
+            as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        }
+
         return as400;
     }
 
-    public void setAS400(AS400 as400) {
+    private void setAS400(AS400 as400) {
         this.as400 = as400;
     }
 
-    public String getHost() {
-        return host;
+    /**
+     * This method returns the name of the host, where the search has been
+     * executed.
+     * <p>
+     * This method is used by CMOne and must not be used by the iSphere plug-in.
+     * 
+     * @return host name
+     */
+    public String getHostName() {
+        return hostName;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    /**
+     * Sets the host name, where the search has been executed.
+     * <p>
+     * This method is for compatibility to CMOne.
+     * 
+     * @param hostName
+     */
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public String getConnectionName() {
+        return connectionName;
+    }
+
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
     }
 
     public String getLibrary() {
@@ -84,7 +119,7 @@ public class SearchResult {
         this.messageIds = messageIds;
     }
 
-    public static SearchResult[] getSearchResults(Connection jdbcConnection, int handle, AS400 as400, String host) {
+    public static SearchResult[] getSearchResults(Connection jdbcConnection, int handle, AS400 as400, String connectionName, String hostName) {
 
         String _separator;
         try {
@@ -137,10 +172,12 @@ public class SearchResult {
                     _messageFile = messageFile;
 
                     _searchResult = new SearchResult();
-                    _searchResult.setAS400(as400);
-                    _searchResult.setHost(host);
+                    _searchResult.setConnectionName(connectionName);
+                    _searchResult.setHostName(hostName);
                     _searchResult.setLibrary(library);
                     _searchResult.setMessageFile(messageFile);
+
+                    _searchResult.setAS400(as400);
 
                     alMessageIds = new ArrayList<SearchResultMessageId>();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,12 +45,12 @@ public class LoadQsysRemoteObjectsJob extends Job {
         List<QSYSRemoteObject> qsysRemoteObjects = getRSESourceObjects(droppedObjects);
         List<RemoteObject> remoteObjects = new ArrayList<RemoteObject>();
         for (QSYSRemoteObject qsysRemoteObject : qsysRemoteObjects) {
-            String connection = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
+            String connectionName = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String type = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            remoteObjects.add(new RemoteObject(connection, name, library, type, description));
+            remoteObjects.add(new RemoteObject(connectionName, name, library, type, description));
         }
         receiver.setRemoteObjects(remoteObjects.toArray(new RemoteObject[remoteObjects.size()]));
 

@@ -37,6 +37,7 @@ public class ISphereHelper {
         try {
             messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)");
         } catch (Exception e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
         if (messageId == null || !messageId.equals("")) {

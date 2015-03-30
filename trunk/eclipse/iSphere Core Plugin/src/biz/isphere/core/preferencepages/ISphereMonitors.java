@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.dataqueue.action.ViewInHexAction;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereMonitors extends PreferencePage implements IWorkbenchPreferencePage {
 

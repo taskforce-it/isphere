@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;

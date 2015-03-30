@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,10 @@ package biz.isphere.core.preferencepages;
 
 import java.io.File;
 
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -27,17 +25,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSearch extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -49,6 +46,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private Button buttonSourceFileSearchAutoSaveEnabled;
     private Text textSourceFileSearchAutoSaveFileName;
 
+    private Text textMessageFileSearchSaveDirectory;
+    private Button buttonMessageFileSearchAutoSaveEnabled;
+    private Text textMessageFileSearchAutoSaveFileName;
+
+    private boolean messageFileSetingsEnabled;
+
     public ISphereSearch() {
         super();
         setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
@@ -56,7 +59,17 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     }
 
     public void init(IWorkbench workbench) {
-        
+
+        /*
+         * Does not work, because we cannot create an AS400 object, when loading
+         * a search result.
+         */
+        if (IBMiHostContributionsHandler.hasContribution()) {
+            messageFileSetingsEnabled = true;
+        } else {
+            messageFileSetingsEnabled = false;
+        }
+
     }
 
     @Override
@@ -67,9 +80,10 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         container.setLayout(gridLayout);
 
         createSectionSourceFileSearch(container);
+        createSectionMessageFileSearch(container);
 
         setScreenToValues();
-        
+
         return container;
     }
 
@@ -180,6 +194,105 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         });
     }
 
+    private void createSectionMessageFileSearch(Composite parent) {
+
+        /*
+         * Does not work, because we cannot create an AS400 object, when loading
+         * a search result.
+         */
+        if (!messageFileSetingsEnabled) {
+            return;
+        }
+
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(3, false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        group.setText(Messages.Message_file_search);
+
+        Label labelMessageFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
+        labelMessageFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
+        labelMessageFileSearchResultsSaveDirectory.setText(Messages.Save_results_to_colon);
+
+        textMessageFileSearchSaveDirectory = WidgetFactory.createText(group);
+        textMessageFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_message_file_search_results_to);
+        GridData messageFileSearchSaveDirectoryLayoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        messageFileSearchSaveDirectoryLayoutData.widthHint = 200;
+        textMessageFileSearchSaveDirectory.setLayoutData(messageFileSearchSaveDirectoryLayoutData);
+        textMessageFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                if (validateMessageFileSearchSaveDirectory()) {
+                    checkAllValues();
+                }
+            }
+        });
+
+        Button buttonMessageFileSearchResultsSaveDirectory = WidgetFactory.createPushButton(group, Messages.Browse + "..."); //$NON-NLS-1$
+        buttonMessageFileSearchResultsSaveDirectory.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+
+                DirectoryDialog dialog = new DirectoryDialog(getShell());
+                dialog.setFilterPath(getFilterPath());
+                String directory = dialog.open();
+                if (directory != null) {
+                    textMessageFileSearchSaveDirectory.setText(directory);
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+
+            private String getFilterPath() {
+                if (!StringHelper.isNullOrEmpty(textMessageFileSearchSaveDirectory.getText())) {
+                    File directory = new File(textMessageFileSearchSaveDirectory.getText());
+                    if (directory.exists()) {
+                        if (directory.isDirectory()) {
+                            return directory.getAbsolutePath();
+                        } else {
+                            return directory.getParentFile().getAbsolutePath();
+                        }
+                    }
+                }
+                return Preferences.getInstance().getDefaultMessageFileSearchResultsSaveDirectory();
+            }
+        });
+
+        Label labelMessageFileSearchResultsAutoSaveEnabled = new Label(group, SWT.NONE);
+        labelMessageFileSearchResultsAutoSaveEnabled.setLayoutData(createLabelLayoutData());
+        labelMessageFileSearchResultsAutoSaveEnabled.setText(Messages.Auto_save_enabled_colon);
+
+        buttonMessageFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
+        buttonMessageFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
+        buttonMessageFileSearchAutoSaveEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonMessageFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                if (validateMessageFileSearchAutoSaveEnabled()) {
+                    checkAllValues();
+                    setControlsEnablement();
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
+        Label labelMessageFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
+        labelMessageFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
+        labelMessageFileSearchResultsAutoSaveFileName.setText(Messages.Auto_save_file_name_colon);
+
+        textMessageFileSearchAutoSaveFileName = WidgetFactory.createText(group);
+        textMessageFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
+        textMessageFileSearchAutoSaveFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textMessageFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                if (validateMessageFileSearchAutoSaveFileName()) {
+                    checkAllValues();
+                }
+            }
+        });
+    }
+
     @Override
     protected void performApply() {
         setStoreToValues();
@@ -208,6 +321,11 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         preferences.setSourceFileSearchResultsAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled.getSelection());
         preferences.setSourceFileSearchResultsAutoSaveFileName(textSourceFileSearchAutoSaveFileName.getText());
 
+        if (messageFileSetingsEnabled) {
+            preferences.setMessageFileSearchResultsSaveDirectory(textMessageFileSearchSaveDirectory.getText());
+            preferences.setMessageFileSearchResultsAutoSaveEnabled(buttonMessageFileSearchAutoSaveEnabled.getSelection());
+            preferences.setMessageFileSearchResultsAutoSaveFileName(textMessageFileSearchAutoSaveFileName.getText());
+        }
     }
 
     protected void setScreenToValues() {
@@ -221,6 +339,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getSourceFileSearchResultsAutoSaveFileName());
 
+        if (messageFileSetingsEnabled) {
+            textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsSaveDirectory());
+            buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.isMessageFileSearchResultsAutoSaveEnabled());
+            textMessageFileSearchAutoSaveFileName.setText(preferences.getMessageFileSearchResultsAutoSaveFileName());
+        }
+
         checkAllValues();
         setControlsEnablement();
     }
@@ -233,6 +357,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         textSourceFileSearchSaveDirectory.setText(preferences.getDefaultSourceFileSearchResultsSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getDefaultSourceFileSearchResultsAutoSaveFileName());
+
+        if (messageFileSetingsEnabled) {
+            textMessageFileSearchSaveDirectory.setText(preferences.getDefaultMessageFileSearchResultsSaveDirectory());
+            buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultMessageFileSearchResultsAutoSaveEnabled());
+            textMessageFileSearchAutoSaveFileName.setText(preferences.getDefaultMessageFileSearchResultsAutoSaveFileName());
+        }
 
         checkAllValues();
         setControlsEnablement();
@@ -273,11 +403,41 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
     private boolean validateSourceFileSearchSaveDirectory() {
 
-        if (textSourceFileSearchSaveDirectory == null) {
+        return validateSearchSaveDirectory(textSourceFileSearchSaveDirectory);
+    }
+
+    private boolean validateSourceFileSearchAutoSaveEnabled() {
+
+        return validateSearchAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled);
+    }
+
+    private boolean validateSourceFileSearchAutoSaveFileName() {
+
+        return validateSearchAutoSaveFileName(textSourceFileSearchAutoSaveFileName);
+    }
+
+    private boolean validateMessageFileSearchSaveDirectory() {
+
+        return validateSearchSaveDirectory(textMessageFileSearchSaveDirectory);
+    }
+
+    private boolean validateMessageFileSearchAutoSaveEnabled() {
+
+        return validateSearchAutoSaveEnabled(buttonMessageFileSearchAutoSaveEnabled);
+    }
+
+    private boolean validateMessageFileSearchAutoSaveFileName() {
+
+        return validateSearchAutoSaveFileName(textMessageFileSearchAutoSaveFileName);
+    }
+
+    private boolean validateSearchSaveDirectory(Text textSearchSaveDirectory) {
+
+        if (textSearchSaveDirectory == null) {
             return true;
         }
 
-        String path = textSourceFileSearchSaveDirectory.getText();
+        String path = textSearchSaveDirectory.getText();
         if (StringHelper.isNullOrEmpty(path)) {
             setError("Directory must not be empty.");
             return false;
@@ -286,7 +446,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }
-        
+
         File directory = new File(path);
         if (!directory.exists()) {
             setError("The specified directory does not exist.");
@@ -301,22 +461,22 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         return clearError();
     }
 
-    private boolean validateSourceFileSearchAutoSaveEnabled() {
+    private boolean validateSearchAutoSaveEnabled(Button buttonAutoSaveEnabled) {
 
-        if (buttonSourceFileSearchAutoSaveEnabled == null) {
+        if (buttonAutoSaveEnabled == null) {
             return true;
         }
 
         return true;
     }
 
-    private boolean validateSourceFileSearchAutoSaveFileName() {
+    private boolean validateSearchAutoSaveFileName(Text textFileName) {
 
-        if (textSourceFileSearchAutoSaveFileName == null) {
+        if (textFileName == null) {
             return true;
         }
 
-        String filename = textSourceFileSearchAutoSaveFileName.getText();
+        String filename = textFileName.getText();
         if (StringHelper.isNullOrEmpty(filename)) {
             setError("File name must not be empty.");
             return false;
@@ -335,7 +495,23 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             return false;
         }
 
+        if (!validateSourceFileSearchAutoSaveEnabled()) {
+            return false;
+        }
+
         if (!validateSourceFileSearchAutoSaveFileName()) {
+            return false;
+        }
+
+        if (!validateMessageFileSearchSaveDirectory()) {
+            return false;
+        }
+
+        if (!validateMessageFileSearchAutoSaveEnabled()) {
+            return false;
+        }
+
+        if (!validateMessageFileSearchAutoSaveFileName()) {
             return false;
         }
 
@@ -348,6 +524,14 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             textSourceFileSearchAutoSaveFileName.setEnabled(true);
         } else {
             textSourceFileSearchAutoSaveFileName.setEnabled(false);
+        }
+
+        if (messageFileSetingsEnabled) {
+            if (buttonMessageFileSearchAutoSaveEnabled.getSelection()) {
+                textMessageFileSearchAutoSaveFileName.setEnabled(true);
+            } else {
+                textMessageFileSearchAutoSaveFileName.setEnabled(false);
+            }
         }
     }
 

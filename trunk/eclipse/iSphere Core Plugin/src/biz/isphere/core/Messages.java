@@ -904,6 +904,10 @@ public class Messages extends NLS {
 
     public static String Copy_selected;
     
+    public static String Message_file_search;
+    
+    public static String Tooltip_Specifies_the_folder_to_save_message_file_search_results_to; 
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

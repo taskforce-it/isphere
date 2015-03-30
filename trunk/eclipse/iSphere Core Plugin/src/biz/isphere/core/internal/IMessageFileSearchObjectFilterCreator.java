@@ -12,6 +12,6 @@ import biz.isphere.core.messagefilesearch.SearchResult;
 
 public interface IMessageFileSearchObjectFilterCreator {
 
-    public boolean createObjectFilter(Object connection, String filterName, SearchResult[] searchResults);
+    public boolean createObjectFilter(String connectionName, String filterName, SearchResult[] searchResults);
 
 }

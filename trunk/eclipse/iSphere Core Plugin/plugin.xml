@@ -172,6 +172,17 @@
 
       	<!--
       	  ==========================================
+      	    Extension point: IRDiContributions
+      	  ==========================================
+      	-->
+
+   <extension-point id="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions" 
+   		 name="RDi Contributions: IRDiContributions" 
+   		 schema="schema/biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions.xsd">
+   </extension-point>
+
+      	<!--
+      	  ==========================================
       	    iSphere RSE Decorator
       	  ==========================================
       	-->

@@ -42,7 +42,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
@@ -51,7 +51,7 @@ public class BindingDirectoryEntryViewer {
     private String level;
     private AS400 as400;
     private Connection jdbcConnection;
-    private String connection;
+    private String connectionName;
     private String library;
     private String bindingDirectory;
     private String mode;
@@ -97,18 +97,18 @@ public class BindingDirectoryEntryViewer {
         }
     }
 
-    public BindingDirectoryEntryViewer(String level, AS400 as400, Connection jdbcConnection, String connection, String library,
+    public BindingDirectoryEntryViewer(String level, AS400 as400, Connection jdbcConnection, String connectionName, String library,
         String bindingDirectory, String mode) {
 
         this.level = level;
         this.as400 = as400;
         this.jdbcConnection = jdbcConnection;
-        this.connection = connection;
+        this.connectionName = connectionName;
         this.library = library;
         this.bindingDirectory = bindingDirectory;
         this.mode = mode;
 
-        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connection, library, bindingDirectory);
+        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory);
 
     }
 
@@ -281,7 +281,7 @@ public class BindingDirectoryEntryViewer {
                     public void widgetSelected(SelectionEvent e) {
 
                         BindingDirectoryEntry _bindingDirectoryEntry = new BindingDirectoryEntry();
-                        _bindingDirectoryEntry.setConnection(connection);
+                        _bindingDirectoryEntry.setConnection(connectionName);
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
                             DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
@@ -409,7 +409,7 @@ public class BindingDirectoryEntryViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
 
-                        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connection, library, bindingDirectory);
+                        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory);
 
                         _tableViewer.refresh();
 
@@ -502,8 +502,8 @@ public class BindingDirectoryEntryViewer {
 
     private void uploadEntries() {
 
-        if (BindingDirectory.removeEntries(level, as400, jdbcConnection, connection, library, bindingDirectory)) {
-            BindingDirectory.addEntries(level, as400, jdbcConnection, connection, library, bindingDirectory, _bindingDirectoryEntries);
+        if (BindingDirectory.removeEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory)) {
+            BindingDirectory.addEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
         }
 
     }

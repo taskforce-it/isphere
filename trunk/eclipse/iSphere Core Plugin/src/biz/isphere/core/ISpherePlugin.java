@@ -33,7 +33,7 @@ import biz.isphere.core.internal.api.retrieveproductinformation.PRDR0100;
 import biz.isphere.core.internal.api.retrieveproductinformation.QSZRTVPR;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 

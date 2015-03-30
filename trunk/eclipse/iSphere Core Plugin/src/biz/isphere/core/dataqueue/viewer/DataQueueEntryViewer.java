@@ -36,7 +36,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 import biz.isphere.core.internal.FontHelper;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class DataQueueEntryViewer extends XDialog {
 

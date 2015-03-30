@@ -22,7 +22,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateEditor;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class DEditorDialog extends AbstractDialog {
 

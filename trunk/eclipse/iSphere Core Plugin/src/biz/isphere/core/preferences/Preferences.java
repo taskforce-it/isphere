@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.sourcefilesearch.SearchResultManager;
 
@@ -112,6 +113,20 @@ public final class Preferences {
     private static final String SOURCE_FILE_SEARCH_DIRECTORY = "sourceFileSearch"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_FILE_NAME = "SourceFileSearchResult"; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_RESULTS = DOMAIN + "MESSAGE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = MESSAGE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = MESSAGE_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
+
+    public static final String MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = MESSAGE_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE = MESSAGE_FILE_SEARCH_RESULTS + "AUTO_SAVE_FILE"; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_DIRECTORY = "messageFileSearch"; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -278,11 +293,58 @@ public final class Preferences {
     }
 
     public boolean isSourceFileSearchResultsAutoSaveEnabled() {
+        
+        /*
+         * Does not work, because we cannot create an AS400 object, when loading
+         * a search result.
+         */
+        if (!IBMiHostContributionsHandler.hasContribution()) {
+            return false;
+        }
+        
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
     }
 
     public String getSourceFileSearchResultsAutoSaveFileName() {
         return preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
+    public String getMessageFileSearchResultsSaveDirectory() {
+        String directory = preferenceStore.getString(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
+        if (!directory.endsWith(File.separator)) {
+            directory = directory + File.separator;
+        }
+        return directory;
+    }
+
+    public String getMessageFileSearchResultsLastUsedFileName() {
+        String filename = preferenceStore.getString(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME);
+        if (!StringHelper.isNullOrEmpty(filename)) {
+            File file = new File(filename);
+            if (!file.exists()) {
+                filename = null;
+            } else {
+                if (file.isDirectory()) {
+                    filename = filename + MESSAGE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+                }
+            }
+        } else {
+            filename = null;
+        }
+
+        if (filename == null) {
+            return getDefaultMessageFileSearchResultsSaveDirectory() + MESSAGE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+        }
+
+        return filename;
+    }
+
+    public boolean isMessageFileSearchResultsAutoSaveEnabled() {
+        return preferenceStore.getBoolean(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
+    }
+
+    public String getMessageFileSearchResultsAutoSaveFileName() {
+        return preferenceStore.getString(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
     }
 
     /*
@@ -401,6 +463,22 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
     }
 
+    public void setMessageFileSearchResultsSaveDirectory(String directory) {
+        preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, directory);
+    }
+
+    public void setMessageFileSearchResultsLastUsedFileName(String directory) {
+        preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, directory);
+    }
+
+    public void setMessageFileSearchResultsAutoSaveEnabled(boolean enabled) {
+        preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, enabled);
+    }
+
+    public void setMessageFileSearchResultsAutoSaveFileName(String filename) {
+        preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -438,6 +516,11 @@ public final class Preferences {
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultSourceFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultSourceFileSearchResultsAutoSaveEnabled());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultSourceFileSearchResultsAutoSaveFileName());
+
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultMessageFileSearchResultsSaveDirectory());
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultMessageFileSearchResultsLastUsedFileName());
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultMessageFileSearchResultsAutoSaveEnabled());
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultMessageFileSearchResultsAutoSaveFileName());
     }
 
     /*
@@ -687,6 +770,54 @@ public final class Preferences {
     public String getDefaultSourceFileSearchResultsAutoSaveFileName() {
 
         return "iSphereSourceFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
+    }
+
+    /**
+     * Returns the default 'message file search save path'.
+     * 
+     * @return default path for saving message file search results
+     */
+    public String getDefaultMessageFileSearchResultsSaveDirectory() {
+
+        String path = ISpherePlugin.getDefault().getStateLocation().toFile().getAbsolutePath();
+        path = path + File.separator + MESSAGE_FILE_SEARCH_DIRECTORY + File.separator;
+
+        try {
+            FileHelper.ensureDirectory(path);
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to create directory: " + path, e); //$NON-NLS-1$
+        }
+
+        return path;
+    }
+
+    /**
+     * Returns the default 'save path' that was last selected to save message
+     * file search results.
+     * 
+     * @return default path last used for saving
+     */
+    public String getDefaultMessageFileSearchResultsLastUsedFileName() {
+        return "";
+    }
+
+    /**
+     * Returns the default 'is auto save' flag of the view search results view.
+     * 
+     * @return default 'is auto save' flag.
+     */
+    public boolean getDefaultMessageFileSearchResultsAutoSaveEnabled() {
+        return false;
+    }
+
+    /**
+     * Returns the default 'message file search auto save file name'.
+     * 
+     * @return default file name for saving search results
+     */
+    public String getDefaultMessageFileSearchResultsAutoSaveFileName() {
+
+        return "iSphereMessageFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
     }
 
     /**

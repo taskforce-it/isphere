@@ -99,7 +99,7 @@ import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener, ISelectionProvider {
 

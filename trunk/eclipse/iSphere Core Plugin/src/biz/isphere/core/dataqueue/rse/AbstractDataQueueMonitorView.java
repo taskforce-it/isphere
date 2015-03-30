@@ -100,7 +100,7 @@ import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.swt.widgets.extension.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
