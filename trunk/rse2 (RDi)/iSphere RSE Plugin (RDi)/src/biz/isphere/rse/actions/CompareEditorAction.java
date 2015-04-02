@@ -8,6 +8,9 @@
 
 package biz.isphere.rse.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,12 +20,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
 
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
 public class CompareEditorAction implements IObjectActionDelegate {
@@ -30,20 +35,21 @@ public class CompareEditorAction implements IObjectActionDelegate {
     protected IStructuredSelection structuredSelection;
     protected Shell shell;
 
+    private RSEMember[] selectedMembers;
+
     public void run(IAction arg0) {
 
         try {
 
-            RSEMember rseLeftMember = getLeftMemberFromSelection();
-            RSEMember rseRightMember = getRightMemberFromSelection();
-
-            if (rseLeftMember != null) {
+            if (selectedMembers.length > 0) {
 
                 RSECompareDialog dialog;
-                if (rseRightMember == null) {
-                    dialog = new RSECompareDialog(shell, true, rseLeftMember);
+                if (selectedMembers.length > 2) {
+                    dialog = new RSECompareDialog(shell, selectedMembers);
+                } else if (selectedMembers.length == 2) {
+                    dialog = new RSECompareDialog(shell, true, selectedMembers[0], selectedMembers[1]);
                 } else {
-                    dialog = new RSECompareDialog(shell, true, rseLeftMember, rseRightMember);
+                    dialog = new RSECompareDialog(shell, true, selectedMembers[0]);
                 }
 
                 if (dialog.open() == Dialog.OK) {
@@ -53,8 +59,6 @@ public class CompareEditorAction implements IObjectActionDelegate {
                     boolean ignoreCase = dialog.isIgnoreCase();
                     boolean threeWay = dialog.isThreeWay();
 
-                    rseLeftMember = dialog.getLeftRSEMember();
-                    rseRightMember = dialog.getRightRSEMember();
                     RSEMember rseAncestorMember = null;
                     if (threeWay) {
                         rseAncestorMember = dialog.getAncestorRSEMember();
@@ -62,14 +66,33 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
                     CompareEditorConfiguration cc = new CompareEditorConfiguration();
                     cc.setLeftEditable(editable);
-                    cc.setRightEditable(false);
                     cc.setConsiderDate(considerDate);
                     cc.setIgnoreCase(ignoreCase);
                     cc.setThreeWay(threeWay);
 
-                    CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
-                    action.run();
+                    if (selectedMembers.length > 2) {
+                        for (RSEMember rseSelectedMember : selectedMembers) {
+                            RSEMember rseRightMember = getRightRSEMember(dialog.getRightConnection(), dialog.getRightLibrary(),
+                                dialog.getRightFile(), rseSelectedMember.getMember());
+                            if (!rseRightMember.exists()) {
+                                String message = biz.isphere.core.Messages
+                                    .bind(
+                                        biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found,
+                                        new Object[] { rseSelectedMember.getLibrary(), rseSelectedMember.getSourceFile(),
+                                            rseSelectedMember.getMember() });
+                                MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 
+                            } else {
+                                CompareAction action = new CompareAction(cc, rseAncestorMember, rseSelectedMember, rseRightMember, null);
+                                action.run();
+                            }
+                        }
+                    } else {
+                        RSEMember rseLeftMember = dialog.getLeftRSEMember();
+                        RSEMember rseRightMember = dialog.getRightRSEMember();
+                        CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
+                        action.run();
+                    }
                 }
             }
 
@@ -84,16 +107,20 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
     }
 
+    private RSEMember getRightRSEMember(IBMiConnection connection, String libraryName, String sourceFileName, String memberName) {
+        try {
+            return new RSEMember(connection.getMember(libraryName, sourceFileName, memberName, null));
+        } catch (Exception e) {
+            MessageDialog.openError(shell, biz.isphere.core.Messages.Error, e.getMessage());
+            return null;
+        }
+    }
+
     public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            structuredSelection = ((IStructuredSelection)selection);
-            if (structuredSelection.size() >= 1 && structuredSelection.size() <= 2) {
-                action.setEnabled(true);
-            } else {
-                action.setEnabled(false);
-            }
+        selectedMembers = getMembersFromSelection((IStructuredSelection)selection);
+        if (selectedMembers.length >= 1 /* && selectedMembers.length <= 2 */) {
+            action.setEnabled(true);
         } else {
-            structuredSelection = null;
             action.setEnabled(false);
         }
     }
@@ -102,24 +129,23 @@ public class CompareEditorAction implements IObjectActionDelegate {
         shell = workbenchPart.getSite().getShell();
     }
 
-    private RSEMember getLeftMemberFromSelection() throws Exception {
-        if (structuredSelection != null && structuredSelection.size() >= 1) {
-            Object[] objects = structuredSelection.toArray();
-            if (objects[0] instanceof QSYSRemoteSourceMember) {
-                return new RSEMember((QSYSRemoteSourceMember)objects[0]);
-            }
-        }
-        return null;
-    }
+    private RSEMember[] getMembersFromSelection(IStructuredSelection structuredSelection) {
 
-    private RSEMember getRightMemberFromSelection() throws Exception {
-        if (structuredSelection != null && structuredSelection.size() >= 2) {
-            Object[] objects = structuredSelection.toArray();
-            if (objects[1] instanceof QSYSRemoteSourceMember) {
-                return new RSEMember((QSYSRemoteSourceMember)objects[1]);
-            }
-        }
-        return null;
-    }
+        List<RSEMember> selectedMembers = new ArrayList<RSEMember>();
 
+        try {
+            if (structuredSelection != null && structuredSelection.size() > 0) {
+                Object[] objects = structuredSelection.toArray();
+                for (Object object : objects) {
+                    if (object instanceof QSYSRemoteSourceMember) {
+                        selectedMembers.add(new RSEMember((QSYSRemoteSourceMember)object));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
+
+        return selectedMembers.toArray(new RSEMember[selectedMembers.size()]);
+    }
 }

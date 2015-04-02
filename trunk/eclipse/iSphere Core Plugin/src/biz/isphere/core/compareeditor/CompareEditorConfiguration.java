@@ -10,6 +10,8 @@ package biz.isphere.core.compareeditor;
 
 import org.eclipse.compare.CompareConfiguration;
 
+import biz.isphere.core.internal.exception.IllegalMethodAccessException;
+
 /**
  * Class to store the compare configuration values of the Source Compare Dialog
  * and task.
@@ -52,6 +54,16 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     public void setThreeWay(boolean aThreeWay) {
         setProperty(THREE_WAY, aThreeWay);
+    }
+    
+    @Override
+    public void setRightEditable(boolean editable) {
+        throw new IllegalMethodAccessException();
+    }
+    
+    @Override
+    public boolean isRightEditable() {
+        return false;
     }
 
 }

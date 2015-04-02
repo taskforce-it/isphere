@@ -27,8 +27,6 @@ file member.</li>
 Enter the name of the source member that you want to compare the selected source 
 member with and click the <i>OK</i> button.
 <p>
-It is also possible to select both source members from the RSE tree at once.
-<p>
 <img src="assets/compare_merge_editor.png" 
      align="middle">
 <p>
@@ -53,6 +51,35 @@ See these links for more details:
 <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=382427" target="_blank">https://bugs.eclipse.org/bugs/show_bug.cgi?id=382427</a>
 <br>
 <a href="https://git.eclipse.org/r/#/c/9004" target="_blank">https://git.eclipse.org/r/#/c/9004</a>
+<p>
+<h2>Selecting Multiple Members at Once</h2>
+<p>
+<h3>Two Members</h3>
+<p>
+If two members are selected at once, the first member is the <i>Left member</i> and the 
+second one is the <i>Right member</i>. The members can be switched with the switch member
+button between the left and right member sections:
+<p>
+<img src="assets/switch_members_button.png" 
+     align="middle">
+<p>
+<h3>Three or More Members</h3>
+<p>
+If three or more members are selected, the left member is set to <i>*SELECTED</i>
+and the name of the right member is set to <i>*LEFT</i> and cannot be changed.
+<p>
+<img src="assets/three_or_more_members.png" 
+     align="middle">
+<p>
+When the <i>OK</i> button is clicked, a compare dialog is opened for each selected member.
+<p>
+This option is useful, when comparing members with the same name but different source files,
+e.g. members of the development level and members of the production level. 
+<p>
+<table>
+<tr><td class="notice" >Notice: The information message that pops up, when there are no 
+differences between the members, cannot be disabled, today.</td></tr>
+</table>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
