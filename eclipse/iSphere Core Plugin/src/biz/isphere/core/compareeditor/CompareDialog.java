@@ -35,6 +35,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
 
+    protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT";
+    protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED";
+
     private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY";
     private static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY";
     private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY";
@@ -56,8 +59,8 @@ public abstract class CompareDialog extends XDialog {
     private boolean ignoreCase;
     private boolean threeWay;
     private Button okButton;
-    private boolean defined;
-    private boolean hasRight;
+    private boolean hasRightMember;
+    private boolean hasMultipleRightMembers;
     private boolean hasAncestor;
     private Image switchImage;
     private Text leftConnectionText;
@@ -72,16 +75,25 @@ public abstract class CompareDialog extends XDialog {
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, null, null);
+        hasMultipleRightMembers = false;
     }
 
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, null);
+        hasMultipleRightMembers = false;
+    }
+
+    public CompareDialog(Shell parentShell, Member[] rightMembers) {
+        super(parentShell);
+        initialize(parentShell, false, rightMembers[0], rightMembers[0], null);
+        hasMultipleRightMembers = true;
     }
 
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
+        hasMultipleRightMembers = false;
     }
 
     private void initialize(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
@@ -93,11 +105,9 @@ public abstract class CompareDialog extends XDialog {
         loadScreenValues();
 
         if (this.rightMember == null) {
-            defined = false;
-            hasRight = false;
+            hasRightMember = false;
         } else {
-            defined = true;
-            hasRight = true;
+            hasRightMember = true;
         }
 
         if (this.ancestorMember == null) {
@@ -217,7 +227,7 @@ public abstract class CompareDialog extends XDialog {
             ignoreCaseButton.setSelection(true);
         }
 
-        if (!defined) {
+        if (!hasRightMember) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
             GridLayout threeWayLayout = new GridLayout(2, true);
@@ -293,10 +303,15 @@ public abstract class CompareDialog extends XDialog {
         leftMemberLabel.setText(Messages.Member_colon);
         leftMemberText = WidgetFactory.createReadOnlyText(leftGroup);
         leftMemberText.setLayoutData(getGridData());
-        if (leftMember.isArchive()) {
-            leftMemberText.setText(leftMember.getArchiveMember());
+
+        if (hasMultipleRightMembers()) {
+            leftMemberText.setText(SPECIAL_MEMBER_NAME_SELECTED);
         } else {
-            leftMemberText.setText(leftMember.getMember());
+            if (leftMember.isArchive()) {
+                leftMemberText.setText(leftMember.getArchiveMember());
+            } else {
+                leftMemberText.setText(leftMember.getMember());
+            }
         }
 
         if (leftMember.isArchive()) {
@@ -307,7 +322,11 @@ public abstract class CompareDialog extends XDialog {
             leftTimeText.setText(leftMember.getArchiveDate() + " - " + leftMember.getArchiveTime());
         }
 
-        if (!defined) {
+        if (hasMultipleRightMembers) {
+
+            createRightArea(rtnGroup);
+
+        } else if (!hasRightMember) {
 
             createRightArea(rtnGroup);
 
@@ -315,7 +334,7 @@ public abstract class CompareDialog extends XDialog {
 
         } else {
 
-            if (hasRight) {
+            if (hasRightMember) {
 
                 if (!hasAncestor) {
 
@@ -353,6 +372,7 @@ public abstract class CompareDialog extends XDialog {
                 rightLibraryLabel.setText(Messages.Library_colon);
                 rightLibraryText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightLibraryText.setLayoutData(getGridData());
+
                 if (rightMember.isArchive()) {
                     rightLibraryText.setText(rightMember.getArchiveLibrary());
                 } else {
@@ -373,6 +393,7 @@ public abstract class CompareDialog extends XDialog {
                 rightMemberLabel.setText(Messages.Member_colon);
                 rightMemberText = WidgetFactory.createReadOnlyText(rightGroup);
                 rightMemberText.setLayoutData(getGridData());
+
                 if (rightMember.isArchive()) {
                     rightMemberText.setText(rightMember.getArchiveMember());
                 } else {
@@ -446,7 +467,7 @@ public abstract class CompareDialog extends XDialog {
 
         }
 
-        if (!defined) {
+        if (!hasRightMember) {
             if (!threeWay) {
                 setAncestorVisible(false);
             } else {
@@ -490,7 +511,7 @@ public abstract class CompareDialog extends XDialog {
         Button button = super.createButton(parent, id, label, defaultButton);
         if (id == OK) {
             okButton = button;
-            if (defined) {
+            if (hasRightMember && !hasMultipleRightMembers) {
                 okButton.setEnabled(true);
             } else {
                 okButton.setEnabled(false);
@@ -503,10 +524,12 @@ public abstract class CompareDialog extends XDialog {
     protected void okPressed() {
         if (selectEditable) {
             editable = editButton.getSelection();
+        } else {
+            editable = false;
         }
         considerDate = considerDateButton.getSelection();
         ignoreCase = ignoreCaseButton.getSelection();
-        if (!defined) {
+        if (!hasRightMember) {
             threeWay = threeWayButton.getSelection();
         }
 
@@ -533,8 +556,12 @@ public abstract class CompareDialog extends XDialog {
         return true;
     }
 
-    public boolean isDefined() {
-        return defined;
+    public boolean hasRightMember() {
+        return hasRightMember;
+    }
+
+    public boolean hasMultipleRightMembers() {
+        return hasMultipleRightMembers;
     }
 
     public boolean isEditable() {
@@ -554,7 +581,11 @@ public abstract class CompareDialog extends XDialog {
     }
 
     private void loadScreenValues() {
-        editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
+        if (selectEditable) {
+            editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
+        } else {
+            editable = false;
+        }
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
     }

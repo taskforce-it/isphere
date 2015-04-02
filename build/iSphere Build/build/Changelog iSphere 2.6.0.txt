@@ -1,5 +1,18 @@
 
 
+Changelog: iSphere 2.6.0 beta 7
+-------------------------------
+
+ • Changed iSphere Source Compare to allow to select more than two members 
+   from the RSE tree. If more than two members are selected, the name of the
+   right member is set set to "*LEFT" on the Compare Source Member dialog 
+   and only the library and source file of the right member can be changed.
+   When clicking the OK button, a compare editor is opened for each selected
+   member. This feature is useful when comparing members with the same name
+   in different source files, such as development and production. 
+ • Changed the initial focus of the compare dialog.   
+
+
 Changelog: iSphere 2.6.0 beta 6
 -------------------------------
 

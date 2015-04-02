@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -89,12 +90,14 @@ public class CompareAction {
                     return;
                 }
 
+                // if (cc.isLeftEditable()) {
                 IEditorPart editor = findMemberInEditor(leftMember);
                 if (editor != null) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                     return;
                 }
+                // }
 
                 ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
                     public void partClosed(IWorkbenchPart part) {
@@ -154,6 +157,20 @@ public class CompareAction {
                     fInput.setTitle(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
                 }
 
+                IEditorReference editorReference = findCompareEditor(leftMember, rightMember);
+                if (editorReference != null) {
+
+                    // TODO: make decision, what is better: close editor or
+                    // restore part. Now the part is brought to front
+                    // IEditorPart editorPart =
+                    // editorReference.getEditor(false);
+                    // editorPart.getEditorSite().getPage().closeEditor(editorPart,
+                    // false);
+
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(editorReference.getPart(false));
+                    return;
+                }
+
                 CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
                 for (int index = 0; index < cleanupListener.size(); index++) {
                     (cleanupListener.get(index)).cleanup();
@@ -161,6 +178,29 @@ public class CompareAction {
 
             }
         });
+    }
+
+    protected static IEditorReference findCompareEditor(Member left, Member right) {
+        for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+            for (IWorkbenchPage page : window.getPages()) {
+                for (IEditorReference editorReference : page.getEditorReferences()) {
+                    try {
+                        if (editorReference.getEditorInput() instanceof CompareInput) {
+                            CompareInput compareInput = (CompareInput)editorReference.getEditorInput();
+                            Member leftMember = compareInput.getLeft(); // leftMember.toString()
+                            Member rightMember = compareInput.getRight();
+                            // TODO: implement comparable to be more accurate
+                            if (left.toString().equals(leftMember.toString()) && right.toString().equals(rightMember.toString())
+                                || left.toString().equals(rightMember.toString()) && right.toString().equals(leftMember.toString())) {
+                                return editorReference;
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     protected static IEditorPart findMemberInEditor(Member left) {
