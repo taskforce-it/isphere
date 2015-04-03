@@ -90,14 +90,12 @@ public class CompareAction {
                     return;
                 }
 
-                // if (cc.isLeftEditable()) {
                 IEditorPart editor = findMemberInEditor(leftMember);
                 if (editor != null) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                     return;
                 }
-                // }
 
                 ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
                     public void partClosed(IWorkbenchPart part) {
@@ -185,13 +183,16 @@ public class CompareAction {
             for (IWorkbenchPage page : window.getPages()) {
                 for (IEditorReference editorReference : page.getEditorReferences()) {
                     try {
-                        if (editorReference.getEditorInput() instanceof CompareInput) {
-                            CompareInput compareInput = (CompareInput)editorReference.getEditorInput();
-                            Member leftMember = compareInput.getLeft(); // leftMember.toString()
-                            Member rightMember = compareInput.getRight();
-                            // TODO: implement comparable to be more accurate
-                            if (left.toString().equals(leftMember.toString()) && right.toString().equals(rightMember.toString())
-                                || left.toString().equals(rightMember.toString()) && right.toString().equals(leftMember.toString())) {
+                        IEditorInput editorInput = editorReference.getEditorInput();
+                        
+                        // FIXME: add FileEditorInput
+                        
+                        if (editorInput instanceof CompareInput) {
+                            CompareInput compareInput = (CompareInput)editorInput;
+                            IFile leftMember = compareInput.getLeft().getLocalResource();
+                            IFile rightMember = compareInput.getRight().getLocalResource();
+                            if (leftMember.equals(left.getLocalResource()) && rightMember.equals(right.getLocalResource())
+                                || leftMember.equals(right.getLocalResource()) && rightMember.equals(left.getLocalResource())) {
                                 return editorReference;
                             }
                         }
