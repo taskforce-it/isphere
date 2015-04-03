@@ -258,7 +258,7 @@
     *   and creates the version tag file.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
+	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, updateStylesheets, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>+  Finished iSphere build ${build.version}             |</echo>
@@ -402,15 +402,15 @@
 		<if>
 			<equals arg1="${is.beta.version}" arg2="true" />
 			<then>
-				<echo>Copying "Not yet available.txt" ...</echo>
-				<copy todir="${build.upload.dir.files}">
-					<fileset dir="${build.template.dir.files}" />
-				</copy>
-			</then>
-			<else>
 				<echo>Copying "Changelog iSphere.txt" ...</echo>
 				<copy todir="${build.upload.dir.files}">
 					<fileset refid="build.changelog.files" />
+				</copy>
+			</then>
+			<else>
+				<echo>Copying "Not yet available.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}">
+					<fileset dir="${build.template.dir.files}" />
 				</copy>
 			</else>
 		</if>
@@ -708,7 +708,7 @@
 
 		<echo>Updating version number to: ${build.version} ...</echo>
 
-		<for list="${build.projects},${build.updatesite}" delimiter="," param="project">
+		<for list="${build.projects}" delimiter="," param="project">
 			<sequential>
 
 				<echo message="${workspace.home}\@{project}" />
@@ -756,6 +756,22 @@
 
 	<!--
     * =====================================================================
+    *   Updates stylesheet.css of the help projects.
+    * ===================================================================== -->
+	<target name="updateStylesheets">
+
+		<echo message="Updating stylesheets ..."/>
+
+		<for list="${build.help.projects}" delimiter="," param="project">
+			<sequential>
+				<copy file="${build.template.dir}/stylesheet.css" todir="${workspace.home}/@{project}/html" overwrite="true"/>
+			</sequential>
+		</for>
+		
+	</target>	
+
+	<!--
+    * =====================================================================
     *   Asks for FTP credentials: username and password.
     *   Property 'IBMi.ftp.user' is loaded from 'ftp.properties'.
     * ===================================================================== -->
@@ -784,7 +800,7 @@
 
 		<echo>Refereshing projects ...</echo>
 
-		<for list="${build.projects},${build.updatesite}" delimiter="," param="project">
+		<for list="${build.projects}" delimiter="," param="project">
 			<sequential>
 				<eclipse.refreshLocal resource="@{project}" depth="infinite" />
 				<echo>* @{project}</echo>

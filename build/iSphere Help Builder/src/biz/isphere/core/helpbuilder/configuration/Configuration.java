@@ -37,7 +37,7 @@ public final class Configuration {
     private static final String BUILD_PROJECT_NAME = "build.project.name";
     private static final String OUTPUT_FILE = "build.output.file";
     private static final String BUILD_OUTPUT_DIRECTORY = "build.output.dir";
-    private static final String PROJECTS = "help.projects";
+    private static final String PROJECTS = "build.help.projects";
 
     private String configurationResource;
     private Properties properties;
