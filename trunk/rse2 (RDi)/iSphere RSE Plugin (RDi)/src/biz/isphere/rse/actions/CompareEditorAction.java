@@ -32,10 +32,18 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
 public class CompareEditorAction implements IObjectActionDelegate {
 
-    protected IStructuredSelection structuredSelection;
-    protected Shell shell;
+    private Shell shell;
 
     private RSEMember[] selectedMembers;
+    private List<RSEMember> selectedMembersList;
+
+    public CompareEditorAction() {
+        selectedMembersList = new ArrayList<RSEMember>();
+    }
+
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+        shell = workbenchPart.getSite().getShell();
+    }
 
     public void run(IAction arg0) {
 
@@ -45,7 +53,7 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
                 RSECompareDialog dialog;
                 if (selectedMembers.length > 2) {
-                    dialog = new RSECompareDialog(shell, selectedMembers);
+                    dialog = new RSECompareDialog(shell, true, selectedMembers);
                 } else if (selectedMembers.length == 2) {
                     dialog = new RSECompareDialog(shell, true, selectedMembers[0], selectedMembers[1]);
                 } else {
@@ -104,7 +112,6 @@ public class CompareEditorAction implements IObjectActionDelegate {
                 MessageDialog.openError(shell, biz.isphere.core.Messages.Unexpected_Error, e.getLocalizedMessage());
             }
         }
-
     }
 
     private RSEMember getRightRSEMember(IBMiConnection connection, String libraryName, String sourceFileName, String memberName) {
@@ -117,28 +124,26 @@ public class CompareEditorAction implements IObjectActionDelegate {
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
+
         selectedMembers = getMembersFromSelection((IStructuredSelection)selection);
-        if (selectedMembers.length >= 1 /* && selectedMembers.length <= 2 */) {
+
+        if (selectedMembers.length >= 1) {
             action.setEnabled(true);
         } else {
             action.setEnabled(false);
         }
     }
 
-    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-        shell = workbenchPart.getSite().getShell();
-    }
-
     private RSEMember[] getMembersFromSelection(IStructuredSelection structuredSelection) {
 
-        List<RSEMember> selectedMembers = new ArrayList<RSEMember>();
+        selectedMembersList.clear();
 
         try {
             if (structuredSelection != null && structuredSelection.size() > 0) {
                 Object[] objects = structuredSelection.toArray();
                 for (Object object : objects) {
                     if (object instanceof QSYSRemoteSourceMember) {
-                        selectedMembers.add(new RSEMember((QSYSRemoteSourceMember)object));
+                        selectedMembersList.add(new RSEMember((QSYSRemoteSourceMember)object));
                     }
                 }
             }
@@ -146,6 +151,6 @@ public class CompareEditorAction implements IObjectActionDelegate {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
-        return selectedMembers.toArray(new RSEMember[selectedMembers.size()]);
+        return selectedMembersList.toArray(new RSEMember[selectedMembersList.size()]);
     }
 }

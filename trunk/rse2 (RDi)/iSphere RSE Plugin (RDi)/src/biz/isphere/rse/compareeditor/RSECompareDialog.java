@@ -54,8 +54,8 @@ public class RSECompareDialog extends CompareDialog {
         initializeRightMember(rightMember);
     }
 
-    public RSECompareDialog(Shell parentShell, RSEMember[] selectedMembers) {
-        super(parentShell, selectedMembers);
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember[] selectedMembers) {
+        super(parentShell, selectEditable, selectedMembers);
         this.rseLeftMember = selectedMembers[0];
         initializeRightMember(selectedMembers[0]);
     }
@@ -104,7 +104,7 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.setSystemConnection(rightConnectionCombo.getHost());
         rightMemberPrompt.setLibraryName(rseLeftMember.getLibrary());
         rightMemberPrompt.setFileName(rseLeftMember.getSourceFile());
-        
+
         if (hasMultipleRightMembers()) {
             rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
         } else {
@@ -354,15 +354,6 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    public RSEMember getAncestorRSEMember() {
-        try {
-            return new RSEMember(ancestorConnection.getMember(ancestorLibrary, ancestorFile, ancestorMember, null));
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
-            return null;
-        }
-    }
-
     public IBMiConnection getRightConnection() {
         return rightConnection;
     }
@@ -393,6 +384,15 @@ public class RSECompareDialog extends CompareDialog {
 
     public String getAncestorMember() {
         return ancestorMember;
+    }
+
+    public RSEMember getAncestorRSEMember() {
+        try {
+            return new RSEMember(ancestorConnection.getMember(ancestorLibrary, ancestorFile, ancestorMember, null));
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
+            return null;
+        }
     }
 
     @Override
