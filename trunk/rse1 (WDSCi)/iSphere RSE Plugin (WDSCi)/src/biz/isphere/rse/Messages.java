@@ -103,7 +103,13 @@ public class Messages extends NLS {
 
     public static String No_objects_found_that_match_the_selection_criteria;
 
+    public static String Loading_remote_objects;
+
     public static String Failed_to_get_connection_colon;
+    
+    public static String Library_A_not_found;
+    
+    public static String File_A_in_library_B_not_found;
     
     static {
         // initialize resource bundle

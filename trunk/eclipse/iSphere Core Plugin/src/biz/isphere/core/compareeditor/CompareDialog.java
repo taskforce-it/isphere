@@ -84,9 +84,9 @@ public abstract class CompareDialog extends XDialog {
         hasMultipleRightMembers = false;
     }
 
-    public CompareDialog(Shell parentShell, Member[] rightMembers) {
+    public CompareDialog(Shell parentShell, boolean selectEditable, Member[] rightMembers) {
         super(parentShell);
-        initialize(parentShell, false, rightMembers[0], rightMembers[0], null);
+        initialize(parentShell, selectEditable, rightMembers[0], rightMembers[0], null);
         hasMultipleRightMembers = true;
     }
 
@@ -591,7 +591,9 @@ public abstract class CompareDialog extends XDialog {
     }
 
     private void storeScreenValues() {
-        getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
+        if (selectEditable) {
+            getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
+        }
         getDialogBoundsSettings().put(CONSIDER_DATE_PROPERTY, considerDate);
         getDialogBoundsSettings().put(IGNORE_CASE_PROPERTY, ignoreCase);
     }
