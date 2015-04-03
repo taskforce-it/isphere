@@ -26,8 +26,7 @@ public class Project {
 
     public Project(String configString) throws JobCanceledException {
 
-        String[] parts = configString.split(Configuration.REGEX_PIPE);
-        name = parts[0];
+        name = configString;
 
         String projectPath = Configuration.getInstance().getWorkspace().getPath() + File.separator + name;
         toc = findToc(projectPath);
