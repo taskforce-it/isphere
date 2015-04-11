@@ -53,15 +53,23 @@ you can do it by hand, of course. Select the option that works best for you:
 <a id="by_hand"></a>
 <h2>Doing it By Hand</h2>
 <ul>
-<li>Unzip biz.isphere.core_x.x.x.jar from the iSphere Update Site zip file.</li>
-<li>Unzip file ISPHERE from directory /Server of biz.isphere.core_x.x.x.jar.</li>
+<li>Download the iSphere update site zip file from <a href="https://sourceforge.net/projects/isphere/" target=_blank>SourceForge</a>.</li>
+<li>Unzip the content of the zip file into a directory of your choice of your hard disk.</li>
+<li>Navigate into directory <i>/plugins</i>.
+<li>Unzip the content of <i>biz.isphere.core_x.x.x.jar</i> into a directory of your choice of your hard disk.</li>
+<li>Navigate into directory <i>/Server</i>.
+<li>Unzip save file <i>ISPHERE</i> into a directory of your choice of your hard disk.</li>
 <li>Create an empty save file in QGPL:
 <p>
 <div class="code">CRTSAVF FILE(QGPL/ISPHERE) TEXT('iSphere')</div>
 </p>
 </li>
-<li>Start a FTP session and transfer the local ISPHERE file into the ISPHERE save file on your host using binary mode.</li>
-<li>Restore library ISPHERE from the save file QGPL/ISPHERE:
+<li>Start a FTP session and transfer the local <i>ISPHERE</i> file into the <i>ISPHERE</i> save file on your host using binary mode.
+	<p>
+	<img src="./assets/ftp_upload.png" />
+	<p>
+</li>
+<li>Restore library ISPHERE from the save file <i>QGPL/ISPHERE</i>:
 <p>
 <div class="code">RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/ISPHERE) RSTLIB(ISPHERE)</div>
 </p>
