@@ -139,9 +139,11 @@
 
 	<!-- Set zip file and directory names -->
 	<property name="build.template.dir" location="${build.home}/templates" />
+	<property name="build.template.dir.maintenance" location="${build.template.dir}/template_maintenance" />
 	<property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
 	<property name="build.template.dir.files" location="${build.template.dir}/template_no_beta_version" />
 	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
+	<property name="build.upload.dir.maintenance" location="${build.upload.dir}/sf-maintenance/${beta.dir}/maintenance" />
 	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
 	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
 	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
@@ -212,6 +214,7 @@
 		</then>
 		<else>
 			<property name="ignore.build.web" value="true" />
+			<property name="ignore.build.maintenance" value="true" />
 			<echo>IGNORED: iSphere Update Site</echo>
 		</else>
 	</if>
@@ -224,6 +227,7 @@
 		</then>
 		<else>
 			<property name="ignore.build.help" value="true" />
+			<property name="ignore.build.maintenance" value="true" />
 			<echo>IGNORED: iSphere Help</echo>
 		</else>
 	</if>
@@ -280,7 +284,7 @@
     *   It must be run, after the update site has been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp" description="Create SourceForge files and web pages">
+	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
@@ -524,6 +528,24 @@
 
 	<!--
     * =====================================================================
+    *   Creates the iSphere maintenance page.
+    * ===================================================================== -->
+	<target name="createSourceForgeMaintenance" unless="ignore.build.maintenance">
+
+		<echo>Creating iSphere maintenance web page ...</echo>
+
+		<copy todir="${build.upload.dir.maintenance}">
+			<fileset dir="${build.template.dir.maintenance}" />
+		</copy>
+		
+		<replace file="${build.upload.dir.maintenance}/index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
     *   Cleans the iSphere download area on SourceForge.
     * ===================================================================== -->
 	<target name="cleanSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
@@ -550,7 +572,11 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
-			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" />
+			<copydir dir="${build.upload.dir.maintenance}" toDir="./${target.ide.sf.dir}" subDirs="true" />
+			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" >
+				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
+				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
+			</Rmdir>
 		</SF>
 
 	</target>
@@ -565,7 +591,11 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
-			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+			<copydir dir="${build.upload.dir.maintenance}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" >
+				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
+				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
+			</Rmdir>
 		</SF>
 
 	</target>
@@ -597,7 +627,8 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
-			<copydir dir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
+			<copydir dir="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
+			<Rmdir dir="./${target.ide.sf.dir}/maintenance-assets" subDirs="true" />
 		</SF>
 
 	</target>
@@ -613,6 +644,7 @@
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.help.root}">
 			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.help.dir}/maintenance-assets" subDirs="true" />
 		</SF>
 
 	</target>
