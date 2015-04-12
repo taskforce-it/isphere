@@ -8,32 +8,74 @@ import static org.junit.Assert.*;
 public class TestStringUtil {
 
     @Test
+    public void testMid() {
+        
+        assertTrue("Hello".equals(StringUtil.trim("Hello  ", " ")));
+        assertTrue("Hello".equals(StringUtil.trim("  Hello", " ")));
+        assertTrue("Hello".equals(StringUtil.trim("  Hello  ", " ")));
+        
+        assertTrue("Hello".equals(StringUtil.trim("Hello**", "*")));
+        assertTrue("Hello".equals(StringUtil.trim("**Hello", "*")));
+        assertTrue("Hello".equals(StringUtil.trim("**Hello**", "*")));
+        
+        assertTrue("Hello".equals(StringUtil.trim("HelloXX", "X")));
+        assertTrue("Hello".equals(StringUtil.trim("XXHello", "X")));
+        assertTrue("Hello".equals(StringUtil.trim("XXHelloXX", "X")));
+    }
+
+    @Test
+    public void testIsNullOrEmpty() {
+
+        assertTrue(StringUtil.isNullOrEmpty(null));
+        assertTrue(StringUtil.isNullOrEmpty(""));
+
+        assertFalse(StringUtil.isNullOrEmpty(" "));
+        assertFalse(StringUtil.isNullOrEmpty("abc"));
+    }
+
+    @Test
     public void testNullValuesPositives() {
 
         // Positive null values Tests
         assertTrue(StringUtil.matchWildcard(null, null));
         assertTrue(StringUtil.matchWildcard(null, ""));
-        assertTrue(StringUtil.matchWildcard("", ""));
-        assertTrue(StringUtil.matchWildcard(null, "abc"));
-        assertTrue(StringUtil.matchWildcard("", " "));
         assertTrue(StringUtil.matchWildcard(null, " "));
+
+        assertTrue(StringUtil.matchWildcard("", ""));
+        assertTrue(StringUtil.matchWildcard("", " "));
+
+        assertTrue(StringUtil.matchWildcard(null, "abc"));
+        assertTrue(StringUtil.matchWildcard("", "abc"));
+
+        assertTrue(StringUtil.matchWildcard("*", null));
+        assertTrue(StringUtil.matchWildcard("*", ""));
+        assertTrue(StringUtil.matchWildcard("*", " "));
     }
 
     @Test
     public void testNullValuesNegatives() {
 
         // Negative null values Tests
+        assertFalse(StringUtil.matchWildcard("?", null));
         assertFalse(StringUtil.matchWildcard("*?", null));
-        assertFalse(StringUtil.matchWildcard(" ", ""));
         assertFalse(StringUtil.matchWildcard(" ", null));
+
+        assertFalse(StringUtil.matchWildcard("?", ""));
+        assertFalse(StringUtil.matchWildcard("*?", ""));
+        assertFalse(StringUtil.matchWildcard(" ", ""));
     }
 
     @Test
     public void testPositives() {
 
         // Positive Tests
+        assertTrue(StringUtil.matchWildcard(" ", " "));
         assertTrue(StringUtil.matchWildcard("*", ""));
         assertTrue(StringUtil.matchWildcard("?", " "));
+
+        assertTrue(StringUtil.matchWildcard("*?", " "));
+        assertTrue(StringUtil.matchWildcard("?*", " "));
+
         assertTrue(StringUtil.matchWildcard("*", "a"));
         assertTrue(StringUtil.matchWildcard("*", "ab"));
         assertTrue(StringUtil.matchWildcard("?", "a"));
@@ -48,9 +90,10 @@ public class TestStringUtil {
     public void testNegatives() {
 
         // Negative Tests
+        assertFalse(StringUtil.matchWildcard("?", ""));
+
         assertFalse(StringUtil.matchWildcard("*a", ""));
         assertFalse(StringUtil.matchWildcard("a*", ""));
-        assertFalse(StringUtil.matchWildcard("?", ""));
         assertFalse(StringUtil.matchWildcard("*b*", "a"));
         assertFalse(StringUtil.matchWildcard("b*a", "ab"));
         assertFalse(StringUtil.matchWildcard("??", "a"));
@@ -61,5 +104,8 @@ public class TestStringUtil {
         assertFalse(StringUtil.matchWildcard("*a*bc*", "ac"));
         assertFalse(StringUtil.matchWildcard("*abc ", "abc"));
         assertFalse(StringUtil.matchWildcard("*abc* ", "abc"));
+
+        assertFalse(StringUtil.matchWildcard("abcd", "abc"));
+        assertFalse(StringUtil.matchWildcard("abc", "abcd"));
     }
 }
