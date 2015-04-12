@@ -56,24 +56,51 @@ you can do it by hand, of course. Select the option that works best for you:
 <li>Download the iSphere update site zip file from <a href="https://sourceforge.net/projects/isphere/" target=_blank>SourceForge</a>.</li>
 <li>Unzip the content of the zip file into a directory of your choice of your hard disk.</li>
 <li>Navigate into directory <i>/plugins</i>.
-<li>Unzip the content of <i>biz.isphere.core_x.x.x.jar</i> into a directory of your choice of your hard disk.</li>
-<li>Navigate into directory <i>/Server</i>.
-<li>Unzip save file <i>ISPHERE</i> into a directory of your choice of your hard disk.</li>
+	<p>
+	<img src="./assets/iSphere_unzipped.png" />
+	<p></li>
+<li>Rename biz.isphere.core_x.x.x.jar to biz.isphere.core_x.x.x.zip.  It is the largest .jar file in the directory.  Right click > Rename or F2.</li>
+<li>Unzip biz.isphere.core_x.x.x.zip
+	<p>	
+	<img src="./assets/iSphere_core_unzipped.png" />
+	<p></li>
+<li>Navigate into directory <i>biz.isphere.core_x.x.x/Server</i>
+	<p>	
+	<img src="./assets/iSphere_server.png" />
+	<p></li>
+<li>Copy file <i>ISPHERE</i> into a directory of your choice of your hard disk.  This is the save file you will need to transfer to IBM i.  It's easier to copy it to a directory with a short path rather than typing a long path into the FTP command window below.</li>
+<li>Switch to a 5250 session.</li>
 <li>Create an empty save file in QGPL:
 <p>
 <div class="code">CRTSAVF FILE(QGPL/ISPHERE) TEXT('iSphere')</div>
 </p>
 </li>
-<li>Start a FTP session and transfer the local <i>ISPHERE</i> file into the <i>ISPHERE</i> save file on your host using binary mode.
+<li>Back at the PC, open a command window, start an FTP session and transfer the local <i>ISPHERE</i> file into the <i>ISPHERE</i> save file on your host using binary mode.
 	<p>
 	<img src="./assets/ftp_upload.png" />
 	<p>
 </li>
-<li>Restore library ISPHERE from the save file <i>QGPL/ISPHERE</i>:
+<li>On the 5250 session, restore library ISPHERE from the save file <i>QGPL/ISPHERE</i>:
 <p>
 <div class="code">RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(QGPL/ISPHERE) RSTLIB(ISPHERE)</div>
 </p>
 </li>
+<li>Now we need to clean up our PC directory.  Go back to Windows Explorer to the <i>/plugins</i> directory.
+	<p>
+	<img src="./assets/iSphere_plugins_altered.png" />
+	<p></p></li>
+<li>Delete the biz.isphere.core_x.x.x directory <i>NOT the jar file!</i>
+	<p>
+	<img src="./assets/iSphere_plugins_altered_delete_dir.png" />
+	<p></p></li>
+<li>Rename biz.isphere.core_x.x.x.zip back to biz.isphere.core_x.x.x.jar  It is the largest file in the directory, and the only .zip file there.  Right click > Rename or F2.
+	<p>
+	<img src="./assets/iSphere_plugins_altered_rename_zip.png" />
+	<p></p></li>
+<li>When finished, the <i>/plugins</i> directory should only have .jar files in it:
+	<p>
+	<img src="./assets/iSphere_plugins_typical.png" />
+	<p></p></li>
 </ul>
 <p>
 <a id="using_iproject"></a>
