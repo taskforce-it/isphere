@@ -49,6 +49,8 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         createSectionTools400(container);
         createSeparator(container);
         createSectionTranslators(container);
+        createSeparator(container);
+        createSectionDocumentation(container);
 
         // Compute size
         Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -163,6 +165,21 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         labelItalian.setText("Italian:");
         Label nicolaBrion = new Label(translators, SWT.NONE);
         nicolaBrion.setText("Nicola Brion");
+
+    }
+
+    private void createSectionDocumentation(Composite container) {
+
+        Composite documentation = new Composite(container, SWT.NONE);
+        documentation.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        GridLayout layout = new GridLayout(2, false);
+        layout.horizontalSpacing = 30;
+        documentation.setLayout(layout);
+
+        Label labelDocumentation = new Label(documentation, SWT.NONE);
+        labelDocumentation.setText("Documentation:");
+        Label buckCalabro = new Label(documentation, SWT.NONE);
+        buckCalabro.setText("Buck Calabro");
 
     }
 
