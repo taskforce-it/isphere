@@ -90,8 +90,6 @@ public class TestStringUtil {
     public void testNegatives() {
 
         // Negative Tests
-        assertFalse(StringUtil.matchWildcard("?", ""));
-
         assertFalse(StringUtil.matchWildcard("*a", ""));
         assertFalse(StringUtil.matchWildcard("a*", ""));
         assertFalse(StringUtil.matchWildcard("*b*", "a"));
