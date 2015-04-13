@@ -214,7 +214,6 @@
 		</then>
 		<else>
 			<property name="ignore.build.web" value="true" />
-			<property name="ignore.build.maintenance" value="true" />
 			<echo>IGNORED: iSphere Update Site</echo>
 		</else>
 	</if>
@@ -227,10 +226,25 @@
 		</then>
 		<else>
 			<property name="ignore.build.help" value="true" />
-			<property name="ignore.build.maintenance" value="true" />
 			<echo>IGNORED: iSphere Help</echo>
 		</else>
 	</if>
+
+	<if>
+		<or>
+			<equals arg1="${build.web.enabled}" arg2="true" />
+			<equals arg1="${build.help.enabled}" arg2="true" />
+		</or>
+		<then>
+			<!-- build files of update site -->
+			<echo>Building 'maintenance' web page ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.maintenance" value="true" />
+			<echo>IGNORED: iSphere 'maintenance' web page</echo>
+		</else>
+	</if>
+
 
 	<!--
     * =====================================================================
