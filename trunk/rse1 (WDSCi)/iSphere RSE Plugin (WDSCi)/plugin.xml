@@ -38,6 +38,11 @@
             icon="icons/user_space.gif"
             class="biz.isphere.rse.userspaceeditor.UserSpaceEditor"
             id="biz.isphere.rse.userspaceeditor.UserSpaceEditor"/>
+      <editor
+            name=""
+            icon="icons/compare_message_files.png"
+            class="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"
+            id="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"/>
 	</extension>
     
 	<extension 
@@ -53,6 +58,18 @@
 			name="Message File Editor"
 			class="biz.isphere.rse.actions.MessageFileEditorAction"
 			id="biz.isphere.rse.actions.MessageFileEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Compare Editor Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Message File Compare Editor"
+			class="biz.isphere.rse.actions.OpenMessageFileCompareEditorAction"
+			id="biz.isphere.rse.actions.OpenMessageFileCompareEditorAction">
 	    </dynamicPopupMenuExtension>
       	
       	<!--
