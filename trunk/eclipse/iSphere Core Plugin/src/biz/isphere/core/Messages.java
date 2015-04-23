@@ -908,6 +908,68 @@ public class Messages extends NLS {
     
     public static String Tooltip_Specifies_the_folder_to_save_message_file_search_results_to; 
     
+    public static String Select;
+    
+    public static String Compare;
+    
+    public static String Synchronize;
+
+    public static String Duplicates;
+    
+    public static String Singles;
+    
+    public static String ID;
+    
+    public static String Please_select_the_missing_message_file_then_press_Compare_to_start;
+    
+    public static String Please_press_Compare_to_start;
+    
+    public static String Warning;
+    
+    public static String Warning_Both_sides_show_the_same_message_file;
+    
+    public static String Items_found_colon;
+    
+    public static String Identical_colon;
+    
+    public static String Different_colon;
+    
+    public static String Unique_left_colon;
+    
+    public static String Unique_right_colon;
+    
+    public static String Remove_selection;
+    
+    public static String Select_for_copying_right_to_left;
+    
+    public static String Select_for_copying_left_to_right;
+    
+    public static String Edit_left;
+    
+    public static String Edit_right;
+    
+    public static String Compare_left_AND_right;
+    
+    public static String Delete_left;
+    
+    public static String Delete_right;
+    
+    public static String Tooltip_display_copy_from_left_to_right;
+    
+    public static String Tooltip_display_copy_from_right_to_left;
+    
+    public static String Tooltip_display_unequal_items;
+    
+    public static String Tooltip_display_equal_items;
+    
+    public static String Tooltip_display_duplicates;
+    
+    public static String Tooltip_display_singles;
+    
+    public static String Tooltip_start_compare;
+    
+    public static String Tooltip_start_synchronize;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -1275,7 +1275,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         private int waitTime;
 
         public AutoRefreshJob(IJobFinishedListener listener, RemoteObject remoteObject, int seconds) {
-            super(remoteObject.getQuaifiedObject());
+            super(remoteObject.getQualifiedObject());
             this.jobFinishedListener = listener;
             this.remoteObject = remoteObject;
             this.messageLoader = new MessageLoader(remoteObject);

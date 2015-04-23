@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@ package biz.isphere.core.internal;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import biz.isphere.base.internal.QsysObjectHelper;
 
 /**
  * The RemoteObject class is used by the RDI and WDSCi plug-in as an adapter to
@@ -35,7 +37,7 @@ public class RemoteObject {
         this.connectionName = connectionName;
         this.name = name;
         this.library = library;
-        this.objectType = objectType;
+        this.objectType = QsysObjectHelper.getAPIObjectType(objectType);
         this.description = description;
     }
 
@@ -81,7 +83,7 @@ public class RemoteObject {
         return description;
     }
 
-    public String getQuaifiedObject() {
+    public String getQualifiedObject() {
         return library + "/" + name + " (" + objectType + ")";
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,17 @@
 
 package biz.isphere.core.messagefileeditor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MessageDescription {
+public class MessageDescription implements Serializable {
 
-    public static final String TEXT_NONE = "*NONE";
+    private static final long serialVersionUID = 5093317088102919464L;
 
-    public static final String CCSID_JOB = "*JOB";
-    public static final String CCSID_HEX = "*HEX";
+    public static final String TEXT_NONE = "*NONE"; //$NON-NLS-1$
+
+    public static final String CCSID_JOB = "*JOB"; //$NON-NLS-1$
+    public static final String CCSID_HEX = "*HEX"; //$NON-NLS-1$
 
     private String connectionName;
     private String library;
@@ -28,13 +31,13 @@ public class MessageDescription {
     private ArrayList<FieldFormat> fieldFormats;
 
     public MessageDescription() {
-        connectionName = "";
-        library = "";
-        messageFile = "";
-        messageId = "";
-        message = "";
-        helpText = "";
-        severity = new Integer("0");
+        connectionName = ""; //$NON-NLS-1$
+        library = ""; //$NON-NLS-1$
+        messageFile = ""; //$NON-NLS-1$
+        messageId = ""; //$NON-NLS-1$
+        message = ""; //$NON-NLS-1$
+        helpText = ""; //$NON-NLS-1$
+        severity = new Integer("0"); //$NON-NLS-1$
         setCcsid(CCSID_JOB);
         fieldFormats = new ArrayList<FieldFormat>();
     }
@@ -115,7 +118,7 @@ public class MessageDescription {
         } else if (CCSID_JOB.equals(ccsid)) {
             this.ccsid = new Integer(-1);
         } else {
-            throw new IllegalArgumentException("Value " + ccsid + " not allowed.");
+            throw new IllegalArgumentException("Value " + ccsid + " not allowed."); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -129,6 +132,11 @@ public class MessageDescription {
 
     public void setFieldFormats(ArrayList<FieldFormat> fieldFormats) {
         this.fieldFormats = fieldFormats;
+    }
+
+    @Override
+    public String toString() {
+        return library + "/" + messageFile + "(" + messageId + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
 }

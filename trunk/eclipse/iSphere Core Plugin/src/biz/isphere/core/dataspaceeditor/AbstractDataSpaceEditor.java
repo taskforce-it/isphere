@@ -48,6 +48,7 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.StatusBar;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 public abstract class AbstractDataSpaceEditor extends EditorPart implements IFindReplaceTarget {

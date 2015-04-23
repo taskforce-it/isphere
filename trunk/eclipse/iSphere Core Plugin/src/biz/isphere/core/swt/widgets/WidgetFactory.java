@@ -309,6 +309,55 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces a toggle button.
+     * 
+     * @param parent - parent composite
+     * @return toggle button
+     */
+    public static Button createToggleButton(Composite parent) {
+        return WidgetFactory.getInstance().produceToggleButton(parent);
+    }
+
+    /**
+     * Produces a toggle button with a label.
+     * 
+     * @param parent - parent composite
+     * @param style - additional style options, such as {@link SWT#FLAT}
+     * @return toggle button
+     */
+    public static Button createToggleButton(Composite parent, int style) {
+        Button button = WidgetFactory.getInstance().produceToggleButton(parent);
+        return button;
+    }
+
+    /**
+     * Produces a toggle button with a label.
+     * 
+     * @param parent - parent composite
+     * @param string - button label
+     * @return toggle button
+     */
+    public static Button createToggleButton(Composite parent, String label) {
+        Button button = WidgetFactory.getInstance().produceToggleButton(parent);
+        button.setText(label);
+        return button;
+    }
+
+    /**
+     * Produces a toggle button with a label.
+     * 
+     * @param parent - parent composite
+     * @param string - button label
+     * @param style - additional style options, such as {@link SWT#FLAT}
+     * @return toggle button
+     */
+    public static Button createToggleButton(Composite parent, String label, int style) {
+        Button button = WidgetFactory.getInstance().produceToggleButton(parent);
+        button.setText(label);
+        return button;
+    }
+
+    /**
      * Produces a radio button field.
      * 
      * @param parent - parent composite
@@ -384,6 +433,20 @@ public final class WidgetFactory {
     private Button producePushButton(Composite parent) {
 
         Button pushButton = new Button(parent, SWT.PUSH);
+
+        return pushButton;
+    }
+
+    private Button produceToggleButton(Composite parent) {
+
+        Button pushButton = new Button(parent, SWT.TOGGLE);
+
+        return pushButton;
+    }
+
+    private Button produceToggleButton(Composite parent, int style) {
+
+        Button pushButton = new Button(parent, SWT.TOGGLE | style);
 
         return pushButton;
     }

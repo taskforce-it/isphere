@@ -8,8 +8,12 @@
 
 package biz.isphere.core.messagefileeditor;
 
-public class FieldFormat {
+import java.io.Serializable;
 
+public class FieldFormat implements Serializable {
+
+    private static final long serialVersionUID = -7764037395725259022L;
+    
     private String type;
     private boolean vary;
     private int bytes;

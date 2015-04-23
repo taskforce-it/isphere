@@ -103,6 +103,12 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SAVE = "save.gif";
     public static final String IMAGE_SAVE_ALL = "save_all.gif";
     public static final String IMAGE_COPY_TO_CLIPBOARD = "copy_to_clipboard.gif";
+    public static final String IMAGE_COPY_LEFT = "copy_left.png";
+    public static final String IMAGE_COPY_RIGHT = "copy_right.png";
+    public static final String IMAGE_COPY_NOT_EQUAL = "copy_not_equal.png";
+    public static final String IMAGE_COPY_EQUAL = "copy_equal.png";
+    public static final String IMAGE_FILTERED_ITEMS = "filtered_items.png";
+    public static final String IMAGE_COMPARE_MESSAGE_FILES = "compare_message_files.png";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -250,6 +256,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_SAVE, getImageDescriptor(IMAGE_SAVE));
         reg.put(IMAGE_SAVE_ALL, getImageDescriptor(IMAGE_SAVE_ALL));
         reg.put(IMAGE_COPY_TO_CLIPBOARD, getImageDescriptor(IMAGE_COPY_TO_CLIPBOARD));
+        reg.put(IMAGE_FILTERED_ITEMS, getImageDescriptor(IMAGE_FILTERED_ITEMS));
+        reg.put(IMAGE_COMPARE_MESSAGE_FILES, getImageDescriptor(IMAGE_COMPARE_MESSAGE_FILES));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {
