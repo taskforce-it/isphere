@@ -62,7 +62,7 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     }
 
     public String getName() {
-        return remoteObject.getQuaifiedObject();
+        return remoteObject.getQualifiedObject();
     }
 
     public String getToolTipText() {

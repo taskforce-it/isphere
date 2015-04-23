@@ -105,6 +105,12 @@ public class Messages extends NLS {
     public static String Library_A_not_found;
     
     public static String File_A_in_library_B_not_found;
+
+    public static String Select_Message_File;
+    
+    public static String Select_Object;
+
+    public static String Object_A_in_library_B_not_found;
     
     static {
         // initialize resource bundle

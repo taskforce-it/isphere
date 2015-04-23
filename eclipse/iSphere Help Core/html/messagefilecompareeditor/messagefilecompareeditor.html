@@ -37,7 +37,24 @@ The complete context menu looks like that:
 <img src="assets/context_menu.png" 
      align="middle">
 <p>
-Please notice that now the compare editor compares and syncronizes the following attributes:
+Use the filter buttons to filter the message descriptions:
+<p>
+<img src="assets/filter_options.png" 
+     align="middle">
+<p>
+A checked button indicates that the relevant entries are displayed. Uncheck one or more buttons to
+remove entries from the display.
+<p>
+<img src="assets/message_file_compare_editor_filtered.png" 
+     align="middle">
+<p>
+The status bar keeps you informed about filtered entries.
+<p>
+<h2>Rule for Merging Message Descriptions</h2>
+<p>
+<h3>Attributes</h3>
+<p>
+The following attributes are used for comparing and synchronizing message descriptions: 
 <p>
 <ul>
 <li>Message text</li>
@@ -46,6 +63,15 @@ Please notice that now the compare editor compares and syncronizes the following
 <li>Ccsid</li>
 <li>Replacement variables</li>
 </ul>
+<p>
+<h3>Merging on Same Systems</h3>
+<p>
+The <i>Message File Compare Editor</i> uses the <i>MERGMSGF</i> command for merging message descriptions.
+<p>
+<h3>Merging on Different Systems</h3>
+<p>
+The <i>Message File Compare Editor</i> uses the <i>ADDMSGD</i> and <i>CHGMSGD</i> commands for merging 
+message descriptions.
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

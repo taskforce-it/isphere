@@ -22,7 +22,7 @@ import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.dataspaceeditor.StatusBar;
+import biz.isphere.core.internal.StatusBar;
 
 /**
  * Abstract class that implements the basic services of a data area editor

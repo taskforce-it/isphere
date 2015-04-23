@@ -185,4 +185,24 @@ public final class StringHelper {
         }
         return count;
     }
+
+    /**
+     * Add quotes to a given string.
+     * 
+     * @param stringToBeQuoted - String the quotes are added to.
+     * @return quoted string
+     */
+    public static String addQuotes(String stringToBeQuoted) {
+
+        StringBuffer stringWithQuotes = new StringBuffer("");
+        for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
+            String character = stringToBeQuoted.substring(idx, idx + 1);
+            stringWithQuotes.append(character);
+            if (character.equals("'")) {
+                stringWithQuotes.append("'");
+            }
+        }
+
+        return stringWithQuotes.toString();
+    }
 }
