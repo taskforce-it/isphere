@@ -16,10 +16,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -52,6 +60,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
@@ -62,6 +71,7 @@ import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDescriptionHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.StatusBar;
@@ -86,8 +96,12 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private static final String BUTTON_DUPLICATES = "BUTTON_DUPLICATES"; //$NON-NLS-1$
 
     private MessageFileCompareEditorInput input;
+    private MessageDescription[] leftMessageDescriptions;
+    private MessageDescription[] rightMessageDescriptions;
 
     private boolean selectionChanged;
+    private boolean isLeftMessageFileWarning;
+    private boolean isRightMessageFileWarning;
 
     private TableViewer tableViewer;
     private TableFilter tableFilter;
@@ -118,6 +132,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     public AbstractMessageFileCompareEditor() {
 
         selectionChanged = true;
+        isLeftMessageFileWarning = false;
+        isRightMessageFileWarning = false;
 
         dialogSettingsManager = new DialogSettingsManager(getDialogSettings());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -163,6 +179,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 RemoteObject messageFile = performSelectRemoteObject(connectionName);
                 if (messageFile != null) {
                     selectionChanged = true;
+                    isLeftMessageFileWarning = false;
                     getEditorInput().setLeftMessageFile(messageFile);
                     refreshAndCheckMessageFileNames();
                 }
@@ -190,6 +207,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 RemoteObject messageFile = performSelectRemoteObject(connectionName);
                 if (messageFile != null) {
                     selectionChanged = true;
+                    isRightMessageFileWarning = false;
                     getEditorInput().setRightMessageFile(messageFile);
                     refreshAndCheckMessageFileNames();
                 }
@@ -371,6 +389,23 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tblClmnRightMessageText.setText(Messages.Message_text);
         tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
 
+        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+            public void doubleClick(DoubleClickEvent event) {
+                ISelection selection = event.getSelection();
+                if (selection instanceof StructuredSelection) {
+                    StructuredSelection structuredSelection = (StructuredSelection)selection;
+                    for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
+                        Object item = (Object)iterator.next();
+                        if (item instanceof MessageFileCompareItem) {
+                            MessageFileCompareItem compareItem = (MessageFileCompareItem)item;
+                            performCompareMessageDescriptions(compareItem);
+                        }
+                    }
+                }
+            }
+        });
+
         TableStatistics tableStatistics = new TableStatistics();
         TableContentProvider tableContentProvider = new TableContentProvider(tableStatistics);
         TableFilter tableFilter = new TableFilter(tableContentProvider);
@@ -522,20 +557,22 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         if (input.getLeftMessageFile() != null) {
             String connectionName = input.getLeftMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
+            if (isLeftMessageFileWarning
+                || !ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "iSphere library is not installed on system: " + connectionName);
+                isLeftMessageFileWarning = true;
             }
         }
 
         if (input.getRightMessageFile() != null) {
             String connectionName = input.getRightMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
+            if (isRightMessageFileWarning
+                || !ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "iSphere library is not installed on system: " + connectionName);
+                isRightMessageFileWarning = true;
             }
         }
 
@@ -652,15 +689,70 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performCompareMessageFiles() {
 
-        MessageFileCompareEditorInput editorInput = getEditorInput();
+        final MessageFileCompareEditorInput editorInput = getEditorInput();
         if (editorInput.getLeftMessageFileName().equals(editorInput.getRightMessageFileName())) {
             MessageDialog.openWarning(getShell(), Messages.Warning, Messages.Warning_Both_sides_show_the_same_message_file);
         }
 
-        tableViewer.setInput(getEditorInput());
-        selectionChanged = false;
+        Job job = new Job(Messages.Loading_message_descriptions) {
 
-        setButtonEnablement();
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+
+                try {
+
+                    monitor.beginTask("", 2);
+
+                    UIJob job = new UIJob("") {
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor monitor) {
+                            tableViewer.getTable().clearAll();
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    job.schedule();
+
+                    try {
+                        leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
+                        monitor.worked(1);
+                        rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
+                        monitor.worked(2);
+                    } catch (PropertyVetoException e) {
+                        leftMessageDescriptions = new MessageDescription[0];
+                        rightMessageDescriptions = new MessageDescription[0];
+                        MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+                    }
+
+                    job = new UIJob("") {
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor monitor) {
+                            tableViewer.setInput(getEditorInput());
+                            selectionChanged = false;
+                            setButtonEnablement();
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    job.schedule();
+
+                } finally {
+                    monitor.done();
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+    }
+
+    private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) throws PropertyVetoException {
+
+        String connectionName = messageFile.getConnectionName();
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+        IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
+        iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
+
+        return iqmhrtvm.retrieveAllMessageDescriptions();
     }
 
     private void performSynchronizeMessageFiles() {
@@ -705,12 +797,30 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tableViewer.refresh(compareItem);
     }
 
+    protected void performCompareMessageDescriptions(MessageFileCompareItem compareItem) {
+
+        CompareConfiguration cc = new CompareConfiguration();
+        cc.setLeftEditable(false);
+        cc.setRightEditable(false);
+        cc.setLeftLabel(Messages.Left_message_description);
+        cc.setRightLabel(Messages.Right_message_description);
+
+        MessageDescription leftMessageDescription = compareItem.getLeftMessageDescription();
+        MessageDescription rightMessageDescription = compareItem.getRightMessageDescription();
+        biz.isphere.core.messagefilecompare.compare.MessageDescriptionCompareEditorInput fInput = new biz.isphere.core.messagefilecompare.compare.MessageDescriptionCompareEditorInput(
+            cc, leftMessageDescription, rightMessageDescription);
+
+        // CompareUI.openCompareEditorOnPage(fInput,
+        // ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
+        CompareUI.openCompareDialog(fInput);
+    }
+
     protected abstract RemoteObject performSelectRemoteObject(String connectionName);
 
     /**
      * Class to provide the content of the table viewer.
      */
-    private static class TableContentProvider implements IStructuredContentProvider {
+    private class TableContentProvider implements IStructuredContentProvider {
 
         private TableStatistics tableStatistics;
         private MessageFileCompareEditorInput editorInput;
@@ -734,9 +844,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 tableStatistics.clearStatistics();
 
                 try {
-
-                    MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
-                    MessageDescription[] rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
 
                     compareItems = new LinkedHashMap<String, MessageFileCompareItem>();
 
@@ -762,17 +869,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             Arrays.sort(compareItemsArray);
 
             return compareItemsArray;
-        }
-
-        private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) throws PropertyVetoException {
-
-            String connectionName = messageFile.getConnectionName();
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-
-            IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
-            iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
-
-            return iqmhrtvm.retrieveAllMessageDescriptions();
         }
 
         public void dispose() {
@@ -1339,7 +1435,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             menuItemCompareLeftAndRight.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    MessageDialog.openInformation(getShell(), "Compare Left & Right", "Beta Version: Not yet implemented."); //$NON-NLS-1$ //$NON-NLS-2$
+                    performCompareMessageDescriptions(getTheSelectedItem());
                 }
             });
 

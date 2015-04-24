@@ -88,17 +88,17 @@ public class FieldFormatDetail {
         comboType = WidgetFactory.createCombo(compositeHeader);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboType.setTextLimit(10);
-        comboType.add("*QTDCHAR");
-        comboType.add("*CHAR");
-        comboType.add("*HEX");
-        comboType.add("*SPP");
-        comboType.add("*DEC");
-        comboType.add("*BIN");
-        comboType.add("*UBIN");
-        comboType.add("*CCHAR");
-        comboType.add("*DTS");
-        comboType.add("*SYP");
-        comboType.add("*ITV");
+        comboType.add(FieldFormat.QTDCHAR);
+        comboType.add(FieldFormat.CHAR);
+        comboType.add(FieldFormat.HEX);
+        comboType.add(FieldFormat.SPP);
+        comboType.add(FieldFormat.DEC);
+        comboType.add(FieldFormat.BIN);
+        comboType.add(FieldFormat.UBIN);
+        comboType.add(FieldFormat.CCHAR);
+        comboType.add(FieldFormat.DTS);
+        comboType.add(FieldFormat.SYP);
+        comboType.add(FieldFormat.ITV);
         if (actionType == DialogActionTypes.CREATE) {
             comboType.setText("");
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
@@ -112,17 +112,17 @@ public class FieldFormatDetail {
         validatorType = Validator.getCharInstance();
         validatorType.setLength(10);
         validatorType.setRestricted(true);
-        validatorType.addSpecialValue("*QTDCHAR");
-        validatorType.addSpecialValue("*CHAR");
-        validatorType.addSpecialValue("*HEX");
-        validatorType.addSpecialValue("*SPP");
-        validatorType.addSpecialValue("*DEC");
-        validatorType.addSpecialValue("*BIN");
-        validatorType.addSpecialValue("*UBIN");
-        validatorType.addSpecialValue("*CCHAR");
-        validatorType.addSpecialValue("*DTS");
-        validatorType.addSpecialValue("*SYP");
-        validatorType.addSpecialValue("*ITV");
+        validatorType.addSpecialValue(FieldFormat.QTDCHAR);
+        validatorType.addSpecialValue(FieldFormat.CHAR);
+        validatorType.addSpecialValue(FieldFormat.HEX);
+        validatorType.addSpecialValue(FieldFormat.SPP);
+        validatorType.addSpecialValue(FieldFormat.DEC);
+        validatorType.addSpecialValue(FieldFormat.BIN);
+        validatorType.addSpecialValue(FieldFormat.UBIN);
+        validatorType.addSpecialValue(FieldFormat.CCHAR);
+        validatorType.addSpecialValue(FieldFormat.DTS);
+        validatorType.addSpecialValue(FieldFormat.SYP);
+        validatorType.addSpecialValue(FieldFormat.ITV);
 
         // Variable length
 
@@ -201,7 +201,7 @@ public class FieldFormatDetail {
             textDecimalPositions.setText("");
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
             || actionType == DialogActionTypes.DISPLAY) {
-            if (_fieldFormat.getType().equals("*DEC")) {
+            if (_fieldFormat.getType().equals(FieldFormat.DEC)) {
                 textDecimalPositions.setText(Integer.toString(_fieldFormat.getDecimalPositions()));
             } else {
                 textDecimalPositions.setText("");
@@ -352,7 +352,7 @@ public class FieldFormatDetail {
                 return false;
             }
 
-            if (comboType.getText().equals("*DEC")) {
+            if (comboType.getText().equals(FieldFormat.DEC)) {
 
                 // The value in field 'Decimal positions' is not valid.
 

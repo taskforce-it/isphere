@@ -20,6 +20,18 @@ public class FieldFormat implements Serializable {
     private int length;
     private int decimalPositions;
 
+    public static final String ITV = "*ITV"; //$NON-NLS-1$
+    public static final String SYP = "*SYP"; //$NON-NLS-1$
+    public static final String DTS = "*DTS"; //$NON-NLS-1$
+    public static final String CCHAR = "*CCHAR"; //$NON-NLS-1$
+    public static final String BIN = "*BIN"; //$NON-NLS-1$
+    public static final String UBIN = "*UBIN"; //$NON-NLS-1$
+    public static final String DEC = "*DEC"; //$NON-NLS-1$
+    public static final String SPP = "*SPP"; //$NON-NLS-1$
+    public static final String HEX = "*HEX"; //$NON-NLS-1$
+    public static final String CHAR = "*CHAR"; //$NON-NLS-1$
+    public static final String QTDCHAR = "*QTDCHAR"; //$NON-NLS-1$
+
     public FieldFormat() {
         type = "";
         vary = false;
@@ -68,4 +80,31 @@ public class FieldFormat implements Serializable {
         this.decimalPositions = decimalPositions;
     }
 
+    public String asFormattedFieldFormat() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        if (isVary()) {
+            buffer.append(getType().trim() + "(" + getBytes());
+        } else {
+            buffer.append(getType().trim() + "(" + getLength());
+        }
+
+        if (FieldFormat.DEC.equals(getType())) {
+            buffer.append(", " + getDecimalPositions());
+        }
+
+        buffer.append(")");
+
+        if (isVary()) {
+            buffer.append(", *VARY");
+        }
+
+        return buffer.toString();
+    }
+    
+    @Override
+    public String toString() {
+        return asFormattedFieldFormat();
+    }
 }

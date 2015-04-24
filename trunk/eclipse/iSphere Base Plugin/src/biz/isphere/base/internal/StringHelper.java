@@ -8,7 +8,10 @@
 
 package biz.isphere.base.internal;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public final class StringHelper {
@@ -204,5 +207,116 @@ public final class StringHelper {
         }
 
         return stringWithQuotes.toString();
+    }
+
+    /**
+     * Indent and wrap multi-line strings.
+     * 
+     * @param original the original string to wrap
+     * @param width the maximum width of lines
+     * @param breakIterator algorithm for breaking lines
+     * @param removeNewLines if <code>true</code>, any newlines in the original
+     *        string are ignored
+     * @return the whole string with embedded newlines
+     * @see http://www.tutego.de/blog/javainsel/2009/05/texte-umbrechen-word-wrap/
+     */
+    public static String wrapAndIndentString(String original, String indent, int width) {
+        BreakIterator breakIterator = BreakIterator.getWordInstance();
+
+        List<String> lines = wrapStringToArray(original, width, breakIterator, true);
+        StringBuffer retBuf = new StringBuffer();
+
+        for (String line : lines) {
+            retBuf.append(indent);
+            retBuf.append(line);
+            retBuf.append('\n');
+        }
+
+        return retBuf.toString();
+    }
+
+    /**
+     * Wrap multi-line strings (and get the individual lines).
+     * 
+     * @param original the original string to wrap
+     * @param width the maximum width of lines
+     * @param breakIterator breaks original to chars, words, sentences,
+     *        depending on what instance you provide.
+     * @param removeNewLines if <code>true</code>, any newlines in the original
+     *        string are ignored
+     * @return the lines after wrapping
+     */
+    public static List<String> wrapStringToArray(String original, int width, BreakIterator breakIterator, boolean removeNewLines) {
+        if (original.length() == 0) return Arrays.asList(original);
+
+        String[] workingSet;
+
+        // substitute original newlines with spaces,
+        // remove newlines from head and tail
+        if (removeNewLines) {
+            original = original.trim();
+            original = original.replace('\n', ' ');
+            workingSet = new String[] { original };
+        } else {
+            StringTokenizer tokens = new StringTokenizer(original, "\n"); // NOI18N
+            int len = tokens.countTokens();
+            workingSet = new String[len];
+
+            for (int i = 0; i < len; i++)
+                workingSet[i] = tokens.nextToken();
+        }
+
+        if (width < 1) width = 1;
+
+        if (original.length() <= width) return Arrays.asList(workingSet);
+
+        widthcheck: {
+            boolean ok = true;
+
+            for (int i = 0; i < workingSet.length; i++) {
+                ok = ok && (workingSet[i].length() < width);
+
+                if (!ok) break widthcheck;
+            }
+
+            return Arrays.asList(workingSet);
+        }
+
+        ArrayList<String> lines = new ArrayList<String>();
+
+        int lineStart = 0; // the position of start of currently processed line
+                           // in
+        // the original string
+
+        for (int i = 0; i < workingSet.length; i++) {
+            if (workingSet[i].length() < width)
+                lines.add(workingSet[i]);
+            else {
+                breakIterator.setText(workingSet[i]);
+
+                int nextStart = breakIterator.next();
+                int prevStart = 0;
+
+                do {
+                    while (((nextStart - lineStart) < width) && (nextStart != BreakIterator.DONE)) {
+                        prevStart = nextStart;
+                        nextStart = breakIterator.next();
+                    }
+
+                    if (nextStart == BreakIterator.DONE) nextStart = prevStart = workingSet[i].length();
+
+                    if (prevStart == 0) prevStart = nextStart;
+
+                    lines.add(workingSet[i].substring(lineStart, prevStart));
+
+                    lineStart = prevStart;
+                    prevStart = 0;
+                } while (lineStart < workingSet[i].length());
+
+                lineStart = 0;
+            }
+        }
+
+        return lines;
     }
 }

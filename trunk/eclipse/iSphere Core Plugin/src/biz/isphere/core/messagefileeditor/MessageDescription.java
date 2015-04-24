@@ -11,7 +11,13 @@ package biz.isphere.core.messagefileeditor;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.Messages;
+
 public class MessageDescription implements Serializable {
+
+    private static final String CRLF = "\n";
+    private static final String TAB = "\t";
 
     private static final long serialVersionUID = 5093317088102919464L;
 
@@ -134,9 +140,44 @@ public class MessageDescription implements Serializable {
         this.fieldFormats = fieldFormats;
     }
 
+    public String asFormattedText(int width) {
+
+        StringBuilder buffer = new StringBuilder();
+
+        int tWidth = width;
+        if (tWidth <= 0) {
+            tWidth = Integer.MAX_VALUE;
+        }
+
+        buffer.append(Messages.Message_identifier_colon + CRLF);
+        buffer.append(TAB + getMessageId() + CRLF + CRLF);
+        buffer.append(Messages.First_level_message_text_colon + CRLF);
+        buffer.append(StringHelper.wrapAndIndentString(getMessage(), TAB, tWidth) + CRLF + CRLF);
+        buffer.append(Messages.Second_level_message_text_colon + CRLF);
+        buffer.append(StringHelper.wrapAndIndentString(getHelpText(), TAB, tWidth) + CRLF + CRLF);
+        buffer.append(Messages.Severity_code_colon + CRLF);
+        buffer.append(TAB + getSeverity() + CRLF + CRLF);
+        buffer.append(Messages.Coded_character_set_ID_colon + CRLF);
+        buffer.append(TAB + getCcsidAsString() + CRLF + CRLF);
+
+        buffer.append(Messages.Message_data_fields_formats_colon + CRLF);
+
+        int i = 0;
+        for (FieldFormat fieldFormat : fieldFormats) {
+            i++;
+            buffer.append(TAB + "&" + i + ": " + fieldFormat.asFormattedFieldFormat() + CRLF); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
+        return buffer.toString();
+    }
+
+    public String getFullQualifiedName() {
+        return library + "/" + messageFile + "(" + messageId + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+
     @Override
     public String toString() {
-        return library + "/" + messageFile + "(" + messageId + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return getFullQualifiedName();
     }
 
 }
