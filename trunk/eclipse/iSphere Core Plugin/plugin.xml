@@ -149,6 +149,11 @@
             category="biz.isphere.base.preferencepages.General"
             name="%LabelDecorations"
             id="biz.isphere.core.preferencepages.LabelDecorations"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereCompare"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Compare"
+            id="biz.isphere.core.preferencepages.ISphereCompare"/>
     	
    </extension>
    

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.preferences.Preferences;
 
 public class MessageDescriptionCompareNode extends BufferedContent implements ITypedElement, IEditableContent {
 
@@ -60,7 +61,8 @@ public class MessageDescriptionCompareNode extends BufferedContent implements IT
     @Override
     protected InputStream createStream() throws CoreException {
         try {
-            return new BufferedInputStream(new ByteArrayInputStream(messageDescription.asFormattedText(72).getBytes()));
+            int lineWidth = Preferences.getInstance().getMessageFileCompareLineWidth();
+            return new BufferedInputStream(new ByteArrayInputStream(messageDescription.asFormattedText(lineWidth).getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

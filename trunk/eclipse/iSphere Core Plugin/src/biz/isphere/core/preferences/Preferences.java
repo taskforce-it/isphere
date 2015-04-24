@@ -128,6 +128,10 @@ public final class Preferences {
 
     private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
+    private static final String MESSAGE_FILE_COMPARE = DOMAIN + "MESSAGE_FILE_COMPARE."; //$NON-NLS-1$
+
+    private static final String MESSAGE_FILE_COMPARE_LINE_WIDTH = MESSAGE_FILE_COMPARE + "LINE_WIDTH"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -293,7 +297,7 @@ public final class Preferences {
     }
 
     public boolean isSourceFileSearchResultsAutoSaveEnabled() {
-        
+
         /*
          * Does not work, because we cannot create an AS400 object, when loading
          * a search result.
@@ -301,7 +305,7 @@ public final class Preferences {
         if (!IBMiHostContributionsHandler.hasContribution()) {
             return false;
         }
-        
+
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
     }
 
@@ -345,6 +349,10 @@ public final class Preferences {
 
     public String getMessageFileSearchResultsAutoSaveFileName() {
         return preferenceStore.getString(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
+    public int getMessageFileCompareLineWidth() {
+        return preferenceStore.getInt(MESSAGE_FILE_COMPARE_LINE_WIDTH);
     }
 
     /*
@@ -479,6 +487,10 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
     }
 
+    public void setMessageFileCompareLineWidth(int lineWidth) {
+        preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -521,6 +533,8 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultMessageFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultMessageFileSearchResultsAutoSaveEnabled());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultMessageFileSearchResultsAutoSaveFileName());
+
+        preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
     }
 
     /*
@@ -818,6 +832,16 @@ public final class Preferences {
     public String getDefaultMessageFileSearchResultsAutoSaveFileName() {
 
         return "iSphereMessageFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
+    }
+
+    /**
+     * Returns the default 'line width' for comparing message files.
+     * 
+     * @return default line width of first and second level text
+     */
+    public int getDefaultMessageFileCompareMinLineWidth() {
+
+        return 70;
     }
 
     /**

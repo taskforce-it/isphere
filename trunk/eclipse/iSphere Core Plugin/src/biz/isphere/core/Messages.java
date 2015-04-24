@@ -988,6 +988,20 @@ public class Messages extends NLS {
     
     public static String Message_data_fields_formats_colon;
     
+    public static String Message_descriptions_compare;
+    
+    public static String Line_width_colon;
+    
+    public static String Tooltip_Line_with_of_word_wrap_of_first_and_second_level_text_when_comparing_message_descriptions;
+
+    public static String Minimum_line_width_is_A_characters;
+
+    public static String Directory_must_not_be_empty;
+    
+    public static String The_specified_directory_does_not_exist;
+    
+    public static String File_name_must_not_be_empty;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
