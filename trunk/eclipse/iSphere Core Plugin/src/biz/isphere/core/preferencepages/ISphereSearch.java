@@ -50,7 +50,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private Button buttonMessageFileSearchAutoSaveEnabled;
     private Text textMessageFileSearchAutoSaveFileName;
 
-    private boolean messageFileSetingsEnabled;
+    private boolean messageFileSettingsEnabled;
 
     public ISphereSearch() {
         super();
@@ -65,9 +65,9 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
          * a search result.
          */
         if (IBMiHostContributionsHandler.hasContribution()) {
-            messageFileSetingsEnabled = true;
+            messageFileSettingsEnabled = true;
         } else {
-            messageFileSetingsEnabled = false;
+            messageFileSettingsEnabled = false;
         }
 
     }
@@ -200,7 +200,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
          * Does not work, because we cannot create an AS400 object, when loading
          * a search result.
          */
-        if (!messageFileSetingsEnabled) {
+        if (!messageFileSettingsEnabled) {
             return;
         }
 
@@ -321,7 +321,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         preferences.setSourceFileSearchResultsAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled.getSelection());
         preferences.setSourceFileSearchResultsAutoSaveFileName(textSourceFileSearchAutoSaveFileName.getText());
 
-        if (messageFileSetingsEnabled) {
+        if (messageFileSettingsEnabled) {
             preferences.setMessageFileSearchResultsSaveDirectory(textMessageFileSearchSaveDirectory.getText());
             preferences.setMessageFileSearchResultsAutoSaveEnabled(buttonMessageFileSearchAutoSaveEnabled.getSelection());
             preferences.setMessageFileSearchResultsAutoSaveFileName(textMessageFileSearchAutoSaveFileName.getText());
@@ -339,7 +339,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getSourceFileSearchResultsAutoSaveFileName());
 
-        if (messageFileSetingsEnabled) {
+        if (messageFileSettingsEnabled) {
             textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.isMessageFileSearchResultsAutoSaveEnabled());
             textMessageFileSearchAutoSaveFileName.setText(preferences.getMessageFileSearchResultsAutoSaveFileName());
@@ -358,7 +358,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getDefaultSourceFileSearchResultsAutoSaveFileName());
 
-        if (messageFileSetingsEnabled) {
+        if (messageFileSettingsEnabled) {
             textMessageFileSearchSaveDirectory.setText(preferences.getDefaultMessageFileSearchResultsSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultMessageFileSearchResultsAutoSaveEnabled());
             textMessageFileSearchAutoSaveFileName.setText(preferences.getDefaultMessageFileSearchResultsAutoSaveFileName());
@@ -526,7 +526,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             textSourceFileSearchAutoSaveFileName.setEnabled(false);
         }
 
-        if (messageFileSetingsEnabled) {
+        if (messageFileSettingsEnabled) {
             if (buttonMessageFileSearchAutoSaveEnabled.getSelection()) {
                 textMessageFileSearchAutoSaveFileName.setEnabled(true);
             } else {
