@@ -577,7 +577,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
 
         if (input.getLeftMessageFile() == null || input.getRightMessageFile() == null) {
-            btnCompare.setEnabled(false);
+            isCompareEnabled = false;
         }
 
         if (tableViewer.getTable().getItems().length <= 0) {
