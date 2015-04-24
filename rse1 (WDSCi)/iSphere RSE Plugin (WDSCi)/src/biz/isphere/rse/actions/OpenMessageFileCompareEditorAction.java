@@ -80,6 +80,10 @@ public class OpenMessageFileCompareEditorAction extends ISeriesSystemBaseAction 
             return false;
         }
 
+        if (arrayListSelection.size() > 2) {
+            return false;
+        }
+
         this.arrayListSelection = arrayListSelection;
         return true;
 
