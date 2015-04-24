@@ -33,7 +33,7 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         try {
-            return connection.getAS400ToolboxObject(getShell());
+            return connection.getAS400ToolboxObject(null);
         } catch (Throwable e) {
             return null;
         }
@@ -65,10 +65,5 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return ISeriesConnection.getConnection(profile, connectionName);
-    }
-
-    private Shell getShell() {
-
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
     }
 }
