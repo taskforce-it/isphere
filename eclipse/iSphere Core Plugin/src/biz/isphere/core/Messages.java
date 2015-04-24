@@ -970,6 +970,24 @@ public class Messages extends NLS {
     
     public static String Tooltip_start_synchronize;
     
+    public static String Loading_message_descriptions;
+
+    public static String Left_message_description;
+
+    public static String Right_message_description;
+
+    public static String Message_identifier_colon;
+    
+    public static String First_level_message_text_colon;
+    
+    public static String Second_level_message_text_colon;
+    
+    public static String Severity_code_colon;
+    
+    public static String Coded_character_set_ID_colon;
+    
+    public static String Message_data_fields_formats_colon;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
