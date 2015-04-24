@@ -439,7 +439,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         String path = textSearchSaveDirectory.getText();
         if (StringHelper.isNullOrEmpty(path)) {
-            setError("Directory must not be empty.");
+            setError(Messages.Directory_must_not_be_empty);
             return false;
         }
 
@@ -449,12 +449,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         File directory = new File(path);
         if (!directory.exists()) {
-            setError("The specified directory does not exist.");
+            setError(Messages.The_specified_directory_does_not_exist);
             return false;
         }
 
         if (!directory.isDirectory()) {
-            setError("The specified directory does not exist.");
+            setError(Messages.The_specified_directory_does_not_exist);
             return false;
         }
 
@@ -478,7 +478,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         String filename = textFileName.getText();
         if (StringHelper.isNullOrEmpty(filename)) {
-            setError("File name must not be empty.");
+            setError(Messages.File_name_must_not_be_empty);
             return false;
         }
 
