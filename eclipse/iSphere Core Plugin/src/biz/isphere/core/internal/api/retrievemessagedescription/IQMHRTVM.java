@@ -66,6 +66,32 @@ public class IQMHRTVM extends APIProgramCallDocument {
     }
 
     /**
+     * Returns the message description of a given message ID.
+     * 
+     * @param messageId - ID of the message description being retrieved
+     * @return message description
+     */
+    public MessageDescription retrieveMessageDescription(String messageId) {
+
+        MessageDescription messageDescription = null;
+
+        try {
+
+            int bufferSize = Buffer.size("2 kByte");
+            IQMHRTVMResult result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_MSGID, messageId, 1, bufferSize);
+
+            if (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() == 1) {
+                messageDescription = result.getMessages().get(0);
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e);
+        }
+
+        return messageDescription;
+    }
+
+    /**
      * Retrieves all message descriptions of the message file.
      * 
      * @return array of message descriptions
@@ -82,7 +108,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
             // int bufferSize = 1024 * 1024 * 1 / 2;
             int bufferSize = Buffer.size("512 kByte");
             IQMHRTVMResult result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_FIRST, "", ALL_MESSAGES, bufferSize);
-            
+
             while (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() > 0) {
                 // numCalls++;
                 messages.addAll(result.getMessages());

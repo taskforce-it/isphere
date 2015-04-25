@@ -8,17 +8,19 @@
 
 package biz.isphere.core.internal;
 
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
-import biz.isphere.core.messagefileeditor.QMHRTVM;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -132,10 +134,15 @@ public final class MessageDescriptionHelper {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 
-        QMHRTVM qmhrtvm = new QMHRTVM();
-        MessageDescription[] messageDescription = qmhrtvm.run(system, connectionName, library, messageFile, messageId);
-        if (messageDescription != null && messageDescription.length == 1) {
-            return messageDescription[0];
+        try {
+
+            IQMHRTVM qmhrtvm = new IQMHRTVM(system, connectionName);
+            qmhrtvm.setMessageFile(messageFile, library);
+            MessageDescription messageDescription = qmhrtvm.retrieveMessageDescription(messageId);
+            return messageDescription;
+
+        } catch (PropertyVetoException e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
         return null;
