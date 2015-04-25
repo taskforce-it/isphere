@@ -15,6 +15,7 @@
   <topic label="Message File Editor"  href="html/messagefileeditor/messagefileeditor.html"> 
   </topic>
   <topic label="Message File Compare Editor"  href="html/messagefilecompareeditor/messagefilecompareeditor.html"> 
+    <topic label="Preferences" href="html/compare/preferences/preferences.html" />
   </topic>
   <topic label="Binding Directory Editor"  href="html/bindingdirectoryeditor/bindingdirectoryeditor.html"> 
   </topic>
