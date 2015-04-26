@@ -171,19 +171,21 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
                 }
 
                 if (line.startsWith(FF)) {
+                    line = line.substring(1);
                     formfeed();
                     line = handleDC1(line);
                     if (line.length() > 1) {
-                        print(line.substring(1));
+                        print(line);
                         newLine();
                     }
                 } else if (line.endsWith(FF)) {
+                    line = line.substring(0, line.length() - 1);
                     line = handleDC1(line);
                     if (line.length() > 1) {
-                        print(line.substring(0, line.length() - 1));
+                        print(line);
                         newLine();
                     }
-                    // Delay FF unitl the next line printed.
+                    // Delay FF until the next line printed.
                     isDelayedFormfeed = true;
                 } else {
                     line = handleDC1(line);
