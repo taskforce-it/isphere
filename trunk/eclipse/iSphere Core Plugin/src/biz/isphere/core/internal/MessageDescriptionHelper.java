@@ -31,23 +31,23 @@ import com.ibm.as400.access.CommandCall;
 public final class MessageDescriptionHelper {
 
     public static String mergeMessageDescription(Shell shell, MessageDescription messageDescription, String toConnectionName, String toMessageFile,
-        String toLibrary) {
+        String toLibrary) throws Exception {
 
         AS400 fromSystem = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
         AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
 
         String message = null;
         if (fromSystem.getSystemName().equals(toSystem.getSystemName())) {
-            message = mergeOnSameSystem(shell, fromSystem, messageDescription, toMessageFile, toLibrary);
+            message = mergeOnSameSystem(fromSystem, messageDescription, toMessageFile, toLibrary);
         } else {
-            message = mergeOnDifferentSystems(shell, fromSystem, messageDescription, toConnectionName, toMessageFile, toLibrary);
+            message = mergeOnDifferentSystems(fromSystem, messageDescription, toConnectionName, toMessageFile, toLibrary);
         }
 
         return message;
     }
 
-    private static String mergeOnSameSystem(Shell shell, AS400 fromSystem, MessageDescription messageDescription, String toMessageFile,
-        String toLibrary) {
+    private static String mergeOnSameSystem(AS400 fromSystem, MessageDescription messageDescription, String toMessageFile, String toLibrary)
+        throws Exception {
 
         StringBuilder command = new StringBuilder();
         command.append("MRGMSGF"); //$NON-NLS-1$
@@ -55,50 +55,50 @@ public final class MessageDescriptionHelper {
         command.append(" TOMSGF(" + toLibrary + "/" + toMessageFile + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         command.append(" SELECT(" + messageDescription.getMessageId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        String message = executeCommand(shell, fromSystem, command);
+        String message = executeCommand(fromSystem, command);
 
         return message;
     }
 
-    private static String mergeOnDifferentSystems(Shell shell, AS400 fromSystem, MessageDescription messageDescription, String toConnectionName,
-        String toMessageFile, String toMessageFileLibrary) {
+    private static String mergeOnDifferentSystems(AS400 fromSystem, MessageDescription messageDescription, String toConnectionName,
+        String toMessageFile, String toMessageFileLibrary) throws Exception {
 
-        refreshMessageDescription(shell, messageDescription);
+        refreshMessageDescription(messageDescription);
 
         MessageDescription remoteMessageDescription = ObjectHelper.cloneVO(messageDescription);
         remoteMessageDescription.setMessageFile(toMessageFile);
         remoteMessageDescription.setLibrary(toMessageFileLibrary);
 
-        MessageDescription tmpMessageDescription = retrieveMessageDescription(shell, toConnectionName, toMessageFile, toMessageFileLibrary,
+        MessageDescription tmpMessageDescription = retrieveMessageDescription(toConnectionName, toMessageFile, toMessageFileLibrary,
             messageDescription.getMessageId());
 
         String message = null;
         if (tmpMessageDescription == null) {
-            message = addMessageDescription(shell, remoteMessageDescription);
+            message = addMessageDescription(remoteMessageDescription);
         } else {
-            message = changeMessageDescription(shell, remoteMessageDescription);
+            message = changeMessageDescription(remoteMessageDescription);
         }
 
         return message;
     }
 
-    public static String addMessageDescription(Shell shell, MessageDescription messageDescription) {
+    public static String addMessageDescription(MessageDescription messageDescription) throws Exception {
 
         StringBuilder command = new StringBuilder();
         command.append("ADDMSGD"); //$NON-NLS-1$
 
-        return addOrChangeMessageDescription(shell, messageDescription, command);
+        return addOrChangeMessageDescription(messageDescription, command);
     }
 
-    public static String changeMessageDescription(Shell shell, MessageDescription messageDescription) {
+    public static String changeMessageDescription(MessageDescription messageDescription) throws Exception {
 
         StringBuilder command = new StringBuilder();
         command.append("CHGMSGD"); //$NON-NLS-1$
 
-        return addOrChangeMessageDescription(shell, messageDescription, command);
+        return addOrChangeMessageDescription(messageDescription, command);
     }
 
-    private static String addOrChangeMessageDescription(Shell shell, MessageDescription messageDescription, StringBuilder command) {
+    private static String addOrChangeMessageDescription(MessageDescription messageDescription, StringBuilder command) throws Exception {
 
         command.append(" MSGID(" + messageDescription.getMessageId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" MSGF(" + messageDescription.getLibrary() + "/" + messageDescription.getMessageFile() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -109,13 +109,13 @@ public final class MessageDescriptionHelper {
         command.append(" FMT(" + getFieldFormats(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
         AS400 system = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
-        String message = executeCommand(shell, system, command);
+        String message = executeCommand(system, command);
 
         return message;
 
     }
 
-    public static String removeMessageDescription(Shell shell, MessageDescription messageDescription) {
+    public static String removeMessageDescription(MessageDescription messageDescription) throws Exception {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
 
@@ -124,13 +124,12 @@ public final class MessageDescriptionHelper {
         command.append(" MSGID(" + messageDescription.getMessageId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" MSGF(" + messageDescription.getLibrary() + "/" + messageDescription.getMessageFile() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String message = executeCommand(shell, system, command);
+        String message = executeCommand(system, command);
 
         return message;
     }
 
-    public static MessageDescription retrieveMessageDescription(Shell shell, String connectionName, String messageFile, String library,
-        String messageId) {
+    public static MessageDescription retrieveMessageDescription(String connectionName, String messageFile, String library, String messageId) {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 
@@ -148,14 +147,14 @@ public final class MessageDescriptionHelper {
         return null;
     }
 
-    public static MessageDescription refreshMessageDescription(Shell shell, MessageDescription messageDescription) {
+    public static MessageDescription refreshMessageDescription(MessageDescription messageDescription) {
 
         String connectionName = messageDescription.getConnection();
         String library = messageDescription.getLibrary();
         String messageFile = messageDescription.getMessageFile();
         String messageId = messageDescription.getMessageId();
 
-        MessageDescription currentValues = retrieveMessageDescription(shell, connectionName, messageFile, library, messageId);
+        MessageDescription currentValues = retrieveMessageDescription(connectionName, messageFile, library, messageId);
         if (currentValues != null) {
             messageDescription.setMessage(currentValues.getMessage());
             messageDescription.setHelpText(currentValues.getHelpText());
@@ -197,28 +196,20 @@ public final class MessageDescriptionHelper {
         return formats.toString();
     }
 
-    private static String executeCommand(Shell shell, AS400 system, StringBuilder command) {
+    private static String executeCommand(AS400 system, StringBuilder command) throws Exception {
 
-        String message = null;
-
-        try {
-            AS400Message[] messageList = null;
-            CommandCall commandCall = new CommandCall(system);
-            if (!commandCall.run(command.toString())) {
-                messageList = commandCall.getMessageList();
-                if (messageList.length > 0) {
-                    message = messageList[0].getText();
-                } else {
-                    message = Messages.Unknown_error_occured;
-                }
+        AS400Message[] messageList = null;
+        CommandCall commandCall = new CommandCall(system);
+        if (!commandCall.run(command.toString())) {
+            messageList = commandCall.getMessageList();
+            if (messageList.length > 0) {
+                return messageList[0].getText();
+            } else {
+                return Messages.Unknown_error_occured;
             }
-        } catch (Exception e) {
-            message = e.getLocalizedMessage();
         }
 
-        displayError(shell, message);
-
-        return message;
+        return null;
     }
 
     private static void displayError(Shell shell, String message) {

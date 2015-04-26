@@ -15,25 +15,25 @@ import biz.isphere.core.internal.api.APIFormat;
 import com.ibm.as400.access.AS400;
 
 /**
- * Format of the substitution variables of the QMHRTVM API.
+ * Substitution variable format of the QMHRTVM API.
  * 
  * @author Thomas Raddatz
  */
-public class SubstitutionVariable extends APIFormat {
+public class SubstitutionVariableFormat extends APIFormat {
 
     private static final String LENGTH_OF_REPLACEMENT_DATA = "lengthOfReplacementData";
     private static final String FIELD_SIZE_OR_DECIMAL_POSITIONS = "fieldSizeOrDecimalPositions";
     private static final String SUBSTITUTION_VARIABLE_TYPE = "substitutionVariableType";
 
     /**
-     * Constructs a SubstitutionVariable object.
+     * Constructs a SubstitutionVariableFormat object.
      * 
      * @param system - System that calls the API
      * @param bytes - buffer that contains the retrieved message descriptions
      * @throws UnsupportedEncodingException
      */
-    public SubstitutionVariable(AS400 system, byte[] bytes) throws UnsupportedEncodingException {
-        super(system, "SubstitutionVariable");
+    public SubstitutionVariableFormat(AS400 system, byte[] bytes) throws UnsupportedEncodingException {
+        super(system, "SubstitutionVariableFormat");
 
         createStructure();
 

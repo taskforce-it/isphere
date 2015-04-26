@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
@@ -38,6 +40,8 @@ public class SearchForUpdates extends Job {
 
     private boolean showResultAlways;
     private boolean newVersionAvailable;
+    private String newVersionInfo;
+    private boolean newRequiresUpdateLibrary;
     private Version currentVersion;
     private Version availableVersion;
 
@@ -67,18 +71,23 @@ public class SearchForUpdates extends Job {
                     ((HttpURLConnection)connection).setRequestMethod("GET");
                 }
 
+                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
+
                 Manifest manifest = readManifest(connection.getInputStream());
                 availableVersion = getVersion(manifest, "Bundle-Version");
 
-                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
                 if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
+                    newVersionInfo = getString(manifest, "X-Bundle-Info");
+                    newRequiresUpdateLibrary = getBoolean(manifest, "X-Bundle-Update-Library", false);
                 }
 
                 if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
                     availableVersion = getVersion(manifest, "X-Beta-Version");
                     if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                         newVersionAvailable = true;
+                        newVersionInfo = getString(manifest, "X-Beta-Info");
+                        newRequiresUpdateLibrary = getBoolean(manifest, "X-Beta-Update-Library", false);
                     }
                 }
 
@@ -118,7 +127,8 @@ public class SearchForUpdates extends Job {
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                             UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
-                                availableVersion), MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
+                                availableVersion, newRequiresUpdateLibrary, newVersionInfo), MessageDialog.INFORMATION, new String[] { Messages.OK }, 0,
+                                availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -132,7 +142,7 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion));
+                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -147,17 +157,37 @@ public class SearchForUpdates extends Job {
         return Status.OK_STATUS;
     }
 
-    private String getNewVersionText(Version currentVersion, Version availableVersion) {
+    private String getNewVersionText(Version currentVersion, Version availableVersion, boolean requiresUpdateLibrary, String newVersionInfo) {
 
-        String text;
+        StringBuilder text = new StringBuilder();
         if (availableVersion.isBeta()) {
-            text = Messages.There_is_a_new_beta_version_available;
+            text.append(Messages.There_is_a_new_beta_version_available);
         } else {
-            text = Messages.There_is_a_new_version_available;
+            text.append(Messages.There_is_a_new_version_available);
         }
 
-        text = text + "\n" + Messages.Current_version + ": " + currentVersion + "\n" + Messages.Available_version + ": " + availableVersion;
-        return text;
+        text.append("\n");
+        text.append(Messages.Current_version);
+        text.append(": ");
+        text.append(currentVersion);
+        text.append("\n");
+        text.append(Messages.Available_version);
+        text.append(": ");
+        text.append(availableVersion);
+
+        if (requiresUpdateLibrary) {
+            text.append("\n");
+            text.append("\n");
+            text.append(Messages.This_version_requires_updating_the_iSphere_library);
+        }
+
+        if (newVersionInfo != null) {
+            text.append("\n");
+            text.append("\n");
+            text.append(newVersionInfo);
+        }
+
+        return text.toString();
     }
 
     private Version getVersion(Manifest manifest, String version) {
@@ -168,6 +198,26 @@ public class SearchForUpdates extends Job {
         }
 
         return null;
+    }
+
+    private String getString(Manifest manifest, String version) {
+
+        String[] propertyValues = getPropertyValues(manifest, version);
+        if (propertyValues != null && propertyValues.length == 1) {
+            return propertyValues[0];
+        }
+
+        return null;
+    }
+
+    private boolean getBoolean(Manifest manifest, String version, boolean defaultValue) {
+
+        String[] propertyValues = getPropertyValues(manifest, version);
+        if (propertyValues != null && propertyValues.length == 1) {
+            return BooleanHelper.tryParseBoolean(propertyValues[0], defaultValue);
+        }
+
+        return defaultValue;
     }
 
     private Manifest readManifest(InputStream manifestStream) {

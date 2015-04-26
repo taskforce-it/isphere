@@ -1,3 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Version: 2.5.2
+X-Bundle-Update-Library: true
+Disabled-X-Bundle-Info: Additional information ...
 X-Beta-Version: 2.6.0.b006
+X-Beta-Update-Library: true
+Disabled-X-Beta-Info: Additional information ...

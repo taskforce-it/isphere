@@ -186,7 +186,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
         ProgramParameter[] parameterList = new ProgramParameter[9];
         parameterList[0] = new ProgramParameter(bufferSize); // Receiver
         parameterList[1] = produceIntegerParameter(bufferSize); // Length
-        parameterList[2] = produceStringParameter("RTVM0300", 8); // Format
+        parameterList[2] = produceStringParameter("RTVM0400", 8); // Format
         parameterList[3] = produceStringParameter(messageID, 7); // MsgID
         parameterList[4] = produceQualifiedObjectName(messageFile, library); // Object
         parameterList[5] = produceStringParameter("*YES", 10); // Rtn Fmt Ctrl

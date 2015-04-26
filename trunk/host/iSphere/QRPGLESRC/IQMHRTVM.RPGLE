@@ -159,9 +159,9 @@
                  '. The minimum size is ' + %char(HEADER_MIN_SIZE) + ' bytes');
          endif;
 
-         if (i_format <> 'RTVM0300');
+         if (i_format <> 'RTVM0300' and i_format <> 'RTVM0400');
             kill('Format ' + %trim(i_format) + ' is not valid. +
-                  The possible formats are: RTVM0300');
+                  The possible formats are: RTVM0300, RTVM0400');
          endif;
 
          if (i_rtvOpt <> IQMHRTVM_FIRST and

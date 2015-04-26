@@ -15,6 +15,8 @@ import java.util.List;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
+import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
 import com.ibm.as400.access.AS400;
 
@@ -116,41 +118,18 @@ public class IQMHRTVMResult extends APIFormat {
 
         ArrayList<MessageDescription> messages = new ArrayList<MessageDescription>();
 
-        RTVM0300 rtvm0300 = new RTVM0300(getSystem(), getBytes());
+        RTVM0400 rtvm0400 = new RTVM0400(getSystem(), getBytes());
         int offset = getOffsetFirstMessage();
 
         for (int i = 0; i < getNumberOfMessagesReturned(); i++) {
 
-            rtvm0300.setOffset(offset);
+            rtvm0400.setOffset(offset);
 
-            ArrayList<FieldFormat> fieldFormats = new ArrayList<FieldFormat>();
+            ArrayList<FieldFormat> fieldFormats = getFieldFormats(rtvm0400, offset);
+            ArrayList<ValidReplyEntry> validReplyEntries = getValidReplyEntries(rtvm0400, offset);
+            ArrayList<SpecialReplyValueEntry> specialReplyValueEntries = getSpecialReplyValueEntries(rtvm0400, offset);
 
-            SubstitutionVariable variable = new SubstitutionVariable(getSystem(), getBytes());
-            int offsetFirstSubstitutionVariable = offset + rtvm0300.getOffsetSubstitutionVariables();
-
-            int offsetVariable = offsetFirstSubstitutionVariable;
-            for (int f = 0; f < rtvm0300.getNumberOfSubstitutionVariables(); f++) {
-
-                variable.setOffset(offsetVariable);
-
-                FieldFormat fieldFormat = new FieldFormat();
-
-                fieldFormat.setType(variable.getType());
-                if (variable.getLengthOfReplacementData() == -1) {
-                    fieldFormat.setVary(true);
-                    fieldFormat.setBytes(variable.getDecimalPositions());
-                } else {
-                    fieldFormat.setVary(false);
-                    fieldFormat.setLength(variable.getLengthOfReplacementData());
-                    fieldFormat.setDecimalPositions(variable.getDecimalPositions());
-                }
-
-                fieldFormats.add(fieldFormat);
-
-                offsetVariable = offsetVariable + rtvm0300.getLengthOfSubstitutionVariableFormatElement();
-            }
-
-            String helpText = rtvm0300.getMessageHelp();
+            String helpText = rtvm0400.getMessageHelp();
             if (helpText == null || helpText.trim().length() == 0) {
                 helpText = MessageDescription.TEXT_NONE;
             }
@@ -159,18 +138,123 @@ public class IQMHRTVMResult extends APIFormat {
             messageDescription.setConnection(connectionName);
             messageDescription.setLibrary(library);
             messageDescription.setMessageFile(messageFile);
-            messageDescription.setMessageId(rtvm0300.getMessageId());
-            messageDescription.setMessage(rtvm0300.getMessage());
+            messageDescription.setMessageId(rtvm0400.getMessageId());
+            messageDescription.setMessage(rtvm0400.getMessage());
             messageDescription.setHelpText(helpText);
             messageDescription.setFieldFormats(fieldFormats);
-            messageDescription.setSeverity(rtvm0300.getMessageSeverity());
-            messageDescription.setCcsid(rtvm0300.getCcsid());
+            messageDescription.setReplyType(rtvm0400.getReplyType());
+            messageDescription.setReplyLength(rtvm0400.getReplyLength());
+            messageDescription.setReplyDecimalPositions(rtvm0400.getReplyDecimalPositions());
+            messageDescription.setValidReplyEntries(validReplyEntries);
+            messageDescription.setSpecialReplyValueEntries(specialReplyValueEntries);
+            messageDescription.setSeverity(rtvm0400.getMessageSeverity());
+            messageDescription.setCcsid(rtvm0400.getCcsid());
             messages.add(messageDescription);
 
-            offset += rtvm0300.getBytesReturned();
+            offset += rtvm0400.getBytesReturned();
         }
 
         return messages;
+    }
+
+    /**
+     * Returns the field formats of a given message description.
+     * 
+     * @param rtvm0400 - message description
+     * @param offset - offset from the start of the returned data
+     * @return field formats
+     * @throws UnsupportedEncodingException
+     */
+    private ArrayList<FieldFormat> getFieldFormats(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
+
+        ArrayList<FieldFormat> fieldFormats = new ArrayList<FieldFormat>();
+
+        SubstitutionVariableFormat variable = new SubstitutionVariableFormat(getSystem(), getBytes());
+        int offsetFirstSubstitutionVariable = offset + rtvm0400.getOffsetSubstitutionVariables();
+
+        int offsetVariable = offsetFirstSubstitutionVariable;
+        for (int f = 0; f < rtvm0400.getNumberOfSubstitutionVariables(); f++) {
+
+            variable.setOffset(offsetVariable);
+
+            FieldFormat fieldFormat = new FieldFormat();
+
+            fieldFormat.setType(variable.getType());
+            if (variable.getLengthOfReplacementData() == -1) {
+                fieldFormat.setVary(true);
+                fieldFormat.setBytes(variable.getDecimalPositions());
+            } else {
+                fieldFormat.setVary(false);
+                fieldFormat.setLength(variable.getLengthOfReplacementData());
+                fieldFormat.setDecimalPositions(variable.getDecimalPositions());
+            }
+
+            fieldFormats.add(fieldFormat);
+
+            offsetVariable = offsetVariable + rtvm0400.getLengthOfSubstitutionVariableFormatElement();
+        }
+
+        return fieldFormats;
+    }
+
+    /**
+     * Returns the valid reply value entries of a given message description.
+     * 
+     * @param rtvm0400 - message description
+     * @param offset - offset from the start of the returned data
+     * @return valid reply entries
+     * @throws UnsupportedEncodingException
+     */
+    private ArrayList<ValidReplyEntry> getValidReplyEntries(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
+
+        ArrayList<ValidReplyEntry> replyEntries = new ArrayList<ValidReplyEntry>();
+
+        ValidReplyEntryFormat replyValue = new ValidReplyEntryFormat(getSystem(), getBytes());
+        int offsetFirstReplyEntry = offset + rtvm0400.getOffsetValidReplyEntries();
+
+        int offsetVariable = offsetFirstReplyEntry;
+        for (int f = 0; f < rtvm0400.getNumberOfValidReplyEntries(); f++) {
+
+            replyValue.setOffset(offsetVariable);
+
+            ValidReplyEntry replyEntry = new ValidReplyEntry(replyValue.getReplyValue());
+
+            replyEntries.add(replyEntry);
+
+            offsetVariable = offsetVariable + rtvm0400.getLengthOfValidReplyEntry();
+        }
+
+        return replyEntries;
+    }
+
+    /**
+     * Returns the special reply value entries of a given message description.
+     * 
+     * @param rtvm0400 - message description
+     * @param offset - offset from the start of the returned data
+     * @return special reply entries
+     * @throws UnsupportedEncodingException
+     */
+    private ArrayList<SpecialReplyValueEntry> getSpecialReplyValueEntries(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
+
+        ArrayList<SpecialReplyValueEntry> specialReplyValueEntries = new ArrayList<SpecialReplyValueEntry>();
+
+        SpecialReplyValueEntryFormat specialReplyValue = new SpecialReplyValueEntryFormat(getSystem(), getBytes());
+        int offsetFirstReplyEntry = offset + rtvm0400.getOffsetSpecialReplyValueEntries();
+
+        int offsetVariable = offsetFirstReplyEntry;
+        for (int f = 0; f < rtvm0400.getNumberOfSpecialReplyValueEntries(); f++) {
+
+            specialReplyValue.setOffset(offsetVariable);
+
+            SpecialReplyValueEntry replyEntry = new SpecialReplyValueEntry(specialReplyValue.getFromValue(), specialReplyValue.getToValue());
+
+            specialReplyValueEntries.add(replyEntry);
+
+            offsetVariable = offsetVariable + rtvm0400.getLengthOfSpecialReplyValueEntry();
+        }
+
+        return specialReplyValueEntries;
     }
 
     /**

@@ -50,7 +50,7 @@ public class RTVM0400 extends APIFormat {
     private static final String RESERVED_2 = "reserved_2"; //$NON-NLS-1$
     private static final String MAXIMUM_REPLY_LENGTH = "maximumReplyLength"; //$NON-NLS-1$
     private static final String MAXIMUM_REPLY_DECIMAL_POSITIONS = "maximumReplyDecimalPositions"; //$NON-NLS-1$
-    private static final String OFFSET_OFVALID_REPLY_VALUE_ENTRIES = "offsetOfvalidReplyValueEntries"; //$NON-NLS-1$
+    private static final String OFFSET_OF_VALID_REPLY_VALUE_ENTRIES = "offsetOfvalidReplyValueEntries"; //$NON-NLS-1$
     private static final String NUMBER_OF_VALID_REPLY_VALUE_ENTRIES_RETRUEND = "numberOfValidReplyValueEntriesRetruend"; //$NON-NLS-1$
     private static final String LENGTH_OF_VALID_REPLY_VALUE_ENTRIES_RETURNED = "lengthOfValidReplyValueEntriesReturned"; //$NON-NLS-1$
     private static final String LENGTH_OF_VALID_REPLY_VALUE_ENTRIES_AVAILABLE = "lengthOfValidReplyValueEntriesAvailable"; //$NON-NLS-1$
@@ -215,6 +215,88 @@ public class RTVM0400 extends APIFormat {
     }
 
     /**
+     * Returns the reply type.
+     * 
+     * @return reply type.
+     * @throws UnsupportedEncodingException
+     */
+    public String getReplyType() throws UnsupportedEncodingException {
+        return getCharValue(REPLY_TYPE).trim();
+    }
+
+    /**
+     * Returns the maximum reply length.
+     * 
+     * @return reply length
+     */
+    public int getReplyLength() {
+        return getInt4Value(MAXIMUM_REPLY_LENGTH);
+    }
+
+    /**
+     * Returns the maximum reply decimal positions.
+     * 
+     * @return decimal positions
+     */
+    public int getReplyDecimalPositions() {
+        return getInt4Value(MAXIMUM_REPLY_DECIMAL_POSITIONS);
+    }
+
+    /**
+     * Returns the offset to the list of valid reply entries.
+     * 
+     * @return offset to reply entries
+     */
+    public int getOffsetValidReplyEntries() {
+        return getInt4Value(OFFSET_OF_VALID_REPLY_VALUE_ENTRIES);
+    }
+
+    /**
+     * Returns the number of valid reply entries.
+     * 
+     * @return number of reply entries
+     */
+    public int getNumberOfValidReplyEntries() {
+        return getInt4Value(NUMBER_OF_VALID_REPLY_VALUE_ENTRIES_RETRUEND);
+    }
+
+    /**
+     * Returns the length of the valid reply entry.
+     * 
+     * @return length of reply entry
+     */
+    public int getLengthOfValidReplyEntry() {
+        return getInt4Value(LENGTH_OF_VALID_REPLY_VALUE_ENTRY);
+    }
+
+    /**
+     * Returns the offset to the list of valid reply entries.
+     * 
+     * @return offset to reply entries
+     */
+    public int getOffsetSpecialReplyValueEntries() {
+        return getInt4Value(OFFSET_OF_SPECIAL_REPLY_VALUE_ENTRIES);
+    }
+
+    /**
+     * Returns the number of valid reply entries.
+     * 
+     * @return number of reply entries
+     */
+    public int getNumberOfSpecialReplyValueEntries() {
+        return getInt4Value(NUMBER_OF_SPECIAL_REPLY_VALUES_RETURNED);
+    }
+
+    /**
+     * Returns the length of the special reply value entry.
+     * 
+     * @return length of reply entry
+     */
+    public int getLengthOfSpecialReplyValueEntry() {
+        return getInt4Value(LENGTH_OF_SPECIAL_REPLY_VALUE_ENTRY);
+    }
+
+    /**
      * Creates the RTVM0400 structure.
      */
     private void createStructure() {
@@ -248,7 +330,7 @@ public class RTVM0400 extends APIFormat {
         addCharField(RESERVED_2, 114, 2);
         addInt4Field(MAXIMUM_REPLY_LENGTH, 116);
         addInt4Field(MAXIMUM_REPLY_DECIMAL_POSITIONS, 120);
-        addInt4Field(OFFSET_OFVALID_REPLY_VALUE_ENTRIES, 124);
+        addInt4Field(OFFSET_OF_VALID_REPLY_VALUE_ENTRIES, 124);
         addInt4Field(NUMBER_OF_VALID_REPLY_VALUE_ENTRIES_RETRUEND, 128);
         addInt4Field(LENGTH_OF_VALID_REPLY_VALUE_ENTRIES_RETURNED, 132);
         addInt4Field(LENGTH_OF_VALID_REPLY_VALUE_ENTRIES_AVAILABLE, 136);
