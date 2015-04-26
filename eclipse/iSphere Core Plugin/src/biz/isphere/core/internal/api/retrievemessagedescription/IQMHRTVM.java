@@ -77,7 +77,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
 
         try {
 
-            int bufferSize = Buffer.size("2 kByte");
+            int bufferSize = Buffer.size("4 kByte");
             IQMHRTVMResult result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_MSGID, messageId, 1, bufferSize);
 
             if (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() == 1) {
