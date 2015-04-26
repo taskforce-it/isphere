@@ -1009,6 +1009,8 @@ public class Messages extends NLS {
     public static String Special_reply_values_colon;
 
     public static String This_version_requires_updating_the_iSphere_library;
+
+    public static String Working;
     
     static {
         // initialize resource bundle

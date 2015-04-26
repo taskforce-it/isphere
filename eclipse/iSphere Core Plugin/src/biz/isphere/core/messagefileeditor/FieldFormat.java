@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class FieldFormat implements Serializable {
 
     private static final long serialVersionUID = -7764037395725259022L;
-    
+
     private String type;
     private boolean vary;
     private int bytes;
@@ -85,13 +85,18 @@ public class FieldFormat implements Serializable {
         StringBuilder buffer = new StringBuilder();
 
         if (isVary()) {
-            buffer.append(getType().trim() + "(" + getBytes());
+            buffer.append(getType().trim());
+            buffer.append("(");
+            buffer.append(getBytes());
         } else {
-            buffer.append(getType().trim() + "(" + getLength());
+            buffer.append(getType().trim());
+            buffer.append("(");
+            buffer.append(getLength());
         }
 
         if (FieldFormat.DEC.equals(getType())) {
-            buffer.append(", " + getDecimalPositions());
+            buffer.append(", ");
+            buffer.append(getDecimalPositions());
         }
 
         buffer.append(")");
@@ -102,7 +107,7 @@ public class FieldFormat implements Serializable {
 
         return buffer.toString();
     }
-    
+
     @Override
     public String toString() {
         return asComparableText();

@@ -124,10 +124,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Shell shell;
 
     private Composite headerArea;
+    private Composite optionsArea;
 
     private CLabel statusInfo;
     private CLabel statusBarFilterImage;
     private CLabel statusBarFilterText;
+
+    private boolean isComparing;
+    private boolean isSynchronizing;
 
     public AbstractMessageFileCompareEditor() {
 
@@ -220,7 +224,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void createOptionsArea(Composite parent) {
 
-        Composite optionsArea = new Composite(parent, SWT.NONE);
+        optionsArea = new Composite(parent, SWT.NONE);
         optionsArea.setLayout(new GridLayout(3, false));
         optionsArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -557,8 +561,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         if (input.getLeftMessageFile() != null) {
             String connectionName = input.getLeftMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (isLeftMessageFileWarning
-                || !ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
+            if (isLeftMessageFileWarning || !ISphereHelper.checkISphereLibrary(getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
                 isLeftMessageFileWarning = true;
@@ -568,8 +571,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         if (input.getRightMessageFile() != null) {
             String connectionName = input.getRightMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (isRightMessageFileWarning
-                || !ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
+            if (isRightMessageFileWarning || !ISphereHelper.checkISphereLibrary(getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
                 isRightMessageFileWarning = true;
@@ -587,13 +589,29 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnCompare.setEnabled(isCompareEnabled);
         btnSynchronize.setEnabled(isSynchronizeEnabled);
 
+        if (isWorking()) {
+            headerArea.setEnabled(false);
+            optionsArea.setEnabled(false);
+        } else {
+            headerArea.setEnabled(true);
+            optionsArea.setEnabled(true);
+        }
+        headerArea.update();
+        optionsArea.update();
+
         displayCompareStatus();
+    }
+
+    private boolean isWorking() {
+        return isComparing || isSynchronizing;
     }
 
     private void displayCompareStatus() {
 
         if (statusInfo != null) {
-            if (selectionChanged) {
+            if (isWorking()) {
+                statusInfo.setText(Messages.Working);
+            } else if (selectionChanged) {
                 if (StringHelper.isNullOrEmpty(lblLeftMessageFile.getText()) || StringHelper.isNullOrEmpty(lblRightMessageFile.getText())) {
                     statusInfo.setText(Messages.Please_select_the_missing_message_file_then_press_Compare_to_start);
                 } else {
@@ -689,6 +707,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performCompareMessageFiles() {
 
+        isComparing = true;
+        setButtonEnablement();
+
         final MessageFileCompareEditorInput editorInput = getEditorInput();
         if (editorInput.getLeftMessageFileName().equals(editorInput.getRightMessageFileName())) {
             MessageDialog.openWarning(getShell(), Messages.Warning, Messages.Warning_Both_sides_show_the_same_message_file);
@@ -736,6 +757,16 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                 } finally {
                     monitor.done();
+
+                    UIJob job = new UIJob("") {
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor monitor) {
+                            isComparing = false;
+                            setButtonEnablement();
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    job.schedule();
                 }
 
                 return Status.OK_STATUS;
@@ -757,6 +788,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performSynchronizeMessageFiles() {
 
+        isSynchronizing = true;
+        setButtonEnablement();
+
         RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
         RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
 
@@ -771,6 +805,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
 
         performCompareMessageFiles();
+
+        isSynchronizing = false;
+        setButtonEnablement();
     }
 
     private void performCopyToLeft(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {

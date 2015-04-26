@@ -41,8 +41,6 @@ public class MessageDescription implements Serializable {
     private ArrayList<ValidReplyEntry> validReplyEntries;
     private ArrayList<SpecialReplyValueEntry> specialReplyValueEntries;
 
-    private String comparableText;
-
     public MessageDescription() {
         connectionName = ""; //$NON-NLS-1$
         library = ""; //$NON-NLS-1$
@@ -58,8 +56,6 @@ public class MessageDescription implements Serializable {
         replyDecimalPositions = 0;
         validReplyEntries = new ArrayList<ValidReplyEntry>();
         specialReplyValueEntries = new ArrayList<SpecialReplyValueEntry>();
-
-        comparableText = null;
     }
 
     public String getConnection() {
@@ -92,7 +88,6 @@ public class MessageDescription implements Serializable {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
-        this.comparableText = null;
     }
 
     public String getMessage() {
@@ -101,7 +96,6 @@ public class MessageDescription implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
-        this.comparableText = null;
     }
 
     public String getHelpText() {
@@ -110,7 +104,6 @@ public class MessageDescription implements Serializable {
 
     public void setHelpText(String helpText) {
         this.helpText = helpText;
-        this.comparableText = null;
     }
 
     public Integer getSeverity() {
@@ -119,7 +112,6 @@ public class MessageDescription implements Serializable {
 
     public void setSeverity(Integer severity) {
         this.severity = severity;
-        this.comparableText = null;
     }
 
     public Integer getCcsid() {
@@ -148,7 +140,6 @@ public class MessageDescription implements Serializable {
 
     public void setCcsid(Integer ccsid) {
         this.ccsid = ccsid;
-        this.comparableText = null;
     }
 
     public ArrayList<FieldFormat> getFieldFormats() {
@@ -157,7 +148,6 @@ public class MessageDescription implements Serializable {
 
     public void setFieldFormats(ArrayList<FieldFormat> fieldFormats) {
         this.fieldFormats = fieldFormats;
-        this.comparableText = null;
     }
 
     public String getReplyType() {
@@ -166,7 +156,6 @@ public class MessageDescription implements Serializable {
 
     public void setReplyType(String replyType) {
         this.replyType = replyType;
-        this.comparableText = null;
     }
 
     public int getReplyLength() {
@@ -175,7 +164,6 @@ public class MessageDescription implements Serializable {
 
     public void setReplyLength(int replyLength) {
         this.replyLength = replyLength;
-        this.comparableText = null;
     }
 
     public int getReplyDecimalPositions() {
@@ -184,7 +172,6 @@ public class MessageDescription implements Serializable {
 
     public void setReplyDecimalPositions(int replyDecimalPositions) {
         this.replyDecimalPositions = replyDecimalPositions;
-        this.comparableText = null;
     }
 
     public ArrayList<ValidReplyEntry> getValidReplyEntries() {
@@ -193,7 +180,6 @@ public class MessageDescription implements Serializable {
 
     public void setValidReplyEntries(ArrayList<ValidReplyEntry> validReplyEntries) {
         this.validReplyEntries = validReplyEntries;
-        this.comparableText = null;
     }
 
     public ArrayList<SpecialReplyValueEntry> getSpecialReplyValueEntries() {
@@ -202,14 +188,9 @@ public class MessageDescription implements Serializable {
 
     public void setSpecialReplyValueEntries(ArrayList<SpecialReplyValueEntry> specialReplyValueEntries) {
         this.specialReplyValueEntries = specialReplyValueEntries;
-        this.comparableText = null;
     }
 
     public String asFormattedText(int width) {
-
-        if (comparableText != null) {
-            return comparableText;
-        }
 
         StringBuilder buffer = new StringBuilder();
 
@@ -261,9 +242,7 @@ public class MessageDescription implements Serializable {
         }
         buffer.append(CRLF);
 
-        comparableText = buffer.toString();
-
-        return comparableText;
+        return buffer.toString();
     }
 
     private void addFormattedTextItem(StringBuilder buffer, String name, String value) {
@@ -279,7 +258,7 @@ public class MessageDescription implements Serializable {
     private String getFullReplyType() {
         return getReplyType() + "(" + getReplyLength() + "," + getReplyDecimalPositions() + ")";
     }
-    
+
     public String getFullQualifiedName() {
         return library + "/" + messageFile + "(" + messageId + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
