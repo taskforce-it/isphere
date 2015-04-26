@@ -35,6 +35,13 @@ public class MessageDescription implements Serializable {
     private Integer severity;
     private Integer ccsid;
     private ArrayList<FieldFormat> fieldFormats;
+    private String replyType;
+    private int replyLength;
+    private int replyDecimalPositions;
+    private ArrayList<ValidReplyEntry> validReplyEntries;
+    private ArrayList<SpecialReplyValueEntry> specialReplyValueEntries;
+
+    private String comparableText;
 
     public MessageDescription() {
         connectionName = ""; //$NON-NLS-1$
@@ -46,6 +53,13 @@ public class MessageDescription implements Serializable {
         severity = new Integer("0"); //$NON-NLS-1$
         setCcsid(CCSID_JOB);
         fieldFormats = new ArrayList<FieldFormat>();
+        replyType = "*NONE";
+        replyLength = 0;
+        replyDecimalPositions = 0;
+        validReplyEntries = new ArrayList<ValidReplyEntry>();
+        specialReplyValueEntries = new ArrayList<SpecialReplyValueEntry>();
+
+        comparableText = null;
     }
 
     public String getConnection() {
@@ -78,6 +92,7 @@ public class MessageDescription implements Serializable {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+        this.comparableText = null;
     }
 
     public String getMessage() {
@@ -86,6 +101,7 @@ public class MessageDescription implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+        this.comparableText = null;
     }
 
     public String getHelpText() {
@@ -94,6 +110,7 @@ public class MessageDescription implements Serializable {
 
     public void setHelpText(String helpText) {
         this.helpText = helpText;
+        this.comparableText = null;
     }
 
     public Integer getSeverity() {
@@ -102,6 +119,7 @@ public class MessageDescription implements Serializable {
 
     public void setSeverity(Integer severity) {
         this.severity = severity;
+        this.comparableText = null;
     }
 
     public Integer getCcsid() {
@@ -120,9 +138,9 @@ public class MessageDescription implements Serializable {
 
     public void setCcsid(String ccsid) {
         if (CCSID_HEX.equals(ccsid)) {
-            this.ccsid = new Integer(65535);
+            setCcsid(new Integer(65535));
         } else if (CCSID_JOB.equals(ccsid)) {
-            this.ccsid = new Integer(-1);
+            setCcsid(new Integer(-1));
         } else {
             throw new IllegalArgumentException("Value " + ccsid + " not allowed."); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -130,6 +148,7 @@ public class MessageDescription implements Serializable {
 
     public void setCcsid(Integer ccsid) {
         this.ccsid = ccsid;
+        this.comparableText = null;
     }
 
     public ArrayList<FieldFormat> getFieldFormats() {
@@ -138,9 +157,59 @@ public class MessageDescription implements Serializable {
 
     public void setFieldFormats(ArrayList<FieldFormat> fieldFormats) {
         this.fieldFormats = fieldFormats;
+        this.comparableText = null;
+    }
+
+    public String getReplyType() {
+        return replyType;
+    }
+
+    public void setReplyType(String replyType) {
+        this.replyType = replyType;
+        this.comparableText = null;
+    }
+
+    public int getReplyLength() {
+        return replyLength;
+    }
+
+    public void setReplyLength(int replyLength) {
+        this.replyLength = replyLength;
+        this.comparableText = null;
+    }
+
+    public int getReplyDecimalPositions() {
+        return replyDecimalPositions;
+    }
+
+    public void setReplyDecimalPositions(int replyDecimalPositions) {
+        this.replyDecimalPositions = replyDecimalPositions;
+        this.comparableText = null;
+    }
+
+    public ArrayList<ValidReplyEntry> getValidReplyEntries() {
+        return validReplyEntries;
+    }
+
+    public void setValidReplyEntries(ArrayList<ValidReplyEntry> validReplyEntries) {
+        this.validReplyEntries = validReplyEntries;
+        this.comparableText = null;
+    }
+
+    public ArrayList<SpecialReplyValueEntry> getSpecialReplyValueEntries() {
+        return specialReplyValueEntries;
+    }
+
+    public void setSpecialReplyValueEntries(ArrayList<SpecialReplyValueEntry> specialReplyValueEntries) {
+        this.specialReplyValueEntries = specialReplyValueEntries;
+        this.comparableText = null;
     }
 
     public String asFormattedText(int width) {
+
+        if (comparableText != null) {
+            return comparableText;
+        }
 
         StringBuilder buffer = new StringBuilder();
 
@@ -149,28 +218,68 @@ public class MessageDescription implements Serializable {
             tWidth = Integer.MAX_VALUE;
         }
 
-        buffer.append(Messages.Message_identifier_colon + CRLF);
-        buffer.append(TAB + getMessageId() + CRLF + CRLF);
-        buffer.append(Messages.First_level_message_text_colon + CRLF);
-        buffer.append(StringHelper.wrapAndIndentString(getMessage(), TAB, tWidth) + CRLF + CRLF);
-        buffer.append(Messages.Second_level_message_text_colon + CRLF);
-        buffer.append(StringHelper.wrapAndIndentString(getHelpText(), TAB, tWidth) + CRLF + CRLF);
-        buffer.append(Messages.Severity_code_colon + CRLF);
-        buffer.append(TAB + getSeverity() + CRLF + CRLF);
-        buffer.append(Messages.Coded_character_set_ID_colon + CRLF);
-        buffer.append(TAB + getCcsidAsString() + CRLF + CRLF);
-
-        buffer.append(Messages.Message_data_fields_formats_colon + CRLF);
+        addFormattedTextItem(buffer, Messages.Message_identifier_colon, getMessageId());
+        addFormattedTextItem(buffer, Messages.First_level_message_text_colon, StringHelper.wrapAndIndentString(getMessage(), TAB, tWidth));
+        addFormattedTextItem(buffer, Messages.Second_level_message_text_colon, StringHelper.wrapAndIndentString(getHelpText(), TAB, tWidth));
+        addFormattedTextItem(buffer, Messages.Severity_code_colon, getSeverity().toString());
+        addFormattedTextItem(buffer, Messages.Coded_character_set_ID_colon, getCcsidAsString());
 
         int i = 0;
-        for (FieldFormat fieldFormat : fieldFormats) {
-            i++;
-            buffer.append(TAB + "&" + i + ": " + fieldFormat.asFormattedFieldFormat() + CRLF); //$NON-NLS-1$ //$NON-NLS-2$
-        }
 
-        return buffer.toString();
+        buffer.append(Messages.Message_data_fields_formats_colon + CRLF);
+        i = 0;
+        for (FieldFormat fieldFormat : getFieldFormats()) {
+            i++;
+            buffer.append(TAB);
+            buffer.append("&"); //$NON-NLS-1$
+            buffer.append(i);
+            buffer.append(": "); //$NON-NLS-1$
+            buffer.append(fieldFormat.asComparableText());
+            buffer.append(CRLF);
+        }
+        buffer.append(CRLF);
+
+        addFormattedTextItem(buffer, Messages.Reply_type_colon, getFullReplyType());
+
+        buffer.append(Messages.Valid_reply_values_colon + CRLF);
+        i = 0;
+        for (ValidReplyEntry validReplyEntry : getValidReplyEntries()) {
+            i++;
+            buffer.append(TAB);
+            buffer.append(validReplyEntry.asComparableText());
+            buffer.append(CRLF);
+        }
+        buffer.append(CRLF);
+
+        buffer.append(Messages.Special_reply_values_colon + CRLF);
+        i = 0;
+        for (SpecialReplyValueEntry specialReplyValueEntry : getSpecialReplyValueEntries()) {
+            i++;
+            buffer.append(TAB);
+            buffer.append(specialReplyValueEntry.asComparableText());
+            buffer.append(CRLF);
+        }
+        buffer.append(CRLF);
+
+        comparableText = buffer.toString();
+
+        return comparableText;
     }
 
+    private void addFormattedTextItem(StringBuilder buffer, String name, String value) {
+
+        buffer.append(name);
+        buffer.append(CRLF);
+        buffer.append(TAB);
+        buffer.append(value);
+        buffer.append(CRLF);
+        buffer.append(CRLF);
+    }
+
+    private String getFullReplyType() {
+        return getReplyType() + "(" + getReplyLength() + "," + getReplyDecimalPositions() + ")";
+    }
+    
     public String getFullQualifiedName() {
         return library + "/" + messageFile + "(" + messageId + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }

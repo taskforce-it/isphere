@@ -31,10 +31,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.MessageDescriptionHelper;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -74,7 +76,7 @@ public class MessageDescriptionDetail {
         this.as400 = as400;
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
-        
+
         if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
             || actionType == DialogActionTypes.DISPLAY) {
             refresh(_messageDescription);
@@ -435,92 +437,37 @@ public class MessageDescriptionDetail {
 
         }
 
-        // Befehl erstellen
+        // Update message description
+        _messageDescription.setMessage(textMessage.getText());
+        _messageDescription.setHelpText(textHelpText.getText());
+        _messageDescription.setFieldFormats(_fieldFormatViewer.getFieldFormats());
+        _messageDescription.setSeverity(IntHelper.tryParseInt(textSeveriry.getText(), 0));
 
-        String parameterMSGF = "MSGF(" + _messageDescription.getLibrary() + "/" + _messageDescription.getMessageFile() + ")";
-
-        String parameterMSGID = "MSGID(" + textMessageId.getText() + ")";
-
-        String parameterMSG = "MSG('" + getStringWithQuotes(textMessage.getText()) + "')";
-
-        String parameterSECLVL = "SECLVL('" + getStringWithQuotes(textHelpText.getText()) + "')";
-
-        String parameterFMT = "";
-        ArrayList<?> fieldFormats = _fieldFormatViewer.getFieldFormats();
-        if (fieldFormats.size() == 0) {
-            parameterFMT = "FMT(*NONE)";
-        } else {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("FMT(");
-            for (int idx = 0; idx < fieldFormats.size(); idx++) {
-                FieldFormat fieldFormat = (FieldFormat)fieldFormats.get(idx);
-                if (idx != 0) {
-                    buffer.append(" ");
-                }
-                buffer.append("(");
-                buffer.append(fieldFormat.getType());
-                if (fieldFormat.isVary()) {
-                    buffer.append(" *VARY " + Integer.toString(fieldFormat.getBytes()));
-                } else {
-                    buffer.append(" " + Integer.toString(fieldFormat.getLength()));
-                    if (fieldFormat.getType().equals("*DEC")) {
-                        buffer.append(" " + Integer.toString(fieldFormat.getDecimalPositions()));
-                    }
-                }
-                buffer.append(")");
-            }
-            buffer.append(")");
-            parameterFMT = buffer.toString();
-        }
-
-        String parameterSEV = "SEV(" + getNumericString(textSeveriry.getText(), "0") + ")";
-
-        String parameterCCSID;
         if (comboCcsid.getText().startsWith("*")) {
-            parameterCCSID = "CCSID('" + getStringWithQuotes(comboCcsid.getText()) + "')";
+            _messageDescription.setCcsid(comboCcsid.getText());
         } else {
-            parameterCCSID = "CCSID(" + comboCcsid.getText() + ")";
+            _messageDescription.setCcsid(IntHelper.tryParseInt(comboCcsid.getText(), 0));
         }
 
-        String command = "";
-
-        if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY) {
-            command = "ADDMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT + " "
-                + parameterSEV + " " + parameterCCSID;
-        } else if (actionType == DialogActionTypes.CHANGE) {
-            command = "CHGMSGD " + parameterMSGF + " " + parameterMSGID + " " + parameterMSG + " " + parameterSECLVL + " " + parameterFMT + " "
-                + parameterSEV + " " + parameterCCSID;
-        } else if (actionType == DialogActionTypes.DELETE) {
-            command = "RMVMSGD " + parameterMSGF + " " + parameterMSGID;
-        }
-
-        // Execute command
-
-        CommandCall commandCall = new CommandCall(as400);
         try {
-            if (!commandCall.run(command)) {
-                AS400Message[] messageList = commandCall.getMessageList();
-                if (messageList.length > 0) {
-                    setErrorMessage(messageList[0].getText());
-                    return false;
-                } else {
-                    setErrorMessage(Messages.Unknown_error_occured);
-                    return false;
-                }
+
+            // Execute command
+            String message = null;
+            if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY) {
+                _messageDescription.setMessageId(textMessageId.getText());
+                message = MessageDescriptionHelper.addMessageDescription(_messageDescription);
+            } else if (actionType == DialogActionTypes.CHANGE) {
+                message = MessageDescriptionHelper.changeMessageDescription(_messageDescription);
+            } else if (actionType == DialogActionTypes.DELETE) {
+                message = MessageDescriptionHelper.removeMessageDescription(_messageDescription);
             }
-        } catch (AS400SecurityException e) {
-            setErrorMessage(Messages.Unknown_error_occured);
-            return false;
-        } catch (ErrorCompletingRequestException e) {
-            setErrorMessage(Messages.Unknown_error_occured);
-            return false;
-        } catch (IOException e) {
-            setErrorMessage(Messages.Unknown_error_occured);
-            return false;
-        } catch (InterruptedException e) {
-            setErrorMessage(Messages.Unknown_error_occured);
-            return false;
-        } catch (PropertyVetoException e) {
+
+            if (message != null) {
+                setErrorMessage(message);
+                return false;
+            }
+
+        } catch (Exception e) {
             setErrorMessage(Messages.Unknown_error_occured);
             return false;
         }
@@ -564,16 +511,22 @@ public class MessageDescriptionDetail {
 
     public void refresh(MessageDescription _messageDescription) {
 
-        QMHRTVM qmhrtvm = new QMHRTVM();
-        MessageDescription[] _description = qmhrtvm.run(as400, _messageDescription.getConnection(), _messageDescription.getLibrary(),
-            _messageDescription.getMessageFile(), _messageDescription.getMessageId());
-        if (_description.length == 1) {
-            _messageDescription.setMessage(_description[0].getMessage());
-            _messageDescription.setHelpText(_description[0].getHelpText());
-            _messageDescription.setFieldFormats(_description[0].getFieldFormats());
-            _messageDescription.setSeverity(_description[0].getSeverity());
-            _messageDescription.setCcsid(_description[0].getCcsid());
-        }
+        _messageDescription = MessageDescriptionHelper.retrieveMessageDescription(_messageDescription.getConnection(),
+            _messageDescription.getMessageFile(), _messageDescription.getLibrary(), _messageDescription.getMessageId());
+
+        // QMHRTVM qmhrtvm = new QMHRTVM();
+        // MessageDescription[] _description = qmhrtvm.run(as400,
+        // _messageDescription.getConnection(),
+        // _messageDescription.getLibrary(),
+        // _messageDescription.getMessageFile(),
+        // _messageDescription.getMessageId());
+        // if (_description.length == 1) {
+        // _messageDescription.setMessage(_description[0].getMessage());
+        // _messageDescription.setHelpText(_description[0].getHelpText());
+        // _messageDescription.setFieldFormats(_description[0].getFieldFormats());
+        // _messageDescription.setSeverity(_description[0].getSeverity());
+        // _messageDescription.setCcsid(_description[0].getCcsid());
+        // }
 
     }
 

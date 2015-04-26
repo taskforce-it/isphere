@@ -1001,6 +1001,14 @@ public class Messages extends NLS {
     public static String The_specified_directory_does_not_exist;
     
     public static String File_name_must_not_be_empty;
+
+    public static String Reply_type_colon;
+    
+    public static String Valid_reply_values_colon;
+    
+    public static String Special_reply_values_colon;
+
+    public static String This_version_requires_updating_the_iSphere_library;
     
     static {
         // initialize resource bundle

@@ -80,7 +80,7 @@ public class FieldFormat implements Serializable {
         this.decimalPositions = decimalPositions;
     }
 
-    public String asFormattedFieldFormat() {
+    public String asComparableText() {
 
         StringBuilder buffer = new StringBuilder();
 
@@ -105,6 +105,6 @@ public class FieldFormat implements Serializable {
     
     @Override
     public String toString() {
-        return asFormattedFieldFormat();
+        return asComparableText();
     }
 }

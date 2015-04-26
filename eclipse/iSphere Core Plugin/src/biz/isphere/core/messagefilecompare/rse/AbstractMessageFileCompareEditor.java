@@ -775,29 +775,45 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performCopyToLeft(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
 
-        if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getRightMessageDescription(), toMessageFile.getConnectionName(),
-            toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
-            compareItem.setLeftMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(getShell(), toMessageFile.getConnectionName(),
-                toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
-            compareItem.clearCompareStatus();
-        }
+        try {
 
-        tableViewer.refresh(compareItem);
+            if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getRightMessageDescription(),
+                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
+                compareItem.setLeftMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
+                    toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
+                compareItem.clearCompareStatus();
+            }
+
+            tableViewer.refresh(compareItem);
+
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+        }
     }
 
     private void performCopyToRight(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
 
-        if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getLeftMessageDescription(), toMessageFile.getConnectionName(),
-            toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
-            compareItem.setRightMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(getShell(), toMessageFile.getConnectionName(),
-                toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
-            compareItem.clearCompareStatus();
-        }
+        try {
 
-        tableViewer.refresh(compareItem);
+            if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getLeftMessageDescription(),
+                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
+                compareItem.setRightMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
+                    toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
+                compareItem.clearCompareStatus();
+            }
+
+            tableViewer.refresh(compareItem);
+
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+        }
     }
 
     protected void performCompareMessageDescriptions(MessageFileCompareItem compareItem) {
+
+        if (compareItem.isSingle()) {
+            return;
+        }
 
         CompareConfiguration cc = new CompareConfiguration();
         cc.setLeftEditable(false);
