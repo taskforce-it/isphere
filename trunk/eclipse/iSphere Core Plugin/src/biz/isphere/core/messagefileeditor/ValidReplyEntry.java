@@ -11,12 +11,9 @@ package biz.isphere.core.messagefileeditor;
 public class ValidReplyEntry {
 
     private String value;
-    
-    private String comparableText;
 
     public ValidReplyEntry(String value) {
         this.value = value;
-        this.comparableText = null;
     }
 
     public String getValue() {
@@ -25,16 +22,11 @@ public class ValidReplyEntry {
 
     public void setValue(String value) {
         this.value = value;
-        this.comparableText = null;
     }
 
     public String asComparableText() {
-        
-        if (comparableText == null) {
-            comparableText = value;
-        }
-        
-        return comparableText;
+
+        return value;
     }
 
     @Override

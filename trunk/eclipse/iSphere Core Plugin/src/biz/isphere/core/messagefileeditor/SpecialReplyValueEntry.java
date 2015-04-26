@@ -13,12 +13,9 @@ public class SpecialReplyValueEntry {
     private String fromValue;
     private String toValue;
 
-    private String comparableText;
-
     public SpecialReplyValueEntry(String fromValue, String toValue) {
         this.fromValue = fromValue;
         this.toValue = toValue;
-        this.comparableText = null;
     }
 
     public String getFromValue() {
@@ -27,7 +24,6 @@ public class SpecialReplyValueEntry {
 
     public void setFromValue(String fromValue) {
         this.fromValue = fromValue;
-        this.comparableText = null;
     }
 
     public String getToValue() {
@@ -36,16 +32,11 @@ public class SpecialReplyValueEntry {
 
     public void setToValue(String toValue) {
         this.toValue = toValue;
-        this.comparableText = null;
     }
 
     public String asComparableText() {
 
-        if (comparableText == null) {
-            comparableText = fromValue + " -> " + toValue;
-        }
-
-        return comparableText;
+        return fromValue + " -> " + toValue;
     }
 
     @Override
