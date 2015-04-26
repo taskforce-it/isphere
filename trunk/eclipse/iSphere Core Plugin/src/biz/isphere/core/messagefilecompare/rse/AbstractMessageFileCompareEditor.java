@@ -859,25 +859,19 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                 tableStatistics.clearStatistics();
 
-                try {
+                compareItems = new LinkedHashMap<String, MessageFileCompareItem>();
 
-                    compareItems = new LinkedHashMap<String, MessageFileCompareItem>();
+                for (MessageDescription leftMessageDescription : leftMessageDescriptions) {
+                    compareItems.put(leftMessageDescription.getMessageId(), new MessageFileCompareItem(leftMessageDescription, null));
+                }
 
-                    for (MessageDescription leftMessageDescription : leftMessageDescriptions) {
-                        compareItems.put(leftMessageDescription.getMessageId(), new MessageFileCompareItem(leftMessageDescription, null));
+                for (MessageDescription rightMessageDescription : rightMessageDescriptions) {
+                    MessageFileCompareItem item = compareItems.get(rightMessageDescription.getMessageId());
+                    if (item == null) {
+                        compareItems.put(rightMessageDescription.getMessageId(), new MessageFileCompareItem(null, rightMessageDescription));
+                    } else {
+                        item.setRightMessageDescription(rightMessageDescription);
                     }
-
-                    for (MessageDescription rightMessageDescription : rightMessageDescriptions) {
-                        MessageFileCompareItem item = compareItems.get(rightMessageDescription.getMessageId());
-                        if (item == null) {
-                            compareItems.put(rightMessageDescription.getMessageId(), new MessageFileCompareItem(null, rightMessageDescription));
-                        } else {
-                            item.setRightMessageDescription(rightMessageDescription);
-                        }
-                    }
-
-                } catch (Throwable e) {
-                    ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e); //$NON-NLS-1$
                 }
             }
 
