@@ -13,10 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biz.isphere.core.internal.api.APIFormat;
-import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
-import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
-import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
 import com.ibm.as400.access.AS400;
 
@@ -35,9 +32,10 @@ public class IQMHRTVMResult extends APIFormat {
     private static final String RESERVED = "reserved"; //$NON-NLS-1$
     private static final String OFFSET_TO_FIRST_MESSAGE = "offsetToFirstMessage"; //$NON-NLS-1$
 
+    private String connectionName;
     private String messageFile;
     private String library;
-    private String connectionName;
+    private String format;
 
     /**
      * Constructs a IQMHRTVMResult object.
@@ -46,15 +44,19 @@ public class IQMHRTVMResult extends APIFormat {
      * @param connectionName - name of the RDi connection
      * @param messageFile - message file
      * @param library - message file library
-     * @param result, returned by the IQMHRTVM API
+     * @param bytes - returned by the IQMHRTVM API
+     * @param format - format of the returned data ({@link IQMHRTVM#RTVM0300} or
+     *        {@link IQMHRTVM#RTVM0400})
      * @throws UnsupportedEncodingException
      */
-    public IQMHRTVMResult(AS400 system, String connectionName, String messageFile, String library, byte[] bytes) throws UnsupportedEncodingException {
+    public IQMHRTVMResult(AS400 system, String connectionName, String messageFile, String library, byte[] bytes, String format)
+        throws UnsupportedEncodingException {
         super(system, "IQMHRTVMHeader");
 
+        this.connectionName = connectionName;
         this.messageFile = messageFile;
         this.library = library;
-        this.connectionName = connectionName;
+        this.format = format;
 
         createStructure();
 
@@ -118,143 +120,26 @@ public class IQMHRTVMResult extends APIFormat {
 
         ArrayList<MessageDescription> messages = new ArrayList<MessageDescription>();
 
-        RTVM0400 rtvm0400 = new RTVM0400(getSystem(), getBytes());
+        RTVM0300 rtvm0000 = null;
+        if (IQMHRTVM.RTVM0400.equals(format)) {
+            rtvm0000 = new RTVM0400(getSystem(), getBytes());
+        } else if (IQMHRTVM.RTVM0300.equals(format)) {
+            rtvm0000 = new RTVM0300(getSystem(), getBytes());
+        } else {
+            throw new IllegalArgumentException("Invalid format: " + format); //$NON-NLS-1$
+        }
+
         int offset = getOffsetFirstMessage();
 
         for (int i = 0; i < getNumberOfMessagesReturned(); i++) {
 
-            rtvm0400.setOffset(offset);
+            rtvm0000.setOffset(offset);
+            messages.add(rtvm0000.createMessageDescription(connectionName, messageFile, library));
 
-            ArrayList<FieldFormat> fieldFormats = getFieldFormats(rtvm0400, offset);
-            ArrayList<ValidReplyEntry> validReplyEntries = getValidReplyEntries(rtvm0400, offset);
-            ArrayList<SpecialReplyValueEntry> specialReplyValueEntries = getSpecialReplyValueEntries(rtvm0400, offset);
-
-            String helpText = rtvm0400.getMessageHelp();
-            if (helpText == null || helpText.trim().length() == 0) {
-                helpText = MessageDescription.TEXT_NONE;
-            }
-
-            MessageDescription messageDescription = new MessageDescription();
-            messageDescription.setConnection(connectionName);
-            messageDescription.setLibrary(library);
-            messageDescription.setMessageFile(messageFile);
-            messageDescription.setMessageId(rtvm0400.getMessageId());
-            messageDescription.setMessage(rtvm0400.getMessage());
-            messageDescription.setHelpText(helpText);
-            messageDescription.setFieldFormats(fieldFormats);
-            messageDescription.setReplyType(rtvm0400.getReplyType());
-            messageDescription.setReplyLength(rtvm0400.getReplyLength());
-            messageDescription.setReplyDecimalPositions(rtvm0400.getReplyDecimalPositions());
-            messageDescription.setValidReplyEntries(validReplyEntries);
-            messageDescription.setSpecialReplyValueEntries(specialReplyValueEntries);
-            messageDescription.setSeverity(rtvm0400.getMessageSeverity());
-            messageDescription.setCcsid(rtvm0400.getCcsid());
-            messages.add(messageDescription);
-
-            offset += rtvm0400.getBytesReturned();
+            offset += rtvm0000.getBytesReturned();
         }
 
         return messages;
-    }
-
-    /**
-     * Returns the field formats of a given message description.
-     * 
-     * @param rtvm0400 - message description
-     * @param offset - offset from the start of the returned data
-     * @return field formats
-     * @throws UnsupportedEncodingException
-     */
-    private ArrayList<FieldFormat> getFieldFormats(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
-
-        ArrayList<FieldFormat> fieldFormats = new ArrayList<FieldFormat>();
-
-        SubstitutionVariableFormat variable = new SubstitutionVariableFormat(getSystem(), getBytes());
-        int offsetFirstSubstitutionVariable = offset + rtvm0400.getOffsetSubstitutionVariables();
-
-        int offsetVariable = offsetFirstSubstitutionVariable;
-        for (int f = 0; f < rtvm0400.getNumberOfSubstitutionVariables(); f++) {
-
-            variable.setOffset(offsetVariable);
-
-            FieldFormat fieldFormat = new FieldFormat();
-
-            fieldFormat.setType(variable.getType());
-            if (variable.getLengthOfReplacementData() == -1) {
-                fieldFormat.setVary(true);
-                fieldFormat.setBytes(variable.getDecimalPositions());
-            } else {
-                fieldFormat.setVary(false);
-                fieldFormat.setLength(variable.getLengthOfReplacementData());
-                fieldFormat.setDecimalPositions(variable.getDecimalPositions());
-            }
-
-            fieldFormats.add(fieldFormat);
-
-            offsetVariable = offsetVariable + rtvm0400.getLengthOfSubstitutionVariableFormatElement();
-        }
-
-        return fieldFormats;
-    }
-
-    /**
-     * Returns the valid reply value entries of a given message description.
-     * 
-     * @param rtvm0400 - message description
-     * @param offset - offset from the start of the returned data
-     * @return valid reply entries
-     * @throws UnsupportedEncodingException
-     */
-    private ArrayList<ValidReplyEntry> getValidReplyEntries(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
-
-        ArrayList<ValidReplyEntry> replyEntries = new ArrayList<ValidReplyEntry>();
-
-        ValidReplyEntryFormat replyValue = new ValidReplyEntryFormat(getSystem(), getBytes());
-        int offsetFirstReplyEntry = offset + rtvm0400.getOffsetValidReplyEntries();
-
-        int offsetVariable = offsetFirstReplyEntry;
-        for (int f = 0; f < rtvm0400.getNumberOfValidReplyEntries(); f++) {
-
-            replyValue.setOffset(offsetVariable);
-
-            ValidReplyEntry replyEntry = new ValidReplyEntry(replyValue.getReplyValue());
-
-            replyEntries.add(replyEntry);
-
-            offsetVariable = offsetVariable + rtvm0400.getLengthOfValidReplyEntry();
-        }
-
-        return replyEntries;
-    }
-
-    /**
-     * Returns the special reply value entries of a given message description.
-     * 
-     * @param rtvm0400 - message description
-     * @param offset - offset from the start of the returned data
-     * @return special reply entries
-     * @throws UnsupportedEncodingException
-     */
-    private ArrayList<SpecialReplyValueEntry> getSpecialReplyValueEntries(RTVM0400 rtvm0400, int offset) throws UnsupportedEncodingException {
-
-        ArrayList<SpecialReplyValueEntry> specialReplyValueEntries = new ArrayList<SpecialReplyValueEntry>();
-
-        SpecialReplyValueEntryFormat specialReplyValue = new SpecialReplyValueEntryFormat(getSystem(), getBytes());
-        int offsetFirstReplyEntry = offset + rtvm0400.getOffsetSpecialReplyValueEntries();
-
-        int offsetVariable = offsetFirstReplyEntry;
-        for (int f = 0; f < rtvm0400.getNumberOfSpecialReplyValueEntries(); f++) {
-
-            specialReplyValue.setOffset(offsetVariable);
-
-            SpecialReplyValueEntry replyEntry = new SpecialReplyValueEntry(specialReplyValue.getFromValue(), specialReplyValue.getToValue());
-
-            specialReplyValueEntries.add(replyEntry);
-
-            offsetVariable = offsetVariable + rtvm0400.getLengthOfSpecialReplyValueEntry();
-        }
-
-        return specialReplyValueEntries;
     }
 
     /**

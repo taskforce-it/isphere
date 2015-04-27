@@ -11,6 +11,7 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
 
 import com.ibm.as400.access.AS400;
 
@@ -67,6 +68,21 @@ public class SpecialReplyValueEntryFormat extends APIFormat {
     }
 
     /**
+     * Factory methods to create a special reply value entry.
+     * 
+     * @return special reply value entry
+     * @throws UnsupportedEncodingException
+     */
+    public SpecialReplyValueEntry createSpecialReplyValueEntry() throws UnsupportedEncodingException {
+
+        SpecialReplyValueEntry specialReplyValueEntry = new SpecialReplyValueEntry();
+        specialReplyValueEntry.setFromValue(getFromValue());
+        specialReplyValueEntry.setToValue(getToValue());
+
+        return specialReplyValueEntry;
+    }
+
+    /**
      * Creates the SubstitutionVariable structure.
      */
     private void createStructure() {
@@ -75,4 +91,3 @@ public class SpecialReplyValueEntryFormat extends APIFormat {
         addCharField(TO_VALUE, 32, 32);
     }
 }
-    

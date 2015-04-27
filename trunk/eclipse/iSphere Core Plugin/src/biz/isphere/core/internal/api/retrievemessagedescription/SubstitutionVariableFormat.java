@@ -11,6 +11,7 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.messagefileeditor.FieldFormat;
 
 import com.ibm.as400.access.AS400;
 
@@ -96,6 +97,29 @@ public class SubstitutionVariableFormat extends APIFormat {
      */
     public String getType() throws UnsupportedEncodingException {
         return getCharValue(SUBSTITUTION_VARIABLE_TYPE);
+    }
+
+    /**
+     * Factory method to create a field format.
+     * 
+     * @return field format
+     * @throws UnsupportedEncodingException
+     */
+    public FieldFormat createFieldFormat() throws UnsupportedEncodingException {
+        
+        FieldFormat fieldFormat = new FieldFormat();
+
+        fieldFormat.setType(getType());
+        if (getLengthOfReplacementData() == -1) {
+            fieldFormat.setVary(true);
+            fieldFormat.setBytes(getDecimalPositions());
+        } else {
+            fieldFormat.setVary(false);
+            fieldFormat.setLength(getLengthOfReplacementData());
+            fieldFormat.setDecimalPositions(getDecimalPositions());
+        }
+        
+        return fieldFormat;
     }
 
     /**

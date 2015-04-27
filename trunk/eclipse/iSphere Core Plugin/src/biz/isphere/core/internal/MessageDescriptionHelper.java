@@ -8,27 +8,26 @@
 
 package biz.isphere.core.internal;
 
-import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
+import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 
-// TODO: refactor to a full featured 'MessageFile' object
-// consider including a list of message IDs.
 public final class MessageDescriptionHelper {
+
+    private static final String SPCVAL_NONE = "*NONE"; //$NON-NLS-1$
 
     public static String mergeMessageDescription(Shell shell, MessageDescription messageDescription, String toConnectionName, String toMessageFile,
         String toLibrary) throws Exception {
@@ -69,11 +68,8 @@ public final class MessageDescriptionHelper {
         remoteMessageDescription.setMessageFile(toMessageFile);
         remoteMessageDescription.setLibrary(toMessageFileLibrary);
 
-        MessageDescription tmpMessageDescription = retrieveMessageDescription(toConnectionName, toMessageFile, toMessageFileLibrary,
-            messageDescription.getMessageId());
-
         String message = null;
-        if (tmpMessageDescription == null) {
+        if (!exists(toConnectionName, toMessageFile, toMessageFileLibrary, messageDescription.getMessageId())) {
             message = addMessageDescription(remoteMessageDescription);
         } else {
             message = changeMessageDescription(remoteMessageDescription);
@@ -102,11 +98,14 @@ public final class MessageDescriptionHelper {
 
         command.append(" MSGID(" + messageDescription.getMessageId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" MSGF(" + messageDescription.getLibrary() + "/" + messageDescription.getMessageFile() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        command.append(" MSG('" + StringHelper.addQuotes(messageDescription.getMessage()) + "')"); //$NON-NLS-1$ //$NON-NLS-2$
-        command.append(" SECLVL('" + StringHelper.addQuotes(messageDescription.getHelpText()) + "')"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" MSG(" + StringHelper.addQuotes(messageDescription.getMessage()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" SECLVL(" + getSecondLevelText(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" SEV(" + messageDescription.getSeverity().toString() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" CCSID(" + messageDescription.getCcsidAsString() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" FMT(" + getFieldFormats(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(getReplyType(messageDescription));
+        command.append(" VALUES(" + getValues(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" SPCVAL(" + getSpecialValues(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
         AS400 system = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
         String message = executeCommand(system, command);
@@ -133,18 +132,11 @@ public final class MessageDescriptionHelper {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 
-        try {
+        IQMHRTVM qmhrtvm = new IQMHRTVM(system, connectionName);
+        qmhrtvm.setMessageFile(messageFile, library);
+        MessageDescription messageDescription = qmhrtvm.retrieveMessageDescription(messageId);
 
-            IQMHRTVM qmhrtvm = new IQMHRTVM(system, connectionName);
-            qmhrtvm.setMessageFile(messageFile, library);
-            MessageDescription messageDescription = qmhrtvm.retrieveMessageDescription(messageId);
-            return messageDescription;
-
-        } catch (PropertyVetoException e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
-        }
-
-        return null;
+        return messageDescription;
     }
 
     public static MessageDescription refreshMessageDescription(MessageDescription messageDescription) {
@@ -166,13 +158,32 @@ public final class MessageDescriptionHelper {
         return messageDescription;
     }
 
+    private static boolean exists(String connectionName, String messageFile, String library, String messageId) {
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+        IQMHRTVM qmhrtvm = new IQMHRTVM(system, connectionName);
+        qmhrtvm.setMessageFile(messageFile, library);
+
+        return qmhrtvm.exists(messageId);
+    }
+
+    private static String getSecondLevelText(MessageDescription messageDescription) {
+
+        if (SPCVAL_NONE.equals(messageDescription.getHelpText())) {
+            return messageDescription.getHelpText();
+        }
+
+        return StringHelper.addQuotes(messageDescription.getHelpText());
+    }
+
     private static String getFieldFormats(MessageDescription messageDescription) {
 
         StringBuilder formats = new StringBuilder();
 
         ArrayList<?> fieldFormats = messageDescription.getFieldFormats();
         if (fieldFormats.size() == 0) {
-            formats.append("*NONE"); //$NON-NLS-1$
+            formats.append(SPCVAL_NONE);
         } else {
             for (int idx = 0; idx < fieldFormats.size(); idx++) {
                 FieldFormat fieldFormat = (FieldFormat)fieldFormats.get(idx);
@@ -196,6 +207,71 @@ public final class MessageDescriptionHelper {
         return formats.toString();
     }
 
+    private static String getReplyType(MessageDescription messageDescription) {
+
+        StringBuilder replyType = new StringBuilder();
+
+        replyType.append(" TYPE("); //$NON-NLS-1$
+        replyType.append(messageDescription.getReplyType());
+        replyType.append(")"); //$NON-NLS-1$
+
+        replyType.append(" LEN("); //$NON-NLS-1$
+
+        if (MessageDescription.REPLY_NONE.equals(messageDescription.getReplyType())) {
+            replyType.append(SPCVAL_NONE);
+        } else if (MessageDescription.REPLY_DEC.equals(messageDescription.getReplyType())) {
+            replyType.append(messageDescription.getReplyLength());
+            replyType.append(" "); //$NON-NLS-1$
+            replyType.append(messageDescription.getReplyDecimalPositions());
+        } else {
+            replyType.append(messageDescription.getReplyLength());
+        }
+
+        replyType.append(")"); //$NON-NLS-1$
+
+        return replyType.toString();
+    }
+
+    private static String getValues(MessageDescription messageDescription) {
+
+        if (messageDescription.getValidReplyEntries().size() == 0) {
+            return SPCVAL_NONE;
+        }
+
+        StringBuilder replyEntries = new StringBuilder();
+
+        for (ValidReplyEntry replyEntry : messageDescription.getValidReplyEntries()) {
+            if (replyEntries.length() > 0) {
+                replyEntries.append(" "); //$NON-NLS-1$
+            }
+            replyEntries.append(StringHelper.addQuotes(replyEntry.getValue()));
+        }
+
+        return replyEntries.toString();
+    }
+
+    private static String getSpecialValues(MessageDescription messageDescription) {
+
+        if (messageDescription.getSpecialReplyValueEntries().size() == 0) {
+            return SPCVAL_NONE;
+        }
+
+        StringBuilder replyEntries = new StringBuilder();
+
+        for (SpecialReplyValueEntry replyEntry : messageDescription.getSpecialReplyValueEntries()) {
+            if (replyEntries.length() > 0) {
+                replyEntries.append(" "); //$NON-NLS-1$
+            }
+            replyEntries.append("("); //$NON-NLS-1$
+            replyEntries.append(StringHelper.addQuotes(replyEntry.getFromValue()));
+            replyEntries.append(" "); //$NON-NLS-1$
+            replyEntries.append(StringHelper.addQuotes(replyEntry.getToValue()));
+            replyEntries.append(")"); //$NON-NLS-1$
+        }
+
+        return replyEntries.toString();
+    }
+
     private static String executeCommand(AS400 system, StringBuilder command) throws Exception {
 
         AS400Message[] messageList = null;
@@ -210,14 +286,5 @@ public final class MessageDescriptionHelper {
         }
 
         return null;
-    }
-
-    private static void displayError(Shell shell, String message) {
-
-        if (shell == null || message == null) {
-            return;
-        }
-
-        MessageDialog.openError(shell, Messages.E_R_R_O_R, message);
     }
 }

@@ -8,7 +8,6 @@
 
 package biz.isphere.core.messagefilecompare.rse;
 
-import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -71,7 +70,6 @@ import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDescriptionHelper;
-import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.StatusBar;
@@ -733,16 +731,11 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     };
                     job.schedule();
 
-                    try {
-                        leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
-                        monitor.worked(1);
-                        rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
-                        monitor.worked(2);
-                    } catch (PropertyVetoException e) {
-                        leftMessageDescriptions = new MessageDescription[0];
-                        rightMessageDescriptions = new MessageDescription[0];
-                        MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
-                    }
+                    leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
+                    monitor.worked(1);
+                    
+                    rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
+                    monitor.worked(2);
 
                     job = new UIJob("") {
                         @Override
@@ -775,7 +768,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         job.schedule();
     }
 
-    private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) throws PropertyVetoException {
+    private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) {
 
         String connectionName = messageFile.getConnectionName();
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);

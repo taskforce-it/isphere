@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -47,6 +48,7 @@ import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
@@ -327,14 +329,21 @@ public class SearchResultViewer {
 
                         SearchResultMessageId _searchResultMessageId = (SearchResultMessageId)structuredSelection.getFirstElement();
 
-                        QMHRTVM qmhrtvm = new QMHRTVM();
-                        MessageDescription[] _messageDescription = qmhrtvm.run(_searchResult.getAS400(), _searchResult.getConnectionName(),
-                            _searchResult.getLibrary(), _searchResult.getMessageFile(), _searchResultMessageId.getMessageId());
-                        if (_messageDescription.length == 1) {
+                        IQMHRTVM qmhrtvm = new IQMHRTVM(_searchResult.getAS400(), _searchResult.getConnectionName());
+                        qmhrtvm.setMessageFile(_searchResult.getMessageFile(), _searchResult.getLibrary());
+                        MessageDescription _messageDescription = qmhrtvm.retrieveMessageDescription(_searchResultMessageId.getMessageId());
+
+                        if (_messageDescription != null) {
 
                             MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, _searchResult
-                                .getAS400(), DialogActionTypes.CHANGE, _messageDescription[0]);
+                                .getAS400(), DialogActionTypes.CHANGE, _messageDescription);
                             _messageDescriptionDetailDialog.open();
+
+                        } else {
+
+                            MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.bind(
+                                Messages.Message_identifier_A_not_found_in_message_file_B_in_C, new String[] { _searchResultMessageId.getMessageId(),
+                                    _searchResult.getMessageFile(), _searchResult.getLibrary() }));
 
                         }
 

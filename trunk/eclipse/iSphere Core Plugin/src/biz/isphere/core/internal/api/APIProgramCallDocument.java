@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import biz.isphere.base.internal.StringHelper;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
@@ -34,6 +36,8 @@ public abstract class APIProgramCallDocument {
     private static final short VARLEN_BYTES = 2;
 
     private AS400 system;
+    private String programName;
+    private String programLibraryName;
     private ProgramCall program;
     private ProgramParameter[] parameterList;
 
@@ -50,15 +54,22 @@ public abstract class APIProgramCallDocument {
      * @param library - program library name
      * @throws PropertyVetoException
      */
-    protected APIProgramCallDocument(AS400 system, String name, String library) throws PropertyVetoException {
+    protected APIProgramCallDocument(AS400 system, String name, String library) {
         this.system = system;
+        this.programName = name;
+        this.programLibraryName = library;
 
         program = new ProgramCall(getSystem());
-        program.setProgram(getPath(name, library, "*PGM")); //$NON-NLS-1$ 
     }
 
     public boolean execute(ProgramParameter[] parameterList) throws PropertyVetoException, AS400SecurityException, ErrorCompletingRequestException,
         IOException, InterruptedException, ObjectDoesNotExistException {
+
+        // Set the program name here, to get rid of the PropertyVetoException in
+        // the constructor.
+        if (StringHelper.isNullOrEmpty(program.getProgram())) {
+            program.setProgram(getPath(programName, programLibraryName, "*PGM")); //$NON-NLS-1$
+        }
 
         this.parameterList = parameterList;
 

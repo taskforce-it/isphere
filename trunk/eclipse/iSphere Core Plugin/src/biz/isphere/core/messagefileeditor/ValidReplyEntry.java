@@ -8,12 +8,16 @@
 
 package biz.isphere.core.messagefileeditor;
 
-public class ValidReplyEntry {
+import java.io.Serializable;
 
+public class ValidReplyEntry implements Serializable {
+
+    private static final long serialVersionUID = 4230668370576222173L;
+    
     private String value;
 
-    public ValidReplyEntry(String value) {
-        this.value = value;
+    public ValidReplyEntry() {
+        this.value = "";
     }
 
     public String getValue() {
