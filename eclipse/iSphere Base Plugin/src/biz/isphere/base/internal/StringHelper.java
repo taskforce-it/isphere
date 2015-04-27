@@ -198,6 +198,8 @@ public final class StringHelper {
     public static String addQuotes(String stringToBeQuoted) {
 
         StringBuffer stringWithQuotes = new StringBuffer("");
+        stringWithQuotes.append("'");
+        
         for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
             String character = stringToBeQuoted.substring(idx, idx + 1);
             stringWithQuotes.append(character);
@@ -205,7 +207,8 @@ public final class StringHelper {
                 stringWithQuotes.append("'");
             }
         }
-
+        stringWithQuotes.append("'");
+        
         return stringWithQuotes.toString();
     }
 
