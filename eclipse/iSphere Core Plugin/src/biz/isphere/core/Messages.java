@@ -1011,6 +1011,8 @@ public class Messages extends NLS {
     public static String This_version_requires_updating_the_iSphere_library;
 
     public static String Working;
+
+    public static String Message_identifier_A_not_found_in_message_file_B_in_C;
     
     static {
         // initialize resource bundle

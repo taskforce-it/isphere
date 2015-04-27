@@ -26,6 +26,12 @@ public class MessageDescription implements Serializable {
     public static final String CCSID_JOB = "*JOB"; //$NON-NLS-1$
     public static final String CCSID_HEX = "*HEX"; //$NON-NLS-1$
 
+    public static final String REPLY_CHAR = "*CHAR"; //$NON-NLS-1$
+    public static final String REPLY_DEC = "*DEC"; //$NON-NLS-1$
+    public static final String REPLY_ALPHA = "*ALPHA"; //$NON-NLS-1$
+    public static final String REPLY_NAME = "*NAME"; //$NON-NLS-1$
+    public static final String REPLY_NONE = "*NONE"; //$NON-NLS-1$
+
     private String connectionName;
     private String library;
     private String messageFile;
@@ -51,7 +57,7 @@ public class MessageDescription implements Serializable {
         severity = new Integer("0"); //$NON-NLS-1$
         setCcsid(CCSID_JOB);
         fieldFormats = new ArrayList<FieldFormat>();
-        replyType = "*NONE";
+        replyType = REPLY_NONE;
         replyLength = 0;
         replyDecimalPositions = 0;
         validReplyEntries = new ArrayList<ValidReplyEntry>();

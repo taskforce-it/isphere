@@ -8,14 +8,18 @@
 
 package biz.isphere.core.messagefileeditor;
 
-public class SpecialReplyValueEntry {
+import java.io.Serializable;
 
+public class SpecialReplyValueEntry implements Serializable {
+
+    private static final long serialVersionUID = 1138196896984532140L;
+    
     private String fromValue;
     private String toValue;
 
-    public SpecialReplyValueEntry(String fromValue, String toValue) {
-        this.fromValue = fromValue;
-        this.toValue = toValue;
+    public SpecialReplyValueEntry() {
+        this.fromValue = "";
+        this.toValue = "";
     }
 
     public String getFromValue() {

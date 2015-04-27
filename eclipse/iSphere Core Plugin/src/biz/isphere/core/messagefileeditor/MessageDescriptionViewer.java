@@ -105,15 +105,10 @@ public class MessageDescriptionViewer {
         public Object[] getElements(Object inputElement) {
             if (messageDescriptions == null) {
 
-                try {
+                IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connectionName);
+                iqmhrtvm.setMessageFile(messageFile, library);
+                messageDescriptions = iqmhrtvm.retrieveAllMessageDescriptions();
 
-                    IQMHRTVM iqmhrtvm = new IQMHRTVM(as400, connectionName);
-                    iqmhrtvm.setMessageFile(messageFile, library);
-                    messageDescriptions = iqmhrtvm.retrieveAllMessageDescriptions();
-
-                } catch (Throwable e) {
-                    ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e);
-                }
             }
             return messageDescriptions;
         }

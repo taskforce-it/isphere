@@ -19,7 +19,6 @@ import biz.isphere.core.internal.api.APIProgramCallDocument;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.ProgramParameter;
 
 /**
@@ -31,13 +30,17 @@ public class IQMHRTVM extends APIProgramCallDocument {
 
     public static final int ALL_MESSAGES = -1;
 
+    public static final String RTVM0300 = "RTVM0300";
+    public static final String RTVM0400 = "RTVM0400";
+
     public static final String RETRIEVE_FIRST = "*FIRST";
     public static final String RETRIEVE_NEXT = "*NEXT";
     public static final String RETRIEVE_MSGID = "*MSGID";
 
+    private String connectionName;
     private String messageFile;
     private String library;
-    private String connectionName;
+    private String format;
 
     /**
      * Constructs a IQMHRTVM object for a system and connection.
@@ -46,10 +49,24 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @param connectionName - Name of the RDi connection.
      * @throws PropertyVetoException
      */
-    public IQMHRTVM(AS400 system, String connectionName) throws PropertyVetoException {
+    public IQMHRTVM(AS400 system, String connectionName) {
+        this(system, connectionName, RTVM0400);
+    }
+
+    /**
+     * Constructs a IQMHRTVM object for a system and connection.
+     * 
+     * @param system - System that hosts the message file.
+     * @param connectionName - Name of the RDi connection.
+     * @param format - Format of the retrieved data ({@link #RTVM0300} or
+     *        {@link #RTVM0400}).
+     * @throws PropertyVetoException
+     */
+    private IQMHRTVM(AS400 system, String connectionName, String format) {
         super(system, "IQMHRTVM", ISpherePlugin.getISphereLibrary());
 
         this.connectionName = connectionName;
+        this.format = format;
     }
 
     /**
@@ -135,6 +152,28 @@ public class IQMHRTVM extends APIProgramCallDocument {
     }
 
     /**
+     * Checks whether or not the message description that is associated to a
+     * given message ID exists.
+     * 
+     * @param messageId - message ID
+     * @return <code>true</code> on success, else <code>false</code>.
+     */
+    public boolean exists(String messageId) {
+
+        try {
+
+            if (execute(createParameterList(RETRIEVE_MSGID, messageId, 1, 8))) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e);
+        }
+
+        return false;
+    }
+
+    /**
      * Retrieves a given number of message descriptions, starting at a specified
      * message ID description.
      * 
@@ -154,14 +193,14 @@ public class IQMHRTVM extends APIProgramCallDocument {
     private IQMHRTVMResult retrieveMessageDescriptions(String retrieveOption, String messageID, int numMessages, int bufferSize) throws Exception {
 
         if (execute(createParameterList(retrieveOption, messageID, numMessages, bufferSize))) {
-            return new IQMHRTVMResult(getSystem(), connectionName, messageFile, library, getParameterList()[0].getOutputData());
+            return new IQMHRTVMResult(getSystem(), connectionName, messageFile, library, getParameterList()[0].getOutputData(), format);
         }
 
-        AS400Message[] msgList = getMessageList();
-        for (int j = 0; j < msgList.length; j++) {
-            ISpherePlugin.logError(msgList[j].getID() + " - " + msgList[j].getText(), null); //$NON-NLS-1$
-        }
-        ISpherePlugin.logError("*** Call to IQMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
+//        AS400Message[] msgList = getMessageList();
+//        for (int j = 0; j < msgList.length; j++) {
+//            ISpherePlugin.logError(msgList[j].getID() + " - " + msgList[j].getText(), null); //$NON-NLS-1$
+//        }
+//        ISpherePlugin.logError("*** Call to IQMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
         return null;
     }
 
@@ -186,7 +225,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
         ProgramParameter[] parameterList = new ProgramParameter[9];
         parameterList[0] = new ProgramParameter(bufferSize); // Receiver
         parameterList[1] = produceIntegerParameter(bufferSize); // Length
-        parameterList[2] = produceStringParameter("RTVM0400", 8); // Format
+        parameterList[2] = produceStringParameter(format, 8); // Format
         parameterList[3] = produceStringParameter(messageID, 7); // MsgID
         parameterList[4] = produceQualifiedObjectName(messageFile, library); // Object
         parameterList[5] = produceStringParameter("*YES", 10); // Rtn Fmt Ctrl

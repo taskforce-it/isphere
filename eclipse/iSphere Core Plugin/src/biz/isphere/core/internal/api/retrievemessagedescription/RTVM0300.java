@@ -9,8 +9,11 @@
 package biz.isphere.core.internal.api.retrievemessagedescription;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.messagefileeditor.FieldFormat;
+import biz.isphere.core.messagefileeditor.MessageDescription;
 
 import com.ibm.as400.access.AS400;
 
@@ -24,13 +27,24 @@ public class RTVM0300 extends APIFormat {
     private static final String BYTES_RETURNED = "bytesReturned"; //$NON-NLS-1$
     private static final String BYTES_AVAILABLE = "bytesAvailable"; //$NON-NLS-1$
     private static final String MESSAGE_SEVERITY = "messageSeverity"; //$NON-NLS-1$
+    private static final String ALERT_INDEX = "alertIndex"; //$NON-NLS-1$
+    private static final String ALERT_OPTION = "alertOption"; //$NON-NLS-1$
+    private static final String LOG_INDICATOR = "logIndicator"; //$NON-NLS-1$
     private static final String MESSAGE_ID = "messageID"; //$NON-NLS-1$
+    private static final String RESERVED_1 = "reserved_1"; //$NON-NLS-1$
     private static final String NUMBER_OF_SUBSTITUTION_VARIABLE_FORMATS = "numberOfSubstitutionVariableFormats"; //$NON-NLS-1$
+    private static final String CCSID_CONVERSION_STATUS_INDICATOR_TEXT = "CCSIDConversionStatusIndicatorText"; //$NON-NLS-1$
+    private static final String CCSID_CONVERSION_STATUS_INDICATOR_OF_REPLACEMENT_DATA = "CCSIDConversionStatusIndicatorOfReplacementData";
     private static final String CCSID_OF_TEXT_RETURNED = "ccsIdOfTextReturned"; //$NON-NLS-1$
+    private static final String OFFSET_OF_DEFAULT_REPLY = "OffsetOfDefaultReply";
+    private static final String LENGTH_OF_DEFAULT_REPLY_RETURNED = "lengthOfDefaultReplyReturned"; //$NON-NLS-1$
+    private static final String LENGTH_OF_DEFAULT_REPLY_AVAILABLE = "lengthOfDefaultReplyAvailable"; //$NON-NLS-1$
     private static final String OFFSET_MESSAGE = "offsetMessage"; //$NON-NLS-1$
-    private static final String LENGTH_MESSAGE_RETURNED = "lengthMessageReturned"; //$NON-NLS-1$
-    private static final String OFFSET_MESSAGE_HELP = "offsetMessageHelp"; //$NON-NLS-1$
-    private static final String LENGTH_MESSAGE_HELP_RETURNED = "lengthMessageHelpReturned"; //$NON-NLS-1$
+    private static final String LENGTH_OF_MESSAGE_RETURNED = "lengthOfMessageReturned"; //$NON-NLS-1$
+    private static final String LENGTH_OF_MESSAGE_AVAILABLE = "lengthOfMessageAvailable"; //$NON-NLS-1$
+    private static final String OFFSET_OF_MESSAGE_HELP = "offsetOfMessageHelp"; //$NON-NLS-1$
+    private static final String LENGTH_OF_MESSAGE_HELP_RETURNED = "lengthOfMessageHelpReturned"; //$NON-NLS-1$
+    private static final String LENGTH_OF_MESSAGE_HELP_AVAILABLE = "lengthOfMessageHelpAvailable"; //$NON-NLS-1$
     private static final String OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS = "offsetOfSubstitutionVariableFormats"; //$NON-NLS-1$
     private static final String LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_RETURNED = "lengthOfSubstitutionVariableFormatsReturned"; //$NON-NLS-1$
     private static final String LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_AVAILABLE = "lengthOfSubstitutionVariableFormatsAvailable"; //$NON-NLS-1$
@@ -49,6 +63,15 @@ public class RTVM0300 extends APIFormat {
         createStructure();
 
         setBytes(bytes);
+    }
+
+    protected RTVM0300(AS400 system, byte[] bytes, String name) throws UnsupportedEncodingException {
+        super(system, name);
+
+        createStructure();
+
+        setBytes(bytes);
+
     }
 
     /**
@@ -113,7 +136,7 @@ public class RTVM0300 extends APIFormat {
     public String getMessage() throws UnsupportedEncodingException {
 
         int offset = getInt4Value(OFFSET_MESSAGE);
-        int length = getInt4Value(LENGTH_MESSAGE_RETURNED);
+        int length = getInt4Value(LENGTH_OF_MESSAGE_RETURNED);
         if (length > 0) {
             return convertToText(getBytesAt(offset, length));
         }
@@ -130,8 +153,8 @@ public class RTVM0300 extends APIFormat {
      */
     public String getMessageHelp() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_MESSAGE_HELP);
-        int length = getInt4Value(LENGTH_MESSAGE_HELP_RETURNED);
+        int offset = getInt4Value(OFFSET_OF_MESSAGE_HELP);
+        int length = getInt4Value(LENGTH_OF_MESSAGE_HELP_RETURNED);
         if (length > 0) {
             return convertToText(getBytesAt(offset, length));
         }
@@ -168,20 +191,89 @@ public class RTVM0300 extends APIFormat {
     }
 
     /**
+     * Factory methods to create a message description.
+     * 
+     * @param connectionName - connection name
+     * @param messageFile - message file
+     * @param library - message file library name
+     * @return message description
+     * @throws UnsupportedEncodingException
+     */
+    public MessageDescription createMessageDescription(String connectionName, String messageFile, String library) throws UnsupportedEncodingException {
+
+        String helpText = getMessageHelp();
+        if (helpText == null || helpText.trim().length() == 0) {
+            helpText = MessageDescription.TEXT_NONE;
+        }
+
+        MessageDescription messageDescription = new MessageDescription();
+
+        messageDescription.setConnection(connectionName);
+        messageDescription.setLibrary(library);
+        messageDescription.setMessageFile(messageFile);
+        messageDescription.setMessageId(getMessageId());
+        messageDescription.setMessage(getMessage());
+        messageDescription.setHelpText(helpText);
+        messageDescription.setFieldFormats(getFieldFormats());
+        messageDescription.setSeverity(getMessageSeverity());
+        messageDescription.setCcsid(getCcsid());
+
+        return messageDescription;
+    }
+
+    /**
+     * Returns the field formats of a given message description.
+     * 
+     * @param rtvm0400 - message description
+     * @param offset - offset from the start of the returned data
+     * @return field formats
+     * @throws UnsupportedEncodingException
+     */
+    private ArrayList<FieldFormat> getFieldFormats() throws UnsupportedEncodingException {
+
+        ArrayList<FieldFormat> fieldFormats = new ArrayList<FieldFormat>();
+
+        SubstitutionVariableFormat substitutionVariableFormat = new SubstitutionVariableFormat(getSystem(), getBytes());
+        int offsetFirstSubstitutionVariable = getOffset() + getOffsetSubstitutionVariables();
+
+        int offsetVariable = offsetFirstSubstitutionVariable;
+        for (int f = 0; f < getNumberOfSubstitutionVariables(); f++) {
+
+            substitutionVariableFormat.setOffset(offsetVariable);
+            fieldFormats.add(substitutionVariableFormat.createFieldFormat());
+
+            offsetVariable = offsetVariable + getLengthOfSubstitutionVariableFormatElement();
+        }
+
+        return fieldFormats;
+    }
+
+    /**
      * Creates the RTVM0300 structure.
      */
-    private void createStructure() {
+    protected void createStructure() {
 
         addInt4Field(BYTES_RETURNED, 0);
         addInt4Field(BYTES_AVAILABLE, 4);
         addInt4Field(MESSAGE_SEVERITY, 8);
+        addInt4Field(ALERT_INDEX, 12);
+        addCharField(ALERT_OPTION, 16, 9);
+        addCharField(LOG_INDICATOR, 25, 1);
         addCharField(MESSAGE_ID, 26, 7);
+        addCharField(RESERVED_1, 33, 3);
         addInt4Field(NUMBER_OF_SUBSTITUTION_VARIABLE_FORMATS, 36);
+        addInt4Field(CCSID_CONVERSION_STATUS_INDICATOR_TEXT, 40);
+        addInt4Field(CCSID_CONVERSION_STATUS_INDICATOR_OF_REPLACEMENT_DATA, 44);
         addInt4Field(CCSID_OF_TEXT_RETURNED, 48);
+        addInt4Field(OFFSET_OF_DEFAULT_REPLY, 52);
+        addInt4Field(LENGTH_OF_DEFAULT_REPLY_RETURNED, 56);
+        addInt4Field(LENGTH_OF_DEFAULT_REPLY_AVAILABLE, 60);
         addInt4Field(OFFSET_MESSAGE, 64);
-        addInt4Field(LENGTH_MESSAGE_RETURNED, 68);
-        addInt4Field(OFFSET_MESSAGE_HELP, 76);
-        addInt4Field(LENGTH_MESSAGE_HELP_RETURNED, 80);
+        addInt4Field(LENGTH_OF_MESSAGE_RETURNED, 68);
+        addInt4Field(LENGTH_OF_MESSAGE_AVAILABLE, 72);
+        addInt4Field(OFFSET_OF_MESSAGE_HELP, 76);
+        addInt4Field(LENGTH_OF_MESSAGE_HELP_RETURNED, 80);
+        addInt4Field(LENGTH_OF_MESSAGE_HELP_AVAILABLE, 84);
         addInt4Field(OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS, 88);
         addInt4Field(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_RETURNED, 92);
         addInt4Field(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMATS_AVAILABLE, 96);

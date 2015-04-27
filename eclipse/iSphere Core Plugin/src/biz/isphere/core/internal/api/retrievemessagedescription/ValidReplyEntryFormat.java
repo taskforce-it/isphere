@@ -11,6 +11,7 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
 import com.ibm.as400.access.AS400;
 
@@ -53,6 +54,20 @@ public class ValidReplyEntryFormat extends APIFormat {
      */
     public String getReplyValue() throws UnsupportedEncodingException {
         return getCharValue(VALID_REPLY_ENTRY).trim();
+    }
+
+    /**
+     * Factory method to create a valid reply entry.
+     *  
+     * @return valid reply entry
+     * @throws UnsupportedEncodingException
+     */
+    public ValidReplyEntry createValidReplyEntry() throws UnsupportedEncodingException {
+        
+        ValidReplyEntry validReplyEntry = new ValidReplyEntry();
+        validReplyEntry.setValue(getReplyValue());
+        
+        return validReplyEntry;
     }
 
     /**
