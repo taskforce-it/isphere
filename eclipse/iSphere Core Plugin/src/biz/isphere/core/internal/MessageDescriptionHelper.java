@@ -27,8 +27,6 @@ import com.ibm.as400.access.CommandCall;
 
 public final class MessageDescriptionHelper {
 
-    private static final String SPCVAL_NONE = "*NONE"; //$NON-NLS-1$
-
     public static String mergeMessageDescription(Shell shell, MessageDescription messageDescription, String toConnectionName, String toMessageFile,
         String toLibrary) throws Exception {
 
@@ -106,6 +104,9 @@ public final class MessageDescriptionHelper {
         command.append(getReplyType(messageDescription));
         command.append(" VALUES(" + getValues(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         command.append(" SPCVAL(" + getSpecialValues(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" RANGE(" + getRangeOfValues(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" REL(" + getRelationshipForValidReplies(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        command.append(" DFT(" + getDefaultReply(messageDescription) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
         AS400 system = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
         String message = executeCommand(system, command);
@@ -170,7 +171,7 @@ public final class MessageDescriptionHelper {
 
     private static String getSecondLevelText(MessageDescription messageDescription) {
 
-        if (SPCVAL_NONE.equals(messageDescription.getHelpText())) {
+        if (MessageDescription.VALUE_NONE.equals(messageDescription.getHelpText())) {
             return messageDescription.getHelpText();
         }
 
@@ -183,7 +184,7 @@ public final class MessageDescriptionHelper {
 
         ArrayList<?> fieldFormats = messageDescription.getFieldFormats();
         if (fieldFormats.size() == 0) {
-            formats.append(SPCVAL_NONE);
+            formats.append(MessageDescription.VALUE_NONE);
         } else {
             for (int idx = 0; idx < fieldFormats.size(); idx++) {
                 FieldFormat fieldFormat = (FieldFormat)fieldFormats.get(idx);
@@ -217,8 +218,8 @@ public final class MessageDescriptionHelper {
 
         replyType.append(" LEN("); //$NON-NLS-1$
 
-        if (MessageDescription.REPLY_NONE.equals(messageDescription.getReplyType())) {
-            replyType.append(SPCVAL_NONE);
+        if (MessageDescription.VALUE_NONE.equals(messageDescription.getReplyType())) {
+            replyType.append(MessageDescription.VALUE_NONE);
         } else if (MessageDescription.REPLY_DEC.equals(messageDescription.getReplyType())) {
             replyType.append(messageDescription.getReplyLength());
             replyType.append(" "); //$NON-NLS-1$
@@ -235,7 +236,7 @@ public final class MessageDescriptionHelper {
     private static String getValues(MessageDescription messageDescription) {
 
         if (messageDescription.getValidReplyEntries().size() == 0) {
-            return SPCVAL_NONE;
+            return MessageDescription.VALUE_NONE;
         }
 
         StringBuilder replyEntries = new StringBuilder();
@@ -253,7 +254,7 @@ public final class MessageDescriptionHelper {
     private static String getSpecialValues(MessageDescription messageDescription) {
 
         if (messageDescription.getSpecialReplyValueEntries().size() == 0) {
-            return SPCVAL_NONE;
+            return MessageDescription.VALUE_NONE;
         }
 
         StringBuilder replyEntries = new StringBuilder();
@@ -270,6 +271,45 @@ public final class MessageDescriptionHelper {
         }
 
         return replyEntries.toString();
+    }
+
+    private static String getRangeOfValues(MessageDescription messageDescription) {
+
+        if (MessageDescription.VALUE_NONE.equals(messageDescription.getRangeOfReplyValue().getLowerValue())) {
+            return MessageDescription.VALUE_NONE;
+        }
+
+        StringBuilder rangeOfValues = new StringBuilder();
+
+        rangeOfValues.append(StringHelper.addQuotes(messageDescription.getRangeOfReplyValue().getLowerValue()));
+        rangeOfValues.append(" "); //$NON-NLS-1$
+        rangeOfValues.append(StringHelper.addQuotes(messageDescription.getRangeOfReplyValue().getUpperValue()));
+
+        return rangeOfValues.toString();
+    }
+
+    private static String getRelationshipForValidReplies(MessageDescription messageDescription) {
+
+        if (MessageDescription.VALUE_NONE.equals(messageDescription.getRelationalTestEntry().getOperator())) {
+            return MessageDescription.VALUE_NONE;
+        }
+
+        StringBuilder relationshipForValidreplies = new StringBuilder();
+
+        relationshipForValidreplies.append(messageDescription.getRelationalTestEntry().getOperator());
+        relationshipForValidreplies.append(" "); //$NON-NLS-1$
+        relationshipForValidreplies.append(StringHelper.addQuotes(messageDescription.getRelationalTestEntry().getValue()));
+
+        return relationshipForValidreplies.toString();
+    }
+
+    private static String getDefaultReply(MessageDescription messageDescription) {
+
+        if (MessageDescription.VALUE_NONE.equals(messageDescription.getDefaultReplyValue())) {
+            return MessageDescription.VALUE_NONE;
+        }
+
+        return StringHelper.addQuotes(messageDescription.getDefaultReplyValue());
     }
 
     private static String executeCommand(AS400 system, StringBuilder command) throws Exception {

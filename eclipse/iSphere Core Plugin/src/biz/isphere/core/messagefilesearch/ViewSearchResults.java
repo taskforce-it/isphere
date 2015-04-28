@@ -202,7 +202,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         /*
          * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * a search result without the contributions handler.
          */
         if (!IBMiHostContributionsHandler.hasContribution()) {
             return;

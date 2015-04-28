@@ -11,7 +11,10 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.messagefileeditor.RangeOfReplyValues;
+import biz.isphere.core.messagefileeditor.RelationalTestEntry;
 import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
 import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
@@ -170,6 +173,67 @@ public class RTVM0400 extends RTVM0300 {
         return getInt4Value(STORED_CCSID_OF_MESSAGE);
     }
 
+    public RangeOfReplyValues getRangeOfReplyValue() throws UnsupportedEncodingException {
+        
+        RangeOfReplyValues rangeOfReplyValue = new RangeOfReplyValues();
+        rangeOfReplyValue.setLowerValue(getLowerRangeReplyValue());
+        rangeOfReplyValue.setUpperValue(getUpperRangeReplyValue());
+        
+        return rangeOfReplyValue;
+    }
+    
+    /**
+     * Returns the 'lower range reply value.
+     * 
+     * @return lower range reply value
+     * @throws UnsupportedEncodingException
+     */
+    private String getLowerRangeReplyValue() throws UnsupportedEncodingException {
+
+        int offset = getInt4Value(OFFSET_OF_LOWER_RANGE_REPLY_VALUE);
+        int length = getInt4Value(LENGTH_OF_LOWER_RANGE_REPLY_VALUE_RETURNED);
+        if (length > 0) {
+            return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
+        }
+
+        return MessageDescription.VALUE_NONE;
+    }
+
+    /**
+     * Returns the 'upper range reply value.
+     * 
+     * @return upper range reply value
+     * @throws UnsupportedEncodingException
+     */
+    private String getUpperRangeReplyValue() throws UnsupportedEncodingException {
+
+        int offset = getInt4Value(OFFSET_OF_UPPER_RANGE_REPLY_VALUE);
+        int length = getInt4Value(LENGTH_OF_UPPER_RANGE_REPLY_VALUE_RETURNED);
+        if (length > 0) {
+            return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
+        }
+
+        return "";
+    }
+
+    /**
+     * Returns the offset to the relational test entry.
+     * 
+     * @return offset to relational test entry
+     */
+    public int getOffsetRelationalTestEntry() {
+        return getInt4Value(OFFSET_OF_RELATIONAL_TEST_ENTRY);
+    }
+
+    /**
+     * Returns the length of the relational test entry.
+     * 
+     * @return length of relational test entry
+     */
+    public int getLengthOfRelationalTestEntry() {
+        return getInt4Value(LENGTH_OF_RELATIONAL_TEST_ENTRY_RETURNED);
+    }
+
     public MessageDescription createMessageDescription(String connectionName, String messageFile, String library) throws UnsupportedEncodingException {
 
         MessageDescription messageDescription = super.createMessageDescription(connectionName, messageFile, library);
@@ -179,6 +243,8 @@ public class RTVM0400 extends RTVM0300 {
         messageDescription.setReplyDecimalPositions(getReplyDecimalPositions());
         messageDescription.setValidReplyEntries(getValidReplyEntries());
         messageDescription.setSpecialReplyValueEntries(getSpecialReplyValueEntries());
+        messageDescription.setRangeOfReplyValue(getRangeOfReplyValue());
+        messageDescription.setRelationalTestEntry(getRelationalTestEntry());
 
         return messageDescription;  
     }
@@ -235,6 +301,26 @@ public class RTVM0400 extends RTVM0300 {
         }
 
         return specialReplyValueEntries;
+    }
+
+    /**
+     * Returns the relational test entry of a given message description.
+     * 
+     * @param rtvm0400 - message description
+     * @param offset - offset from the start of the returned data
+     * @return relational test entry
+     * @throws UnsupportedEncodingException
+     */
+    private RelationalTestEntry getRelationalTestEntry() throws UnsupportedEncodingException {
+
+        if (getLengthOfRelationalTestEntry() == 0) {
+            return new RelationalTestEntry();
+        }
+        
+        RelationalTestEntryFormat relationalTestEntryFormat = new RelationalTestEntryFormat(getSystem(), getBytes());
+        relationalTestEntryFormat.setOffset(getOffset() + getOffsetRelationalTestEntry());
+
+        return relationalTestEntryFormat.createRelationalTestEntry();
     }
 
     /**

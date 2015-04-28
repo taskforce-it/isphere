@@ -62,7 +62,7 @@ public class MessageDescriptionCompareNode extends BufferedContent implements IT
     protected InputStream createStream() throws CoreException {
         try {
             int lineWidth = Preferences.getInstance().getMessageFileCompareLineWidth();
-            return new BufferedInputStream(new ByteArrayInputStream(messageDescription.asFormattedText(lineWidth).getBytes()));
+            return new BufferedInputStream(new ByteArrayInputStream(messageDescription.asComparableText(lineWidth).getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

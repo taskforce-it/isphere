@@ -80,9 +80,15 @@ public class FieldFormat implements Serializable {
         this.decimalPositions = decimalPositions;
     }
 
-    public String asComparableText() {
+    public String asComparableText(int index) {
 
         StringBuilder buffer = new StringBuilder();
+
+        if (index > 0) {
+            buffer.append("&"); //$NON-NLS-1$
+            buffer.append(index);
+            buffer.append(": "); //$NON-NLS-1$
+        }
 
         if (isVary()) {
             buffer.append(getType().trim());
@@ -110,6 +116,6 @@ public class FieldFormat implements Serializable {
 
     @Override
     public String toString() {
-        return asComparableText();
+        return asComparableText(-1);
     }
 }

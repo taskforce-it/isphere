@@ -8,10 +8,6 @@
 
 package biz.isphere.core.messagefileeditor;
 
-import java.beans.PropertyVetoException;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -42,10 +38,6 @@ import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.AS400SecurityException;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.ErrorCompletingRequestException;
 
 public class MessageDescriptionDetail {
 
@@ -475,25 +467,6 @@ public class MessageDescriptionDetail {
         // Everything is alright
 
         return true;
-    }
-
-    private String getNumericString(String numericValue, String defaultValue) {
-        if (StringHelper.isNullOrEmpty(numericValue)) {
-            return defaultValue;
-        }
-        return numericValue;
-    }
-
-    private String getStringWithQuotes(String stringToBeQuoted) {
-        StringBuffer stringWithQuotes = new StringBuffer("");
-        for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
-            String character = stringToBeQuoted.substring(idx, idx + 1);
-            stringWithQuotes.append(character);
-            if (character.equals("'")) {
-                stringWithQuotes.append("'");
-            }
-        }
-        return stringWithQuotes.toString();
     }
 
     protected void reloadMessageDescription() {
