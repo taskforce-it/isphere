@@ -377,7 +377,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         // TableViewerColumn(tableViewer, SWT.CENTER);
         TableColumn tblClmnCompareResult = new TableColumn(tableViewer.getTable(), SWT.CENTER);
         tblClmnCompareResult.setResizable(false);
-        tblClmnCompareResult.setWidth(Size.getSize(16));
+        tblClmnCompareResult.setWidth(Size.getSize(20));
 
         // TableViewerColumn tableViewerColumnRightMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
@@ -1540,6 +1540,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     throw new IllegalArgumentException("Invalid side value: " + side); //$NON-NLS-1$
                 }
 
+                MessageDescriptionHelper.refreshMessageDescription(messageDescription);
+                tableViewer.update(compareItem, null);
+                
                 AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
                 MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
                     DialogActionTypes.getSubEditorActionType(IEditor.EDIT), messageDescription);

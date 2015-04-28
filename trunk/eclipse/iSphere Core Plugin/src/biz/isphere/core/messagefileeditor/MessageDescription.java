@@ -21,7 +21,7 @@ public class MessageDescription implements Serializable {
 
     private static final long serialVersionUID = 5093317088102919464L;
 
-    public static final String TEXT_NONE = "*NONE"; //$NON-NLS-1$
+    public static final String VALUE_NONE = "*NONE"; //$NON-NLS-1$
 
     public static final String CCSID_JOB = "*JOB"; //$NON-NLS-1$
     public static final String CCSID_HEX = "*HEX"; //$NON-NLS-1$
@@ -30,7 +30,6 @@ public class MessageDescription implements Serializable {
     public static final String REPLY_DEC = "*DEC"; //$NON-NLS-1$
     public static final String REPLY_ALPHA = "*ALPHA"; //$NON-NLS-1$
     public static final String REPLY_NAME = "*NAME"; //$NON-NLS-1$
-    public static final String REPLY_NONE = "*NONE"; //$NON-NLS-1$
 
     private String connectionName;
     private String library;
@@ -46,6 +45,9 @@ public class MessageDescription implements Serializable {
     private int replyDecimalPositions;
     private ArrayList<ValidReplyEntry> validReplyEntries;
     private ArrayList<SpecialReplyValueEntry> specialReplyValueEntries;
+    private RangeOfReplyValues rangeOfReplyValue;
+    private String defaultReplyValue;
+    private RelationalTestEntry relationalTestEntry;
 
     public MessageDescription() {
         connectionName = ""; //$NON-NLS-1$
@@ -57,11 +59,14 @@ public class MessageDescription implements Serializable {
         severity = new Integer("0"); //$NON-NLS-1$
         setCcsid(CCSID_JOB);
         fieldFormats = new ArrayList<FieldFormat>();
-        replyType = REPLY_NONE;
+        replyType = VALUE_NONE;
         replyLength = 0;
         replyDecimalPositions = 0;
         validReplyEntries = new ArrayList<ValidReplyEntry>();
         specialReplyValueEntries = new ArrayList<SpecialReplyValueEntry>();
+        rangeOfReplyValue = new RangeOfReplyValues();
+        defaultReplyValue = VALUE_NONE;
+        relationalTestEntry = new RelationalTestEntry();
     }
 
     public String getConnection() {
@@ -180,6 +185,14 @@ public class MessageDescription implements Serializable {
         this.replyDecimalPositions = replyDecimalPositions;
     }
 
+    public String getDefaultReplyValue() {
+        return this.defaultReplyValue;
+    }
+
+    public void setDefaultReplyValue(String defaultReplyValue) {
+        this.defaultReplyValue = defaultReplyValue;
+    }
+
     public ArrayList<ValidReplyEntry> getValidReplyEntries() {
         return validReplyEntries;
     }
@@ -196,7 +209,23 @@ public class MessageDescription implements Serializable {
         this.specialReplyValueEntries = specialReplyValueEntries;
     }
 
-    public String asFormattedText(int width) {
+    public RangeOfReplyValues getRangeOfReplyValue() {
+        return rangeOfReplyValue;
+    }
+
+    public void setRangeOfReplyValue(RangeOfReplyValues rangeOfReplyValue) {
+        this.rangeOfReplyValue = rangeOfReplyValue;
+    }
+
+    public RelationalTestEntry getRelationalTestEntry() {
+        return relationalTestEntry;
+    }
+
+    public void setRelationalTestEntry(RelationalTestEntry relationalTestEntry) {
+        this.relationalTestEntry = relationalTestEntry;
+    }
+
+    public String asComparableText(int width) {
 
         StringBuilder buffer = new StringBuilder();
 
@@ -214,54 +243,75 @@ public class MessageDescription implements Serializable {
         int i = 0;
 
         buffer.append(Messages.Message_data_fields_formats_colon + CRLF);
-        i = 0;
-        for (FieldFormat fieldFormat : getFieldFormats()) {
-            i++;
-            buffer.append(TAB);
-            buffer.append("&"); //$NON-NLS-1$
-            buffer.append(i);
-            buffer.append(": "); //$NON-NLS-1$
-            buffer.append(fieldFormat.asComparableText());
-            buffer.append(CRLF);
+        if (getFieldFormats().size() == 0) {
+            addFormattedItemValue(buffer, MessageDescription.VALUE_NONE);
+        } else {
+            i = 0;
+            for (FieldFormat fieldFormat : getFieldFormats()) {
+                i++;
+                addFormattedItemValue(buffer, fieldFormat.asComparableText(i));
+            }
         }
         buffer.append(CRLF);
 
         addFormattedTextItem(buffer, Messages.Reply_type_colon, getFullReplyType());
 
         buffer.append(Messages.Valid_reply_values_colon + CRLF);
-        i = 0;
-        for (ValidReplyEntry validReplyEntry : getValidReplyEntries()) {
-            i++;
-            buffer.append(TAB);
-            buffer.append(validReplyEntry.asComparableText());
-            buffer.append(CRLF);
+        if (getValidReplyEntries().size() == 0) {
+            addFormattedItemValue(buffer, MessageDescription.VALUE_NONE);
+        } else {
+            i = 0;
+            for (ValidReplyEntry validReplyEntry : getValidReplyEntries()) {
+                i++;
+                addFormattedItemValue(buffer, validReplyEntry.asComparableText());
+            }
         }
         buffer.append(CRLF);
 
         buffer.append(Messages.Special_reply_values_colon + CRLF);
-        i = 0;
-        for (SpecialReplyValueEntry specialReplyValueEntry : getSpecialReplyValueEntries()) {
-            i++;
-            buffer.append(TAB);
-            buffer.append(specialReplyValueEntry.asComparableText());
-            buffer.append(CRLF);
+        if (getValidReplyEntries().size() == 0) {
+            addFormattedItemValue(buffer, MessageDescription.VALUE_NONE);
+        } else {
+            i = 0;
+            for (SpecialReplyValueEntry specialReplyValueEntry : getSpecialReplyValueEntries()) {
+                i++;
+                addFormattedItemValue(buffer, specialReplyValueEntry.asComparableText());
+            }
         }
         buffer.append(CRLF);
+
+        addFormattedTextItem(buffer, Messages.Range_of_reply_values_colon, getRangeOfReplyValue().asComparableText());
+        addFormattedTextItem(buffer, Messages.Default_reply_value_colon, getDefaultReplyValue());
+        addFormattedTextItem(buffer, Messages.Relationship_for_valid_replies_colon, getRelationalTestEntry().asComparableText());
 
         return buffer.toString();
     }
 
-    private void addFormattedTextItem(StringBuilder buffer, String name, String value) {
+    private void addFormattedTextItem(StringBuilder buffer, String name, String... values) {
 
         buffer.append(name);
         buffer.append(CRLF);
+
+        for (String value : values) {
+            addFormattedItemValue(buffer, value);
+        }
+
+        buffer.append(CRLF);
+    }
+
+    private void addFormattedItemValue(StringBuilder buffer, String value) {
+
         buffer.append(TAB);
         buffer.append(value);
-        buffer.append(CRLF);
         buffer.append(CRLF);
     }
 
     private String getFullReplyType() {
+
+        if (VALUE_NONE.equals(getReplyType())) {
+            return VALUE_NONE;
+        }
+
         return getReplyType() + "(" + getReplyLength() + "," + getReplyDecimalPositions() + ")";
     }
 

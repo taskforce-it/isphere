@@ -28,7 +28,7 @@ public class MessageDescriptionCompareDifferencer extends Differencer {
         MessageDescription leftMessageDescription = ((MessageDescriptionCompareNode)left).getMessageDescription();
         MessageDescription rightMessageDescription = ((MessageDescriptionCompareNode)right).getMessageDescription();
 
-        if (leftMessageDescription.asFormattedText(-1).equals(rightMessageDescription.asFormattedText(-1))) {
+        if (leftMessageDescription.asComparableText(-1).equals(rightMessageDescription.asComparableText(-1))) {
             return true;
         }
 

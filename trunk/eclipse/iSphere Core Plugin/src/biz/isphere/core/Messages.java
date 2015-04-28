@@ -1007,6 +1007,12 @@ public class Messages extends NLS {
     public static String Valid_reply_values_colon;
     
     public static String Special_reply_values_colon;
+    
+    public static String Range_of_reply_values_colon;
+    
+    public static String Default_reply_value_colon;
+    
+    public static String Relationship_for_valid_replies_colon;
 
     public static String This_version_requires_updating_the_iSphere_library;
 

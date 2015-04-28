@@ -8,9 +8,6 @@
 
 package biz.isphere.core.messagefilecompare;
 
-import java.util.ArrayList;
-
-import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
 public class MessageFileCompareItem implements Comparable<MessageFileCompareItem> {
@@ -137,67 +134,10 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
 
     private boolean leftEqualsRight(MessageDescription left, MessageDescription right) {
 
-        if (!compareText(left.getMessage(), right.getMessage())) {
-            return false;
-        }
+        String leftText = leftMessageDescription.asComparableText(-1);
+        String rightText = rightMessageDescription.asComparableText(-1);
 
-        if (!compareText(left.getHelpText(), right.getHelpText())) {
-            return false;
-        }
-
-        if (left.getCcsid().intValue() != right.getCcsid().intValue()) {
-            return false;
-        }
-
-        if (left.getSeverity() != right.getSeverity()) {
-            return false;
-        }
-
-        if (!compareFieldFormats(left.getFieldFormats(), right.getFieldFormats())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean compareFieldFormats(ArrayList<FieldFormat> fields1, ArrayList<FieldFormat> fields2) {
-
-        if (fields1.size() != fields2.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < fields1.size(); i++) {
-
-            FieldFormat field1 = fields1.get(i);
-            FieldFormat field2 = fields2.get(i);
-
-            if (!compareFieldFormat(field1, field2)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean compareFieldFormat(FieldFormat field1, FieldFormat field2) {
-
-        if (field1.isVary() != field2.isVary()) {
-            return false;
-        }
-
-        if (field1.getDecimalPositions() != field2.getDecimalPositions()) {
-            return false;
-        }
-
-        if (field1.getLength() != field2.getLength()) {
-            return false;
-        }
-
-        if (!compareText(field1.getType(), field2.getType())) {
-            return false;
-        }
-
-        return true;
+        return compareText(leftText, rightText);
     }
 
     private boolean compareText(String string1, String string2) {

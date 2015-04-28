@@ -11,6 +11,7 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
@@ -191,6 +192,23 @@ public class RTVM0300 extends APIFormat {
     }
 
     /**
+     * Returns the default reply value.
+     * 
+     * @return default reply value
+     * @throws UnsupportedEncodingException
+     */
+    public String getDefaultReplyValue() throws UnsupportedEncodingException {
+
+        int offset = getInt4Value(OFFSET_OF_DEFAULT_REPLY);
+        int length = getInt4Value(LENGTH_OF_DEFAULT_REPLY_RETURNED);
+        if (length > 0) {
+            return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
+        }
+
+        return MessageDescription.VALUE_NONE;
+    }
+
+    /**
      * Factory methods to create a message description.
      * 
      * @param connectionName - connection name
@@ -203,7 +221,7 @@ public class RTVM0300 extends APIFormat {
 
         String helpText = getMessageHelp();
         if (helpText == null || helpText.trim().length() == 0) {
-            helpText = MessageDescription.TEXT_NONE;
+            helpText = MessageDescription.VALUE_NONE;
         }
 
         MessageDescription messageDescription = new MessageDescription();
@@ -217,6 +235,7 @@ public class RTVM0300 extends APIFormat {
         messageDescription.setFieldFormats(getFieldFormats());
         messageDescription.setSeverity(getMessageSeverity());
         messageDescription.setCcsid(getCcsid());
+        messageDescription.setDefaultReplyValue(getDefaultReplyValue());
 
         return messageDescription;
     }
