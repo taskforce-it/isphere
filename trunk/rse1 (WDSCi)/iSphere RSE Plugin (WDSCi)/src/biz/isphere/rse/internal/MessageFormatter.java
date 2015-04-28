@@ -17,7 +17,7 @@ public class MessageFormatter extends AbstractMessageFormatter {
 
     public String format(MessageDescription aMessageDescription) {
         String messageHelp = aMessageDescription.getHelpText();
-        if (MessageDescription.TEXT_NONE.equals(messageHelp)) {
+        if (MessageDescription.VALUE_NONE.equals(messageHelp)) {
             messageHelp = "";
         }
         return format(aMessageDescription.getMessage(), messageHelp);
