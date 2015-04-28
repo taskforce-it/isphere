@@ -37,12 +37,16 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +55,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -345,7 +350,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void createCompareArea(Composite parent) {
 
-        Composite compareArea = new Composite(parent, SWT.NONE);
+        final Composite compareArea = new Composite(parent, SWT.NONE);
         compareArea.setLayout(new GridLayout(1, false));
         compareArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -363,31 +368,31 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         // TableViewerColumn tableViewerColumnLeftMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
-        TableColumn tblClmnLeftMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        final TableColumn tblClmnLeftMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageId.setText(Messages.ID);
         tblClmnLeftMessageId.setWidth(Size.getSize(60));
 
         // TableViewerColumn tableViewerColumnLeftMsgText = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
-        TableColumn tblClmnLeftMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        final TableColumn tblClmnLeftMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageText.setText(Messages.Message_text);
         tblClmnLeftMessageText.setWidth(Size.getSize(200));
 
         // TableViewerColumn tableViewerColumnSyncAction = new
         // TableViewerColumn(tableViewer, SWT.CENTER);
-        TableColumn tblClmnCompareResult = new TableColumn(tableViewer.getTable(), SWT.CENTER);
+        final TableColumn tblClmnCompareResult = new TableColumn(tableViewer.getTable(), SWT.CENTER);
         tblClmnCompareResult.setResizable(false);
         tblClmnCompareResult.setWidth(Size.getSize(20));
 
         // TableViewerColumn tableViewerColumnRightMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
-        TableColumn tblclmnRightMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        final TableColumn tblclmnRightMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblclmnRightMessageId.setText(Messages.ID);
         tblclmnRightMessageId.setWidth(tblClmnLeftMessageId.getWidth());
 
         // TableViewerColumn tableViewerColumnRightMsgText = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
-        TableColumn tblClmnRightMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        final TableColumn tblClmnRightMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnRightMessageText.setText(Messages.Message_text);
         tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
 
@@ -418,6 +423,43 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
+
+        compareArea.addControlListener(new ControlAdapter() {
+
+            @Override
+            public void controlResized(ControlEvent e) {
+                Rectangle area = compareArea.getClientArea();
+                Point size = tableViewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+                ScrollBar vBar = tableViewer.getTable().getVerticalBar();
+                int width = area.width - tableViewer.getTable().computeTrim(0, 0, 0, 0).width - vBar.getSize().x;
+                if (size.y > area.height + tableViewer.getTable().getHeaderHeight()) {
+                    // Subtract the scrollbar width from the total column width
+                    // if a vertical scrollbar will be required
+                    // Point vBarSize = vBar.getSize();
+                    // width -= vBarSize.x;
+                }
+                Point oldSize = tableViewer.getTable().getSize();
+                if (oldSize.x > area.width) {
+                    // table is getting smaller so make the columns
+                    // smaller first and then resize the table to
+                    // match the client area width
+                    tblClmnLeftMessageText.setWidth((width - getFixedColumnWidth()) / 2);
+                    tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
+                    tableViewer.getTable().setSize(area.width, area.height);
+                } else {
+                    // table is getting bigger so make the table
+                    // bigger first and then make the columns wider
+                    // to match the client area width
+                    tableViewer.getTable().setSize(area.width, area.height);
+                    tblClmnLeftMessageText.setWidth((width - getFixedColumnWidth()) / 2);
+                    tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
+                }
+            }
+
+            private int getFixedColumnWidth() {
+                return tblClmnLeftMessageId.getWidth() + tblClmnCompareResult.getWidth() + tblclmnRightMessageId.getWidth();
+            }
+        });
     }
 
     private void createrFooterArea(Composite parent) {
@@ -733,7 +775,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                     leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
                     monitor.worked(1);
-                    
+
                     rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
                     monitor.worked(2);
 
@@ -1542,7 +1584,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                 MessageDescriptionHelper.refreshMessageDescription(messageDescription);
                 tableViewer.update(compareItem, null);
-                
+
                 AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
                 MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
                     DialogActionTypes.getSubEditorActionType(IEditor.EDIT), messageDescription);
