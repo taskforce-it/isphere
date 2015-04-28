@@ -74,6 +74,7 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
                     CompareEditorConfiguration cc = new CompareEditorConfiguration();
                     cc.setLeftEditable(editable);
+                    cc.setRightEditable(false);
                     cc.setConsiderDate(considerDate);
                     cc.setIgnoreCase(ignoreCase);
                     cc.setThreeWay(threeWay);
