@@ -908,7 +908,7 @@ public class Messages extends NLS {
     
     public static String Tooltip_Specifies_the_folder_to_save_message_file_search_results_to; 
     
-    public static String Select;
+    public static String Tooltip_Select_object;
     
     public static String Compare;
     
@@ -1019,6 +1019,10 @@ public class Messages extends NLS {
     public static String Working;
 
     public static String Message_identifier_A_not_found_in_message_file_B_in_C;
+
+    public static String Yes_To_All;
+    
+    public static String No_To_All;
     
     static {
         // initialize resource bundle

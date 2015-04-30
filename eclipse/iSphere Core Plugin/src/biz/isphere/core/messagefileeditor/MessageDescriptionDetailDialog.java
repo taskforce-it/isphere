@@ -26,16 +26,27 @@ import com.ibm.as400.access.AS400;
 
 public class MessageDescriptionDetailDialog extends XDialog {
 
+    public static final int YES_TO_ALL = IDialogConstants.YES_TO_ALL_ID;
+    public static final int NO_TO_ALL = IDialogConstants.NO_TO_ALL_ID;
+    
     private AS400 as400;
     private int actionType;
     private MessageDescription _messageDescription;
+    private boolean yesToAllButton;
+
     private MessageDescriptionDetail _messageDescriptionDetail;
 
     public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
+        this(parentShell, as400, actionType, _messageDescription, false);
+    }
+
+    public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription,
+        boolean yesToAllButton) {
         super(parentShell);
         this.as400 = as400;
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
+        this.yesToAllButton = yesToAllButton;
     }
 
     @Override
@@ -62,9 +73,33 @@ public class MessageDescriptionDetailDialog extends XDialog {
         }
     }
 
+    protected void yesToAllPressed() {
+        setReturnCode(YES_TO_ALL);
+        close();
+    }
+
+    protected void noToAllPressed() {
+        setReturnCode(NO_TO_ALL);
+        close();
+    }
+    
+    @Override
+    protected void buttonPressed(int buttonId) {
+        super.buttonPressed(buttonId);
+        if (buttonId == IDialogConstants.YES_TO_ALL_ID) {
+            yesToAllPressed();
+        } else  if (buttonId == IDialogConstants.NO_TO_ALL_ID) {
+            noToAllPressed();
+        }
+    }
+    
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        if (yesToAllButton) {
+            createButton(parent, IDialogConstants.YES_TO_ALL_ID, Messages.Yes_To_All, false);
+            createButton(parent, IDialogConstants.NO_TO_ALL_ID, Messages.No_To_All, false);
+        }
         createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
     }
 

@@ -109,6 +109,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_COPY_EQUAL = "copy_equal.png";
     public static final String IMAGE_FILTERED_ITEMS = "filtered_items.png";
     public static final String IMAGE_COMPARE_MESSAGE_FILES = "compare_message_files.png";
+    public static final String IMAGE_OPEN = "open.png";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -258,6 +259,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_COPY_TO_CLIPBOARD, getImageDescriptor(IMAGE_COPY_TO_CLIPBOARD));
         reg.put(IMAGE_FILTERED_ITEMS, getImageDescriptor(IMAGE_FILTERED_ITEMS));
         reg.put(IMAGE_COMPARE_MESSAGE_FILES, getImageDescriptor(IMAGE_COMPARE_MESSAGE_FILES));
+        reg.put(IMAGE_OPEN, getImageDescriptor(IMAGE_OPEN));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {
