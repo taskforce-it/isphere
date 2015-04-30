@@ -37,16 +37,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -55,7 +51,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -68,6 +63,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.swt.events.TableAutoSizeAdapter;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -165,18 +161,19 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void createHeaderArea(Composite parent) {
 
         headerArea = new Composite(parent, SWT.NONE);
+        headerArea.setLayout(createGridLayoutNoBorder(2, true));
         headerArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        headerArea.setLayout(new GridLayout(2, true));
 
         Composite leftHeaderArea = new Composite(headerArea, SWT.NONE);
         leftHeaderArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        leftHeaderArea.setLayout(new GridLayout(2, false));
+        leftHeaderArea.setLayout(createGridLayoutNoBorder(2, false));
 
         lblLeftMessageFile = new Label(leftHeaderArea, SWT.BORDER);
         lblLeftMessageFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Button btnSelectLeftMessageFile = WidgetFactory.createPushButton(leftHeaderArea);
-        btnSelectLeftMessageFile.setText(Messages.Select);
+        btnSelectLeftMessageFile.setToolTipText(Messages.Tooltip_Select_object);
+        btnSelectLeftMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectLeftMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -197,14 +194,15 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         Composite rightHeaderArea = new Composite(headerArea, SWT.NONE);
+        rightHeaderArea.setLayout(createGridLayoutNoBorder(2, false));
         rightHeaderArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        rightHeaderArea.setLayout(new GridLayout(2, false));
 
         lblRightMessageFile = new Label(rightHeaderArea, SWT.BORDER);
         lblRightMessageFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Button btnSelectRightMessageFile = WidgetFactory.createPushButton(rightHeaderArea);
-        btnSelectRightMessageFile.setText(Messages.Select);
+        btnSelectRightMessageFile.setToolTipText(Messages.Tooltip_Select_object);
+        btnSelectRightMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectRightMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -228,7 +226,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void createOptionsArea(Composite parent) {
 
         optionsArea = new Composite(parent, SWT.NONE);
-        optionsArea.setLayout(new GridLayout(3, false));
+        optionsArea.setLayout(createGridLayoutNoBorder(3, false));
         optionsArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         btnCompare = WidgetFactory.createPushButton(optionsArea);
@@ -264,7 +262,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void createFilterOptionsArea(Composite parent) {
 
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
-        filterOptionsGroup.setLayout(new GridLayout(5, false));
+        filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
         filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
         filterOptionsGroup.setText(Messages.Display);
 
@@ -350,7 +348,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void createCompareArea(Composite parent) {
 
-        final Composite compareArea = new Composite(parent, SWT.NONE);
+        Composite compareArea = new Composite(parent, SWT.NONE);
         compareArea.setLayout(new GridLayout(1, false));
         compareArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -364,12 +362,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         // TableViewerColumn tableViewerColumnDummy = new
         // TableViewerColumn(tableViewer, SWT.NONE);
         TableColumn tblClmnDummy = new TableColumn(tableViewer.getTable(), SWT.NONE);
+        tblClmnDummy.setResizable(false);
         tblClmnDummy.setWidth(Size.getSize(0));
 
         // TableViewerColumn tableViewerColumnLeftMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnLeftMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageId.setText(Messages.ID);
+        tblClmnLeftMessageId.setResizable(false);
         tblClmnLeftMessageId.setWidth(Size.getSize(60));
 
         // TableViewerColumn tableViewerColumnLeftMsgText = new
@@ -386,14 +386,16 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         // TableViewerColumn tableViewerColumnRightMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
-        final TableColumn tblclmnRightMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-        tblclmnRightMessageId.setText(Messages.ID);
-        tblclmnRightMessageId.setWidth(tblClmnLeftMessageId.getWidth());
+        final TableColumn tblClmnRightMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        tblClmnRightMessageId.setText(Messages.ID);
+        tblClmnRightMessageId.setResizable(tblClmnLeftMessageId.getResizable());
+        tblClmnRightMessageId.setWidth(tblClmnLeftMessageId.getWidth());
 
         // TableViewerColumn tableViewerColumnRightMsgText = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnRightMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnRightMessageText.setText(Messages.Message_text);
+        tblClmnRightMessageText.setResizable(tblClmnLeftMessageText.getResizable());
         tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
 
         tableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -424,42 +426,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
-        compareArea.addControlListener(new ControlAdapter() {
-
-            @Override
-            public void controlResized(ControlEvent e) {
-                Rectangle area = compareArea.getClientArea();
-                Point size = tableViewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                ScrollBar vBar = tableViewer.getTable().getVerticalBar();
-                int width = area.width - tableViewer.getTable().computeTrim(0, 0, 0, 0).width - vBar.getSize().x;
-                if (size.y > area.height + tableViewer.getTable().getHeaderHeight()) {
-                    // Subtract the scrollbar width from the total column width
-                    // if a vertical scrollbar will be required
-                    // Point vBarSize = vBar.getSize();
-                    // width -= vBarSize.x;
-                }
-                Point oldSize = tableViewer.getTable().getSize();
-                if (oldSize.x > area.width) {
-                    // table is getting smaller so make the columns
-                    // smaller first and then resize the table to
-                    // match the client area width
-                    tblClmnLeftMessageText.setWidth((width - getFixedColumnWidth()) / 2);
-                    tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
-                    tableViewer.getTable().setSize(area.width, area.height);
-                } else {
-                    // table is getting bigger so make the table
-                    // bigger first and then make the columns wider
-                    // to match the client area width
-                    tableViewer.getTable().setSize(area.width, area.height);
-                    tblClmnLeftMessageText.setWidth((width - getFixedColumnWidth()) / 2);
-                    tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
-                }
-            }
-
-            private int getFixedColumnWidth() {
-                return tblClmnLeftMessageId.getWidth() + tblClmnCompareResult.getWidth() + tblclmnRightMessageId.getWidth();
-            }
-        });
+        TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
+        tableAutoSizeAdapter.addResizableColumn(tblClmnLeftMessageText, 1);
+        tableAutoSizeAdapter.addResizableColumn(tblClmnRightMessageText, 1);
+        compareArea.addControlListener(tableAutoSizeAdapter);
     }
 
     private void createrFooterArea(Composite parent) {
@@ -473,6 +443,15 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         statusBarFilterImage = statusBar.createStatusBarImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
         statusBarFilterText = statusBar.createStatusBarLabel("", 50, SWT.CENTER); //$NON-NLS-1$
 
+    }
+
+    private GridLayout createGridLayoutNoBorder(int numColumns, boolean makeColumnsEqualWidth) {
+
+        GridLayout layout = new GridLayout(numColumns, makeColumnsEqualWidth);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+
+        return layout;
     }
 
     private GridData createButtonLayoutData() {
@@ -1598,6 +1577,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         private void performDeleteMessageDescriptions(int side) {
 
             IStructuredSelection structuredSelection = (IStructuredSelection)tableViewer.getSelection();
+            boolean yesToAll = false;
 
             for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
                 MessageFileCompareItem compareItem = (MessageFileCompareItem)iterator.next();
@@ -1611,10 +1591,29 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     throw new IllegalArgumentException("Invalid side value: " + side); //$NON-NLS-1$
                 }
 
-                AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
-                MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
-                    DialogActionTypes.DELETE, messageDescription);
-                if (messageDescriptionDetailDialog.open() == Dialog.OK) {
+                int returnCode = MessageDescriptionDetailDialog.CANCEL;
+                if (!yesToAll) {
+                    boolean displayYesToAll;
+                    if (structuredSelection.size() > 1) {
+                        displayYesToAll = true;
+                    } else {
+                        displayYesToAll = false;
+                    }
+                    AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
+                    MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
+                        DialogActionTypes.DELETE, messageDescription, displayYesToAll);
+                    returnCode = messageDescriptionDetailDialog.open();
+                    if (returnCode == MessageDescriptionDetailDialog.YES_TO_ALL) {
+                        returnCode = MessageDescriptionDetailDialog.OK;
+                        yesToAll = true;
+                    } else if (returnCode == MessageDescriptionDetailDialog.NO_TO_ALL) {
+                        return;
+                    }
+                } else {
+                    returnCode = MessageDescriptionDetailDialog.OK;
+                }
+
+                if (returnCode == MessageDescriptionDetailDialog.OK) {
 
                     if (side == LEFT) {
                         compareItem.setLeftMessageDescription(null);
