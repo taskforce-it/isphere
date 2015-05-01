@@ -47,13 +47,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -76,7 +79,6 @@ import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.StatusBar;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefilecompare.MessageFileCompareEditorInput;
-import biz.isphere.core.messagefilecompare.MessageFileCompareItem;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -362,14 +364,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         // TableViewerColumn tableViewerColumnDummy = new
         // TableViewerColumn(tableViewer, SWT.NONE);
         TableColumn tblClmnDummy = new TableColumn(tableViewer.getTable(), SWT.NONE);
-        tblClmnDummy.setResizable(false);
+        tblClmnDummy.setResizable(true);
         tblClmnDummy.setWidth(Size.getSize(0));
 
         // TableViewerColumn tableViewerColumnLeftMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnLeftMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageId.setText(Messages.ID);
-        tblClmnLeftMessageId.setResizable(false);
+        tblClmnLeftMessageId.setResizable(true);
         tblClmnLeftMessageId.setWidth(Size.getSize(60));
 
         // TableViewerColumn tableViewerColumnLeftMsgText = new
@@ -381,8 +383,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         // TableViewerColumn tableViewerColumnSyncAction = new
         // TableViewerColumn(tableViewer, SWT.CENTER);
         final TableColumn tblClmnCompareResult = new TableColumn(tableViewer.getTable(), SWT.CENTER);
-        tblClmnCompareResult.setResizable(false);
-        tblClmnCompareResult.setWidth(Size.getSize(20));
+        tblClmnCompareResult.setResizable(true);
+        tblClmnCompareResult.setWidth(Size.getSize(25));
 
         // TableViewerColumn tableViewerColumnRightMsgId = new
         // TableViewerColumn(tableViewer, SWT.LEFT);
@@ -399,7 +401,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tblClmnRightMessageText.setWidth(tblClmnLeftMessageText.getWidth());
 
         tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-
             public void doubleClick(DoubleClickEvent event) {
                 ISelection selection = event.getSelection();
                 if (selection instanceof StructuredSelection) {
@@ -421,7 +422,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         tableViewer.setContentProvider(new TableContentProvider(tableStatistics));
         tableViewer.addFilter(tableFilter);
-        tableViewer.setLabelProvider(new TableLabelProvider());
+        tableViewer.setLabelProvider(getTableLabelProvider(tableViewer, 3));
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
@@ -536,7 +537,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         headerArea.layout(true);
 
-        setButtonEnablement();
+        setButtonEnablementAndDisplayCompareStatus();
     }
 
     private void refreshTableFilter() {
@@ -545,6 +546,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
             if (tableFilter != null) {
                 tableViewer.removeFilter(tableFilter);
+                clearTableStatistics();
             }
 
             if (filterData != null) {
@@ -560,19 +562,25 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 if (tableFilter == null) {
                     tableFilter = new TableFilter(contentProvider);
                 }
-                contentProvider.getTableStatistics().clearStatistics();
 
+                clearTableStatistics();
                 tableFilter.setFilterData(filterData);
                 tableViewer.addFilter(tableFilter);
             }
 
-            setButtonEnablement();
+            setButtonEnablementAndDisplayCompareStatus();
 
             storeScreenValues();
         }
     }
 
-    private void setButtonEnablement() {
+    private void clearTableStatistics() {
+
+        TableContentProvider contentProvider = (TableContentProvider)tableViewer.getContentProvider();
+        contentProvider.getTableStatistics().clearStatistics();
+    }
+
+    private void setButtonEnablementAndDisplayCompareStatus() {
 
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
@@ -721,13 +729,15 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             compareItem.setCompareStatus(newStatus);
         }
 
+        clearTableStatistics();
         tableViewer.refresh();
+        setButtonEnablementAndDisplayCompareStatus();
     }
 
     private void performCompareMessageFiles() {
 
         isComparing = true;
-        setButtonEnablement();
+        setButtonEnablementAndDisplayCompareStatus();
 
         final MessageFileCompareEditorInput editorInput = getEditorInput();
         if (editorInput.getLeftMessageFileName().equals(editorInput.getRightMessageFileName())) {
@@ -763,7 +773,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             tableViewer.setInput(getEditorInput());
                             selectionChanged = false;
-                            setButtonEnablement();
+                            setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
                     };
@@ -776,7 +786,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             isComparing = false;
-                            setButtonEnablement();
+                            setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
                     };
@@ -803,7 +813,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void performSynchronizeMessageFiles() {
 
         isSynchronizing = true;
-        setButtonEnablement();
+        setButtonEnablementAndDisplayCompareStatus();
 
         RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
         RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
@@ -811,6 +821,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
             MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
 
+            // CHECKED: OK
             if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
                 performCopyToLeft(compareItem, leftMessageFile);
             } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
@@ -821,7 +832,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         performCompareMessageFiles();
 
         isSynchronizing = false;
-        setButtonEnablement();
+        setButtonEnablementAndDisplayCompareStatus();
     }
 
     private void performCopyToLeft(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
@@ -884,6 +895,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     protected abstract RemoteObject performSelectRemoteObject(String connectionName);
 
+    protected abstract LabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
+
     /**
      * Class to provide the content of the table viewer.
      */
@@ -908,7 +921,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
             if (editorInput != null && compareItems == null) {
 
-                tableStatistics.clearStatistics();
+                clearTableStatistics();
 
                 compareItems = new LinkedHashMap<String, MessageFileCompareItem>();
 
@@ -939,118 +952,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
             editorInput = (MessageFileCompareEditorInput)newInput;
             compareItems = null;
-            tableStatistics.clearStatistics();
-        }
-    }
-
-    /**
-     * Class the provides the content for the cells of the table.
-     */
-    private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-
-        private static final int COLUMN_DUMMY = 0;
-        private static final int COLUMN_LEFT_MESSAGE_ID = 1;
-        private static final int COLUMN_LEFT_MESSAGE_TEXT = 2;
-        private static final int COLUMN_COMPARE_RESULT = 3;
-        private static final int COLUMN_RIGHT_MESSAGE_ID = 4;
-        private static final int COLUMN_RIGHT_MESSAGE_TEXT = 5;
-
-        private Image copyToLeft;
-        private Image copyToRight;
-        private Image copyNotEqual;
-        private Image copyEqual;
-
-        public TableLabelProvider() {
-
-            this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
-            this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
-            this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
-            this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
-        }
-
-        public Image getColumnImage(Object element, int columnIndex) {
-
-            if (columnIndex != COLUMN_COMPARE_RESULT) {
-                return null;
-            }
-
-            if (!(element instanceof MessageFileCompareItem)) {
-                return null;
-            }
-
-            MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
-            int compareStatus = compareItem.getCompareStatus();
-
-            if (compareStatus == MessageFileCompareItem.RIGHT_MISSING) {
-                return copyToRight;
-            } else if (compareStatus == MessageFileCompareItem.LEFT_MISSING) {
-                return copyToLeft;
-            } else if (compareStatus == MessageFileCompareItem.LEFT_EQUALS_RIGHT) {
-                return copyEqual;
-            } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
-                return copyNotEqual;
-            }
-            return null;
-        }
-
-        public String getColumnText(Object element, int columnIndex) {
-
-            if (columnIndex == COLUMN_COMPARE_RESULT) {
-                return null;
-            }
-
-            if (!(element instanceof MessageFileCompareItem)) {
-                return ""; //$NON-NLS-1$
-            }
-
-            MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
-
-            switch (columnIndex) {
-            case COLUMN_DUMMY:
-                return ""; //$NON-NLS-1$
-
-            case COLUMN_LEFT_MESSAGE_ID:
-                if (compareItem.getLeftMessageDescription() != null) {
-                    return compareItem.getLeftMessageDescription().getMessageId();
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
-
-            case COLUMN_LEFT_MESSAGE_TEXT:
-                if (compareItem.getLeftMessageDescription() != null) {
-                    return compareItem.getLeftMessageDescription().getMessage();
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
-
-            case COLUMN_RIGHT_MESSAGE_ID:
-                if (compareItem.getRightMessageDescription() != null) {
-                    return compareItem.getRightMessageDescription().getMessageId();
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
-
-            case COLUMN_RIGHT_MESSAGE_TEXT:
-                if (compareItem.getRightMessageDescription() != null) {
-                    return compareItem.getRightMessageDescription().getMessage();
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
-
-            default:
-                return ""; //$NON-NLS-1$
-            }
-        }
-
-        @Override
-        public void dispose() {
-
-            copyToLeft.dispose();
-            copyToRight.dispose();
-            copyNotEqual.dispose();
-            copyEqual.dispose();
-
-            super.dispose();
+            clearTableStatistics();
         }
     }
 
@@ -1192,11 +1094,17 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
             int compareStatus = compareItem.getCompareStatus();
 
-            countElements(compareItem);
+            // System.out.println(compareItem.getMessageId());
 
             if (filterData == null) {
-                return countSelectedElements(compareItem, true);
+                return true;
             }
+
+            countElements(compareItem);
+
+            // if (filterData == null) {
+            // return countSelectedElements(compareItem, true);
+            // }
 
             if (compareItem.isDuplicate() && !filterData.isDuplicates()) {
                 return countSelectedElements(compareItem, false);
@@ -1231,7 +1139,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         private void countElements(MessageFileCompareItem compareItem) {
 
-            int compareStatus = compareItem.getCompareStatus();
+            int compareStatus = compareItem.compareMessageDescriptions();
 
             tableStatistics.countElements();
 
@@ -1256,7 +1164,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 return false;
             }
 
-            int compareStatus = compareItem.getCompareStatus();
+            int compareStatus = compareItem.compareMessageDescriptions();
 
             tableStatistics.countElementsSelected();
 
@@ -1629,6 +1537,184 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Class the provides the content for the cells of the table.
+     */
+    protected abstract class AbstractTableLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+        protected static final int COLUMN_DUMMY = 0;
+        protected static final int COLUMN_LEFT_MESSAGE_ID = 1;
+        protected static final int COLUMN_LEFT_MESSAGE_TEXT = 2;
+        protected static final int COLUMN_COMPARE_RESULT = 3;
+        protected static final int COLUMN_RIGHT_MESSAGE_ID = 4;
+        protected static final int COLUMN_RIGHT_MESSAGE_TEXT = 5;
+
+        protected Image copyToLeft;
+        protected Image copyToRight;
+        protected Image copyNotEqual;
+        protected Image copyEqual;
+
+        public AbstractTableLabelProvider(TableViewer tableViewer, int columnIndex) {
+
+            this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
+            this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
+            this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
+            this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
+
+            if (useCompareStatusImagePainter()) {
+                tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
+            }
+        }
+
+        protected boolean useCompareStatusImagePainter() {
+            return true;
+        }
+
+        public Image getColumnImage(Object element, int columnIndex) {
+
+            if (columnIndex != COLUMN_COMPARE_RESULT) {
+                return null;
+            }
+            
+            if (useCompareStatusImagePainter()) {
+                return null;
+            }
+
+            MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
+            if (compareItem == null) {
+                return null;
+            }
+
+            int compareStatus = compareItem.getCompareStatus();
+            if (compareStatus == MessageFileCompareItem.RIGHT_MISSING) {
+                return copyToRight;
+            } else if (compareStatus == MessageFileCompareItem.LEFT_MISSING) {
+                return copyToLeft;
+            } else if (compareStatus == MessageFileCompareItem.LEFT_EQUALS_RIGHT) {
+                return copyEqual;
+            } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
+                return copyNotEqual;
+            }
+
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+
+            if (columnIndex == COLUMN_COMPARE_RESULT) {
+                return null;
+            }
+
+            if (!(element instanceof MessageFileCompareItem)) {
+                return ""; //$NON-NLS-1$
+            }
+
+            MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
+
+            switch (columnIndex) {
+            case COLUMN_DUMMY:
+                return ""; //$NON-NLS-1$
+
+            case COLUMN_LEFT_MESSAGE_ID:
+                if (compareItem.getLeftMessageDescription() != null) {
+                    return compareItem.getLeftMessageDescription().getMessageId();
+                } else {
+                    return ""; //$NON-NLS-1$
+                }
+
+            case COLUMN_LEFT_MESSAGE_TEXT:
+                if (compareItem.getLeftMessageDescription() != null) {
+                    return compareItem.getLeftMessageDescription().getMessage();
+                } else {
+                    return ""; //$NON-NLS-1$
+                }
+
+            case COLUMN_RIGHT_MESSAGE_ID:
+                if (compareItem.getRightMessageDescription() != null) {
+                    return compareItem.getRightMessageDescription().getMessageId();
+                } else {
+                    return ""; //$NON-NLS-1$
+                }
+
+            case COLUMN_RIGHT_MESSAGE_TEXT:
+                if (compareItem.getRightMessageDescription() != null) {
+                    return compareItem.getRightMessageDescription().getMessage();
+                } else {
+                    return ""; //$NON-NLS-1$
+                }
+
+            default:
+                return ""; //$NON-NLS-1$
+            }
+        }
+
+        @Override
+        public void dispose() {
+
+            copyToLeft.dispose();
+            copyToRight.dispose();
+            copyNotEqual.dispose();
+            copyEqual.dispose();
+
+            super.dispose();
+        }
+
+        protected class CompareStatusImagePainter implements Listener {
+
+            private int columnIndex;
+
+            public CompareStatusImagePainter(int columnIndex) {
+                this.columnIndex = columnIndex;
+            }
+
+            public void handleEvent(Event event) {
+                TableItem tableItem = (TableItem)event.item;
+                if (event.index == columnIndex) {
+                    Image tmpImage = getImage(tableItem);
+                    if (tmpImage == null) {
+                        return;
+                    }
+                    int tmpWidth = tableItem.getParent().getColumn(event.index).getWidth();
+                    int tmpHeight = ((TableItem)event.item).getBounds().height;
+                    int tmpX = tmpImage.getBounds().width;
+                    tmpX = (tmpWidth / 2 - tmpX / 2);
+                    int tmpY = tmpImage.getBounds().height;
+                    tmpY = (tmpHeight / 2 - tmpY / 2);
+                    if (tmpX <= 0)
+                        tmpX = event.x;
+                    else
+                        tmpX += event.x;
+                    if (tmpY <= 0)
+                        tmpY = event.y;
+                    else
+                        tmpY += event.y;
+                    event.gc.drawImage(tmpImage, tmpX, tmpY);
+                }
+            }
+
+            private Image getImage(TableItem tableItem) {
+
+                MessageFileCompareItem compareItem = (MessageFileCompareItem)tableItem.getData();
+                if (compareItem == null) {
+                    return null;
+                }
+
+                int compareStatus = compareItem.getCompareStatus();
+                if (compareStatus == MessageFileCompareItem.RIGHT_MISSING) {
+                    return copyToRight;
+                } else if (compareStatus == MessageFileCompareItem.LEFT_MISSING) {
+                    return copyToLeft;
+                } else if (compareStatus == MessageFileCompareItem.LEFT_EQUALS_RIGHT) {
+                    return copyEqual;
+                } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
+                    return copyNotEqual;
+                }
+                return null;
+            }
+
         }
     }
 }

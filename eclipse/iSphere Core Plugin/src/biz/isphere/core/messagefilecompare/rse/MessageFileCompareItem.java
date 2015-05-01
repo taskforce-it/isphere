@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.messagefilecompare;
+package biz.isphere.core.messagefilecompare.rse;
 
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
@@ -81,7 +81,7 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
         return compareMessageDescriptions();
     }
 
-    private int compareMessageDescriptions() {
+    public int compareMessageDescriptions() {
 
         if (getLeftMessageDescription() == null && getRightMessageDescription() == null) {
             return LEFT_EQUALS_RIGHT;
@@ -168,5 +168,24 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
 
     public int compareTo(MessageFileCompareItem o) {
         return messageId.compareTo(o.getMessageId());
+    }
+
+    private String getLeftMessageFileName() {
+        if (getLeftMessageDescription() == null) {
+            return "null";
+        }
+        return getLeftMessageDescription().getLibrary() + "/" + getLeftMessageDescription().getMessageFile();
+    }
+
+    private String getRightMessageFileName() {
+        if (getRightMessageDescription() == null) {
+            return "null";
+        }
+        return getRightMessageDescription().getLibrary() + "/" + getRightMessageDescription().getMessageFile();
+    }
+
+    @Override
+    public String toString() {
+        return getMessageId() + "[" + getLeftMessageFileName() + ", " + getRightMessageFileName() + "]";
     }
 }
