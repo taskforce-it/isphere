@@ -8,6 +8,10 @@
 
 package biz.isphere.rse.messagefilecompare.rse;
 
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
+
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
 import biz.isphere.rse.internal.RSESelectObjectDialog;
@@ -32,4 +36,18 @@ public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
         return dialog.getRemoteObject();
     }
 
+    @Override
+    protected LabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex) {
+        return new TableLabelProvider(tableViewer, columnIndex);
+    }
+
+    /**
+     * Class the provides the content for the cells of the table.
+     */
+    private class TableLabelProvider extends AbstractTableLabelProvider {
+
+        public TableLabelProvider(TableViewer tableViewer, int columnIndex) {
+            super(tableViewer, columnIndex);
+        }
+    }
 }
