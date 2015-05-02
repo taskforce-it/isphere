@@ -9,7 +9,6 @@
 package biz.isphere.rse.dataqueue.rse;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.swt.events.ControlEvent;
 
 import biz.isphere.core.dataqueue.rse.AbstractDataQueueMonitorView;
 import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;

@@ -8,11 +8,11 @@
 
 package biz.isphere.core.internal;
 
+import biz.isphere.base.internal.StringHelper;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
-
-import biz.isphere.base.internal.StringHelper;
 
 public class PcmlProgramCallDocument extends ProgramCallDocument {
 
