@@ -10,10 +10,10 @@ package biz.isphere.rse.messagefilecompare.rse;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
 
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
+import biz.isphere.core.messagefilecompare.rse.AbstractTableLabelProvider;
 import biz.isphere.rse.internal.RSESelectObjectDialog;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;

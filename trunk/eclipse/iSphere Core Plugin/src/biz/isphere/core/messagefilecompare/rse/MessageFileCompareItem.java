@@ -8,6 +8,7 @@
 
 package biz.isphere.core.messagefilecompare.rse;
 
+import biz.isphere.core.messagefilecompare.TableFilterData;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
 public class MessageFileCompareItem implements Comparable<MessageFileCompareItem> {
@@ -121,6 +122,41 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
     public boolean isDuplicate() {
 
         return !isSingle();
+    }
+
+    public boolean isSelected(TableFilterData filterData) {
+
+        int compareStatus = getCompareStatus();
+
+        if (isDuplicate() && !filterData.isDuplicates()) {
+            return false;
+        }
+
+        if (isSingle() && !filterData.isSingles()) {
+            return false;
+        }
+
+        if (compareStatus == MessageFileCompareItem.NO_ACTION) {
+            return true;
+        }
+
+        if (compareStatus == MessageFileCompareItem.LEFT_MISSING && filterData.isCopyLeft()) {
+            return true;
+        }
+
+        if (compareStatus == MessageFileCompareItem.RIGHT_MISSING && filterData.isCopyRight()) {
+            return true;
+        }
+
+        if (compareStatus == MessageFileCompareItem.NOT_EQUAL && filterData.isCopyNotEqual()) {
+            return true;
+        }
+
+        if (compareStatus == MessageFileCompareItem.LEFT_EQUALS_RIGHT && filterData.isEqual()) {
+            return true;
+        }
+
+        return false;
     }
 
     private int checkStatus(int status) {
