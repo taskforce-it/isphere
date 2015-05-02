@@ -16,19 +16,21 @@ import org.eclipse.ui.IPersistableElement;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.messagefileeditor.MessageDescription;
 
 public class MessageFileCompareEditorInput implements IEditorInput {
 
     private RemoteObject leftMessageFile;
     private RemoteObject rightMessageFile;
-    private String mode;
     private Image titleImage;
+    
+    private MessageDescription[] leftMessageDescriptions;
+    private MessageDescription[] rightMessageDescriptions;
 
-    public MessageFileCompareEditorInput(RemoteObject leftMessageFile, RemoteObject rightMessageFile, String mode) {
+    public MessageFileCompareEditorInput(RemoteObject leftMessageFile, RemoteObject rightMessageFile) {
 
         this.leftMessageFile = leftMessageFile;
         this.rightMessageFile = rightMessageFile;
-        this.mode = mode;
         this.titleImage = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE_MESSAGE_FILES);
     }
 
@@ -77,6 +79,22 @@ public class MessageFileCompareEditorInput implements IEditorInput {
             return ""; //$NON-NLS-1$
         }
         return rightMessageFile.getAbsoluteName();
+    }
+
+    public MessageDescription[] getLeftMessageDescriptions() {
+        return this.leftMessageDescriptions;
+    }
+    
+    public void setLeftMessageDescriptions(MessageDescription[] leftMessageDescriptions) {
+        this.leftMessageDescriptions = leftMessageDescriptions;
+    }
+
+    public MessageDescription[] getRightMessageDescriptions() {
+        return this.rightMessageDescriptions;
+    }
+
+    public void setRightMessageDescriptions(MessageDescription[] rightMessageDescriptions) {
+        this.rightMessageDescriptions = rightMessageDescriptions;
     }
 
     public String getName() {
