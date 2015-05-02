@@ -784,6 +784,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                             tableViewer.setInput(getEditorInput());
                             selectionChanged = false;
                             isComparing = false;
+                            tableViewer.refresh();
                             setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
