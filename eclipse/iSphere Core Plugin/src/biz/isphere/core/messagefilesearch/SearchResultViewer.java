@@ -52,7 +52,6 @@ import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
-import biz.isphere.core.messagefileeditor.QMHRTVM;
 
 public class SearchResultViewer {
 
