@@ -32,22 +32,24 @@ public class TableContentProvider implements IStructuredContentProvider {
 
     public Object[] getElements(Object inputElement) {
 
-        if (editorInput != null && compareItems == null) {
+        if (compareItems == null) {
 
             tableStatistics.clearStatistics();
-            
             compareItems = new LinkedHashMap<String, MessageFileCompareItem>();
+            
+            if (editorInput != null) {
 
-            for (MessageDescription leftMessageDescription : editorInput.getLeftMessageDescriptions()) {
-                compareItems.put(leftMessageDescription.getMessageId(), new MessageFileCompareItem(leftMessageDescription, null));
-            }
+                for (MessageDescription leftMessageDescription : editorInput.getLeftMessageDescriptions()) {
+                    compareItems.put(leftMessageDescription.getMessageId(), new MessageFileCompareItem(leftMessageDescription, null));
+                }
 
-            for (MessageDescription rightMessageDescription : editorInput.getRightMessageDescriptions()) {
-                MessageFileCompareItem item = compareItems.get(rightMessageDescription.getMessageId());
-                if (item == null) {
-                    compareItems.put(rightMessageDescription.getMessageId(), new MessageFileCompareItem(null, rightMessageDescription));
-                } else {
-                    item.setRightMessageDescription(rightMessageDescription);
+                for (MessageDescription rightMessageDescription : editorInput.getRightMessageDescriptions()) {
+                    MessageFileCompareItem item = compareItems.get(rightMessageDescription.getMessageId());
+                    if (item == null) {
+                        compareItems.put(rightMessageDescription.getMessageId(), new MessageFileCompareItem(null, rightMessageDescription));
+                    } else {
+                        item.setRightMessageDescription(rightMessageDescription);
+                    }
                 }
             }
         }

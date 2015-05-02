@@ -742,6 +742,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void performCompareMessageFiles() {
 
         isComparing = true;
+        
+        tableViewer.setInput(null);
+        clearTableStatistics();
         setButtonEnablementAndDisplayCompareStatus();
 
         final MessageFileCompareEditorInput editorInput = getEditorInput();
@@ -784,7 +787,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                             tableViewer.setInput(getEditorInput());
                             selectionChanged = false;
                             isComparing = false;
-                            tableViewer.refresh();
                             setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
