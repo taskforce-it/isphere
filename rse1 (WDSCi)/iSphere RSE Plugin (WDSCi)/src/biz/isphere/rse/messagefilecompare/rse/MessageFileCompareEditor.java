@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
+import biz.isphere.core.messagefilecompare.rse.AbstractTableLabelProvider;
 import biz.isphere.rse.internal.RSESelectObjectDialog;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
