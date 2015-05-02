@@ -185,6 +185,5 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             }
             return null;
         }
-
     }
 }
