@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -93,8 +94,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private MessageFileCompareEditorInput input;
 
     private boolean selectionChanged;
-    private boolean isLeftMessageFileWarning;
-    private boolean isRightMessageFileWarning;
+    private boolean isLeftMessageFileValid;
+    private boolean isRightMessageFileValid;
 
     private TableViewer tableViewer;
     private TableFilter tableFilter;
@@ -102,6 +103,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private Button btnCompare;
     private Button btnSynchronize;
+    private Button btnCancel;
+    private IProgressMonitor jobToCancel;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -129,8 +132,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     public AbstractMessageFileCompareEditor() {
 
         selectionChanged = true;
-        isLeftMessageFileWarning = false;
-        isRightMessageFileWarning = false;
+        isLeftMessageFileValid = false;
+        isRightMessageFileValid = false;
 
         dialogSettingsManager = new DialogSettingsManager(getDialogSettings());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -177,7 +180,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 RemoteObject messageFile = performSelectRemoteObject(connectionName);
                 if (messageFile != null) {
                     selectionChanged = true;
-                    isLeftMessageFileWarning = false;
+                    isLeftMessageFileValid = false;
                     getEditorInput().setLeftMessageFile(messageFile);
                     refreshAndCheckMessageFileNames();
                 }
@@ -206,7 +209,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 RemoteObject messageFile = performSelectRemoteObject(connectionName);
                 if (messageFile != null) {
                     selectionChanged = true;
-                    isRightMessageFileWarning = false;
+                    isRightMessageFileValid = false;
                     getEditorInput().setRightMessageFile(messageFile);
                     refreshAndCheckMessageFileNames();
                 }
@@ -224,7 +227,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         optionsArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         btnCompare = WidgetFactory.createPushButton(optionsArea);
-        btnCompare.setLayoutData(createButtonLayoutData());
+        btnCompare.setLayoutData(createButtonLayoutData(2));
         btnCompare.setText(Messages.Compare);
         btnCompare.setToolTipText(Messages.Tooltip_start_compare);
         btnCompare.addSelectionListener(new SelectionListener() {
@@ -251,13 +254,26 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             public void widgetDefaultSelected(SelectionEvent event) {
             }
         });
+
+        btnCancel = WidgetFactory.createPushButton(optionsArea);
+        btnCancel.setLayoutData(createButtonLayoutData());
+        btnCancel.setText(Messages.Cancel);
+        btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
+        btnCancel.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                performCancelOperation();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+            }
+        });
     }
 
     private void createFilterOptionsArea(Composite parent) {
 
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
         filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
-        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 2));
         filterOptionsGroup.setText(Messages.Display);
 
         filterData = new TableFilterData();
@@ -447,9 +463,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     }
 
     private GridData createButtonLayoutData() {
+        return createButtonLayoutData(1);
+    }
+
+    private GridData createButtonLayoutData(int verticalSpan) {
 
         GridData gridData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
         gridData.widthHint = 120;
+        gridData.verticalSpan = verticalSpan;
 
         return gridData;
     }
@@ -483,10 +504,12 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        return;
     }
 
     @Override
     public void doSaveAs() {
+        return;
     }
 
     @Override
@@ -501,7 +524,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     @Override
     public boolean isSaveOnCloseNeeded() {
-        return false;
+        return true;
     }
 
     public static void openEditor(RemoteObject leftMessageFile, RemoteObject rightMessageFile, String mode) {
@@ -584,23 +607,27 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
 
-        if (input.getLeftMessageFile() != null) {
+        if (input.getLeftMessageFile() != null && !isLeftMessageFileValid) {
             String connectionName = input.getLeftMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (isLeftMessageFileWarning || !ISphereHelper.checkISphereLibrary(getShell(), system)) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
-                isLeftMessageFileWarning = true;
+                isLeftMessageFileValid = false;
+            } else {
+                isLeftMessageFileValid = true;
             }
         }
 
-        if (input.getRightMessageFile() != null) {
+        if (input.getRightMessageFile() != null && !isRightMessageFileValid) {
             String connectionName = input.getRightMessageFile().getConnectionName();
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (isRightMessageFileWarning || !ISphereHelper.checkISphereLibrary(getShell(), system)) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), system)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
-                isRightMessageFileWarning = true;
+                isRightMessageFileValid = false;
+            } else {
+                isRightMessageFileValid = true;
             }
         }
 
@@ -612,20 +639,35 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             isSynchronizeEnabled = false;
         }
 
+        if (isWorking()) {
+            setChildrenEnabled(headerArea, false);
+            setChildrenEnabled(optionsArea, false);
+            isCompareEnabled = false;
+        } else {
+            setChildrenEnabled(headerArea, true);
+            setChildrenEnabled(optionsArea, true);
+        }
+
+        if (jobToCancel == null) {
+            btnCancel.setEnabled(false);
+        } else {
+            btnCancel.setEnabled(true);
+        }
+
         btnCompare.setEnabled(isCompareEnabled);
         btnSynchronize.setEnabled(isSynchronizeEnabled);
 
-        if (isWorking()) {
-            headerArea.setEnabled(false);
-            optionsArea.setEnabled(false);
-        } else {
-            headerArea.setEnabled(true);
-            optionsArea.setEnabled(true);
-        }
-        headerArea.update();
-        optionsArea.update();
-
         displayCompareStatus();
+    }
+
+    private void setChildrenEnabled(Composite parent, boolean enabled) {
+        for (Control control : parent.getChildren()) {
+            if (control instanceof Button) {
+                control.setEnabled(enabled);
+            } else if (control instanceof Composite) {
+                setChildrenEnabled((Composite)control, enabled);
+            }
+        }
     }
 
     private boolean isWorking() {
@@ -747,7 +789,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
 
         tableViewer.setInput(getEditorInput().clearAll());
-        
+
         isComparing = true;
         setButtonEnablementAndDisplayCompareStatus();
 
@@ -758,15 +800,33 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                 try {
 
+                    jobToCancel = monitor;
+                    UIJob job = new UIJob("") {
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor monitor) {
+                            setButtonEnablementAndDisplayCompareStatus();
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    job.schedule();
+
                     monitor.beginTask("", 2);
 
-                    MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
+                    MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile(), monitor);
                     getEditorInput().setLeftMessageDescriptions(leftMessageDescriptions);
                     monitor.worked(1);
 
-                    MessageDescription[] rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile());
+                    if (monitor.isCanceled()) {
+                        return cancelOperation();
+                    }
+
+                    MessageDescription[] rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile(), monitor);
                     getEditorInput().setRightMessageDescriptions(rightMessageDescriptions);
                     monitor.worked(2);
+
+                    if (monitor.isCanceled()) {
+                        return cancelOperation();
+                    }
 
                 } finally {
                     monitor.done();
@@ -774,6 +834,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     UIJob job = new UIJob("") {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
+                            if (tableViewer.getTable().isDisposed()) {
+                                return Status.OK_STATUS;
+                            }
+                            jobToCancel = null;
                             tableViewer.setInput(getEditorInput());
                             selectionChanged = false;
                             isComparing = false;
@@ -787,7 +851,15 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 return Status.OK_STATUS;
             }
 
-            private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) {
+            private IStatus cancelOperation() {
+
+                getEditorInput().setLeftMessageDescriptions(new MessageDescription[0]);
+                getEditorInput().setRightMessageDescriptions(new MessageDescription[0]);
+
+                return Status.OK_STATUS;
+            }
+
+            private MessageDescription[] getMessageDescriptions(RemoteObject messageFile, IProgressMonitor monitor) {
 
                 String connectionName = messageFile.getConnectionName();
                 AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
@@ -795,7 +867,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
                 iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
 
-                return iqmhrtvm.retrieveAllMessageDescriptions();
+                return iqmhrtvm.retrieveAllMessageDescriptions(monitor);
             }
         };
         job.schedule();
@@ -816,18 +888,20 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
 
                 if (compareItem.isSelected(filterData)) {
+                    getTableStatistics().removeElement(compareItem, filterData);
                     if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
                         performCopyToLeft(compareItem, leftMessageFile);
                     } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
                         performCopyToRight(compareItem, rightMessageFile);
                     }
+                    getTableStatistics().addElement(compareItem, filterData);
                 }
             }
 
             tableViewer.getTable().redraw();
             setButtonEnablementAndDisplayCompareStatus();
 
-            performCompareMessageFiles();
+            // performCompareMessageFiles();
 
         } finally {
 
@@ -893,6 +967,23 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         // CompareUI.openCompareEditorOnPage(fInput,
         // ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
         CompareUI.openCompareDialog(fInput);
+    }
+
+    private void performCancelOperation() {
+
+        if (jobToCancel != null) {
+            jobToCancel.setCanceled(true);
+        }
+    }
+
+    @Override
+    public void dispose() {
+
+        if (jobToCancel != null) {
+            jobToCancel.setCanceled(true);
+        }
+
+        super.dispose();
     }
 
     protected abstract RemoteObject performSelectRemoteObject(String connectionName);

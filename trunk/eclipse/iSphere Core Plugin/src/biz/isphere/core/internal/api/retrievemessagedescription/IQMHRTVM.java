@@ -12,6 +12,8 @@ import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
@@ -111,9 +113,22 @@ public class IQMHRTVM extends APIProgramCallDocument {
     /**
      * Retrieves all message descriptions of the message file.
      * 
+     * @param monitor - monitor
+     * 
      * @return array of message descriptions
      */
     public MessageDescription[] retrieveAllMessageDescriptions() {
+        return retrieveAllMessageDescriptions(null);
+    }
+
+    /**
+     * Retrieves all message descriptions of the message file.
+     * 
+     * @param monitor - monitor
+     * 
+     * @return array of message descriptions
+     */
+    public MessageDescription[] retrieveAllMessageDescriptions(IProgressMonitor monitor) {
 
         List<MessageDescription> messages = new ArrayList<MessageDescription>();
 
@@ -129,6 +144,9 @@ public class IQMHRTVM extends APIProgramCallDocument {
             while (result != null && result.getBytesAvailable() > 0 && result.getNumberOfMessagesReturned() > 0) {
                 // numCalls++;
                 messages.addAll(result.getMessages());
+                if (monitor != null && monitor.isCanceled()) {
+                    break;
+                }
                 result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_NEXT, result.getLastMessageIdReturned(), ALL_MESSAGES, bufferSize);
             }
 

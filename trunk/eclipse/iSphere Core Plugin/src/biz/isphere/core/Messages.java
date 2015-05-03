@@ -1023,6 +1023,8 @@ public class Messages extends NLS {
     public static String Yes_To_All;
     
     public static String No_To_All;
+
+    public static String Tooltip_cancel_operation;
     
     static {
         // initialize resource bundle
