@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -719,7 +720,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         return selectedItems.toArray(new MessageFileCompareItem[selectedItems.size()]);
     }
 
-    // TODO: update statistics
     private void changeCompareStatus(int newStatus) {
 
         MessageFileCompareItem[] selectedItems = getSelectedItems();
@@ -736,16 +736,20 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performCompareMessageFiles() {
 
-        isComparing = true;
-        
-        tableViewer.setInput(null);
-        clearTableStatistics();
-        setButtonEnablementAndDisplayCompareStatus();
-
         final MessageFileCompareEditorInput editorInput = getEditorInput();
+
         if (editorInput.getLeftMessageFileName().equals(editorInput.getRightMessageFileName())) {
-            MessageDialog.openWarning(getShell(), Messages.Warning, Messages.Warning_Both_sides_show_the_same_message_file);
+            MessageDialog dialog = new MessageDialog(getShell(), Messages.Warning, null, Messages.Warning_Both_sides_show_the_same_message_file,
+                MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+            if (dialog.open() == 1) {
+                return;
+            }
         }
+
+        tableViewer.setInput(getEditorInput().clearAll());
+        
+        isComparing = true;
+        setButtonEnablementAndDisplayCompareStatus();
 
         Job job = new Job(Messages.Loading_message_descriptions) {
 
@@ -755,15 +759,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 try {
 
                     monitor.beginTask("", 2);
-
-                    UIJob job = new UIJob("") {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            tableViewer.getTable().clearAll();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
 
                     MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile());
                     getEditorInput().setLeftMessageDescriptions(leftMessageDescriptions);
@@ -791,48 +786,55 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
                 return Status.OK_STATUS;
             }
+
+            private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) {
+
+                String connectionName = messageFile.getConnectionName();
+                AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+                IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
+                iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
+
+                return iqmhrtvm.retrieveAllMessageDescriptions();
+            }
         };
         job.schedule();
-    }
-
-    private MessageDescription[] getMessageDescriptions(RemoteObject messageFile) {
-
-        String connectionName = messageFile.getConnectionName();
-        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-
-        IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
-        iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
-
-        return iqmhrtvm.retrieveAllMessageDescriptions();
     }
 
     private void performSynchronizeMessageFiles() {
 
         isSynchronizing = true;
-        setButtonEnablementAndDisplayCompareStatus();
 
-        RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
-        RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
+        try {
 
-        for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
-            MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
+            setButtonEnablementAndDisplayCompareStatus();
 
-            if (compareItem.isSelected(filterData)) {
-                if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
-                    performCopyToLeft(compareItem, leftMessageFile);
-                } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
-                    performCopyToRight(compareItem, rightMessageFile);
+            RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
+            RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
+
+            for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
+                MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
+
+                if (compareItem.isSelected(filterData)) {
+                    if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
+                        performCopyToLeft(compareItem, leftMessageFile);
+                    } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
+                        performCopyToRight(compareItem, rightMessageFile);
+                    }
                 }
             }
+
+            tableViewer.getTable().redraw();
+            setButtonEnablementAndDisplayCompareStatus();
+
+            performCompareMessageFiles();
+
+        } finally {
+
+            isSynchronizing = false;
+            setButtonEnablementAndDisplayCompareStatus();
+
         }
-
-        tableViewer.getTable().redraw();
-        setButtonEnablementAndDisplayCompareStatus();
-        
-        performCompareMessageFiles();
-
-        isSynchronizing = false;
-        setButtonEnablementAndDisplayCompareStatus();
     }
 
     private void performCopyToLeft(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
@@ -1131,7 +1133,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 }
 
                 getTableStatistics().addElement(compareItem, filterData);
-                
+
                 tableViewer.getTable().redraw();
                 setButtonEnablementAndDisplayCompareStatus();
             }

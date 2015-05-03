@@ -23,7 +23,7 @@ public class MessageFileCompareEditorInput implements IEditorInput {
     private RemoteObject leftMessageFile;
     private RemoteObject rightMessageFile;
     private Image titleImage;
-    
+
     private MessageDescription[] leftMessageDescriptions;
     private MessageDescription[] rightMessageDescriptions;
 
@@ -84,7 +84,7 @@ public class MessageFileCompareEditorInput implements IEditorInput {
     public MessageDescription[] getLeftMessageDescriptions() {
         return this.leftMessageDescriptions;
     }
-    
+
     public void setLeftMessageDescriptions(MessageDescription[] leftMessageDescriptions) {
         this.leftMessageDescriptions = leftMessageDescriptions;
     }
@@ -99,9 +99,9 @@ public class MessageFileCompareEditorInput implements IEditorInput {
 
     public String getName() {
 
-        if (StringHelper.isNullOrEmpty( getLeftMessageFileName())) {
+        if (StringHelper.isNullOrEmpty(getLeftMessageFileName())) {
             return getRightMessageFileName();
-        } else if (StringHelper.isNullOrEmpty( getRightMessageFileName())) {
+        } else if (StringHelper.isNullOrEmpty(getRightMessageFileName())) {
             return getLeftMessageFileName();
         } else {
             return getLeftMessageFileName() + " - " + getRightMessageFileName(); //$NON-NLS-1$
@@ -114,5 +114,13 @@ public class MessageFileCompareEditorInput implements IEditorInput {
 
     public Image getTitleImage() {
         return titleImage;
+    }
+
+    public MessageFileCompareEditorInput clearAll() {
+
+        leftMessageDescriptions = new MessageDescription[0];
+        rightMessageDescriptions = new MessageDescription[0];
+
+        return this;
     }
 }
