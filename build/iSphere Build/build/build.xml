@@ -32,9 +32,15 @@
  *             Check: Regular expression
  *     - On the PC update document iSphere.doc.
  *     - On the PC print iSphere.doc to 'iSphere for WDSCi 7.0-RDi 8.0+.pdf'.
- *     - On the PC set version number (build.version) in build.properties.
+ *     - On the PC set version number (build.version) in build.properties and the
+ *       propertes for selecting what to build according to your needs.
  *       (version number is automatically updated in MANIFEST.MF, feature.xml 
  *        and plugin.xml by build target 'updateVersionNumber'.)
+ *
+ *        build.version
+ *        build.files.enabled
+ *        build.web.enabled
+ *        build.help.enabled
  *
  *   Repeat for RDi and WDSC:
  *     - On the PC run target 'downloadISphereLibrary'.
