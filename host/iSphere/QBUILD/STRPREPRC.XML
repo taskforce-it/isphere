@@ -5483,7 +5483,7 @@ srccssid=  "00273">
       *   >>COMPILE<<                                                       *                 RADDAT
       *     >>PARM<< TRUNCNBR(*NO);                                         *                 RADDAT
       *     >>PARM<< DBGVIEW(*LIST);                                        *                 RADDAT
-      *     >>PARM<< TGTRLS(V5R3M0);                                        *                 RADDAT
+      *     >>PARM<< TGTRLS(V5R4M0);                                        *                 RADDAT
       *   >>END-COMPILE<<                                                   *                 RADDAT
       *                                                                     *                 RADDAT
       *   >>EXECUTE<<                                                       *                 RADDAT

@@ -36,7 +36,7 @@
              DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
              DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHEREDVP')
              DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
-             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R3M0')
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R4M0')
              DCL        VAR(&OWNER    ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
 
              DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
