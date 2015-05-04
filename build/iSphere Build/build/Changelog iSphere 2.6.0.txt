@@ -3,9 +3,13 @@
 Changelog: iSphere 2.6.0 beta 8
 -------------------------------
 
-   ***********************************************************
-   *** This version requires updating the iSphere library. ***
-   ***********************************************************
+   ***************************************************************
+   *** This version requires updating the iSphere library.     ***
+   ***************************************************************
+
+   ***************************************************************
+   *** This version requires V5R4 for restoring the save file. ***
+   ***************************************************************
 
  • Fixed bug that the character preceding a form feed (FF) was not converted
    to text, html and pdf when saving or displaying a spooled file.
