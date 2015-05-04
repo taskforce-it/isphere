@@ -90,6 +90,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private static final String BUTTON_EQUAL = "BUTTON_EQUAL"; //$NON-NLS-1$
     private static final String BUTTON_SINGLES = "BUTTON_SINGLES"; //$NON-NLS-1$
     private static final String BUTTON_DUPLICATES = "BUTTON_DUPLICATES"; //$NON-NLS-1$
+    private static final String BUTTON_COMPARE_AFTER_SYNC = "BUTTON_COMPARE_AFTER_SYNC"; //$NON-NLS-1$
 
     private MessageFileCompareEditorInput input;
 
@@ -104,6 +105,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Button btnCompare;
     private Button btnSynchronize;
     private Button btnCancel;
+    private Button chkCompareAfterSync;
     private IProgressMonitor jobToCancel;
 
     private DialogSettingsManager dialogSettingsManager;
@@ -226,8 +228,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         optionsArea.setLayout(createGridLayoutNoBorder(3, false));
         optionsArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+        int verticalSpan = 3;
         btnCompare = WidgetFactory.createPushButton(optionsArea);
-        btnCompare.setLayoutData(createButtonLayoutData(2));
+        btnCompare.setLayoutData(createButtonLayoutData(verticalSpan));
         btnCompare.setText(Messages.Compare);
         btnCompare.setToolTipText(Messages.Tooltip_start_compare);
         btnCompare.addSelectionListener(new SelectionListener() {
@@ -240,10 +243,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         });
 
-        createFilterOptionsArea(optionsArea);
+        createFilterOptionsArea(optionsArea, verticalSpan);
 
         btnSynchronize = WidgetFactory.createPushButton(optionsArea);
-        btnSynchronize.setLayoutData(createButtonLayoutData());
+        btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
         btnSynchronize.setText(Messages.Synchronize);
         btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize);
         btnSynchronize.addSelectionListener(new SelectionListener() {
@@ -256,7 +259,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         btnCancel = WidgetFactory.createPushButton(optionsArea);
-        btnCancel.setLayoutData(createButtonLayoutData());
+        btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
         btnCancel.setText(Messages.Cancel);
         btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
         btnCancel.addSelectionListener(new SelectionListener() {
@@ -267,13 +270,25 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             public void widgetDefaultSelected(SelectionEvent event) {
             }
         });
+
+        chkCompareAfterSync = WidgetFactory.createCheckbox(optionsArea);
+        chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
+        chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_synchronization);
+        chkCompareAfterSync.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                storeScreenValues();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
+            }
+        });
     }
 
-    private void createFilterOptionsArea(Composite parent) {
+    private void createFilterOptionsArea(Composite parent, int verticalSpan) {
 
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
         filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
-        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 2));
+        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, verticalSpan));
         filterOptionsGroup.setText(Messages.Display);
 
         filterData = new TableFilterData();
@@ -467,8 +482,12 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     }
 
     private GridData createButtonLayoutData(int verticalSpan) {
+        return createButtonLayoutData(verticalSpan, SWT.LEFT);
+    }
 
-        GridData gridData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
+    private GridData createButtonLayoutData(int verticalSpan, int horizontalAlignment) {
+
+        GridData gridData = new GridData(horizontalAlignment, SWT.TOP, false, false, 1, 1);
         gridData.widthHint = 120;
         gridData.verticalSpan = verticalSpan;
 
@@ -602,7 +621,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         getTableStatistics().clearStatistics();
     }
 
-    private void setButtonEnablementAndDisplayCompareStatus() {
+    private synchronized void setButtonEnablementAndDisplayCompareStatus()  {
 
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
@@ -670,10 +689,18 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
     }
 
-    private boolean isWorking() {
+    private synchronized boolean isWorking() {
         return isComparing || isSynchronizing;
     }
 
+    private synchronized void setIsComparing(boolean isComparing) {
+        this.isComparing = isComparing;
+    }
+
+    private synchronized void setIsSynchronizing(boolean isSynchronizing) {
+        this.isSynchronizing = isSynchronizing;
+    }
+    
     private void displayCompareStatus() {
 
         if (statusInfo != null) {
@@ -706,6 +733,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnNoCopy.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_NO_COPY, true));
         btnSingles.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_SINGLES, true));
         btnDuplicates.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_DUPLICATES, true));
+        chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
     }
 
     /**
@@ -719,6 +747,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         dialogSettingsManager.storeValue(BUTTON_NO_COPY, btnNoCopy.getSelection());
         dialogSettingsManager.storeValue(BUTTON_SINGLES, btnSingles.getSelection());
         dialogSettingsManager.storeValue(BUTTON_DUPLICATES, btnDuplicates.getSelection());
+        dialogSettingsManager.storeValue(BUTTON_COMPARE_AFTER_SYNC, chkCompareAfterSync.getSelection());
     }
 
     /**
@@ -790,7 +819,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         tableViewer.setInput(getEditorInput().clearAll());
 
-        isComparing = true;
+        setIsComparing(true);
         setButtonEnablementAndDisplayCompareStatus();
 
         Job job = new Job(Messages.Loading_message_descriptions) {
@@ -840,7 +869,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                             jobToCancel = null;
                             tableViewer.setInput(getEditorInput());
                             selectionChanged = false;
-                            isComparing = false;
+                            setIsComparing(false);
                             setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
@@ -875,7 +904,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void performSynchronizeMessageFiles() {
 
-        isSynchronizing = true;
+        setIsSynchronizing(true);
 
         try {
 
@@ -898,14 +927,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 }
             }
 
-            tableViewer.getTable().redraw();
-            setButtonEnablementAndDisplayCompareStatus();
-
-            // performCompareMessageFiles();
+            if (chkCompareAfterSync.getSelection()) {
+                performCompareMessageFiles();
+            }
 
         } finally {
 
-            isSynchronizing = false;
+            setIsSynchronizing(false);
+            tableViewer.getTable().redraw();
             setButtonEnablementAndDisplayCompareStatus();
 
         }
