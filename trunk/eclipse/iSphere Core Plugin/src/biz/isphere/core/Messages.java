@@ -1026,6 +1026,10 @@ public class Messages extends NLS {
 
     public static String Tooltip_cancel_operation;
     
+    public static String Compare_after_synchronization;
+    
+    public static String Tooltip_Compare_after_synchronization;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
