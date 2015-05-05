@@ -55,25 +55,5 @@ public class QSZRTVPR extends APIProgramCallDocument {
 
         return parameterList;
     }
-
-    public static void main(String[] args) {
-
-        try {
-
-            AS400 system = new AS400("ghentw.gfd.de", "WEBUSER", "WEBUSER");
-            PRDI0100 prdi0100 = new PRDI0100(system);
-            PRDR0100 prdr0100 = new PRDR0100(system);
-            QSZRTVPR main = new QSZRTVPR(system);
-            if (main.execute(prdr0100, prdi0100)){
-                System.out.println(prdr0100.getReleaseLevel());
-            } else {
-                System.out.println(main.getMessageList()[0]);
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
+    
 }
