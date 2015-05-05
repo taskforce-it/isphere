@@ -30,13 +30,6 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
         titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);
     }
 
-    // TODO: CMOne - remove constructor
-    @Deprecated
-    public AbstractObjectEditorInput(AS400 anAS400, String aConnectionName, String aLibrary, String anObjectName, String anObjectType, String aMode,
-        String anImageID) {
-        this(anAS400, new RemoteObject(aConnectionName, anObjectName, aLibrary, anObjectType, ""), aMode, anImageID);
-    }
-
     public AS400 getAS400() {
         return as400;
     }

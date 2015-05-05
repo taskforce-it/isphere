@@ -89,18 +89,5 @@ public class BindingDirectoryEditor extends EditorPart {
         } catch (PartInitException e) {
         }
     }
-
-    // TODO: CMOne - remove method
-    @Deprecated
-    public static void openEditor(AS400 as400, Connection jdbcConnection, String connectionName, String library, String bindingDirectory, String mode) {
-
-        try {
-
-            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, connectionName, library, bindingDirectory,
-                mode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
-
-        } catch (PartInitException e) {
-        }
-    }
+    
 }
