@@ -303,7 +303,7 @@ public class TransferISphereLibrary extends Shell {
                             AS400FTP client = new AS400FTP(as400);
 
                             URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
-                            File file = new File(fileUrl.getPath() + "Server\\ISPHERE");
+                            File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE");
                             client.setPort(ftpPort);
                             client.setDataTransferType(FTP.BINARY);
                             if (client.connect()) {
