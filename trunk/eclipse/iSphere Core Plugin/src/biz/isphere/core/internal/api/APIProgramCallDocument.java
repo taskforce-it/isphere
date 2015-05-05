@@ -112,7 +112,12 @@ public abstract class APIProgramCallDocument {
         if (type.startsWith("*")) { //$NON-NLS-1$
             type = type.substring(1);
         }
-        return "/QSYS.LIB/" + library + ".LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if (library.equals("QSYS")) {
+            return "/QSYS.LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+        else {
+            return "/QSYS.LIB/" + library + ".LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
     }
 
     /**
