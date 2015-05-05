@@ -19,16 +19,8 @@ import com.ibm.as400.access.AS400;
 
 public class MessageFileEditorInput extends AbstractObjectEditorInput {
 
-    private static final String OBJECT_TYPE = "MSGF";
-
     public MessageFileEditorInput(AS400 anAS400, RemoteObject remoteObject, String aMode) {
         super(anAS400, remoteObject, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
-    }
-
-    // TODO: CMOne - remove method
-    @Deprecated
-    public MessageFileEditorInput(AS400 anAS400, String aConnectionName, String aLibrary, String aMessageFile, String aMode) {
-        super(anAS400, aConnectionName, aLibrary, aMessageFile, OBJECT_TYPE, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
     }
 
     public boolean exists() {

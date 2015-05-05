@@ -21,8 +21,6 @@ import com.ibm.as400.access.AS400;
 
 public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
-    private static final String OBJECT_TYPE = "BNDDIR";
-
     private Connection jdbcConnection;
     private String level;
 
@@ -31,12 +29,6 @@ public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
         this.jdbcConnection = jdbcConnection;
         this.level = ISpherePlugin.getDefault().getIBMiRelease(as400);
-    }
-
-    // TODO: CMOne - remove constructor
-    @Deprecated
-    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, String connectionName, String library, String bindingDirectory, String mode) {
-        this(as400, jdbcConnection, new RemoteObject(connectionName, bindingDirectory, library, OBJECT_TYPE, ""), mode);
     }
 
     public boolean exists() {
