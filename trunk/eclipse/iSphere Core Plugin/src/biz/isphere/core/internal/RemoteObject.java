@@ -11,8 +11,6 @@ package biz.isphere.core.internal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import biz.isphere.base.internal.QsysObjectHelper;
-
 /**
  * The RemoteObject class is used by the RDI and WDSCi plug-in as an adapter to
  * pass QSYSRemoteObjects (RDi) and ISeriesObjects (WDSCi) to the core plug-in.
@@ -37,7 +35,7 @@ public class RemoteObject {
         this.connectionName = connectionName;
         this.name = name;
         this.library = library;
-        this.objectType = QsysObjectHelper.getAPIObjectType(objectType);
+        this.objectType = objectType;
         this.description = description;
     }
 
