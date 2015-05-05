@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -365,7 +366,7 @@ public abstract class AbstractEntryDialog extends XDialog {
      */
     protected String loadRepositoryPath() {
 
-        return loadValue(REPOSITORY_PATH, "C:\\");
+        return loadValue(REPOSITORY_PATH, FileHelper.getDefaultRootDirectory());
     }
 
     /**

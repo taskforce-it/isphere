@@ -320,7 +320,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                 dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
                 dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
-                dialog.setFilterPath("C:\\");
+                dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
                 dialog.setFileName("export.xls");
                 dialog.setOverwrite(true);
                 String file = dialog.open();

@@ -245,7 +245,7 @@ public final class Preferences {
     public String getSpooledFileSaveDirectory() {
         String directory = preferenceStore.getString(SPOOLED_FILES_SAVE_DIRECTORY);
         if (StringHelper.isNullOrEmpty(directory)) {
-            return "C:\\"; //$NON-NLS-1$
+            return FileHelper.getDefaultRootDirectory();
         }
         return directory;
     }
