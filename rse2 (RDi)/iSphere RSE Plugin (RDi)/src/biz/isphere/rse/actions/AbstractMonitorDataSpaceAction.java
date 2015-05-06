@@ -72,9 +72,9 @@ public abstract class AbstractMonitorDataSpaceAction implements IObjectActionDel
             String connectionName = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
-            String type = qsysRemoteObject.getType();
+            String objectType = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            RemoteObject remoteObject = new RemoteObject(connectionName, name, library, type, description);
+            RemoteObject remoteObject = new RemoteObject(connectionName, name, library, objectType, description);
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_SPACE_MONITOR_VIEWS);
