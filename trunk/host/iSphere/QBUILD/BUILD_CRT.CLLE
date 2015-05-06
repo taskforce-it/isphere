@@ -92,7 +92,17 @@
              /* ----------------------------------------------- */
              CHKOBJ     OBJ(&PRDLIB) OBJTYPE(*LIB)
              MONMSG     MSGID(CPF9801) EXEC(DO)
-                CRTLIB LIB(&PRDLIB)
+
+                CRTLIB     LIB(&PRDLIB)
+
+                CHGOBJOWN  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) NEWOWN(&OWNER) +
+                             CUROWNAUT(*REVOKE)
+
+                RVKOBJAUT  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) USER(*ALL)
+
+                GRTOBJAUT  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) USER(*PUBLIC) +
+                             AUT(*CHANGE)
+
              ENDDO
 
              CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
@@ -494,6 +504,14 @@
              /* ----------------------------------------------- */
 
              CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
+
+             CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
+                          CUROWNAUT(*REVOKE)
+
+             RVKOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*ALL)
+
+             GRTOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*PUBLIC) +
+                          AUT(*CHANGE)
 
              SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
                           OMITOBJ((&PRDLIB/BUILD    *PGM) +
