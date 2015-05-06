@@ -17,18 +17,25 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
@@ -86,7 +93,7 @@ public class TransferISphereLibrary extends Shell {
         buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         buttonStart.setText(Messages.Start_Transfer);
 
-        tableStatus = new Table(this, SWT.BORDER);
+        tableStatus = new Table(this, SWT.BORDER | SWT.MULTI);
         final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true);
         tableStatus.setLayoutData(gd_tableStatus);
 
@@ -102,6 +109,26 @@ public class TransferISphereLibrary extends Shell {
                 }
             }
         });
+
+        tableStatus.addKeyListener(new KeyListener() {
+            public void keyReleased(KeyEvent event) {
+            }
+            public void keyPressed(KeyEvent event) {
+                if ((event.stateMask & SWT.CTRL) != SWT.CTRL) {
+                    return;
+                }
+                if (event.keyCode == 'a') {
+                    tableStatus.selectAll();
+                }
+                if (event.keyCode == 'c') {
+                    ClipboardHelper.setTableItemsText(tableStatus.getSelection());
+                }
+            }
+        });
+        
+        Menu menuTableStatusContextMenu = new Menu(tableStatus);
+        menuTableStatusContextMenu.addMenuListener(new TableContextMenu(tableStatus));
+        tableStatus.setMenu(menuTableStatusContextMenu);
 
         buttonClose = WidgetFactory.createPushButton(this);
         buttonClose.setText(Messages.btnLabel_Close);
@@ -349,6 +376,52 @@ public class TransferISphereLibrary extends Shell {
                 buttonClose.setEnabled(true);
                 buttonClose.setFocus();
             }
+        }
+    }
+
+    /**
+     * Class that implements the context menu for the table rows.
+     */
+    private class TableContextMenu extends MenuAdapter {
+
+        private Table table;
+        private MenuItem menuItemCopySelected;
+
+        public TableContextMenu(Table table) {
+            this.table = table;
+        }
+
+        @Override
+        public void menuShown(MenuEvent event) {
+            destroyMenuItems();
+            createMenuItems();
+        }
+
+        private Menu getMenu() {
+            return table.getMenu();
+        }
+        
+        private void destroyMenuItems() {
+            if (!((menuItemCopySelected == null) || (menuItemCopySelected.isDisposed()))) {
+                menuItemCopySelected.dispose();
+            }
+        }
+
+        private void createMenuItems() {
+
+            createMenuItemCopySelected();
+        }
+
+        private void createMenuItemCopySelected() {
+            
+            menuItemCopySelected = new MenuItem(getMenu(), SWT.NONE);
+            menuItemCopySelected.setText(Messages.Copy);
+            menuItemCopySelected.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    ClipboardHelper.setTableItemsText(table.getItems());
+                }
+            });
         }
     }
 }
