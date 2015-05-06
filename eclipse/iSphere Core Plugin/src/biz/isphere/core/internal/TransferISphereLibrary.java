@@ -79,7 +79,7 @@ public class TransferISphereLibrary extends Shell {
         setLayout(gl_shell);
 
         setText(Messages.Transfer_iSphere_library);
-        setSize(500, 310);
+        setSize(500, 330);
 
         buttonStart = WidgetFactory.createPushButton(this);
         buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
