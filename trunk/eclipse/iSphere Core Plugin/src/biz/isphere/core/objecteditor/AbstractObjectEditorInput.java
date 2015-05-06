@@ -59,8 +59,7 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     }
 
     public String getToolTipText() {
-        return "\\\\" + getAS400().getSystemName() + "\\QSYS.LIB\\" + getObjectLibrary() + ".LIB\\" + getObjectName() + "."
-            + remoteObject.getObjectType();
+        return remoteObject.getToolTipText();
     }
 
     public String getMode() {

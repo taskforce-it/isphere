@@ -74,9 +74,9 @@ public class MonitorDataQueueAction implements IObjectActionDelegate {
             String connection = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
-            String type = qsysRemoteObject.getType();
+            String objectType = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            RemoteObject remoteObject = new RemoteObject(connection, name, library, type, description);
+            RemoteObject remoteObject = new RemoteObject(connection, name, library, objectType, description);
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_QUEUE_MONITOR_VIEWS);

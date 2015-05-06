@@ -11,7 +11,6 @@ package biz.isphere.core.dataspace.rse;
 import java.math.BigDecimal;
 
 import biz.isphere.base.internal.BigDecimalHelper;
-import biz.isphere.base.internal.QsysObjectHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspaceeditor.QWCRDTAA;
 import biz.isphere.core.internal.ISeries;
@@ -23,7 +22,6 @@ import com.ibm.as400.access.CharacterDataArea;
 import com.ibm.as400.access.DataArea;
 import com.ibm.as400.access.DecimalDataArea;
 import com.ibm.as400.access.LogicalDataArea;
-import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.UserSpace;
 
@@ -482,8 +480,7 @@ public abstract class AbstractWrappedDataSpace {
     }
 
     private QSYSObjectPathName getObjectPathName() {
-        return new QSYSObjectPathName(remoteObject.getLibrary(), remoteObject.getName(), QsysObjectHelper.getAPIObjectType(remoteObject
-            .getObjectType()));
+        return remoteObject.getObjectPathName();
     }
 
     protected boolean isDataArea() {
@@ -500,15 +497,7 @@ public abstract class AbstractWrappedDataSpace {
     }
 
     private String retrieveDescription(AS400 anAS400, RemoteObject remoteObject) {
-        ObjectDescription objectDescription = new ObjectDescription(as400, remoteObject.getLibrary(), remoteObject.getName(),
-            QsysObjectHelper.getAPIObjectType(remoteObject.getObjectType()));
-        String text;
-        try {
-            text = (String)objectDescription.getValue(ObjectDescription.TEXT_DESCRIPTION);
-        } catch (Exception e) {
-            text = ""; //$NON-NLS-1$
-        }
-        return text;
+        return remoteObject.getDescription();
     }
 
     private IllegalMethodAccessException produceIllegalMethodAccessException(String aMethodName) {
