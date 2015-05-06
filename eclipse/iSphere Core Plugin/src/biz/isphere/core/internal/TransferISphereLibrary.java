@@ -226,13 +226,17 @@ public class TransferISphereLibrary extends Shell {
             commandCall.run(command);
             AS400Message[] messageList = commandCall.getMessageList();
             if (messageList.length > 0) {
+                AS400Message escapeMessage = null;
                 for (int idx = 0; idx < messageList.length; idx++) {
-                    if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                        if (logError) {
-                            setStatus(messageList[idx].getID() + ": " + messageList[idx].getText());
-                        }
-                        return messageList[idx].getID();
+                    if (logError) {
+                        setStatus(messageList[idx].getID() + ": " + messageList[idx].getText());
                     }
+                    if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                        escapeMessage = messageList[idx];
+                    }
+                }
+                if (escapeMessage != null) {
+                    return escapeMessage.getID();
                 }
             }
             return "";
