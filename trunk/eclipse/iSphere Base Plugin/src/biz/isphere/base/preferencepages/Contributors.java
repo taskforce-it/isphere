@@ -181,6 +181,10 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         Label buckCalabro = new Label(documentation, SWT.NONE);
         buckCalabro.setText("Buck Calabro");
 
+        Label labelDummy1 = new Label(documentation, SWT.NONE);
+        Label samLennon = new Label(documentation, SWT.NONE);
+        samLennon.setText("Sam Lennon");
+
     }
 
     public void init(IWorkbench workbench) {
