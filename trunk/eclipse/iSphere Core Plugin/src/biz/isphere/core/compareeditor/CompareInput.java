@@ -142,7 +142,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     ancestorTemp.delete();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Could not delete temporary ancestor file ***", e);
                 }
             }
         }
@@ -152,7 +152,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     leftTemp.delete();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Could not delete temporary left file ***", e);
                 }
             }
         }
@@ -162,7 +162,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     rightTemp.delete();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Could not delete temporary right file ***", e);
                 }
             }
         }
@@ -175,12 +175,12 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             fLeft.commit(pm);
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not commit changes of left file ***", e);
         }
         try {
             leftMember.upload(pm);
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not upload left file ***", e);
         }
         fLeft.refreshTempFile();
         ((MyDiffNode)fRoot).fireChange();
@@ -191,7 +191,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             leftMember.openStream();
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not open stream of left file ***", e);
         }
     }
 
@@ -200,7 +200,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             leftMember.closeStream();
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not close stream of left file ***", e);
         }
     }
 

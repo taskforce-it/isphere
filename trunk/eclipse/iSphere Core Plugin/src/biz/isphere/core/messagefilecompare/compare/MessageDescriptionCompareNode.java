@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.preferences.Preferences;
 
@@ -64,7 +65,7 @@ public class MessageDescriptionCompareNode extends BufferedContent implements IT
             int lineWidth = Preferences.getInstance().getMessageFileCompareLineWidth();
             return new BufferedInputStream(new ByteArrayInputStream(messageDescription.asComparableText(lineWidth).getBytes()));
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not create InputStream of message description ***", e);
             return null;
         }
     }

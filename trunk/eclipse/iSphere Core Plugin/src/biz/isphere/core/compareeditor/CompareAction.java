@@ -184,9 +184,9 @@ public class CompareAction {
                 for (IEditorReference editorReference : page.getEditorReferences()) {
                     try {
                         IEditorInput editorInput = editorReference.getEditorInput();
-                        
+
                         // FIXME: add FileEditorInput
-                        
+
                         if (editorInput instanceof CompareInput) {
                             CompareInput compareInput = (CompareInput)editorInput;
                             IFile leftMember = compareInput.getLeft().getLocalResource();
@@ -197,6 +197,7 @@ public class CompareAction {
                             }
                         }
                     } catch (Exception e) {
+                        ISpherePlugin.logError("*** Could not the compare editor ***", e);
                     }
                 }
             }

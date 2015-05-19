@@ -250,6 +250,7 @@ public final class DataSpaceEditorRepository {
                     dEditors.put(dialog.getKey(), dialog);
                 }
             } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not load data space designer repository ***", e);
             }
         }
 
@@ -274,7 +275,7 @@ public final class DataSpaceEditorRepository {
             return (DEditor)getXStream().fromXML(xml.toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not load XML of data space editor ***", e);
             return null;
         }
     }
