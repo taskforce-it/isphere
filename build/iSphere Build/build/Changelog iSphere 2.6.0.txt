@@ -6,6 +6,7 @@ Changelog: iSphere 2.6.0 beta 9
  • Added drag & drop to tree viewer of iSphere Data Space Editor Designer.
  • Added exception logging for monitored exceptions.
  • Fixed error messages.
+ • Added iSphere Help Feature.
 
 
 Changelog: iSphere 2.6.0 beta 8
