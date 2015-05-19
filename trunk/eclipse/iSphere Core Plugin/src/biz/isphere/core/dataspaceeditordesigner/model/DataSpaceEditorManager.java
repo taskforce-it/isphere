@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,8 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 public final class DataSpaceEditorManager {
 
     public static final String GENERATED = "*GENERATED";
+
+    private static final String DATA_KEY_DIALOG_AREA = "DATA_KEY_DIALOG_AREA";
 
     public DataSpaceEditorManager() {
     }
@@ -96,9 +98,20 @@ public final class DataSpaceEditorManager {
         dialogAreaLayoutData.grabExcessVerticalSpace = true;
         dialogArea.setLayoutData(dialogAreaLayoutData);
 
+        dialogArea.setData(DATA_KEY_DIALOG_AREA, DATA_KEY_DIALOG_AREA);
+        
         return dialogArea;
     }
 
+    public boolean isDialogArea(Composite composite) {
+        
+        if (composite.getData(DATA_KEY_DIALOG_AREA) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public Control createReadOnlyWidgetControlAndAddToParent(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         Control control = createWidgetControlAndAddToParent(parent, columnsPerEditorColumn, widget);

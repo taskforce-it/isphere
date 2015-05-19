@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -99,6 +100,7 @@ import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.rse.AbstractDropRemoteObjectListerner;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractDataSpaceEditorDesigner extends EditorPart implements IDialogEditor, IDropObjectListener, ISelectionProvider {
@@ -226,13 +228,17 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     }
 
     public void addReferencedObjectToSelectedEditors(DTemplateReferencedObject template) {
-        DReferencedObject referencedObject = manager.createReferencedObjectFromTemplate(template);
         for (DEditor dEditor : getSelectedEditors()) {
-            manager.addReferencedObject(dEditor, referencedObject);
-            treeViewer.refresh(dEditor);
-            treeViewer.setExpandedElements(new Object[] { dEditor });
-            setEditorDirty(dEditor);
+            addReferencedObjectToEditor(dEditor, template);
         }
+    }
+
+    private void addReferencedObjectToEditor(DEditor dEditor, DTemplateReferencedObject template) {
+        DReferencedObject referencedObject = manager.createReferencedObjectFromTemplate(template);
+        manager.addReferencedObject(dEditor, referencedObject);
+        treeViewer.refresh(dEditor);
+        treeViewer.setExpandedElements(new Object[] { dEditor });
+        setEditorDirty(dEditor);
     }
 
     public void removeSelectedReferencedObject() {
@@ -394,7 +400,9 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         treeViewer.setLabelProvider(new TreeViewLabelProvider());
         treeViewer.setSorter(new TreeViewSorter());
         treeViewer.setInput(DataSpaceEditorRepository.getInstance().getCopyOfDataSpaceEditors());
-        treeViewer.addDropSupport(DND.DROP_NONE, new Transfer[] {}, new DropVetoListerner());
+        // treeViewer.addDropSupport(DND.DROP_NONE, new Transfer[] {}, new
+        // DropVetoListerner());
+        addDropSupportOnViewer(treeViewer);
 
         Menu treeViewerMenu = new Menu(treeViewer.getControl());
         treeViewerMenu.addMenuListener(new PopupTreeViewer(this));
@@ -517,12 +525,63 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         descriptionViewer.setText(text);
     }
 
+    public void dropData(RemoteObject[] remoteObjects, Object target) {
 
-    public void dropData(RemoteObject[] remoteObjects) {
         if (remoteObjects == null || remoteObjects.length == 0) {
             MessageDialogAsync.displayError(getShell(), Messages.Dropped_object_does_not_match_expected_type);
             return;
         }
+
+        if (target instanceof TreeItem) {
+            dropReferencedObject(remoteObjects, (TreeItem)target);
+        } else {
+            dropExampleData(remoteObjects);
+        }
+
+    }
+
+    private void dropReferencedObject(final RemoteObject[] remoteObjects, final TreeItem treeItem) {
+
+        for (RemoteObject remoteObject : remoteObjects) {
+            if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
+                MessageDialogAsync.displayError(getShell(),
+                    Messages.bind(Messages.Selected_object_does_not_match_expected_type_A, ISeries.DTAARA + "/" + ISeries.USRSPC));
+                return;
+            }
+        }
+
+        UIJob job = new UIJob("") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+
+                DataSpaceEditorRepository repository = DataSpaceEditorRepository.getInstance();
+                if (treeItem.getData() instanceof DEditor) {
+                    DEditor dEditor = (DEditor)treeItem.getData();
+                    for (RemoteObject remoteObject : remoteObjects) {
+                        if (!repository.editorSupportsObject(dEditor, remoteObject)) {
+                            String name = remoteObject.getName();
+                            String library = remoteObject.getLibrary();
+                            String type = remoteObject.getObjectType();
+                            DTemplateReferencedObject template = new DTemplateReferencedObject(name, library, type);
+                            addReferencedObjectToEditor(dEditor, template);
+                        } else {
+                            MessageDialog.openError(
+                                getShell(),
+                                Messages.E_R_R_O_R,
+                                Messages.bind(Messages.Object_A_has_already_been_assigned_to_editor_B,
+                                    new String[] { remoteObject.getQualifiedObject(), dEditor.getName() }));
+                        }
+                    }
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+    }
+
+    private void dropExampleData(RemoteObject[] remoteObjects) {
 
         if (remoteObjects.length > 1) {
             MessageDialogAsync.displayError(getShell(), Messages.Only_one_data_space_object_must_be_selected_to_provide_sample_data);
@@ -536,6 +595,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         }
 
         try {
+
             final AbstractWrappedDataSpace dataArea = createDataSpaceWrapper(remoteObject);
 
             if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
@@ -565,7 +625,6 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
             ISpherePlugin.logError(e.getMessage(), e);
             MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
         }
-
     }
 
     protected abstract AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception;
@@ -689,11 +748,18 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         label.setToolTipText(Messages.Offset_length_of_selected_data);
     }
 
+    private void addDropSupportOnViewer(TreeViewer treeViewer) {
+
+        Transfer[] transferTypes = new Transfer[] { PluginTransfer.getInstance() };
+        int operations = DND.DROP_MOVE | DND.DROP_COPY;
+        treeViewer.addDropSupport(operations, transferTypes, createEditorDropListener(this));
+    }
+
     private void addDropSupportOnComposite(Composite dialogEditorComposite) {
 
         Transfer[] transferTypes = new Transfer[] { PluginTransfer.getInstance() };
         int operations = DND.DROP_MOVE | DND.DROP_COPY;
-        DropTargetListener listener = createDropListener(this);
+        DropTargetListener listener = createEditorDropListener(this);
 
         DropTarget dropTarget = new DropTarget(dialogEditorComposite, operations);
         dropTarget.setTransfer(transferTypes);
@@ -701,7 +767,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         dropTarget.setData(this);
     }
 
-    protected abstract AbstractDropDataObjectListerner createDropListener(IDropObjectListener editor);
+    protected abstract AbstractDropRemoteObjectListerner createEditorDropListener(IDropObjectListener editor);
 
     private void disableDropSupportOnComposite(Composite dialogEditorComposite) {
 

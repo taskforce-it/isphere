@@ -788,7 +788,7 @@ public class Messages extends NLS {
 
     public static String Last_reclaimed_at;
 
-    public static String Selected_object_does_not_match_expected_type;
+    public static String Selected_object_does_not_match_expected_type_A;
 
     public static String The_object_cannot_be_monitored_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view;
 
@@ -1029,6 +1029,8 @@ public class Messages extends NLS {
     public static String Compare_after_synchronization;
     
     public static String Tooltip_Compare_after_synchronization;
+
+    public static String Object_A_has_already_been_assigned_to_editor_B;
     
     static {
         // initialize resource bundle

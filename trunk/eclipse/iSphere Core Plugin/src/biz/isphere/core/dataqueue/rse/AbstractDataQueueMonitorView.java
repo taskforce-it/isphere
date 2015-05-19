@@ -88,7 +88,6 @@ import biz.isphere.core.dataqueue.retrieve.message.RDQM0200SenderID;
 import biz.isphere.core.dataqueue.retrieve.message.RDQS0100;
 import biz.isphere.core.dataqueue.retrieve.message.RDQS0200;
 import biz.isphere.core.dataqueue.viewer.DataQueueEntryViewer;
-import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.dataspacemonitor.action.RefreshViewAction;
 import biz.isphere.core.dataspacemonitor.action.RefreshViewIntervalAction;
@@ -100,6 +99,7 @@ import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.rse.AbstractDropRemoteObjectListerner;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
@@ -388,7 +388,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
         if (!(ISeries.DTAQ.equals(remoteObject.getObjectType()))) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                Messages.bind(Messages.Selected_object_does_not_match_expected_type, ISeries.DTAQ));
+                Messages.bind(Messages.Selected_object_does_not_match_expected_type_A, ISeries.DTAQ));
             return false;
         }
 
@@ -399,7 +399,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
         if (remoteObjects == null || remoteObjects.length == 0) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                Messages.bind(Messages.Selected_object_does_not_match_expected_type, ISeries.DTAQ));
+                Messages.bind(Messages.Selected_object_does_not_match_expected_type_A, ISeries.DTAQ));
             return false;
         }
 
@@ -420,9 +420,9 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
      * that is displayed in the view.
      * <p>
      * For example it is called by
-     * {@link AbstractDropDataObjectListerner#setRemoteObjects(RemoteObject[])}.
+     * {@link AbstractDropRemoteObjectListerner#setRemoteObjects(RemoteObject[])}.
      */
-    public void dropData(RemoteObject[] remoteObjects) {
+    public void dropData(RemoteObject[] remoteObjects, Object target) {
 
         if (isPinned()) {
             MessageDialogAsync.displayError(getShell(),
@@ -1047,7 +1047,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     protected abstract IViewManager getViewManager();
 
-    protected abstract AbstractDropDataObjectListerner createDropListener(IDialogView editor);
+    protected abstract AbstractDropRemoteObjectListerner createDropListener(IDialogView editor);
 
     protected abstract AS400 getSystem(String connectionName);
 
