@@ -62,6 +62,7 @@ public class SearchExec {
             try {
                 currentLibrary = ISphereHelper.getCurrentLibrary(_as400);
             } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not retrieve current library ***", e);
             }
 
             if (currentLibrary != null) {
@@ -70,68 +71,75 @@ public class SearchExec {
                 try {
                     ok = ISphereHelper.setCurrentLibrary(_as400, iSphereLibrary);
                 } catch (Exception e1) {
+                    ISpherePlugin.logError("*** Could not set current library to: " + iSphereLibrary + " ***", e1);
                 }
 
                 if (ok) {
 
-                    _handle = new FNDSTR_getHandle().run(_as400);
+                    try {
 
-                    if (_handle > 0) {
+                        _handle = new FNDSTR_getHandle().run(_as400);
 
-                        SearchElement.setSearchElements(_jdbcConnection, _handle, _searchElements);
+                        if (_handle > 0) {
 
-                        new FNDSTR_resolveGenericSearchElements().run(_as400, _handle);
+                            SearchElement.setSearchElements(_jdbcConnection, _handle, _searchElements);
 
-                        int _numberOfSearchElements = new FNDSTR_getNumberOfSearchElements().run(_as400, _handle);
+                            new FNDSTR_resolveGenericSearchElements().run(_as400, _handle);
 
-                        monitor.beginTask("Searching", _numberOfSearchElements); //$NON-NLS-1$
+                            int _numberOfSearchElements = new FNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
-                        new DoSearch(_as400, _handle, _searchOptions, monitor).start();
+                            monitor.beginTask("Searching", _numberOfSearchElements); //$NON-NLS-1$
 
-                        int _lastCounter = 0;
+                            new DoSearch(_as400, _handle, _searchOptions, monitor).start();
 
-                        getStatus();
-
-                        boolean _cancel = false;
-
-                        while (_counter != -1) {
-
-                            monitor.worked(_counter - _lastCounter);
-
-                            _lastCounter = _counter;
-
-                            if (monitor.isCanceled()) {
-                                _cancel = true;
-                                cancelJob();
-                                _status = Status.CANCEL_STATUS;
-                                break;
-                            }
-
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            int _lastCounter = 0;
 
                             getStatus();
 
+                            boolean _cancel = false;
+
+                            while (_counter != -1) {
+
+                                monitor.worked(_counter - _lastCounter);
+
+                                _lastCounter = _counter;
+
+                                if (monitor.isCanceled()) {
+                                    _cancel = true;
+                                    cancelJob();
+                                    _status = Status.CANCEL_STATUS;
+                                    break;
+                                }
+
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                getStatus();
+
+                            }
+
+                            monitor.worked(_numberOfSearchElements - _lastCounter);
+
+                            monitor.done();
+
+                            if (!_cancel) {
+                                _searchResults = getSearchResults(_jdbcConnection, _handle);
+                            }
+
+                            new FNDSTR_clear().run(_as400, _handle);
+
                         }
 
-                        monitor.worked(_numberOfSearchElements - _lastCounter);
+                    } finally {
 
-                        monitor.done();
-
-                        if (!_cancel) {
-                            _searchResults = getSearchResults(_jdbcConnection, _handle);
+                        try {
+                            ISphereHelper.setCurrentLibrary(_as400, currentLibrary);
+                        } catch (Exception e) {
+                            ISpherePlugin.logError("*** Could not restore current library to: " + currentLibrary + " ***", e);
                         }
-
-                        new FNDSTR_clear().run(_as400, _handle);
-
-                    }
-
-                    try {
-                        ISphereHelper.setCurrentLibrary(_as400, currentLibrary);
-                    } catch (Exception e) {
                     }
 
                 }

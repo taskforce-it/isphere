@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 
 public class CompareDifferencer extends Differencer {
 
@@ -100,7 +101,7 @@ public class CompareDifferencer extends Differencer {
         try {
             return new BufferedInputStream(new FileInputStream(((CompareNode)o).getTempFile(ignoreCase)));
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not return InputStream object ***", e);
             return null;
         }
     }

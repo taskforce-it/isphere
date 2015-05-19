@@ -255,7 +255,7 @@ public class SearchForUpdates extends Job {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not retrieve property " + property + " from manifest ***", e);
         }
         return propertyValues;
     }

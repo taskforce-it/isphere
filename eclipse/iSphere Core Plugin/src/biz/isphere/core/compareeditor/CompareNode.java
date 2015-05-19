@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 
+import biz.isphere.core.ISpherePlugin;
+
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent {
 
     private IResource fResource;
@@ -82,7 +84,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         try {
             return new BufferedInputStream(new FileInputStream(getTempFile(ignoreCase)));
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not create BufferedInputStream ***", e);
             return null;
         }
     }
@@ -104,7 +106,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             }
             return tempFile;
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not create temporary file ***", e);
             return null;
         }
     }
