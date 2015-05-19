@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspaceeditordesigner.rse;
+package biz.isphere.core.dataqueue.rse;
 
-import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
+import biz.isphere.core.rse.AbstractDropRemoteObjectListerner;
 
-public interface IDropObjectListener {
+public abstract class AbstractDropDataDataQueueListener extends AbstractDropRemoteObjectListerner {
 
-    public void dropData(RemoteObject[] objects, Object target);
-
+    public AbstractDropDataDataQueueListener(IDropObjectListener iDropObjectListener) {
+        super(iDropObjectListener);
+    }
 }

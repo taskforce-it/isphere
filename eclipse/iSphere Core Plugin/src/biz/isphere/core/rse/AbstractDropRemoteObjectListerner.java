@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspaceeditordesigner.rse;
+package biz.isphere.core.rse;
 
 import java.io.UnsupportedEncodingException;
 
@@ -16,6 +16,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.ui.part.PluginTransferData;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
+import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
 import biz.isphere.core.internal.RemoteObject;
 
 /**
@@ -34,12 +36,13 @@ import biz.isphere.core.internal.RemoteObject;
  * @see org.eclipse.rse.internal.ui.view.SystemTableTreeView#initDragAndDrop()
  * @see org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter
  */
-public abstract class AbstractDropDataObjectListerner extends DropTargetAdapter implements IListOfRemoteObjectsReceiver {
+public abstract class AbstractDropRemoteObjectListerner extends DropTargetAdapter implements IListOfRemoteObjectsReceiver {
 
-    private IDropObjectListener editor;
+    private IDropObjectListener target;
+    private DropTargetEvent event;
 
-    public AbstractDropDataObjectListerner(IDropObjectListener editor) {
-        this.editor = editor;
+    public AbstractDropRemoteObjectListerner(IDropObjectListener iDropObjectListener) {
+        this.target = iDropObjectListener;
     }
 
     public void dragEnter(DropTargetEvent event) {
@@ -69,6 +72,8 @@ public abstract class AbstractDropDataObjectListerner extends DropTargetAdapter 
                 str = new String(result);
             }
 
+            this.event = event;
+
             // Split plug-in transfer data into objects
             String[] droppedObjects = str.split("\\|");
             loadRemoteObjectsAsync(droppedObjects, this, Messages.Loading_remote_objects);
@@ -78,6 +83,6 @@ public abstract class AbstractDropDataObjectListerner extends DropTargetAdapter 
     protected abstract void loadRemoteObjectsAsync(String[] objects, IListOfRemoteObjectsReceiver receiver, String jobName);
 
     public void setRemoteObjects(RemoteObject[] objects) {
-        editor.dropData(objects);
+        target.dropData(objects, event.item);
     }
 }

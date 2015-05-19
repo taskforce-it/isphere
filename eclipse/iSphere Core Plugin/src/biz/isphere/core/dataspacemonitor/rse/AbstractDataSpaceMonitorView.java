@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,6 @@ import biz.isphere.core.dataspaceeditordesigner.model.DDataSpaceValue;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
-import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.dataspacemonitor.action.RefreshViewAction;
 import biz.isphere.core.dataspacemonitor.action.RefreshViewIntervalAction;
@@ -68,6 +67,7 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
+import biz.isphere.core.rse.AbstractDropRemoteObjectListerner;
 
 public abstract class AbstractDataSpaceMonitorView extends ViewPart implements IDialogView, IPinnableView, IJobFinishedListener {
 
@@ -301,7 +301,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
         if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+                Messages.bind(Messages.Selected_object_does_not_match_expected_type_A, ISeries.DTAARA + "/" + ISeries.USRSPC));
             return false;
         }
 
@@ -332,9 +332,9 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
      * that is displayed in the view.
      * <p>
      * For example it is called by
-     * {@link AbstractDropDataObjectListerner#setRemoteObjects(RemoteObject[])}.
+     * {@link AbstractDropRemoteObjectListerner#setRemoteObjects(RemoteObject[])}.
      */
-    public void dropData(RemoteObject[] remoteObjects) {
+    public void dropData(RemoteObject[] remoteObjects, Object target) {
 
         if (isPinned()) {
             MessageDialogAsync.displayError(getShell(),
@@ -735,7 +735,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     protected abstract IViewManager getViewManager();
 
-    protected abstract AbstractDropDataObjectListerner createDropListener(IDialogView editor);
+    protected abstract AbstractDropRemoteObjectListerner createDropListener(IDialogView editor);
 
     protected abstract AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception;
 

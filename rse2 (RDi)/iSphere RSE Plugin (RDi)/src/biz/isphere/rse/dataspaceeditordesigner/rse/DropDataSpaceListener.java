@@ -1,20 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataspaceeditor.rse;
+package biz.isphere.rse.dataspaceeditordesigner.rse;
 
-import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataSpaceListener;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDropObjectListener;
 import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
+import biz.isphere.rse.internal.job.LoadQsysRemoteObjectsJob;
 
-public class DropDataObjectListener extends AbstractDropDataObjectListerner {
+public class DropDataSpaceListener extends AbstractDropDataSpaceListener {
 
-    public DropDataObjectListener(IDropObjectListener editor) {
+    public DropDataSpaceListener(IDropObjectListener editor) {
         super(editor);
     }
 

@@ -10,12 +10,11 @@ package biz.isphere.rse.dataqueue.rse;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
+import biz.isphere.core.dataqueue.rse.AbstractDropDataDataQueueListener;
 import biz.isphere.core.dataqueue.rse.AbstractDataQueueMonitorView;
-import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
-import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -23,8 +22,8 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 public class DataQueueMonitorView extends AbstractDataQueueMonitorView {
 
     @Override
-    protected AbstractDropDataObjectListerner createDropListener(IDialogView editor) {
-        return new DropDataObjectListener(editor);
+    protected AbstractDropDataDataQueueListener createDropListener(IDialogView editor) {
+        return new DropDataQueueListener(editor);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,7 +153,7 @@ public final class DataSpaceEditorRepository {
         return null;
     }
 
-    private boolean editorSupportsObject(DEditor dEditor, RemoteObject remoteObject) {
+    public boolean editorSupportsObject(DEditor dEditor, RemoteObject remoteObject) {
         DReferencedObject[] referencedObjects = dEditor.getReferencedObjects();
         for (DReferencedObject dReferencedObject : referencedObjects) {
             if (remoteObjectMatchesReferencedObject(remoteObject, dReferencedObject)) {
