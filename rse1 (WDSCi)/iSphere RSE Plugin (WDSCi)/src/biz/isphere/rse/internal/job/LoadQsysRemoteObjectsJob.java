@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.dataspaceeditor.rse;
+package biz.isphere.rse.internal.job;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Menu;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
-import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataObjectListerner;
+import biz.isphere.core.dataspaceeditordesigner.rse.AbstractDropDataSpaceListener;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.dataspacemonitor.rse.AbstractDataSpaceMonitorView;
 import biz.isphere.core.dataspacemonitor.rse.WatchItemManager;
@@ -25,14 +25,14 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
-import biz.isphere.rse.dataspaceeditor.rse.DropDataObjectListener;
+import biz.isphere.rse.dataspaceeditordesigner.rse.DropDataSpaceListener;
 import biz.isphere.rse.internal.RSEControlDecoration;
 
 public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     @Override
-    protected AbstractDropDataObjectListerner createDropListener(IDialogView editor) {
-        return new DropDataObjectListener(editor);
+    protected AbstractDropDataSpaceListener createDropListener(IDialogView editor) {
+        return new DropDataSpaceListener(editor);
     }
 
     @Override
