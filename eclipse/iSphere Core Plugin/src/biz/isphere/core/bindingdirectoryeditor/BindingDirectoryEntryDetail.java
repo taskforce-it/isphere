@@ -298,7 +298,7 @@ public class BindingDirectoryEntryDetail {
             return false;
         }
 
-        // The entry does already exist.
+        // The entry already exists.
 
         if (actionType == DialogActionTypes.CREATE
             || actionType == DialogActionTypes.COPY
