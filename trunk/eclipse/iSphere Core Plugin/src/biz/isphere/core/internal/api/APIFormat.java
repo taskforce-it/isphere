@@ -329,7 +329,7 @@ public class APIFormat {
         }
 
         if (fields.containsKey(name)) {
-            throw new RuntimeException("A field with name '" + name + " does already exist."); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new RuntimeException("A field with name '" + name + " already exists."); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         fields.put(field.getName(), field);
