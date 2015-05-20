@@ -599,4 +599,29 @@
       
    </extension>
 
+      	<!--
+      	  ==========================================
+      	    iSphere i Project Decorator
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="false"
+            class="biz.isphere.rse.decorators.IProjectFileDecorator"
+            id="biz.isphere.rse.decorators.IProjectFileDecorator"
+            label="%iSphere_i_Project_Decorator_Label"
+            lightweight="true"
+            state="false">
+         <description>
+           %iSphere_i_Project_Decorator_Description
+         </description>
+         <enablement>
+            <objectClass
+                  name="com.ibm.etools.iseries.perspective.model.AbstractISeriesNativeMember">
+            </objectClass>
+         </enablement>
+      </decorator>
+   </extension>
+
 </plugin>
