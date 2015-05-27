@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
@@ -287,10 +286,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                         if (!creator.createObjectFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
                             _searchResultViewer.getSearchResults())) {
 
-                            MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-                            errorBox.setText(Messages.E_R_R_O_R);
-                            errorBox.setMessage(Messages.The_filter_could_not_be_created);
-                            errorBox.open();
+//                            MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+//                            errorBox.setText(Messages.E_R_R_O_R);
+//                            errorBox.setMessage(Messages.The_filter_could_not_be_created);
+//                            errorBox.open();
 
                         }
                     }
