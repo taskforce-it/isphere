@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,15 @@ package biz.isphere.rse.internal;
 
 import java.util.Vector;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.ui.PlatformUI;
+
+import biz.isphere.rse.Messages;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesLibraryFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
@@ -57,46 +62,86 @@ public class RSEHelper {
 
     public static ISystemFilter createFilter(IBMiConnection connection, String filterType, String filterName, Vector<String> filterStrings) {
 
-        ISubSystem subsystem = connection.getQSYSObjectSubSystem();
+        ISystemFilterPool filterPool = null;
 
-        if (subsystem != null) {
+        ISystemFilterPool[] pools = getFilterPools(connection);
+        if (pools != null) {
 
-            ISystemFilterPool pools[] = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
-
-            if (pools != null) {
-
-                ISystemFilterPool defaultPool = null;
-                for (int idx = 0; idx < pools.length; idx++) {
-                    if (pools[idx].isDefault()) {
-                        defaultPool = pools[idx];
-                        break;
-                    }
+            if (pools.length > 1 || !pools[0].isDefault()) {
+                RSESelectFilterPoolDialog selectPoolDialog = new RSESelectFilterPoolDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getShell(), pools);
+                selectPoolDialog.setSelectedFilterPool(getDefaultFilterPool(connection));
+                if (selectPoolDialog.open() == Dialog.OK) {
+                    filterPool = selectPoolDialog.getSelectedFilterPool();
                 }
-
-                if (defaultPool != null) {
-
-                    String[] filterNames = defaultPool.getSystemFilterNames();
-                    for (int idx = 0; idx < filterNames.length; idx++) {
-                        if (filterNames[idx].equals(filterName)) {
-                            return null;
-                        }
-                    }
-
-                    ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-
-                    try {
-                        return dftPoolMgr.createSystemFilter(defaultPool, filterName, filterStrings, filterType);
-                    } catch (Exception e) {
-                    }
-
-                }
-
+            } else {
+                filterPool = pools[0];
             }
+        } else {
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                Messages.No_filter_pool_available);
+        }
 
+        if (filterPool == null) {
+            return null;
+        }
+
+        if (filterExists(filterPool, filterName)) {
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.A_filter_with_name_A_already_exists, filterName));
+            return null;
+        }
+
+        try {
+            ISubSystem subsystem = connection.getQSYSObjectSubSystem();
+            ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
+
+            return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
+        } catch (Exception e) {
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
 
         return null;
+    }
 
+    private static ISystemFilterPool getDefaultFilterPool(IBMiConnection connection) {
+
+        ISystemFilterPool[] filterPools = getFilterPools(connection);
+        for (ISystemFilterPool filterPool : filterPools) {
+            if (filterPool.isDefault()) {
+                return filterPool;
+            }
+        }
+
+        return null;
+    }
+
+    private static ISystemFilterPool[] getFilterPools(IBMiConnection connection) {
+
+        ISystemFilterPool pools[] = null;
+
+        ISubSystem subsystem = connection.getQSYSObjectSubSystem();
+        if (subsystem != null) {
+            pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
+        }
+
+        if (pools == null) {
+            pools = new ISystemFilterPool[0];
+        }
+
+        return pools;
+    }
+
+    private static boolean filterExists(ISystemFilterPool filterPool, String filterName) {
+
+        String[] filterNames = filterPool.getSystemFilterNames();
+        for (int idx = 0; idx < filterNames.length; idx++) {
+            if (filterNames[idx].equals(filterName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
