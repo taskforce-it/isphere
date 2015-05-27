@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,6 +111,10 @@ public class Messages extends NLS {
     public static String Select_Object;
 
     public static String Object_A_in_library_B_not_found;
+    
+    public static String No_filter_pool_available;
+    
+    public static String A_filter_with_name_A_already_exists;
     
     static {
         // initialize resource bundle
