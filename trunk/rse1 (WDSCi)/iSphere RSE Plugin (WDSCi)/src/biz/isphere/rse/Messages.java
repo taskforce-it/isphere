@@ -119,6 +119,10 @@ public class Messages extends NLS {
 
     public static String Object_A_in_library_B_not_found;
     
+    public static String No_filter_pool_available;
+    
+    public static String A_filter_with_name_A_already_exists;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
