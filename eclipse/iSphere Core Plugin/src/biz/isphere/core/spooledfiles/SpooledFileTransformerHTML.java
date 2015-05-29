@@ -21,8 +21,6 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
 
     private BufferedWriter writer = null;
 
-    private int count;
-
     public SpooledFileTransformerHTML(SpooledFile spooledFile) {
         super(spooledFile);
     }
@@ -35,14 +33,12 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
     @Override
     protected void openPrinter(String target) throws IOException {
         writer = new BufferedWriter(new FileWriter(target));
-        count = 0;
     }
 
     @Override
     protected void closePrinter() throws IOException {
         if (writer != null) {
             writer.close();
-            count = 0;
         }
     }
 
@@ -58,7 +54,7 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
 
     @Override
     protected void formfeed() throws IOException {
-        writer.write("<hr/>");
+        writer.write("</pre><hr/><pre>");
     }
 
     @Override
@@ -68,12 +64,7 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
 
     @Override
     protected void print(String text) throws IOException {
-        if (count == 0 && text.startsWith("<INIT_PRINTER/></b></u></b></u>")) {
-            writer.write(text.substring("<INIT_PRINTER/></b></u></b></u>".length()));
-        } else {
-            writer.write(text);
-        }
-        count++;
+        writer.write(text);
     }
 
 }
