@@ -3,6 +3,9 @@
 Changelog: iSphere 2.6.0 beta 10
 --------------------------------
 
+ • Fixed double print problem when converting a spooled file to TEXT,
+   HTML or PDF.
+ • Fixed minor page break problem when converting a spooled file to HTML.  
  • Added i Project label decorator.
  • Added dialog for selecting the filter pool, when exporting a search
    result to a member or object filter.
