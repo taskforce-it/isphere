@@ -153,7 +153,8 @@
     :EEBCASCTBL.
 
     :INITPRT                /* Initialize Printer */
-      DATA ='3C494E49545F5052494E5445522F3E'X.
+    /*DATA ='3C494E49545F5052494E5445522F3E'X. */
+      DATA =''X.
 
     :RESETPRT               /* Reset Printer */
       DATA =''X.
