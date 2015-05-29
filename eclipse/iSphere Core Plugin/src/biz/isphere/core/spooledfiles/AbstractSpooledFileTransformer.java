@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.SpooledFile;
 
 public abstract class AbstractSpooledFileTransformer implements ISpooledFileTransformer {
+
+    private static final String SPACE = " "; //$NON-NLS-1$
+
+    private static final String UNDERSCORE = "_"; //$NON-NLS-1$
 
     protected static final String CR_LF = "\r\n"; //$NON-NLS-1$
 
@@ -216,13 +220,76 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
      * @param line - current print data
      */
     protected String handleDC1(String line) {
-        if (line.length() >= 1) {
-            int p = line.indexOf(DC1);
-            if (p >= 0) {
-                line = line.substring(0, p);
-            }
+
+        if (line.length() <= 0) {
+            return line;
         }
-        return line;
+
+        StringBuilder buffer = new StringBuilder();
+
+        int start = 0;
+        int end = line.indexOf(DC1, start);
+
+        while ((end = line.indexOf(DC1, start)) >= 0) {
+
+            String linePart = line.substring(start, end);
+            int length = Math.min(buffer.length(), linePart.length());
+            for (int offset = 0; offset < length; offset++) {
+                String linePartChar = linePart.substring(offset, offset + 1);
+                if (canReplaceLineChar(buffer, linePart, offset)) {
+                    buffer.replace(offset, offset + 1, getLineChar(linePartChar));
+                }
+            }
+
+            if (length < linePart.length()) {
+                buffer.append(getLineChar(linePart.substring(length)));
+            }
+
+            start = start + linePart.length();
+            start = start + 1; // DC1
+            end = line.indexOf(DC1, start);
+        }
+
+        return buffer.toString();
+    }
+
+    /**
+     * Checks whether or not a character at a given position can be replaced or
+     * not.
+     * 
+     * @param buffer - buffer that is checked
+     * @param linePart - source of the new character
+     * @param offset - offset of the old and new character
+     * @return <code>true</code> when the character can be replaced else
+     *         <code>false</code>.
+     */
+    private boolean canReplaceLineChar(StringBuilder buffer, String linePart, int offset) {
+
+        // Replace spaces only
+        if (!SPACE.equals(buffer.substring(offset, offset + 1))) {
+            return false;
+        }
+
+        // Ignore underline characters
+        if (UNDERSCORE.equals(linePart.substring(offset, offset + 1))) {
+            return false;
+        }
+
+        // Ignore spaces
+        if (SPACE.equals(linePart.substring(offset, offset + 1))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getLineChar(String linePartChar) {
+
+        if (linePartChar.indexOf(UNDERSCORE) != -1) {
+            return linePartChar.replaceAll(UNDERSCORE, SPACE);
+        }
+
+        return linePartChar;
     }
 
     /**
