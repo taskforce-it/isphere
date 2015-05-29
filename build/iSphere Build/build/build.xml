@@ -688,11 +688,16 @@
     * ===================================================================== -->
 	<target name="checkPdfFile">
 
-		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
-
-		<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
-
-		<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
+		<if>
+			<equals arg1="${build.files.enabled}" arg2="true" />
+			<then>
+				<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+		
+				<uptodate property="pdf.isUpToDate" srcfile="${isphere.doc}" targetfile="${isphere.pdf}" />
+		
+				<echo>Check iSphere PDF result: ${pdf.isUpToDate}</echo>
+			</then>
+		</if>
 
 	</target>
 
@@ -701,15 +706,20 @@
     *   Updates the PDF file from 'iSphere.doc'.
     * ===================================================================== -->
 	<target name="updatePdfFile" unless="pdf.isUpToDate">
+		
+		<if>
+			<equals arg1="${build.files.enabled}" arg2="true" />
+			<then>
+				<echo>Updating iSphere PDF file ...</echo>
+		
+				<winword file="${isphere.doc}" visible="true">
+					<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
+				</winword>
 
-		<echo>Updating iSphere PDF file ...</echo>
-
-		<winword file="${isphere.doc}" visible="true">
-			<saveAs toFile="${isphere.pdf}" saveFormat="pdf" />
-		</winword>
-
-		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
-
+				<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
+			</then>
+		</if>
+				
 	</target>
 
 	<!--
