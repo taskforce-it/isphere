@@ -122,7 +122,7 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
         rightMemberPrompt.getLibraryCombo().setFocus();
 
-        rightMemberPrompt.getMemberCombo().setEnabled(!hasMultipleRightMembers());
+        setRightMemberPromptEnablement(!hasMultipleRightMembers());
     }
 
     @Override
@@ -293,6 +293,11 @@ public class RSECompareDialog extends CompareDialog {
             }
         }
         return true;
+    }
+
+    private void setRightMemberPromptEnablement(boolean enabled) {
+        rightMemberPrompt.getMemberCombo().setEnabled(enabled);
+        rightMemberPrompt.getMemberBrowseButton().setEnabled(enabled);
     }
 
     private String getRightLibraryName() {
