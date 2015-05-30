@@ -9,6 +9,7 @@ Changelog: iSphere 2.6.0 beta 10
  • Added i Project label decorator.
  • Added dialog for selecting the filter pool, when exporting a search
    result to a member or object filter.
+ • Fixed enablement of browse button of right member prompt. (Compare/merge)  
 
 
 Changelog: iSphere 2.6.0 beta 9
