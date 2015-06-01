@@ -1,32 +1,32 @@
--- *------------------------------------------------------------------------*
--- *                                                                        *
--- * Copyright (c) 2012-2014 iSphere Project Owners                         *
--- * All rights reserved. This program and the accompanying materials       *
--- * are made available under the terms of the Common Public License v1.0   *
--- * which accompanies this distribution, and is available at               *
--- * http://www.eclipse.org/legal/cpl-v10.html                              *
--- *                                                                        *
--- *------------------------------------------------------------------------*
--- *                                                                        *
--- * Find String in Source File (Status)                                    *
--- *                                                                        *
--- *------------------------------------------------------------------------*
--- * STRPREPRC Compile Options:                                             *
--- *   >>PRE-COMPILER<<                                                     *
--- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
--- *       >>COMPILE<<                                                      *
--- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
--- *       >>END-COMPILE<<                                                  *
--- *       >>EXECUTE<<                                                      *
--- *   >>END-PRE-COMPILER<<                                                 *
--- *------------------------------------------------------------------------*
- 
-CREATE UNIQUE INDEX FNDSTRS01
-ON FNDSTRS
-(
- XSHDL ASC
-)
-WITH 1 DISTINCT VALUES;
- 
-LABEL ON INDEX FNDSTRS01
- IS 'Find String in Source File (Status)';
+000100150519-- *------------------------------------------------------------------------*
+000200150519-- *                                                                        *
+000300150519-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
+000400150519-- * All rights reserved. This program and the accompanying materials       *
+000500150519-- * are made available under the terms of the Common Public License v1.0   *
+000600150519-- * which accompanies this distribution, and is available at               *
+000700150519-- * http://www.eclipse.org/legal/cpl-v10.html                              *
+000800150519-- *                                                                        *
+000900150519-- *------------------------------------------------------------------------*
+001000150519-- *                                                                        *
+001100150519-- * Find String in Source File (Status)                                    *
+001200150519-- *                                                                        *
+001300150519-- *------------------------------------------------------------------------*
+001400150519-- * STRPREPRC Compile Options:                                             *
+001500150519-- *   >>PRE-COMPILER<<                                                     *
+001600150519-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+001700150519-- *       >>COMPILE<<                                                      *
+001800150519-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+001900150519-- *       >>END-COMPILE<<                                                  *
+002000150519-- *       >>EXECUTE<<                                                      *
+002100150519-- *   >>END-PRE-COMPILER<<                                                 *
+002200150519-- *------------------------------------------------------------------------*
+002300150519
+002400150519CREATE UNIQUE INDEX FNDSTRS01
+002500150519ON FNDSTRS
+002600150519(
+002700150519 XSHDL ASC
+002800150519)
+002900150519WITH 1 DISTINCT VALUES;
+003000150519
+003100150520--LABEL ON INDEX FNDSTRS01
+003200150520-- IS 'Find String in Source File (Status)';
