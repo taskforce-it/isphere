@@ -621,7 +621,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         getTableStatistics().clearStatistics();
     }
 
-    private synchronized void setButtonEnablementAndDisplayCompareStatus()  {
+    private synchronized void setButtonEnablementAndDisplayCompareStatus() {
 
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
@@ -700,7 +700,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private synchronized void setIsSynchronizing(boolean isSynchronizing) {
         this.isSynchronizing = isSynchronizing;
     }
-    
+
     private void displayCompareStatus() {
 
         if (statusInfo != null) {
@@ -796,10 +796,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         MessageFileCompareItem[] selectedItems = getSelectedItems();
 
         for (MessageFileCompareItem compareItem : selectedItems) {
-            getTableStatistics().removeElement(compareItem, filterData);
             compareItem.setCompareStatus(newStatus);
             tableViewer.update(compareItem, null);
-            getTableStatistics().addElement(compareItem, filterData);
         }
         tableViewer.getTable().redraw();
         setButtonEnablementAndDisplayCompareStatus();
@@ -916,15 +914,13 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
                 MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
 
-                if (compareItem.isSelected(filterData)) {
-                    getTableStatistics().removeElement(compareItem, filterData);
-                    if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
-                        performCopyToLeft(compareItem, leftMessageFile);
-                    } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
-                        performCopyToRight(compareItem, rightMessageFile);
-                    }
-                    getTableStatistics().addElement(compareItem, filterData);
+                getTableStatistics().removeElement(compareItem, filterData);
+                if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
+                    performCopyToLeft(compareItem, leftMessageFile);
+                } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
+                    performCopyToRight(compareItem, rightMessageFile);
                 }
+                getTableStatistics().addElement(compareItem, filterData);
             }
 
             if (chkCompareAfterSync.getSelection()) {
