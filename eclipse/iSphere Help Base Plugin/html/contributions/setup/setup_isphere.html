@@ -132,6 +132,16 @@ are only needed when there is something to change in the <i>iSphere Ant Contribu
 <p>
 Checking out the <i>iSphere</i> host project is a bit different from checking out the other projects, because
 you need to specify the name of your iSphere library at the project properties after you checked it out.
+<p> 
+You also need to change the i Project preferences to match the settings below, because we do not store source 
+sequence numbers in the repository: 
+<p>
+<img alt="i Project preferences" src="./assets/iproject_preferences.png">
+<p>
+<table>
+<tr><td class="important" >Do not forget to change your i Project preferences. All IBM i native source code must be stored in the 
+repository without sequence numbers.</td></tr>
+</table>
 <p>
 If you did not yet connect to SourceForge, refer to <a href="../setup/setup_rdp_svn.html#install_svn_adapter">Installing the SVN Adapter</a> 
 to learn how to install the SVN adapter. Then right-click the <i>iSphere</i> project and check it out to your workspace:  
