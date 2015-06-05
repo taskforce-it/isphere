@@ -53,7 +53,6 @@ import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 public abstract class AbstractDataSpaceEditor extends EditorPart implements IFindReplaceTarget {
 
-    public static final int VALUE_LABEL_WIDTH_HINT = 40;
     public static final int SPACER_WIDTH_HINT = 10;
 
     private boolean isDirty;
@@ -103,7 +102,6 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     private void createHeadline(Composite aHeader, String aLabel, String aValue) {
         Label lblText = new Label(aHeader, SWT.NONE);
         GridData lblTextLayoutData = new GridData();
-        lblTextLayoutData.widthHint = VALUE_LABEL_WIDTH_HINT;
         lblText.setLayoutData(lblTextLayoutData);
         lblText.setText(aLabel);
 
