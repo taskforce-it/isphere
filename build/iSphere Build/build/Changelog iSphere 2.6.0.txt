@@ -1,5 +1,11 @@
 
 
+Changelog: iSphere 2.6.0 beta 12
+--------------------------------
+
+ • Fixed bug, that the decimal data area editor did not allow negative values.
+
+
 Changelog: iSphere 2.6.0 beta 11
 --------------------------------
 
