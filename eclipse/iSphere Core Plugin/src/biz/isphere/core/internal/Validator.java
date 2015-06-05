@@ -30,6 +30,7 @@ public class Validator {
     private String type;
     private int length;
     private int precision;
+    private boolean negativeValuesAllowed;
     private boolean mandatory;
     private boolean restricted;
     private boolean generic;
@@ -79,9 +80,14 @@ public class Validator {
     }
 
     public static Validator getDecimalInstance(int length, int precision) {
+        return getDecimalInstance(length, precision, false);
+    }
+
+    public static Validator getDecimalInstance(int length, int precision, boolean allowNegativeValues) {
         Validator validator = new Validator(TYPE_DEC);
         validator.setLength(length);
         validator.setPrecision(precision);
+        validator.setAllowNegativeValues(allowNegativeValues);
         return validator;
     }
 
@@ -104,6 +110,7 @@ public class Validator {
         mandatory = true;
         restricted = false;
         generic = false;
+        negativeValuesAllowed = false;
         arrayListSpecialValues = new ArrayList<String>();
         Arrays.sort(charactersName1);
         Arrays.sort(charactersName2);
@@ -149,6 +156,15 @@ public class Validator {
             return true;
         }
         this.precision = -1;
+        return false;
+    }
+
+    public boolean setAllowNegativeValues(boolean allowNegativeValues) {
+        if (type.equals(TYPE_DEC)) {
+            this.negativeValuesAllowed = allowNegativeValues;
+            return true;
+        }
+        this.negativeValuesAllowed = false;
         return false;
     }
 
@@ -240,6 +256,13 @@ public class Validator {
             char character;
             for (int idx = 0; idx < argument.length(); idx++) {
                 character = argument.charAt(idx);
+                
+                if (idx == 0 && (character == '+' || character == '-')) {
+                    if (character == '-' && !negativeValuesAllowed) {
+                        return false;
+                    }
+                    continue;
+                } 
                 if (!(Character.isDigit(character) || character == '.')) {
                     return false;
                 }
