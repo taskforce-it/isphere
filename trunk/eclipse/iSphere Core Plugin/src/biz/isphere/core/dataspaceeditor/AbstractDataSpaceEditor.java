@@ -53,6 +53,7 @@ import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
 public abstract class AbstractDataSpaceEditor extends EditorPart implements IFindReplaceTarget {
 
+    public static final int VALUE_LABEL_WIDTH_HINT = 40;
     public static final int SPACER_WIDTH_HINT = 10;
 
     private boolean isDirty;
