@@ -82,8 +82,9 @@ public class SearchForUpdates extends Job {
                 }
 
                 if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
-                    availableVersion = getVersion(manifest, "X-Beta-Version");
-                    if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
+                    Version availableBetaVersion = getVersion(manifest, "X-Beta-Version");
+                    if (availableBetaVersion != null && availableBetaVersion.compareTo(currentVersion) > 0) {
+                        availableVersion = availableBetaVersion;
                         newVersionAvailable = true;
                         newVersionInfo = getString(manifest, "X-Beta-Info");
                         newRequiresUpdateLibrary = getBoolean(manifest, "X-Beta-Update-Library", false);
@@ -126,8 +127,8 @@ public class SearchForUpdates extends Job {
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                             UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
-                                availableVersion, newRequiresUpdateLibrary, newVersionInfo), MessageDialog.INFORMATION, new String[] { Messages.OK }, 0,
-                                availableVersion.toString());
+                                availableVersion, newRequiresUpdateLibrary, newVersionInfo), MessageDialog.INFORMATION, new String[] { Messages.OK },
+                                0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
