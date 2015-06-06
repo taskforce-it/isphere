@@ -1,0 +1,24 @@
+<antlib>
+	<!-- typedef the tasks that work for ant less than 1.6 //-->
+	<taskdef resource="biz/isphere/antcontrib/antcontrib.properties" />
+
+	<taskdef name="winword"
+		classname="biz.isphere.antcontrib.taskdef.Winword"
+		onerror="fail" />
+
+	<taskdef name="SF"
+		classname="biz.isphere.antcontrib.taskdef.SF"
+		onerror="fail" />
+		
+	<typedef name="copyDir"
+        classname="biz.isphere.antcontrib.taskdef.Copydir"
+		onerror="fail" />
+		
+	<typedef name="rmDir"
+        classname="biz.isphere.antcontrib.taskdef.Rmdir"
+		onerror="fail" />
+		
+	<typedef name="ignoreFile"
+        classname="biz.isphere.antcontrib.taskdef.IgnoreFile"
+		onerror="fail" />
+</antlib>
