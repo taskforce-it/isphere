@@ -15,13 +15,19 @@ import org.eclipse.swt.events.VerifyListener;
 public class NumericOnlyVerifyListener implements VerifyListener {
 
     private boolean isDecimalPositions;
+    private boolean hasSign;
 
     public NumericOnlyVerifyListener() {
         this(false);
     }
 
     public NumericOnlyVerifyListener(boolean anIsDecimalPositions) {
+        this(anIsDecimalPositions, false);
+    }
+
+    public NumericOnlyVerifyListener(boolean anIsDecimalPositions, boolean anHasSign) {
         isDecimalPositions = anIsDecimalPositions;
+        hasSign = anHasSign;
     }
 
     public void verifyText(VerifyEvent event) {
@@ -37,6 +43,12 @@ public class NumericOnlyVerifyListener implements VerifyListener {
 
         if (isDecimalPositions) {
             if (event.character == ',' || event.character == '.' || event.keyCode == SWT.KEYPAD_DECIMAL) {
+                return;
+            }
+        }
+
+        if (hasSign) {
+            if (event.character == '+' || event.character == '-') {
                 return;
             }
         }
