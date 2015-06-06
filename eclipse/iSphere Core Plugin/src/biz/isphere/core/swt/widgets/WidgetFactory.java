@@ -154,9 +154,21 @@ public final class WidgetFactory {
      * @return integer text field
      */
     public static Text createIntegerText(Composite parent) {
+        return createIntegerText(parent, false);
+    }
+
+    /**
+     * Produces an integer text field with a border. Only the character 0-9 are
+     * allowed to be entered.
+     * 
+     * @param parent - parent composite
+     * @param hasSign - specifies whether to enable the signs '+' and '-'.
+     * @return integer text field
+     */
+    public static Text createIntegerText(Composite parent, boolean hasSign) {
 
         Text text = WidgetFactory.createText(parent);
-        text.addVerifyListener(new NumericOnlyVerifyListener());
+        text.addVerifyListener(new NumericOnlyVerifyListener(false, hasSign));
 
         return text;
     }
@@ -184,9 +196,21 @@ public final class WidgetFactory {
      * @return decimal text field
      */
     public static Text createDecimalText(Composite parent) {
+        return createDecimalText(parent, false);
+    }
+
+    /**
+     * Produces a decimal text field with a border. Only the character 0-9 and
+     * comma are allowed to be entered.
+     * 
+     * @param parent - parent composite
+     * @param hasSign - specifies whether to enable the signs '+' and '-'.
+     * @return decimal text field
+     */
+    public static Text createDecimalText(Composite parent, boolean hasSign) {
 
         Text text = WidgetFactory.createText(parent);
-        text.addVerifyListener(new NumericOnlyVerifyListener(true));
+        text.addVerifyListener(new NumericOnlyVerifyListener(true, hasSign));
 
         return text;
     }

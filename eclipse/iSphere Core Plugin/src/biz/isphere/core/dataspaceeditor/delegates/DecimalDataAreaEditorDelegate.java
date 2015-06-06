@@ -64,7 +64,12 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         horizontalSpacerLayoutData.heightHint = 1;
         horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
 
-        dataAreaText = WidgetFactory.createDecimalText(editorArea);
+        if (getWrappedDataSpace().getDecimalPositions() != 0) {
+            dataAreaText = WidgetFactory.createDecimalText(editorArea, true);
+        } else {
+            dataAreaText = WidgetFactory.createIntegerText(editorArea, true);
+        }
+
         dataAreaText.setTextLimit(getWrappedDataSpace().getTextLimit());
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;
@@ -85,8 +90,6 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         dataAreaText.addKeyListener(new TextControlKeyListener());
 
         // Add 'verify' listener
-        boolean hasFraction = getWrappedDataSpace().getDecimalPositions() != 0;
-        dataAreaText.addVerifyListener(new NumericOnlyVerifyListener(hasFraction));
         dataAreaText.addVerifyListener(new TextControlVerifyListener());
 
         // Add 'dirty' listener
