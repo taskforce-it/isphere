@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bundle-Version: 2.5.2
+Bundle-Version: 2.6.0
 X-Bundle-Update-Library: true
-Disabled-X-Bundle-Info: Additional information ...
-X-Beta-Version: 2.6.0.b009
-X-Beta-Update-Library: true
-X-Beta-Info: This version requires V5R4 for restoring the library.
+X-Bundle-Info: This version requires V5R4 for restoring the library.
+Disabled-X-Beta-Version: 2.6.0.b009
+Disabled-X-Beta-Update-Library: true
+Disabled-X-Beta-Info: This version requires V5R4 for restoring the library.
