@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Message File Search</title>
+</head>
+
+<body>
+<h1>Message File Search</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/messagefilesearch.gif" 
+     style="float:right; margin-left:60px;   margin-right:20px;  margin-bottom:40px" border=0></a>
+The Message File Search feature provides an extremely fast search of message files on a 
+server. The first time after an IPL, iSphere Message File Search may take a little longer, but you should see the improvement in subsequent runs. <p>
+To search message files on a server: 
+<p>
+<ul>
+<li>In the Remote Systems Explorer open the context menu  (right click) for a library filter, an object filter or a message file.</li>
+<li>Select menu item "iSphere Message File Search".</li>
+<li>Enter the search string<br>Use the drop down on the left to select either "contains" or "contains not".
+<br>Check "Case sensitive" if you want the search  string to be case sensitive.<br>Click [+] to add additional search strings. (Search strings have an "and" or "or" relationship, depending on whether "Match all of the following" or "Match any of the following" is selected.)
+<br>Click [-] to remove a search string.<br>If you want to limit the search to only part of the first level text, enter "From column" and/or "To column".
+<br>If you want to search the entire second level text, check &quot;Include second level text ...&quot;<br>Click "OK".<br></li>
+</ul>
+<p>
+<img src="assets/messagefilesearch_dialog.gif" 
+     align="middle">
+</p>
+After the search finishes on the host, the "iSphere Message File Search" view appears:
+<p>
+<img src="assets/messagefilesearch_result.gif" 
+     align="middle">
+<p>
+In the left pane click on a message file and a preview of the message(s) containing the search string in the message filer appear in the right pane..
+<p>Double click on a message in the right pane and the Message description Change window opens.
+<p>Double click on a message file in the left pane and the Message File Editor is opened.
+<p>
+Right click in the left pane on a message file and the context menu appears. Select "Open editor" to open the Message File Editor.
+<p>
+<img src="assets/messagefile_context_menu.gif" 
+     align="middle">
+<p>
+The available menu option are:
+<p>
+<table>
+<tr><td valign="top"><img src="assets/open_editor.gif"/></td><td valign="top"> - </td><td>Opens the message file editor.</td></tr>
+<tr><td valign="top"><img src="assets/select_all.gif"/></td><td valign="top"> - </td><td>Selects all entries of the message file table.</td></tr>
+<tr><td valign="top"><img src="assets/deselect_all.gif"/></td><td valign="top"> - </td><td>Removes the selection for all entries of the message file table.</td></tr>
+<tr><td valign="top"><img src="assets/invert_selection.gif"/></td><td valign="top"> - </td><td>Inverts the selection of the message file table.</td></tr>
+<tr><td valign="top"><img src="assets/copy_to_clipboard.gif"/></td><td valign="top"> - </td><td>Copies the selected items of the message file table to the clipboard.</td></tr>
+<tr><td valign="top"><img src="assets/remove.gif"/></td><td valign="top"> - </td><td>Removes the selected entry from the message file table.</td></tr>
+</table>
+<p>
+The additional icons at the top at of the view and their meanings are:
+<p>
+<table>
+<tr><td valign="top"><img src="assets/object_filter.gif"/></td><td valign="top"> - </td><td>Creates an object filter for the items of the message file frame add adds the filter to the RSE tree.</td></tr>
+<tr><td valign="top"><img src="assets/excel.png"/></td><td valign="top"> - </td><td>Exports the content of the message file frame to Excel.</td></tr>
+<tr><td valign="top"><img src="assets/minus.gif"/></td><td valign="top"> - </td><td>Closes the active tab.</td></tr>
+</table>
+<p>
+Use the view menu to save and load search results:
+<p>
+<img src="assets/view_menu.gif" 
+     align="middle">
+<p>
+<table>
+<tr><td valign="top" nowrap>Load</td><td valign="top"> - </td><td>Loads search results from a given file. If the selected file contains more than one search result, the user is asked whether or 
+                     not he wants to replace the existing tabs. Otherwise a new tab is added to the view.</td></tr>
+<tr><td valign="top" nowrap>Save</td><td valign="top"> - </td><td>Save the selected search result to a given file.</td></tr>
+<tr><td valign="top" nowrap>Save all</td><td valign="top"> - </td><td>Save the content of all search results to a given file.</td></tr>
+<tr><td valign="top" nowrap>Auto-save</td><td valign="top"> - </td><td>Enabled or disables the auto-save feature. When auto-save is enabled, the content of the view is automatically save to a 
+                     pre-defined file. See the <a href="../search/preferences/preferences.html">iSphere 'Search' preferences</a> for details.</td></tr>
+</table>
+<p>
+<h2>Search Pop-up (CTRL-I,M)</h2>
+<p>
+The iSphere Message File Search can also be started from the Eclipse Search Pop-up window. Use CTRL-I,M or the "Search" menu, option "Search..." 
+to open the iSphere Message File Search dialog.
+<p>
+<img src="assets/global_messagefilesearch.gif" 
+     align="middle">
+<p>
+The additional options are:
+<p>
+<table>
+<tr><td valign="top" nowrap>Connection</td><td valign="top">-</td><td valign="top">Specifies the connection that is used to connect to the host.</td></tr>
+<tr><td valign="top" nowrap>Target</td><td valign="top">-</td><td valign="top">Specifies the library and message file that is searched. Each item accepts *generic* strings.</td></tr>
+<tr><td valign="top" nowrap>Columns</td><td valign="top">-</td><td valign="top">Specifies the column range of the first level text that is searched for the search argument.</td></tr>
+<tr><td valign="top" nowrap>Options</td><td valign="top">-</td><td valign="top">Specifies the message text parts that are searched for the search argument.</td></tr>
+</table>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
