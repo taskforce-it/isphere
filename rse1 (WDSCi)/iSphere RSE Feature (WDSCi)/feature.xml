@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for WDSCi 7.0 (recommended)"
-      version="2.6.0.r"
+      version="2.6.0.b011"
       provider-name="iSphere Project Owners"
       plugin="biz.isphere.core">
 
@@ -22,13 +22,13 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </license>
 
    <url>
-      <discovery label="iSphere Project Home" url="http://code.google.com/p/isphere"/>
+      <discovery label="iSphere Project Home" url="http://sourceforge.net/projects/isphere"/>
       <discovery label="Tools/400" url="http://www.tools400.de"/>
       <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="2.6.0.r" match="perfect"/>
+      <import feature="biz.isphere.core" version="2.6.0.b011" match="perfect"/>
    </requires>
 
    <plugin
