@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="biz.isphere.messagesubsystem"
+      label="iSphere Message Subsystem for WDSCi 7.0"
+      version="2.7.0.b001 "
+      provider-name="iSphere Project Team">
+
+   <description url="https://sourceforge.net/projects/isphere/">
+      iSphere Message Subsystem for WDSCi 7.0
+The &quot;iSphere Message Subsystem for WDSCi 7.0&quot; features adds a message subsystem to the RSE tree.
+   </description>
+
+   <copyright url="https://sourceforge.net/projects/isphere/">
+      Copyright (c) 2012-2015 iSphere Project Owners. All rights reserved.
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <discovery label="iSphere Project Home" url="http://sourceforge.net/projects/isphere"/>
+      <discovery label="Tools/400" url="http://www.tools400.de"/>
+      <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
+   </url>
+
+   <plugin
+         id="biz.isphere.messagesubsystem"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
