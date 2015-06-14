@@ -118,14 +118,19 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         try {
             queuedMessage.getQueue().remove(queuedMessage.getKey());
         } catch (Exception e) {
-            String errorMessage = null;
+            final String errorMessage;
             if (e.getMessage() == null) {
                 errorMessage = e.toString();
             } else {
                 errorMessage = e.getMessage();
             }
 
-            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Delete_Message_Error, errorMessage);
+            shell.getDisplay().syncExec(new Runnable() {
+                public void run() {
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Delete_Message_Error, errorMessage);
+                }
+            });
+
             return false;
         }
 
