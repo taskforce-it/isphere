@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Message Subsystem</title>
+</head>
+<body>																		
+<h1>Message Subsystem</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/messagesubsystem.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+With the iSphere Message Subsystem it is possible to maintain and monitor messages on an 
+IBM i server. Here are the features.<ul>
+<li>View and delete messages with filters.</li>
+<li>Reply to inquery messages.</li>
+<li>Create an alert for new messages: dialog, email or beep.</li>
+</ul>
+<p>
+The iSphere Message Subsystem integrates into the Remote Systems Explorer 
+as shown below. From there you can use the context menu to create message 
+filters or to perform actions on selected messages.
+<p>
+<img src="assets/message_subsystem.png" 
+     align="middle">
+<p>
+Use the iSphere Messages context menu to create filters for your messages.
+<p>
+<img src="assets/create_filter.png" 
+     align="middle">
+<p>
+Use the message file context menu to rename a message filter or to change the filter properties.
+<p>
+<img src="assets/message_filter_popup_menu.png" 
+     align="middle">
+<p>
+Use the message file context menu to remove or view the message details.
+<p>
+<img src="assets/message_popup_menu.png" 
+     align="middle">
+<p>
+Answer inquery messages from the message detail dialog:
+<p>
+<img src="assets/message_detail_dialog.png" 
+     align="middle">
+<p>
+<h2>Monitoring Messages</h2>
+<p>
+Another feature of the iSphere message subsystem is the ability to monitor the message queue
+of your your user profile in the background. When a new message is added to the message queue 
+you can be notified by:
+<ul>
+<li>a message dialog</li>
+<li>a "beep" of your computer</li>
+<li>an email</li>
+</ul>
+<p>
+Use the context menu of the <i>iSphere Messages</i> node to configure the message monitor.
+<p>
+<img src="assets/message_monitor_properties.png" 
+     align="middle">
+<p>
+The message monitor requires an exclusive lock on your message queue, which it can not get, when 
+the messsage queue is locked by another job, such as a 5250 session. Therefore it is recommended 
+to start RDi/WDSCi before any 5250 session.
+<p>
+The message queue is not immediately unlocked, when option <i>Monitor message queue</i> is unchecked.
+It can take up to 20 seconds until the lock has been removed.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
