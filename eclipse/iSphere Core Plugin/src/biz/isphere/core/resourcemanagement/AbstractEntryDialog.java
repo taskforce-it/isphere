@@ -173,17 +173,6 @@ public abstract class AbstractEntryDialog extends XDialog {
 
     public void check() {
 
-        if (buttonBoth.getSelection() || buttonWorkspace.getSelection()) {
-
-            String error = checkFilterPool();
-            if (error != null) {
-                if (okButton != null) okButton.setEnabled(false);
-                setErrorMessage(error);
-                return;
-            }
-
-        }
-        
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
 
             String error = checkWorkspaceArea();
@@ -332,7 +321,7 @@ public abstract class AbstractEntryDialog extends XDialog {
     protected String checkFilterPool() {
         return null;
     }
-    
+
     protected abstract String getTitle();
 
     protected abstract String getFileSubject();

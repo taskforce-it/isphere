@@ -213,19 +213,12 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             return Messages.No_profiles_available + ".";
         } else if (singleFilterPool && filterPools.length == 0) {
             return Messages.No_filter_pools_available + ".";
-        } else {
-            return null;
-        }
-    };
-
-    protected String checkFilterPool() {
-
-        if (getFilterPool() == null) {
+        } else if (singleFilterPool && getFilterPool() == null) {
             return Messages.No_filter_pool_selected + ".";
         } else {
             return null;
         }
-    }
+    };
 
     private RSEProfile getProfile() {
         if (profiles.length > 0 && comboViewerProfile.getSelection() instanceof IStructuredSelection) {
