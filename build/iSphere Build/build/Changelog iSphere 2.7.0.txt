@@ -2,6 +2,7 @@
 
 Changelog: iSphere 2.7.0 beta 1
 -------------------------------
+ • Added messages subsystem.
  • MessageDescriptionDetail: Removed parameter "as400" from 
    constructor.
  • MessageDescriptionDetailDialog: Removed parameter "as400" from 
