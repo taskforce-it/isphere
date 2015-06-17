@@ -230,6 +230,16 @@ public class XDialog extends Dialog {
     }
 
     /**
+     * Returns the dialog settings manger of this dialog.
+     * 
+     * @return dialog settings manager
+     */
+    protected DialogSettingsManager getDialogSettingsManager() {
+        
+        return dialogSettingsManager;
+    }
+    
+    /**
      * Retrieves the screen value that was last displayed on the dialog.
      * 
      * @param aKey - key, that is used to retrieve the value from the store

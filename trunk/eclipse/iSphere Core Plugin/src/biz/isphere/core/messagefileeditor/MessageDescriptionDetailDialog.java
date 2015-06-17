@@ -22,28 +22,23 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 
-import com.ibm.as400.access.AS400;
-
 public class MessageDescriptionDetailDialog extends XDialog {
 
     public static final int YES_TO_ALL = IDialogConstants.YES_TO_ALL_ID;
     public static final int NO_TO_ALL = IDialogConstants.NO_TO_ALL_ID;
-    
-    private AS400 as400;
+
     private int actionType;
     private MessageDescription _messageDescription;
     private boolean yesToAllButton;
 
     private MessageDescriptionDetail _messageDescriptionDetail;
 
-    public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription) {
-        this(parentShell, as400, actionType, _messageDescription, false);
+    public MessageDescriptionDetailDialog(Shell parentShell, int actionType, MessageDescription _messageDescription) {
+        this(parentShell, actionType, _messageDescription, false);
     }
 
-    public MessageDescriptionDetailDialog(Shell parentShell, AS400 as400, int actionType, MessageDescription _messageDescription,
-        boolean yesToAllButton) {
+    public MessageDescriptionDetailDialog(Shell parentShell, int actionType, MessageDescription _messageDescription, boolean yesToAllButton) {
         super(parentShell);
-        this.as400 = as400;
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
         this.yesToAllButton = yesToAllButton;
@@ -59,9 +54,9 @@ public class MessageDescriptionDetailDialog extends XDialog {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout());
 
-        _messageDescriptionDetail = new MessageDescriptionDetail(as400, actionType, _messageDescription);
+        _messageDescriptionDetail = new MessageDescriptionDetail(actionType, _messageDescription);
         _messageDescriptionDetail.createContents(container);
-        _messageDescriptionDetail.loadSettings(getDialogBoundsSettings());
+        _messageDescriptionDetail.loadSettings(getDialogSettingsManager());
 
         return container;
     }
@@ -82,17 +77,17 @@ public class MessageDescriptionDetailDialog extends XDialog {
         setReturnCode(NO_TO_ALL);
         close();
     }
-    
+
     @Override
     protected void buttonPressed(int buttonId) {
         super.buttonPressed(buttonId);
         if (buttonId == IDialogConstants.YES_TO_ALL_ID) {
             yesToAllPressed();
-        } else  if (buttonId == IDialogConstants.NO_TO_ALL_ID) {
+        } else if (buttonId == IDialogConstants.NO_TO_ALL_ID) {
             noToAllPressed();
         }
     }
-    
+
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
@@ -111,7 +106,7 @@ public class MessageDescriptionDetailDialog extends XDialog {
 
     @Override
     public boolean close() {
-        _messageDescriptionDetail.saveSettings(getDialogBoundsSettings());
+        _messageDescriptionDetail.saveSettings(getDialogSettingsManager());
         return super.close();
     }
 

@@ -215,8 +215,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             return Messages.No_filter_pools_available + ".";
         } else if (singleFilterPool && getFilterPool() == null) {
             return Messages.No_filter_pool_selected + ".";
-        } 
-        else {
+        } else {
             return null;
         }
     };

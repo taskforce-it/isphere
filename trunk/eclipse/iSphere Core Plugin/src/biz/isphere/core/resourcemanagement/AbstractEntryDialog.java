@@ -172,7 +172,7 @@ public abstract class AbstractEntryDialog extends XDialog {
     }
 
     public void check() {
-        
+
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
 
             String error = checkWorkspaceArea();
@@ -186,41 +186,7 @@ public abstract class AbstractEntryDialog extends XDialog {
 
         if (buttonBoth.getSelection() || buttonRepository.getSelection()) {
 
-            String fileName = textRepository.getText().trim();
-            if (fileName.equals("")) {
-                if (okButton != null) okButton.setEnabled(false);
-                setErrorMessage(Messages.Enter_a_file_name + ".");
-                textRepository.setFocus();
-                return;
-            }
-
-            File repository = new File(fileName);
-            try {
-                repository.getCanonicalPath();
-            } catch (IOException e) {
-                if (okButton != null) okButton.setEnabled(false);
-                setErrorMessage(Messages.Invalid_file_name + ".");
-                textRepository.setFocus();
-                return;
-            }
-
-            String[] fileExtensions = getFileExtensionsInternal();
-            boolean ok = false;
-            StringBuffer extensions = new StringBuffer();
-            for (int idx = 0; idx < fileExtensions.length; idx++) {
-                if (fileName.endsWith("." + fileExtensions[idx])) {
-                    ok = true;
-                    break;
-                }
-                if (idx > 0) {
-                    extensions.append(", ");
-                }
-                extensions.append("." + fileExtensions[idx]);
-            }
-            if (!ok) {
-                if (okButton != null) okButton.setEnabled(false);
-                setErrorMessage(Messages.File_name_does_not_end_with + " " + extensions.toString());
-                textRepository.setFocus();
+            if (!checkRepositoryName()) {
                 return;
             }
 
@@ -229,6 +195,75 @@ public abstract class AbstractEntryDialog extends XDialog {
         if (okButton != null) okButton.setEnabled(true);
         setErrorMessage(null);
 
+    }
+
+    private boolean checkRepositoryName() {
+
+        String fileName = getRepositoryName();
+        if (fileName.equals("")) {
+            if (okButton != null) okButton.setEnabled(false);
+            setErrorMessage(Messages.Enter_a_file_name + ".");
+            textRepository.setFocus();
+            return false;
+        }
+
+        File repository = new File(fileName);
+        try {
+            repository.getCanonicalPath();
+        } catch (IOException e) {
+            if (okButton != null) okButton.setEnabled(false);
+            setErrorMessage(Messages.Invalid_file_name + ".");
+            textRepository.setFocus();
+            return false;
+        }
+
+        if (getFileExtensionsInternal().length > 1) {
+            if (!checkRepositoryNameExtension(fileName)) {
+                displayRepositoryFileNameExtensionError();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private String getRepositoryName() {
+        return textRepository.getText().trim();
+    }
+
+    private boolean checkRepositoryNameExtension(String fileName) {
+
+        String[] fileExtensions = getFileExtensionsInternal();
+        for (int idx = 0; idx < fileExtensions.length; idx++) {
+            if (fileName.endsWith("." + fileExtensions[idx])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private void displayRepositoryFileNameExtensionError() {
+        
+        if (okButton != null) {
+            okButton.setEnabled(false);
+        }
+        setErrorMessage(Messages.File_name_does_not_end_with + " " + getRepositoryNameExtensionsAsString());
+        textRepository.setFocus();
+    }
+    
+    private String getRepositoryNameExtensionsAsString() {
+        
+        StringBuffer extensions = new StringBuffer();
+        String[] fileExtensions = getFileExtensionsInternal();
+        for (int idx = 0; idx < fileExtensions.length; idx++) {
+            if (idx > 0) {
+                extensions.append(", ");
+            }
+            extensions.append("." + fileExtensions[idx]);
+        }
+
+        return extensions.toString();
     }
 
     private void setErrorMessage(String errorMessage) {
@@ -241,17 +276,26 @@ public abstract class AbstractEntryDialog extends XDialog {
 
     protected void okPressed() {
 
+        String repository = getRepository();
+
+        if (!checkRepositoryNameExtension(repository)) {
+            if (getFileExtensionsInternal().length == 1) {
+                repository = repository + "." + getFileExtensionsInternal()[0]; //$NON-NLS-1$ 
+                textRepository.setText(repository);
+            } else {
+                displayRepositoryFileNameExtensionError();
+            }
+        }
+
         boolean run = true;
 
         if (isEditBoth() || isEditRepository()) {
-
-            String repository = getRepository();
 
             File file = new File(repository);
             if (!file.exists()) {
 
                 MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                messageBox.setMessage(Messages.Create_the_repository + "?");
+                messageBox.setMessage(Messages.Create_the_repository + "?\n\n" + file.getAbsolutePath()); //$NON-NLS-1$
                 messageBox.setText(Messages.Repository_does_not_exist);
                 int response = messageBox.open();
 
@@ -321,7 +365,7 @@ public abstract class AbstractEntryDialog extends XDialog {
     protected String checkFilterPool() {
         return null;
     }
-    
+
     protected abstract String getTitle();
 
     protected abstract String getFileSubject();
