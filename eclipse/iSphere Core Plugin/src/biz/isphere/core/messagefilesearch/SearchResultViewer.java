@@ -334,8 +334,8 @@ public class SearchResultViewer {
 
                         if (_messageDescription != null) {
 
-                            MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, _searchResult
-                                .getAS400(), DialogActionTypes.CHANGE, _messageDescription);
+                            MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell,
+                                DialogActionTypes.CHANGE, _messageDescription);
                             _messageDescriptionDetailDialog.open();
 
                         } else {

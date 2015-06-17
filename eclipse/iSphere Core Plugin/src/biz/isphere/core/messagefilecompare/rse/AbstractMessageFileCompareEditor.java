@@ -1241,8 +1241,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 MessageDescriptionHelper.refreshMessageDescription(messageDescription);
                 tableViewer.update(compareItem, null);
 
-                AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
-                MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
+                MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(),
                     DialogActionTypes.getSubEditorActionType(IEditor.EDIT), messageDescription);
                 if (messageDescriptionDetailDialog.open() == Dialog.OK) {
                     tableViewer.update(compareItem, null);
@@ -1280,8 +1279,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                     } else {
                         displayYesToAll = false;
                     }
-                    AS400 as400 = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
-                    MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(), as400,
+                    MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(),
                         DialogActionTypes.DELETE, messageDescription, displayYesToAll);
                     returnCode = messageDescriptionDetailDialog.open();
                     if (returnCode == MessageDescriptionDetailDialog.YES_TO_ALL) {

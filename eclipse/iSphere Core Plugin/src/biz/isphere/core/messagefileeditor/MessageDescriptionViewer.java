@@ -290,8 +290,8 @@ public class MessageDescriptionViewer {
                     IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
                     MessageDescription _messageDescription = (MessageDescription)structuredSelection.getFirstElement();
 
-                    MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                        DialogActionTypes.getSubEditorActionType(mode), _messageDescription);
+                    MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes
+                        .getSubEditorActionType(mode), _messageDescription);
                     if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                         _tableViewer.update(_messageDescription, null);
                         // Update message preview
@@ -578,7 +578,7 @@ public class MessageDescriptionViewer {
         _messageDescription.setConnection(connectionName);
         _messageDescription.setLibrary(library);
         _messageDescription.setMessageFile(messageFile);
-        MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400, DialogActionTypes.CREATE,
+        MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes.CREATE,
             _messageDescription);
         if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
             ((ContentProviderTableViewer)_tableViewer.getContentProvider()).addElement(_tableViewer, _messageDescription);
@@ -594,8 +594,8 @@ public class MessageDescriptionViewer {
         for (int idx = 0; idx < selectedItems.length; idx++) {
             if (selectedItems[idx] instanceof MessageDescription) {
 
-                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                    DialogActionTypes.CHANGE, (MessageDescription)selectedItems[idx]);
+                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes.CHANGE,
+                    (MessageDescription)selectedItems[idx]);
                 if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                     _tableViewer.update((selectedItems[idx]), null);
                 }
@@ -636,8 +636,8 @@ public class MessageDescriptionViewer {
                 }
                 _messageDescription.setFieldFormats(fieldFormats2);
 
-                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                    DialogActionTypes.COPY, _messageDescription);
+                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes.COPY,
+                    _messageDescription);
                 if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                     _tableViewer.add(_messageDescription);
                 }
@@ -654,8 +654,8 @@ public class MessageDescriptionViewer {
         for (int idx = 0; idx < selectedItems.length; idx++) {
             if (selectedItems[idx] instanceof MessageDescription) {
 
-                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                    DialogActionTypes.DELETE, (MessageDescription)selectedItems[idx]);
+                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes.DELETE,
+                    (MessageDescription)selectedItems[idx]);
                 if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                     _tableViewer.remove((selectedItems[idx]));
                 }
@@ -672,8 +672,8 @@ public class MessageDescriptionViewer {
         for (int idx = 0; idx < selectedItems.length; idx++) {
             if (selectedItems[idx] instanceof MessageDescription) {
 
-                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, as400,
-                    DialogActionTypes.DISPLAY, (MessageDescription)selectedItems[idx]);
+                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell, DialogActionTypes.DISPLAY,
+                    (MessageDescription)selectedItems[idx]);
                 if (_messageDescriptionDetailDialog.open() == Dialog.OK) {
                 }
 
