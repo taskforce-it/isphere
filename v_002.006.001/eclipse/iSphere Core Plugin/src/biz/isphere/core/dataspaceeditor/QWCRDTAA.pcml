@@ -1,0 +1,22 @@
+<pcml version="1.0">
+
+  <struct name="receiver">
+    <data name="bytesReturned"             type="int"    length="4"        usage="output"/>
+    <data name="bytesAvailable"            type="int"    length="4"        usage="output"/>
+    <data name="type"                      type="char"   length="10"       usage="output"/>
+    <data name="library"                   type="char"   length="10"       usage="output"/>
+    <data name="length"                    type="int"    length="4"        usage="output"/>
+    <data name="decimalPositions"          type="int"    length="4"        usage="output"/>
+    <data name="value"                     type="char"   length="2000"     usage="output"/>
+  </struct>
+
+  <program name="QWCRDTAA" path="/QSYS.LIB/QWCRDTAA.PGM">
+    <data name="receiver"                  type="struct" struct="receiver" usage="output" outputsize="receiverLength"/>
+    <data name="receiverLength"            type="int"    length="4"        usage="input"  init="2036"     />
+    <data name="dataArea"                  type="char"   length="20"       usage="input"                  />
+    <data name="start"                     type="int"    length="4"        usage="input"  init="1"        />
+    <data name="length"                    type="int"    length="4"        usage="input"  init="1"        />
+    <data name="errorCode"                 type="int"    length="4"        usage="input"  init="0"        />
+  </program>
+
+</pcml>

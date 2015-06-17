@@ -1,0 +1,10 @@
+<pcml version="1.0">
+
+  <program name="QXXRTVDA" path="/QSYS.LIB/QXXRTVDA.PGM">
+    <data name="dataArea"                  type="char"   length="20"       usage="input"/>
+    <data name="start"                     type="int"    length="4"        usage="input"/>
+    <data name="length"                    type="int"    length="4"        usage="input"/>
+    <data name="value"                     type="byte"   length="2000"     usage="output"  outputsize="2000"/>
+  </program>
+
+</pcml>

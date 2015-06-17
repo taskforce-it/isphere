@@ -1,0 +1,117 @@
+Setup Eclipse (Helios) for iSphere
+==================================
+
+
+Prerequisites:
+--------------
+
+Installed IBM Rational Developer for Power Systems Software (RDP 8.0).
+
+		
+Repository Location:
+--------------------
+
+   https://svn.code.sf.net/p/isphere/code/trunk
+   
+   Password: Your SourceForge password.
+
+	
+Eclipse Plug-ins:
+-----------------
+
+Install the "iSphere Ant Plugin", which is required to build the iSphere
+project.
+
+For WDSCi set the Ant home diretory to:
+
+   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
+
+For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
+
+   Preferences - Java - Build path - Classpath variables
+   
+   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
+
+
+Eclipse Settings:
+-----------------
+
+a) Preferences -> Java -> Installed JREs (
+
+   WDSCi:
+   ------
+   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
+   JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
+
+   RDi:
+   ----
+   JRE home:   C:\Programme x86\IBM\SDP_080\jdk   (example path)
+   JRE name:   JRE 1.6.0 IBM J9                   (must be spelled as shown)
+   
+   Flagged as "Default JRE".
+
+b) Preferences - Java -> Code Style -> Clean Up
+   
+   Import: Preferences_Java_CodeStyle_CleanUp (iSphere)_3.6.xml
+   
+   Alternatively import and enable the cleanup profile for
+   each iSphere project.
+   
+   WDSCi: Restore default values for all "Clean Up" tabs.
+          Uncheck "Change all accesses through subtypes"
+          on "Member Accesses" tab.
+
+c) Preferences - Java -> Code Style -> Formatter
+
+   Import: Preferences_Java_CodeStyle_Formatter (iSphere)_3.6.xml
+   
+   Alternatively import and enable the formatter profile for
+   each iSphere project.
+
+d) Preferences - Java -> Editor -> Save Actions:
+
+   Enable:  Perform the selected actions on save
+   Enable:  Format source code
+            Format all lines
+   Enable:  Organize imports
+
+   Disable: Additional actions
+
+
+Strongly Recommended Run Configuration Settings:
+------------------------------------------------
+
+Add argument "-en" to the "VM arguments" field to enable Java assertions.
+
+
+Useful Settings:
+----------------
+
+a) Preferences -> General -> Show heap status (enable)
+
+b) Preferences -> General -> Editors -> Text Editors -> Spelling (disable for slow PCs)
+
+c) Preferences -> General -> Keys:
+
+   Filter for UNDO and copy entry "Ctrl+Z" to "Ctrl+Backspace".
+   
+   Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].
+   (Otherwise CTRL-ALT-Q does not work to get the '@'.)
+
+
+Usefull plug-ins:
+-----------------
+
+WindowBuilder Pro Update Site: 
+
+RDi 8.0:
+--------
+
+Name:     Eclipse 3.6 WindowBuilder Repo
+Location: http://download.eclipse.org/windowbuilder/WB/release/R201306261200/3.6/
+
+RDi 9.0/9.1:
+------------
+
+Name:     WindowBuilder Pro Eclipse Update Site
+Location: http://download.eclipse.org/windowbuilder/WB/integration/4.2/

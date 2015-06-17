@@ -1,0 +1,10 @@
+<pcml version="1.0">
+
+  <program name="QXXCHGDA" path="/QSYS.LIB/QXXCHGDA.PGM">
+    <data name="dataArea"                  type="char"   length="20"       usage="input"/>
+    <data name="start"                     type="int"    length="4"        usage="input"/>
+    <data name="length"                    type="int"    length="4"        usage="input"/>
+    <data name="value"                     type="byte"   length="2000"     usage="input"/>
+  </program>
+
+</pcml>
