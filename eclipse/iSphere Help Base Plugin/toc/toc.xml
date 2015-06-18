@@ -22,5 +22,8 @@
       <topic label="Setting up iSphere" href="html/contributions/setup/setup_isphere.html" />
       <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
    </topic>
+   <topic label="Utilities" >
+      <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc.html" />
+   </topic>
    <topic label="Links" href="html/links/links.html" />
 </toc>
