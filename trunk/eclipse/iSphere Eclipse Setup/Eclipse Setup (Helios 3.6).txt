@@ -32,6 +32,11 @@ For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
    
    ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
 
+Optionally:
+
+   'Eclipse Update Site', 'Web, XML, and Java EE Development':
+   
+      Web Page Editor Plug-in
 
 Eclipse Settings:
 -----------------
