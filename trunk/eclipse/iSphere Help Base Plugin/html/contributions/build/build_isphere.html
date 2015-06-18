@@ -167,7 +167,7 @@ to that object type. For that, open the context menu of the source member that y
 Select <i>Remote Actions</i> and <i>Work With Compile Commands...</i>. Click <i>New command</i> 
 underneath <i>Compile Commands</i> and add a label, e.g. <i>iSphere</i> and the <i>STRPREPRC</i> command:
 <p>
-<div class="codeCommand">STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) CHGOBJD(*NO) OBJTYPE(*PGM) LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) TGTRLS(*CURRENT) USER0(&X)</div> 
+<div class="codeCommand">STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) OPTION(*EVENTF) CHGOBJD(*NO) OBJTYPE(*PGM) LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) TGTRLS(*CURRENT) USER0(&X)</div> 
 <p>
 Do not add line breaks to the command string! I does not work.
 <p>
@@ -197,7 +197,7 @@ to connect to SourceForge and eventually checkout the project, as described in
 Switch to the <i>i Projects</i> perspective and select <i>Remote Actions -&gt; Push Selected</i> from the context
 menu of the <i>iSphere</i> project to push the source code to your host:
 <p>
-<img alt="Push selected changes tot he host" src="./assets/push_selected.gif">
+<img alt="Push selected changes tot he host" src="./assets/push_selected.gif" />
 <p>
 Now login to your host and compile the iSphere BUILD command like this:
 <p>
@@ -215,7 +215,7 @@ Add library ISPHEREDVP to your library list:
 <p>
 And eventually execute the BUILD command:
 <p>
-<img alt="Executing the iSphere BUILD command" src="./assets/isphere_build_cmd.gif">
+<img alt="Executing the iSphere BUILD command" src="./assets/isphere_build_cmd.gif" />
 <p>
 This way you create library <i>ISPHERE</i> from library <i>ISPHEREDVP</i>. But you can also use the command
 to compile your iSphere library "in place" when you specify the same library name twice.

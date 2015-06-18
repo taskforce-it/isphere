@@ -21,6 +21,25 @@ ARG DEVLIB TGTRLS;
 "SRCFILE(QBUILD) ",
 "SRCMBR(XMLINST)";
 
+/* Create the Tools/400 Runtime service program */
+/* Create sample programs: NO   */
+/* C-Compiler available:   C_NO */
+"CALL ",
+"PGM(XMLINST) ",
+"PARM('BASICS1' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+
+/* Create the Job Log API */
+/* Create sample programs: NO   */
+"CALL ",
+"PGM(XMLINST) ",
+"PARM('JOBLOG' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+
+/* Create the Event File API */
+/* Create sample programs: NO   */
+"CALL ",
+"PGM(XMLINST) ",
+"PARM('EVENTF' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+
 /* Create Preprocessor */
 "CALL ",
 "PGM(XMLINST) ",
