@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 6/18/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 6/19/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2617,7 +2617,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8 - 18.06.2015 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.8.1 - 19.06.2015 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -6158,6 +6158,7 @@ srccssid=  "00273">
              DCL        VAR(&XUSER9    ) TYPE(*CHAR) LEN(  50)
              DCL        VAR(&XTAGSREQ  ) TYPE(*LGL ) LEN(   1)
              DCL        VAR(&XMSGF     ) TYPE(*CHAR) LEN(  10)
+             DCL        VAR(&XMSGFLIB  ) TYPE(*CHAR) LEN(  10)
              DCL        VAR(&EXICMDEXC ) TYPE(*CHAR) LEN(  20)
              DCL        VAR(&PGMCMDEXC ) TYPE(*CHAR) LEN(  10)
              DCL        VAR(&LPGMCMDEXC) TYPE(*CHAR) LEN(  10)
@@ -6219,9 +6220,9 @@ srccssid=  "00273">
              IF         COND(&CHGOBJD *EQ '*YES') THEN(DO)
                CHKOBJ     OBJ(*LIBL/CHGOBJDA) OBJTYPE(*CMD)
                MONMSG     MSGID(CPF9801) EXEC(DO)
-                 SNDPGMMSG  MSGID(PRZ0021) MSGF(*LIBL/&XMSGF) +
+                 SNDPGMMSG  MSGID(PRZ0021) MSGF(&XMSGFLIB/&XMSGF) +
                             TOPGMQ(*PRV (*PGMBDY)) MSGTYPE(*DIAG)
-                 SNDPGMMSG  MSGID(PRZ0022) MSGF(*LIBL/&XMSGF) +
+                 SNDPGMMSG  MSGID(PRZ0022) MSGF(&XMSGFLIB/&XMSGF) +
                             TOPGMQ(*PRV (*PGMBDY)) MSGTYPE(*ESCAPE)
                ENDDO
              ENDDO
@@ -6298,6 +6299,7 @@ srccssid=  "00273">
                                               &XUSER9     +
                                               &XTAGSREQ   +
                                               &XMSGF      +
+                                              &XMSGFLIB   +
                                               &PGMCMDEXC  +
                                               &LPGMCMDEXC +
                                               &OPTION     )
@@ -6480,9 +6482,6 @@ srccssid=  "00273">
       * -------------------------------------------------------------
      D cNone           c                   '*NONE'
       *
-     D cAppMsgF        c                   'STRPREPRC'
-     D cAppMsgL        c                   '*LIBL'
-      *
       *  Nachrichtenkonstanten
      D cTYPE_DIAG      c                   '*DIAG'
      D cTYPE_ESCAPE    c                   '*ESCAPE'
@@ -6599,6 +6598,7 @@ srccssid=  "00273">
      D  i_user9                                   like(userParm_t)
      D  i_tagsReq                                 like(bool_t)
      D  i_msgFile                                 like(msg_t.file)
+     D  i_msgFileLib                              like(msg_t.lib)
      D  i_pgmCmdExc...
      D                                            like(pgm_t)
      D  i_libPgmCmdExc...
@@ -6750,6 +6750,7 @@ srccssid=  "00273">
      D  i_user9                                   like(userParm_t)
      D  i_tagsReq                                 like(bool_t)
      D  i_msgFile                                 like(msg_t.file)
+     D  i_msgFileLib                              like(msg_t.lib)
      D  i_pgmCmdExc...
      D                                            like(pgm_t)
      D  i_libPgmCmdExc...
@@ -6789,7 +6790,7 @@ srccssid=  "00273">
      D                 S                   like(bool_t)  inz(cFalse)
       /free
 
-         p_setAppMsgFile(cAppMsgF: cAppMsgL);
+         p_setAppMsgFile(i_msgFile: i_msgFileLib);
 
          // Initialisieren globaler Variablen
          reset g_msgFile;
@@ -8085,10 +8086,8 @@ srccssid=  "00273">
       *  Arbeitsfelder
       /free
 
-         if (%parms() >= 5);
-            writeEventFile(g_srcFile.name: g_srcFile.lib: g_srcFile.name
-                           : f1_line_number);
-         endif;
+         writeEventFile(g_srcFile.name: g_srcFile.lib: g_srcFile.name
+                        : f1_line_number);
 
          if (g_eventfOpen);
             closeEventFile();
