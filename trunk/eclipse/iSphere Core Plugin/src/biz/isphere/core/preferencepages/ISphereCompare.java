@@ -156,6 +156,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     }
 
     private boolean validateMessageFileCompareLineWidth() {
+        
+        if (!messageFileCompareEnabled) {
+            return true;
+        }
 
         int minLineWidth = 15;
 
