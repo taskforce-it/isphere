@@ -77,16 +77,16 @@ public class SearchForUpdates extends Job {
 
                 if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
-                    newVersionInfo = getString(manifest, "X-Bundle-Info");
+                    newVersionInfo = getString(manifest, "X-Bundle-Info", true);
                     newRequiresUpdateLibrary = getBoolean(manifest, "X-Bundle-Update-Library", false);
                 }
 
-                if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions()) || showResultAlways) {
+                if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions())) {
                     Version availableBetaVersion = getVersion(manifest, "X-Beta-Version");
                     if (availableBetaVersion != null && availableBetaVersion.compareTo(currentVersion) > 0) {
                         availableVersion = availableBetaVersion;
                         newVersionAvailable = true;
-                        newVersionInfo = getString(manifest, "X-Beta-Info");
+                        newVersionInfo = getString(manifest, "X-Beta-Info", true);
                         newRequiresUpdateLibrary = getBoolean(manifest, "X-Beta-Update-Library", false);
                     }
                 }
@@ -198,6 +198,18 @@ public class SearchForUpdates extends Job {
         }
 
         return null;
+    }
+
+    private String getString(Manifest manifest, String version, boolean replaceControlCharacter) {
+
+        String value = getString(manifest, version);
+        if (value == null) {
+            return null;
+        }
+
+        value = value.replaceAll(";", ", ").replaceAll("\\\\n", "\n"); //$NON-NLS-1$//$NON-NLS-2$
+
+        return value;
     }
 
     private String getString(Manifest manifest, String version) {
