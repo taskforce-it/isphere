@@ -22,6 +22,14 @@ public class SearchArgumentEditor extends AbstractSearchArgumentEditor {
 
     private SystemHistoryCombo txtSearchString;
 
+    public SearchArgumentEditor() {
+        this(false);
+    }
+
+    public SearchArgumentEditor(boolean regularExpressions) {
+        setRegularExpressionsOption(regularExpressions);
+    }
+
     @Override
     public void addSearchStringListener(Listener aListener) {
         txtSearchString.getCombo().addListener(SWT.Modify, aListener);
