@@ -15,12 +15,16 @@ import biz.isphere.core.search.AbstractSearchArgumentEditor;
 public class SearchArgumentsListEditor extends biz.isphere.core.search.SearchArgumentsListEditor {
 
     public SearchArgumentsListEditor(int aMaxNumSearchArguments) {
-        super(aMaxNumSearchArguments);
+        this(aMaxNumSearchArguments, false);
+    }
+
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean regularExpressionsOption) {
+        super(aMaxNumSearchArguments, regularExpressionsOption);
     }
 
     @Override
     protected AbstractSearchArgumentEditor createEditor(Composite aParent) {
-        SearchArgumentEditor tEditor = new SearchArgumentEditor();
+        SearchArgumentEditor tEditor = new SearchArgumentEditor(isRegularExpressions());
         tEditor.createContents(aParent);
         tEditor.addSearchStringListener(this);
         tEditor.addButtonListener(this);

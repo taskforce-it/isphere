@@ -1031,6 +1031,10 @@ public class Messages extends NLS {
     public static String Tooltip_Compare_after_synchronization;
 
     public static String Object_A_has_already_been_assigned_to_editor_B;
+
+    public static String Regular_expression;
+    
+    public static String Specify_whether_you_want_to_use_a_regular_expression_for_the_search_argument;
     
     static {
         // initialize resource bundle

@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +33,9 @@ public abstract class AbstractSearchArgumentEditor {
     private Button btnAdd;
     private Composite container;
     private Button btnCaseSensitive;
+    private Button btnRegularExpression;
     private Combo cboCondition;
+    private boolean regularExpressionsOption;
 
     /**
      * @wbp.parser.entryPoint
@@ -59,9 +62,21 @@ public abstract class AbstractSearchArgumentEditor {
         txtSearchString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtSearchString.setSize(76, 19);
 
-        btnCaseSensitive = WidgetFactory.createCheckbox(container);
+        Composite searchOptions = new Composite(container, SWT.NONE);
+        RowLayout searchOptionsLayout = new RowLayout(SWT.VERTICAL);
+        searchOptionsLayout.marginHeight = 0;
+        searchOptionsLayout.marginWidth = 0;
+        searchOptions.setLayout(searchOptionsLayout);
+
+        btnCaseSensitive = WidgetFactory.createCheckbox(searchOptions);
         btnCaseSensitive.setText(Messages.Case_sensitive);
         btnCaseSensitive.setToolTipText(Messages.Specify_whether_case_should_be_considered_during_search);
+
+        if (regularExpressionsOption) {
+            btnRegularExpression = WidgetFactory.createCheckbox(searchOptions);
+            btnRegularExpression.setText(Messages.Regular_expression);
+            btnRegularExpression.setToolTipText(Messages.Specify_whether_you_want_to_use_a_regular_expression_for_the_search_argument);
+        }
 
         btnAdd = WidgetFactory.createPushButton(container);
         GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -123,12 +138,34 @@ public abstract class AbstractSearchArgumentEditor {
         }
     }
 
+    public void setRegularExpressionsOption(boolean regularExpressions) {
+        regularExpressionsOption = regularExpressions;
+    }
+
     public boolean isCaseSensitive() {
         return btnCaseSensitive.getSelection();
     }
 
     public void setCase(boolean anIsCaseSensitive) {
         btnCaseSensitive.setSelection(anIsCaseSensitive);
+    }
+
+    public boolean isRegularExpression() {
+        
+        if (!regularExpressionsOption) {
+            return false;
+        }
+        
+        return btnRegularExpression.getSelection();
+    }
+
+    public void setRegularExpression(boolean anIsRegularExpression) {
+        
+        if (!regularExpressionsOption) {
+            return;
+        }
+        
+        btnRegularExpression.setSelection(anIsRegularExpression);
     }
 
     public Rectangle getBounds() {
@@ -140,7 +177,7 @@ public abstract class AbstractSearchArgumentEditor {
     }
 
     public SearchArgument getSearchArgument() {
-        return new SearchArgument(getSearchString(), isCaseSensitive(), getCompareCondition());
+        return new SearchArgument(getSearchString(), isCaseSensitive(), isRegularExpression(), getCompareCondition());
     }
 
     protected abstract Composite createSearchStringCombo(Composite aContainer, int aStyle, String aKey, int aMaxComboEntries, boolean aReadOnly);

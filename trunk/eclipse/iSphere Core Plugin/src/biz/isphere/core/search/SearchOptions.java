@@ -24,6 +24,9 @@ public class SearchOptions {
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
 
+    public static final String SEARCH_ARG_STRING = "*STRING";
+    public static final String SEARCH_ARG_REGEX = "*REGEX";
+
     private boolean matchAll;
     private boolean showAllItems;
     private List<SearchArgument> searchArguments;

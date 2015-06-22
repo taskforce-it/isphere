@@ -45,6 +45,7 @@ public class FNDSTR_search {
                 pcml.setIntValue("FNDSTR_search.arguments.fromColumn", indices, searchArgument.getFromColumn());
                 pcml.setIntValue("FNDSTR_search.arguments.toColumn", indices, searchArgument.getToColumn());
                 pcml.setValue("FNDSTR_search.arguments.case", indices, searchArgument.getCaseSensitive());
+                pcml.setValue("FNDSTR_search.arguments.regex", indices, searchArgument.getRegularExpression());
             }
 
             if (_searchOptions.isShowAllItems()) {

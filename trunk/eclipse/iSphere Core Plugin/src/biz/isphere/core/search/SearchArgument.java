@@ -15,33 +15,43 @@ public class SearchArgument {
     private int fromColumn;
     private int toColumn;
     private String caseSensitive; // TODO: change to boolean -> FNDSTR.RPGLE
+    private String regularExpression;
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive) {
-        this(aString, aFromColumn, aToColumn, aCaseSensitive, SearchOptions.CONTAINS);
+        this(aString, aFromColumn, aToColumn, aCaseSensitive, SearchOptions.SEARCH_ARG_STRING, SearchOptions.CONTAINS);
     }
 
-    public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive, int anOperator) {
+    public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive, String aRegularExpression, int anOperator) {
         operator = anOperator;
         string = aString;
         fromColumn = aFromColumn;
         toColumn = aToColumn;
         caseSensitive = aCaseSensitive;
+        regularExpression = aRegularExpression;
     }
 
-    public SearchArgument(String aString, int aFromColumn, int aToColumn, boolean anIsCaseSensitive, int anOperator) {
+    public SearchArgument(String aString, int aFromColumn, int aToColumn, boolean aCaseSensitive, boolean aRegularExpression, int anOperator) {
+        
         operator = anOperator;
         string = aString;
         fromColumn = aFromColumn;
         toColumn = aToColumn;
-        if (anIsCaseSensitive) {
+        
+        if (aCaseSensitive) {
             caseSensitive = SearchOptions.CASE_MATCH;
         } else {
             caseSensitive = SearchOptions.CASE_IGNORE;
         }
+        
+        if (aRegularExpression) {
+            regularExpression = SearchOptions.SEARCH_ARG_REGEX;
+        } else {
+            regularExpression = SearchOptions.SEARCH_ARG_STRING;
+        }
     }
 
-    public SearchArgument(String aString, boolean anIsCaseSensitive, int anOperator) {
-        this(aString, -1, -1, anIsCaseSensitive, anOperator);
+    public SearchArgument(String aString, boolean anIsCaseSensitive, boolean aRegularExpression, int anOperator) {
+        this(aString, -1, -1, anIsCaseSensitive, aRegularExpression, anOperator);
     }
 
     public int getOperator() {
@@ -62,6 +72,10 @@ public class SearchArgument {
 
     public String getCaseSensitive() {
         return caseSensitive;
+    }
+
+    public String getRegularExpression() {
+        return regularExpression;
     }
 
     public void setRange(int aFromColumn, int aToColumn) {
