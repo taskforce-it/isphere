@@ -59,7 +59,7 @@
              PARM       KWD(TMPLIB) TYPE(*NAME) LEN(10) DFT(QTEMP) +
                           PROMPT('Temporary library')
 
-             PARM       KWD(PREPRC) TYPE(*CHAR) LEN(10) DFT(*YES) +
+             PARM       KWD(PREPRC) TYPE(*CHAR) LEN(10) DFT(*NO) +
                           RSTD(*YES) SPCVAL((*YES) (*NO)) +
                           PROMPT('Create preprocessor')
 

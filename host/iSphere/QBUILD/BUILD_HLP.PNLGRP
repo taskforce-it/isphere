@@ -112,17 +112,17 @@ Create preprocessor - Help
 :XH3.Create preprocessor (PREPRC)
 :P.
 Specifies whether or not to compile the STRPREPRC command. Usually
-it is required to do so, because STRPREPRC is used by the build process
-to compile objects. The STRPREPRC command is complied into the
-development library.
+it is sufficient to do it one, because the STRPREPRC complied into the
+development library. It is used by the build process to compile the
+iSphere objects.
 .*
 :IMHELP name='COM/OPTPARM'.
 .*
 :PARML.
-:PT.:PK DEF.*YES:EPK.
-:PD.Compile the STRPREPRC command.
-:PT.:PV.*NO:EPV.
+:PT.:PK DEF.*NO:EPK.
 :PD.The STRPREPRC command is not created.
+:PT.:PV.*YES:EPV.
+:PD.Compile the STRPREPRC command.
 :EPARML.
 .*
 :EHELP.

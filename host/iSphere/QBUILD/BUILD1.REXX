@@ -56,6 +56,12 @@ DO;
    "PGM(BUILD_CRT) ",
    "PARM(&PRDLIB &DEVLIB &TMPLIB &TGTRLS &OWNER)";
 
+   "SNDPGMMSG ",
+   "MSGID(CPF9897) ",
+   "MSGF(QCPFMSG) ",
+   "MSGDTA('*** Successfully created the iSphere library ***') ",
+   "TOPGMQ(*PRV (*CTLBDY)) ",
+   "MSGTYPE(*INFO)";
 END;
 
 /* Remove current library */

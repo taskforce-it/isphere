@@ -124,6 +124,18 @@
              IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
                 CPYF       FROMFILE(&DEVLIB/&BUILD) +
                              TOFILE(&PRDLIB/&BUILD) +
+                             FROMMBR(BASICS1) TOMBR(BASICS1) +
+                             MBROPT(*REPLACE) CRTFILE(*YES)
+                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+                             TOFILE(&PRDLIB/&BUILD) +
+                             FROMMBR(JOBLOG) TOMBR(JOBLOG) +
+                             MBROPT(*REPLACE) CRTFILE(*YES)
+                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+                             TOFILE(&PRDLIB/&BUILD) +
+                             FROMMBR(EVENTF) TOMBR(EVENTF) +
+                             MBROPT(*REPLACE) CRTFILE(*YES)
+                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+                             TOFILE(&PRDLIB/&BUILD) +
                              FROMMBR(STRPREPRC) TOMBR(STRPREPRC) +
                              MBROPT(*REPLACE) CRTFILE(*YES)
                 CPYF       FROMFILE(&DEVLIB/&BUILD) +
@@ -134,6 +146,18 @@
 
              /* Create XML installer */
              CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/&BUILD) SRCMBR(*PGM)
+
+             /* Create Tools/400 Runtime service program */
+             CALL       PGM(&TMPLIB/XMLINST) +
+                          PARM('BASICS1' &BUILD &PRDLIB '' 'NO;C_NO' &TGTRLS)
+
+             /* Create Job Log API */
+             CALL       PGM(&TMPLIB/XMLINST) +
+                          PARM('JOBLOG' &BUILD &PRDLIB '' 'NO' &TGTRLS)
+
+             /* Create Event File API */
+             CALL       PGM(&TMPLIB/XMLINST) +
+                          PARM('EVENTF' &BUILD &PRDLIB '' 'NO' &TGTRLS)
 
              /* Create STRPREPRC utility */
              CALL       PGM(&TMPLIB/XMLINST) +

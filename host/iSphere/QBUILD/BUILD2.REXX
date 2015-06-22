@@ -32,18 +32,25 @@ ARG DEVLIB TGTRLS;
 /* Create sample programs: NO   */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('JOBLOG' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+"PARM('JOBLOG' 'QBUILD' &DEVLIB '' 'NO' &TGTRLS)";
 
 /* Create the Event File API */
 /* Create sample programs: NO   */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('EVENTF' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+"PARM('EVENTF' 'QBUILD' &DEVLIB '' 'NO' &TGTRLS)";
 
 /* Create Preprocessor */
 "CALL ",
 "PGM(XMLINST) ",
 "PARM('STRPREPRC' 'QBUILD' &DEVLIB '' 'ENG;NO' &TGTRLS)";
+
+"SNDPGMMSG ",
+"MSGID(CPF9897) ",
+"MSGF(QCPFMSG) ",
+"MSGDTA('*** Successfully compiled the STRPREPRC utility ***') ",
+"TOPGMQ(*PRV (*CTLBDY)) ",
+"MSGTYPE(*INFO)";
 
 /* End */
 EXIT;
