@@ -4,10 +4,11 @@
      d searchArgument_t...
      d                 DS                  Qualified Based(pTemplate)
      d  operator                     10I 0
-     d  string                       40A   Varying
+     d  string                      256A   Varying
      d  fromColumn                   10I 0
      d  toColumn                     10I 0
      d  case                         10A
+     d  regex                        10A
 
      d SRCHOPTS_OPERATOR_CONTAINS...
      d                 C                   1
@@ -18,6 +19,11 @@
      d                 C                   '*MATCH'
      d SRCHOPTS_CASE_IGNORE...
      d                 C                   '*IGNORE'
+
+     d SRCHOPTS_ARG_STRING...
+     d                 C                   '*STRING'
+     d SRCHOPTS_ARG_REGEX...
+     d                 C                   '*REGEX'
 
      d SRCHOPTS_ARGUMENTS_SIZE...
      d                 C                   16

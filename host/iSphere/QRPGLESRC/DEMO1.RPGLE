@@ -77,6 +77,7 @@
        searchArguments(1).fromColumn = 1;
        searchArguments(1).toColumn = 228;
        searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
+       searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
         GIHDL :         // --> Handle

@@ -36,6 +36,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
     private static final String COMPARE_CONDITION = "compareCondition";
     private static final String SEARCH_STRING = "searchString";
     private static final String CASE_SENSITIVE = "caseSensitive";
+    private static final String REGULAR_EXPRESSION = "regularExpression";
 
     private Composite searchStringGroup;
     private ScrolledComposite scrollable;
@@ -45,8 +46,14 @@ public abstract class SearchArgumentsListEditor implements Listener {
     private List<AbstractSearchArgumentEditor> searchArgumentEditors;
     private int maxNumSearchArguments;
     private Listener listener;
+    private boolean regularExpressionsOption;
 
     public SearchArgumentsListEditor(int aMaxNumSearchArguments) {
+        this(aMaxNumSearchArguments, false);
+    }
+
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption) {
+        regularExpressionsOption = aRegularExpressionsOption;
         maxNumSearchArguments = aMaxNumSearchArguments;
         listener = null;
     }
@@ -88,6 +95,10 @@ public abstract class SearchArgumentsListEditor implements Listener {
         scrollable.setContent(searchStringGroup);
 
         searchArgumentEditors = new ArrayList<AbstractSearchArgumentEditor>();
+    }
+
+    protected boolean isRegularExpressions() {
+        return regularExpressionsOption;
     }
 
     private void addSearchArgumentEditorAndLayout() {
@@ -197,7 +208,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
         List<SearchArgument> tSearchArguments = new ArrayList<SearchArgument>();
         for (AbstractSearchArgumentEditor tSearchArgumentEditor : searchArgumentEditors) {
             tSearchArguments.add(new SearchArgument(tSearchArgumentEditor.getSearchString(), aStartColumn, anEndColumn, tSearchArgumentEditor
-                .isCaseSensitive(), tSearchArgumentEditor.getCompareCondition()));
+                .isCaseSensitive(), tSearchArgumentEditor.isRegularExpression(), tSearchArgumentEditor.getCompareCondition()));
         }
         return tSearchArguments;
     }
@@ -215,6 +226,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
             aDialogSettings.put(SEARCH_STRING + "_" + i, searchArgumentEditors.get(i).getSearchString());
 
             aDialogSettings.put(CASE_SENSITIVE + "_" + i, searchArgumentEditors.get(i).isCaseSensitive());
+            aDialogSettings.put(REGULAR_EXPRESSION + "_" + i, searchArgumentEditors.get(i).isRegularExpression());
         }
     }
 
@@ -230,6 +242,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
                     IntHelper.tryParseInt(loadValue(aDialogSettings, COMPARE_CONDITION + "_" + i, ""), SearchOptions.CONTAINS));
                 searchArgumentEditors.get(i).setSearchString(loadValue(aDialogSettings, SEARCH_STRING + "_" + i, "Enter search string here"));
                 searchArgumentEditors.get(i).setCase(loadBooleanValue(aDialogSettings, CASE_SENSITIVE + "_" + i, false));
+                searchArgumentEditors.get(i).setRegularExpression(loadBooleanValue(aDialogSettings, REGULAR_EXPRESSION + "_" + i, false));
             } catch (Throwable e) {
                 // ignore all errors
             }
