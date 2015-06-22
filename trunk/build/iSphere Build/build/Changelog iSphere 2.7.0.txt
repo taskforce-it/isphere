@@ -1,5 +1,12 @@
 
 
+Changelog: iSphere 2.7.0 beta 2
+-------------------------------
+ • Added option "regular expression" to source file search.
+ • Fixed NPE when the RSE plug-in is not installed.
+ • Updated utility STRPREPRC to latest version.
+
+
 Changelog: iSphere 2.7.0 beta 1
 -------------------------------
  • Added messages subsystem.
