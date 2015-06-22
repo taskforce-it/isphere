@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Version: 2.6.1.r
 X-Bundle-Update-Library: true
-X-Bundle-Info: Bugix:\nFixed RSE filter manager to properly export the filters; when 'Single filter pool' is deselected.
+X-Bundle-Info: Bugix: Fixed RSE filter manager to properly export the filters when 'Single filter pool' is deselected.
 X-Beta-Version: 2.6.0.r
 X-Beta-Update-Library: false
 X-Beta-Info: This version requires V5R4 for restoring the library.
