@@ -11,3 +11,4 @@ decorators
 checkbox
 Lpex
 enablement
+clipboard
