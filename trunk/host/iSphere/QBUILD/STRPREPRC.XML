@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 6/19/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 6/23/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -6412,7 +6412,7 @@ srccssid=  "00273">
       *                                                                     *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
-     H NOMAIN
+     H NOMAIN BNDDIR('QC2LE')
       /COPY QSTRPREPRC,H_SPEC
       /COPY QSTRPREPRC,COPYRIGHT
       * =================================================================== *
@@ -8403,7 +8403,7 @@ srccssid=  "00273">
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
       /COPY QSTRPREPRC,H_SPEC
-     H NOMAIN
+     H NOMAIN BNDDIR('QC2LE')
       *
      FSTRPRE2   IF   E           K DISK    usropn
      F                                     prefix(P2)
