@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name=""
+            icon="icons/tn5250j.gif"
+            class="de.taskforce.tn5250j.rse.sessionseditor.SessionsEditor"
+            id="de.taskforce.tn5250j.rse.sessionseditor.SessionsEditor"/>
+      <editor
+            name=""
+            icon="icons/tn5250j.gif"
+            class="de.taskforce.tn5250j.rse.designereditor.DesignerEditor"
+            id="de.taskforce.tn5250j.rse.designereditor.DesignerEditor"/>
+   </extension>
+ 
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="TN5250J"
+            id="de.taskforce.tn5250j">
+      </category>
+      <view
+            name="%TN5250J_Sessions"
+            icon="icons/tn5250j.gif"
+            category="de.taskforce.tn5250j"
+            class="de.taskforce.tn5250j.rse.sessionsview.SessionsView"
+            id="de.taskforce.tn5250j.rse.sessionsview.SessionsView">
+      </view>
+      <view
+            name="%TN5250J_Designer"
+            icon="icons/tn5250j.gif"
+            category="de.taskforce.tn5250j"
+            class="de.taskforce.tn5250j.rse.designerview.DesignerView"
+            id="de.taskforce.tn5250j.rse.designerview.DesignerView">
+      </view>
+   </extension>
+
+   <extension 
+         point="com.ibm.etools.systems.core.subsystemfactory">
+        <factory
+             id="de.taskforce.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
+             systemtypes="iSeries"
+             name="TN5250J"
+             class="de.taskforce.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
+             category="5250Sessions"
+             vendor="Task Force IT-Consulting GmbH"
+             icon="icons/tn5250j.gif"
+             iconlive="icons/tn5250j.gif">
+        </factory>
+   </extension>
+    
+	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+		<dynamicPopupMenuExtension
+			name="TN5250J Designer"
+			class="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction"
+			id="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction">
+	    </dynamicPopupMenuExtension>
+	</extension>  
+	
+	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+		<dynamicPopupMenuExtension
+			name="TN5250J Designer"
+			class="de.taskforce.tn5250j.rse.actions.DesignerBrowseWithAction"
+			id="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction">
+	    </dynamicPopupMenuExtension>
+	</extension>  
+
+</plugin>
