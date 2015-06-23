@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.messagesubsystem"
-      label="iSphere Message Subsystem for WDSCi 7.0"
-      version="2.7.0.b001 "
+      label="iSphere Message Subsystem for WDSCi 7.0 (optional)"
+      version="2.7.0.b001"
       provider-name="iSphere Project Team">
 
    <description url="https://sourceforge.net/projects/isphere/">

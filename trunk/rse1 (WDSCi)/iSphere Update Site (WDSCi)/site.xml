@@ -12,7 +12,7 @@
    <feature url="features/biz.isphere.help_2.7.0.b001.jar" id="biz.isphere.help" version="2.7.0.b001">
       <category name="iSphere for WDSCi 7.0"/>
    </feature>
-   <feature url="features/biz.isphere.messagesubsystem_2.7.0.b001 .jar" id="biz.isphere.messagesubsystem" version="2.7.0.b001 ">
+   <feature url="features/biz.isphere.messagesubsystem_2.7.0.b001 .jar" id="biz.isphere.messagesubsystem" version="2.7.0.b001">
       <category name="iSphere for WDSCi 7.0"/>
    </feature>
    <category-def name="iSphere for WDSCi 7.0" label="iSphere for WDSCi 7.0"/>
