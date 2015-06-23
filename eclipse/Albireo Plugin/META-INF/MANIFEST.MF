@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Bundle-Name: Albireo Core (Incubation)
 Bundle-Vendor: Albireo Project (Eclipse Foundation)
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.albireo.core
 Export-Package: org.eclipse.albireo.core,org.eclipse.albireo.internal;
