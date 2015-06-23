@@ -2774,7 +2774,7 @@ srccssid=  "00273">
       *     >>EXECUTE<<                                                     *
       *   >>END-PRE-COMPILER<<                                              *
       *=====================================================================*
- CPY H NOMAIN
+ CPY H NOMAIN BNDDIR('QC2LE')
       /COPY QJOBLOG,H_SPEC
       /COPY QJOBLOG,COPYRIGHT
       *=====================================================================*
