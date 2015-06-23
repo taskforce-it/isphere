@@ -142,26 +142,27 @@
                              TOFILE(&PRDLIB/&BUILD) +
                              FROMMBR(BUILD_CLR) TOMBR(BUILD_CLR) +
                              MBROPT(*REPLACE) CRTFILE(*YES)
+
+                /* Create XML installer */
+                CRTBNDRPG  PGM(&TMPLIB/XMLINST) +
+                             SRCFILE(&DEVLIB/&BUILD) SRCMBR(*PGM)
+
+                /* Create Tools/400 Runtime service program */
+                CALL       PGM(&TMPLIB/XMLINST) +
+                             PARM('BASICS1' &BUILD &PRDLIB '' 'NO;C_NO' &TGTRLS)
+
+                /* Create Job Log API */
+                CALL       PGM(&TMPLIB/XMLINST) +
+                             PARM('JOBLOG' &BUILD &PRDLIB '' 'NO' &TGTRLS)
+
+                /* Create Event File API */
+                CALL       PGM(&TMPLIB/XMLINST) +
+                             PARM('EVENTF' &BUILD &PRDLIB '' 'NO' &TGTRLS)
+
+                /* Create STRPREPRC utility */
+                CALL       PGM(&TMPLIB/XMLINST) +
+                             PARM('STRPREPRC' &BUILD &PRDLIB '' 'ENG;NO' &TGTRLS)
              ENDDO
-
-             /* Create XML installer */
-             CRTBNDRPG  PGM(&TMPLIB/XMLINST) SRCFILE(&DEVLIB/&BUILD) SRCMBR(*PGM)
-
-             /* Create Tools/400 Runtime service program */
-             CALL       PGM(&TMPLIB/XMLINST) +
-                          PARM('BASICS1' &BUILD &PRDLIB '' 'NO;C_NO' &TGTRLS)
-
-             /* Create Job Log API */
-             CALL       PGM(&TMPLIB/XMLINST) +
-                          PARM('JOBLOG' &BUILD &PRDLIB '' 'NO' &TGTRLS)
-
-             /* Create Event File API */
-             CALL       PGM(&TMPLIB/XMLINST) +
-                          PARM('EVENTF' &BUILD &PRDLIB '' 'NO' &TGTRLS)
-
-             /* Create STRPREPRC utility */
-             CALL       PGM(&TMPLIB/XMLINST) +
-                          PARM('STRPREPRC' &BUILD &PRDLIB '' 'ENG;NO' &TGTRLS)
 
              /* ----------------------------------------------- */
              /* Delete old objects                              */
