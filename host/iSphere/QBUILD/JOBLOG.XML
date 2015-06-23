@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 6/18/2015">
+<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 6/23/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2790,7 +2790,7 @@ srccssid=  "00273">
       * ------------------------------------
       *  Type Definitions
       * ------------------------------------
-     D handle_t        ds                  qualified template
+     D handle_t        ds                  qualified based(pDummy)
      D  isOpen                         n
      D  isEOF                          n
      D  qJob                               likeds(qJob_t)
@@ -2800,7 +2800,7 @@ srccssid=  "00273">
      D  listInf                            likeds(qgy_opnListInf_t)
      D  options                            likeds(listOptions_t)
       *
-     D listOptions_t   ds                  qualified template
+     D listOptions_t   ds                  qualified based(pDummy)
      D  isMsg                          n   inz(cFalse)
      D  msgSelectId                  10i 0 inz
      D  isMsgHelp                      n   inz(cFalse)
@@ -3977,7 +3977,7 @@ srccssid=  "00273">
      D                 s             10i 0
       *
      D JobLog_jobLogEntry_t...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  isMsg                          n
      D  isMsgHelp                      n
      D  isSender                       n
@@ -3998,7 +3998,7 @@ srccssid=  "00273">
      D  rplcData                   5120a   varying
       *
      D JobLog_addresse_t...
-     D                 DS                  qualified template
+     D                 DS                  qualified based(pDummy)
      D  job                                likeds(qJob_t)
      D  type                          1a
      D  pgm                                likeds(qObj_t)
@@ -4008,7 +4008,7 @@ srccssid=  "00273">
      D  usrPrf                       10a
       *
      D JobLog_stmts_t...
-     D                 DS                  qualified template
+     D                 DS                  qualified based(pDummy)
      D  numE                         10i 0
      D  lineNbr                      10a   dim(10)
       *
@@ -4053,7 +4053,7 @@ srccssid=  "00273">
       *
       *  OLJL0100 Format
      D oljl0100_t...
-     D                 DS                  qualified template
+     D                 DS                  qualified based(pDummy)
      D  ofsNxtEntry                  10I 0
      D  ofsFldsRtn                   10I 0
      D  numFldsRtn                   10I 0
@@ -4079,7 +4079,7 @@ srccssid=  "00273">
       *  Reserved                                         CHAR(14)
       *
      D oljl0100_fieldInf_t...
-     D                 DS                  qualified template
+     D                 DS                  qualified based(pDummy)
      D  ofsNxtFldInf                 10I 0
      D  lenFldInf                    10I 0
      D  fieldId                      10I 0
@@ -4092,7 +4092,7 @@ srccssid=  "00273">
       *
       *  Message Selection Information Format
      D QGYOLJBL_msgSlcInf...
-     D                 DS                  qualified template
+     D                 DS                  qualified based(pDummy)
      D  listDirection                10A
      D  qJob                               likeds(qJob_t)
      D  intJobID                     16A

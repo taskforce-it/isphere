@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 6/18/2015">
+<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 6/23/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1603,7 +1603,7 @@ srccssid=  "00273">
       // to determine if the Events File is current. This record is always the first record
       // in the Events File.
      D evf_timestamp...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('TIMESTAMP')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1614,7 +1614,7 @@ srccssid=  "00273">
       // This record indicates that a new processor has been invoked.
       // One will always follow the timestamp record in the Events File.
      D evf_processor...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('PROCESSOR')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1628,7 +1628,7 @@ srccssid=  "00273">
       // and associates an integer with the file name.
       // Usage:  result = %trimR(evf_file_id_1) + evf_file_id_2
      D evf_file_id_1...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('FILEID')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1643,7 +1643,7 @@ srccssid=  "00273">
      D                                     'Library___/File______(Member____)')
 
      D evf_file_id_2...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  separator_6                   1    inz
      D  sourcefile_timestamp...
      D                               14a   inz('YYYYMMDDHHMMSS')
@@ -1653,7 +1653,7 @@ srccssid=  "00273">
       // File End Record
       // This record indicates that an included file is ending.
      D evf_file_end...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('FILEEND')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1667,7 +1667,7 @@ srccssid=  "00273">
       // a token or line causing a message in the source file, as well
       // as enough information to allow the message itself to be displayed.
      D evf_error...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('ERROR')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1703,7 +1703,7 @@ srccssid=  "00273">
       // This record contains information about expanded source lines
       // due to a pre-processor.
      D evf_expansion...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('EXPANSION')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1733,7 +1733,7 @@ srccssid=  "00273">
       //       PROGRAM record for that program and before any PROGRAM
       //       records for other programs.
      D evf_program...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('PROGRAM')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1743,7 +1743,7 @@ srccssid=  "00273">
       // Map Define Record
       // This record indicates that a macro is being defined.
      D evf_map_define...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('MAPDEFINE')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1759,7 +1759,7 @@ srccssid=  "00273">
       // Map Start Record
       // This record indicates that source expansion is starting.
      D evf_map_start...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('MAPSTART')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1771,7 +1771,7 @@ srccssid=  "00273">
       // Map End Record
       // This record indicates that source expansion is complete.
      D evf_map_end...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('MAPEND')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
@@ -1785,7 +1785,7 @@ srccssid=  "00273">
       // Feedback Code Record
       // This record indicates that source expansion is complete.
      D evf_feedback...
-     D                 ds                  qualified template
+     D                 ds                  qualified based(pDummy)
      D  type                         10a   inz('FEEDBACK')
      D  separator_1                   1    inz
      D  version                       1a   inz('0')
