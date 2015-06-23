@@ -3009,7 +3009,7 @@ srccssid=  "00273">
       *                                                                     *
       *   >>END-PRE-COMPILER<<                                              *
       *=====================================================================*
- CPY H NOMAIN
+     H NOMAIN BNDDIR('QC2LE')
       /COPY QEVENTF,H_SPEC
       /COPY QEVENTF,COPYRIGHT
       *=====================================================================*

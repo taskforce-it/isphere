@@ -2801,12 +2801,12 @@ srccssid=  "00273">
      D  options                            likeds(listOptions_t)
       *
      D listOptions_t   ds                  qualified based(pDummy)
-     D  isMsg                          n   inz(cFalse)
-     D  msgSelectId                  10i 0 inz
-     D  isMsgHelp                      n   inz(cFalse)
-     D  hlpSelectId                  10i 0 inz
-     D  isSender                       n   inz(cFalse)
-     D  isReceiver                     n   inz(cFalse)
+     D  isMsg                          n
+     D  msgSelectId                  10i 0
+     D  isMsgHelp                      n
+     D  hlpSelectId                  10i 0
+     D  isSender                       n
+     D  isReceiver                     n
       *
      D mixedData_t     ds                  likeds(JobLog_stmts_t)
       *
