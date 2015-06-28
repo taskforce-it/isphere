@@ -95,8 +95,10 @@
 
                 CRTLIB     LIB(&PRDLIB)
 
-                CHGOBJOWN  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) NEWOWN(&OWNER) +
-                             CUROWNAUT(*REVOKE)
+                IF         COND(&OWNER *NE '*SAME') THEN(DO)
+                   CHGOBJOWN  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) NEWOWN(&OWNER) +
+                                CUROWNAUT(*REVOKE)
+                ENDDO
 
                 RVKOBJAUT  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) USER(*ALL)
 
@@ -530,8 +532,10 @@
 
              CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
 
-             CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
-                          CUROWNAUT(*REVOKE)
+             IF         COND(&OWNER *NE '*SAME') THEN(DO)
+                CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
+                             CUROWNAUT(*REVOKE)
+             ENDDO
 
              RVKOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*ALL)
 
