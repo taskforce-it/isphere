@@ -30,7 +30,7 @@
       //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
 
-     hNoMain
+     hNoMain bnddir('QC2LE')
       /copy qcpysrc,h_spec
       /copy qcpysrc,copyright
 
@@ -465,7 +465,11 @@
      d                                     Inz
      d  isInit                         N   Inz(*OFF)
      d  isError                        N   Inz(*OFF)
+      /if defined(*V5R4M0)
      d  handle                             Likeds(regex_t)
+      /else
+     d  handle                             Like(regex_t)
+      /endif
 
      d rc              S             10I 0
      d cflags          S             10I 0
