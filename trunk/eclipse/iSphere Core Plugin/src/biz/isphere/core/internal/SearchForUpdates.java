@@ -200,6 +200,18 @@ public class SearchForUpdates extends Job {
         return null;
     }
 
+    /**
+     * Replaces characters that are not allowed in a MANIFEST.MF file. This way
+     * we can specify comma and linefeed characters in a manifest file.
+     * <pre>
+     * semicolon (;) -> comma (,)
+     * </pre>
+     * 
+     * @param manifest - 
+     * @param version - 
+     * @param replaceControlCharacter - 
+     * @return replaced string
+     */
     private String getString(Manifest manifest, String version, boolean replaceControlCharacter) {
 
         String value = getString(manifest, version);
@@ -207,7 +219,7 @@ public class SearchForUpdates extends Job {
             return null;
         }
 
-        value = value.replaceAll(";", ", ").replaceAll("\\\\n", "\n"); //$NON-NLS-1$//$NON-NLS-2$
+        value = value.replaceAll(";", ", "); //$NON-NLS-1$
 
         return value;
     }
