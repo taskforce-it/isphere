@@ -121,6 +121,19 @@
 
      dNULL             C                   -1
 
+      // This array has a 1:1 relation to
+      // the LSARGS input array of procedure FNDSTR_search().
+     d gregex          DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d                                     Qualified
+     d                                     Inz
+     d  isInit                         N   Inz(*OFF)
+     d  isError                        N   Inz(*OFF)
+      /if defined(*V5R4M0)
+     d  handle                             Likeds(regex_t) inz
+      /else
+     d  handle                             Like(regex_t) inz(*ALLx'00')
+      /endif
+
       // Local procedures
 
      d removeMember...
@@ -143,6 +156,8 @@
      d                 PR                  Extproc('updateStatus')
      d  i_handle                     10S 0 Const
      d  i_status                     10I 0 Const
+
+     d freeRegEx       PR                  Extproc('freeRegEx')
 
      d*cvtCcsid_lc     PR                        like(searchArgument_t.string)
      d*                                    Extproc('cvtCcsid_lc')
@@ -189,6 +204,9 @@
               0,
               '*NO'
              );
+
+       // Free regular expression handles
+       freeRegEx();
 
        // Leave procedure
        Return LIHDL;
@@ -458,19 +476,6 @@
      d  mustBeFound                    N
      d  hasBeenFound                   N
 
-      // This array has a 1:1 relation to
-      // the LSARGS input array.
-     d regex           DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
-     d                                     Qualified
-     d                                     Inz
-     d  isInit                         N   Inz(*OFF)
-     d  isError                        N   Inz(*OFF)
-      /if defined(*V5R4M0)
-     d  handle                             Likeds(regex_t)
-      /else
-     d  handle                             Like(regex_t)
-      /endif
-
      d rc              S             10I 0
      d cflags          S             10I 0
      d nmatch          S             10U 0 Inz(1)
@@ -698,31 +703,31 @@
 
              // Match!
              If LSARGS(LIIDX).regex = SRCHOPTS_ARG_REGEX;
-               If not regex(LIIDX).isInit and not regex(LIIDX).isError;
+               If not gregex(LIIDX).isInit and not gregex(LIIDX).isError;
                  // LISTG = cvtCcsid_lc(LISTG);
-                 rc = regcomp(regex(LIIDX).handle: LISTG: cflags);
+                 rc = regcomp(gregex(LIIDX).handle: LISTG: cflags);
                  If rc = 0;
-                   regex(LIIDX).isInit = *ON;
+                   gregex(LIIDX).isInit = *ON;
                  Else;
-                   regex(LIIDX).isInit = *OFF;
-                   regex(LIIDX).isError = *ON;
+                   gregex(LIIDX).isInit = *OFF;
+                   gregex(LIIDX).isError = *ON;
                    regerror(
-                     rc: regex(LIIDX).handle: %addr(error): %size(error));
+                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
                  Endif;
                Endif;
-               If regex(LIIDX).isInit and not regex(LIIDX).isError;
+               If gregex(LIIDX).isInit and not gregex(LIIDX).isError;
                  // LILINE = cvtCcsid_lc(LILINE);
                  rc = regexec(
-                        regex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
+                        gregex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
                  Select;
                  When rc = 0;             // found!
                    searchArgFound = *ON;
                  When rc = REG_NOMATCH;   // not found
                    searchArgFound = *OFF;
                  Other;                   // error!
-                   regex(LIIDX).isError = *ON;
+                   gregex(LIIDX).isError = *ON;
                    regerror(
-                     rc: regex(LIIDX).handle: %addr(error): %size(error));
+                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
                  Endsl;
                Endif;
              Else;
@@ -829,6 +834,9 @@
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+       // Free regular expression handles
+       freeRegEx();
 
        // Clear file 'Status'
        Exec SQL
@@ -959,6 +967,28 @@
 
       /End-Free
      p                 E
+
+      //*==========================================================================================*
+      //* Free regular expression handles.
+      //*==========================================================================================*
+
+     P freeRegEx       B
+     D                 PI
+
+     D LIIDX           S             10I 0 inz
+      /free
+
+         For LIIDX = 1 to %elem(gregex);
+            If (gregex(LIIDX).isInit);
+               regfree(gregex(LIIDX).handle);
+               gregex(LIIDX).isInit = *OFF;
+               gregex(LIIDX).isError = *OFF;
+               gregex(LIIDX).handle = *ALLx'00';
+            EndIf;
+         EndFor;
+
+      /end-free
+     P                 E
 
       //*==========================================================================================*
       //* Converts a given string to the CCSID of the current locale.                              *
