@@ -1,5 +1,21 @@
 
 
+Changelog: iSphere 2.7.0 beta 4
+-------------------------------
+ • Fixed problem that errors and warnings were not removed from the 
+   view after the problem had been fixed. (Data Space Monitor)
+ • Fixed problem that negative values were not acccepted when editing 
+   integer or decimal values. (Data Space Editor)
+ • Fixed problem of empty message boxes for exceptions with no message 
+   text. (Data Space Editor and Monitor)
+
+
+Changelog: iSphere 2.7.0 beta 3
+-------------------------------
+ • Fixed some build problems when building the iSphere library.
+ • Updated STRPREPRC, EVENTF and JOBLOG.
+
+
 Changelog: iSphere 2.7.0 beta 2
 -------------------------------
  • Added option "regular expression" to source file search.
