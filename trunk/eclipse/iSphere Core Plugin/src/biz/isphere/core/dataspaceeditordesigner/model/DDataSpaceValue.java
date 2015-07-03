@@ -179,7 +179,7 @@ public class DDataSpaceValue {
 
     public BigDecimal getDecimal(int offset, int length, int fraction) {
         ensureDecimalType();
-        String data = convertByteArrayToString(bytes, offset, length);
+        String data = convertByteArrayToStringRaw(bytes, offset, length);
         String digits = data.substring(0, length - fraction);
         String decPos = data.substring(length - fraction);
         return new BigDecimal(digits + "." + decPos);
@@ -188,15 +188,19 @@ public class DDataSpaceValue {
     public void setDecimal(BigDecimal value, int offset, int length, int fraction) throws CharConversionException {
         ensureDecimalType();
         String data = BigDecimalHelper.getFixLength(value, length, fraction);
-        convertStringToByteArray(data.replaceAll("\\.", ""), bytes, offset, length);
+        convertStringToByteArrayRaw(data.replaceAll("\\.", ""), bytes, offset, length);
     }
 
     private String convertByteArrayToString(byte[] bytes, int offset, int length) {
         if (converter == null) {
-            return new String(ByteHelper.copyOfRange(bytes, offset, length));
+            return convertByteArrayToStringRaw(bytes, offset, length);
         } else {
             return converter.byteArrayToString(bytes, offset, length);
         }
+    }
+
+    private String convertByteArrayToStringRaw(byte[] bytes, int offset, int length) {
+        return new String(ByteHelper.copyOfRange(bytes, offset, length));
     }
 
     private void convertStringToByteArray(String string, byte[] bytes, int offset, int length) throws CharConversionException {

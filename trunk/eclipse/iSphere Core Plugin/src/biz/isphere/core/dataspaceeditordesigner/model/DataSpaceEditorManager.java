@@ -99,19 +99,19 @@ public final class DataSpaceEditorManager {
         dialogArea.setLayoutData(dialogAreaLayoutData);
 
         dialogArea.setData(DATA_KEY_DIALOG_AREA, DATA_KEY_DIALOG_AREA);
-        
+
         return dialogArea;
     }
 
     public boolean isDialogArea(Composite composite) {
-        
+
         if (composite.getData(DATA_KEY_DIALOG_AREA) != null) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     public Control createReadOnlyWidgetControlAndAddToParent(Composite parent, int columnsPerEditorColumn, AbstractDWidget widget) {
 
         Control control = createWidgetControlAndAddToParent(parent, columnsPerEditorColumn, widget);
@@ -535,6 +535,8 @@ public final class DataSpaceEditorManager {
         ControlPayload payload = getPayloadFromControl(control);
         AbstractDWidget widget = payload.getWidget();
 
+        payload.resetErrorsAndWarnings();
+
         try {
 
             if (widget instanceof DText) {
@@ -633,7 +635,7 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Text text = WidgetFactory.createDecimalText(parent);
+        Text text = WidgetFactory.createDecimalText(parent, true);
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
         return text;
@@ -643,7 +645,7 @@ public final class DataSpaceEditorManager {
 
         createLabel(parent, widget);
 
-        Text text = WidgetFactory.createIntegerText(parent);
+        Text text = WidgetFactory.createIntegerText(parent, true);
         GridData layoutData = getDataWidgetLayoutData(columnsPerEditorColumn, widget);
         text.setLayoutData(layoutData);
         return text;
