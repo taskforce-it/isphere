@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
@@ -144,7 +145,7 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
 
         if (exception != null) {
             ISpherePlugin.logError(exception.getMessage(), exception);
-            MessageDialog.openError(shell, Messages.E_R_R_O_R, exception.getLocalizedMessage());
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
         }
     }
 

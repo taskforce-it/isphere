@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.internal.StatusBar;
@@ -153,7 +154,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      */
     protected void handleSaveResult(IProgressMonitor aMonitor, Throwable anException) {
         if (anException != null) {
-            statusBar.setMessage(anException.getLocalizedMessage());
+            statusBar.setMessage(ExceptionHelper.getLocalizedMessage(anException));
             aMonitor.setCanceled(true);
         } else {
             statusBar.setMessage(null);
