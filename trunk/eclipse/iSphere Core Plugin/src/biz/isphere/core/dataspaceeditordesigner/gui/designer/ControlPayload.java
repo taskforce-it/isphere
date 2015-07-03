@@ -65,6 +65,11 @@ public class ControlPayload {
         return listener;
     }
 
+    public void resetErrorsAndWarnings() {
+        setInvalidDataError(false);
+        setInvalidDataWarning(false);
+    }
+
     public void setInvalidDataWarning(boolean invalidDataWarning) {
         this.invalidDataWarning = invalidDataWarning;
     }
