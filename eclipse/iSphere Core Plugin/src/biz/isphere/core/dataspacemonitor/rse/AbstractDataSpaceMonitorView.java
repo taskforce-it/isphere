@@ -531,6 +531,9 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             labelInvalidDataWarningOrError.setText(errorItem + ": " + Messages.Invalid_data_warning_Editor_might_not_be_suitable_for_the_data); //$NON-NLS-1$
             labelInvalidDataWarningOrError.setBackground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
             labelInvalidDataWarningOrError.setVisible(true);
+        } else {
+            labelInvalidDataWarningOrError.setText("");
+            labelInvalidDataWarningOrError.setVisible(false);
         }
     }
 
