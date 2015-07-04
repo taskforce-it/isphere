@@ -28,6 +28,9 @@ import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 import biz.isphere.rse.dataspaceeditordesigner.rse.DropDataSpaceListener;
 import biz.isphere.rse.internal.RSEControlDecoration;
 
+import com.ibm.etools.iseries.services.qsys.api.IQSYSObject;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     @Override
@@ -37,6 +40,13 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     @Override
     protected AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception {
+
+        IQSYSObject object = IBMiConnection.getConnection(remoteObject.getConnectionName()).getObject(remoteObject.getLibrary(),
+            remoteObject.getName(), remoteObject.getObjectType(), null);
+        if (object == null) {
+            return null;
+        }
+
         return new WrappedDataSpace(remoteObject);
     }
 
