@@ -8,6 +8,8 @@ Changelog: iSphere 2.7.0 beta 4
    integer or decimal values. (Data Space Editor)
  • Fixed problem of empty message boxes for exceptions with no message 
    text. (Data Space Editor and Monitor)
+ • Fixed expection when a data area was renamed or deleted while it 
+   had been monitored. (Object not found.)
 
 
 Changelog: iSphere 2.7.0 beta 3
