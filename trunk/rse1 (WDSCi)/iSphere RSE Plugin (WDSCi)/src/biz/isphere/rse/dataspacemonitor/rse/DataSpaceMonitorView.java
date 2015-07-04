@@ -28,6 +28,9 @@ import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 import biz.isphere.rse.dataspaceeditordesigner.rse.DropDataSpaceListener;
 import biz.isphere.rse.internal.RSEControlDecoration;
 
+import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.iseries.core.api.ISeriesObject;
+
 public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     @Override
@@ -37,6 +40,13 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     @Override
     protected AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception {
+
+        ISeriesObject object = ISeriesConnection.getConnection(remoteObject.getConnectionName()).getISeriesObject(null,
+            remoteObject.getLibrary(), remoteObject.getName(), remoteObject.getObjectType());
+        if (object == null) {
+            return null;
+        }
+
         return new WrappedDataSpace(remoteObject);
     }
 
@@ -61,7 +71,7 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     private void setDecorator(Control control, IControlDecoration decorator) {
         control.setData(DE.KEY_CONTROL_DECORATOR, decorator);
-}
+    }
 
     private IControlDecoration getDecorator(Control control) {
         Object data = control.getData(DE.KEY_CONTROL_DECORATOR);
