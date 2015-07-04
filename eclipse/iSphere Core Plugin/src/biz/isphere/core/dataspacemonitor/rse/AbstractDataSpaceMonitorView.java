@@ -802,6 +802,13 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
             try {
 
                 AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
+                if (dataSpace == null) {
+                    MessageDialogAsync.displayError(
+                        getShell(),
+                        Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
+                            new String[] { remoteObject.getName(), remoteObject.getLibrary(), remoteObject.getObjectType() }));
+                    return Status.OK_STATUS;
+                }
 
                 /*
                  * Now that we know the type of the data area (= dataSpace), we
@@ -943,22 +950,29 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                 try {
 
                     AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
+                    if (dataSpace == null) {
+                        MessageDialogAsync.displayError(
+                            getShell(),
+                            Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
+                                new String[] { remoteObject.getName(), remoteObject.getLibrary(), remoteObject.getObjectType() }));
+                        monitor.setCanceled(true);
+                    } else {
+                        /*
+                         * Create a UI job to update the view with the new data.
+                         */
+                        updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), null);
+                        updateDataUIJob.setJobFinishedListener(this);
+                        updateDataUIJob.schedule();
 
-                    /*
-                     * Create a UI job to update the view with the new data.
-                     */
-                    updateDataUIJob = new UpdateDataUIJob(getShell().getDisplay(), getName(), createDataSpaceValue(dataSpace), null);
-                    updateDataUIJob.setJobFinishedListener(this);
-                    updateDataUIJob.schedule();
-
-                    waitTime = interval;
-                    while ((!monitor.isCanceled() && waitTime > 0) || updateDataUIJob != null) {
-                        Thread.sleep(SLEEP_INTERVAL);
-                        if (waitTime > interval) {
-                            waitTime = interval;
-                        }
-                        if (waitTime > 0) {
-                            waitTime = waitTime - SLEEP_INTERVAL;
+                        waitTime = interval;
+                        while ((!monitor.isCanceled() && waitTime > 0) || updateDataUIJob != null) {
+                            Thread.sleep(SLEEP_INTERVAL);
+                            if (waitTime > interval) {
+                                waitTime = interval;
+                            }
+                            if (waitTime > 0) {
+                                waitTime = waitTime - SLEEP_INTERVAL;
+                            }
                         }
                     }
 

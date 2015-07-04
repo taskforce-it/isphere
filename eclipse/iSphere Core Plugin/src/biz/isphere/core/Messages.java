@@ -903,73 +903,73 @@ public class Messages extends NLS {
     public static String No_filter_pool_selected;
 
     public static String Copy_selected;
-    
+
     public static String Message_file_search;
-    
-    public static String Tooltip_Specifies_the_folder_to_save_message_file_search_results_to; 
-    
+
+    public static String Tooltip_Specifies_the_folder_to_save_message_file_search_results_to;
+
     public static String Tooltip_Select_object;
-    
+
     public static String Compare;
-    
+
     public static String Synchronize;
 
     public static String Duplicates;
-    
+
     public static String Singles;
-    
+
     public static String ID;
-    
+
     public static String Please_select_the_missing_message_file_then_press_Compare_to_start;
-    
+
     public static String Please_press_Compare_to_start;
-    
+
     public static String Warning;
-    
+
     public static String Warning_Both_sides_show_the_same_message_file;
-    
+
     public static String Items_found_colon;
-    
+
     public static String Identical_colon;
-    
+
     public static String Different_colon;
-    
+
     public static String Unique_left_colon;
-    
+
     public static String Unique_right_colon;
-    
+
     public static String Remove_selection;
-    
+
     public static String Select_for_copying_right_to_left;
-    
+
     public static String Select_for_copying_left_to_right;
-    
+
     public static String Edit_left;
-    
+
     public static String Edit_right;
-    
+
     public static String Compare_left_AND_right;
-    
+
     public static String Delete_left;
-    
+
     public static String Delete_right;
-    
+
     public static String Tooltip_display_copy_from_left_to_right;
-    
+
     public static String Tooltip_display_copy_from_right_to_left;
-    
+
     public static String Tooltip_display_unequal_items;
-    
+
     public static String Tooltip_display_equal_items;
-    
+
     public static String Tooltip_display_duplicates;
-    
+
     public static String Tooltip_display_singles;
-    
+
     public static String Tooltip_start_compare;
-    
+
     public static String Tooltip_start_synchronize;
-    
+
     public static String Loading_message_descriptions;
 
     public static String Left_message_description;
@@ -977,41 +977,41 @@ public class Messages extends NLS {
     public static String Right_message_description;
 
     public static String Message_identifier_colon;
-    
+
     public static String First_level_message_text_colon;
-    
+
     public static String Second_level_message_text_colon;
-    
+
     public static String Severity_code_colon;
-    
+
     public static String Coded_character_set_ID_colon;
-    
+
     public static String Message_data_fields_formats_colon;
-    
+
     public static String Message_descriptions_compare;
-    
+
     public static String Line_width_colon;
-    
+
     public static String Tooltip_Line_with_of_word_wrap_of_first_and_second_level_text_when_comparing_message_descriptions;
 
     public static String Minimum_line_width_is_A_characters;
 
     public static String Directory_must_not_be_empty;
-    
+
     public static String The_specified_directory_does_not_exist;
-    
+
     public static String File_name_must_not_be_empty;
 
     public static String Reply_type_colon;
-    
+
     public static String Valid_reply_values_colon;
-    
+
     public static String Special_reply_values_colon;
-    
+
     public static String Range_of_reply_values_colon;
-    
+
     public static String Default_reply_value_colon;
-    
+
     public static String Relationship_for_valid_replies_colon;
 
     public static String This_version_requires_updating_the_iSphere_library;
@@ -1021,21 +1021,23 @@ public class Messages extends NLS {
     public static String Message_identifier_A_not_found_in_message_file_B_in_C;
 
     public static String Yes_To_All;
-    
+
     public static String No_To_All;
 
     public static String Tooltip_cancel_operation;
-    
+
     public static String Compare_after_synchronization;
-    
+
     public static String Tooltip_Compare_after_synchronization;
 
     public static String Object_A_has_already_been_assigned_to_editor_B;
 
     public static String Regular_expression;
-    
+
     public static String Specify_whether_you_want_to_use_a_regular_expression_for_the_search_argument;
-    
+
+    public static String Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
