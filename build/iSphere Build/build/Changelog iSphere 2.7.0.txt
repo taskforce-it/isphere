@@ -10,7 +10,9 @@ Changelog: iSphere 2.7.0 beta 4
    text. (Data Space Editor and Monitor)
  • Fixed expection when a data area was renamed or deleted while it 
    had been monitored. (Object not found.)
-
+ • Fixed problem that iSphere Source File search did not return a result 
+   when the search arguments were all set to “contains-not”.
+   (Fixed in 2.6.2)
 
 Changelog: iSphere 2.7.0 beta 3
 -------------------------------
