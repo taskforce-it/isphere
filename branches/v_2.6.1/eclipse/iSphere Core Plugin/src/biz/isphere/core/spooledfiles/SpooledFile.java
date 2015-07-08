@@ -594,6 +594,11 @@ public class SpooledFile {
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
             doTransformSpooledFile = store.getSpooledFileConversionPDF().equals(IPreferences.SPLF_CONVERSION_TRANSFORM);
         }
+
+        if (doTransformSpooledFile && !ISphereHelper.canTransformSpooledFile(getAS400())) {
+            doTransformSpooledFile = false;
+        }
+
         return doTransformSpooledFile;
     }
 
