@@ -13,6 +13,8 @@ Changelog: iSphere 2.7.0 beta 4
  • Fixed problem that iSphere Source File search did not return a result 
    when the search arguments were all set to “contains-not”.
    (Fixed in 2.6.2)
+ • Fixed problem that spooled file transformation can not be used with 
+   V5R3 and lower. Now using default conversion instead.
 
 Changelog: iSphere 2.7.0 beta 3
 -------------------------------
