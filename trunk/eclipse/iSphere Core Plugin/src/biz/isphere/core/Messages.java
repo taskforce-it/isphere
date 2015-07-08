@@ -1038,6 +1038,8 @@ public class Messages extends NLS {
 
     public static String Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist;
 
+    public static String Items_colon;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
