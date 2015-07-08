@@ -189,10 +189,14 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         Group groupArea = new Group(container, SWT.NONE);
         groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         groupArea.setText(Messages.Area);
-        groupArea.setLayout(new FillLayout(SWT.HORIZONTAL));
+        groupArea.setLayout(new GridLayout());
 
         List listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         listArea.setItems(getItems());
+
+        Label labelNumElem = new Label(groupArea, SWT.NONE);
+        labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
 
         loadScreenValues();
 
