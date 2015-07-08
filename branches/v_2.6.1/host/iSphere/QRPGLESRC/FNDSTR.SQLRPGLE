@@ -647,12 +647,16 @@
              // Match!
              If %Scan(%TrimR(LISTG) : LILINE) > *Zero;
                matchesResult(LIIDX).hasBeenFound = *ON;
-               if (matchesResult(LIIDX).mustBeFound);
+               If (matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;
                  memberFound = *ON; // For now. Maybe changed below.
                Else;
-                 // For "contains not" crtierias,
+                 // For "contains not" criterias,
                  // records are not logged.
+               EndIf;
+             Else;
+               If (not matchesResult(LIIDX).mustBeFound);
+                 memberFound = *ON; // For now. Maybe changed below.
                EndIf;
              EndIf;
 
