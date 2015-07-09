@@ -1039,6 +1039,8 @@ public class Messages extends NLS {
     public static String Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist;
 
     public static String Items_colon;
+
+    public static String Back;
     
     static {
         // initialize resource bundle

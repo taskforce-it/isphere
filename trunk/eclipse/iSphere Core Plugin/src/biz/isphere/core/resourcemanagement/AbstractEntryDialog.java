@@ -242,18 +242,18 @@ public abstract class AbstractEntryDialog extends XDialog {
 
         return false;
     }
-    
+
     private void displayRepositoryFileNameExtensionError() {
-        
+
         if (okButton != null) {
             okButton.setEnabled(false);
         }
         setErrorMessage(Messages.File_name_does_not_end_with + " " + getRepositoryNameExtensionsAsString());
         textRepository.setFocus();
     }
-    
+
     private String getRepositoryNameExtensionsAsString() {
-        
+
         StringBuffer extensions = new StringBuffer();
         String[] fileExtensions = getFileExtensionsInternal();
         for (int idx = 0; idx < fileExtensions.length; idx++) {
@@ -294,17 +294,19 @@ public abstract class AbstractEntryDialog extends XDialog {
             File file = new File(repository);
             if (!file.exists()) {
 
-                MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+                MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
                 messageBox.setMessage(Messages.Create_the_repository + "?\n\n" + file.getAbsolutePath()); //$NON-NLS-1$
                 messageBox.setText(Messages.Repository_does_not_exist);
                 int response = messageBox.open();
 
                 if (response == SWT.YES) {
                     if (!createEmptyRepository(file)) {
-                        run = false;
+                        return;
                     }
+                } else if (response == SWT.CANCEL) {
+                    return;
                 } else {
-                    run = false;
+                    run = false; // SWT.NO
                 }
 
             }
@@ -312,11 +314,12 @@ public abstract class AbstractEntryDialog extends XDialog {
         }
 
         if (run) {
-            run();
+            if (run() == IDialogConstants.BACK_ID) {
+                return;
+            }
         }
 
         super.okPressed();
-
     }
 
     protected void createButtonsForButtonBar(Composite parent) {
@@ -390,7 +393,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         return fileExtensions;
     }
 
-    protected abstract void run();
+    protected abstract int run();
 
     protected abstract boolean createEmptyRepository(File repository);
 
