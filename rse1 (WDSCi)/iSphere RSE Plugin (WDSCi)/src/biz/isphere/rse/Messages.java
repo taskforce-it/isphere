@@ -122,6 +122,10 @@ public class Messages extends NLS {
     public static String No_filter_pool_available;
     
     public static String A_filter_with_name_A_already_exists;
+
+    public static String Failed_to_save_data_to_file_colon_A;
+
+    public static String Failed_to_load_data_from_file_colon_A;
     
     static {
         // initialize resource bundle
