@@ -43,29 +43,37 @@
 		displayed in up to four separate horizontal panes.
 	<p>
 	<ul>
-		<li>Filters only in workspace.</li>
-		<li>Filters only in repository.</li>
-		<li>Filters in workspace and in repository with a different type
-			or filter string.</li>
-		<li>Filters in workspace and in repository with an equal type and
-			filter string.</li>
+		<li>Edit workspace and repository filters</li>
+		<li>Edit only workspace filters</li>
+		<li>Edit only repository filters</li>
 	</ul>
 
 	Click the appropriate button. The default,
-	<i>Edit workspace and repository files</i>, is suitable for the first
-	time you want to create a new repository.
+	<i>Edit workspace and repository filters</i>, is suitable for the first
+	time you want to create a new repository. With this option you can:
+	<ul>
+	<li>Push filters from the workspace to the repository and vice versa.</li>
+	<li>Delete filters from the workspace.</li>
+	<li>Delete filters from the repository.</li>
+	</ul>
+	<p>The next two option, <i>Edit only workspace filters</i> and 
+	<i>Edit only repository filters</i> are suitable for removing filters from
+	the workspace or the repository.
+	<h3>Profile</h3>
+	Select the profile that contains the filter pools you want to manage.
 	<h3>Single Filter Pool</h3>
 	If this is checked, then you will need to select a filter pool using
-	the
-	<i>Filter Pool</i> drop down below. Only filters in this filter pool
+	the	<i>Filter Pool</i> drop down below. Only filters in this filter pool
 	will be considered for action, and the filter pool name will not be
 	saved. (Note that even if you never explicitly created a Filter Pool, a
 	default filter pool is created for each connection and it is shown in
-	the
-	<i>Filter Pool</i> drop down.)
+	the	<i>Filter Pool</i> drop down.)
 	<P>If this is unchecked, then all filters will be considered for
 		action and the connections between filters and filter pools will be
 		saved.
+	<h3>Filter Pool</h3>
+	Use this option to specify the filter pool you want to manage, when 
+	<i>Single filter pool</i> is checked.
 	<h3>Repository</h3>
 	Specify the location and name of the repository. A single filter pool
 	repository must have a suffix of
@@ -104,8 +112,23 @@
 	<p>
 		<img src="assets/rse_filter_management_manage_action04.png"
 			align="middle">.
-	<p>If you click [Yes] the repository is updated
+	<p>If you click [Yes] the repository is updated.
+	<br>If you click [No] you get back to the editor.
+	<br>If you click [Cancel] nothing is updated and the editor is closed.
 	<p>
+	<h2>Editing Window Areas</h2>
+	The filters in the workspace and in the repository are displayed in up to four 
+	separate horizontal panes.
+	<ul>
+	<li>Filters only in workspace.</li>
+	<li>Filters only in repository.</li>
+	<li>Filters in workspace and in repository with a different type or filter string.</li>
+	<li>Filters in workspace and in repository with an equal type and filter string.</li>
+	</ul>
+	When you export filters for the first time only the first area, 
+	<i>Filters only in workspace</i>, is displayed. The other areas are displayed
+	depending on the selected options and the existence of the filters in the
+	workspace and the repository.
 	<h2>Exporting All Filters After a Change</h2>
 	Suppose we create a new filter,
 	<i> LENNONS/XPR-O</i>, in the
