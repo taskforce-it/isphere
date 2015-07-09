@@ -10,6 +10,7 @@ package biz.isphere.core.resourcemanagement.filter;
 
 import java.io.File;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -238,7 +239,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
         }
     }
 
-    protected void run() {
+    protected int run() {
 
         if (isEditRepository()) {
             if (getRepository().endsWith(".rseflt")) {
@@ -246,7 +247,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             } else if (getRepository().endsWith(".rsefltall")) {
                 singleFilterPool = false;
             } else {
-                return;
+                return IDialogConstants.CANCEL_ID;
             }
         }
 
@@ -276,6 +277,9 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             repository = getRepository();
             if (repository != null) {
                 filtersRepository = restoreFiltersFromXML(new File(repository), singleFilterPool, profile, filterPool);
+                if (filtersRepository == null) {
+                    return IDialogConstants.BACK_ID;
+                }
             }
         }
 
@@ -314,7 +318,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             resourcesRepository = filtersRepository;
         }
 
-        openEditingDialog(getShell(), isEditWorkspace(), isEditRepository(), isEditBoth(), singleFilterPool, workspace, repository,
+        return openEditingDialog(getShell(), isEditWorkspace(), isEditRepository(), isEditBoth(), singleFilterPool, workspace, repository,
             resourcesWorkspace, resourcesRepository, resourcesBothDifferent, resourcesBothEqual);
 
     }
@@ -331,7 +335,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
 
     protected abstract RSEFilter[] getFilters(RSEFilterPool filterPool);
 
-    protected abstract void openEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth,
+    protected abstract int openEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth,
         boolean singleFilterPool, String workspace, String repository, RSEFilter[] resourceWorkspace, RSEFilter[] resourceRepository,
         RSEFilterBoth[] resourceBothDifferent, RSEFilter[] resourceBothEqual);
 

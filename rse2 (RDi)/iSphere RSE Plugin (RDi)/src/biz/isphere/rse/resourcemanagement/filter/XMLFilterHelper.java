@@ -39,78 +39,68 @@ public class XMLFilterHelper {
     private static final String FILTERSTRINGS = "filterstrings";
     private static final String FILTERSTRING = "filterstring";
 
-    public static boolean saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) {
+    public static void saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) throws Exception {
 
-        try {
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
 
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
+        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+        XMLEvent end = eventFactory.createDTD("\n");
+        XMLEvent tab = eventFactory.createDTD("\t");
 
-            XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-            XMLEvent end = eventFactory.createDTD("\n");
-            XMLEvent tab = eventFactory.createDTD("\t");
+        eventWriter.add(eventFactory.createStartDocument());
 
-            eventWriter.add(eventFactory.createStartDocument());
+        if (singleFilterPool) {
 
-            if (singleFilterPool) {
+            createFilters(eventWriter, eventFactory, end, tab, filters);
 
-                createFilters(eventWriter, eventFactory, end, tab, filters);
-                
-            }
-            else {
-                
-                eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOLS));
-                eventWriter.add(end);
-                
-                HashMap<String, ArrayList<RSEFilter>> _pools = new HashMap<String, ArrayList<RSEFilter>>();
-                for (int idx = 0; idx < filters.length; idx++) {
-                    String _pool = filters[idx].getFilterPool().getName();
-                    ArrayList<RSEFilter> _filters = (ArrayList<RSEFilter>)_pools.get(_pool);
-                    if (_filters == null) {
-                        _filters = new ArrayList<RSEFilter>();
-                        _pools.put(_pool, _filters);
-                    }
-                    _filters.add(filters[idx]);
+        } else {
+
+            eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOLS));
+            eventWriter.add(end);
+
+            HashMap<String, ArrayList<RSEFilter>> _pools = new HashMap<String, ArrayList<RSEFilter>>();
+            for (int idx = 0; idx < filters.length; idx++) {
+                String _pool = filters[idx].getFilterPool().getName();
+                ArrayList<RSEFilter> _filters = (ArrayList<RSEFilter>)_pools.get(_pool);
+                if (_filters == null) {
+                    _filters = new ArrayList<RSEFilter>();
+                    _pools.put(_pool, _filters);
                 }
-                
-                for (Map.Entry<String, ArrayList<RSEFilter>> entry : _pools.entrySet()) {
-
-                    eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOL));
-                    eventWriter.add(end);
-
-                    createNode(eventWriter, eventFactory, end, tab, NAME, entry.getKey());
-
-                    RSEFilter[] _filters = new RSEFilter[entry.getValue().size()];
-                    entry.getValue().toArray(_filters);
-                    createFilters(eventWriter, eventFactory, end, tab, _filters);
-
-                    eventWriter.add(eventFactory.createEndElement("", "", FILTERPOOL));
-                    eventWriter.add(end);
-                    
-                }
-
-                eventWriter.add(eventFactory.createEndElement("", "", FILTERPOOLS));
-                eventWriter.add(end);
-                
+                _filters.add(filters[idx]);
             }
 
-            eventWriter.add(eventFactory.createEndDocument());
+            for (Map.Entry<String, ArrayList<RSEFilter>> entry : _pools.entrySet()) {
 
-            eventWriter.close();
+                eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOL));
+                eventWriter.add(end);
 
-            return true;
+                createNode(eventWriter, eventFactory, end, tab, NAME, entry.getKey());
 
-        } catch (Exception e) {
+                RSEFilter[] _filters = new RSEFilter[entry.getValue().size()];
+                entry.getValue().toArray(_filters);
+                createFilters(eventWriter, eventFactory, end, tab, _filters);
 
-            return false;
+                eventWriter.add(eventFactory.createEndElement("", "", FILTERPOOL));
+                eventWriter.add(end);
+
+            }
+
+            eventWriter.add(eventFactory.createEndElement("", "", FILTERPOOLS));
+            eventWriter.add(end);
 
         }
 
+        eventWriter.add(eventFactory.createEndDocument());
+
+        eventWriter.close();
+
     }
 
-    private static void createFilters(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, RSEFilter[] filters) throws XMLStreamException {
-        
+    private static void createFilters(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, RSEFilter[] filters)
+        throws XMLStreamException {
+
         eventWriter.add(eventFactory.createStartElement("", "", FILTERS));
         eventWriter.add(end);
 
@@ -139,10 +129,11 @@ public class XMLFilterHelper {
 
         eventWriter.add(eventFactory.createEndElement("", "", FILTERS));
         eventWriter.add(end);
-        
+
     }
-    
-    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, String value) throws XMLStreamException {
+
+    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, String value)
+        throws XMLStreamException {
 
         eventWriter.add(tab);
         eventWriter.add(eventFactory.createStartElement("", "", name));
@@ -154,86 +145,69 @@ public class XMLFilterHelper {
 
     }
 
-    public static RSEFilter[] restoreFiltersFromXML(File fromFile, boolean singleFilterPool, RSEProfile profile, RSEFilterPool filterPool) {
+    public static RSEFilter[] restoreFiltersFromXML(File fromFile, boolean singleFilterPool, RSEProfile profile, RSEFilterPool filterPool)
+        throws Exception {
 
-        try {
+        ArrayList<RSEFilter> items = new ArrayList<RSEFilter>();
+        ArrayList<String> filterStrings = null;
 
-            ArrayList<RSEFilter> items = new ArrayList<RSEFilter>();
-            ArrayList<String> filterStrings = null;
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        InputStream in = new FileInputStream(fromFile);
+        XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
 
-            InputStream in = new FileInputStream(fromFile);
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+        RSEFilterPool pool = null;
+        if (singleFilterPool) {
+            pool = filterPool;
+        }
+        RSEFilter filter = null;
+        String lastElement = null;
 
-            RSEFilterPool pool = null;
-            if (singleFilterPool) {
-                pool = filterPool;
-            }
-            RSEFilter filter = null;
-            String lastElement = null;
-            
-            while (eventReader.hasNext()) {
+        while (eventReader.hasNext()) {
 
-                XMLEvent event = eventReader.nextEvent();
+            XMLEvent event = eventReader.nextEvent();
 
-                if (event.isStartElement()) {
-                    if (event.asStartElement().getName().getLocalPart().equals(FILTERPOOL)) {
-                        lastElement = FILTERPOOL;
-                        pool = new RSEFilterPool();
-                        pool.setProfile(profile);
+            if (event.isStartElement()) {
+                if (event.asStartElement().getName().getLocalPart().equals(FILTERPOOL)) {
+                    lastElement = FILTERPOOL;
+                    pool = new RSEFilterPool();
+                    pool.setProfile(profile);
+                } else if (event.asStartElement().getName().getLocalPart().equals(FILTER)) {
+                    lastElement = FILTER;
+                    filter = new RSEFilter(true);
+                    filter.setFilterPool(pool);
+                } else if (event.asStartElement().getName().getLocalPart().equals(NAME)) {
+                    event = eventReader.nextEvent();
+                    if (lastElement.equals(FILTERPOOL)) {
+                        pool.setName(event.asCharacters().getData());
+                    } else if (lastElement.equals(FILTER)) {
+                        filter.setName(event.asCharacters().getData());
                     }
-                    else if (event.asStartElement().getName().getLocalPart().equals(FILTER)) {
-                        lastElement = FILTER;
-                        filter = new RSEFilter(true);
-                        filter.setFilterPool(pool);
-                    }
-                    else if (event.asStartElement().getName().getLocalPart().equals(NAME)) {
-                        event = eventReader.nextEvent();
-                        if (lastElement.equals(FILTERPOOL)) {
-                            pool.setName(event.asCharacters().getData());
-                        }
-                        else if (lastElement.equals(FILTER)) {
-                            filter.setName(event.asCharacters().getData());
-                        }
-                    }
-                    else if (event.asStartElement().getName().getLocalPart().equals(TYPE)) {
-                        event = eventReader.nextEvent();
-                        filter.setType(event.asCharacters().getData());
-                    }
-                    else if (event.asStartElement().getName().getLocalPart().equals(FILTERSTRINGS)) {
-                        filterStrings = new ArrayList<String>();
-                    }
-                    else if (event.asStartElement().getName().getLocalPart().equals(FILTERSTRING)) {
-                        event = eventReader.nextEvent();
-                        filterStrings.add(event.asCharacters().getData());
-                    }
+                } else if (event.asStartElement().getName().getLocalPart().equals(TYPE)) {
+                    event = eventReader.nextEvent();
+                    filter.setType(event.asCharacters().getData());
+                } else if (event.asStartElement().getName().getLocalPart().equals(FILTERSTRINGS)) {
+                    filterStrings = new ArrayList<String>();
+                } else if (event.asStartElement().getName().getLocalPart().equals(FILTERSTRING)) {
+                    event = eventReader.nextEvent();
+                    filterStrings.add(event.asCharacters().getData());
                 }
-                else if (event.isEndElement()) {
-                    if (event.asEndElement().getName().getLocalPart().equals(FILTER)) {
-                        items.add(filter);
-                    }
-                    else if (event.asEndElement().getName().getLocalPart().equals(FILTERSTRINGS)) {
-                        String[] _filterStrings = new String[filterStrings.size()];
-                        filterStrings.toArray(_filterStrings);
-                        filter.setFilterStrings(_filterStrings);
-                    }
+            } else if (event.isEndElement()) {
+                if (event.asEndElement().getName().getLocalPart().equals(FILTER)) {
+                    items.add(filter);
+                } else if (event.asEndElement().getName().getLocalPart().equals(FILTERSTRINGS)) {
+                    String[] _filterStrings = new String[filterStrings.size()];
+                    filterStrings.toArray(_filterStrings);
+                    filter.setFilterStrings(_filterStrings);
                 }
-
             }
-
-            RSEFilter[] filters = new RSEFilter[items.size()];
-            items.toArray(filters);
-
-            return filters;
-
-
-        } catch (Exception e) {
-
-            return null;
 
         }
 
+        RSEFilter[] filters = new RSEFilter[items.size()];
+        items.toArray(filters);
+
+        return filters;
     }
 
 }

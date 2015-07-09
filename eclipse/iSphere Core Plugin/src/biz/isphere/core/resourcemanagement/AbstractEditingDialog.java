@@ -144,14 +144,30 @@ public abstract class AbstractEditingDialog extends Dialog {
 
     }
 
+    protected void buttonPressed(int buttonId) {
+        if (buttonId == IDialogConstants.BACK_ID) {
+            backPressed();
+        } else {
+            super.buttonPressed(buttonId);
+        }
+    }
+
+    protected void backPressed() {
+
+        setReturnCode(IDialogConstants.BACK_ID);
+        close();
+    }
+
     protected void okPressed() {
 
-        MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+        MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
         messageBox.setMessage(Messages.Are_you_sure + "?");
         messageBox.setText(Messages.Perform_actions);
         int response = messageBox.open();
 
-        if (response == SWT.YES) {
+        if (response == SWT.NO) {
+            return;
+        } else if (response == SWT.YES) {
 
             boolean repositoryAction = false;
 
@@ -245,6 +261,7 @@ public abstract class AbstractEditingDialog extends Dialog {
     }
 
     protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.BACK_ID, Messages.Back, true);
         createButton(parent, IDialogConstants.OK_ID, Messages.Perform_actions, true);
         createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
     }
