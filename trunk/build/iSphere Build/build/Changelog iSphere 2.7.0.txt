@@ -15,6 +15,8 @@ Changelog: iSphere 2.7.0 beta 4
    (Fixed in 2.6.2)
  • Fixed problem that spooled file transformation can not be used with 
    V5R3 and lower. Now using default conversion instead.
+ • Added BACK and CANCEL buttons and an error dialog for save/restore 
+   exceptions to RSE Filter Management.
 
 Changelog: iSphere 2.7.0 beta 3
 -------------------------------
