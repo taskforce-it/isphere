@@ -17,6 +17,9 @@ Changelog: iSphere 2.7.0 beta 4
    V5R3 and lower. Now using default conversion instead.
  • Added BACK and CANCEL buttons and an error dialog for save/restore 
    exceptions to RSE Filter Management.
+ • Added option to display the message help text as formatted text
+   when displaying a message description in the message file editor.
+ 
 
 Changelog: iSphere 2.7.0 beta 3
 -------------------------------

@@ -35,6 +35,7 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.BasicMessageFormatter;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.MessageDescriptionHelper;
 import biz.isphere.core.internal.Size;
@@ -47,9 +48,13 @@ public class MessageDescriptionDetail {
 
     private static final String STATUS_BUTTON_HIDE_ADVANCED_OPTIONS = "status_buttonHideAdvancedOptions"; //$NON-NLS-1$
     private static final String WEIGHT_SASH_FORM_HELP_TEXT_FIELD_FORMATS = "weight_sashFormHelpTextFieldFormats_"; //$NON-NLS-1$
+    private static final String FORMAT_MESSAGE_HELP_TEXT = "formatMessageHelpText"; //$NON-NLS-1$
 
     private int actionType;
     private MessageDescription _messageDescription;
+    private Text textConnection;
+    private Text textLibrary;
+    private Text textMessageFile;
     private Text textMessageId;
     private Text textMessage;
     private Text textHelpText;
@@ -63,14 +68,16 @@ public class MessageDescriptionDetail {
     private StatusLineManager statusLineManager;
     private FieldFormatViewer _fieldFormatViewer;
     private Composite compositeAdvancedOptions;
+    private Button buttonFormatHelpText;
     private Button buttonHideAdvancedOptions;
     private Text textTextLength;
     private SashForm sashContainer;
+    private BasicMessageFormatter messageFormatter;
 
     public MessageDescriptionDetail(int actionType, MessageDescription _messageDescription) {
         this.actionType = actionType;
         this._messageDescription = _messageDescription;
-        
+
         if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
             || actionType == DialogActionTypes.DISPLAY) {
             refresh(_messageDescription);
@@ -121,7 +128,7 @@ public class MessageDescriptionDetail {
 
         createFieldFormats(sashContainer);
 
-        sashContainer.setWeights(new int[]{4, 2});
+        sashContainer.setWeights(new int[] { 4, 2 });
 
         // Advanced options group
 
@@ -142,7 +149,6 @@ public class MessageDescriptionDetail {
         } else {
             textMessageId.setFocus();
         }
-
     }
 
     private void createHeader(final Composite container) {
@@ -160,8 +166,7 @@ public class MessageDescriptionDetail {
         final Label labelConnection = new Label(compositeHeader, SWT.NONE);
         labelConnection.setText(Messages.Connection_colon);
 
-        Text textConnection = WidgetFactory.createReadOnlyText(compositeHeader);
-        textConnection.setText(_messageDescription.getConnection());
+        textConnection = WidgetFactory.createReadOnlyText(compositeHeader);
         textConnection.setLayoutData(getLayoutDataFillHorizontal());
 
         // Library
@@ -169,8 +174,7 @@ public class MessageDescriptionDetail {
         final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
         labelLibrary.setText(Messages.Library_colon);
 
-        Text textLibrary = WidgetFactory.createReadOnlyText(compositeHeader);
-        textLibrary.setText(_messageDescription.getLibrary());
+        textLibrary = WidgetFactory.createReadOnlyText(compositeHeader);
         textLibrary.setLayoutData(getLayoutDataFillHorizontal());
 
         // Message file
@@ -178,8 +182,7 @@ public class MessageDescriptionDetail {
         final Label labelMessageFile = new Label(compositeHeader, SWT.NONE);
         labelMessageFile.setText(Messages.Message_file_colon);
 
-        Text textMessageFile = WidgetFactory.createReadOnlyText(compositeHeader);
-        textMessageFile.setText(_messageDescription.getMessageFile());
+        textMessageFile = WidgetFactory.createReadOnlyText(compositeHeader);
         textMessageFile.setLayoutData(getLayoutDataFillHorizontal());
 
         // Message-Id.
@@ -190,12 +193,6 @@ public class MessageDescriptionDetail {
         textMessageId = WidgetFactory.createText(compositeHeader);
         textMessageId.setLayoutData(getLayoutDataFillHorizontal());
         textMessageId.setTextLimit(7);
-        if (actionType == DialogActionTypes.CREATE) {
-            textMessageId.setText("");
-        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
-            || actionType == DialogActionTypes.DISPLAY) {
-            textMessageId.setText(_messageDescription.getMessageId());
-        }
         if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textMessageId.setEditable(false);
         }
@@ -219,12 +216,6 @@ public class MessageDescriptionDetail {
         textMessage = WidgetFactory.createText(compositeMessage);
         textMessage.setLayoutData(getLayoutDataFillHorizontal());
         textMessage.setTextLimit(132);
-        if (actionType == DialogActionTypes.CREATE) {
-            textMessage.setText("");
-        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
-            || actionType == DialogActionTypes.DISPLAY) {
-            textMessage.setText(_messageDescription.getMessage());
-        }
         if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textMessage.setEditable(false);
         }
@@ -241,7 +232,6 @@ public class MessageDescriptionDetail {
         labelTextLength.setText(Messages.Text_length + ":");
 
         textTextLength = WidgetFactory.createReadOnlyText(compositeMessage);
-        textTextLength.setText(Integer.toString(textMessage.getText().length()));
         textTextLength.setLayoutData(new GridData(Size.getSize(25), SWT.DEFAULT));
 
         // Helptext
@@ -291,7 +281,6 @@ public class MessageDescriptionDetail {
         textSeveriry = WidgetFactory.createIntegerText(compositeAdvancedOptions);
         textSeveriry.setLayoutData(getLayoutData(60));
         textSeveriry.setTextLimit(2);
-        textSeveriry.setText(_messageDescription.getSeverity().toString());
         if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textSeveriry.setEditable(false);
         }
@@ -312,7 +301,6 @@ public class MessageDescriptionDetail {
         comboCcsid.setTextLimit(5);
         comboCcsid.add(MessageDescription.CCSID_JOB);
         comboCcsid.add(MessageDescription.CCSID_HEX);
-        comboCcsid.setText(_messageDescription.getCcsidAsString());
 
         validatorCcsid = Validator.getIntegerInstance(comboCcsid.getTextLimit());
         validatorCcsid.addSpecialValue(MessageDescription.CCSID_JOB);
@@ -331,13 +319,23 @@ public class MessageDescriptionDetail {
         textHelpText.setLayoutData(gridData);
         textHelpText.setTextLimit(3000);
 
-        textHelpText.setText(_messageDescription.getHelpText());
-        if (actionType == DialogActionTypes.CREATE) {
-            textHelpText.setText(SPECIAL_VALUE_NONE);
-        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
-            || actionType == DialogActionTypes.DISPLAY) {
-            textHelpText.setText(_messageDescription.getHelpText());
+        if (actionType == DialogActionTypes.DISPLAY || actionType == DialogActionTypes.DELETE) {
+            buttonFormatHelpText = WidgetFactory.createCheckbox(compositeHeader);
+            buttonFormatHelpText.setText(Messages.Format_help_text);
+            buttonFormatHelpText.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent event) {
+                    if (buttonFormatHelpText.getSelection()) {
+                        textHelpText.setText(getMessageFormatter().formatHelpText(_messageDescription.getHelpText()));
+                    } else {
+                        textHelpText.setText(_messageDescription.getHelpText());
+                    }
+                }
+
+                public void widgetDefaultSelected(SelectionEvent event) {
+                }
+            });
         }
+
         if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textHelpText.setEditable(false);
         }
@@ -353,6 +351,31 @@ public class MessageDescriptionDetail {
         validatorHelpText = Validator.getCharInstance();
         validatorHelpText.setLength(textHelpText.getTextLimit());
         validatorHelpText.addSpecialValue(SPECIAL_VALUE_NONE);
+
+    }
+
+    private void loadScreenValues() {
+
+        textConnection.setText(_messageDescription.getConnection());
+        textLibrary.setText(_messageDescription.getLibrary());
+        textMessageFile.setText(_messageDescription.getMessageFile());
+
+        if (actionType == DialogActionTypes.CREATE) {
+            textMessageId.setText("");
+            textMessage.setText("");
+            textHelpText.setText(SPECIAL_VALUE_NONE);
+        } else {
+            textMessageId.setText(_messageDescription.getMessageId());
+            textMessage.setText(_messageDescription.getMessage());
+            if (buttonFormatHelpText != null && buttonFormatHelpText.getSelection()) {
+                textHelpText.setText(getMessageFormatter().formatHelpText(_messageDescription.getHelpText()));
+            } else {
+                textHelpText.setText(_messageDescription.getHelpText());
+            }
+        }
+
+        textSeveriry.setText(_messageDescription.getSeverity().toString());
+        comboCcsid.setText(_messageDescription.getCcsidAsString());
     }
 
     private void setAdvancedOptionsEnablement() {
@@ -531,19 +554,29 @@ public class MessageDescriptionDetail {
     }
 
     public void saveSettings(DialogSettingsManager dialogSettingsManager) {
-        
+
+        if (buttonFormatHelpText != null) {
+            dialogSettingsManager.storeValue(FORMAT_MESSAGE_HELP_TEXT, buttonFormatHelpText.getSelection());
+        }
+
         dialogSettingsManager.storeValue(STATUS_BUTTON_HIDE_ADVANCED_OPTIONS, buttonHideAdvancedOptions.getSelection());
-        
+
         storeIntArray(dialogSettingsManager, WEIGHT_SASH_FORM_HELP_TEXT_FIELD_FORMATS, sashContainer.getWeights());
     }
 
     public void loadSettings(DialogSettingsManager dialogSettingsManager) {
-        
+
+        if (buttonFormatHelpText != null) {
+            buttonFormatHelpText.setSelection(dialogSettingsManager.loadBooleanValue(FORMAT_MESSAGE_HELP_TEXT, false));
+        }
+
         buttonHideAdvancedOptions.setSelection(dialogSettingsManager.loadBooleanValue(STATUS_BUTTON_HIDE_ADVANCED_OPTIONS, false));
         setAdvancedOptionsEnablement();
-        
-        int[] weights = loadIntArray(dialogSettingsManager, WEIGHT_SASH_FORM_HELP_TEXT_FIELD_FORMATS, new int[] {4, 2});
+
+        int[] weights = loadIntArray(dialogSettingsManager, WEIGHT_SASH_FORM_HELP_TEXT_FIELD_FORMATS, new int[] { 4, 2 });
         sashContainer.setWeights(weights);
+
+        loadScreenValues();
     }
 
     protected void storeIntArray(DialogSettingsManager dialogSettingsManager, String aKey, int[] aValue) {
@@ -556,34 +589,43 @@ public class MessageDescriptionDetail {
     protected int[] loadIntArray(DialogSettingsManager dialogSettingsManager, String aKey, int[] aDefault) {
 
         List<Integer> intValues = new ArrayList<Integer>();
-        
+
         int i = 0;
         int value = 0;
         do {
-            
+
             if (i < aDefault.length) {
                 value = dialogSettingsManager.loadIntValue(getArrayKey(aKey, i), aDefault[i]);
             } else {
                 value = dialogSettingsManager.loadIntValue(getArrayKey(aKey, i), -1);
             }
-            
+
             if (value != -1) {
                 intValues.add(new Integer(value));
             }
-            
+
             i++;
-            
-        } while (value != -1); 
-        
+
+        } while (value != -1);
+
         int[] values = new int[intValues.size()];
         for (int j = 0; j < intValues.size(); j++) {
             values[j] = intValues.get(j).intValue();
         }
-        
+
         return values;
     }
 
     private String getArrayKey(String aBaseKey, int index) {
         return aBaseKey + index;
+    }
+
+    private BasicMessageFormatter getMessageFormatter() {
+
+        if (messageFormatter == null) {
+            messageFormatter = new BasicMessageFormatter();
+        }
+
+        return messageFormatter;
     }
 }
