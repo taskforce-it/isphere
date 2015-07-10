@@ -8,20 +8,11 @@
 
 package biz.isphere.rse.internal;
 
-import biz.isphere.core.internal.AbstractMessageFormatter;
-import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.internal.BasicMessageFormatter;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMessageDescription;
 
-public class MessageFormatter extends AbstractMessageFormatter {
-
-    public String format(MessageDescription aMessageDescription) {
-        String messageHelp = aMessageDescription.getHelpText();
-        if (MessageDescription.VALUE_NONE.equals(messageHelp)) {
-            messageHelp = "";
-        }
-        return format(aMessageDescription.getMessage(), messageHelp);
-    }
+public class MessageFormatter extends BasicMessageFormatter {
 
     public String format(QSYSRemoteMessageDescription aMessageDescription) {
         return format(aMessageDescription.getText(), aMessageDescription.getHelp());

@@ -9,8 +9,9 @@
 package biz.isphere.core.internal;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.messagefileeditor.MessageDescription;
 
-public abstract class AbstractMessageFormatter {
+public class BasicMessageFormatter {
 
     private int width = 80;
 
@@ -31,6 +32,18 @@ public abstract class AbstractMessageFormatter {
     private String indent;
 
     private StringBuilder formatted;
+
+    public String format(MessageDescription aMessageDescription) {
+        String messageHelp = aMessageDescription.getHelpText();
+        if (MessageDescription.VALUE_NONE.equals(messageHelp)) {
+            messageHelp = "";
+        }
+        return format(aMessageDescription.getMessage(), messageHelp);
+    }
+
+    public String formatHelpText(String aMessageHelpText) {
+        return format(aMessageHelpText);
+    }
 
     protected String format(String aMessage) {
         if (aMessage == null) {
@@ -59,7 +72,7 @@ public abstract class AbstractMessageFormatter {
         int i;
 
         // include leading spaces
-         if (aMessage.startsWith(" ")) {
+        if (aMessage.startsWith(" ")) {
             i = includeSpaces(aMessage, p);
         } else {
             i = p + 1;
@@ -140,17 +153,17 @@ public abstract class AbstractMessageFormatter {
     }
 
     public static void main(String[] args) {
-        
-        AbstractMessageFormatter main = new AbstractMessageFormatter() {
+
+        BasicMessageFormatter main = new BasicMessageFormatter() {
         };
-        
-        String tMessage ;
-        
+
+        String tMessage;
+
         tMessage = "&N Cause . . . . . :   The application running requires a later version of CSP/AE. &N Recovery  . . . :   Contact the application developer to generate the application for the level of CSP/AE installed. Or, contact your system administrator to determine the correct level of CSP/AE required to run the generated application. &N Technical description . . . . . . . . :   Consult the Program Directory of your current CSP/AD product to determine the level of CSP/AE required to run the generated application.";
         System.out.println(main.format(tMessage));
-        
+
         System.out.println();
-        
+
         tMessage = "&N Cause . . . . . :   A significant part of a number (not the decimal positions) is lost because the field to receive the number is too short. Application processing ends. &N Message CAE0021, issued when the application ended, gives the number of the statement causing the error. &N Recovery  . . . :   Contact the application developer to correct this problem. &N Technical description . . . . . . . . :   Change the application by increasing the size of the target data item to avoid overflow.  Or, have the application handle overflow conditions using the EZEOVER and EZEOVERS special function words.*NONE";
         System.out.println(main.format(tMessage));
     }

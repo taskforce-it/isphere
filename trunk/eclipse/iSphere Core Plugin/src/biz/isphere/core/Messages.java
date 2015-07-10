@@ -1042,6 +1042,8 @@ public class Messages extends NLS {
 
     public static String Back;
     
+    public static String Format_help_text;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
