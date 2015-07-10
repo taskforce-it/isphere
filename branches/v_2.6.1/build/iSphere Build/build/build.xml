@@ -73,6 +73,9 @@
 	<!-- Load ftp user name and password -->
 	<property file="ftp.properties" />
 
+	<!-- Load properties for local update site -->
+	<property file="localUpdateSite.properties" />
+
 	<!-- Set date and time -->
 	<tstamp>
 		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
@@ -340,6 +343,49 @@
 
 	<!--
     * =====================================================================
+    *   Create a local update site for your company.
+    *   This target must be run, after the SourceForge files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="uploadLocalUpdateSite" description="Copies the update site to a local directory" >
+
+		<if>
+			<equals arg1="${local.updateSite.enabled}" arg2="true" />
+			<then>
+				
+				<echo>Creating local update site ...</echo>
+				
+				<antcall target="cleanLocalUpdateSite" />
+				
+				<antcall target="uploadLocalUpdateSiteDownloadFiles" />
+			</then>	
+		</if>
+			
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Sets the properties that are used for building your local
+    *   update site.
+    *   This target uses the properties stored in 
+    *   'localUpdateSite.properties'.
+    * ===================================================================== -->
+	<target name="setLocalUpdateSiteProperties" >
+		
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<property name="local.updateSite.path" value="${local.updateSite.beta.path}" />
+			</then>
+			<else>
+				<property name="local.updateSite.path" value="${local.updateSite.release.path}" />
+			</else>
+		</if>
+		
+	</target>
+
+	<!--
+    * =====================================================================
     *   Removes all generated files from the local 
     *   'iSphere Update Site' folder. This target is indented to be called
     *   before the update site is build from the context menu of the
@@ -378,6 +424,23 @@
 		</delete>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the local update site folders of
+    *   your company.
+    * ===================================================================== -->
+	<target name="cleanLocalUpdateSite" depends="setLocalUpdateSiteProperties">
+
+		<echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${local.updateSite.path}" includes="**/*" />
+		</delete>
+
+		<echo>Done.</echo>
 
 	</target>
 
@@ -439,6 +502,31 @@
 		</if>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Copies the iSphere update site files to your local update site.
+    *   Also copies MANIFEST.MF of the 'iSphere Notifier' project to
+    *   your local update site to inform your colleagues about the new
+    *   iSphere version.
+    * ===================================================================== -->
+	<target name="uploadLocalUpdateSiteDownloadFiles" depends="setLocalUpdateSiteProperties">
+
+		<echo>Copying files to local update Site '${local.updateSite.path}' ...</echo>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+			</fileset>
+		</copy>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
+			</fileset>
+		</copy>
+
+		<echo>Done.</echo>
 
 	</target>
 
