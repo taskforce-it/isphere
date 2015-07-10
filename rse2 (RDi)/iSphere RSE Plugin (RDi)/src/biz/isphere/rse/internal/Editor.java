@@ -33,87 +33,85 @@ public class Editor implements IEditor {
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 
-            IBMiConnection _connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection _connection = IBMiConnection.getConnection(connectionName);
 
-            try {
+        try {
 
-                IQSYSMember _member = _connection.getMember(library, file, member, null);
-                if (_member != null) {
+            IQSYSMember _member = _connection.getMember(library, file, member, null);
+            if (_member != null) {
 
-                    String editor = "com.ibm.etools.systems.editor";
+                String editor = "com.ibm.etools.systems.editor";
 
-                    QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
-                    if (statement == 0 && !isOpenInEditor(mbr)) {
+                QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
+                if (statement == 0 && !isOpenInEditor(mbr)) {
 
-                        String _editor = null;
-                        if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
-                            _editor = "Screen Designer";
-                        } else if (_member.getType().equals("PRTF")) {
-                            _editor = "Report Designer";
-                        }
-
-                        if (_editor != null) {
-
-                            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            MessageDialog dialog = new MessageDialog(shell, Messages.Choose_Editor, null,
-                                Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION, new String[] { _editor,
-                                    "LPEX Editor" }, 0);
-
-                            final int dialogResult = dialog.open();
-                            if (dialogResult == 0) {
-
-                                if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
-                                    editor = "com.ibm.etools.iseries.dds.tui.editor.ScreenDesigner";
-                                } else if (_member.getType().equals("PRTF")) {
-                                    editor = "com.ibm.etools.iseries.dds.tui.editor.ReportDesigner";
-                                }
-
-                            }
-
-                        }
-
+                    String _editor = null;
+                    if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
+                        _editor = "Screen Designer";
+                    } else if (_member.getType().equals("PRTF")) {
+                        _editor = "Report Designer";
                     }
 
-                    if (mbr != null) {
+                    if (_editor != null) {
 
-                        if (!isOpenInEditor(mbr)) {
-                            if (mode.equals(IEditor.EDIT)) {
-                                mbr.open(editor, false, null);
-                            } else if (mode.equals(IEditor.BROWSE)) {
-                                mbr.open(editor, true, null);
-                            }
-                        } else {
-                            /*
-                             * Hack, to keep the editor read-only due to a bug
-                             * in
-                             * QSYSEditableRemoteSourceFileMember.internalOpen
-                             * (String strEditorID, boolean readOnly, int
-                             * lineNumber, IProgressMonitor monitor).
-                             */
-                            IEditorPart editorPart = findEditorPart(mbr);
-                            mbr.setEditor(editorPart);
-                        }
+                        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                        MessageDialog dialog = new MessageDialog(shell, Messages.Choose_Editor, null,
+                            Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION,
+                            new String[] { _editor, "LPEX Editor" }, 0);
 
-                        if (statement != 0) {
-                            if (!mbr.openIsCanceled()) {
-                                SystemTextEditor systemTextEditor = mbr.getEditor();
-                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(mbr.getEditorPart());
-                                if (systemTextEditor != null) {
-                                    systemTextEditor.gotoLine(statement);
-                                }
+                        final int dialogResult = dialog.open();
+                        if (dialogResult == 0) {
+
+                            if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
+                                editor = "com.ibm.etools.iseries.dds.tui.editor.ScreenDesigner";
+                            } else if (_member.getType().equals("PRTF")) {
+                                editor = "com.ibm.etools.iseries.dds.tui.editor.ReportDesigner";
                             }
+
                         }
 
                     }
 
                 }
 
+                if (mbr != null) {
+
+                    if (!isOpenInEditor(mbr)) {
+                        if (mode.equals(IEditor.EDIT)) {
+                            mbr.open(editor, false, null);
+                        } else if (mode.equals(IEditor.BROWSE)) {
+                            mbr.open(editor, true, null);
+                        }
+                    } else {
+                        /*
+                         * Hack, to keep the editor read-only due to a bug in
+                         * QSYSEditableRemoteSourceFileMember.internalOpen
+                         * (String strEditorID, boolean readOnly, int
+                         * lineNumber, IProgressMonitor monitor).
+                         */
+                        IEditorPart editorPart = findEditorPart(mbr);
+                        mbr.setEditor(editorPart);
+                    }
+
+                    if (statement != 0) {
+                        if (!mbr.openIsCanceled()) {
+                            SystemTextEditor systemTextEditor = mbr.getEditor();
+                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(mbr.getEditorPart());
+                            if (systemTextEditor != null) {
+                                systemTextEditor.gotoLine(statement);
+                            }
+                        }
+                    }
+
+                }
+
             }
 
-            catch (Throwable e) {
-                ISpherePlugin.logError("Failed to open Lpex editor.", e); //$NON-NLS-1$
-            }
+        }
 
+        catch (Throwable e) {
+            ISpherePlugin.logError("Failed to open Lpex editor.", e); //$NON-NLS-1$
+        }
 
     }
 
@@ -134,10 +132,12 @@ public class Editor implements IEditor {
             for (IWorkbenchPage page : window.getPages()) {
                 for (IEditorReference editor : page.getEditorReferences()) {
                     IEditorPart part = editor.getEditor(false);
-                    IEditorInput input = part.getEditorInput();
-                    IFileEditorInput fileInput = (IFileEditorInput)input;
-                    if (localFileResource.equals(fileInput.getFile())) {
-                        return part;
+                    if (part != null) {
+                        IEditorInput input = part.getEditorInput();
+                        IFileEditorInput fileInput = (IFileEditorInput)input;
+                        if (localFileResource.equals(fileInput.getFile())) {
+                            return part;
+                        }
                     }
                 }
             }
