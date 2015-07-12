@@ -173,20 +173,27 @@
 	</fileset>
 
 	<!-- Set build target dependant parameters -->
+	<property name="target.ide.product.name.short.rdi" value="RDi 8.0+" />
+	<property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
+	<property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
+	<property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
+	<property name="target.ide.rdi" value="rdi8.0" />
+	<property name="target.ide.wdsci" value="wdsci7.0" />
+	
 	<if>
 		<equals arg1="${build.target}" arg2="RDi" />
 		<then>
-			<property name="target.ide.ide.product.name.long" value="IBM Rational Developer for i" />
-			<property name="target.ide.ide.product.name.short" value="RDi 8.0+" />
-			<property name="target.ide.sf.dir" value="rdi8.0" />
+			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
+			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
+			<property name="target.ide.sf.dir" value="${target.ide.rdi}" />
 			<property name="target.ide.exclude.site.xml" value="site.xml" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*"/>
 		</then>
 		<else>
-			<property name="target.ide.ide.product.name.long" value="Websphere Development Studio Client for iSeries" />
-			<property name="target.ide.ide.product.name.short" value="WDSCi 7.0" />
-			<property name="target.ide.sf.dir" value="wdsci7.0" />
+			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
+			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
+			<property name="target.ide.sf.dir" value="${target.ide.wdsci}" />
 			<property name="target.ide.exclude.site.xml" value="" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
@@ -684,6 +691,12 @@
 		<replace file="${build.upload.dir.home}/index.html" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.home}/index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
 		<replace file="${build.upload.dir.home}/index.html" token="@ISPHERE_HELP@" value="${isphere.help}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_RDI@" value="${target.ide.rdi}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_WDSCI@" value="${target.ide.wdsci}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_PRODUCT_NAME_LONG_RDI@" value="${target.ide.product.name.long.rdi}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@" value="${target.ide.product.name.long.wdsci}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_PRODUCT_NAME_SHORT_RDI@" value="${target.ide.product.name.short.rdi}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@" value="${target.ide.product.name.short.wdsci}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
