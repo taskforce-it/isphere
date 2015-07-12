@@ -133,6 +133,9 @@
 
 	<!-- Set the iSphere home at SourceForge -->
 	<property name="isphere.home" value="https://sourceforge.net/projects/isphere/" />
+	
+	<!-- Set the home of the iSphere help pages -->
+	<property name="isphere.help" value="http://isphere.sourceforge.net/help/" />
 
 	<!-- Set local FTP properties -->
 	<property name="local.download.directory" location="${basedir}/temp-downloads" />
@@ -144,6 +147,8 @@
 	<property name="sf.dir.updatesite.files.root" value="/home/pfs/project/isphere/${beta.dir}/" />
 	<property name="sf.dir.updatesite.help.root" value="/home/project-web/isphere/htdocs/${beta.dir}/" />
 	<property name="sf.dir.updatesite.help.dir" value="help" />
+	<property name="sf.dir.updatesite.home.root" value="/home/project-web/isphere/htdocs/" />
+	<property name="sf.dir.updatesite.home.dir" value="." />
 
 	<!-- Set zip file and directory names -->
 	<property name="build.template.dir" location="${build.home}/templates" />
@@ -157,6 +162,7 @@
 	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
 	<property name="build.upload.dir.web.eclipse" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse" />
 	<property name="build.upload.dir.help" location="${build.upload.dir}/sf-help/${beta.dir}/help" />
+	<property name="build.upload.dir.home" location="${build.upload.dir}/sf-home/" />
 	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
 	<property name="isphere.doc" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere.doc" />
 	<property name="isphere.pdf" location="${workspace.home}/${build.project.isphere.core}/doc/iSphere for WDSCi 7.0-RDi 8.0+.pdf" />
@@ -239,9 +245,31 @@
 	</if>
 
 	<if>
+		<equals arg1="${build.home.enabled}" arg2="true" />
+		<then>
+			<!-- build iSphere home page -->
+			<if>
+				<equals arg1="${is.beta.version}" arg2="false" />
+				<then>
+					<echo>Building iSphere help home page ...</echo>
+				</then>
+				<else>
+					<property name="ignore.build.home" value="true" />
+					<echo>IGNORED: iSphere Home Page (due to beta version number)</echo>
+				</else>
+			</if>
+		</then>
+		<else>
+			<property name="ignore.build.home" value="true" />
+			<echo>IGNORED: iSphere Home Page</echo>
+		</else>
+	</if>
+
+	<if>
 		<or>
 			<equals arg1="${build.web.enabled}" arg2="true" />
 			<equals arg1="${build.help.enabled}" arg2="true" />
+			<equals arg1="${build.home.enabled}" arg2="true" />
 		</or>
 		<then>
 			<!-- build files of update site -->
@@ -306,7 +334,7 @@
     *   It must be run, after the update site has been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
+	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in 'iSphere Build/upload/...'           |</echo>
@@ -333,11 +361,15 @@
 
 		<antcall target="cleanSourceForgeHelp" />
 
+		<antcall target="cleanSourceForgeHome" />
+
 		<antcall target="uploadSourceForgeDownloadFiles" />
 
 		<antcall target="uploadSourceForgeWebPages" />
 
 		<antcall target="uploadSourceForgeHelp" />
+
+		<antcall target="uploadSourceForgeHome" />
 
 	</target>
 
@@ -590,6 +622,7 @@
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@YEAR@" value="${today.year}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@ISPHERE_HELP@" value="${isphere.help}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -628,6 +661,29 @@
 		<copy todir="${build.upload.dir.help}">
 			<fileset dir="${workspace.home}/${build.help.builder}/upload" />
 		</copy>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the iSphere home page.
+    * ===================================================================== -->
+	<target name="createSourceForgeHome" unless="ignore.build.home">
+
+		<echo>Creating iSphere home page ...</echo>
+
+		<copy todir="${build.upload.dir.home}">
+			<fileset dir="${workspace.home}/${build.homepage.project}/html" />
+		</copy>
+		
+		<replace file="${build.upload.dir.home}/index.html" token="@VERSION_INFO@" value="${version.info}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@YEAR@" value="${today.year}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@VERSION_NUMBER@" value="${build.version}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@ISPHERE_HOME@" value="${isphere.home}" />
+		<replace file="${build.upload.dir.home}/index.html" token="@ISPHERE_HELP@" value="${isphere.help}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
@@ -709,6 +765,25 @@
 
 	<!--
     * =====================================================================
+    *   Cleans the iSphere home page web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeHome" depends="ftpCredentialsSourceForge" unless="ignore.build.home">
+
+		<echo>Deleting SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.home}" remoteDir="${sf.dir.updatesite.home.root}">
+			<copydir dir="${build.upload.dir.maintenance}" toDir="./${sf.dir.updatesite.home.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.home.dir}" subDirs="false" >
+				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
+				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
+			</Rmdir>
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
     *   Uploads the iSphere files to the SourceForge download area.
     * ===================================================================== -->
 	<target name="uploadSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
@@ -749,9 +824,25 @@
 		<echo>Uploading SourceForge: web pages (help) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.help.root}">
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
 			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
 			<Rmdir dir="./${sf.dir.updatesite.help.dir}/maintenance-assets" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the iSphere home page to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeHome" depends="ftpCredentialsSourceForge" unless="ignore.build.home">
+
+		<echo>Uploading SourceForge: web pages (home) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.home}" remoteDir="${sf.dir.updatesite.home.root}">
+			<copydir dir="${build.upload.dir.home}" toDir="./${sf.dir.updatesite.home.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.home.dir}/maintenance-assets" subDirs="true" />
 		</SF>
 
 	</target>
