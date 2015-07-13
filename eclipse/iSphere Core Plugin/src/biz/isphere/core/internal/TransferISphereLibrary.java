@@ -113,6 +113,7 @@ public class TransferISphereLibrary extends Shell {
         tableStatus.addKeyListener(new KeyListener() {
             public void keyReleased(KeyEvent event) {
             }
+
             public void keyPressed(KeyEvent event) {
                 if ((event.stateMask & SWT.CTRL) != SWT.CTRL) {
                     return;
@@ -125,7 +126,7 @@ public class TransferISphereLibrary extends Shell {
                 }
             }
         });
-        
+
         Menu menuTableStatusContextMenu = new Menu(tableStatus);
         menuTableStatusContextMenu.addMenuListener(new TableContextMenu(tableStatus));
         tableStatus.setMenu(menuTableStatusContextMenu);
@@ -336,7 +337,7 @@ public class TransferISphereLibrary extends Shell {
                             AS400FTP client = new AS400FTP(as400);
 
                             URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
-                            File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE");
+                            File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE.SAVF");
                             client.setPort(ftpPort);
                             client.setDataTransferType(FTP.BINARY);
                             if (client.connect()) {
@@ -400,7 +401,7 @@ public class TransferISphereLibrary extends Shell {
         private Menu getMenu() {
             return table.getMenu();
         }
-        
+
         private void destroyMenuItems() {
             if (!((menuItemCopySelected == null) || (menuItemCopySelected.isDisposed()))) {
                 menuItemCopySelected.dispose();
@@ -413,7 +414,7 @@ public class TransferISphereLibrary extends Shell {
         }
 
         private void createMenuItemCopySelected() {
-            
+
             menuItemCopySelected = new MenuItem(getMenu(), SWT.NONE);
             menuItemCopySelected.setText(Messages.Copy);
             menuItemCopySelected.addSelectionListener(new SelectionAdapter() {
