@@ -139,7 +139,7 @@
 
 	<!-- Set local FTP properties -->
 	<property name="local.download.directory" location="${basedir}/temp-downloads" />
-	<property name="local.savefile.name" value="ISPHERE" />
+	<property name="local.savefile.name" value="ISPHERE.SAVF" />
 	<property name="local.savefile.directory" location="${basedir}/../../${build.project.isphere.core}/Server" />
 
 	<!-- Set remote FTP properties (SourceForge) -->
