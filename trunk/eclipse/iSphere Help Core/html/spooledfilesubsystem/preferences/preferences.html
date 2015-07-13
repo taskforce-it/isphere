@@ -8,18 +8,30 @@
 </head>
 
 <body>
-	<h1>Preferences</h1>
-	<p>You can specify some default spool file actions here.
-	<p>
-		Click <i>Window -&gt; Preferences</i>. In the left pane expand  <i>iSphere</i>. Click on
-		"Spooled Files".
+	<h1>Spooled File Preferences</h1>
+	Click
+	<i>Window -&gt; Preferences</i>. In the left pane expand
+	<i>iSphere</i>. Click on "Spooled Files".
 	<h2>Default &quot;Double Click&quot; Action</h2>
 	<p>Specify in which format a spooled file will be opened when you
 		double click on it in the spooled files subsystem.
-	<h2>Your Own Conversion Commands</h2>
-	<p>You can use your own conversion tools for conversion of spooled
-		files to Text, HTML and PDF.
-	<p>In field "Library" enter the library name which contains the
+	<h2>Conversion Tools</h2>
+	<p>For each of the three conversions (to Text, to HTML or to PDF),
+		there are three possible conversions tools you can specify. Use the
+		one which works best for you.
+	<h3>Default</h3>
+	<p>
+		This option uses the free CVTSPLF command from <a
+			href="http://www.freerpgtools.com/" target="_blank">http://www.freerpgtools.com/</a>
+		to do the conversion.
+	<h3>Transform</h3>
+	This option uses the IBM spooled file transformer (Java class
+	PrintObjectTransformedInputStream) and these three Workstation
+	Customization Objects to do the conversion: ISPHERE/SPLFHTML,
+	ISPHERE/SPLFPDF, ISPHERE/SPLFTXT
+	<h3>User defined</h3>
+	Use your own conversion tool. (There are a number vendors providing
+			 spooled file conversion tools.)<p>In field "Library" enter the library name which contains the
 		conversion command.
 	<p>In field "Command" enter the conversion command and parameters.
 		Use the substitution variables shown at the bottom of the window to
