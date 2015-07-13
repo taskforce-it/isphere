@@ -19,6 +19,8 @@ Changelog: iSphere 2.7.0 beta 4
    exceptions to RSE Filter Management.
  • Added option to display the message help text as formatted text
    when displaying a message description in the message file editor.
+ • Renamed save file ISPHERE to ISPHERE.SAVF to ease Drag & Drop
+   from the RSE tree.
  
 
 Changelog: iSphere 2.7.0 beta 3
