@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 6/23/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 7/14/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2617,7 +2617,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8.1 - 19.06.2015 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.8.2 - 14.07.2015 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -6063,6 +6063,9 @@ srccssid=  "00273">
      /*                                                                     */
      /*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */
      /*                                                                     */
+     /*  14.07.2015  Th.Raddatz    Fixed problem, that parameter &XMSGFLIB  */
+     /*                            was not properly initialized.            */
+     /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
      /*                                                                     */
@@ -6213,6 +6216,12 @@ srccssid=  "00273">
              CHKOBJ     OBJ(*LIBL/STRPRE1) OBJTYPE(*FILE) +
                           MBR(*FIRST)
              CALLPRC    PRC(P_INITPREPRZ)
+
+ /* - - - - - - - - - - - - - - - - - - */
+ /*  Ermitteln Bibliothek der MsgF      */
+ /* - - - - - - - - - - - - - - - - - - */
+             QSYS/RTVOBJD OBJ(*LIBL/&XMSGF) OBJTYPE(*MSGF) +
+                            RTNLIB(&XMSGFLIB)
 
  /* - - - - - - - - - - - - - - - - - - */
  /*  Prüfen Befehl CHGOBJDA             */
