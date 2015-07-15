@@ -12,6 +12,9 @@
 /*                                                                       */
 /*-----------------------------------------------------------------------*/
 
+/* Register error handler */
+Signal on Error;
+
 /* Start */
 PARSE ARG,
 DUMMY1 "(" PRDLIB ")",
@@ -68,5 +71,18 @@ END;
 "CHGCURLIB ",
 "CURLIB(*CRTDFT)";
 
-/* End */
+/* Normal end */
 EXIT;
+
+/* Error handler */
+ERROR:
+
+"SNDPGMMSG ",
+"MSGID(CPF9898) ",
+"MSGF(QCPFMSG) ",
+"MSGDTA('ERROR: Failed to create the iSphere library. Check the job log for details') ",
+"TOPGMQ(*PRV (*CTLBDY)) ",
+"MSGTYPE(*ESCAPE)";
+
+EXIT;
+

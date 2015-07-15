@@ -12,6 +12,9 @@
 /*                                                                       */
 /*-----------------------------------------------------------------------*/
 
+/* Register error handler */
+Signal on Error;
+
 /* Start */
 ARG DEVLIB TGTRLS;
 
@@ -52,5 +55,18 @@ ARG DEVLIB TGTRLS;
 "TOPGMQ(*PRV (*CTLBDY)) ",
 "MSGTYPE(*INFO)";
 
-/* End */
+/* Normal end */
 EXIT;
+
+/* Error handler */
+ERROR:
+
+"SNDPGMMSG ",
+"MSGID(CPF9898) ",
+"MSGF(QCPFMSG) ",
+"MSGDTA('ERROR: Failed to create the STRPREPRC utility. Check the job log for details') ",
+"TOPGMQ(*PRV (*CTLBDY)) ",
+"MSGTYPE(*ESCAPE)";
+
+EXIT;
+
