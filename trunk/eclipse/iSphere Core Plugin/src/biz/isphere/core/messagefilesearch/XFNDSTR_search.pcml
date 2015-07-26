@@ -2,7 +2,7 @@
 
    <struct name="varString" usage="inherit">
      <data name="length" type="int"  length="2"  />
-     <data name="value"  type="char" length="40" />
+     <data name="value"  type="char" length="256" />
    </struct>
 
    <struct name="searchArgument" usage="inherit">
@@ -11,6 +11,7 @@
      <data name="fromColumn" type="int"    length="4"         />
      <data name="toColumn"   type="int"    length="4"         />
      <data name="case"       type="char"   length="10"        />
+     <data name="regex"      type="char"   length="10"        />
    </struct>
 
    <program name="XFNDSTR_search" path="/QSYS.LIB/%LIBL%.LIB/W002002.PGM">

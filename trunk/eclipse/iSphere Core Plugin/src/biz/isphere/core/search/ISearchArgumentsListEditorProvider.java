@@ -10,6 +10,6 @@ package biz.isphere.core.search;
 
 public interface ISearchArgumentsListEditorProvider {
 
-    public SearchArgumentsListEditor getListEditor();
+    public SearchArgumentsListEditor getListEditor(boolean regularExpressionsOption);
 
 }
