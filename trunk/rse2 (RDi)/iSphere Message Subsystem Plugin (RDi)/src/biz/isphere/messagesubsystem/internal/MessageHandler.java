@@ -55,7 +55,7 @@ public class MessageHandler implements IMessageHandler {
 
                 if (MonitoringAttributes.NOTIFICATION_TYPE_EMAIL.equals(handling)) {
 
-                    if (monitoringAttributes.isValid()) {
+                    if (!monitoringAttributes.isValid()) {
                         if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error,
                             Messages.Email_Notification_Error_Message)) {
                             QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false);
