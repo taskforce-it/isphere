@@ -7,17 +7,19 @@ Changelog: iSphere 2.7.0 beta 5
    commands.
  • Fixed problem in service program EVENTF that an invalid error 
    was produced for blank messages IDs.
+ • Fixed message handler to properly check the Message Queue Monitoring
+   attributes when "email" is selected. 
 
 
 Changelog: iSphere 2.7.0 beta 4
 -------------------------------
  • Fixed problem that errors and warnings were not removed from the 
    view after the problem had been fixed. (Data Space Monitor)
- • Fixed problem that negative values were not acccepted when editing 
+ • Fixed problem that negative values were not accepted when editing 
    integer or decimal values. (Data Space Editor)
  • Fixed problem of empty message boxes for exceptions with no message 
    text. (Data Space Editor and Monitor)
- • Fixed expection when a data area was renamed or deleted while it 
+ • Fixed exception when a data area was renamed or deleted while it 
    had been monitored. (Object not found.)
  • Fixed problem that iSphere Source File search did not return a result 
    when the search arguments were all set to “contains-not”.
