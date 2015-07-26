@@ -49,6 +49,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private int _toColumn;
     private Button okButton;
     private int maxColumns;
+    private boolean regularExpressionsOption;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
@@ -58,7 +59,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private static final String TEXT_STRING = "textString";
     private static final String IGNORE_CASE = "ignoreCase";
 
-    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor) {
+    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption) {
         super(parentShell);
         this.maxColumns = maxColumns;
         _fromColumn = 1;
@@ -68,6 +69,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         } else {
             _editor = false;
         }
+        this.regularExpressionsOption = regularExpressionsOption;
     }
 
     @Override
@@ -85,7 +87,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             _searchArguments.setLayout(new GridLayout());
 
-            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor();
+            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption);
             _listEditor.createControl(_searchArguments);
             _listEditor.setListener(this);
 

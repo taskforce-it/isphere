@@ -41,12 +41,12 @@ public class SearchDialog extends AbstractSearchDialog {
     private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
-        super(parentShell, 132, false);
+        super(parentShell, 132, false, false);
         this.searchElements = searchElements;
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, 132, searchArgumentsListEditor);
+        super(parentShell, 132, searchArgumentsListEditor, false);
         this.searchElements = searchElements;
     }
 

@@ -25,12 +25,12 @@ public class SearchDialog extends AbstractSearchDialog {
     private HashMap<String, SearchElement> searchElements;
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
-        super(parentShell, 228, false);
+        super(parentShell, 228, false, false);
         this.searchElements = searchElements;
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, 228, searchArgumentsListEditor);
+        super(parentShell, 228, searchArgumentsListEditor, true);
         this.searchElements = searchElements;
     }
 

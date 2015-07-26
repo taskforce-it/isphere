@@ -1,5 +1,14 @@
 
 
+Changelog: iSphere 2.7.0 beta 5
+-------------------------------
+ • Fixed problem that XFNDSTR.pcml did not match searchArguments_t.
+ • Changed STRPREPRC to also write the event file for pre- and post 
+   commands.
+ • Fixed problem in service program EVENTF that an invalid error 
+   was produced for blank messages IDs.
+
+
 Changelog: iSphere 2.7.0 beta 4
 -------------------------------
  • Fixed problem that errors and warnings were not removed from the 
