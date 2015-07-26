@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 7/14/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 7/24/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1936,6 +1936,26 @@ eöffnet werden.'                                                      +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0026                    */
+     /* Could not prepare the event file.                           */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0026) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0026) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.'          +
+                ) +
+                SEV(40) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -2550,6 +2570,26 @@ r &3.'                                                                +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0026                    */
+     /* Could not prepare the event file.                           */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0026) MSGF(&LI/STRPREPRCE)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0026) +
+                MSGF(&LI/STRPREPRCE) +
+                MSG(+
+'Could not prepare the event file.'                                   +
+                ) +
+                SEV(40) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -2617,7 +2657,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8.2 - 14.07.2015 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.8.3 - 23.07.2015 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -2661,8 +2701,14 @@ srccssid=  "00273">
       /if not defined(proto_h)
       /define proto_h
 
-     D openEventFile...
+     D prepareEventFile...
      D                 pr
+     D                                     extproc('STRPREPRC4_+
+     D                                     prepareEventFile+
+     D                                     ')
+
+     D openEventFile...
+     D                 pr              n
      D                                     extproc('STRPREPRC4_+
      D                                     openEventFile+
      D                                     ')
@@ -3298,6 +3344,30 @@ srccssid=  "00273">
      D PRZ0025         DS
      D  PRZ00251                    010A   INZ(*BLANKS)
      D PRZ0025_LEN     S              8B 0 INZ(0010)
+      *
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0026  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0026   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: EVFEVENT Datei konnte nicht zur Ausgabe vorbe"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      *---------------------------------------------------------------
+      * Datenstruktur für Message-ID : PRZ0026
+      *
+      * EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
+      *
+     D PRZ0026         DS
+      *   Keine Ersatzvariablen definiert!
+     D PRZ0026_LEN     S              8B 0 INZ(0512)
       *
 ]]>  </copysrc>
 </mbr>
@@ -4287,7 +4357,14 @@ erstellt wird.
 :HP3.Achtung::EHP3. Wird die Option :HP3.*EVENTF:EHP3. zur Ausgabe einer
 Ereignisdatei gesetzt, so werden die Stellen 1-20 des Local Data Area (*LDA)
 verwendet, um den Namen der Bibliothek und des Objekts an RDi/WDSCi zu
-übergeben.
+übergeben. Die Bibliothek zur Ausgabe der EVFEVENT Datei wird in folgender
+Reihenfolge durchgeführt, bis eine benannte Bibliothek gefunden wurde:
+:P.
+:LINES.
+ - Objektbibliothek (LIB)
+ - Quellenbibliothek (SRCLIB)
+ - Bibliothek der gelesenen Quellendatei (USESRCFILE)
+:ELINES.
 :P.
 In der Datei STRPRE2 können Paarungen Nachrichten-ID/Ersatzvariable
 hinterlegt werden, anhand derer STRPREPRC Informationen aus dem
@@ -5354,7 +5431,15 @@ client tooling.
 :P.
 :HP3.Important::EHP3. When option :HP3.*EVENTF:EHP3. is set to produce
 an event file, positions 1-20 of the local data area (*LDA) are used
-to pass the library and object name to RDi/WDSCi.
+to pass the library and object name to RDi/WDSCi. The output library
+of the EVFEVENT file is searched in the following oder until a named
+library is found:
+:P.
+:LINES.
+ - Object library (LIB)
+ - Source file library (SRCLIB)
+ - Library of the input source file (USESRCFILE)
+:ELINES.
 :P.
 File STRPRE2 contains key value pairs message-id/field format
 for retrieving den statement in error from the job log.
@@ -6405,20 +6490,25 @@ srccssid=  "00273">
       *                                                                     *
       *  18.06.2015  Th.Raddatz    Renamed parameter EVENTF to OPTION.      *
       *                                                                     *
+      *  23.07.2015  Th.Raddatz    Fixed problem that the EVFEVENT file     *
+      *                            was not created when the creation        *
+      *                            command had been executed implicitly.    *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
-      *                                                                     *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
       *                           SRCFILE(&SL/&SF) +                        *
       *                           SRCMBR(&SM);                              *
-      *                                                                     *
       *   >>COMPILE<<                                                       *
       *     >>PARM<< TRUNCNBR(*NO);                                         *
       *     >>PARM<< DBGVIEW(*LIST);                                        *
+      *     >>PARM<< OPTION(&U3);                                           *
       *   >>END-COMPILE<<                                                   *
-      *                                                                     *
+      *   >>CMD<<    SNDMSG MSG('Starting to object creation ...') +        *
+      *                TOUSR(RADDATZ);                                      *
       *   >>EXECUTE<<                                                       *
-      *                                                                     *
+      *   >>CMD<<    SNDMSG MSG('Finished object creation.') +              *
+      *                TOUSR(RADDATZ);                                      *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
      H NOMAIN BNDDIR('QC2LE')
@@ -6550,7 +6640,11 @@ srccssid=  "00273">
      D                 s                   like(pgm_t) inz
      D g_libPgmCmdExc  s                   like(lib_t) inz
      D g_msgKey        s              4a   inz(*ALLx'FF')
-     D g_eventfOpen    s               n   inz(cFalse)
+      *
+     D g_eventf        ds                  qualified
+     D  isOpen                         n   inz(cFalse)
+     D  mbr                          10a   inz
+     D  lib                          10a   inz('*N')
       *
      D g_option        ds                  qualified inz
      D  isEventf                       n   inz(cFalse)
@@ -6614,8 +6708,20 @@ srccssid=  "00273">
      D                                            like(lib_t)
      D  i_option                                  likeds(option_t)
       *
+     D p_performExecute...
+     D                 pr
+     D                                     extproc('p_performExecute')
+     D  i_cmd                              value  like(cmd_t)
+     D  i_cmdChgObjD                       value  like(cmd_t)
+      *
+     D p_performCmd...
+     D                 PR
+     D                                     extproc('p_performCmd')
+     D  i_cmd                              value  like(cmd_t)
+      *
      D f_addData...
      D                 PR          2048a          varying
+     D                                     extproc('f_addData')
      D  i_tag                              value  like(tag_t)
      D  i_keyData                  2048a   value  varying
      D  i_srcDta                           value  like(srcDta_t)
@@ -6623,67 +6729,92 @@ srccssid=  "00273">
       *
      D f_getWidth...
      D                 PR            10i 0
+     D                                     extproc('f_getWidth')
      D  i_srcDta                           value  like(srcDta_t)
      D  i_length                     10i 0 value
       *
      D f_replaceCmdKeyWord...
      D                 PR                         like(cmd_t)
+     D                                     extproc('f_replaceCmdKeyWord')
      D  i_cmd                              value  like(cmd_t)
      D  i_keyData                  2048a   value  varying
       *
      D f_srcDtaLen...
      D                 PR                         like(int4_t)
+     D                                     extproc('f_srcDtaLen')
       *
      D f_startPos...
      D                 PR                         like(int4_t)
+     D                                     extproc('f_startPos')
      D  i_tag                              value  like(tag_t)
      D  i_srcDta                                  like(srcDta_t)
       *
      D f_isTag...
      D                 PR                         like(bool_t)
+     D                                     extproc('f_isTag')
      D  i_srcDta                           value  like(srcDta_t)
      D  o_tag                                     like(tag_t)
       *
      D f_rtvTag...
      D                 PR                         like(bool_t)
+     D                                     extproc('f_rtvTag')
      D  i_tagToTest                        value  like(tag_t)
      D  i_srcDta                           value  like(srcDta_t)
      D  o_tag                                     like(tag_t)
       *
      D f_tagToMode...
      D                 PR                         like(mode_t)
+     D                                     extproc('f_tagToMode')
      D  i_tag                              value  like(tag_t)
       *
      D f_chkMode...
      D                 PR              n
+     D                                     extproc('f_chkMode')
      D  i_mode                             value  like(mode_t)
      D  i_newMode                          value  like(mode_t)
       *
      D p_pushMode...
      D                 PR
+     D                                     extproc('p_pushMode')
      D  i_mode                             value  like(mode_t)
       *
      D f_popMode...
      D                 PR                         like(mode_t)
+     D                                     extproc('f_popMode')
       *
      D p_sndMsg...
      D                 PR
+     D                                     extproc('p_sndMsg')
      D  i_msg                              value  likeds(msg_t)
+      *
+     D f_checkCommand...
+     D                 PR                         like(bool_t)
+     D                                     extproc('f_checkCommand')
+     D  i_cmd                              value  like(cmd_t)
       *
      D f_executeCommand...
      D                 PR                         like(bool_t)
+     D                                     extproc('f_executeCommand')
      D  i_monErr                           value  like(bool_t)
      D  i_cmd                              value  like(cmd_t)
       *
      D f_fmtCmd...
      D                 PR                         like(cmd_t)
+     D                                     extproc('f_fmtCmd')
      D  i_cmd                              value  like(cmd_t)
       *
      D p_endAbn...
      D                 PR
+     D                                     extproc('p_endAbn')
+     D  i_crtEventf                    n   value  options(*nopass)
+      *
+     D p_endOK...
+     D                 PR
+     D                                     extproc('p_endOK')
       *
      D p_replaceVar...
      D                 PR
+     D                                     extproc('p_replaceVar')
      D  i_var                        10a   value
      D  i_value                     256a   value
      D  io_string                 32767a
@@ -6702,6 +6833,7 @@ srccssid=  "00273">
       *
      D p_getMsgInf...
      D                 PR
+     D                                     extproc('p_getMsgInf')
      D  i_pgm                              value  like(pgm_t)
      D  i_module                           value  like(module_t)
      D  i_proc                             value  like(proc_t)
@@ -6781,6 +6913,8 @@ srccssid=  "00273">
       /COPY QSTRPREPRC,PRZ0024
       *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet
       /COPY QSTRPREPRC,PRZ0025
+      *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
+      /COPY QSTRPREPRC,PRZ0026
       *
       *  Arbeitsfelder
      D i               S             10i 0 inz
@@ -6797,6 +6931,7 @@ srccssid=  "00273">
      D                 S                   like(bool_t)  inz(cTrue)
      D foundPrePrcTags...
      D                 S                   like(bool_t)  inz(cFalse)
+     D cmdChgObjD      S                   like(cmd_t)
       /free
 
          p_setAppMsgFile(i_msgFile: i_msgFileLib);
@@ -6810,6 +6945,7 @@ srccssid=  "00273">
          reset g_option;
          reset g_msgKey;
          reset g_option;
+         reset g_eventf;
          g_msgFile = i_msgFile;
          g_pgmCmdExc = i_pgmCmdExc;
          g_libPgmCmdExc = i_libPgmCmdExc;
@@ -6818,7 +6954,22 @@ srccssid=  "00273">
             for i = 1 to i_option.numE;
                select;
                when (i_option.option(i) = cEVENTF_YES);
-                  g_option.isEventf = cTrue;
+                  select;
+                  when (not f_startsWith('*': i_lib));
+                     g_option.isEventf = cTrue;
+                     g_eventf.mbr = i_srcMbr;
+                     g_eventf.lib = i_lib;
+                  when (not f_startsWith('*': i_srcLib));
+                     g_option.isEventf = cTrue;
+                     g_eventf.mbr = i_srcMbr;
+                     g_eventf.lib = i_srcLib;
+                  when (not f_startsWith('*': i_useSrcLib));
+                     g_option.isEventf = cTrue;
+                     g_eventf.mbr = i_srcMbr;
+                     g_eventf.lib = i_useSrcLib;
+                  other;
+                     g_option.isEventf = cFalse;
+                  endsl;
                when (i_option.option(i) = cEVENTF_NO);
                   g_option.isEventf = cFalse;
                endsl;
@@ -6829,16 +6980,18 @@ srccssid=  "00273">
          g_srcFile.lib = i_srcLib;
          g_srcFile.mbr = i_srcMbr;
 
-         if (g_option.isEventf);
-            monitor;
-               openEventFile(i_srcMbr: i_lib);
-               g_eventfOpen = cTrue;
-            on-error;
-               clear PRZ0025;
-               PRZ00251 = i_lib;
-               p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_ESCAPE));
-               p_endAbn();
-            endmon;
+         if (i_chgObjD = '*YES');
+            cmdChgObjD =
+               'CHGOBJDA +
+                   OBJ(' + %trim(i_lib) + '/' + %trim(i_obj) + ') +
+                   OBJTYPE(' + %trim(i_objType) + ') +
+                   SRCF(' + %trim(i_objSrcFile) + ') +
+                   SRCFLIB(' + %trim(i_objSrcLib) + ') +
+                   SRCMBR(' + %trim(i_objSrcMbr) + ') +
+                   SRCDATE(' + %trim('*SRCMBR') + ') +
+                   SRCTIME(' + %trim('*SRCMBR') + ')';
+         else;
+            cmdChgObjD = '';
          endif;
 
          open(E) SRCFILE;
@@ -7011,7 +7164,9 @@ srccssid=  "00273">
 
             // Execute-Anweisung   >>EXECUTE<<
             if (mode = cMODE_EXECUTE);
-               exsr executeCmd;
+               cmdString = i_cmd;
+               exsr replaceVar;
+               p_performExecute(cmdString: cmdChgObjD);
                mode = f_popMode();
                iter;
             endif;
@@ -7030,9 +7185,7 @@ srccssid=  "00273">
                else;
                   cmdString = keyData;
                   exsr replaceVar;
-                  if (not f_executeCommand(cFalse: cmdString));
-                     p_endAbn();
-                  endif;
+                  p_performCmd(cmdString);
                   exsr resetLine;
                   mode = f_popMode();
                   iter;
@@ -7041,18 +7194,21 @@ srccssid=  "00273">
 
          enddo;
 
-         if (g_eventfOpen);
-            closeEventFile();
-            g_eventfOpen = cFalse;
-         endif;
-
          close SRCFILE;
          close STRPRE1;
 
          // Ausführen >>EXECUTE<< implizit, weil
          // kein Pre-Prozessor Abschnitt gefunden werden konnte
          if (execCmdImplizit = cTrue);
-            exsr executeCmd;
+            cmdString = i_cmd;
+            exsr replaceVar;
+            p_performExecute(cmdString: cmdChgObjD);
+         endif;
+
+         // Schließen der EVFEVENT Datei
+         if (g_eventf.isOpen);
+            closeEventFile();
+            g_eventf.isOpen = cFalse;
          endif;
 
          // Senden Abbruchnachricht, weil keine STRPREPRC Anweisungen
@@ -7066,46 +7222,6 @@ srccssid=  "00273">
          endif;
 
          return;
-
-         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-         //  Ausführen Erstellungsbefehl
-         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-         begsr executeCmd;
-
-            cmdString = i_cmd;
-            exsr replaceVar;
-
-            if (%scan(cEVENTF_YES: cmdString) > 0);
-               g_option.isEventf = cFalse;
-               closeEventFile();
-               g_eventfOpen = cFalse;
-            endif;
-
-            if (not f_executeCommand(cTrue: cmdString));
-               p_endAbn();
-            else;
-               // Write event file, but change messages greater or equal
-               // to "error" to "warning".
-               writeEventFile(
-                  i_srcFile: i_srcLib: i_srcMbr: f1_line_number
-                  : EVF_MSG_SEVERITY_ERROR: EVF_MSG_SEVERITY_WARNING);
-            endif;
-
-            if (i_chgObjD = '*YES');
-               if (not f_executeCommand(cFalse:
-                          'CHGOBJDA +
-                             OBJ(' + %trim(i_lib) + '/' + %trim(i_obj) + ') +
-                             OBJTYPE(' + %trim(i_objType) + ') +
-                             SRCF(' + %trim(i_objSrcFile) + ') +
-                             SRCFLIB(' + %trim(i_objSrcLib) + ') +
-                             SRCMBR(' + %trim(i_objSrcMbr) + ') +
-                             SRCDATE(' + %trim('*SRCMBR') + ') +
-                             SRCTIME(' + %trim('*SRCMBR') + ')'));
-                  p_endAbn();
-               endif;
-            endif;
-
-         endsr;
 
          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          //  Zurücksetzen Werte für neue Schlüsselwortdaten
@@ -7247,6 +7363,92 @@ srccssid=  "00273">
 
       /end-free
      P                 E
+
+         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+         //  Ausführen Erstellungsbefehl
+         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+         // begsr performExecute;
+      *
+      * =============================================================
+      *  Ausführen >>CMD<< tag (Pre und Post Befehle)
+      * =============================================================
+     P p_performExecute...
+     P                 b
+     D                 pi
+     D  i_cmd                              value  like(cmd_t)
+     D  i_cmdChgObjD                       value  like(cmd_t)
+      *
+      *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
+      /COPY QSTRPREPRC,PRZ0026
+      /free
+
+         if (g_option.isEventf);
+            monitor;
+               prepareEventFile();
+            on-error;
+               clear PRZ0026;
+               p_sndMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               p_endAbn();
+            endmon;
+         endif;
+
+         if (not f_checkCommand(i_cmd));
+            p_endAbn();
+         endif;
+
+         if (not f_executeCommand(cTrue: i_cmd));
+            if (%scan(cEVENTF_YES: i_cmd) > 0);
+               p_endAbn(cFalse); // EVENT file created by command
+            else;
+               p_endAbn();
+            endif;
+         else;
+            // Write event file, but change messages greater or equal
+            // to "error" to "warning".
+            if (%scan(cEVENTF_YES: i_cmd) = 0);
+               p_endOK();
+            endif;
+         endif;
+
+         if (i_cmdChgObjD <> '');
+            p_performCmd(i_cmdChgObjD);
+         endif;
+
+      /end-free
+     p                 e
+      *
+      * =============================================================
+      *  Ausführen >>CMD<< tag (Pre und Post Befehle)
+      * =============================================================
+     P p_performCmd...
+     P                 b
+     D                 pi
+     D  i_cmd                              value  like(cmd_t)
+      *
+      *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
+      /COPY QSTRPREPRC,PRZ0026
+      /free
+
+         if (g_option.isEventf);
+            monitor;
+               prepareEventFile();
+            on-error;
+               clear PRZ0026;
+               p_sndMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               p_endAbn();
+            endmon;
+         endif;
+
+         if (not f_checkCommand(i_cmd));
+            p_endAbn();
+         endif;
+
+         if (not f_executeCommand(cTrue: i_cmd));
+            p_endAbn();
+         endif;
+
+      /end-free
+     P                 e
       *
       * =============================================================
       *  Zusammenbauen Schlüsselwortdaten
@@ -7852,6 +8054,48 @@ srccssid=  "00273">
      P                 e
       *
       * =============================================================
+      *  Prüfen CL Befehl
+      * =============================================================
+     P f_checkCommand...
+     P                 b
+     D                 pi                         like(bool_t)
+     D  i_cmd                              value  like(cmd_t)
+      *
+      *  Definitionen für QCAPCMD
+     D optCtrl         ds                  likeds(cpop0100_t) inz
+     D retCmd          s                   like(i_cmd) inz
+     D retCmdLenAvl    s             10i 0 inz(%len(retCmd))
+     D retCmdLenRtn    s             10i 0 inz
+     D errCode         ds                  likeds(errCode_t) inz
+      *
+      *  ... Fehler im Erstellungsbefehl gefunden.
+      /COPY QSTRPREPRC,PRZ0015
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /free
+
+         clear errCode;
+
+         monitor;
+            clear optCtrl;
+            optCtrl.typeCmdPrc = cQCAPCMD_PRC_CHK_CMDLINE;
+            optCtrl.DBCS_data = cQCAPCMD_DBCS_HANDLE;
+            optCtrl.prmtAction = cQCAPCMD_PROMPT_NEVER;
+            optCtrl.cmdStrSyntax = cQCAPCMD_SYNTAX_SYSTEM;
+            optCtrl.msgRtvKey = '';
+            optCtrl.res_01 = *ALLx'00';
+
+            errCode = f_newApiErrCode(cTrue);
+            QCAPCMD(i_cmd: %len(%trimR(i_cmd)): optCtrl: %size(optCtrl)
+                    : 'CPOP0100': retCmd: retCmdLenAvl: retCmdLenRtn: errCode);
+            return not f_isApiError(errCode);
+         on-error;
+            return cFalse;
+         endmon;
+
+      /end-free
+     P                 e
+      *
+      * =============================================================
       *  Ausführen CL Befehl
       * =============================================================
      P f_executeCommand...
@@ -7859,9 +8103,6 @@ srccssid=  "00273">
      D                 pi                         like(bool_t)
      D  i_monErr                           value  like(bool_t)
      D  i_cmd                              value  like(cmd_t)
-      *
-      *  Definieren Funktionswert
-     D isOK            s                   like(bool_t) inz(cFalse)
       *
       *  Definitionen für f_getMsgInf
      D msgID           s                   like(msgID_t) inz
@@ -8087,20 +8328,45 @@ srccssid=  "00273">
      P p_endAbn...
      P                 b
      D                 pi
+     D  i_crtEventf                    n   value  options(*nopass)
+      *
+     D p_crtEventf     c                   1
+      *
+     D crtEventf       s                   like(i_crtEventf)
       *
       *  Nachrichten
       *  ... Verarbeitung in Zeile &1 abgebrochen.
       /COPY QSTRPREPRC,PRZ0002
+      *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet
+      /COPY QSTRPREPRC,PRZ0025
       *
       *  Arbeitsfelder
       /free
 
-         writeEventFile(g_srcFile.name: g_srcFile.lib: g_srcFile.name
-                        : f1_line_number);
+         if (%parms() >= p_crtEventf and %addr(i_crtEventf) <> *null);
+            crtEventf = i_crtEventf;
+         else;
+            crtEventf = cTrue;
+         endif;
 
-         if (g_eventfOpen);
+         if (crtEventf and g_option.isEventf and g_eventf.isOpen = cFalse);
+            monitor;
+               g_eventf.isOpen =
+                  openEventFile(g_eventf.mbr: g_eventf.lib);
+            on-error;
+               g_eventf.isOpen = cFalse;
+               clear PRZ0025;
+               PRZ00251 = g_eventf.lib;
+               p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_DIAG));
+               p_endAbn(cFalse);
+            endmon;
+         endif;
+
+         if (g_eventf.isOpen);
+            writeEventFile(g_srcFile.name: g_srcFile.lib: g_srcFile.mbr
+                           : f1_line_number);
             closeEventFile();
-            g_eventfOpen = cFalse;
+            g_eventf.isOpen = cFalse;
          endif;
 
          if (%open(SRCFILE));
@@ -8115,7 +8381,43 @@ srccssid=  "00273">
          PRZ00021 = f1_line_number;
          p_sndMsg(f_newMsg('PRZ0002': PRZ0002: cTYPE_ESCAPE));
 
-         return;
+      /end-free
+     P                 e
+      *
+      * =============================================================
+      *  Beenden Programm normal
+      * =============================================================
+     P p_endOK...
+     P                 b
+     D                 pi
+      *
+      *  Nachrichten
+      *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet
+      /COPY QSTRPREPRC,PRZ0025
+      *
+      *  Arbeitsfelder
+      /free
+
+         if (g_option.isEventf and g_eventf.isOpen = cFalse);
+            monitor;
+               g_eventf.isOpen =
+                  openEventFile(g_eventf.mbr: g_eventf.lib);
+            on-error;
+               g_eventf.isOpen = cFalse;
+               clear PRZ0025;
+               PRZ00251 = g_eventf.lib;
+               p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_DIAG));
+               p_endAbn();
+            endmon;
+         endif;
+
+         if (g_eventf.isOpen);
+            writeEventFile(
+               g_srcFile.name: g_srcFile.lib: g_srcFile.mbr: f1_line_number
+               : EVF_MSG_SEVERITY_ERROR: EVF_MSG_SEVERITY_WARNING);
+            closeEventFile();
+            g_eventf.isOpen = cFalse;
+         endif;
 
       /end-free
      P                 e
@@ -8490,22 +8792,14 @@ srccssid=  "00273">
       /copy QJOBLOG,PJOBLOG                        EVFEVENT API - Job Log
       *
       * =============================================================
-      *  Opens the event file.
+      *  Prepares for writing the event file.
       * =============================================================
-     P openEventFile...
+     P prepareEventFile...
      P                 b                   export
      D                 pi
-     D  i_obj                        10a   const
-     D  i_lib                        10a   const
 
-     D msg             ds                  likeds(msg_t)
      D jobLogEntry     ds                  likeds(JobLog_jobLogEntry_t) inz
       /free
-
-         Eventf_open(i_lib: i_obj);
-         g_status.haveEventFile = cTrue;
-
-         Eventf_writeProcessor();
 
          if (JobLog_getNewest('*': jobLogEntry));
             g_status.haveJobLog = cTrue;
@@ -8515,13 +8809,45 @@ srccssid=  "00273">
             g_status.msgKey = *ALLx'FF';
          endif;
 
+      /end-free
+     P                 e
+      *
+      * =============================================================
+      *  Opens the event file.
+      * =============================================================
+     P openEventFile...
+     P                 b                   export
+     D                 pi              n
+     D  i_obj                        10a   const
+     D  i_lib                        10a   const
+
+     D msg             ds                  likeds(msg_t)
+     D rtnLib          s                   like(i_lib)
+      /free
+
+         Eventf_open(i_lib: i_obj: rtnLib);
+         g_status.haveEventFile = cTrue;
+
+         Eventf_writeProcessor();
+
          monitor;
             in g_LDA;
-            g_LDA.library = i_lib;
-            g_LDA.object = i_obj;
+            if (rtnLib <> '');
+               g_LDA.library = rtnLib;
+               g_LDA.object = i_obj;
+            else;
+               g_LDA.library = '';
+               g_LDA.object = '';
+            endif;
             out g_LDA;
          on-error;
          endmon;
+
+         if (rtnLib <> '');
+            return cTrue;
+         endif;
+
+         return cFalse;
 
       /end-free
      P                 e
