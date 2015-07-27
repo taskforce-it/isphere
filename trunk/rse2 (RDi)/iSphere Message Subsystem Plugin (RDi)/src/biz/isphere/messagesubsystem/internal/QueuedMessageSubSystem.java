@@ -141,6 +141,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
         if (monitoringAttributes.isMonitoring()) {
             communicationsListener.startMonitoring();
+        } else {
+            communicationsListener.stopMonitoring();
         }
     }
 
