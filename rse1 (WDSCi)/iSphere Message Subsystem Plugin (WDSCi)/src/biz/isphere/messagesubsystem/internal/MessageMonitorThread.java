@@ -74,9 +74,14 @@ public class MessageMonitorThread extends Thread {
     }
 
     public void stopMonitoring() {
+
+        if (!monitoring) {
+            return;
+        }
+
         monitoring = false;
     }
-    
+
     private void handleMessage(QueuedMessage message) throws Exception {
 
         if (END_MONITORING.equals(message.getText())) {
