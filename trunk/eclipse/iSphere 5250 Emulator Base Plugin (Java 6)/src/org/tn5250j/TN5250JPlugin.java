@@ -20,7 +20,7 @@ public class TN5250JPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
-		TN5250JPlugin.setTN5250JInstallation("TN5250J - Version 0.7.5.1");
+		TN5250JPlugin.setTN5250JInstallation("TN5250J - Version 0.7.5.2");
 	}
 
 	public void stop(BundleContext context) throws Exception {

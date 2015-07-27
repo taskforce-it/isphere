@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TN5250J
 Bundle-SymbolicName: org.tn5250j
-Bundle-Version: 0.7.5.1
+Bundle-Version: 0.7.5.2
 Bundle-Activator: org.tn5250j.TN5250JPlugin
 Bundle-Vendor: Task Force IT-Consulting GmbH
 Bundle-Localization: plugin
@@ -17,7 +17,8 @@ Bundle-ClassPath: .,
  lib/jythonlib.jar,
  lib/mailapi.jar,
  lib/smtp.jar,
- lib/log4j.jar
+ lib/log4j.jar,
+ resources/
 Export-Package: org.tn5250j,
  org.tn5250j.encoding,
  org.tn5250j.encoding.builtin,
