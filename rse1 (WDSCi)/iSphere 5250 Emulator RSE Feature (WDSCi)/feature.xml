@@ -2,7 +2,7 @@
 <feature
       id="de.taskforce.tn5250j.rse"
       label="TN5250J for WDSCi 7.0"
-      version="3.0.0"
+      version="3.0.2"
       provider-name="Task Force IT-Consulting GmbH">
 
    <description>

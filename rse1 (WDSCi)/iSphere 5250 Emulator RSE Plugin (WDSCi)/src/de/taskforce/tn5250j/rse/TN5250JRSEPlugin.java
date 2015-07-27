@@ -58,7 +58,7 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
 		
 		initializePreferenceStoreDefaults();
 		
-		TN5250JPlugin.setTN5250JInstallation("TN5250J for WDSCi 7.0 - Version 3.0.0");
+		TN5250JPlugin.setTN5250JInstallation("TN5250J for WDSCi 7.0 - Version 3.0.2");
 	}
 
 	public void stop(BundleContext context) throws Exception {
