@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.messagesubsystem"
       label="iSphere Message Subsystem for WDSCi 7.0 (optional)"
-      version="2.7.0.b003"
+      version="2.7.0.b005"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
