@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.BasicMessageFormatter;
+import biz.isphere.core.internal.FontHelper;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
@@ -40,6 +42,7 @@ public class QueuedMessageDialog extends XDialog {
     private QueuedMessage queuedMessage;
     private Text responseText;
     private boolean createCancelButton;
+    private BasicMessageFormatter messageFormatter;
 
     public QueuedMessageDialog(Shell shell, QueuedMessage queuedMessage) {
         this(shell, queuedMessage, true);
@@ -49,6 +52,7 @@ public class QueuedMessageDialog extends XDialog {
         super(shell);
         this.queuedMessage = queuedMessage;
         this.createCancelButton = createCancelButton;
+        this.messageFormatter = new BasicMessageFormatter();
     }
 
     @Override
@@ -117,6 +121,7 @@ public class QueuedMessageDialog extends XDialog {
         msgText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
         msgText.setEditable(false);
         msgText.setRedraw(true);
+        msgText.setFont(FontHelper.getFixedSizeFont());
 
         // Place holder label
         new Label(headerGroup, SWT.NONE);
@@ -125,13 +130,14 @@ public class QueuedMessageDialog extends XDialog {
         msgHelp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         msgHelp.setEditable(false);
         msgHelp.setRedraw(true);
+        msgHelp.setFont(FontHelper.getFixedSizeFont());
 
         if ((queuedMessage.getHelp() == null) || (queuedMessage.getHelp().equals(queuedMessage.getText()))) {
             msgText.setText(queuedMessage.getText());
             msgHelp.setVisible(false);
         } else {
             msgText.setText(queuedMessage.getText());
-            msgHelp.setText(queuedMessage.getHelp());
+            msgHelp.setText(messageFormatter.formatHelpText(queuedMessage.getHelp()));
         }
 
         if (queuedMessage.getType() == QueuedMessage.INQUIRY) {
