@@ -11,6 +11,8 @@ Changelog: iSphere 2.7.0 beta 5
    attributes when "email" is selected.
  • Changed messages subsystem to format the message help text and to use
    a fixed size font to display the message text and the message help text. 
+ • Changes messages subsystem to be stop when it is turned off in the 
+   preferences.
 
 
 Changelog: iSphere 2.7.0 beta 4
