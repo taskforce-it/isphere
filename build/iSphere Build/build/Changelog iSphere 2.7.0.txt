@@ -34,6 +34,7 @@ Changelog: iSphere 2.7.0 beta 4
    when displaying a message description in the message file editor.
  • Renamed save file ISPHERE to ISPHERE.SAVF to ease Drag & Drop
    from the RSE tree.
+ • Updated STRPREPRC (bug fix).
  
 
 Changelog: iSphere 2.7.0 beta 3
