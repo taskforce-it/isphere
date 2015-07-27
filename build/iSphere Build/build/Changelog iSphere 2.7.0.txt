@@ -8,7 +8,9 @@ Changelog: iSphere 2.7.0 beta 5
  • Fixed problem in service program EVENTF that an invalid error 
    was produced for blank messages IDs.
  • Fixed message handler to properly check the Message Queue Monitoring
-   attributes when "email" is selected. 
+   attributes when "email" is selected.
+ • Changed messages subsystem to format the message help text and to use
+   a fixed size font to display the message text and the message help text. 
 
 
 Changelog: iSphere 2.7.0 beta 4
