@@ -74,6 +74,11 @@ public class MessageMonitorThread extends Thread {
     }
 
     public void stopMonitoring() {
+
+        if (!monitoring) {
+            return;
+        }
+
         monitoring = false;
     }
 
