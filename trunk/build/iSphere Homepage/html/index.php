@@ -8,25 +8,41 @@
         <title>iSphere Plug-in</title>
     </head>
     <body>
-    	<a href="@ISPHERE_HOME@"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="98" height="97" border="0" align="left" style="padding-right:10px;"/></a>
-    	<table border="0" width="85%" >
-    	<tr>
-    	<td valign="top" width="60%">
+        <?php
+            function parseJarManifest($manifestFileContents) {
+               $manifest = array();	
+               $lines = explode("\n", $manifestFileContents);
+               foreach ($lines as $line) {
+                  if (preg_match("/^([^:]+):\s*(.+)$/", $line, $m)) {
+                     $manifest[$m[1]] = trim($m[2]);
+                  }
+               }
+               return $manifest;
+            }
+            $manifestFileContents = file_get_contents('http://sourceforge.net/p/isphere/code/HEAD/tree/trunk/build/iSphere%20Notifier/MANIFEST.MF?format=raw');
+            $manifest = parseJarManifest($manifestFileContents);
+            $current_version = $manifest['Bundle-Version'];
+        ?>
+      
+        <table width="100%" border="0">
+        <tr><td align="left" >
+        <a href="https://sourceforge.net/projects/isphere/"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="98" height="97" border="0" style="padding-right: 10px;"/></a>
+        </td>
+        <td align="left" width="100%" >
         <h1>iSphere Plug-in</h1>
         <p>Hi, this is the home of the iSphere plug-in for RDi and WDSCi.</p>
-        <p>Visit the <a target="_help" href="@ISPHERE_HELP@">iSphere help</a> site to find out more about the plug-in.</p>
+        <p>Visit the <a target="_help" href="http://isphere.sourceforge.net/help/">iSphere help</a> site to find out more about the plug-in.</p>
         </td>
-        <td valign="top" align="right" width="40%">
-        Version - @VERSION_NUMBER@
+        <td valign="bottom" align="right" nowrap>
+        <b>Version: <?php echo $current_version; ?></b>
         </td>
         </tr>
         </table>
-        <p/>
         
         <h2 class="release">Introduction</h2>
         <div class="section">
         iSphere is an open source plug-in for WDSCi 7.0 and RDi 8.0+. It delivers high quality extensions 
-        for WDSC, RDP and RDi to further improve developer productivity.
+        for WDSC, RDP and RDi to further improve developer productivity. The current version is <?php echo $current_version; ?>.
 		<p/>
 		IBM's current Eclipse based Integrated Development Environment (IDE) is a huge step beyond SEU, but 
 		it still lacks features available only on the green screen. That is where the iSphere Project comes 
@@ -97,17 +113,24 @@
         The easiest way to install the iSphere plug-in is using the official update sites:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/@TARGET_IDE_RDI@/">@TARGET_IDE_PRODUCT_NAME_LONG_RDI@ - @TARGET_IDE_PRODUCT_NAME_SHORT_RDI@</a></td></tr>
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/@TARGET_IDE_WDSCI@/">@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@ - @TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0</a></td></tr>
         </table>
         <p/>
-        Refer to the iSphere <a target="_help" href="@ISPHERE_HELP@">help</a> page for detailed installation instructions.
+        The iSphere beta versions are available here:
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+ (beta)</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0 (beta)</a></td></tr>
+        </table>
+        <p/>
+        Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/help/">help</a> page for detailed installation instructions.
         </div>
         
         <h2 class="release">Help</h2>
         <div class="section">
         <table>
-        <tr><td>Visit the iSphere <a target="_help" href="@ISPHERE_HELP@">help</a> page.</td></tr>
+        <tr><td>Visit the iSphere <a target="_help" href="http://isphere.sourceforge.net/help/">help</a> page.</td></tr>
         <tr><td>Ask your questions at the <a target="_wdsci-l" href="http://lists.midrange.com/mailman/listinfo/wdsci-l">WDSCI-L</a> mailing list at <a target="_wdsci-l" href="http://www.midrange.com">midrange.com</a>.</td></tr>
         <tr><td>For bug reports open a ticket at the <a href="https://sourceforge.net/p/isphere/tickets/">iSphere bug tracker.</a></td></tr>
         </table>
@@ -138,7 +161,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @YEAR@, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: <?php echo $current_version; ?> - Copyright: 2015, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: 15.07.2015 - 20:50:31</td></tr>
         </table>
         <br>
     </body>
