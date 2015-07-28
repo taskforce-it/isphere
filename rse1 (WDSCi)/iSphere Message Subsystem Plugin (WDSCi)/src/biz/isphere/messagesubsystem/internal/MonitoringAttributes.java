@@ -46,7 +46,7 @@ public class MonitoringAttributes {
         this.queuedMessageSubSystem = queuedMessageSubSystem;
     }
 
-    public boolean isMonitoring() {
+    public boolean isMonitoringEnabled() {
 
         String monitorString = getVendorAttribute(MONITOR);
         if (monitorString == null) {

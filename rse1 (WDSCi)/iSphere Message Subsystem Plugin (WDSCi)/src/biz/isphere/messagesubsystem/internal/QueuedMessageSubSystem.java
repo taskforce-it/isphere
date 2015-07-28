@@ -131,7 +131,7 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
 
     public void restartMessageMonitoring() {
 
-        if (monitoringAttributes.isMonitoring()) {
+        if (monitoringAttributes.isMonitoringEnabled()) {
             communicationsListener.startMonitoring();
         } else {
             communicationsListener.stopMonitoring();
