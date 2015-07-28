@@ -258,7 +258,7 @@ public class MonitoringPropertiesPage extends PropertyPage {
 
     private void loadSettings() {
 
-        monitorButton.setSelection(monitoringAttributes.isMonitoring());
+        monitorButton.setSelection(monitoringAttributes.isMonitoringEnabled());
         removeButton.setSelection(monitoringAttributes.removeInformationalMessages());
         inqCombo.select(inqCombo.indexOf(monitoringAttributes.getInqueryMessageNotificationTypeForGUI()));
         infCombo.select(inqCombo.indexOf(monitoringAttributes.getInformationalMessageNotificationTypeForGUI()));

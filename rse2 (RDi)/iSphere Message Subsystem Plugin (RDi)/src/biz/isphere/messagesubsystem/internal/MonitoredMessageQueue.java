@@ -87,7 +87,6 @@ public class MonitoredMessageQueue extends MessageQueue {
         }
 
         try {
-            // sendInformational(END_MONITORING);
             monitoringThread.stopMonitoring();
         } catch (Exception e) {
             String errorMessage = null;
