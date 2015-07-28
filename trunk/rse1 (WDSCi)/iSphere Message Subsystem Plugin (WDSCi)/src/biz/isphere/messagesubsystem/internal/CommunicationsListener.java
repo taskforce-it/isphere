@@ -20,18 +20,20 @@ public class CommunicationsListener implements ICommunicationsListener {
     private QueuedMessageSubSystem queuedMessageSubSystem;
     private MonitoredMessageQueue monitoredMessageQueue;
     private MonitoringAttributes monitoringAttributes;
+    private boolean isStarting;
 
     public CommunicationsListener(QueuedMessageSubSystem queuedMessageSubSystem) {
         super();
 
         this.queuedMessageSubSystem = queuedMessageSubSystem;
         this.monitoringAttributes = new MonitoringAttributes(this.queuedMessageSubSystem);
+        this.isStarting = false;
     }
 
     public void communicationsStateChange(CommunicationsEvent ce) {
 
         if (ce.getState() == CommunicationsEvent.AFTER_CONNECT) {
-            if (monitoringAttributes.isMonitoring()) {
+            if (monitoringAttributes.isMonitoringEnabled()) {
                 startMonitoring();
             }
         }
@@ -47,15 +49,27 @@ public class CommunicationsListener implements ICommunicationsListener {
 
     public void startMonitoring() {
 
-        if (monitoredMessageQueue == null) {
-            QueuedMessageFilter filter = new QueuedMessageFilter();
-            filter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
-            AS400 as400 = new AS400(queuedMessageSubSystem.getToolboxAS400Object());
-            monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
-                monitoringAttributes);
+        if (isStarting) {
+            return;
         }
 
-        monitoredMessageQueue.startMonitoring(MessageQueue.OLD, MessageQueue.ANY);
+        try {
+
+            isStarting = true;
+
+            if (monitoredMessageQueue == null) {
+                QueuedMessageFilter filter = new QueuedMessageFilter();
+                filter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
+                AS400 as400 = new AS400(queuedMessageSubSystem.getToolboxAS400Object());
+                monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
+                    monitoringAttributes);
+            }
+
+            monitoredMessageQueue.startMonitoring(MessageQueue.OLD, MessageQueue.ANY);
+
+        } finally {
+            isStarting = false;
+        }
     }
 
     public void stopMonitoring() {

@@ -31,7 +31,7 @@ public class MessageHandler implements IMessageHandler {
     public void handleMessage(QueuedMessage message, MonitoredMessageQueue messageQueue) {
 
         MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
-        if (!monitoringAttributes.isMonitoring()) {
+        if (!monitoringAttributes.isMonitoringEnabled()) {
             return;
         }
 

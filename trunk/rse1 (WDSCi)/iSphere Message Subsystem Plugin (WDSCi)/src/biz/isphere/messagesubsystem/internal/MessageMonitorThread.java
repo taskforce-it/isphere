@@ -51,7 +51,7 @@ public class MessageMonitorThread extends Thread {
         monitoring = true;
 
         try {
-            while (monitoring && monitoringAttributes.isMonitoring()) {
+            while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
                 QueuedMessage message = messageQueue.receive(null, 20, messageAction, messageType);
                 if (monitoring && (message != null)) {
                     handleMessage(message);
