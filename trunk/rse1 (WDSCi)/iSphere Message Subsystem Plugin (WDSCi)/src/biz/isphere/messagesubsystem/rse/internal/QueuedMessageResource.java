@@ -9,22 +9,29 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
+import com.ibm.etools.systems.subsystems.SubSystem;
+import com.ibm.etools.systems.subsystems.impl.AbstractResource;
 
-public class QueuedMessageFactory {
-    private AS400 as400;
+public class QueuedMessageResource extends AbstractResource {
+    private QueuedMessage queuedMessage;
 
-    public QueuedMessageFactory(AS400 as400) {
-        super();
-        this.as400 = as400;
+    public QueuedMessageResource(SubSystem subSystem) {
+        super(subSystem);
     }
 
-    public QueuedMessage[] getQueuedMessages(QueuedMessageFilter filter) throws Exception {
-        MonitoredMessageQueue messageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter);
-        return messageQueue.getFilteredMessages();
+    public QueuedMessageResource() {
+        super();
+    }
+
+    public QueuedMessage getQueuedMessage() {
+        return queuedMessage;
+    }
+
+    public void setQueuedMessage(QueuedMessage message) {
+        queuedMessage = message;
     }
 
 }

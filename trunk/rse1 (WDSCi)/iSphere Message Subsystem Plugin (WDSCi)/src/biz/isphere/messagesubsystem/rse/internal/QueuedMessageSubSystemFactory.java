@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import java.util.Vector;
 
@@ -17,8 +17,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.messagesubsystem.ISphereMessageSubsystemPlugin;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
@@ -108,7 +108,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     @Override
     public ImageDescriptor getSystemFilterImage(SystemFilter filter) {
-        return ISphereMessageSubsystemPlugin.getImageDescriptor(ISphereMessageSubsystemPlugin.IMAGE_MESSAGE_FILTER);
+        return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE_FILTER);
     }
 
 }

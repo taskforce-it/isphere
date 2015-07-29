@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem;
+package biz.isphere.messagesubsystem.rse;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,15 +30,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.messagesubsystem.internal.QueuedMessageAdapterFactory;
-import biz.isphere.messagesubsystem.internal.QueuedMessageResource;
+import biz.isphere.messagesubsystem.rse.internal.QueuedMessageAdapterFactory;
+import biz.isphere.messagesubsystem.rse.internal.QueuedMessageResource;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
+public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
     // The shared instance.
-    private static ISphereMessageSubsystemPlugin plugin;
+    private static ISphereMessageSubsystemRSEPlugin plugin;
     // Resource bundle.
     private ResourceBundle resourceBundle;
     private static URL installURL;
@@ -49,12 +49,12 @@ public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
     public static final String IMAGE_MESSAGE_FILTER = "message_filter.gif"; //$NON-NLS-1$
     public static final String IMAGE_INQUIRY = "inquiry.gif"; //$NON-NLS-1$
 
-    private static final String ID = "biz.isphere.messagesubsystem";
+    private static final String ID = "biz.isphere.messagesubsystem.rse";
 
     /**
      * The constructor.
      */
-    public ISphereMessageSubsystemPlugin() {
+    public ISphereMessageSubsystemRSEPlugin() {
         super();
         plugin = this;
         try {
@@ -70,7 +70,7 @@ public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        ISphereMessageSubsystemPlugin.installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
+        ISphereMessageSubsystemRSEPlugin.installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
         setupAdapters();
     }
 
@@ -85,7 +85,7 @@ public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
     /**
      * Returns the shared instance.
      */
-    public static ISphereMessageSubsystemPlugin getDefault() {
+    public static ISphereMessageSubsystemRSEPlugin getDefault() {
         return plugin;
     }
 
@@ -107,7 +107,7 @@ public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
      * found.
      */
     public static String getResourceString(String key) {
-        ResourceBundle bundle = ISphereMessageSubsystemPlugin.getDefault().getResourceBundle();
+        ResourceBundle bundle = ISphereMessageSubsystemRSEPlugin.getDefault().getResourceBundle();
         try {
             return (bundle != null) ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {
@@ -166,18 +166,18 @@ public class ISphereMessageSubsystemPlugin extends AbstractUIPlugin {
     }
 
     public static void log(String msg) {
-        getDefault().getLog().log(new Status(IStatus.INFO, ISphereMessageSubsystemPlugin.ID, 0, msg, null));
+        getDefault().getLog().log(new Status(IStatus.INFO, ISphereMessageSubsystemRSEPlugin.ID, 0, msg, null));
     }
 
     public static void log(Exception e) {
         String msg = e.getMessage();
-        if (msg == null || msg.trim().length() == 0) msg = ISphereMessageSubsystemPlugin.getResourceString("pluginError.internal");
-        ISphereMessageSubsystemPlugin.log(msg, e);
+        if (msg == null || msg.trim().length() == 0) msg = ISphereMessageSubsystemRSEPlugin.getResourceString("pluginError.internal");
+        ISphereMessageSubsystemRSEPlugin.log(msg, e);
     }
 
     public static void log(String msg, Exception e) {
-        getDefault().getLog().log(new Status(IStatus.ERROR, ISphereMessageSubsystemPlugin.ID, 0, msg, e));
+        getDefault().getLog().log(new Status(IStatus.ERROR, ISphereMessageSubsystemRSEPlugin.ID, 0, msg, e));
         MessageDialog.openError(Display.getCurrent().getActiveShell(),
-            ISphereMessageSubsystemPlugin.getResourceString("pluginError"), msg + ISphereMessageSubsystemPlugin.getResourceString("pluginError.log")); //$NON-NLS-1$
+            ISphereMessageSubsystemRSEPlugin.getResourceString("pluginError"), msg + ISphereMessageSubsystemRSEPlugin.getResourceString("pluginError.log")); //$NON-NLS-1$
     }
 }

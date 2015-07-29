@@ -8,9 +8,9 @@
  * Contributors:
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.as400.access.QueuedMessage;
 
