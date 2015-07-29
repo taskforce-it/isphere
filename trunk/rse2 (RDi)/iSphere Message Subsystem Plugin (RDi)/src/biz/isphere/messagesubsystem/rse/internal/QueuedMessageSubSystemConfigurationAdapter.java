@@ -9,7 +9,7 @@
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
 
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import java.util.Vector;
 
@@ -26,8 +26,8 @@ import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.messagesubsystem.ISphereMessageSubsystemPlugin;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigurationAdapter {
 
@@ -73,7 +73,7 @@ public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigu
 
     @Override
     public ImageDescriptor getSystemFilterImage(ISystemFilter filter) {
-        return ISphereMessageSubsystemPlugin.getImageDescriptor("message_filter.gif");
+        return ISphereMessageSubsystemRSEPlugin.getImageDescriptor("message_filter.gif");
     }
 
     @Override

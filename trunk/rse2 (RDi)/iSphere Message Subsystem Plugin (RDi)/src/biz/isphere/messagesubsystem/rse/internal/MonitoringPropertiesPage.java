@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -32,7 +32,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 public class MonitoringPropertiesPage extends PropertyPage {
 

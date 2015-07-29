@@ -9,7 +9,7 @@
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
 
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;

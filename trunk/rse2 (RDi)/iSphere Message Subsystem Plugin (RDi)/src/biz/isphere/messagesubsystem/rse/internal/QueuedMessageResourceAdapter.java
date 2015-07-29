@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import biz.isphere.messagesubsystem.ISphereMessageSubsystemPlugin;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.as400.access.QueuedMessage;
 
@@ -56,9 +56,9 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
     public ImageDescriptor getImageDescriptor(Object object) {
         QueuedMessageResource queuedMessageResource = (QueuedMessageResource)object;
         if (queuedMessageResource.getQueuedMessage().getType() == QueuedMessage.INQUIRY) {
-            return ISphereMessageSubsystemPlugin.getImageDescriptor(ISphereMessageSubsystemPlugin.IMAGE_INQUIRY);
+            return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_INQUIRY);
         } else {
-            return ISphereMessageSubsystemPlugin.getImageDescriptor(ISphereMessageSubsystemPlugin.IMAGE_MESSAGE);
+            return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE);
         }
     }
 
