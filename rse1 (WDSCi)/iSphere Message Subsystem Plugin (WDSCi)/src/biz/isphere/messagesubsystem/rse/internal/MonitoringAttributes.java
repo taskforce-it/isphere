@@ -8,10 +8,10 @@
  * Contributors:
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 public class MonitoringAttributes {
 
@@ -317,7 +317,7 @@ public class MonitoringAttributes {
     }
 
     private void setVendorAttribute(String key, String value) {
-        queuedMessageSubSystem.setVendorAttribute(VENDOR_ID, EMAIL_PORT, value);
+        queuedMessageSubSystem.setVendorAttribute(VENDOR_ID, key, value);
     }
 
     /*

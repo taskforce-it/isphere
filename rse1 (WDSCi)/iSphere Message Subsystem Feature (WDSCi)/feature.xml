@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="biz.isphere.messagesubsystem"
+      id="biz.isphere.messagesubsystem.rse"
       label="iSphere Message Subsystem for WDSCi 7.0 (optional)"
       version="2.7.0.b005"
       provider-name="iSphere Project Team"
@@ -28,11 +28,11 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="2.7.0.b005"/>
+      <import feature="biz.isphere.core" version="2.7.0.b005" match="greaterOrEqual"/>
    </requires>
 
    <plugin
-         id="biz.isphere.messagesubsystem"
+         id="biz.isphere.messagesubsystem.rse"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -16,7 +16,7 @@
             iconlive="icons/messages_connected.gif"
             icon="icons/messages.gif"
             category="queued messages"
-            class="biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory"
+            class="biz.isphere.messagesubsystem.rse.internal.QueuedMessageSubSystemFactory"
             vendor="iSphere Project Team"
             id="biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory">
       </factory>
@@ -33,7 +33,7 @@
             id="biz.isphere.messagesubsystem.queuedmessages.popupmenu">
          <action
                label="%Message_Details"
-               class="biz.isphere.messagesubsystem.internal.QueuedMessageDetailsPopupMenuExtensionAction"
+               class="biz.isphere.messagesubsystem.rse.internal.QueuedMessageDetailsPopupMenuExtensionAction"
                enablesFor="1"
                id="biz.isphere.messagesubsystem.internal.QueuedMessageDetailsPopupMenuExtensionAction">
          </action>
@@ -43,10 +43,10 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="biz.isphere.messagesubsystem.internal.QueuedMessageSubSystem"
+            objectClass="biz.isphere.messagesubsystem.rse.internal.QueuedMessageSubSystem"
             name="Message Queue Monitoring"
             nameFilter="*"
-            class="biz.isphere.messagesubsystem.internal.MonitoringPropertiesPage"
+            class="biz.isphere.messagesubsystem.rse.internal.MonitoringPropertiesPage"
             id="biz.isphere.messagesubsystem.internal.MonitoringPropertiesPage">
       </page>
    </extension>

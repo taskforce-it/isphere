@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.core.messages.SystemMessage;
