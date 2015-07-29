@@ -27,6 +27,10 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
    </url>
 
+   <requires>
+      <import feature="biz.isphere.core" version="2.7.0.b005"/>
+   </requires>
+
    <plugin
          id="biz.isphere.messagesubsystem"
          download-size="0"
