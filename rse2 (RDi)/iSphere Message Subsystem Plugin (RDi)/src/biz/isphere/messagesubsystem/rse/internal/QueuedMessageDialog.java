@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -32,7 +32,7 @@ import biz.isphere.core.internal.BasicMessageFormatter;
 import biz.isphere.core.internal.FontHelper;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;

@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse.internal;
 
 import java.util.Properties;
 
@@ -19,7 +19,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.Messages;
 
 import com.ibm.as400.access.QueuedMessage;
 
