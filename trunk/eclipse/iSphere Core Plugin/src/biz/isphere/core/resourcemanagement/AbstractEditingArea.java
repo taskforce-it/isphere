@@ -106,9 +106,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
     }
 
     public AbstractEditingArea(Composite parent, AbstractResource[] resources, boolean both) {
-        super(parent, SWT.NONE);
-        this.resources = resources;
-        createDialog(both, null);
+        this(parent, resources, both, null);
     }
 
     public AbstractEditingArea(Composite parent, AbstractResource[] resources, boolean both, Object qualifier) {

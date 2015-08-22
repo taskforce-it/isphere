@@ -11,6 +11,7 @@ package biz.isphere.core.resourcemanagement.filter;
 import java.util.Arrays;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.ObjectHelper;
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class RSEFilter extends AbstractResource {
@@ -42,7 +43,7 @@ public class RSEFilter extends AbstractResource {
         this.type = type;
         this.filterStrings = filterStrings;
         this.origin = origin;
-        Arrays.sort(this.filterStrings);
+        // Arrays.sort(this.filterStrings);
     }
 
     public RSEFilterPool getFilterPool() {
@@ -75,7 +76,7 @@ public class RSEFilter extends AbstractResource {
 
     public void setFilterStrings(String[] filterStrings) {
         this.filterStrings = filterStrings;
-        Arrays.sort(this.filterStrings);
+        // Arrays.sort(this.filterStrings);
     }
 
     public Object getOrigin() {
@@ -87,12 +88,15 @@ public class RSEFilter extends AbstractResource {
     }
 
     public String getDisplayFilterString() {
+        String[] sortedFilterString = ObjectHelper.cloneVO(filterStrings);
+        Arrays.sort(sortedFilterString);
+
         StringBuffer buffer = new StringBuffer("");
-        for (int idx = 0; idx < filterStrings.length; idx++) {
+        for (int idx = 0; idx < sortedFilterString.length; idx++) {
             if (idx > 0) {
                 buffer.append("     ");
             }
-            buffer.append(filterStrings[idx]);
+            buffer.append(sortedFilterString[idx]);
         }
         return buffer.toString();
     }
