@@ -1,5 +1,11 @@
 
 
+Changelog: iSphere 2.7.0 beta 6
+-------------------------------
+ • Fixed filter manager to preserve the order of the filter strings of 
+   a filter.
+
+
 Changelog: iSphere 2.7.0 beta 5
 -------------------------------
  • Fixed problem that XFNDSTR.pcml did not match searchArguments_t.
