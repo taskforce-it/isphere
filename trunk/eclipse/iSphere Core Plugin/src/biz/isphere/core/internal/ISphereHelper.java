@@ -226,9 +226,11 @@ public class ISphereHelper {
 
     public static boolean canTransformSpooledFile(AS400 as400) {
 
-        if (ISpherePlugin.getDefault().getIBMiRelease(as400).compareTo("V5R3M0") <= 0) {
-            return false;
-        }
+        // if
+        // (ISpherePlugin.getDefault().getIBMiRelease(as400).compareTo("V5R3M0")
+        // <= 0) {
+        // return false;
+        // }
 
         return true;
     }
