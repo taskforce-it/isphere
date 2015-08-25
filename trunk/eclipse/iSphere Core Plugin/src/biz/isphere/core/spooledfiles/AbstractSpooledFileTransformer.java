@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
-import biz.isphere.core.ccsid.CcsidUtil;
+import biz.isphere.base.internal.IntHelper;
 
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintParameterList;
@@ -150,18 +150,26 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
             PrintParameterList transformParameters = new PrintParameterList();
             transformParameters.setParameter(PrintObject.ATTR_WORKSTATION_CUST_OBJECT, wscst.getPath());
             transformParameters.setParameter(PrintObject.ATTR_MFGTYPE, "*WSCST");
+            // transformParameters.setParameter(PrintObject.ATTR_TGT_CODEPAGE,
+            // getTargetCodePage());
 
             InputStream in = spooledFile.getTransformedInputStream(transformParameters);
-            int ccsid = spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
 
-            CcsidUtil util = new CcsidUtil();
-            String ascii = util.getAsciiCodepage(ccsid);
+            // TODO: remove obsolete code
+            // TODO: check CcsidUtil and ebcdicAsciiMapping.txt
+            // TODO: remove getTargetCodePage()
 
-            if (ascii != null) {
-                reader = new BufferedReader(new InputStreamReader(in, ascii));
-            } else {
-                reader = new BufferedReader(new InputStreamReader(in));
-            }
+            // int ccsid =
+            // spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
+
+            // CcsidUtil util = new CcsidUtil();
+            // String ascii = util.getAsciiCodepage(ccsid);
+            //
+            // if (ascii != null) {
+            // reader = new BufferedReader(new InputStreamReader(in, ascii));
+            // } else {
+            reader = new BufferedReader(new InputStreamReader(in));
+            // }
 
             openPrinter(target);
             initPrinter();
@@ -213,6 +221,17 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return cleanUp;
     }
 
+    private String getTargetCodePage() {
+
+        try {
+            String chrSet = spooledFile.getStringAttribute(SpooledFile.ATTR_CODEPAGE);
+            chrSet = "Cp" + IntHelper.tryParseInt(chrSet, 850);
+            return chrSet;
+        } catch (Exception e) {
+            return "Cp850";
+        }
+    }
+
     /**
      * Strips that special "fake" lines used by *SCS printer files for BOLD and
      * UNDERLINED printing.
@@ -229,20 +248,27 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
         int start = 0;
         int end = line.indexOf(DC1, start);
+        int linePartCount = 0;
 
         while ((end = line.indexOf(DC1, start)) >= 0) {
 
+            linePartCount++;
             String linePart = line.substring(start, end);
-            int length = Math.min(buffer.length(), linePart.length());
-            for (int offset = 0; offset < length; offset++) {
-                String linePartChar = linePart.substring(offset, offset + 1);
-                if (canReplaceLineChar(buffer, linePart, offset)) {
-                    buffer.replace(offset, offset + 1, getLineChar(linePartChar));
-                }
-            }
 
-            if (length < linePart.length()) {
-                buffer.append(getLineChar(linePart.substring(length)));
+            if (linePartCount == 1) {
+                buffer.append(linePart);
+            } else {
+                int length = Math.min(buffer.length(), linePart.length());
+                for (int offset = 0; offset < length; offset++) {
+                    String linePartChar = linePart.substring(offset, offset + 1);
+                    if (canReplaceLineChar(buffer, linePart, offset)) {
+                        buffer.replace(offset, offset + 1, getLineChar(linePartChar));
+                    }
+                }
+
+                if (length < linePart.length()) {
+                    buffer.append(getLineChar(linePart.substring(length)));
+                }
             }
 
             start = start + linePart.length();
