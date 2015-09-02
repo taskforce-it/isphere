@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintParameterList;
@@ -155,9 +156,10 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
             InputStream in = spooledFile.getTransformedInputStream(transformParameters);
 
-            // TODO: remove obsolete code
+            // TODO: remove obsolete code with 2.8
             // TODO: check CcsidUtil and ebcdicAsciiMapping.txt
             // TODO: remove getTargetCodePage()
+            // TODO: remove getLineChar()
 
             // int ccsid =
             // spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
@@ -253,21 +255,32 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         while ((end = line.indexOf(DC1, start)) >= 0) {
 
             linePartCount++;
-            String linePart = line.substring(start, end);
+            String linePart = StringHelper.trimR(line.substring(start, end));
 
             if (linePartCount == 1) {
                 buffer.append(linePart);
             } else {
-                int length = Math.min(buffer.length(), linePart.length());
-                for (int offset = 0; offset < length; offset++) {
-                    String linePartChar = linePart.substring(offset, offset + 1);
-                    if (canReplaceLineChar(buffer, linePart, offset)) {
-                        buffer.replace(offset, offset + 1, getLineChar(linePartChar));
-                    }
-                }
+                
+                if (linePart.length() == 0) {
+                    // Ignore empty line parts
+                } else if (isUnderlineDoublePrinting(linePart)) {
+                    // Ignore underline printing
+                } else {
+                    // Perform double printing
+                    int length = Math.min(buffer.length(), linePart.length());
 
-                if (length < linePart.length()) {
-                    buffer.append(getLineChar(linePart.substring(length)));
+                    // Overlay double printing characters
+                    for (int offset = 0; offset < length; offset++) {
+                        String linePartChar = linePart.substring(offset, offset + 1);
+                        if (canReplaceLineChar(buffer, linePart, offset)) {
+                            buffer.replace(offset, offset + 1, linePartChar);
+                        }
+                    }
+
+                    // Append remaining double printing characters
+                    if (length < linePart.length()) {
+                        buffer.append(linePart.substring(length));
+                    }
                 }
             }
 
@@ -277,6 +290,22 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         }
 
         return buffer.toString();
+    }
+
+    /**
+     * Checks, whether a given double printing line contains only underline
+     * characters.
+     * 
+     * @param linePart - line that is checked for underline characters
+     * @return <code>true</code> when the line contains only underline characters
+     */
+    private boolean isUnderlineDoublePrinting(String linePart) {
+        
+        if (linePart.trim().replaceAll(UNDERSCORE, "").length() == 0) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -293,11 +322,6 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
         // Replace spaces only
         if (!SPACE.equals(buffer.substring(offset, offset + 1))) {
-            return false;
-        }
-
-        // Ignore underline characters
-        if (UNDERSCORE.equals(linePart.substring(offset, offset + 1))) {
             return false;
         }
 
