@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -489,6 +489,10 @@ public class SpooledFile {
      */
     public String getCreationDateFormated() {
         if (creationDateFormatted == null) {
+            if (creationTimestamp == null) {
+                return creationDate;
+            }
+            
             DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT);
             creationDateFormatted = formatter.format(creationTimestamp);
         }
@@ -505,6 +509,10 @@ public class SpooledFile {
      */
     public String getCreationTimeFormated() {
         if (creationTimeFormatted == null) {
+            if (creationTimestamp == null) {
+                return creationTime;
+            }
+            
             DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT);
             creationTimeFormatted = formatter.format(creationTimestamp);
         }
