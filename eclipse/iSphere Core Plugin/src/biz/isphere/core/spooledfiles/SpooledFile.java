@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2014 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,8 +91,6 @@ public class SpooledFile {
 
     private int currentPage;
 
-    private Date creationTimestamp;
-
     private Object data;
 
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
@@ -118,7 +116,6 @@ public class SpooledFile {
         copies = 0;
         pages = 0;
         currentPage = 0;
-        creationTimestamp = null;
         data = null;
         toolboxSpooledFile = null;
     }
@@ -185,19 +182,22 @@ public class SpooledFile {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
-        creationDateFormatted = null;
+        if (creationDateFormatted == null) {
+            creationDateFormatted = creationDate.substring(5, 7) + "." + creationDate.substring(3, 5) + "." + (creationDate.substring(0, 1).equals("0") ? "19" : "20") + creationDate.substring(1, 3);
+        }
     }
 
     private void setCreationDate(Date creationDate) {
+        String date;
         DateFormat formatter = new SimpleDateFormat("yyMMdd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(creationDate);
         if (calendar.get(Calendar.YEAR) >= 2000) {
-            this.creationDate = "1" + formatter.format(creationDate);
+            date = "1" + formatter.format(creationDate);
         } else {
-            this.creationDate = "0" + formatter.format(creationDate);
+            date = "0" + formatter.format(creationDate);
         }
-        creationDateFormatted = null;
+        setCreationDate(date);
     }
 
     public String getCreationTime() {
@@ -206,17 +206,25 @@ public class SpooledFile {
 
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
-        creationTimeFormatted = null;
+        if (creationTimeFormatted == null) {
+            creationTimeFormatted = creationTime.substring(0, 2) + ":" + creationTime.substring(2, 4) + ":" + creationTime.substring(4, 6);
+        }
     }
 
     private void setCreationTime(Time creationTime) {
+        String time;
         DateFormat formatter = new SimpleDateFormat("HHmmss");
-        this.creationTime = formatter.format(creationTime);
-        creationTimeFormatted = null;
+        time = formatter.format(creationTime);
+        setCreationTime(time);
     }
 
     public void setCreationTimestamp(Date date, Time time) {
-        this.creationTimestamp = new Date(date.getTime() + time.getTime());
+        Date creationTimestamp = new Date(date.getTime() + time.getTime());
+        DateFormat formatter;
+        formatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        creationDateFormatted = formatter.format(creationTimestamp);
+        formatter = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+        creationTimeFormatted = formatter.format(creationTimestamp);
         setCreationDate(date);
         setCreationTime(time);
     }
@@ -488,14 +496,6 @@ public class SpooledFile {
      * @return date the spooled file was created
      */
     public String getCreationDateFormated() {
-        if (creationDateFormatted == null) {
-            if (creationTimestamp == null) {
-                return creationDate;
-            }
-            
-            DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT);
-            creationDateFormatted = formatter.format(creationTimestamp);
-        }
         return creationDateFormatted;
     }
 
@@ -508,14 +508,6 @@ public class SpooledFile {
      * @return time the spooled file was created
      */
     public String getCreationTimeFormated() {
-        if (creationTimeFormatted == null) {
-            if (creationTimestamp == null) {
-                return creationTime;
-            }
-            
-            DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT);
-            creationTimeFormatted = formatter.format(creationTimestamp);
-        }
         return creationTimeFormatted;
     }
 
