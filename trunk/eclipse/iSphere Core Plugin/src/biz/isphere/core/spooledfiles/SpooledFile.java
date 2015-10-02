@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -27,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.Buffer;
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditorInput;
@@ -93,6 +93,10 @@ public class SpooledFile {
 
     private Object data;
 
+    private DateFormat dateFormatter;
+
+    private DateFormat timeFormatter;
+
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
 
     public SpooledFile() {
@@ -118,6 +122,9 @@ public class SpooledFile {
         currentPage = 0;
         data = null;
         toolboxSpooledFile = null;
+
+        dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        timeFormatter = new SimpleDateFormat("HH:mm:ss");
     }
 
     public AS400 getAS400() {
@@ -182,22 +189,11 @@ public class SpooledFile {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
-        if (creationDateFormatted == null) {
-            creationDateFormatted = creationDate.substring(5, 7) + "." + creationDate.substring(3, 5) + "." + (creationDate.substring(0, 1).equals("0") ? "19" : "20") + creationDate.substring(1, 3);
-        }
+        this.creationDateFormatted = null;
     }
 
     private void setCreationDate(Date creationDate) {
-        String date;
-        DateFormat formatter = new SimpleDateFormat("yyMMdd");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(creationDate);
-        if (calendar.get(Calendar.YEAR) >= 2000) {
-            date = "1" + formatter.format(creationDate);
-        } else {
-            date = "0" + formatter.format(creationDate);
-        }
-        setCreationDate(date);
+        setCreationDate(IBMiHelper.dateToCyymmdd(creationDate, ""));
     }
 
     public String getCreationTime() {
@@ -206,25 +202,14 @@ public class SpooledFile {
 
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
-        if (creationTimeFormatted == null) {
-            creationTimeFormatted = creationTime.substring(0, 2) + ":" + creationTime.substring(2, 4) + ":" + creationTime.substring(4, 6);
-        }
+        this.creationTimeFormatted = null;
     }
 
     private void setCreationTime(Time creationTime) {
-        String time;
-        DateFormat formatter = new SimpleDateFormat("HHmmss");
-        time = formatter.format(creationTime);
-        setCreationTime(time);
+        setCreationTime(IBMiHelper.timeToHhmmss(creationTime, ""));
     }
 
     public void setCreationTimestamp(Date date, Time time) {
-        Date creationTimestamp = new Date(date.getTime() + time.getTime());
-        DateFormat formatter;
-        formatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        creationDateFormatted = formatter.format(creationTimestamp);
-        formatter = DateFormat.getTimeInstance(DateFormat.MEDIUM);
-        creationTimeFormatted = formatter.format(creationTimestamp);
         setCreationDate(date);
         setCreationTime(time);
     }
@@ -496,6 +481,18 @@ public class SpooledFile {
      * @return date the spooled file was created
      */
     public String getCreationDateFormated() {
+        if (creationDateFormatted == null) {
+            if (creationDate == null) {
+                return "";
+            }
+
+            Date date = IBMiHelper.cyymmddToDate(creationDate);
+            if (date == null) {
+                creationDateFormatted = "";
+            } else {
+                creationDateFormatted = dateFormatter.format(date);
+            }
+        }
         return creationDateFormatted;
     }
 
@@ -508,6 +505,18 @@ public class SpooledFile {
      * @return time the spooled file was created
      */
     public String getCreationTimeFormated() {
+        if (creationTimeFormatted == null) {
+            if (creationTime == null) {
+                return "";
+            }
+
+            Date time = IBMiHelper.hhmmssToTime(creationTime);
+            if (time == null) {
+                creationDateFormatted = "";
+            } else {
+                creationTimeFormatted = timeFormatter.format(time);
+            }
+        }
         return creationTimeFormatted;
     }
 
