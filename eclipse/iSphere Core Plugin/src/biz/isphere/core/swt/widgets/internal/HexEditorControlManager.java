@@ -107,7 +107,7 @@ public class HexEditorControlManager extends MouseAdapter implements KeyListener
      * 
      * <pre>
      * DE AD BE EF - 38 48 55
-     * ^   ^   ^   ^^
+     * &circ;   &circ;   &circ;   &circ;&circ;
      * |   |   |    returns 3,4
      * |   |    returns 2
      * |    returns 1
@@ -208,13 +208,17 @@ public class HexEditorControlManager extends MouseAdapter implements KeyListener
         }
 
         StyledText control = getActiveControl();
-        
-        int visibleHeight = parent.getClientArea().height - control.getTopMargin();
+
+        // int visibleHeight = parent.getClientArea().height -
+        // control.getTopMargin(); // WDSCi!
+        int visibleHeight = parent.getClientArea().height;
         int fontHeight = getFontCharHeight() + control.getLineSpacing();
 
-        return (visibleHeight - control.getTopMargin()) / fontHeight;
+        // return (visibleHeight - control.getTopMargin()) / fontHeight; //
+        // WDSCi!
+        return visibleHeight;
     }
-    
+
     private void positionEditorArea() {
 
         ScrolledComposite parent = getScrolledComposite();
@@ -224,7 +228,9 @@ public class HexEditorControlManager extends MouseAdapter implements KeyListener
 
         StyledText control = getActiveControl();
 
-        int visibleHeight = parent.getClientArea().height - control.getTopMargin();
+        // int visibleHeight = parent.getClientArea().height -
+        // control.getTopMargin(); // WDSCi!
+        int visibleHeight = parent.getClientArea().height;
         int visibleWidth = parent.getClientArea().width;
 
         int fontHeight = getFontCharHeight() + control.getLineSpacing();

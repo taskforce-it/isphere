@@ -89,7 +89,8 @@ public class HexEditorInternal extends Composite implements FocusListener {
     private static final String STRING_OVERWRITE_CARET = "STRING_OVERWRITE_CARET";
     private static final int LENGTH_OFFSET_LABEL = 8;
 
-    private static final int BORDER_WIDTH = 10;
+    // private static final int BORDER_WIDTH = 10; // WDSCi!
+    private static final int BORDER_WIDTH = 0;
     private static final int LINE_SPACING = 5;
 
     private Label labelOffset;
@@ -648,7 +649,7 @@ public class HexEditorInternal extends Composite implements FocusListener {
 
         for (int i = 0; i < numVisibleBytes; i++) {
 
-            byte currentByte = byteData[i]; 
+            byte currentByte = byteData[i];
 
             // if currentByte is not the first byte, append separator
             // Convert and append high nibble (bit7 - bit4)
@@ -736,7 +737,7 @@ public class HexEditorInternal extends Composite implements FocusListener {
         scrollableEditorArea.setContent(editorArea);
         scrollableEditorArea.setExpandHorizontal(true);
         scrollableEditorArea.setExpandVertical(true);
-        scrollableEditorArea.setShowFocusedControl(true);
+        // scrollableEditorArea.setShowFocusedControl(true); // WDSCi!
         scrollableEditorArea.setAlwaysShowScrollBars(true);
 
         hexpart.setData(DATA_CONTROL, stringpart);
@@ -802,7 +803,8 @@ public class HexEditorInternal extends Composite implements FocusListener {
 
         GridLayout offsetAreaLayout = new GridLayout();
         offsetAreaLayout.marginHeight = BORDER_WIDTH;
-        offsetAreaLayout.marginWidth = BORDER_WIDTH;
+        // offsetAreaLayout.marginWidth = BORDER_WIDTH; // WDSCi
+        offsetAreaLayout.marginWidth = 5;
         offsetAreaLayout.verticalSpacing = LINE_SPACING;
         offsetAreaLayout.horizontalSpacing = 0;
         offsetArea.setLayout(offsetAreaLayout);
@@ -820,7 +822,8 @@ public class HexEditorInternal extends Composite implements FocusListener {
         hexpart.addFocusListener(this);
 
         hexpart.setLineSpacing(LINE_SPACING);
-        hexpart.setMargins(BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH);
+        // hexpart.setMargins(BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH,
+        // BORDER_WIDTH); // WDSCi!
         hexpart.addMouseListener(hexCursorPositioner);
         hexpart.addKeyListener(hexCursorPositioner);
         hexpart.addPaintListener(new BackgroundPainter(getNumBytesPerLine(), getCharsPerHexByte(), getNumBytesGrouped(),
@@ -841,7 +844,8 @@ public class HexEditorInternal extends Composite implements FocusListener {
         stringpart.addFocusListener(this);
 
         stringpart.setLineSpacing(LINE_SPACING);
-        stringpart.setMargins(BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH);
+        // stringpart.setMargins(BORDER_WIDTH, BORDER_WIDTH, BORDER_WIDTH,
+        // BORDER_WIDTH); // WDSCi!
         stringpart.addMouseListener(hexCursorPositioner);
         stringpart.addKeyListener(hexCursorPositioner);
         stringpart.addPaintListener(new BackgroundPainter(getNumBytesPerLine(), getCharsPerStringByte(), getNumBytesPerLine(),
@@ -907,7 +911,9 @@ public class HexEditorInternal extends Composite implements FocusListener {
         offsetArea.setLayoutData(offsetAreaLayoutData);
 
         GridData hexPartGridData = (GridData)hexpart.getLayoutData();
-        offsetAreaLayoutData.heightHint = hexPartGridData.heightHint + hexpart.getBottomMargin() + hexpart.getTopMargin();
+        // offsetAreaLayoutData.heightHint = hexPartGridData.heightHint +
+        // hexpart.getBottomMargin() + hexpart.getTopMargin(); // WDSCi!
+        offsetAreaLayoutData.heightHint = hexPartGridData.heightHint;
     }
 
     private void updateOffsetArea() {
