@@ -24,7 +24,6 @@ public class QueuedMessageSubSystemConfigurationAdapterFactory implements IAdapt
         this.configurationAdapter = new QueuedMessageSubSystemConfigurationAdapter();
     }
 
-    @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
 
         if ((adaptableObject instanceof QueuedMessageSubSystemFactory)) {
@@ -34,7 +33,6 @@ public class QueuedMessageSubSystemConfigurationAdapterFactory implements IAdapt
         return null;
     }
 
-    @Override
     public Class<?>[] getAdapterList() {
         return new Class<?>[] { ISubSystemConfigurationAdapter.class };
     }
