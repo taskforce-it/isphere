@@ -9,7 +9,12 @@
 package biz.isphere.core.preferences;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -41,6 +46,11 @@ public final class Preferences {
      * Global preferences of the plugin.
      */
     private IPreferenceStore preferenceStore;
+
+    /**
+     * List of date formats.
+     */
+    private Map<String, String> dateFormats;
 
     /*
      * Preferences keys:
@@ -131,6 +141,12 @@ public final class Preferences {
     private static final String MESSAGE_FILE_COMPARE = DOMAIN + "MESSAGE_FILE_COMPARE."; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_COMPARE_LINE_WIDTH = MESSAGE_FILE_COMPARE + "LINE_WIDTH"; //$NON-NLS-1$
+
+    private static final String APPEARANCE = DOMAIN + "APPEARANCE."; //$NON-NLS-1$
+
+    private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
+
+    private static final String APPEARANCE_DATE_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -355,6 +371,10 @@ public final class Preferences {
         return preferenceStore.getInt(MESSAGE_FILE_COMPARE_LINE_WIDTH);
     }
 
+    public String getDateFormatLabel() {
+        return preferenceStore.getString(APPEARANCE_DATE_FORMAT);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -491,6 +511,10 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
     }
 
+    public void setDateFormatLabel(String dateFormatLabel) {
+        preferenceStore.setValue(APPEARANCE_DATE_FORMAT, dateFormatLabel);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -535,6 +559,8 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultMessageFileSearchResultsAutoSaveFileName());
 
         preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
+
+        preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
     }
 
     /*
@@ -844,6 +870,10 @@ public final class Preferences {
         return 70;
     }
 
+    public String getDefaultDateFormatLabel() {
+        return APPEARANCE_DATE_FORMAT_LOCALE;
+    }
+
     /**
      * Returns an arrays of maximum lengths values for retrieving data queue
      * entries.
@@ -870,5 +900,44 @@ public final class Preferences {
         int[] lengths2 = new int[lengths.length - 1];
         System.arraycopy(lengths, 1, lengths2, 0, lengths2.length);
         return lengths2;
+    }
+
+    public DateFormat getDateFormatter() {
+
+        String pattern = getDateFormatsMap().get(getDateFormatLabel());
+        if (pattern == null) {
+            pattern = getDateFormatsMap().get(getDefaultDateFormatLabel());
+        }
+
+        if (pattern == null) {
+            return DateFormat.getDateInstance(DateFormat.SHORT);
+        }
+
+        return new SimpleDateFormat(pattern);
+    }
+
+    public String[] getDateFormatLabels() {
+
+        Set<String> formats = getDateFormatsMap().keySet();
+
+        String[] dateFormats = formats.toArray(new String[formats.size()]);
+        Arrays.sort(dateFormats);
+
+        return dateFormats;
+    }
+
+    public Map<String, String> getDateFormatsMap() {
+
+        if (dateFormats != null) {
+            return dateFormats;
+        }
+
+        dateFormats = new HashMap<String, String>();
+
+        dateFormats.put(getDefaultDateFormatLabel(), null);
+        dateFormats.put("de (dd.mm.yyyy)", "dd.MM.yyyy");
+        dateFormats.put("us (mm/dd/yyyy)", "MM/dd/yyyy");
+
+        return dateFormats;
     }
 }

@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataqueue;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.preferences.Preferences;
 
 public class DataQueuePropertySource implements IPropertySource {
 
@@ -62,7 +62,8 @@ public class DataQueuePropertySource implements IPropertySource {
             properties.add(createPropertyDescriptor(PROPERTY_IS_KEYED, Messages.Keyed));
 
             properties.add(createPropertyDescriptor(PROPERTY_MAXIMUM_NUMBER_OF_MESSAGES_ALLOWED, Messages.Maximum_number_of_messages_allowed, true));
-            properties.add(createPropertyDescriptor(PROPERTY_MAXIMUM_NUMBER_OF_MESSAGES_SPECIFIED, Messages.Maximum_number_of_messages_specified, true));
+            properties.add(createPropertyDescriptor(PROPERTY_MAXIMUM_NUMBER_OF_MESSAGES_SPECIFIED, Messages.Maximum_number_of_messages_specified,
+                true));
             properties.add(createPropertyDescriptor(PROPERTY_SEQUENCE, Messages.Sequence, true));
             properties.add(createPropertyDescriptor(PROPERTY_FORCE, Messages.Force_to_storage, true));
             properties.add(createPropertyDescriptor(PROPERTY_IS_AUTO_RECLAIM, Messages.Automatically_reclaimed, true));
@@ -137,7 +138,7 @@ public class DataQueuePropertySource implements IPropertySource {
                 if (rdqd0100.getLastReclaimDateAndTime() == null) {
                     return null;
                 } else {
-                    return DateFormat.getDateInstance(DateFormat.SHORT).format(rdqd0100.getLastReclaimDateAndTime());
+                    return Preferences.getInstance().getDateFormatter().format(rdqd0100.getLastReclaimDateAndTime());
                 }
             }
 
