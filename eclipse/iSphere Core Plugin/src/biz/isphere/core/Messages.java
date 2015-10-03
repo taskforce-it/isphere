@@ -1042,6 +1042,12 @@ public class Messages extends NLS {
 
     public static String Format_help_text;
 
+    public static String Date;
+
+    public static String Format_colon;
+
+    public static String Tooltip_Specifies_the_format_for_displaying_date_values;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

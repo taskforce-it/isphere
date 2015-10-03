@@ -154,6 +154,11 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Compare"
             id="biz.isphere.core.preferencepages.ISphereCompare"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereAppearance"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Appearance"
+            id="biz.isphere.core.preferencepages.ISphereAppearance"/>
     	
    </extension>
    

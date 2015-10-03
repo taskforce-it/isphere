@@ -123,7 +123,7 @@ public class SpooledFile {
         data = null;
         toolboxSpooledFile = null;
 
-        dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        dateFormatter = Preferences.getInstance().getDateFormatter();
         timeFormatter = new SimpleDateFormat("HH:mm:ss");
     }
 
