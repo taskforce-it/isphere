@@ -57,8 +57,9 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group.setText(Messages.Label_Decorations_RSE_host_objects);
 
-        String headline = Messages.bind(Messages.Label_Decorations_RSE_host_objects_Description, new String[]{"<a href=\"org.eclipse.ui.preferencePages.Decorators\">","</a>"});
-        
+        String headline = Messages.bind(Messages.Label_Decorations_RSE_host_objects_Description, new String[] {
+            "<a href=\"org.eclipse.ui.preferencePages.Decorators\">", "</a>" });
+
         Link lnkJavaTaskTags = new Link(group, SWT.MULTI | SWT.WRAP);
         lnkJavaTaskTags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 3, 1));
         lnkJavaTaskTags.setText(headline);
@@ -115,19 +116,9 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
 
     }
 
-    private boolean setError(String message) {
-        setErrorMessage(message);
-        setValid(false);
-        return false;
-    }
-
     private boolean clearError() {
         setErrorMessage(null);
         setValid(true);
         return true;
-    }
-
-    private GridData createLabelLayoutData() {
-        return new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
     }
 }

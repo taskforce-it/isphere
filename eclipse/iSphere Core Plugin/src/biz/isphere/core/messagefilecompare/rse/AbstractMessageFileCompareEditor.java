@@ -125,7 +125,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Composite optionsArea;
 
     private CLabel statusInfo;
-    private CLabel statusBarFilterImage;
     private CLabel statusBarFilterText;
 
     private boolean isComparing;
@@ -463,7 +462,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         StatusBar statusBar = new StatusBar(footerArea, false);
         statusInfo = statusBar.createStatusBarLabel(""); //$NON-NLS-1$
-        statusBarFilterImage = statusBar.createStatusBarImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
+        statusBar.createStatusBarImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
         statusBarFilterText = statusBar.createStatusBarLabel("", 50, SWT.CENTER); //$NON-NLS-1$
 
     }

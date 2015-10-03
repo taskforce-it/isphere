@@ -38,7 +38,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
@@ -276,11 +275,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 if (dialog.open() == Dialog.OK) {
                     if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
                         _searchResultViewer.getSearchResults())) {
-//
-//                        MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-//                        errorBox.setText(Messages.E_R_R_O_R);
-//                        errorBox.setMessage(Messages.The_filter_could_not_be_created);
-//                        errorBox.open();
                     }
                 }
             }

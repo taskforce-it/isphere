@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
-import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 
 import com.ibm.as400.access.PrintObject;
@@ -223,17 +222,6 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return cleanUp;
     }
 
-    private String getTargetCodePage() {
-
-        try {
-            String chrSet = spooledFile.getStringAttribute(SpooledFile.ATTR_CODEPAGE);
-            chrSet = "Cp" + IntHelper.tryParseInt(chrSet, 850);
-            return chrSet;
-        } catch (Exception e) {
-            return "Cp850";
-        }
-    }
-
     /**
      * Strips that special "fake" lines used by *SCS printer files for BOLD and
      * UNDERLINED printing.
@@ -260,7 +248,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
             if (linePartCount == 1) {
                 buffer.append(linePart);
             } else {
-                
+
                 if (linePart.length() == 0) {
                     // Ignore empty line parts
                 } else if (isUnderlineDoublePrinting(linePart)) {
@@ -297,14 +285,15 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
      * characters.
      * 
      * @param linePart - line that is checked for underline characters
-     * @return <code>true</code> when the line contains only underline characters
+     * @return <code>true</code> when the line contains only underline
+     *         characters
      */
     private boolean isUnderlineDoublePrinting(String linePart) {
-        
+
         if (linePart.trim().replaceAll(UNDERSCORE, "").length() == 0) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -331,15 +320,6 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         }
 
         return true;
-    }
-
-    private String getLineChar(String linePartChar) {
-
-        if (linePartChar.indexOf(UNDERSCORE) != -1) {
-            return linePartChar.replaceAll(UNDERSCORE, SPACE);
-        }
-
-        return linePartChar;
     }
 
     /**
