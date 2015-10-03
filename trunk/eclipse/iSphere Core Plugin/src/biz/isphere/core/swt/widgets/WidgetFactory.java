@@ -468,13 +468,6 @@ public final class WidgetFactory {
         return pushButton;
     }
 
-    private Button produceToggleButton(Composite parent, int style) {
-
-        Button pushButton = new Button(parent, SWT.TOGGLE | style);
-
-        return pushButton;
-    }
-
     private Button produceRadioButton(Composite parent) {
 
         Button radioButton = new Button(parent, SWT.RADIO);
