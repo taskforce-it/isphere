@@ -40,7 +40,7 @@ public final class IBMiHelper {
 
     public static Date cyymmddToDate(String cyymmdd) {
 
-        if ("1".equals(cyymmdd.substring(0))) {
+        if ("1".equals(cyymmdd.substring(0, 1))) {
             cyymmdd = "20" + cyymmdd.substring(1);
         } else {
             cyymmdd = "19" + cyymmdd.substring(1);
