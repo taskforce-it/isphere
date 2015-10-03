@@ -73,12 +73,10 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         return false;
     }
 
-    @Override
     public String getText(Object element) {
         return ((QueuedMessageResource)element).getQueuedMessage().getText();
     }
 
-    @Override
     public String getAbsoluteName(Object object) {
         QueuedMessageResource queuedMessageResource = (QueuedMessageResource)object;
         return QUEUED_MESSAGE + queuedMessageResource.getQueuedMessage().getKey();
@@ -252,7 +250,6 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         return "queued message"; //$NON-NLS-1$
     }
 
-    @Override
     public String getRemoteSubType(Object arg0) {
         return null;
     }
@@ -266,12 +263,10 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         return false;
     }
 
-    @Override
     public Object getRemoteParent(Object paramObject, IProgressMonitor paramIProgressMonitor) throws Exception {
         return null;
     }
 
-    @Override
     public String[] getRemoteParentNamesInUse(Object paramObject, IProgressMonitor paramIProgressMonitor) throws Exception {
         return null;
     }
@@ -280,7 +275,6 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
      * Start of RDi/WDSCi specific methods.
      */
 
-    @Override
     public String getSubSystemConfigurationId(Object arg0) {
         return null;
     }
