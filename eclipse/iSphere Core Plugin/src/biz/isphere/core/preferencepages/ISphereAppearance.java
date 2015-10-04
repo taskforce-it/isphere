@@ -28,6 +28,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 public class ISphereAppearance extends PreferencePage implements IWorkbenchPreferencePage {
 
     private Combo textDateFormat;
+    private Combo textTimeFormat;
 
     public ISphereAppearance() {
         super();
@@ -57,17 +58,27 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(3, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        group.setText(Messages.Date);
+        group.setText(Messages.DateAndTimeFormats);
 
-        Label labelMessageFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
-        labelMessageFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
-        labelMessageFileSearchResultsAutoSaveFileName.setText(Messages.Format_colon);
+        Label labelDate = new Label(group, SWT.NONE);
+        labelDate.setLayoutData(createLabelLayoutData());
+        labelDate.setText(Messages.Date_long_colon);
 
         textDateFormat = WidgetFactory.createReadOnlyCombo(group);
         textDateFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_date_values);
         textDateFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
         textDateFormat.setItems(Preferences.getInstance().getDateFormatLabels());
+
+        Label labelTime = new Label(group, SWT.NONE);
+        labelTime.setLayoutData(createLabelLayoutData());
+        labelTime.setText(Messages.Time_long_colon);
+
+        textTimeFormat = WidgetFactory.createReadOnlyCombo(group);
+        textTimeFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_time_values);
+        textTimeFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        textTimeFormat.setItems(Preferences.getInstance().getTimeFormatLabels());
     }
 
     @Override
@@ -94,6 +105,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         Preferences preferences = Preferences.getInstance();
 
         preferences.setDateFormatLabel(textDateFormat.getText());
+        preferences.setTimeFormatLabel(textTimeFormat.getText());
     }
 
     protected void setScreenToValues() {
@@ -103,6 +115,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         Preferences preferences = Preferences.getInstance();
 
         textDateFormat.setText(preferences.getDateFormatLabel());
+        textTimeFormat.setText(preferences.getTimeFormatLabel());
 
         checkAllValues();
         setControlsEnablement();
@@ -113,6 +126,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         Preferences preferences = Preferences.getInstance();
 
         textDateFormat.setText(preferences.getDefaultDateFormatLabel());
+        textTimeFormat.setText(preferences.getDefaultTimeFormatLabel());
 
         checkAllValues();
         setControlsEnablement();

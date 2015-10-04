@@ -52,6 +52,11 @@ public final class Preferences {
      */
     private Map<String, String> dateFormats;
 
+    /**
+     * List of time formats.
+     */
+    private Map<String, String> timeFormats;
+
     /*
      * Preferences keys:
      */
@@ -146,7 +151,11 @@ public final class Preferences {
 
     private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
 
+    private static final String APPEARANCE_TIME_FORMAT = APPEARANCE + "TIME_FORMAT"; //$NON-NLS-1$
+
     private static final String APPEARANCE_DATE_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
+
+    private static final String APPEARANCE_TIME_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -375,6 +384,10 @@ public final class Preferences {
         return preferenceStore.getString(APPEARANCE_DATE_FORMAT);
     }
 
+    public String getTimeFormatLabel() {
+        return preferenceStore.getString(APPEARANCE_TIME_FORMAT);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -515,6 +528,10 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_DATE_FORMAT, dateFormatLabel);
     }
 
+    public void setTimeFormatLabel(String dateFormatLabel) {
+        preferenceStore.setValue(APPEARANCE_TIME_FORMAT, dateFormatLabel);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -561,6 +578,7 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
+        preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
     }
 
     /*
@@ -874,6 +892,10 @@ public final class Preferences {
         return APPEARANCE_DATE_FORMAT_LOCALE;
     }
 
+    public String getDefaultTimeFormatLabel() {
+        return APPEARANCE_TIME_FORMAT_LOCALE;
+    }
+
     /**
      * Returns an arrays of maximum lengths values for retrieving data queue
      * entries.
@@ -926,7 +948,7 @@ public final class Preferences {
         return dateFormats;
     }
 
-    public Map<String, String> getDateFormatsMap() {
+    private Map<String, String> getDateFormatsMap() {
 
         if (dateFormats != null) {
             return dateFormats;
@@ -939,5 +961,44 @@ public final class Preferences {
         dateFormats.put("us (mm/dd/yyyy)", "MM/dd/yyyy");
 
         return dateFormats;
+    }
+
+    public DateFormat getTimeFormatter() {
+
+        String pattern = getTimeFormatsMap().get(getTimeFormatLabel());
+        if (pattern == null) {
+            pattern = getTimeFormatsMap().get(getDefaultTimeFormatLabel());
+        }
+
+        if (pattern == null) {
+            return DateFormat.getTimeInstance(DateFormat.SHORT);
+        }
+
+        return new SimpleDateFormat(pattern);
+    }
+
+    public String[] getTimeFormatLabels() {
+
+        Set<String> formats = getTimeFormatsMap().keySet();
+
+        String[] timeFormats = formats.toArray(new String[formats.size()]);
+        Arrays.sort(timeFormats);
+
+        return timeFormats;
+    }
+
+    private Map<String, String> getTimeFormatsMap() {
+
+        if (timeFormats != null) {
+            return timeFormats;
+        }
+
+        timeFormats = new HashMap<String, String>();
+
+        timeFormats.put(getDefaultDateFormatLabel(), null);
+        timeFormats.put("de (hh:mm:ss)", "HH:mm:ss");
+        timeFormats.put("us (hh:mm:ss AM/PM)", "KK:mm:ss a");
+
+        return timeFormats;
     }
 }
