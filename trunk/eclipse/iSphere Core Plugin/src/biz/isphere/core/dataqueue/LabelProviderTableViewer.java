@@ -9,7 +9,6 @@
 package biz.isphere.core.dataqueue;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.jface.action.Action;
@@ -26,6 +25,7 @@ import biz.isphere.core.dataqueue.action.DisplayEndOfDataAction;
 import biz.isphere.core.dataqueue.action.ViewInHexAction;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
+import biz.isphere.core.preferences.Preferences;
 
 public class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider, IPropertyChangeListener {
 
@@ -42,6 +42,7 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
 
     private int visibleColumns[] = new int[NUM_COLUMNS];
     private DateFormat dateFormatter;
+    private DateFormat timeFormatter;
     private boolean isHexView;
     private boolean isDisplayEndOfData;
 
@@ -56,7 +57,9 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
             this.visibleColumns[i] = -1;
         }
 
-        this.dateFormatter = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        this.dateFormatter = Preferences.getInstance().getDateFormatter();
+        this.timeFormatter = Preferences.getInstance().getTimeFormatter();
+
         setHexMode(true);
         setDisplayEndOfData(false);
     }
@@ -112,7 +115,7 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
                 if (date == null) {
                     return ""; //$NON-NLS-1$
                 } else {
-                    return dateFormatter.format(date);
+                    return dateFormatter.format(date) + " " + timeFormatter.format(date);
                 }
             } else if (columnIndex == visibleColumns[COLUMN_KEY]) {
                 if (isHexView) {
