@@ -3,7 +3,8 @@
 Changelog: iSphere 2.7.0 beta 7
 -------------------------------
  • Fixed fixed invalid time value when displaying spooled files.
- • Added preferences page "Appearance" to specify the date format.
+ • Added preferences page "Appearance" to specify the date and time 
+   formats.
 
 
 Changelog: iSphere 2.7.0 beta 6
