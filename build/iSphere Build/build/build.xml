@@ -517,6 +517,9 @@
 		</zip>
 		<copy file="${isphere.pdf}" todir="${build.upload.dir.files}" />
 
+		<echo>Deleting 'logs.zip' ...</echo>
+		<delete file="${workspace.home}\${build.updatesite}\logs.zip" />
+		
 		<echo>Copying Eclipse update site files ...</echo>
 		<copy todir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
 			<fileset dir="${workspace.home}\${build.updatesite}">
@@ -543,6 +546,7 @@
 			</else>
 		</if>
 
+		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
 	</target>
