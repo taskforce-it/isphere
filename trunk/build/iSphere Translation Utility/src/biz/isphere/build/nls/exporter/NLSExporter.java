@@ -127,7 +127,7 @@ public class NLSExporter {
         LogUtil.print("Adding to Excel workbook: " + project);
 
         // Excel sheet
-        Sheet sheet = workbook.createSheet(project.getName());
+        Sheet sheet = workbook.createSheet(project.getName().replaceAll(" Plugin", ""));
 
         // headline row
         Row headlineRow = sheet.createRow(getNextRowNum(sheet));
