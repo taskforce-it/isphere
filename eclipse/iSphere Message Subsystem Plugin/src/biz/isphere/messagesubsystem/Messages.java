@@ -44,10 +44,6 @@ public class Messages extends NLS {
 
     public static String Message_Type_Text_Notify;
 
-    public static String Message_queue_and_library_must_be_specified;
-
-    public static String Delete_Message_Error;
-
     public static String iSeries_Message;
 
     public static String Severity_colon;
