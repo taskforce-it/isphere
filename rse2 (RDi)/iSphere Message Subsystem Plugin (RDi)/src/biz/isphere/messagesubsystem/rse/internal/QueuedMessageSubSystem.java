@@ -15,6 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.PropertySet;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -25,6 +28,10 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFactory;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
@@ -33,7 +40,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
-public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSystem, IQueuedMessageSubSystem {
+public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSystem, IQueuedMessageSubsystem {
 
     private CommunicationsListener communicationsListener;
     private MonitoringAttributes monitoringAttributes;
@@ -149,4 +156,29 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     /*
      * Start of RDi/WDSCi specific methods.
      */
+
+    public String getVendorAttribute(String key) {
+
+        IProperty property = getVendorAttributes().getProperty(key);
+        if (property == null) {
+            return null;
+        }
+
+        return property.getValue();
+    }
+
+    public void setVendorAttribute(String key, String value) {
+        getVendorAttributes().addProperty(key, value);
+    }
+
+    private IPropertySet getVendorAttributes() {
+
+        IPropertySet propertySet = getPropertySet(MonitoringAttributes.VENDOR_ID);
+        if (propertySet == null) {
+            propertySet = new PropertySet(MonitoringAttributes.VENDOR_ID);
+            addPropertySet(propertySet);
+        }
+
+        return propertySet;
+    }
 }
