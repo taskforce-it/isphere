@@ -10,6 +10,11 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse.internal;
 
+import biz.isphere.messagesubsystem.rse.MessageHandler;
+import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.etools.systems.subsystems.CommunicationsEvent;

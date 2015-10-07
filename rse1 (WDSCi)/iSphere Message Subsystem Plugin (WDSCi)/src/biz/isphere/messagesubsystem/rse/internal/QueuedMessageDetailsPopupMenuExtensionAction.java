@@ -13,6 +13,8 @@ package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.swt.widgets.Display;
 
+import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
+
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
 

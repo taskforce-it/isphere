@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.rse.Messages;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+import biz.isphere.messagesubsystem.rse.QueuedMessageHelper;
 
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.core.messages.SystemMessage;
@@ -144,15 +146,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
         typeLabel.setText(Messages.Message_type_colon);
 
         messageTypeCombo = WidgetFactory.createReadOnlyCombo(composite_prompts);
-        messageTypeCombo.add(Messages.Message_Type_Text_Any);
-        messageTypeCombo.add(Messages.Message_Type_Text_Completion);
-        messageTypeCombo.add(Messages.Message_Type_Text_Diagnostic);
-        messageTypeCombo.add(Messages.Message_Type_Text_Informational);
-        messageTypeCombo.add(Messages.Message_Type_Text_Inquiry);
-        messageTypeCombo.add(Messages.Message_Type_Text_Senders_copy);
-        messageTypeCombo.add(Messages.Message_Type_Text_Request);
-        messageTypeCombo.add(Messages.Message_Type_Text_Request_with_prompting);
-        messageTypeCombo.add(Messages.Message_Type_Text_Notify);
+        messageTypeCombo.setItems(QueuedMessageHelper.getMessageTypeItems());
 
         resetFields();
         doInitializeFields();
@@ -248,7 +242,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
                 }
             }
             if (messageTypeCombo.getSelectionIndex() == -1) {
-                messageTypeCombo.select(messageTypeCombo.indexOf(Messages.Message_Type_Text_Any));
+                messageTypeCombo.select(messageTypeCombo.indexOf(QueuedMessageHelper.getMessageTypeAnyItem()));
             }
         }
     }
@@ -264,7 +258,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
         fromJobNumberText.setText(ASTERISK);
         fromProgramText.setText(ASTERISK);
         textText.setText(ASTERISK);
-        messageTypeCombo.select(messageTypeCombo.indexOf(Messages.Message_Type_Text_Any));
+        messageTypeCombo.select(messageTypeCombo.indexOf(QueuedMessageHelper.getMessageTypeAnyItem()));
     }
 
     @Override
@@ -320,26 +314,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
             filter.setText(textText.getText());
         }
 
-        int messageType = -1;
-        if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Completion)) {
-            messageType = QueuedMessage.COMPLETION;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Diagnostic)) {
-            messageType = QueuedMessage.DIAGNOSTIC;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Informational)) {
-            messageType = QueuedMessage.INFORMATIONAL;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Inquiry)) {
-            messageType = QueuedMessage.INQUIRY;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Senders_copy)) {
-            messageType = QueuedMessage.SENDERS_COPY;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Request)) {
-            messageType = QueuedMessage.REQUEST;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Request_with_prompting)) {
-            messageType = QueuedMessage.REQUEST_WITH_PROMPTING;
-        } else if (messageTypeCombo.getText().equals(Messages.Message_Type_Text_Notify)) {
-            messageType = QueuedMessage.NOTIFY;
-        }
-
-        filter.setMessageType(messageType);
+        filter.setMessageType(QueuedMessageHelper.getMessageTypeFromText(messageTypeCombo.getText()));
 
         return filter.getFilterString();
     }
