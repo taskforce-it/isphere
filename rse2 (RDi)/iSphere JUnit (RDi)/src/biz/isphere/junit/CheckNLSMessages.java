@@ -60,6 +60,7 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.core.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.lpex.tasktags.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.rse.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.messagesubsystem.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.messagesubsystem.rse.Messages.class, "messages");
 
         System.out.println("** Finished testing NLS messages **");
