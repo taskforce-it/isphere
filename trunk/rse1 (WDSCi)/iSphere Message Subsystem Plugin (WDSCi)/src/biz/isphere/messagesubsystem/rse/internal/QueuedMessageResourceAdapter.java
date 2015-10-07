@@ -21,6 +21,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
+import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
+import biz.isphere.messagesubsystem.rse.QueuedMessageHelper;
 
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -180,26 +182,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
             }
 
             if (propKey.equals(KEY_TYPE)) {
-                switch (queuedMessage.getQueuedMessage().getType()) {
-                case QueuedMessage.COMPLETION:
-                    return Messages.Message_Type_Text_Completion;
-                case QueuedMessage.DIAGNOSTIC:
-                    return Messages.Message_Type_Text_Diagnostic;
-                case QueuedMessage.INFORMATIONAL:
-                    return Messages.Message_Type_Text_Informational;
-                case QueuedMessage.INQUIRY:
-                    return Messages.Message_Type_Text_Inquiry;
-                case QueuedMessage.SENDERS_COPY:
-                    return Messages.Message_Type_Text_Senders_copy;
-                case QueuedMessage.REQUEST:
-                    return Messages.Message_Type_Text_Request;
-                case QueuedMessage.REQUEST_WITH_PROMPTING:
-                    return Messages.Message_Type_Text_Request_with_prompting;
-                case QueuedMessage.NOTIFY:
-                    return Messages.Message_Type_Text_Notify;
-                default:
-                    return ""; //$NON-NLS-1$
-                }
+                return QueuedMessageHelper.getMessageTypeAsText(queuedMessage.getQueuedMessage().getType());
             }
 
             if (propKey.equals(KEY_DATE)) {

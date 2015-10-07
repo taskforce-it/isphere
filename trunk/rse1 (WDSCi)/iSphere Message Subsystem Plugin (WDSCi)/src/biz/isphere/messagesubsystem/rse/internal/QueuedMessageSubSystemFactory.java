@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;

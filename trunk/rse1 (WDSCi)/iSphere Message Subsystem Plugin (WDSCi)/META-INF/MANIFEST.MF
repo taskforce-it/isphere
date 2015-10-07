@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.systems.core,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.core,
- biz.isphere.base
+ biz.isphere.base,
+ biz.isphere.messagesubsystem
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/mail.jar,

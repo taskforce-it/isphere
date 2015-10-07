@@ -7,7 +7,6 @@ Bundle-Activator: biz.isphere.messagesubsystem.ISphereMessageSubsystemBasePlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.rse.core,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
  biz.isphere.core

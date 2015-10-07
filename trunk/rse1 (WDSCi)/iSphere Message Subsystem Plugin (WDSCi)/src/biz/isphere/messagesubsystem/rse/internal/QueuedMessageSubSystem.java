@@ -16,6 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFactory;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.core.IISeriesSubSystem;
@@ -39,7 +44,7 @@ import com.ibm.etools.systems.subsystems.ISystem;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
 
-public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, IQueuedMessageSubSystem {
+public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, IQueuedMessageSubsystem {
 
     private CommunicationsListener communicationsListener;
     private MonitoringAttributes monitoringAttributes;
@@ -163,5 +168,13 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
     public ISeriesSystemDataStore getISeriesSystem() {
         ISeriesSystemDataStore iSeriesSystemDataStore = (ISeriesSystemDataStore)getSystem();
         return iSeriesSystemDataStore;
+    }
+
+    public String getVendorAttribute(String key) {
+        return super.getVendorAttribute(MonitoringAttributes.VENDOR_ID, key);
+    }
+
+    public void setVendorAttribute(String key, String value) {
+        super.setVendorAttribute(MonitoringAttributes.VENDOR_ID, key, value);
     }
 }
