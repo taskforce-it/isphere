@@ -13,6 +13,11 @@ package biz.isphere.messagesubsystem.rse.internal;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 
+import biz.isphere.messagesubsystem.rse.MessageHandler;
+import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
 

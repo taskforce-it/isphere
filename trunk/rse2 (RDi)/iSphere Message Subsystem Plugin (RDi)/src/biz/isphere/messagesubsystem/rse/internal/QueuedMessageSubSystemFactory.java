@@ -22,6 +22,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
 import biz.isphere.messagesubsystem.rse.Messages;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
