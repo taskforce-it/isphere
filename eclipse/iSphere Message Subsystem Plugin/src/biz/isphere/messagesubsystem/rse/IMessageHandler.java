@@ -11,8 +11,6 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
-import com.ibm.as400.access.QueuedMessage;
-
 public interface IMessageHandler {
-    public void handleMessage(QueuedMessage message, MonitoredMessageQueue messageQueue);
+    public void handleMessage(ReceivedMessage message);
 }

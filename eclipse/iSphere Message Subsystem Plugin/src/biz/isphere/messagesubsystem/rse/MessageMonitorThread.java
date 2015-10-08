@@ -92,7 +92,7 @@ public class MessageMonitorThread extends Thread {
         } else {
             if (includeMessage(message)) {
                 if (messageHandler != null) {
-                    messageHandler.handleMessage(message, messageQueue);
+                    messageHandler.handleMessage(new ReceivedMessage(message));
                 }
             }
         }

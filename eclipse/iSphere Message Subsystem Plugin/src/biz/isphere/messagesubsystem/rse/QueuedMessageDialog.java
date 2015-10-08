@@ -39,16 +39,16 @@ import com.ibm.as400.access.QueuedMessage;
 
 public class QueuedMessageDialog extends XDialog {
 
-    private QueuedMessage queuedMessage;
+    private ReceivedMessage queuedMessage;
     private Text responseText;
     private boolean createCancelButton;
     private BasicMessageFormatter messageFormatter;
 
-    public QueuedMessageDialog(Shell shell, QueuedMessage queuedMessage) {
+    public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage) {
         this(shell, queuedMessage, true);
     }
 
-    public QueuedMessageDialog(Shell shell, QueuedMessage queuedMessage, boolean createCancelButton) {
+    public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage, boolean createCancelButton) {
         super(shell);
         this.queuedMessage = queuedMessage;
         this.createCancelButton = createCancelButton;
@@ -93,7 +93,7 @@ public class QueuedMessageDialog extends XDialog {
         Text typeText = WidgetFactory.createReadOnlyText(headerGroup);
         typeText.setLayoutData(new GridData(200, SWT.DEFAULT));
         typeText.setEnabled(false);
-        typeText.setText(QueuedMessageHelper.getMessageTypeAsText(queuedMessage));
+        typeText.setText(queuedMessage.getMessageType());
 
         Label dateLabel = new Label(headerGroup, SWT.NONE);
         dateLabel.setText(Messages.Date_sent_colon);
@@ -132,12 +132,12 @@ public class QueuedMessageDialog extends XDialog {
         msgHelp.setRedraw(true);
         msgHelp.setFont(FontHelper.getFixedSizeFont());
 
-        if ((queuedMessage.getHelp() == null) || (queuedMessage.getHelp().equals(queuedMessage.getText()))) {
+        if ((queuedMessage.getHelpFormatted() == null) || (queuedMessage.getHelpFormatted().equals(queuedMessage.getText()))) {
             msgText.setText(queuedMessage.getText());
             msgHelp.setVisible(false);
         } else {
             msgText.setText(queuedMessage.getText());
-            msgHelp.setText(messageFormatter.formatHelpText(queuedMessage.getHelp()));
+            msgHelp.setText(messageFormatter.formatHelpText(queuedMessage.getHelpFormatted()));
         }
 
         if (queuedMessage.getType() == QueuedMessage.INQUIRY) {

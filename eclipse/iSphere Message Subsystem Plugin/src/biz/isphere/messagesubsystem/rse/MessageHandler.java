@@ -15,10 +15,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.messagesubsystem.Messages;
-import biz.isphere.messagesubsystem.rse.IMessageHandler;
-import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
-import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
-import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 
 import com.ibm.as400.access.QueuedMessage;
 
@@ -32,14 +28,14 @@ public class MessageHandler implements IMessageHandler {
         this.queuedMessageSubSystem = queuedMessageSubSystem;
     }
 
-    public void handleMessage(QueuedMessage message, MonitoredMessageQueue messageQueue) {
+    public void handleMessage(ReceivedMessage message) {
 
         MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
         if (!monitoringAttributes.isMonitoringEnabled()) {
             return;
         }
 
-        final QueuedMessage msg = message;
+        final ReceivedMessage msg = message;
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
 
@@ -114,7 +110,7 @@ public class MessageHandler implements IMessageHandler {
                 }
             }
 
-            private void removeInformationalMessage(final QueuedMessage msg, MonitoringAttributes monitoringAttributes) {
+            private void removeInformationalMessage(final ReceivedMessage msg, MonitoringAttributes monitoringAttributes) {
 
                 if (monitoringAttributes.removeInformationalMessages() && (msg.getType() != QueuedMessage.INQUIRY)) {
                     try {
