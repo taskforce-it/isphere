@@ -23,6 +23,7 @@ import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
 import biz.isphere.messagesubsystem.rse.QueuedMessageHelper;
+import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -67,7 +68,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         if (object instanceof QueuedMessageResource) {
             QueuedMessageResource queuedMessageResource = (QueuedMessageResource)object;
             QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
-            QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), queuedMessage);
+            QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), new ReceivedMessage(queuedMessage));
             dialog.open();
         }
         return false;
@@ -232,11 +233,11 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
     }
 
     public boolean refreshRemoteObject(Object oldElement, Object newElement) {
-        
+
         QueuedMessageResource oldQueuedMessage = (QueuedMessageResource)oldElement;
         QueuedMessageResource newQueuedMessage = (QueuedMessageResource)newElement;
         newQueuedMessage.setQueuedMessage(oldQueuedMessage.getQueuedMessage());
-        
+
         return false;
     }
 
