@@ -64,6 +64,21 @@
 		The message queue is not immediately unlocked when option <i>Monitor
 			message queue</i> is unchecked. It can take up to 20 seconds until the
 		lock has been removed.
+	<h2>End Message Monitor</h2>
+	<p>Message monitoring ends, when the <i>Monitor message queue</i> checkbox is
+	   unchecked. That may take up to 20 seconds, because of the receive message
+	   timeout. You can also end the message monitor from a 5250 command line or
+	   any program by sending <i>*END_MONITORING</i> to a monitored message queue
+	   like this:
+	<p>   
+	<table>
+		<tr>
+			<td class="code">SNDMSG MSG('*END_MONITORING') TOUSR(user_profile)</td>
+		</tr>
+	</table>
+	<p>You need to check the <i>Monitor message queue</i> checkbox again to
+	   start the message monitor again.
+	<p>
 	<h2>Acknowledgement</h2>
 	<p>Over several  months,  many on the WDSC_L mailing list at
 		midrange.com have asked us to adopt the Message Subsystem feature from
