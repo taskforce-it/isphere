@@ -28,6 +28,7 @@ import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
 import biz.isphere.messagesubsystem.rse.QueuedMessageHelper;
+import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.QueuedMessage;
 
@@ -69,7 +70,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         if (object instanceof QueuedMessageResource) {
             QueuedMessageResource queuedMessageResource = (QueuedMessageResource)object;
             QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
-            QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), queuedMessage);
+            QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), new ReceivedMessage(queuedMessage));
             dialog.open();
         }
         return false;

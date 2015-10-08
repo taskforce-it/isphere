@@ -62,7 +62,7 @@ public class MessageQueueMailMessenger {
         Transport.send(msg);
     }
 
-    public void sendMail(QueuedMessage message) throws Exception {
+    public void sendMail(ReceivedMessage message) throws Exception {
 
         if ((recipients == null) || (recipients.length == 0)) {
             return;
@@ -86,7 +86,7 @@ public class MessageQueueMailMessenger {
         Transport.send(msg);
     }
 
-    private String getMessageBody(QueuedMessage message) {
+    private String getMessageBody(ReceivedMessage message) {
 
         StringBuffer body = new StringBuffer();
         if (message.getUser() != null) {
@@ -99,7 +99,7 @@ public class MessageQueueMailMessenger {
 
         body.append(Messages.Severity_colon + message.getSeverity() + NEW_LINE);
         body.append(Messages.Message_type_colon);
-        body.append(QueuedMessageHelper.getMessageTypeAsText(message));
+        body.append(message.getMessageType());
         body.append(NEW_LINE);
 
         if (message.getDate() != null) {
