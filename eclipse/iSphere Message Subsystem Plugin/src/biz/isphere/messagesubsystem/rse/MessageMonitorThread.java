@@ -88,6 +88,7 @@ public class MessageMonitorThread extends Thread {
             if (!MessageQueue.REMOVE.equals(messageAction)) {
                 messageQueue.remove(message.getKey());
             }
+            monitoringAttributes.setMonitoring(false);
             monitoring = false;
         } else {
             if (includeMessage(message)) {
