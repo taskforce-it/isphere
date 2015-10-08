@@ -58,6 +58,7 @@ public class MessageMonitorThread extends Thread {
                 }
             }
         } catch (Exception e) {
+            monitoringAttributes.setMonitoring(false);
             monitoring = false;
             if (e.getMessage() == null)
                 errorMessage = e.toString();
