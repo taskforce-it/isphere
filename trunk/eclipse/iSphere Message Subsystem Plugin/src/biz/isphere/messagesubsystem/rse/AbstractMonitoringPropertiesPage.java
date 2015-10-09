@@ -33,6 +33,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
 
 public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 

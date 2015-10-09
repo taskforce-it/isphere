@@ -8,6 +8,7 @@
  * Contributors:
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
+
 package biz.isphere.messagesubsystem.rse;
 
 import java.util.ArrayList;
