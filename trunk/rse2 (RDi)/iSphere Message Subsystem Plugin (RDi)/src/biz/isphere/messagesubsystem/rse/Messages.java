@@ -28,8 +28,6 @@ public class Messages extends NLS {
 
     public static String Message_queue_and_library_must_be_specified;
 
-    public static String Delete_Message_Error;
-
     public static String From;
 
     public static String Message_ID;

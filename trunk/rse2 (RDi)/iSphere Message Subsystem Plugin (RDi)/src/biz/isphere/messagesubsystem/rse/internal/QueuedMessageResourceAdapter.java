@@ -13,7 +13,6 @@ package biz.isphere.messagesubsystem.rse.internal;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -28,6 +27,7 @@ import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
 import biz.isphere.messagesubsystem.rse.QueuedMessageHelper;
+import biz.isphere.messagesubsystem.rse.QueuedMessageResourceAdapterDelegate;
 import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.QueuedMessage;
@@ -45,10 +45,13 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
     private static final String KEY_FROM = "from"; //$NON-NLS-1$
 
     private static final String QUEUED_MESSAGE = "Queued message"; //$NON-NLS-1$
-    private static final String QUEUED_MESSAGE_RESOURCE = "Queued message resource"; //$NON-NLS-1$
+
+    private QueuedMessageResourceAdapterDelegate delegate;
 
     public QueuedMessageResourceAdapter() {
         super();
+
+        delegate = new QueuedMessageResourceAdapterDelegate();
     }
 
     @Override
@@ -87,27 +90,27 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
 
     @Override
     public String getType(Object element) {
-        return QUEUED_MESSAGE_RESOURCE;
+        return delegate.getType();
     }
 
     @Override
     public Object getParent(Object element) {
-        return null;
+        return delegate.getParent();
     }
 
     @Override
     public boolean hasChildren(IAdaptable element) {
-        return false;
+        return delegate.hasChildren();
     }
 
     @Override
     public boolean showDelete(Object element) {
-        return true;
+        return delegate.showDelete();
     }
 
     @Override
     public boolean canDelete(Object element) {
-        return true;
+        return delegate.canDelete();
     }
 
     @Override
@@ -116,26 +119,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         QueuedMessageResource queuedMessageResource = (QueuedMessageResource)element;
         QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
 
-        try {
-            queuedMessage.getQueue().remove(queuedMessage.getKey());
-        } catch (Exception e) {
-            final String errorMessage;
-            if (e.getMessage() == null) {
-                errorMessage = e.toString();
-            } else {
-                errorMessage = e.getMessage();
-            }
-
-            shell.getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Delete_Message_Error, errorMessage);
-                }
-            });
-
-            return false;
-        }
-
-        return true;
+        return delegate.doDelete(shell, queuedMessage, monitor);
     }
 
     @Override
