@@ -31,7 +31,6 @@ import biz.isphere.messagesubsystem.rse.internal.QueuedMessageSubSystemConfigura
 public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
     // The shared instance.
     private static ISphereMessageSubsystemRSEPlugin plugin;
-    // Resource bundle.
     private static URL installURL;
 
     public static final String IMAGE_MESSAGE = "message.gif"; //$NON-NLS-1$
@@ -55,11 +54,11 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
      */
     @Override
     public void start(BundleContext context) throws Exception {
-        
+
         super.start(context);
-        
+
         ISphereMessageSubsystemRSEPlugin.installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
-        
+
         setupAdapters();
     }
 
@@ -103,7 +102,7 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        
+
         reg.put(IMAGE_MESSAGE, getImageDescriptor(IMAGE_MESSAGE));
         reg.put(IMAGE_MESSAGES, getImageDescriptor(IMAGE_MESSAGES));
         reg.put(IMAGE_MESSAGES_CONNECTED, getImageDescriptor(IMAGE_MESSAGES_CONNECTED));
