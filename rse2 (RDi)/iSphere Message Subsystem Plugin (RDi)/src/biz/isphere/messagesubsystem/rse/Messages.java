@@ -26,26 +26,6 @@ public class Messages extends NLS {
 
     public static String Change_Message_Filter;
 
-    public static String Message_queue_colon;
-
-    public static String Library_colon;
-
-    public static String From_user_colon;
-
-    public static String Message_ID_colon;
-
-    public static String Severity_threshold_colon;
-
-    public static String From_job_colon;
-
-    public static String From_job_number_colon;
-
-    public static String From_program_colon;
-
-    public static String Message_text_contains_colon;
-
-    public static String Message_type_colon;
-
     public static String Message_queue_and_library_must_be_specified;
 
     public static String Delete_Message_Error;
