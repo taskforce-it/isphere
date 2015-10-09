@@ -126,6 +126,8 @@ public class Messages extends NLS {
 
     public static String Notification_test_message_failed;
 
+    public static String Delete_Message_Error;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
