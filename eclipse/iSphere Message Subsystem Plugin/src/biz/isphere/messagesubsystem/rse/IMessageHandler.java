@@ -11,6 +11,7 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+
 public interface IMessageHandler {
     public void handleMessage(ReceivedMessage message);
 }

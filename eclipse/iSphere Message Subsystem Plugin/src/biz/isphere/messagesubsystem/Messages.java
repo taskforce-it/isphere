@@ -24,6 +24,16 @@ public class Messages extends NLS {
 
     public static String From_program_colon;
 
+    public static String Message_queue_colon;
+
+    public static String Library_colon;
+
+    public static String From_user_colon;
+
+    public static String Severity_threshold_colon;
+
+    public static String Message_text_contains_colon;
+
     public static String Message_type_colon;
 
     public static String Message_Type_Text_Any;

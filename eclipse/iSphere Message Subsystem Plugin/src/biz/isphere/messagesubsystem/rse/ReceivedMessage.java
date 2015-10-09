@@ -13,7 +13,6 @@ package biz.isphere.messagesubsystem.rse;
 
 import java.util.Calendar;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.MessageFile;
 import com.ibm.as400.access.MessageQueue;

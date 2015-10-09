@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
 
 import com.ibm.as400.access.QueuedMessage;
 

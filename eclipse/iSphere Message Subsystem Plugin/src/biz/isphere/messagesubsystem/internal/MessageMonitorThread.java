@@ -9,12 +9,17 @@
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
 
-package biz.isphere.messagesubsystem.rse;
+package biz.isphere.messagesubsystem.internal;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.IMessageHandler;
+import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
