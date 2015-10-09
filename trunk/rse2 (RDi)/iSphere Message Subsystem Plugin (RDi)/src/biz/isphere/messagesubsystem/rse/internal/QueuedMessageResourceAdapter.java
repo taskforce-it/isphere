@@ -96,7 +96,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
         QueuedMessageResource queuedMessageResource = (QueuedMessageResource)element;
         QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
 
-        return delegate.doDelete(shell, queuedMessage, monitor);
+        return delegate.doDelete(shell, queuedMessage);
     }
 
     @Override
