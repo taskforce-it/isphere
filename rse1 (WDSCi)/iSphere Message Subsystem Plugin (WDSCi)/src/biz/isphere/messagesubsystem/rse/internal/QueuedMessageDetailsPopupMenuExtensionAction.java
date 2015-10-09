@@ -19,6 +19,10 @@ import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
 
+/**
+ * This class adds a popup menu extension to queued message resources in order
+ * to display the message details in a message dialog.
+ */
 public class QueuedMessageDetailsPopupMenuExtensionAction extends ISeriesAbstractQSYSPopupMenuExtensionAction {
 
     public QueuedMessageDetailsPopupMenuExtensionAction() {
@@ -33,7 +37,9 @@ public class QueuedMessageDetailsPopupMenuExtensionAction extends ISeriesAbstrac
                 QueuedMessageResource queuedMessageResource = (QueuedMessageResource)selection[i];
                 QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
                 QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), new ReceivedMessage(queuedMessage));
-                if (dialog.open() == QueuedMessageDialog.CANCEL) break;
+                if (dialog.open() == QueuedMessageDialog.CANCEL) {
+                    break;
+                }
             }
         }
     }
