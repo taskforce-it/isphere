@@ -1,6 +1,5 @@
 package biz.isphere.messagesubsystem.rse;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -47,7 +46,7 @@ public class QueuedMessageResourceAdapterDelegate {
         return true;
     }
 
-    public boolean doDelete(Shell shell, QueuedMessage queuedMessage, IProgressMonitor monitor) {
+    public boolean doDelete(Shell shell, QueuedMessage queuedMessage) {
 
         try {
             queuedMessage.getQueue().remove(queuedMessage.getKey());
