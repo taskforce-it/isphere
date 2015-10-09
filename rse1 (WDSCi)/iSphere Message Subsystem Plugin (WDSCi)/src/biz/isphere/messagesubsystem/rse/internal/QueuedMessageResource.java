@@ -11,11 +11,13 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse.internal;
 
+import biz.isphere.messagesubsystem.rse.IQueuedMessageResource;
+
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractResource;
 
-public class QueuedMessageResource extends AbstractResource {
+public class QueuedMessageResource extends AbstractResource implements IQueuedMessageResource {
     private QueuedMessage queuedMessage;
 
     public QueuedMessageResource(SubSystem subSystem) {
