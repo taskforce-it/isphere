@@ -28,24 +28,6 @@ public class Messages extends NLS {
 
     public static String Message_queue_and_library_must_be_specified;
 
-    public static String From;
-
-    public static String Message_ID;
-
-    public static String Severity;
-
-    public static String Message_type;
-
-    public static String Date_sent;
-
-    public static String From_job;
-
-    public static String From_job_number;
-
-    public static String From_program;
-
-    public static String Reply_status;
-
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

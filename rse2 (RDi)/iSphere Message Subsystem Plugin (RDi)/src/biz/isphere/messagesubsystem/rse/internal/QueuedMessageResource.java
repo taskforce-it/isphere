@@ -14,9 +14,11 @@ package biz.isphere.messagesubsystem.rse.internal;
 import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
+import biz.isphere.messagesubsystem.rse.IQueuedMessageResource;
+
 import com.ibm.as400.access.QueuedMessage;
 
-public class QueuedMessageResource extends AbstractResource {
+public class QueuedMessageResource extends AbstractResource implements IQueuedMessageResource {
     private QueuedMessage queuedMessage;
 
     public QueuedMessageResource(ISubSystem subSystem) {
