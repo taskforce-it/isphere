@@ -106,7 +106,7 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
     }
 
-    public static ImageDescriptor getImageDescriptor(String name) {
+    private ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
             URL url = new URL(installURL, iconPath + name);
