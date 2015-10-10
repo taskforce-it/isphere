@@ -105,8 +105,6 @@ public class QueuedMessageResourceAdapterDelegate {
 
             QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
 
-            System.out.println("" + propKey);
-
             if (propKey.equals(KEY_FROM)) {
                 return queuedMessage.getUser();
             }
