@@ -73,7 +73,7 @@ public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigu
 
     @Override
     public ImageDescriptor getSystemFilterImage(ISystemFilter filter) {
-        return ISphereMessageSubsystemRSEPlugin.getImageDescriptor("message_filter.gif");
+        return ISphereMessageSubsystemRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE_FILTER);
     }
 
     @Override
