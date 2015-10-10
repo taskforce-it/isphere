@@ -46,9 +46,9 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
     public ImageDescriptor getImageDescriptor(Object object) {
         IQueuedMessageResource queuedMessageResource = (IQueuedMessageResource)object;
         if (queuedMessageResource.getQueuedMessage().getType() == QueuedMessage.INQUIRY) {
-            return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_INQUIRY);
+            return ISphereMessageSubsystemRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_INQUIRY);
         } else {
-            return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE);
+            return ISphereMessageSubsystemRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE);
         }
     }
 
