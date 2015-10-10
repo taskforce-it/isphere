@@ -74,7 +74,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
     public boolean supportsNestedFilters() {
         return false;
     }
-    
+
     /*
      * Start of RDi/WDSCi specific methods.
      */
@@ -109,7 +109,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     @Override
     public ImageDescriptor getSystemFilterImage(SystemFilter filter) {
-        return ISphereMessageSubsystemRSEPlugin.getImageDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE_FILTER);
+        return ISphereMessageSubsystemRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_MESSAGE_FILTER);
     }
 
 }

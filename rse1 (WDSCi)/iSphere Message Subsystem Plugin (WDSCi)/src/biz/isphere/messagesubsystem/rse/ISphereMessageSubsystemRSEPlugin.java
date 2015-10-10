@@ -76,7 +76,7 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    public static ImageDescriptor getImageDescriptor(String name) {
+    private ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/"; //$NON-NLS-1$
         try {
             URL url = new URL(installURL, iconPath + name);
