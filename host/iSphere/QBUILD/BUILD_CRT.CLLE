@@ -217,6 +217,15 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
 
              /* ----------------------------------------------- */
+             /* Update release date in member COPYRIGHT         */
+             /* ----------------------------------------------- */
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_RPLC') +
+                          LIB(&TMPLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+
+             CALL       PGM(&TMPLIB/BUILD_RPLC) PARM(&PRDLIB)
+
+             /* ----------------------------------------------- */
              /* Create data areas                               */
              /* ----------------------------------------------- */
 
