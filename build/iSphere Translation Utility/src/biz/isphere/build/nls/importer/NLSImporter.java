@@ -17,8 +17,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,8 +49,7 @@ public class NLSImporter {
 
     /**
      * Main method of the importer utility. Valid optional arguments are:
-     * <p>
-     * - name of the configuration properties file
+     * <p> - name of the configuration properties file
      * 
      * @param args
      */
@@ -79,7 +81,9 @@ public class NLSImporter {
 
         LogUtil.print("Loading data from Excel sheet: " + sheet.getSheetName());
 
-        String projectName = sheet.getSheetName();
+        Cell cell = findHeadlineCell(sheet);
+
+        String projectName = cell.getStringCellValue(); // sheet.getSheetName();
         EclipseProject project = new EclipseProject(projectName);
 
         Row firstDataRow = findFirstDataRow(sheet);
@@ -137,6 +141,23 @@ public class NLSImporter {
     private Row getNextDataRow(Sheet sheet, Row row) {
         if (row.getRowNum() < sheet.getLastRowNum()) {
             return sheet.getRow(row.getRowNum() + 1);
+        }
+        return null;
+    }
+
+    private Cell findHeadlineCell(Sheet sheet) {
+        for (Iterator<Row> iterator = sheet.iterator(); iterator.hasNext();) {
+            Row row = iterator.next();
+            for (Iterator cellIterator = row.iterator(); cellIterator.hasNext();) {
+                Object object = cellIterator.next();
+                if (object instanceof HSSFCell) {
+                    HSSFCell cell = (HSSFCell)object;
+                    if (cell.getCellStyle().getFillForegroundColor() == IndexedColors.LIGHT_YELLOW.getIndex() && 
+                        cell.getCellStyle().getFont(sheet.getWorkbook()).getBoldweight() == Font.BOLDWEIGHT_BOLD) {
+                        return cell;
+                    }
+                }
+            }
         }
         return null;
     }
