@@ -262,6 +262,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_OPEN, getImageDescriptor(IMAGE_OPEN));
     }
 
+    // Don`t change this method due to CMOne compatibility reasons
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
