@@ -78,6 +78,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
     }
 
+    // Don`t change this method due to CMOne compatibility reasons
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
