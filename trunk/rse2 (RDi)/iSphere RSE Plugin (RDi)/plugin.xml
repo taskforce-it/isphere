@@ -695,6 +695,9 @@
          <menu
                id="biz.isphere.core.menu.isphere"
                label="%menu_iSphere">
+	         <separator name="group0" visible="true" />
+	         <separator name="transferlibrary" visible="true" />
+	         <separator name="help" visible="true" />
          </menu>
          
          <action
@@ -703,7 +706,7 @@
                definitionId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
                label="%menu_DataSpace_Editor_Designer"
                icon="icons/data_space_editor_designer.gif"
-               menubarPath="biz.isphere.core.menu.isphere/Group0"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
          </action>
          
@@ -713,14 +716,9 @@
                definitionId="biz.isphere.core.command.RSEManagement.open"
                label="%menu_RSE_Filter_Management"
                icon="icons/iSphere_RSE_Management.gif"
-               menubarPath="biz.isphere.core.menu.isphere/Group0"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
          </action>
-            
-         <separator
-               name="transferlibrary"
-               visible="true">
-         </separator>
          
          <action
                class="biz.isphere.rse.actions.TransferLibraryAction"
@@ -731,11 +729,6 @@
                menubarPath="biz.isphere.core.menu.isphere/transferlibrary"
                tooltip="%menu_Tooltip_Transfer_iSphere_library">
          </action>
-            
-         <separator
-               name="help"
-               visible="true">
-         </separator>
          
          <action
                class="biz.isphere.rse.actions.DisplayHelpAction"
