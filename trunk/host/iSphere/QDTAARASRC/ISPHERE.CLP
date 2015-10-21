@@ -27,8 +27,9 @@
              DCL        VAR(&LIB ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&OBJ ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&VER_SERVER ) TYPE(*CHAR) LEN(6) VALUE('020000')
-             DCL        VAR(&VER_CLIENT ) TYPE(*CHAR) LEN(6) VALUE('020000')
+             DCL        VAR(&VER_SERVER ) TYPE(*CHAR) LEN( 6) VALUE('020000')
+             DCL        VAR(&VER_CLIENT ) TYPE(*CHAR) LEN( 6) VALUE('020000')
+             DCL        VAR(&VER_DATE   ) TYPE(*CHAR) LEN(10) VALUE('0001-01-01')
 
 
              /* ------------------------- Error handler ------------------------- */
@@ -51,10 +52,12 @@
              CRTDTAARA  DTAARA(&LIB/&OBJ) TYPE(*CHAR) LEN(256) TEXT('iSphere +
                           Version')
 
-             CHGDTAARA  DTAARA(&LIB/&OBJ ( 1 7)) VALUE('Server:')
-             CHGDTAARA  DTAARA(&LIB/&OBJ (15 7)) VALUE('Client:')
-             CHGDTAARA  DTAARA(&LIB/&OBJ ( 8 6)) VALUE(&VER_SERVER)
-             CHGDTAARA  DTAARA(&LIB/&OBJ (22 6)) VALUE(&VER_CLIENT)
+             CHGDTAARA  DTAARA(&LIB/&OBJ ( 1  7)) VALUE('Server:')
+             CHGDTAARA  DTAARA(&LIB/&OBJ (15  7)) VALUE('Client:')
+             CHGDTAARA  DTAARA(&LIB/&OBJ (29 11)) VALUE('Build-date:')
+             CHGDTAARA  DTAARA(&LIB/&OBJ ( 8  6)) VALUE(&VER_SERVER)
+             CHGDTAARA  DTAARA(&LIB/&OBJ (22  6)) VALUE(&VER_CLIENT)
+             CHGDTAARA  DTAARA(&LIB/&OBJ (40 10)) VALUE(&VER_DATE)
 
              RETURN
 
