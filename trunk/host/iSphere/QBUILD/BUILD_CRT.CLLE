@@ -59,8 +59,15 @@
 
              DCL        VAR(&TRUE     ) TYPE(*LGL ) VALUE('1')
              DCL        VAR(&FALSE    ) TYPE(*LGL ) VALUE('1')
+
+             DCL        VAR(&CURLIB   ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&USRLIBL  ) TYPE(*CHAR) LEN(2750)
              DCL        VAR(&RSTLIBL  ) TYPE(*LGL )
 
+             DCL        VAR(&CMD      ) TYPE(*CHAR) LEN(3000)
+             DCL        VAR(&CMDLEN   ) TYPE(*DEC ) LEN(15 5) VALUE(3000)
+
+             CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
 
              CHGVAR     VAR(&PRDLIB) VALUE(&I_PRDLIB)
              MONMSG     MSGID(MCH3601) EXEC(DO)
@@ -111,13 +118,26 @@
                           TEXT('*BUILD_IN_PROGRESS')
 
              /* ----------------------------------------------- */
-             /* Add product library to library list             */
+             /* Set up library list                             */
+             /*    Current library      -  *CRTDFT              */
+             /*    Product library      -  ISPHERE              */
+             /*    Development library  -  ISPHEREDVP           */
              /* ----------------------------------------------- */
-             CHGVAR     VAR(&RSTLIBL) VALUE(&TRUE)
-             ADDLIBLE   LIB(&PRDLIB)
-             MONMSG     MSGID(CPF2103) EXEC(DO)
-                CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
+             RTVJOBA    CURLIB(&CURLIB) USRLIBL(&USRLIBL)
+             IF         COND(&CURLIB *EQ '*NONE') THEN(DO)
+                CHGVAR     VAR(&CURLIB) VALUE('*CRTDFT')
              ENDDO
+
+             CHGCURLIB  CURLIB(*CRTDFT)
+             RMVLIBLE   LIB(&PRDLIB)
+             MONMSG     MSGID(CPF2104)
+             RMVLIBLE   LIB(&DEVLIB)
+             MONMSG     MSGID(CPF2104)
+
+             ADDLIBLE   LIB(&PRDLIB) POSITION(*FIRST)
+             ADDLIBLE   LIB(&DEVLIB) POSITION(*AFTER &PRDLIB)
+
+             CHGVAR     VAR(&RSTLIBL) VALUE(&TRUE)
 
              /* ----------------------------------------------- */
              /* Create STRPREPRC utility                        */
@@ -567,8 +587,13 @@
              /* ----------------------------------------------- */
              /* Restore library list                            */
              /* ----------------------------------------------- */
+
              IF         COND(&RSTLIBL) THEN(DO)
-                RMVLIBLE   LIB(&PRDLIB)
+                CHGCURLIB  CURLIB(&CURLIB)
+                CHGVAR     VAR(&CMD) +
+                           VALUE('CHGLIBL LIBL(' *CAT &USRLIBL *TCAT ')' *BCAT +
+                                   'CURLIB(' *CAT &CURLIB *TCAT ')')
+                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
                 CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
              ENDDO
 
