@@ -48,6 +48,7 @@
      D  i_prdlib                     10a   const
      D  i_server_ver                128a   const varying
      D  i_client_ver                128a   const varying
+     D  i_build_date                128a   const varying
 
      D splitt...
      D                 pr                  likeds(splitted_t)
@@ -66,6 +67,8 @@
      D  server_ver             8     13a
      D  client_id             15     21a   inz('Client:')
      D  client_ver            22     27a
+     D  build_date_id         29     39a   inz('Build-date:')
+     D  build_date            40     49a
 
       //*------------------------------------------------------------------------------------------*
       //*  Program Entry Point
@@ -76,7 +79,10 @@
       /free
 
          *inlr = *on;
-         main(gi_prdlib: ISPHERE_SERVER_VERSION: ISPHERE_MIN_CLIENT_VERSION);
+         main(gi_prdlib
+              : ISPHERE_SERVER_VERSION
+              : ISPHERE_MIN_CLIENT_VERSION
+              : ISPHERE_DATE);
 
       /end-free
 
@@ -89,6 +95,7 @@
      D  i_prdlib                     10a   const
      D  i_server_ver                128a   const varying
      D  i_client_ver                128a   const varying
+     D  i_build_date                128a   const varying
 
      D i               s             10i 0
      D splitted        ds                  likeds(splitted_t) inz
@@ -117,6 +124,7 @@
          reset iSphere;
          iSphere.server_ver = server_version;
          iSphere.client_ver = client_version;
+         iSphere.build_date = i_build_date;
          out iSphere;
 
       /end-free
