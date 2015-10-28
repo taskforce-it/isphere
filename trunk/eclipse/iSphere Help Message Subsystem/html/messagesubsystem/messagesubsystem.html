@@ -16,7 +16,7 @@
 	messages on an IBM i server:
 	<ul>
 		<li>View and delete messages, with filters.</li>
-		<li>Reply to inquery messages.</li>
+		<li>Reply to inquiry messages.</li>
 		<li>Create an alert for new messages, using a dialog, an email or
 			a beep.</li>
 	</ul>
@@ -38,7 +38,7 @@
 		details.
 	<p>
 		<img src="assets/message_popup_menu.png" align="middle">
-	<p>Answer inquery messages from the message detail dialog:
+	<p>Answer inquiry messages from the message detail dialog:
 	<p>
 		<img src="assets/message_detail_dialog.png" align="middle">
 	<p>
@@ -56,10 +56,20 @@
 		the message monitor.
 	<p>
 		<img src="assets/message_monitor_properties.png" align="middle">
+	<p>The <i>Login credentials</i> are optional and must be specified only
+	   for email servers that require an authenticated user for sending emails.
 	<p>The message monitor requires an <b>exclusive lock</b> on your message
-		queue. It will not get the lock if the messsage queue is locked by
+		queue. It will not get the lock if the message queue is locked by
 		another job, such as a 5250 session. Therefore it is recommended you
-		start RDi/WDSCi before any 5250 session.
+		start RDi/WDSCi before any 5250 session. But you can also use the 
+		following CL command to unlock the message queue:
+	<p>   
+	<table>
+		<tr>
+			<td class="code">DLCOBJ OBJ((library_name/message_queue_name *MSGQ *EXCL)) SCOPE(*THREAD)</td>
+		</tr>
+	</table>
+	<p>The command must be executed from the job that holds the lock.
 	<p>
 		The message queue is not immediately unlocked when option <i>Monitor
 			message queue</i> is unchecked. It can take up to 20 seconds until the

@@ -51,8 +51,11 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     private Group emailGroup;
     private Text emailText;
     private Text fromText;
-    private Text portText;
     private Text hostText;
+    private Text portText;
+    private Button smtpCredentialsButton;
+    private Text smtpUserText;
+    private Text smtpPasswordText;
     private Button testButton;
 
     public AbstractMonitoringPropertiesPage() {
@@ -132,6 +135,8 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         createEmailGroup(propsGroup);
 
+        smtpCredentialsButton.addSelectionListener(listener);
+
         loadSettings();
 
         setControlVisibility();
@@ -195,6 +200,33 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         gd.widthHint = 50;
         portText.setLayoutData(gd);
         portText.setTextLimit(4);
+
+        smtpCredentialsButton = WidgetFactory.createCheckbox(emailGroup);
+        gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = 2;
+        smtpCredentialsButton.setLayoutData(gd);
+        smtpCredentialsButton.setText(Messages.SmtpLogin_credentials);
+        smtpCredentialsButton.setToolTipText(Messages.SmtpLogin_credentials_tooltip);
+
+        Label smtpUser = new Label(emailGroup, SWT.NONE);
+        smtpUser.setText(Messages.SmtpUser_colon);
+        smtpUser.setToolTipText(Messages.SmtpUser_tooltip);
+
+        smtpUserText = WidgetFactory.createText(emailGroup);
+        smtpUserText.setToolTipText(Messages.SmtpUser_tooltip);
+        gd = new GridData();
+        gd.widthHint = 250;
+        smtpUserText.setLayoutData(gd);
+
+        Label smtpPassword = new Label(emailGroup, SWT.NONE);
+        smtpPassword.setText(Messages.SmtpPassword_colon);
+        smtpPassword.setToolTipText(Messages.SmtpPassword_tooltip);
+
+        smtpPasswordText = WidgetFactory.createPassword(emailGroup);
+        smtpPasswordText.setToolTipText(Messages.SmtpPassword_tooltip);
+        gd = new GridData();
+        gd.widthHint = 250;
+        smtpPasswordText.setLayoutData(gd);
 
         Label dummy = new Label(emailGroup, SWT.NONE); // dummy
         dummy.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER, GridData.HORIZONTAL_ALIGN_CENTER, false, false));
@@ -268,6 +300,9 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         fromText.setText(monitoringAttributes.getFrom());
         hostText.setText(monitoringAttributes.getHost());
         portText.setText(monitoringAttributes.getPort());
+        smtpCredentialsButton.setSelection(monitoringAttributes.isSmtpLogin());
+        smtpUserText.setText(monitoringAttributes.getSmtpUser());
+        smtpPasswordText.setText(monitoringAttributes.getSmtpPassword());
     }
 
     private void saveSettings() {
@@ -280,6 +315,9 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         monitoringAttributes.setFrom(fromText.getText());
         monitoringAttributes.setHost(hostText.getText());
         monitoringAttributes.setPort(portText.getText());
+        monitoringAttributes.setSmtpLogin(smtpCredentialsButton.getSelection());
+        monitoringAttributes.setSmtpUser(smtpUserText.getText());
+        monitoringAttributes.setSmtpPassword(smtpPasswordText.getText());
     }
 
     private void setControlVisibility() {
@@ -308,6 +346,14 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
                 emailGroup.setVisible(false);
             }
         }
+
+        if (smtpCredentialsButton.getSelection()) {
+            smtpUserText.setEnabled(true);
+            smtpPasswordText.setEnabled(true);
+        } else {
+            smtpUserText.setEnabled(false);
+            smtpPasswordText.setEnabled(false);
+        }
     }
 
     private void testEmail() {
@@ -320,7 +366,13 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         messenger.setHost(hostText.getText());
 
         try {
-            messenger.sendMail(Messages.ISeries_Message_Monitor_Test, Messages.Notification_test_message);
+            if (smtpCredentialsButton.getSelection()) {
+                messenger.sendMail(Messages.ISeries_Message_Monitor_Test, Messages.Notification_test_message, smtpUserText.getText(),
+                    smtpPasswordText.getText());
+            } else {
+                messenger.sendMail(Messages.ISeries_Message_Monitor_Test, Messages.Notification_test_message);
+            }
+
             MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Messages.ISeries_Message_Monitor_Test,
                 Messages.Notification_test_message_sent_to + " " + emailText.getText()); //$NON-NLS-1$
         } catch (Exception e) {

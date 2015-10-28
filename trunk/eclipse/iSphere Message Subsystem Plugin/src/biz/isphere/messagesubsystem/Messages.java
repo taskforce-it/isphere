@@ -145,6 +145,18 @@ public class Messages extends NLS {
     public static String From_program;
 
     public static String Reply_status;
+    
+    public static String SmtpLogin_credentials;
+    
+    public static String SmtpLogin_credentials_tooltip;
+    
+    public static String SmtpUser_colon;
+    
+    public static String SmtpUser_tooltip;
+    
+    public static String SmtpPassword_colon;
+    
+    public static String SmtpPassword_tooltip;
 
     static {
         // initialize resource bundle
