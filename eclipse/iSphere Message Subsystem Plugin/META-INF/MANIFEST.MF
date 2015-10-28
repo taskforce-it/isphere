@@ -8,6 +8,7 @@ Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.views,
+ org.eclipse.equinox.security,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
  biz.isphere.core

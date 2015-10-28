@@ -69,7 +69,11 @@ public class MessageHandler implements IMessageHandler {
                         messenger.setPort(monitoringAttributes.getPort());
 
                         try {
-                            messenger.sendMail(msg);
+                            if (monitoringAttributes.isSmtpLogin()) {
+                                messenger.sendMail(msg, monitoringAttributes.getSmtpUser(), monitoringAttributes.getSmtpPassword());
+                            } else {
+                                messenger.sendMail(msg);
+                            }
                         } catch (Exception e) {
 
                             String errorMessage = e.getMessage();
@@ -122,5 +126,4 @@ public class MessageHandler implements IMessageHandler {
             }
         });
     }
-
 }

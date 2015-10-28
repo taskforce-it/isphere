@@ -11,6 +11,8 @@
 
 package biz.isphere.messagesubsystem.internal;
 
+import java.util.Calendar;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -37,6 +39,7 @@ public class MessageMonitorThread extends Thread {
     private String errorMessage;
 
     private final static String END_MONITORING = "*END_MONITORING"; //$NON-NLS-1$
+    private final static int WAIT_SECS = 20;
 
     public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, QueuedMessageFilter messageFilter,
         IMessageHandler messageHandler, String action, String type) {
@@ -55,25 +58,42 @@ public class MessageMonitorThread extends Thread {
 
         monitoring = true;
 
-        try {
-            while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
-                QueuedMessage message = messageQueue.receive(null, 20, messageAction, messageType);
+        /*
+         * Use a timeout for locking the message queue when starting the message
+         * monitor thread, because the message queue may still be locked after
+         * having restarted RDi.
+         */
+        Calendar startTime = Calendar.getInstance();
+        startTime.add(Calendar.SECOND, WAIT_SECS + 1);
+        long startTimeout = startTime.getTimeInMillis();
+
+        while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
+            try {
+                QueuedMessage message = messageQueue.receive(null, WAIT_SECS, messageAction, messageType);
                 if (monitoring && (message != null)) {
                     handleMessage(message);
                 }
-            }
-        } catch (Exception e) {
-            monitoringAttributes.setMonitoring(false);
-            monitoring = false;
-            if (e.getMessage() == null)
-                errorMessage = e.toString();
-            else
-                errorMessage = e.getMessage();
-            Display.getDefault().syncExec(new Runnable() {
-                public void run() {
-                    MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error, errorMessage);
+            } catch (Exception e) {
+                if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
+                    monitoringAttributes.setMonitoring(false);
+                    monitoring = false;
+                    if (e.getMessage() == null)
+                        errorMessage = e.toString();
+                    else
+                        errorMessage = e.getMessage();
+                    Display.getDefault().syncExec(new Runnable() {
+                        public void run() {
+                            MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error, errorMessage);
+                        }
+                    });
+                } else {
+                    try {
+                        // wait a second, then try again
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                    }
                 }
-            });
+            }
         }
 
         messageQueue.messageMonitorStopped();

@@ -10,7 +10,13 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
+
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.Messages;
 
 public class MonitoringAttributes {
@@ -25,6 +31,9 @@ public class MonitoringAttributes {
     private final static String EMAIL_FROM = "biz.isphere.messagesubsystem.internal.from"; //$NON-NLS-1$
     private final static String EMAIL_PORT = "biz.isphere.messagesubsystem.internal.port"; //$NON-NLS-1$
     private final static String EMAIL_HOST = "biz.isphere.messagesubsystem.internal.host"; //$NON-NLS-1$
+    private final static String SMTP_LOGIN = "biz.isphere.messagesubsystem.internal.smtp.login"; //$NON-NLS-1$ 
+    private final static String SMTP_USER = "biz.isphere.messagesubsystem.internal.smtp.user"; //$NON-NLS-1$ 
+    private final static String SMTP_PASSWORD = "biz.isphere.messagesubsystem.internal.smtp.password"; //$NON-NLS-1$ 
 
     public static final String NOTIFICATION_TYPE_DIALOG = "*DIALOG"; //$NON-NLS-1$
     public static final String NOTIFICATION_TYPE_EMAIL = "*EMAIL"; //$NON-NLS-1$
@@ -35,10 +44,12 @@ public class MonitoringAttributes {
     private static final String REMOVE_YES = "true"; //$NON-NLS-1$
     private static final String REMOVE_NO = "false"; //$NON-NLS-1$
 
-    private static final String EMAIL_EXAMPLE_FROM = "MyMessages@";
-    private static final String EMAIL_EXAMPLE_ADDRESS = "youraddress@yourcompany.com";
-    private static final String EMAIL_EXAMPLE_HOST = "mailserver.yourcompany.com";
-    private static final String EMAIL_EXAMPLE_PORT = "25";
+    private static final String EMAIL_EXAMPLE_FROM = "MyMessages@"; //$NON-NLS-1$
+    private static final String EMAIL_EXAMPLE_ADDRESS = "youraddress@yourcompany.com"; //$NON-NLS-1$
+    private static final String EMAIL_EXAMPLE_HOST = "mailserver.yourcompany.com"; //$NON-NLS-1$
+    private static final String EMAIL_EXAMPLE_PORT = "25"; //$NON-NLS-1$
+    private static final String SMTP_LOGIN_ENABLED = "true"; //$NON-NLS-1$
+    private static final String SMTP_LOGIN_DISABLED = "false"; //$NON-NLS-1$
 
     private IQueuedMessageSubsystem queuedMessageSubSystem;
 
@@ -249,6 +260,45 @@ public class MonitoringAttributes {
         setVendorAttribute(EMAIL_PORT, portString);
     }
 
+    public boolean isSmtpLogin() {
+
+        String smtpLoginString = getVendorAttribute(SMTP_LOGIN);
+        if (smtpLoginString == null) {
+            return false;
+        } else {
+            if (SMTP_LOGIN_ENABLED.equals(smtpLoginString)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public void setSmtpLogin(boolean enabled) {
+
+        if (enabled) {
+            setVendorAttribute(SMTP_LOGIN, SMTP_LOGIN_ENABLED);
+        } else {
+            setVendorAttribute(SMTP_LOGIN, SMTP_LOGIN_DISABLED);
+        }
+    }
+
+    public String getSmtpUser() {
+        return getSecureValue(SMTP_USER);
+    }
+
+    public void setSmtpUser(String user) {
+        setSecureValue(SMTP_USER, user);
+    }
+
+    public String getSmtpPassword() {
+        return getSecureValue(SMTP_PASSWORD);
+    }
+
+    public void setSmtpPassword(String password) {
+        setSecureValue(SMTP_PASSWORD, password);
+    }
+
     public boolean isValid() {
 
         if (EMAIL_EXAMPLE_ADDRESS.equals(getEmail())) {
@@ -260,6 +310,49 @@ public class MonitoringAttributes {
         }
 
         return true;
+    }
+
+    private String getSecureValue(String key) {
+
+        if (getHost() == null) {
+            throw new RuntimeException("Host must not be null."); //$NON-NLS-1$
+        }
+
+        ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
+        String valueString = ""; //$NON-NLS-1$
+
+        try {
+            valueString = securePreferences.get(key + "/" + getHost(), ""); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (StorageException e) {
+        }
+
+        if (StringHelper.isNullOrEmpty(valueString)) {
+            return ""; //$NON-NLS-1$
+        } else {
+            return valueString;
+        }
+    }
+
+    public void setSecureValue(String key, String value) {
+
+        if (getHost() == null) {
+            throw new RuntimeException("Host must not be null."); //$NON-NLS-1$
+        }
+
+        String valueString;
+        if (StringHelper.isNullOrEmpty(value)) {
+            valueString = ""; //$NON-NLS-1$
+        } else {
+            valueString = value;
+        }
+
+        ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
+
+        try {
+            securePreferences.put(key + "/" + getHost(), valueString, true); //$NON-NLS-1$
+        } catch (StorageException e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
     }
 
     private String convertToInternalNotificationType(String notificationType) {
