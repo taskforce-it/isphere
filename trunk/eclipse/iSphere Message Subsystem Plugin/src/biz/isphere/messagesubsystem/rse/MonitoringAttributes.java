@@ -10,7 +10,6 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
-
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
@@ -56,6 +55,22 @@ public class MonitoringAttributes {
     public MonitoringAttributes(IQueuedMessageSubsystem queuedMessageSubSystem) {
 
         this.queuedMessageSubSystem = queuedMessageSubSystem;
+    }
+
+    public void restoreToDefault() {
+
+        setMonitoring(false);
+        setRemoveInformationalMessages(false);
+        setInformationalMessageNotificationType(null);
+        setInqueryMessageNotificationType(null);
+
+        setEmail(null);
+        setFrom(null);
+        setHost(null);
+        setPort(null);
+        setSmtpLogin(false);
+        setSmtpUser("");
+        setSmtpPassword("");
     }
 
     public boolean isMonitoringEnabled() {

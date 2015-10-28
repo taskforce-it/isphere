@@ -290,6 +290,14 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         return super.performOk();
     }
 
+    @Override
+    protected void performDefaults() {
+        monitoringAttributes.restoreToDefault();
+        loadSettings();
+        setControlVisibility();
+        super.performDefaults();
+    }
+
     private void loadSettings() {
 
         monitorButton.setSelection(monitoringAttributes.isMonitoringEnabled());
