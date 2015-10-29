@@ -52,7 +52,7 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 
         final Label labelISphere = new Label(container, SWT.NONE);
         labelISphere.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelISphere.setText("iSphere Version " + ISphereBasePlugin.getDefault().getVersion());
+        labelISphere.setText("iSphere Version " + ISphereBasePlugin.getDefault().getVersion()); //$NON-NLS-1$
 
         final Label labelSeparator2 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
         final GridData gd_labelSeparator2 = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -60,35 +60,22 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
 
         final Label labelFeature0 = new Label(container, SWT.NONE);
         labelFeature0.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature0.setText("iSphere provides the following features");
+        labelFeature0.setText("iSphere provides the following features:"); //$NON-NLS-1$
 
-        final Label labelFeature1 = new Label(container, SWT.NONE);
-        labelFeature1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature1.setText("Message File Editor");
-
-        final Label labelFeature2 = new Label(container, SWT.NONE);
-        labelFeature2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature2.setText("Binding Directory Editor");
-
-        final Label labelFeature3 = new Label(container, SWT.NONE);
-        labelFeature3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature3.setText("Compare/Merge Editor");
-
-        final Label labelFeature4 = new Label(container, SWT.NONE);
-        labelFeature4.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature4.setText("Source File Search");
-
-        final Label labelFeature5 = new Label(container, SWT.NONE);
-        labelFeature5.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature5.setText("Message File Search");
-
-        final Label labelFeature6 = new Label(container, SWT.NONE);
-        labelFeature6.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature6.setText("Spooled Files Subsystem");
-
-        final Label labelFeature7 = new Label(container, SWT.NONE);
-        labelFeature7.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelFeature7.setText("Lpex Task Tags");
+        createFeatureLabel(container, "Binding Directory Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "Data Area Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "User Space Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "Data Queue Viewer"); //$NON-NLS-1$
+        createFeatureLabel(container, "Message File Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "Message File Compare Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "Message File Search"); //$NON-NLS-1$
+        createFeatureLabel(container, "Source File Search"); //$NON-NLS-1$
+        createFeatureLabel(container, "Source Compare/Merge Editor"); //$NON-NLS-1$
+        createFeatureLabel(container, "Spooled Files Subsystem"); //$NON-NLS-1$
+        createFeatureLabel(container, "Lpex Task Tags"); //$NON-NLS-1$
+        createFeatureLabel(container, "Host Object Decorator"); //$NON-NLS-1$
+        createFeatureLabel(container, "RSE Filter Manager"); //$NON-NLS-1$
+        createFeatureLabel(container, "Messages Subsystem"); //$NON-NLS-1$
 
         // Compute size
         Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -104,6 +91,13 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
         sc.setExpandVertical(true);
 
         return _container;
+    }
+
+    private void createFeatureLabel(Composite parent, String label) {
+
+        final Label featureLabel = new Label(parent, SWT.NONE);
+        featureLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        featureLabel.setText(label);
     }
 
     public void init(IWorkbench workbench) {
