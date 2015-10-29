@@ -32,6 +32,17 @@ public class IBMiHostContributionsHandler {
         return true;
     }
     
+    public static AS400 findSystem(String hostName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.findSystem(hostName);
+    }
+    
     public static AS400 getSystem(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();

@@ -12,6 +12,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -26,20 +28,27 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.TransferISphereLibrary;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
+import com.ibm.as400.access.AS400;
+
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private Text textISphereLibrary;
     private String iSphereLibrary;
     private Validator validatorLibrary;
+
     private Text textHostName;
     private Text textFtpPortNumber;
+    private Text textISphereLibrary;
+    private Label textISphereLibraryVersion;
 
     public ISphereLibrary() {
         super();
@@ -56,23 +65,27 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         container.setLayout(gridLayout);
 
         Label labelHostName = new Label(container, SWT.NONE);
-        labelHostName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        labelHostName.setLayoutData(createLabelLayoutData());
         labelHostName.setText(Messages.Host_name_colon);
 
         textHostName = WidgetFactory.createText(container);
-        textHostName.setText(Messages.Host_name_colon);
-        textHostName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textHostName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                updateISphereLibraryVersion();
+            }
+        });
+        textHostName.setLayoutData(createTextLayoutData());
 
         Label labelFtpPortNumber = new Label(container, SWT.NONE);
-        labelFtpPortNumber.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        labelFtpPortNumber.setLayoutData(createLabelLayoutData());
         labelFtpPortNumber.setText(Messages.FTP_port_number_colon);
 
         textFtpPortNumber = WidgetFactory.createIntegerText(container);
-        textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         textFtpPortNumber.setTextLimit(5);
-        textFtpPortNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textFtpPortNumber.setLayoutData(createTextLayoutData());
 
-        final Label labelISphereLibrary = new Label(container, SWT.NONE);
+        Label labelISphereLibrary = new Label(container, SWT.NONE);
+        labelISphereLibrary.setLayoutData(createLabelLayoutData());
         labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
         textISphereLibrary = WidgetFactory.createText(container);
@@ -89,10 +102,22 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
                 }
             }
         });
-        textISphereLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textISphereLibrary.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                updateISphereLibraryVersion();
+            }
+        });
+        textISphereLibrary.setLayoutData(createTextLayoutData());
         textISphereLibrary.setTextLimit(10);
 
         validatorLibrary = Validator.getLibraryNameInstance();
+
+        Label labelIShereLibraryVersion = new Label(container, SWT.NONE);
+        labelIShereLibraryVersion.setLayoutData(createLabelLayoutData());
+        labelIShereLibraryVersion.setText("Version:");
+
+        textISphereLibraryVersion = new Label(container, SWT.NONE);
+        textISphereLibraryVersion.setLayoutData(createTextLayoutData());
 
         Button buttonTransfer = WidgetFactory.createPushButton(container);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
@@ -137,38 +162,89 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
-        Preferences.getInstance().setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance().setFtpPortNumber(
+            IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
 
     }
 
     protected void setScreenToValues() {
 
         ISpherePlugin.getDefault();
-        iSphereLibrary = Preferences.getInstance().getISphereLibrary();
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getFtpPortNumber());
+        iSphereLibrary = Preferences.getInstance().getISphereLibrary();
 
         setScreenValues();
-
     }
 
     protected void setScreenToDefaultValues() {
 
-        iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getDefaultFtpPortNumber());
+        iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
 
         setScreenValues();
-
     }
 
     protected void setScreenValues() {
 
         textISphereLibrary.setText(iSphereLibrary);
-
     }
 
     public void init(IWorkbench workbench) {
     }
 
+    private GridData createLabelLayoutData() {
+        return new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+    }
+
+    private GridData createTextLayoutData() {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+    }
+
+    private void updateISphereLibraryVersion() {
+        String text = getISphereLibraryVersion(textHostName.getText(), textISphereLibrary.getText());
+        if (text == null) {
+            return;
+        }
+
+        textISphereLibraryVersion.setText(text);
+    }
+
+    private String getISphereLibraryVersion(String hostName, String library) {
+        
+        clearError();
+
+        if (StringHelper.isNullOrEmpty(hostName)) {
+            return Messages.not_found;
+        } else if (StringHelper.isNullOrEmpty(library)) {
+            
+        }
+
+        AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
+
+        if (as400 == null) {
+            setError(Messages.bind(Messages.Host_A_not_found, hostName));
+            return Messages.not_found;
+        }
+
+        String version = ISphereHelper.getISphereLibraryVersion(as400, library);
+        if (version == null) {
+            return Messages.not_found;
+        }
+
+        return version;
+    }
+
+    private boolean setError(String message) {
+        setErrorMessage(message);
+        setValid(false);
+        return false;
+    }
+
+    private boolean clearError() {
+        setErrorMessage(null);
+        setValid(true);
+        return true;
+    }
 }
