@@ -67,7 +67,7 @@ public class ISphereHelper {
             String message = Messages
                 .bind(
                     Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
-                    new String[] { ISpherePlugin.getISphereLibrary(), as400.getSystemName(), getVersionFormatted(serverProvided),
+                    new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided),
                         getVersionFormatted(clientNeedsServer) });
             new DisplayMessage(shell, text, message).start();
 
