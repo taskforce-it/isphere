@@ -10,12 +10,31 @@ package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
 
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class XRDiContributions implements IIBMiHostContributions {
+
+    public AS400 findSystem(String hostName) {
+
+        try {
+            IBMiConnection[] connections = IBMiConnection.getConnections();
+            for (IBMiConnection ibMiConnection : connections) {
+                if (ibMiConnection.getHostName().equalsIgnoreCase(hostName)) {
+                    return ibMiConnection.getAS400ToolboxObject();
+                }
+            }
+        } catch (SystemMessageException e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
+
+        return null;
+    }
 
     public AS400 getSystem(String connectionName) {
 

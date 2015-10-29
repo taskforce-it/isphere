@@ -100,7 +100,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         comboSourceFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
         comboSourceFileSearchEditMode.setToolTipText(Messages.Tooltip_Lpex_editor_mode);
-        comboSourceFileSearchEditMode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        comboSourceFileSearchEditMode.setLayoutData(createTextLayoutData(2));
         comboSourceFileSearchEditMode.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 if (validateSourceFileSearchEditMode()) {
@@ -116,7 +116,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         textSourceFileSearchSaveDirectory = WidgetFactory.createText(group);
         textSourceFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_source_file_search_results_to);
-        GridData sourceFileSearchSaveDirectoryLayoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        GridData sourceFileSearchSaveDirectoryLayoutData = createTextLayoutData();
         sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
         textSourceFileSearchSaveDirectory.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
         textSourceFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
@@ -164,7 +164,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         buttonSourceFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
         buttonSourceFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
-        buttonSourceFileSearchAutoSaveEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonSourceFileSearchAutoSaveEnabled.setLayoutData(createTextLayoutData(2));
         buttonSourceFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -184,7 +184,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         textSourceFileSearchAutoSaveFileName = WidgetFactory.createText(group);
         textSourceFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
-        textSourceFileSearchAutoSaveFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textSourceFileSearchAutoSaveFileName.setLayoutData(createTextLayoutData(2));
         textSourceFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 if (validateSourceFileSearchAutoSaveFileName()) {
@@ -215,7 +215,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         textMessageFileSearchSaveDirectory = WidgetFactory.createText(group);
         textMessageFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_message_file_search_results_to);
-        GridData messageFileSearchSaveDirectoryLayoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        GridData messageFileSearchSaveDirectoryLayoutData = createTextLayoutData();
         messageFileSearchSaveDirectoryLayoutData.widthHint = 200;
         textMessageFileSearchSaveDirectory.setLayoutData(messageFileSearchSaveDirectoryLayoutData);
         textMessageFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
@@ -263,7 +263,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         buttonMessageFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
         buttonMessageFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
-        buttonMessageFileSearchAutoSaveEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonMessageFileSearchAutoSaveEnabled.setLayoutData(createTextLayoutData(2));
         buttonMessageFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -283,7 +283,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         textMessageFileSearchAutoSaveFileName = WidgetFactory.createText(group);
         textMessageFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
-        textMessageFileSearchAutoSaveFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textMessageFileSearchAutoSaveFileName.setLayoutData(createTextLayoutData(2));
         textMessageFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 if (validateMessageFileSearchAutoSaveFileName()) {
@@ -548,6 +548,14 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     }
 
     private GridData createLabelLayoutData() {
-        return new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+        return new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+    }
+
+    private GridData createTextLayoutData() {
+        return createTextLayoutData(1);
+    }
+
+    private GridData createTextLayoutData(int horizontalSpan) {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
     }
 }

@@ -15,6 +15,14 @@ import com.ibm.as400.access.AS400;
 public interface IIBMiHostContributions {
 
     /**
+     * Returns an AS400 object for a given host name.
+     * 
+     * @param hostName - host name to identify the connection
+     * @return AS400 object that is associated to the host
+     */
+    public AS400 findSystem(String hostName);
+    
+    /**
      * Returns an AS400 object for a given connection name.
      * 
      * @param connectionName - connection name to identify the connection

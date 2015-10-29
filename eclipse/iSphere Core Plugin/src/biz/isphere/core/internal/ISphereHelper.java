@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,35 +29,101 @@ import com.ibm.as400.access.ObjectDoesNotExistException;
 
 public class ISphereHelper {
 
-    public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
+    public static String getISphereLibraryVersion(AS400 as400, String library) {
 
-        Boolean isValidLibrary = null;
+        String dataAreaISphereContent = readISphereDataArea(null, as400, library);
+        if (dataAreaISphereContent == null) {
+            return null;
+        }
+
+        String libraryVersion = retrieveServerVersion(dataAreaISphereContent);
+        if (libraryVersion == null) {
+            return null;
+        }
+
+        return getVersionFormatted(libraryVersion);
+    }
+
+    public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
+        return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary());
+    }
+
+    public static boolean checkISphereLibrary(Shell shell, AS400 as400, String library) {
+
+        String dataAreaISphereContent = readISphereDataArea(shell, as400, library);
+        if (dataAreaISphereContent == null) {
+            return false;
+        }
+
+        String serverProvided = retrieveServerVersion(dataAreaISphereContent);
+        String serverNeedsClient = retrieveRequiredClientVersion(dataAreaISphereContent);
+
+        String clientProvided = comparableVersion(ISpherePlugin.getDefault().getVersion());
+        String clientNeedsServer = comparableVersion(ISpherePlugin.getDefault().getMinServerVersion());
+
+        if (serverProvided.compareTo(clientNeedsServer) < 0) {
+
+            String text = Messages.E_R_R_O_R;
+            String message = Messages
+                .bind(
+                    Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
+                    new String[] { ISpherePlugin.getISphereLibrary(), as400.getSystemName(), getVersionFormatted(serverProvided),
+                        getVersionFormatted(clientNeedsServer) });
+            new DisplayMessage(shell, text, message).start();
+
+            return false;
+        }
+
+        if (clientProvided.compareTo(serverNeedsClient) < 0) {
+
+            String text = Messages.E_R_R_O_R;
+            String message = Messages
+                .bind(
+                    Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client,
+                    new String[] { getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient) });
+            new DisplayMessage(shell, text, message).start();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private static String retrieveServerVersion(String dataAreaISphereContent) {
+        return dataAreaISphereContent.substring(7, 13);
+    }
+
+    private static String retrieveRequiredClientVersion(String dataAreaISphereContent) {
+        return dataAreaISphereContent.substring(21, 27);
+    }
+
+    private static String retrieveBuildDate(String dataAreaISphereContent) {
+        return dataAreaISphereContent.substring(39, 49);
+    }
+
+    private static String readISphereDataArea(Shell shell, AS400 as400, String library) {
 
         String messageId = null;
         try {
-            messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + ISpherePlugin.getISphereLibrary() + ") OBJTYPE(*LIB)");
+            messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + library + ") OBJTYPE(*LIB)");
         } catch (Exception e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
         if (messageId == null || !messageId.equals("")) {
 
-            String text = Messages.E_R_R_O_R;
-            String message = Messages.bind(Messages.iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B,
-                new String[] { ISpherePlugin.getISphereLibrary(), as400.getSystemName() });
-            // .iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B;
-            // message = message.replace("&1",
-            // ISpherePlugin.getISphereLibrary());
-            // message = message.replace("&2", as400.getSystemName());
-            new DisplayMessage(shell, text, message).start();
+            if (shell != null) {
+                String text = Messages.E_R_R_O_R;
+                String message = Messages.bind(Messages.iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B,
+                    new String[] { library, as400.getSystemName() });
+                new DisplayMessage(shell, text, message).start();
+            }
 
-            isValidLibrary = Boolean.FALSE;
-            return isValidLibrary.booleanValue();
-
+            return null;
         }
 
         String dataAreaISphereContent = null;
-        CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + ISpherePlugin.getISphereLibrary() + ".LIB/ISPHERE.DTAARA");
+        CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + library + ".LIB/ISPHERE.DTAARA");
         try {
             dataAreaISphereContent = dataAreaISphere.read();
         } catch (AS400SecurityException e) {
@@ -75,73 +141,17 @@ public class ISphereHelper {
         }
         if (dataAreaISphereContent == null) {
 
-            String text = Messages.E_R_R_O_R;
-            String message = Messages.bind(Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library,
-                new String[] { ISpherePlugin.getISphereLibrary(), as400.getSystemName() });
-            // String message =
-            // Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
-            // message = message.replace("&1",
-            // ISpherePlugin.getISphereLibrary());
-            // message = message.replace("&2", as400.getSystemName());
-            new DisplayMessage(shell, text, message).start();
+            if (shell != null) {
+                String text = Messages.E_R_R_O_R;
+                String message = Messages.bind(Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library, new String[] { library,
+                    as400.getSystemName() });
+                new DisplayMessage(shell, text, message).start();
+            }
 
-            isValidLibrary = Boolean.FALSE;
-            return isValidLibrary.booleanValue();
-
+            return null;
         }
 
-        String serverProvided = dataAreaISphereContent.substring(7, 13);
-        String clientProvided = comparableVersion(ISpherePlugin.getDefault().getVersion());
-        String serverNeedsClient = dataAreaISphereContent.substring(21, 27);
-        String clientNeedsServer = comparableVersion(ISpherePlugin.getDefault().getMinServerVersion());
-
-        if (serverProvided.compareTo(clientNeedsServer) < 0) {
-
-            String text = Messages.E_R_R_O_R;
-            String message = Messages
-                .bind(
-                    Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
-                    new String[] { ISpherePlugin.getISphereLibrary(), as400.getSystemName(), getVersionFormatted(serverProvided),
-                        getVersionFormatted(clientNeedsServer) });
-            // String message =
-            // Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B;
-            // message = message.replace("&1",
-            // ISpherePlugin.getISphereLibrary());
-            // message = message.replace("&2", as400.getSystemName());
-            // message = message.replace("&3",
-            // getVersionFormatted(serverProvided));
-            // message = message.replace("&4",
-            // getVersionFormatted(clientNeedsServer));
-            new DisplayMessage(shell, text, message).start();
-
-            isValidLibrary = Boolean.FALSE;
-            return isValidLibrary.booleanValue();
-
-        }
-
-        if (clientProvided.compareTo(serverNeedsClient) < 0) {
-
-            String text = Messages.E_R_R_O_R;
-            String message = Messages
-                .bind(
-                    Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client,
-                    new String[] { getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient) });
-            // String message =
-            // Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client;
-            // message = message.replace("&1",
-            // getVersionFormatted(clientProvided));
-            // message = message.replace("&2",
-            // getVersionFormatted(serverNeedsClient));
-            new DisplayMessage(shell, text, message).start();
-
-            isValidLibrary = Boolean.FALSE;
-            return isValidLibrary.booleanValue();
-
-        }
-
-        isValidLibrary = Boolean.TRUE;
-        return isValidLibrary.booleanValue();
-
+        return dataAreaISphereContent;
     }
 
     private static String getVersionFormatted(String aVersionNumber) {
