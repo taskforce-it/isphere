@@ -58,6 +58,24 @@
 		<img src="assets/message_monitor_properties.png" align="middle">
 	<p>The <i>Login credentials</i> are optional and must be specified only
 	   for email servers that require an authenticated user for sending emails.
+    
+    <p>
+ 	<table>
+ 		<tr>
+ 			<td class="notice" >Notice: The email password is stored in the Eclipse secure 
+ 			storage area.<br>See: Windows | Preferences | General | Security | Secure Storage</td>
+		</tr>
+ 	</table>
+ 	
+    <p>
+ 	<table>
+ 		<tr>
+ 			<td class="important" >Important: Eclipse 3.2, which is used by WDSCi, does not have
+ 			a secure storage container. Here the password is encrypted and stored by iSphere, which
+ 			might not be as secure as the Eclipse secure storage area.</td>
+		</tr>
+ 	</table>
+	   
 	<p>The message monitor requires an <b>exclusive lock</b> on your message
 		queue. It will not get the lock if the message queue is locked by
 		another job, such as a 5250 session. Therefore it is recommended you
@@ -69,6 +87,7 @@
 			<td class="code">DLCOBJ OBJ((library_name/message_queue_name *MSGQ *EXCL)) SCOPE(*THREAD)</td>
 		</tr>
 	</table>
+	
 	<p>The command must be executed from the job that holds the lock.
 	<p>
 		The message queue is not immediately unlocked when option <i>Monitor
