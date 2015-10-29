@@ -88,7 +88,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelISphereLibrary.setLayoutData(createLabelLayoutData());
         labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
-        textISphereLibrary = WidgetFactory.createText(container);
+        textISphereLibrary = WidgetFactory.createUpperCaseText(container);
         textISphereLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -212,20 +212,17 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     }
 
     private String getISphereLibraryVersion(String hostName, String library) {
-        
-        clearError();
 
         if (StringHelper.isNullOrEmpty(hostName)) {
             return Messages.not_found;
         } else if (StringHelper.isNullOrEmpty(library)) {
-            
+
         }
 
         AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
 
         if (as400 == null) {
-            setError(Messages.bind(Messages.Host_A_not_found, hostName));
-            return Messages.not_found;
+            return Messages.bind(Messages.Host_A_not_found, hostName);
         }
 
         String version = ISphereHelper.getISphereLibraryVersion(as400, library);
@@ -234,17 +231,5 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         }
 
         return version;
-    }
-
-    private boolean setError(String message) {
-        setErrorMessage(message);
-        setValid(false);
-        return false;
-    }
-
-    private boolean clearError() {
-        setErrorMessage(null);
-        setValid(true);
-        return true;
     }
 }
