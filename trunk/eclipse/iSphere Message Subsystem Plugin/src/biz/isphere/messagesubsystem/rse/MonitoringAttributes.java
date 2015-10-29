@@ -38,17 +38,30 @@ public class MonitoringAttributes {
     public static final String NOTIFICATION_TYPE_EMAIL = "*EMAIL"; //$NON-NLS-1$
     public static final String NOTIFICATION_TYPE_BEEP = "*BEEP"; //$NON-NLS-1$
 
+    public static final String INFORMATIONAL_MESSAGE_NOTIFICATION_TYPE_DEFAULT = NOTIFICATION_TYPE_BEEP;
+    public static final String INQUIRY_MESSAGE_NOTIFICATION_TYPE_DEFAULT = NOTIFICATION_TYPE_DIALOG;
+
     private static final String MONITORING_ENABLED = "true"; //$NON-NLS-1$
     private static final String MONITORING_DISABLED = "false"; //$NON-NLS-1$
+    private static final boolean MONITORING_DEFAULT = Boolean.parseBoolean(MONITORING_DISABLED);
+
     private static final String REMOVE_YES = "true"; //$NON-NLS-1$
     private static final String REMOVE_NO = "false"; //$NON-NLS-1$
+    private static final boolean REMOVE_DEFAULT = Boolean.parseBoolean(REMOVE_NO);
 
-    private static final String EMAIL_EXAMPLE_FROM = "MyMessages@"; //$NON-NLS-1$
     private static final String EMAIL_EXAMPLE_ADDRESS = "youraddress@yourcompany.com"; //$NON-NLS-1$
+    private static final String EMAIL_EXAMPLE_FROM = "MyMessages@"; //$NON-NLS-1$
     private static final String EMAIL_EXAMPLE_HOST = "mailserver.yourcompany.com"; //$NON-NLS-1$
     private static final String EMAIL_EXAMPLE_PORT = "25"; //$NON-NLS-1$
+
+    private static final String SMTP_EXAMPLE_USER = ""; //$NON-NLS-1$
+    private static final String SMTP_EXAMPLE_PASSWORD = ""; //$NON-NLS-1$
+
     private static final String SMTP_LOGIN_ENABLED = "true"; //$NON-NLS-1$
     private static final String SMTP_LOGIN_DISABLED = "false"; //$NON-NLS-1$
+    private static final boolean SMTP_LOGIN_DEFAULT = Boolean.parseBoolean(SMTP_LOGIN_DISABLED);
+    private static final String SMTP_USER_DEFAULT = ""; //$NON-NLS-1$
+    private static final String SMTP_PASSWORD_DEFAULT = ""; //$NON-NLS-1$
 
     private IQueuedMessageSubsystem queuedMessageSubSystem;
 
@@ -59,25 +72,25 @@ public class MonitoringAttributes {
 
     public void restoreToDefault() {
 
-        setMonitoring(false);
-        setRemoveInformationalMessages(false);
-        setInformationalMessageNotificationType(null);
-        setInqueryMessageNotificationType(null);
+        setMonitoring(MONITORING_DEFAULT);
+        setRemoveInformationalMessages(REMOVE_DEFAULT);
+        setInformationalMessageNotificationType(INFORMATIONAL_MESSAGE_NOTIFICATION_TYPE_DEFAULT);
+        setInqueryMessageNotificationType(INQUIRY_MESSAGE_NOTIFICATION_TYPE_DEFAULT);
 
-        setEmail(null);
-        setFrom(null);
-        setHost(null);
-        setPort(null);
-        setSmtpLogin(false);
-        setSmtpUser("");
-        setSmtpPassword("");
+        setEmail(EMAIL_EXAMPLE_ADDRESS);
+        setFrom(EMAIL_EXAMPLE_FROM);
+        setHost(EMAIL_EXAMPLE_HOST);
+        setPort(EMAIL_EXAMPLE_PORT);
+        setSmtpLogin(SMTP_LOGIN_DEFAULT);
+        setSmtpUser(SMTP_USER_DEFAULT);
+        setSmtpPassword(SMTP_PASSWORD_DEFAULT);
     }
 
     public boolean isMonitoringEnabled() {
 
         String monitorString = getVendorAttribute(MONITOR);
         if (monitorString == null) {
-            return false;
+            return MONITORING_DEFAULT;
         } else {
             if (MONITORING_ENABLED.equals(monitorString)) {
                 return true;
@@ -100,7 +113,7 @@ public class MonitoringAttributes {
 
         String removeString = getVendorAttribute(REMOVE);
         if (removeString == null) {
-            return false;
+            return REMOVE_DEFAULT;
         } else {
             if (MONITORING_ENABLED.equals(removeString)) {
                 return true;
@@ -126,7 +139,7 @@ public class MonitoringAttributes {
             return typeInternal;
         }
 
-        return NOTIFICATION_TYPE_DIALOG;
+        return INQUIRY_MESSAGE_NOTIFICATION_TYPE_DEFAULT;
     }
 
     public void setInqueryMessageNotificationType(String typeInternal) {
@@ -135,7 +148,7 @@ public class MonitoringAttributes {
         if (isValidNotificationType(typeInternal)) {
             typeValidated = typeInternal;
         } else {
-            typeValidated = NOTIFICATION_TYPE_DIALOG;
+            typeValidated = INQUIRY_MESSAGE_NOTIFICATION_TYPE_DEFAULT;
         }
 
         setVendorAttribute(INQUIRY_NOTIFICATION, typeValidated);
@@ -160,7 +173,7 @@ public class MonitoringAttributes {
             return typeInternal;
         }
 
-        return NOTIFICATION_TYPE_EMAIL;
+        return INFORMATIONAL_MESSAGE_NOTIFICATION_TYPE_DEFAULT;
     }
 
     public void setInformationalMessageNotificationType(String notificationType) {
@@ -169,7 +182,7 @@ public class MonitoringAttributes {
         if (isValidNotificationType(notificationType)) {
             typeInternal = notificationType;
         } else {
-            typeInternal = NOTIFICATION_TYPE_EMAIL;
+            typeInternal = INFORMATIONAL_MESSAGE_NOTIFICATION_TYPE_DEFAULT;
         }
 
         setVendorAttribute(INFORMATIONAL_NOTIFICATION, typeInternal);
@@ -279,7 +292,7 @@ public class MonitoringAttributes {
 
         String smtpLoginString = getVendorAttribute(SMTP_LOGIN);
         if (smtpLoginString == null) {
-            return false;
+            return SMTP_LOGIN_DEFAULT;
         } else {
             if (SMTP_LOGIN_ENABLED.equals(smtpLoginString)) {
                 return true;
@@ -299,18 +312,28 @@ public class MonitoringAttributes {
     }
 
     public String getSmtpUser() {
-        return getSecureValue(SMTP_USER);
+        return getSecureValue(SMTP_USER, SMTP_USER_DEFAULT);
     }
 
     public void setSmtpUser(String user) {
+
+        if (user == null) {
+            user = SMTP_EXAMPLE_USER;
+        }
+
         setSecureValue(SMTP_USER, user);
     }
 
     public String getSmtpPassword() {
-        return getSecureValue(SMTP_PASSWORD);
+        return getSecureValue(SMTP_PASSWORD, SMTP_PASSWORD_DEFAULT);
     }
 
     public void setSmtpPassword(String password) {
+
+        if (password == null) {
+            password = SMTP_EXAMPLE_PASSWORD;
+        }
+
         setSecureValue(SMTP_PASSWORD, password);
     }
 
@@ -327,31 +350,29 @@ public class MonitoringAttributes {
         return true;
     }
 
-    private String getSecureValue(String key) {
+    private String getSecureValue(String key, String def) {
 
         if (getHost() == null) {
-            throw new RuntimeException("Host must not be null."); //$NON-NLS-1$
+            ISpherePlugin.logError("MonitoringAttributes.getSecureValue(): Host must not be null.", null); //$NON-NLS-1$
+            return def;
         }
 
         ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
-        String valueString = ""; //$NON-NLS-1$
+        String valueString = null;
 
         try {
-            valueString = securePreferences.get(key + "/" + getHost(), ""); //$NON-NLS-1$ //$NON-NLS-2$
+            valueString = securePreferences.get(getSecureValueKey(key), def); 
         } catch (StorageException e) {
         }
 
-        if (StringHelper.isNullOrEmpty(valueString)) {
-            return ""; //$NON-NLS-1$
-        } else {
-            return valueString;
-        }
+        return valueString;
     }
 
     public void setSecureValue(String key, String value) {
 
         if (getHost() == null) {
-            throw new RuntimeException("Host must not be null."); //$NON-NLS-1$
+            ISpherePlugin.logError("MonitoringAttributes.setSecureValue(): Host must not be null.", null); //$NON-NLS-1$
+            return;
         }
 
         String valueString;
@@ -364,10 +385,14 @@ public class MonitoringAttributes {
         ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
 
         try {
-            securePreferences.put(key + "/" + getHost(), valueString, true); //$NON-NLS-1$
+            securePreferences.put(getSecureValueKey(key), valueString, true);
         } catch (StorageException e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
+    }
+
+    private String getSecureValueKey(String key) {
+        return key + "/" + getHost(); //$NON-NLS-1$
     }
 
     private String convertToInternalNotificationType(String notificationType) {
@@ -398,14 +423,12 @@ public class MonitoringAttributes {
     }
 
     private boolean isValidNotificationType(String typeInternal) {
+
         if (NOTIFICATION_TYPE_DIALOG.equals(typeInternal)) {
             return true;
-        }
-
-        if (NOTIFICATION_TYPE_EMAIL.equals(typeInternal)) {
+        } else if (NOTIFICATION_TYPE_EMAIL.equals(typeInternal)) {
             return true;
-        }
-        if (NOTIFICATION_TYPE_BEEP.equals(typeInternal)) {
+        } else if (NOTIFICATION_TYPE_BEEP.equals(typeInternal)) {
             return true;
         }
 
