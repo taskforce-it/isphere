@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
+import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 
 /**
  * Factory for creating SWT widgets.
@@ -67,6 +68,36 @@ public final class WidgetFactory {
     public static Text createReadOnlyText(Composite parent) {
 
         Text text = WidgetFactory.getInstance().produceText(parent, SWT.NONE, false);
+        text.setEditable(false);
+
+        return text;
+    }
+
+    /**
+     * Produces a single line text field with a border. Input is upper-case
+     * only.
+     * 
+     * @param parent - parent composite
+     * @return text field
+     */
+    public static Text createUpperCaseText(Composite parent) {
+
+        Text text = WidgetFactory.getInstance().produceText(parent, SWT.NONE, true);
+        text.addVerifyListener(new UpperCaseOnlyVerifier());
+
+        return text;
+    }
+
+    /**
+     * Produces an upper-case, read-only single line text field.
+     * 
+     * @param parent - parent composite
+     * @return read-only text field
+     */
+    public static Text createUpperCaseReadOnlyText(Composite parent) {
+
+        Text text = WidgetFactory.getInstance().produceText(parent, SWT.NONE, false);
+        text.addVerifyListener(new UpperCaseOnlyVerifier());
         text.setEditable(false);
 
         return text;
