@@ -8,6 +8,10 @@
 
 package biz.isphere.core.preferencepages;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -228,6 +232,18 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         String version = ISphereHelper.getISphereLibraryVersion(as400, library);
         if (version == null) {
             return Messages.not_found;
+        }
+
+        String buildDate = ISphereHelper.getISphereLibraryBuildDate(as400, library);
+        if (StringHelper.isNullOrEmpty(buildDate)) {
+            return version;
+        }
+
+        try {
+            DateFormat dateFormatter = Preferences.getInstance().getDateFormatter();
+            DateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
+            return version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
+        } catch (ParseException e) {
         }
 
         return version;

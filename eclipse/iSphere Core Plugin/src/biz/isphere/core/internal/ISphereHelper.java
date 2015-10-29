@@ -44,6 +44,21 @@ public class ISphereHelper {
         return getVersionFormatted(libraryVersion);
     }
 
+    public static String getISphereLibraryBuildDate(AS400 as400, String library) {
+
+        String dataAreaISphereContent = readISphereDataArea(null, as400, library);
+        if (dataAreaISphereContent == null) {
+            return null;
+        }
+
+        String buildDate = retrieveBuildDate(dataAreaISphereContent);
+        if (buildDate == null || buildDate.trim().length() == 0) {
+            return null;
+        }
+
+        return buildDate;
+    }
+
     public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
         return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary());
     }
@@ -67,8 +82,7 @@ public class ISphereHelper {
             String message = Messages
                 .bind(
                     Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
-                    new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided),
-                        getVersionFormatted(clientNeedsServer) });
+                    new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided), getVersionFormatted(clientNeedsServer) });
             new DisplayMessage(shell, text, message).start();
 
             return false;
