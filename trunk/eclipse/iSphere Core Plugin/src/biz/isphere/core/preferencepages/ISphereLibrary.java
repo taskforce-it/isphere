@@ -9,7 +9,6 @@
 package biz.isphere.core.preferencepages;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.jface.preference.PreferencePage;
@@ -217,35 +216,35 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     private String getISphereLibraryVersion(String hostName, String library) {
 
-        if (StringHelper.isNullOrEmpty(hostName)) {
-            return Messages.not_found;
-        } else if (StringHelper.isNullOrEmpty(library)) {
-
-        }
-
-        AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
-
-        if (as400 == null) {
-            return Messages.bind(Messages.Host_A_not_found, hostName);
-        }
-
-        String version = ISphereHelper.getISphereLibraryVersion(as400, library);
-        if (version == null) {
+        if (StringHelper.isNullOrEmpty(hostName) || StringHelper.isNullOrEmpty(library)) {
             return Messages.not_found;
         }
 
-        String buildDate = ISphereHelper.getISphereLibraryBuildDate(as400, library);
-        if (StringHelper.isNullOrEmpty(buildDate)) {
-            return version;
-        }
+        String version;
 
         try {
+
+            AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
+            if (as400 == null) {
+                return Messages.bind(Messages.Host_A_not_found, hostName);
+            }
+
+            version = ISphereHelper.getISphereLibraryVersion(as400, library);
+            if (version == null) {
+                return Messages.not_found;
+            }
+
+            String buildDate = ISphereHelper.getISphereLibraryBuildDate(as400, library);
+            if (StringHelper.isNullOrEmpty(buildDate)) {
+                return version;
+            }
+
             DateFormat dateFormatter = Preferences.getInstance().getDateFormatter();
             DateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
             return version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
-        } catch (ParseException e) {
-        }
 
-        return version;
+        } catch (Throwable e) {
+            return null;
+        }
     }
 }
