@@ -51,7 +51,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label messageQueueLabel = new Label(composite_prompts, SWT.NONE);
         messageQueueLabel.setText(Messages.Message_queue_colon);
 
-        messageQueueText = WidgetFactory.createText(composite_prompts);
+        messageQueueText = WidgetFactory.createUpperCaseText(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
         messageQueueText.setLayoutData(gd);
@@ -60,7 +60,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label libraryLabel = new Label(composite_prompts, SWT.NONE);
         libraryLabel.setText(Messages.Library_colon);
 
-        libraryText = WidgetFactory.createText(composite_prompts);
+        libraryText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         libraryText.setLayoutData(gd);
@@ -69,7 +69,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label fromLabel = new Label(composite_prompts, SWT.NONE);
         fromLabel.setText(Messages.From_user_colon);
 
-        userText = WidgetFactory.createText(composite_prompts);
+        userText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         userText.setLayoutData(gd);
@@ -78,7 +78,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label idLabel = new Label(composite_prompts, SWT.NONE);
         idLabel.setText(Messages.Message_ID_colon);
 
-        idText = WidgetFactory.createText(composite_prompts);
+        idText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         idText.setLayoutData(gd);
@@ -96,7 +96,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label fromJobLabel = new Label(composite_prompts, SWT.NONE);
         fromJobLabel.setText(Messages.From_job_colon);
 
-        fromJobText = WidgetFactory.createText(composite_prompts);
+        fromJobText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         fromJobText.setLayoutData(gd);
@@ -114,7 +114,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label fromProgramLabel = new Label(composite_prompts, SWT.NONE);
         fromProgramLabel.setText(Messages.From_program_colon);
 
-        fromProgramText = WidgetFactory.createText(composite_prompts);
+        fromProgramText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         fromProgramText.setLayoutData(gd);
