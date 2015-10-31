@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jasypt-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt400Small.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/icu4j_3_4_5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
+		<accessrules>
+			<accessrule kind="accessible" pattern="org/eclipse/ui/internal/keys/BindingService"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
