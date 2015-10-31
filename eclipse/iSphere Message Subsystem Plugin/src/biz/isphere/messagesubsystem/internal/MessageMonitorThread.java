@@ -39,6 +39,7 @@ public class MessageMonitorThread extends Thread {
     private String errorMessage;
 
     private final static String END_MONITORING = "*END_MONITORING"; //$NON-NLS-1$
+    private static final String REMOVE_ALL = "*REMOVE_ALL"; //$NON-NLS-1$
     private final static int WAIT_SECS = 20;
 
     public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, QueuedMessageFilter messageFilter,
@@ -110,7 +111,9 @@ public class MessageMonitorThread extends Thread {
 
     private void handleMessage(QueuedMessage message) throws Exception {
 
-        if (END_MONITORING.equals(message.getText())) {
+        if (REMOVE_ALL.equals(message.getText())) {
+            messageQueue.remove();
+        } else if (END_MONITORING.equals(message.getText())) {
             if (!MessageQueue.REMOVE.equals(messageAction)) {
                 messageQueue.remove(message.getKey());
             }
