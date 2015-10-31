@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TN5250J for RDi 8.0+
+Bundle-SymbolicName: de.taskforce.tn5250j.rse;singleton:=true
+Bundle-Version: 3.0.2
+Bundle-Activator: de.taskforce.tn5250j.rse.TN5250JRSEPlugin
+Bundle-Vendor: Task Force IT-Consulting GmbH
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.views,
+ org.eclipse.rse.core,
+ org.eclipse.rse.services,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.rse.ui,
+ org.eclipse.rse.ui,
+ de.taskforce.tn5250j.core,
+ org.tn5250j,
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.rse
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Export-Package: de.taskforce.tn5250j.rse,
+ de.taskforce.tn5250j.rse.actions,
+ de.taskforce.tn5250j.rse.designereditor,
+ de.taskforce.tn5250j.rse.designerpart,
+ de.taskforce.tn5250j.rse.designerview,
+ de.taskforce.tn5250j.rse.model,
+ de.taskforce.tn5250j.rse.sessionseditor,
+ de.taskforce.tn5250j.rse.sessionspart,
+ de.taskforce.tn5250j.rse.sessionsview,
+ de.taskforce.tn5250j.rse.subsystems
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
