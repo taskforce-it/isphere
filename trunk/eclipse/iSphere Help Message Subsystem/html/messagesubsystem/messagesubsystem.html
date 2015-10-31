@@ -93,6 +93,18 @@
 		The message queue is not immediately unlocked when option <i>Monitor
 			message queue</i> is unchecked. It can take up to 20 seconds until the
 		lock has been removed.
+	<h2>Remove Messages</h2>
+	<p>Actually messages cannot be removed from a monitored message queue, because
+	   the Java message queue class puts an *EXCL lock on the message queue when 
+	   it waits for incoming messages. But you can get around that limitation by
+	   sending a <i>*REMOVE_ALL</i> message to the message queue to make the message
+	   monitor remove all messages from the queue: 
+	<p>   
+	<table>
+		<tr>
+			<td class="code">SNDMSG MSG('*REMOVE_ALL') TOUSR(user_profile)</td>
+		</tr>
+	</table>
 	<h2>End Message Monitor</h2>
 	<p>Message monitoring ends, when the <i>Monitor message queue</i> checkbox is
 	   unchecked. That may take up to 20 seconds, because of the receive message
@@ -111,7 +123,7 @@
 	<h2>Acknowledgement</h2>
 	<p>Over several  months,  many on the WDSC_L mailing list at
 		midrange.com have asked us to adopt the Message Subsystem feature from
-		the RSE Extensions Plugin of Softlandings Systems.
+		the RSE Extensions Plug-in of Softlandings Systems.
 	<p>In our opinion, forking another open source project is
 		difficult, but sometimes there are good reasons to do this. If the
 		original contributor cannot provide further support and enhancements,
