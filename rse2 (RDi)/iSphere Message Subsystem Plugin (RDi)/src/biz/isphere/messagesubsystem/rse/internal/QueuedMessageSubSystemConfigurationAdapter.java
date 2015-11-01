@@ -33,8 +33,8 @@ public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigu
 
     @Override
     protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup,
+        ISubSystemConfiguration config, ISystemFilterPool selectedPool) {
 
-    ISubSystemConfiguration config, ISystemFilterPool selectedPool) {
         SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(config, selectedPool, shell);
         filterAction.setWizardPageTitle(Messages.Message_Filter);
         filterAction.setPage1Description(Messages.Create_a_new_filter_to_list_messages);
