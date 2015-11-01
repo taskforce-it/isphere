@@ -20,7 +20,6 @@ import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.rse.IMessageHandler;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
-import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.MessageQueue;
@@ -30,10 +29,7 @@ public class MessageMonitorThread extends Thread {
 
     private MonitoredMessageQueue messageQueue;
     private MonitoringAttributes monitoringAttributes;
-    private QueuedMessageFilter messageFilter;
     private IMessageHandler messageHandler;
-    private String messageAction;
-    private String messageType;
 
     private boolean monitoring;
     private String errorMessage;
@@ -42,16 +38,12 @@ public class MessageMonitorThread extends Thread {
     private static final String REMOVE_ALL = "*REMOVE_ALL"; //$NON-NLS-1$
     private final static int WAIT_SECS = 20;
 
-    public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, QueuedMessageFilter messageFilter,
-        IMessageHandler messageHandler, String action, String type) {
+    public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, IMessageHandler messageHandler) {
         super("iSphere Message Monitor");
 
         this.messageQueue = messageQueue;
         this.monitoringAttributes = monitoringAttributes;
-        this.messageFilter = messageFilter;
         this.messageHandler = messageHandler;
-        this.messageAction = action;
-        this.messageType = type;
     }
 
     @Override
@@ -70,7 +62,7 @@ public class MessageMonitorThread extends Thread {
 
         while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
             try {
-                QueuedMessage message = messageQueue.receive(null, WAIT_SECS, messageAction, messageType);
+                QueuedMessage message = messageQueue.receive(null, WAIT_SECS, MessageQueue.OLD, MessageQueue.ANY);
                 if (monitoring && (message != null)) {
                     handleMessage(message);
                 }
@@ -114,81 +106,15 @@ public class MessageMonitorThread extends Thread {
         if (REMOVE_ALL.equals(message.getText())) {
             messageQueue.remove();
         } else if (END_MONITORING.equals(message.getText())) {
-            if (!MessageQueue.REMOVE.equals(messageAction)) {
-                messageQueue.remove(message.getKey());
-            }
+            messageQueue.remove(message.getKey());
             monitoringAttributes.setMonitoring(false);
             monitoring = false;
         } else {
-            if (includeMessage(message)) {
+            if (messageQueue.isIncluded(message)) {
                 if (messageHandler != null) {
                     messageHandler.handleMessage(new ReceivedMessage(message));
                 }
             }
         }
     }
-
-    private boolean includeMessage(QueuedMessage message) {
-
-        if (messageFilter == null) {
-            return true;
-        }
-
-        if (messageFilter.getUser() != null) {
-            if ((message.getUser() == null) || !message.getUser().equals(messageFilter.getUser())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getId() != null) {
-            if ((message.getID() == null) || !message.getID().equals(messageFilter.getId())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromJobName() != null) {
-            if ((message.getFromJobName() == null) || !message.getFromJobName().equals(messageFilter.getFromJobName())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromJobNumber() != null) {
-            if ((message.getFromJobNumber() == null) || !message.getFromJobNumber().equals(messageFilter.getFromJobNumber())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromProgram() != null) {
-            if ((message.getFromProgram() == null) || !message.getFromProgram().equals(messageFilter.getFromProgram())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getText() != null) {
-            if ((message.getText() == null) || (message.getText().indexOf(messageFilter.getText()) < 0)) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getSeverity() != -1) {
-            if (message.getSeverity() < messageFilter.getSeverity()) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getMessageType() != -1) {
-            if (message.getType() != messageFilter.getMessageType()) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getDate() != null) {
-            if (messageFilter.getDate().after(message.getDate().getTime())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 }
