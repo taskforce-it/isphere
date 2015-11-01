@@ -104,6 +104,7 @@
         <li>Data Area Monitor/Viewer</li>
         <li>User Space Monitor/Viewer</li>
         <li>Data Queue Monitor/Viewer</li>
+        <li>Message Subsystem/Message Monitor</li>
         </ul>
         </div>     
         <p/>
