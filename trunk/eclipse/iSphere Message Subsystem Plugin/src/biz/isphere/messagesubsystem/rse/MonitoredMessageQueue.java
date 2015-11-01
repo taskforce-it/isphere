@@ -21,31 +21,22 @@ import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.MessageMonitorThread;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
 
-public class MonitoredMessageQueue extends MessageQueue {
+public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     private static final long serialVersionUID = 2988890902520435974L;
 
-    private QueuedMessageFilter messageFilter;
     private IMessageHandler messageHandler;
     private MonitoringAttributes monitoringAttributes;
 
     private boolean monitoring;
-    private String messageAction;
-    private String messageType;
     private MessageMonitorThread monitoringThread;
-
-    public MonitoredMessageQueue(AS400 system, String path, QueuedMessageFilter filter) {
-        this(system, path, filter, null, null);
-    }
 
     public MonitoredMessageQueue(AS400 system, String path, QueuedMessageFilter filter, IMessageHandler messageHandler,
         MonitoringAttributes monitoringAttributes) {
-        super(system, path);
+        super(system, path, filter);
 
-        this.messageFilter = filter;
         this.messageHandler = messageHandler;
         this.monitoringAttributes = monitoringAttributes;
     }
@@ -57,7 +48,7 @@ public class MonitoredMessageQueue extends MessageQueue {
         Enumeration<?> enumx = getMessages();
         while (enumx.hasMoreElements()) {
             QueuedMessage message = (QueuedMessage)enumx.nextElement();
-            if (includeMessage(message)) {
+            if (isIncluded(message)) {
                 messages.add(message);
             }
         }
@@ -68,10 +59,7 @@ public class MonitoredMessageQueue extends MessageQueue {
         return messageArray;
     }
 
-    public void startMonitoring(String action, String type) {
-
-        messageAction = action;
-        messageType = type;
+    public void startMonitoring() {
 
         if (monitoringThread == null) {
             monitoring = true;
@@ -107,77 +95,9 @@ public class MonitoredMessageQueue extends MessageQueue {
         return monitoring;
     }
 
-    public void setFilter(QueuedMessageFilter filter) {
-        this.messageFilter = filter;
-    }
-
-    private boolean includeMessage(QueuedMessage message) {
-
-        if (messageFilter == null) {
-            return true;
-        }
-
-        if (messageFilter.getUser() != null) {
-            if ((message.getUser() == null) || !message.getUser().equals(messageFilter.getUser())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getId() != null) {
-            if ((message.getID() == null) || !message.getID().equals(messageFilter.getId())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromJobName() != null) {
-            if ((message.getFromJobName() == null) || !message.getFromJobName().equals(messageFilter.getFromJobName())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromJobNumber() != null) {
-            if ((message.getFromJobNumber() == null) || !message.getFromJobNumber().equals(messageFilter.getFromJobNumber())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getFromProgram() != null) {
-            if ((message.getFromProgram() == null) || !message.getFromProgram().equals(messageFilter.getFromProgram())) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getText() != null) {
-            if ((message.getText() == null) || (message.getText().indexOf(messageFilter.getText()) < 0)) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getSeverity() != -1) {
-            if (message.getSeverity() < messageFilter.getSeverity()) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getMessageType() != -1) {
-            if (message.getType() != messageFilter.getMessageType()) {
-                return false;
-            }
-        }
-
-        if (messageFilter.getDate() != null) {
-            if (messageFilter.getDate().after(message.getDate().getTime())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private MessageMonitorThread createMonitoringThread() {
 
-        MessageMonitorThread monitorThread = new MessageMonitorThread(this, monitoringAttributes, messageFilter, messageHandler, messageAction,
-            messageType);
+        MessageMonitorThread monitorThread = new MessageMonitorThread(this, monitoringAttributes, messageHandler);
         return monitorThread;
     }
 }
