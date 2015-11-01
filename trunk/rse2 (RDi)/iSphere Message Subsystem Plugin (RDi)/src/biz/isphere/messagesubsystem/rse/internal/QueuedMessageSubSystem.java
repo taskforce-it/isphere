@@ -120,7 +120,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
         return null;
     }
 
-    public AS400 getToolboxAS400Object() {
+    private AS400 getToolboxAS400Object() {
 
         try {
             return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();

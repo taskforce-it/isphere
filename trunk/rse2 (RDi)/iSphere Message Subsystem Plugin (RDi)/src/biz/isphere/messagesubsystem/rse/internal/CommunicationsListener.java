@@ -13,13 +13,14 @@ package biz.isphere.messagesubsystem.rse.internal;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.rse.MessageHandler;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.MessageQueue;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class CommunicationsListener implements ICommunicationsListener {
 
@@ -66,13 +67,15 @@ public class CommunicationsListener implements ICommunicationsListener {
             if (monitoredMessageQueue == null) {
                 QueuedMessageFilter filter = new QueuedMessageFilter();
                 filter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
-                AS400 as400 = new AS400(queuedMessageSubSystem.getToolboxAS400Object());
+                AS400 as400 = new AS400(IBMiConnection.getConnection(queuedMessageSubSystem.getHost()).getAS400ToolboxObject());
                 monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
                     monitoringAttributes);
             }
 
-            monitoredMessageQueue.startMonitoring(MessageQueue.OLD, MessageQueue.ANY);
+            monitoredMessageQueue.startMonitoring();
 
+        } catch (Exception e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
         } finally {
             isStarting = false;
         }
@@ -85,4 +88,17 @@ public class CommunicationsListener implements ICommunicationsListener {
         }
     }
 
+    public boolean isMonitoring() {
+
+        if (monitoredMessageQueue != null) {
+            return monitoredMessageQueue.isMonitoring();
+        }
+
+        return false;
+    }
+
+    public MonitoredMessageQueue getMonitoredMessageQueue() {
+
+        return monitoredMessageQueue;
+    }
 }
