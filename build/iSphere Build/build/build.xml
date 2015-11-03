@@ -511,8 +511,9 @@
 
 		<echo>Copying zip and pdf files ...</echo>
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
-			<include name="**/*" />
-			<exclude name="**/.project" />
+			<exclude name="*.log" />
+			<exclude name="${target.ide.exclude.site.xml}" />
+			<exclude name=".project" />
 		</zip>
 		<copy file="${isphere.pdf}" todir="${build.upload.dir.files}" />
 
