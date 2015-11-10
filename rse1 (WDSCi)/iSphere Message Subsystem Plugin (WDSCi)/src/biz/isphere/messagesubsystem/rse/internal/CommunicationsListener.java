@@ -70,7 +70,7 @@ public class CommunicationsListener implements ICommunicationsListener {
                     monitoringAttributes);
             }
 
-            monitoredMessageQueue.startMonitoring(MessageQueue.OLD, MessageQueue.ANY);
+            monitoredMessageQueue.startMonitoring();
 
         } finally {
             isStarting = false;
