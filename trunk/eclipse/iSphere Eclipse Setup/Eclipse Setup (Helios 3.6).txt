@@ -96,6 +96,16 @@ c) Preferences -> General -> Keys:
    Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].
    (Otherwise CTRL-ALT-Q does not work to get the '@'.)
 
+d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
+
+   File:    {name} {revision} {author}
+   Folder:  {name} {revision} {author}
+   Project: {name} {revision} [{location_label}]{root_prefix}: {first_branchOrTag_child}
+
+e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
+
+   Check: Outgoing changes
+
 
 Usefull plug-ins:
 -----------------
