@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,23 @@ package biz.isphere.core.compareeditor;
 
 import org.eclipse.compare.CompareConfiguration;
 
+import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
+
 /**
  * Class to store the compare configuration values of the Source Compare Dialog
  * and task.
  */
 public class CompareEditorConfiguration extends CompareConfiguration {
 
-    private static String CONSIDER_DATE = "biz.isphere.core.compareeditor.considerDate";
+    private static final String ISPHERE_COMPARE_PLUGIN_ID = "biz.isphere.comparefilters"; //$NON-NLS-1$
 
-    private static String IGNORE_CASE = "biz.isphere.core.compareeditor.ignoreCase";
+    private static String CONSIDER_DATE = "biz.isphere.core.compareeditor.considerDate"; //$NON-NLS-1$
 
-    private static String THREE_WAY = "biz.isphere.core.compareeditor.threeWay";
+    private static String IGNORE_CASE = "biz.isphere.core.compareeditor.ignoreCase"; //$NON-NLS-1$
+
+    private static String THREE_WAY = "biz.isphere.core.compareeditor.threeWay"; //$NON-NLS-1$
+
+    private boolean hasCompareFilters;
 
     public CompareEditorConfiguration() {
         setIgnoreCase(false);
@@ -28,6 +34,8 @@ public class CompareEditorConfiguration extends CompareConfiguration {
         setThreeWay(false);
 
         setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
+
+        hasCompareFilters = CompareFilterContributionsHandler.hasContribution();
     }
 
     public boolean isIgnoreCase() {
@@ -54,4 +62,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
         setProperty(THREE_WAY, aThreeWay);
     }
 
+    public boolean hasCompareFilters() {
+        return hasCompareFilters;
+    }
 }

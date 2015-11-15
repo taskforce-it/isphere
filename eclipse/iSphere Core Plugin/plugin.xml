@@ -193,6 +193,17 @@
 
       	<!--
       	  ==========================================
+      	    Extension point: Compare Filters
+      	  ==========================================
+      	-->
+
+   <extension-point id="biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions" 
+   		 name="Compare Filter Contributions: ICompareFilterContributions" 
+   		 schema="schema/biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions.xsd">
+   </extension-point>
+
+      	<!--
+      	  ==========================================
       	    iSphere RSE Decorator
       	  ==========================================
       	-->

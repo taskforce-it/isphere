@@ -1055,7 +1055,31 @@ public class Messages extends NLS {
     public static String Host_A_not_found;
 
     public static String not_found;
-    
+
+    public static String Source_member;
+
+    public static String Compare_Filter_File_extensions;
+
+    public static String Button_New;
+
+    public static String Button_Edit;
+
+    public static String Button_Remove;
+
+    public static String Button_Export;
+
+    public static String Button_Import;
+
+    public static String Export_Compare_Filter_File_Extensions;
+
+    public static String Import_Compare_Filter_File_Extensions;
+
+    public static String FileExtensionEditor_headline_new;
+
+    public static String FileExtensionEditor_headline_edit;
+
+    public static String Label_fileExtension_colon;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

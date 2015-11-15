@@ -6,7 +6,7 @@
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description>
       iSphere for RDi 8.0+
 The &quot;iSphere RSE Feature (RDi)&quot; delivers services that are specific to RDi. It completely relies on and extends the iSphere Core Feature regarding to RDi.
    </description>
@@ -40,6 +40,13 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
 
    <plugin
          id="biz.isphere.adapter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="biz.isphere.comparefilters"
          download-size="0"
          install-size="0"
          version="0.0.0"
