@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Compare Filters for RDi 9.5+ (optional)
+Bundle-Name: iSphere Compare Filters for RDi 9.5+ (recommended)
 Bundle-SymbolicName: biz.isphere.comparefilters;singleton:=true
 Bundle-Version: 2.7.0.r
 Bundle-Activator: biz.isphere.comparefilters.ISphereCompareFiltersPlugin
