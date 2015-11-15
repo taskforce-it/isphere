@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent {
@@ -98,7 +99,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
-                    String newString = new String(oldString.getBytes(), "UTF-8");
+                    String newString = StringHelper.trimR(new String(oldString.getBytes(), "UTF-8"));
                     out.println(ignoreCase ? newString.substring(column).toLowerCase() : newString.substring(column));
                 }
                 in.close();
