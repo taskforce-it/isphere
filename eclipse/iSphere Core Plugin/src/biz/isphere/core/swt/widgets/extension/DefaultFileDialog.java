@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
  * @author traddatz
  */
 public class DefaultFileDialog implements IFileDialog {
-    
+
     private FileDialog dialog = null;
 
     public DefaultFileDialog(Shell aParent, int aStyle) {
@@ -62,7 +62,11 @@ public class DefaultFileDialog implements IFileDialog {
     public void setFilterExtensions(String[] aFilterExtensions) {
         dialog.setFilterExtensions(aFilterExtensions);
     }
- 
+
+    public void setFilterIndex(int index) {
+        dialog.setFilterIndex(index);
+    }
+
     public String getFilterPath() {
         return FileHelper.getDefaultRootDirectory();
     }

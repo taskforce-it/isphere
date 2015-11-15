@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,7 @@ public interface IFileDialog {
      * 
      * @return a string describing the absolute path of the first selected file,
      *         or null if the dialog was cancelled or an error occurred
-     * @throws SWTException
-     *         <ul>
+     * @throws SWTException <ul>
      *         <li>ERROR_WIDGET_DISPOSED - if the dialog has been disposed</li>
      *         <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread
      *         that created the dialog</li>
@@ -102,12 +101,19 @@ public interface IFileDialog {
     public void setFilterExtensions(String[] aFilterExtensions);
 
     /**
+     * Set the 0-based index of the file extension filter which the dialog will
+     * use initially to filter the files it shows to the argument.
+     * 
+     * @param index - the file extension filter index
+     */
+    public void setFilterIndex(int index);
+
+    /**
      * Returns the directory path that the dialog will use, or an empty string
      * if this is not set. File names in this path will appear in the dialog,
      * filtered according to the filter extensions.
      * 
      * @return the directory path string
-     * 
      * @see #setFilterExtensions
      */
     public String getFilterPath();
