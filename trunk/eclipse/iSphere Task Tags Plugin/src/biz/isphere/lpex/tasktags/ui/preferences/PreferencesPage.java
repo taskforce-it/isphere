@@ -55,7 +55,7 @@ import biz.isphere.lpex.tasktags.preferences.Preferences;
 
 public class PreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private static final String[] IMPORT_FILE_EXTENSIONS = new String[] { "*.properties", "*.*" }; //$NON-NLS-1$
+    private static final String[] IMPORT_FILE_EXTENSIONS = new String[] { "*.properties", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private Table tblFileExtensions;
 
@@ -103,7 +103,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         gl_mainPanel.verticalSpacing = 4;
         mainPanel.setLayout(gl_mainPanel);
 
-        String headline = " <a href=\"org.eclipse.jdt.ui.preferences.TodoTaskPreferencePage\">" + Messages.PreferencesPage_configureTaskTags + "</a>";
+        String headline = " <a href=\"org.eclipse.jdt.ui.preferences.TodoTaskPreferencePage\">" + Messages.PreferencesPage_configureTaskTags + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$
         Link lnkJavaTaskTags = new Link(mainPanel, SWT.NONE);
         lnkJavaTaskTags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
         lnkJavaTaskTags.setText(headline);
@@ -117,12 +117,12 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
         Link lnkHelp = new Link(mainPanel, SWT.NONE);
         lnkHelp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
-        lnkHelp.setText("<a>" + Messages.PreferencesPage_help + "</a>");
+        lnkHelp.setText("<a>" + Messages.PreferencesPage_help + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
         lnkHelp.pack();
         lnkHelp.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.lpex.tasks.help/html/tasktags/tasktags.html");
+                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.lpex.tasks.help/html/tasktags/tasktags.html"); //$NON-NLS-1$
             }
         });
 
@@ -333,6 +333,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         tFileDialog.setFileName("LPEXTaskTags"); //$NON-NLS-1$
         tFileDialog.setFilterPath(getPreferences().getImportExportLocation());
         tFileDialog.setFilterExtensions(IMPORT_FILE_EXTENSIONS);
+        tFileDialog.setFilterIndex(0);
         tFileDialog.setOverwrite(true);
 
         String tExportFile = tFileDialog.open();
@@ -351,6 +352,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         fileDialog.setFileName(""); //$NON-NLS-1$
         fileDialog.setFilterPath(getPreferences().getImportExportLocation());
         fileDialog.setFilterExtensions(IMPORT_FILE_EXTENSIONS);
+        fileDialog.setFilterIndex(0);
 
         String location = fileDialog.open();
         if (location != null) {
@@ -364,7 +366,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         try {
             Properties tExportData = new Properties();
             for (String tItem : aFileExtensions) {
-                tExportData.put(tItem, "");
+                tExportData.put(tItem, ""); //$NON-NLS-1$
             }
 
             FileOutputStream tOutStream = new FileOutputStream(aLocation);
