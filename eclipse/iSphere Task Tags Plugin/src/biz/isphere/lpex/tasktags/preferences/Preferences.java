@@ -142,7 +142,7 @@ public final class Preferences {
         return true;
     }
 
-    public String getDefaultFileExtensionsAsString() {
+    private String getDefaultFileExtensionsAsString() {
         return "rpg,sqlrpg,rpgle,sqlrpgle,clp,clle,cbl,cblle,c,cle,dspf,prtf,pf,lf,cmd,pnlgrp".replaceAll(",", TOKEN_SEPARATOR); //$NON-NLS-1$
     }
 
