@@ -52,10 +52,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class that implements interface &lt;i&gt;biz.isphere.core.extension.swt.widget.IWidgetFactory&lt;/i&gt;.
+                  Class that implements interface &lt;i&gt;biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions&lt;/i&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":biz.isphere.core.extension.swt.widget.IWidgetFactory"/>
+                  <meta.attribute kind="java" basedOn=":biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions"/>
                </appInfo>
             </annotation>
          </attribute>

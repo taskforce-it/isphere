@@ -15,5 +15,17 @@
    <feature url="features/biz.isphere.messagesubsystem.rse_2.7.0.r.jar" id="biz.isphere.messagesubsystem.rse" version="2.7.0.r">
       <category name="iSphere for RDi 8.0+"/>
    </feature>
-   <category-def name="iSphere for RDi 8.0+" label="iSphere for RDi 8.0+"/>
+   <feature url="features/biz.isphere.comparefilters_2.7.0.r.jar" id="biz.isphere.comparefilters" version="2.7.0.r">
+      <category name="iSphere for RDi 9.5+"/>
+   </feature>
+   <category-def name="iSphere for RDi 8.0+" label="iSphere for RDi 8.0+">
+      <description>
+         iSphere for RDi 8.0+
+      </description>
+   </category-def>
+   <category-def name="iSphere for RDi 9.5+" label="iSphere for RDi 9.5+ (additions)">
+      <description>
+         Optional additions for RDi 9.5+
+      </description>
+   </category-def>
 </site>

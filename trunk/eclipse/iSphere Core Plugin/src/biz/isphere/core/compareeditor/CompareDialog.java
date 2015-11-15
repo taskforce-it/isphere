@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,12 +35,12 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
 
-    protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT";
-    protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED";
+    protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT"; //$NON-NLS-1$
+    protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED"; //$NON-NLS-1$
 
-    private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY";
-    private static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY";
-    private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY";
+    private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY"; //$NON-NLS-1$
+    public static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY"; //$NON-NLS-1$
+    private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY"; //$NON-NLS-1$
 
     private boolean selectEditable;
     private Member leftMember;
@@ -319,7 +319,7 @@ public abstract class CompareDialog extends XDialog {
             leftTimeLabel.setText(Messages.Archive_colon);
             Text leftTimeText = WidgetFactory.createReadOnlyText(leftGroup);
             leftTimeText.setLayoutData(getGridData());
-            leftTimeText.setText(leftMember.getArchiveDate() + " - " + leftMember.getArchiveTime());
+            leftTimeText.setText(leftMember.getArchiveDate() + " - " + leftMember.getArchiveTime()); //$NON-NLS-1$
         }
 
         if (hasMultipleRightMembers) {
@@ -405,7 +405,7 @@ public abstract class CompareDialog extends XDialog {
                     rightTimeLabel.setText(Messages.Archive_colon);
                     Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
                     rightTimeText.setLayoutData(getGridData());
-                    rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime());
+                    rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime()); //$NON-NLS-1$
                 }
 
             }
@@ -460,7 +460,7 @@ public abstract class CompareDialog extends XDialog {
                     ancestorTimeLabel.setText(Messages.Archive_colon);
                     Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
                     ancestorTimeText.setLayoutData(getGridData());
-                    ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime());
+                    ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime()); //$NON-NLS-1$
                 }
 
             }

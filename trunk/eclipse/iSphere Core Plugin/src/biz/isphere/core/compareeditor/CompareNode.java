@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,22 +39,29 @@ import biz.isphere.core.ISpherePlugin;
 
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent {
 
+    private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
+    private static final String CRLF = "\r\n"; //$NON-NLS-1$
+
     private IResource fResource;
     private boolean considerDate;
     private boolean ignoreCase;
     private int column;
+    private boolean hasDate;
     private File tempFile;
     private String yymmdd;
 
-    public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase) {
+    public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase, boolean hasCompareFilters) {
 
         this.fResource = fResource;
         this.considerDate = considerDate;
         this.ignoreCase = ignoreCase;
-        if (considerDate) {
+
+        if (considerDate || hasCompareFilters) {
             column = 6;
+            hasDate = true;
         } else {
             column = 12;
+            hasDate = false;
         }
 
         Assert.isNotNull(fResource);
@@ -85,7 +92,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         try {
             return new BufferedInputStream(new FileInputStream(getTempFile(ignoreCase)));
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not create BufferedInputStream ***", e);
+            ISpherePlugin.logError("*** Could not create BufferedInputStream ***", e); //$NON-NLS-1$
             return null;
         }
     }
@@ -94,20 +101,23 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         try {
             if (tempFile == null) {
                 File file = fResource.getLocation().toFile();
-                tempFile = new File(file.getPath() + "_temp");
+                tempFile = new File(file.getPath() + "_temp"); //$NON-NLS-1$
                 BufferedReader in = new BufferedReader(new FileReader(file));
                 PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
-                    String newString = StringHelper.trimR(new String(oldString.getBytes(), "UTF-8"));
-                    out.println(ignoreCase ? newString.substring(column).toLowerCase() : newString.substring(column));
+                    String newString = StringHelper.trimR(new String(oldString.getBytes(), UTF_8)).substring(column); //$NON-NLS-1$
+                    if (ignoreCase) {
+                        newString = newString.toLowerCase();
+                    }
+                    out.println(newString);
                 }
                 in.close();
                 out.close();
             }
             return tempFile;
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not create temporary file ***", e);
+            ISpherePlugin.logError("*** Could not create temporary file ***", e); //$NON-NLS-1$
             return null;
         }
     }
@@ -134,12 +144,12 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 else if (seq < 999999) seq++;
                 String sequence = Integer.toString(seq);
                 while (sequence.length() < 6)
-                    sequence = "0" + sequence;
-                String newStr = new String(s.getBytes("UTF-8"));
-                if (considerDate) {
-                    updatedContents.append(sequence + newStr + "\r\n");
+                    sequence = "0" + sequence; //$NON-NLS-1$
+                String newStr = new String(s.getBytes(UTF_8)); //$NON-NLS-1$
+                if (hasDate) {
+                    updatedContents.append(sequence + newStr + CRLF);
                 } else {
-                    updatedContents.append(sequence + getSourceDate() + newStr + "\r\n");
+                    updatedContents.append(sequence + getSourceDate() + newStr + CRLF);
                 }
             }
             in.close();
@@ -160,7 +170,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
 
     private String getSourceDate() {
         if (yymmdd == null) {
-            SimpleDateFormat tDateFormatter = new SimpleDateFormat("yyMMdd");
+            SimpleDateFormat tDateFormatter = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
             yymmdd = tDateFormatter.format(Calendar.getInstance().getTime());
         }
         return yymmdd;

@@ -3,10 +3,10 @@
 <schema targetNamespace="biz.isphere.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="biz.isphere.core" id="biz.isphere.core.swt.widget.extension.point.IWidgetFactory" name="SWT Widget Extensions: IWidgetFactory"/>
+         <meta.schema plugin="biz.isphere.core" id="biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions" name="Compare Filter Contributions: ICompareFilterContributions"/>
       </appInfo>
       <documentation>
-         This extension point allows plugins to contribute enhanced versions of swt widgets. It has been introduced at the time plugin &apos;iSphere Adapter&apos; was added in order to contribute XFileDialog.
+         This extension point allows plug-ins to contribute IBM i source member compare filters.
       </documentation>
    </annotation>
 
@@ -52,10 +52,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class that implements interface &lt;i&gt;biz.isphere.core.swt.widgets.extension.point.IWidgetFactory&lt;/i&gt;.
+                  Class that implements interface &lt;i&gt;biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions&lt;/i&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":biz.isphere.core.swt.widgets.extension.point.IWidgetFactory"/>
+                  <meta.attribute kind="java" basedOn=":biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -67,7 +67,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         2.0.0
+         2.6.0
       </documentation>
    </annotation>
 

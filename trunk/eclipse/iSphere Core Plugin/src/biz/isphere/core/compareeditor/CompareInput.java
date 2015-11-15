@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     private boolean threeWay;
     private boolean considerDate;
     private boolean ignoreCase;
+    private boolean hasCompareFilters;
     private Member ancestorMember;
     private Member leftMember;
     private Member rightMember;
@@ -59,6 +60,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         this.threeWay = config.isThreeWay();
         this.considerDate = config.isConsiderDate();
         this.ignoreCase = config.isIgnoreCase();
+        this.hasCompareFilters = config.hasCompareFilters();
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
@@ -72,18 +74,18 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 ancestorMember.download(monitor);
                 IResource fAncestorResource = ancestorMember.getLocalResource();
                 fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                fAncestor = new CompareNode(fAncestorResource, considerDate, ignoreCase);
+                fAncestor = new CompareNode(fAncestorResource, considerDate, ignoreCase, hasCompareFilters);
             }
 
             leftMember.download(monitor);
             IResource fLeftResource = leftMember.getLocalResource();
             fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fLeft = new CompareNode(fLeftResource, considerDate, ignoreCase);
+            fLeft = new CompareNode(fLeftResource, considerDate, ignoreCase, hasCompareFilters);
 
             rightMember.download(monitor);
             IResource fRightResource = rightMember.getLocalResource();
             fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fRight = new CompareNode(fRightResource, considerDate, ignoreCase);
+            fRight = new CompareNode(fRightResource, considerDate, ignoreCase, hasCompareFilters);
 
             monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
             CompareDifferencer d;
@@ -118,7 +120,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             ISpherePlugin.logError(Messages.Unexpected_Error, e);
             String message;
             if (e.getLocalizedMessage() == null) {
-                message = e.getClass().getName() + " - " + getClass().getName();
+                message = e.getClass().getName() + " - " + getClass().getName(); //$NON-NLS-1$
             } else {
                 message = e.getLocalizedMessage();
             }
@@ -142,7 +144,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     ancestorTemp.delete();
                 } catch (Exception e) {
-                    ISpherePlugin.logError("*** Could not delete temporary ancestor file ***", e);
+                    ISpherePlugin.logError("*** Could not delete temporary ancestor file ***", e); //$NON-NLS-1$
                 }
             }
         }
@@ -152,7 +154,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     leftTemp.delete();
                 } catch (Exception e) {
-                    ISpherePlugin.logError("*** Could not delete temporary left file ***", e);
+                    ISpherePlugin.logError("*** Could not delete temporary left file ***", e); //$NON-NLS-1$
                 }
             }
         }
@@ -162,7 +164,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
                 try {
                     rightTemp.delete();
                 } catch (Exception e) {
-                    ISpherePlugin.logError("*** Could not delete temporary right file ***", e);
+                    ISpherePlugin.logError("*** Could not delete temporary right file ***", e); //$NON-NLS-1$
                 }
             }
         }
@@ -175,12 +177,12 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             fLeft.commit(pm);
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not commit changes of left file ***", e);
+            ISpherePlugin.logError("*** Could not commit changes of left file ***", e); //$NON-NLS-1$
         }
         try {
             leftMember.upload(pm);
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not upload left file ***", e);
+            ISpherePlugin.logError("*** Could not upload left file ***", e); //$NON-NLS-1$
         }
         fLeft.refreshTempFile();
         ((MyDiffNode)fRoot).fireChange();
@@ -191,7 +193,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             leftMember.openStream();
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not open stream of left file ***", e);
+            ISpherePlugin.logError("*** Could not open stream of left file ***", e); //$NON-NLS-1$
         }
     }
 
@@ -200,7 +202,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
             leftMember.closeStream();
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not close stream of left file ***", e);
+            ISpherePlugin.logError("*** Could not close stream of left file ***", e); //$NON-NLS-1$
         }
     }
 
