@@ -64,7 +64,7 @@ public class DefaultFileDialog implements IFileDialog {
     }
 
     public void setFilterIndex(int index) {
-        dialog.setFilterIndex(index);
+        return; // Not supported for WDSCi 7.0
     }
 
     public String getFilterPath() {

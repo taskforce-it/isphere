@@ -33,7 +33,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
     public QueuedMessageFilterStringEditPane(Shell shell) {
         super(shell);
 
-        delegate = new QueuedMessageFilterStringEditPaneDelegate(shell);
+        delegate = new QueuedMessageFilterStringEditPaneDelegate();
     }
 
     @Override

@@ -439,7 +439,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void performImport(SelectionEvent anEvent) {
-        FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IFileDialog fileDialog = factory.getFileDialog(getShell(), SWT.OPEN);
         fileDialog.setText(Messages.Import_Compare_Filter_File_Extensions);
         fileDialog.setFileName(""); //$NON-NLS-1$
         fileDialog.setFilterPath(CompareFilterContributionsHandler.getImportExportLocation());

@@ -197,6 +197,16 @@ public class XFileDialog implements IFileDialog {
     }
 
     /**
+     * Set the 0-based index of the file extension filter which the dialog will
+     * use initially to filter the files it shows to the argument.
+     * 
+     * @param index - the file extension filter index
+     */
+    public void setFilterIndex(int index) {
+        return; // Not supported for WDSCi 7.0
+    }
+
+    /**
      * Returns the directory path that the dialog will use, or an empty string
      * if this is not set. File names in this path will appear in the dialog,
      * filtered according to the filter extensions.
