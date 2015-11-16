@@ -48,6 +48,10 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
     public boolean isEnabledInitially() {
 
         IDialogSettings dialogSettings = ISpherePlugin.getDefault().getDialogSettings().getSection(RSECompareDialog.class.getName());
+        if (dialogSettings == null) {
+            return false;
+        }
+
         return !dialogSettings.getBoolean(CompareDialog.CONSIDER_DATE_PROPERTY);
     }
 
@@ -73,7 +77,8 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
 
     private String getFileExtension(Object node) {
 
-        if (node instanceof ITypedElement) {
+        // if (node instanceof ITypedElement) {
+        if (node instanceof biz.isphere.core.compareeditor.CompareNode) {
             return FileHelper.getFileExtension(((ITypedElement)node).getName());
         }
 
