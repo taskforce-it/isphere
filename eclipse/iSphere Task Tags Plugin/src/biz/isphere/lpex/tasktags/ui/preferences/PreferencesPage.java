@@ -347,7 +347,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     }
 
     private void performImport(SelectionEvent anEvent) {
-        FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+        XFileDialog fileDialog = new XFileDialog(getShell(), SWT.OPEN);
         fileDialog.setText(Messages.PreferencesPage_ImportDialog_headline);
         fileDialog.setFileName(""); //$NON-NLS-1$
         fileDialog.setFilterPath(getPreferences().getImportExportLocation());

@@ -60,7 +60,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
         SystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
         QueuedMessageFilter messageFilter = new QueuedMessageFilter();
-        messageFilter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
+        messageFilter.setMessageQueue(QueuedMessageFilter.MSGQ_CURRENT);
         strings.add(messageFilter.getFilterString());
         try {
             SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_Messages, strings);
