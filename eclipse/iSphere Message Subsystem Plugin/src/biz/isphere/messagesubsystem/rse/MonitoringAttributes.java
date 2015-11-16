@@ -33,6 +33,7 @@ public class MonitoringAttributes {
     private final static String SMTP_LOGIN = "biz.isphere.messagesubsystem.internal.smtp.login"; //$NON-NLS-1$ 
     private final static String SMTP_USER = "biz.isphere.messagesubsystem.internal.smtp.user"; //$NON-NLS-1$ 
     private final static String SMTP_PASSWORD = "biz.isphere.messagesubsystem.internal.smtp.password"; //$NON-NLS-1$ 
+    private final static String MESSAGE_FILTER = "biz.isphere.messagesubsystem.internal.messagefilter"; //$NON-NLS-1$ 
 
     public static final String NOTIFICATION_TYPE_DIALOG = "*DIALOG"; //$NON-NLS-1$
     public static final String NOTIFICATION_TYPE_EMAIL = "*EMAIL"; //$NON-NLS-1$
@@ -109,7 +110,7 @@ public class MonitoringAttributes {
         }
     }
 
-    public boolean removeInformationalMessages() {
+    public boolean isRemoveInformationalMessages() {
 
         String removeString = getVendorAttribute(REMOVE);
         if (removeString == null) {
@@ -337,6 +338,19 @@ public class MonitoringAttributes {
         setSecureValue(SMTP_PASSWORD, password);
     }
 
+    public String getFilterString() {
+        return getSecureValue(MESSAGE_FILTER, QueuedMessageFilter.getDefaultFilterString());
+    }
+
+    public void setFilterString(String filter) {
+
+        if (filter == null) {
+            filter = QueuedMessageFilter.getDefaultFilterString();
+        }
+
+        setSecureValue(MESSAGE_FILTER, filter);
+    }
+
     public boolean isValid() {
 
         if (EMAIL_EXAMPLE_ADDRESS.equals(getEmail())) {
@@ -361,7 +375,7 @@ public class MonitoringAttributes {
         String valueString = null;
 
         try {
-            valueString = securePreferences.get(getSecureValueKey(key), def); 
+            valueString = securePreferences.get(getSecureValueKey(key), def);
         } catch (StorageException e) {
         }
 

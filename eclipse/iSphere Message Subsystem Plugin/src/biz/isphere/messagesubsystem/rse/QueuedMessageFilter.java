@@ -17,6 +17,8 @@ import com.ibm.as400.access.MessageQueue;
 
 public class QueuedMessageFilter {
 
+    public static final String MSGQ_CURRENT = "*CURRENT"; //$NON-NLS-1$
+    
     private String description;
     private String messageQueue;
     private String library;
@@ -36,7 +38,7 @@ public class QueuedMessageFilter {
 
     public QueuedMessageFilter(String filterString) {
         this();
-        setFilters(filterString);
+        setFilterString(filterString);
     }
 
     public String getDescription() {
@@ -154,94 +156,157 @@ public class QueuedMessageFilter {
     }
 
     public String getFilterString() {
+
         StringBuffer filterString = new StringBuffer();
-        if (messageQueue == null)
+
+        if (messageQueue == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(messageQueue + "/"); //$NON-NLS-1$
-        if (library == null)
+        }
+
+        if (library == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(library + "/"); //$NON-NLS-1$
-        if (user == null)
+        }
+
+        if (user == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(user + "/"); //$NON-NLS-1$
-        if (id == null)
+        }
+
+        if (id == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(id + "/"); //$NON-NLS-1$
-        if (severity == -1)
+        }
+
+        if (severity == -1) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(new Integer(severity).toString() + "/"); //$NON-NLS-1$
-        if (messageType == -1)
+        }
+
+        if (messageType == -1) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(new Integer(messageType).toString() + "/"); //$NON-NLS-1$
-        if (fromJobName == null)
+        }
+
+        if (fromJobName == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(fromJobName + "/"); //$NON-NLS-1$
-        if (fromJobNumber == null)
+        }
+
+        if (fromJobNumber == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(fromJobNumber + "/"); //$NON-NLS-1$
-        if (fromProgram == null)
+        }
+
+        if (fromProgram == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(fromProgram + "/"); //$NON-NLS-1$
-        if (text == null)
+        }
+
+        if (text == null) {
             filterString.append("*/"); //$NON-NLS-1$
-        else
+        } else {
             filterString.append(text + "/"); //$NON-NLS-1$
+        }
+
         return filterString.toString();
     }
 
-    public void setFilters(String filterString) {
+    public static String getDefaultFilterString() {
+        
+        QueuedMessageFilter filter = new QueuedMessageFilter();
+        filter.setMessageQueue(MSGQ_CURRENT); //$NON-NLS-1$
+        
+        return filter.getFilterString();
+    }
+    
+    public void setFilterString(String filterString) {
+
         int index;
+
         index = filterString.indexOf("/"); //$NON-NLS-1$
         String temp = filterString.substring(0, index);
-        if (!temp.equals("*")) setMessageQueue(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setMessageQueue(temp);
+        }
+
         String parseText = filterString.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setLibrary(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setLibrary(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setUser(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setUser(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setId(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setId(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setSeverity(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setSeverity(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setMessageType(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setMessageType(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setFromJobName(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setFromJobName(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setFromJobNumber(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setFromJobNumber(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setFromProgram(temp); //$NON-NLS-1$
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setFromProgram(temp);
+        }
+
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
-        if (index == -1)
+        if (index == -1) {
             temp = parseText;
-        else
+        } else {
             temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setText(temp); //$NON-NLS-1$
+        }
+
+        if (!temp.equals("*")) { //$NON-NLS-1$
+            setText(temp);
+        }
     }
 
 }

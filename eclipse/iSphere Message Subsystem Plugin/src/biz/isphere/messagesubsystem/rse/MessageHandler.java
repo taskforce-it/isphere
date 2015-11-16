@@ -117,7 +117,7 @@ public class MessageHandler implements IMessageHandler {
 
             private void removeInformationalMessage(final ReceivedMessage msg, MonitoringAttributes monitoringAttributes) {
 
-                if (monitoringAttributes.removeInformationalMessages() && (msg.getType() != QueuedMessage.INQUIRY)) {
+                if (monitoringAttributes.isRemoveInformationalMessages() && (msg.getType() != QueuedMessage.INQUIRY)) {
                     try {
                         msg.getQueue().remove(msg.getKey());
                     } catch (Exception e) {

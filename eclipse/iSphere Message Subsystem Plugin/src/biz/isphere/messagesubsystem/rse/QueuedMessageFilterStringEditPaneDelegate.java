@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -30,7 +29,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
 
     private static final String QUSRSYS = "QUSRSYS";
     private static final String ASTERISK = "*";
-    private Text messageQueueText;
+    private Combo messageQueueText;
     private Text libraryText;
     private Text userText;
     private Text idText;
@@ -41,7 +40,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     private Text textText;
     private Combo messageTypeCombo;
 
-    public QueuedMessageFilterStringEditPaneDelegate(Shell shell) {
+    public QueuedMessageFilterStringEditPaneDelegate() {
     }
 
     public Control createContents(Composite composite_prompts) {
@@ -51,11 +50,12 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         Label messageQueueLabel = new Label(composite_prompts, SWT.NONE);
         messageQueueLabel.setText(Messages.Message_queue_colon);
 
-        messageQueueText = WidgetFactory.createUpperCaseText(composite_prompts);
+        messageQueueText = WidgetFactory.createUpperCaseCombo(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
         messageQueueText.setLayoutData(gd);
         messageQueueText.setTextLimit(10);
+        messageQueueText.add(QueuedMessageFilter.MSGQ_CURRENT);
 
         Label libraryLabel = new Label(composite_prompts, SWT.NONE);
         libraryLabel.setText(Messages.Library_colon);
@@ -227,7 +227,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     }
 
     public void resetFields() {
-        messageQueueText.setText(""); //$NON-NLS-1$
+        messageQueueText.select(0);
         libraryText.setText(QUSRSYS);
         userText.setText(ASTERISK);
         idText.setText(ASTERISK);

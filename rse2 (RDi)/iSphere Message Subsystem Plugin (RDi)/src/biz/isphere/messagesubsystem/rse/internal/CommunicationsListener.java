@@ -64,13 +64,10 @@ public class CommunicationsListener implements ICommunicationsListener {
 
             isStarting = true;
 
-            if (monitoredMessageQueue == null) {
-                QueuedMessageFilter filter = new QueuedMessageFilter();
-                filter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
-                AS400 as400 = new AS400(IBMiConnection.getConnection(queuedMessageSubSystem.getHost()).getAS400ToolboxObject());
-                monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
-                    monitoringAttributes);
-            }
+            QueuedMessageFilter filter = new QueuedMessageFilter(monitoringAttributes.getFilterString());
+            AS400 as400 = new AS400(IBMiConnection.getConnection(queuedMessageSubSystem.getHost()).getAS400ToolboxObject());
+            monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
+                monitoringAttributes);
 
             monitoredMessageQueue.startMonitoring();
 
@@ -86,19 +83,5 @@ public class CommunicationsListener implements ICommunicationsListener {
         if (monitoredMessageQueue != null) {
             monitoredMessageQueue.stopMonitoring();
         }
-    }
-
-    public boolean isMonitoring() {
-
-        if (monitoredMessageQueue != null) {
-            return monitoredMessageQueue.isMonitoring();
-        }
-
-        return false;
-    }
-
-    public MonitoredMessageQueue getMonitoredMessageQueue() {
-
-        return monitoredMessageQueue;
     }
 }
