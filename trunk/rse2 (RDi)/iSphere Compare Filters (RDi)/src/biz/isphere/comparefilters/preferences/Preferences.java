@@ -91,7 +91,7 @@ public final class Preferences {
     }
 
     public boolean supportsFileExtension(String fileExtension) {
-        if (getOrCreateFileExtensionsSet().contains(fileExtension.toUpperCase())) {
+        if (fileExtension != null && getOrCreateFileExtensionsSet().contains(fileExtension.toUpperCase())) {
             return true;
         }
         return false;
