@@ -322,7 +322,7 @@ public class BindingDirectoryEntryViewer {
 
             public void createMenuItemCopy() {
                 menuItemCopy = new MenuItem(menuTableBindingDirectoryEntries, SWT.NONE);
-                menuItemCopy.setText(Messages.Copy);
+                menuItemCopy.setText(Messages.Duplicate);
                 menuItemCopy.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY));
                 menuItemCopy.addSelectionListener(new SelectionAdapter() {
                     @Override

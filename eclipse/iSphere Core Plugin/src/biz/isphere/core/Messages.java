@@ -64,6 +64,8 @@ public class Messages extends NLS {
 
     public static String Copy;
 
+    public static String Duplicate;
+
     public static String Decimal_positions_Bytes;
 
     public static String Decimal_positions_colon;
