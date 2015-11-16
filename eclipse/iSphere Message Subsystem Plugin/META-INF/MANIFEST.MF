@@ -17,3 +17,5 @@ Bundle-ClassPath: .,
  lib/mail.jar,
  lib/activation.jar
 Export-Package: biz.isphere.messagesubsystem.rse
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
