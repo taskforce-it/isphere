@@ -974,42 +974,50 @@
 		<for list="${build.projects}" delimiter="," param="project">
 			<sequential>
 
-				<echo message="${workspace.home}\@{project}" />
-
 				<if>
-					<available file="${workspace.home}\@{project}/META-INF" />
+					<not>
+						<contains string="@{project}" substring="RDi" />
+					</not>
 					<then>
-						<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
-							<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+
+						<echo message="${workspace.home}\@{project}" />
+
+						<if>
+							<available file="${workspace.home}\@{project}/META-INF" />
+							<then>
+								<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+								</replaceregexp>
+							</then>
+						</if>
+		
+						<if>
+							<available file="${workspace.home}\@{project}/html" />
+							<then>
+								<replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
+								</replaceregexp>
+							</then>
+						</if>
+		
+						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
+		
+						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+						</replaceregexp>
+		
+						<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+						</replaceregexp>
+		
+						<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+						</replaceregexp>
+
 					</then>
 				</if>
-
-				<if>
-					<available file="${workspace.home}\@{project}/html" />
-					<then>
-						<replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true">
-							<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
-						</replaceregexp>
-					</then>
-				</if>
-
-				<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
-					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
-				</replaceregexp>
-
-				<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
-					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
-				</replaceregexp>
-
-				<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
-					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
-				</replaceregexp>
-
-				<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
-					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
-				</replaceregexp>
-
 			</sequential>
 		</for>
 
