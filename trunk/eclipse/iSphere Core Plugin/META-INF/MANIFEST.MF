@@ -19,7 +19,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.help,
  biz.isphere.base
-Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/jxl.jar,
  lib/itextpdf-5.5.0.jar,
@@ -55,3 +54,5 @@ Export-Package: biz.isphere.core,
  biz.isphere.core.swt.widgets,
  biz.isphere.core.swt.widgets.extension.point,
  biz.isphere.core.versionupdate
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

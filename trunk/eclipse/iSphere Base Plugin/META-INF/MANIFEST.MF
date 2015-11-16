@@ -16,3 +16,4 @@ Export-Package: biz.isphere.base.internal,
  biz.isphere.base.swt.widgets,
  biz.isphere.base.versioncheck
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
