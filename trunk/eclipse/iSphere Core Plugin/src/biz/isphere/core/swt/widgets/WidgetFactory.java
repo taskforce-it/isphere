@@ -273,6 +273,18 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces an upper-case combo field.
+     * 
+     * @param parent - parent composite
+     * @return combo field
+     */
+    public static Combo createUpperCaseCombo(Composite parent) {
+        Combo combo = WidgetFactory.getInstance().produceComboField(parent, SWT.NONE);
+        combo.addVerifyListener(new UpperCaseOnlyVerifier());
+        return combo;
+    }
+
+    /**
      * Produces a read-only combo field.
      * 
      * @param parent - parent composite

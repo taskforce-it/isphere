@@ -56,7 +56,7 @@ public class QueuedMessageSubSystemFactory extends SubSystemConfiguration {
         ISystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
         QueuedMessageFilter messageFilter = new QueuedMessageFilter();
-        messageFilter.setMessageQueue("*CURRENT"); //$NON-NLS-1$
+        messageFilter.setMessageQueue(QueuedMessageFilter.MSGQ_CURRENT);
         strings.add(messageFilter.getFilterString());
         try {
             ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_Messages, strings);

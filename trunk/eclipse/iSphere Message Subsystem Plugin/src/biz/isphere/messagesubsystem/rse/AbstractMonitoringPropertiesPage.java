@@ -13,6 +13,8 @@ package biz.isphere.messagesubsystem.rse;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -58,6 +60,8 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     private Text smtpPasswordText;
     private Button testButton;
 
+    QueuedMessageFilterStringEditPaneDelegate delegate;
+
     public AbstractMonitoringPropertiesPage() {
         super();
     }
@@ -67,8 +71,29 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         queuedMessageSubSystem = (IQueuedMessageSubsystem)getElement();
         monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
+        delegate = new QueuedMessageFilterStringEditPaneDelegate();
 
-        Composite propsGroup = new Composite(parent, SWT.NONE);
+        CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER);
+        addMonitorTab(tabFolder);
+        addFilterTab(tabFolder);
+
+        loadSettings();
+
+        setControlVisibility();
+
+        tabFolder.setSelection(0);
+
+        return tabFolder;
+    }
+
+    private void addMonitorTab(CTabFolder tabFolder) {
+
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NULL);
+        tabItem.setText("Monitor");
+
+        Composite propsGroup = new Composite(tabFolder, SWT.NONE);
+        tabItem.setControl(propsGroup);
+
         GridLayout layout = new GridLayout();
         layout.numColumns = 1;
         propsGroup.setLayout(layout);
@@ -136,12 +161,45 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         createEmailGroup(propsGroup);
 
         smtpCredentialsButton.addSelectionListener(listener);
+    }
 
-        loadSettings();
+    private void addFilterTab(CTabFolder tabFolder) {
 
-        setControlVisibility();
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NULL);
+        tabItem.setText("Filter");
 
-        return propsGroup;
+        Composite propsGroup = new Composite(tabFolder, SWT.NONE);
+        tabItem.setControl(propsGroup);
+        propsGroup.setLayout(new GridLayout(2, false));
+
+        delegate.createContents(propsGroup);
+
+        delegate.resetFields();
+        delegate.doInitializeFields(null);
+
+        ModifyListener keyListener = new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                Object source = e.getSource();
+                if (source instanceof Text) {
+                    Text text = (Text)source;
+                    validateStringInput(text.getText());
+                }
+                if (source instanceof Combo) {
+                    Combo combo = (Combo)source;
+                    validateStringInput(combo.getText());
+                }
+            }
+        };
+
+        delegate.addModifyListener(keyListener);
+    }
+
+    private void validateStringInput(String text) {
+
+        if (StringHelper.isNullOrEmpty(text)) {
+            setErrorMessage("Missing value.");
+            setValid(false);
+        }
     }
 
     private void setSendEmailButtonEnablement() {
@@ -292,22 +350,22 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
     @Override
     protected void performDefaults() {
-        
+
         boolean isMonitoring = monitorButton.getSelection();
         monitoringAttributes.restoreToDefault();
-        
+
         loadSettings();
         monitorButton.setSelection(isMonitoring);
-        
+
         setControlVisibility();
-        
+
         super.performDefaults();
     }
 
     private void loadSettings() {
 
         monitorButton.setSelection(monitoringAttributes.isMonitoringEnabled());
-        removeButton.setSelection(monitoringAttributes.removeInformationalMessages());
+        removeButton.setSelection(monitoringAttributes.isRemoveInformationalMessages());
         inqCombo.select(inqCombo.indexOf(monitoringAttributes.getInqueryMessageNotificationTypeForGUI()));
         infCombo.select(inqCombo.indexOf(monitoringAttributes.getInformationalMessageNotificationTypeForGUI()));
         emailText.setText(monitoringAttributes.getEmail());
@@ -317,6 +375,9 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         smtpCredentialsButton.setSelection(monitoringAttributes.isSmtpLogin());
         smtpUserText.setText(monitoringAttributes.getSmtpUser());
         smtpPasswordText.setText(monitoringAttributes.getSmtpPassword());
+
+        String filterString = monitoringAttributes.getFilterString();
+        delegate.doInitializeFields(filterString);
     }
 
     private void saveSettings() {
@@ -332,6 +393,9 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         monitoringAttributes.setSmtpLogin(smtpCredentialsButton.getSelection());
         monitoringAttributes.setSmtpUser(smtpUserText.getText());
         monitoringAttributes.setSmtpPassword(smtpPasswordText.getText());
+
+        String filterString = delegate.getFilterString();
+        monitoringAttributes.setFilterString(filterString);
     }
 
     private void setControlVisibility() {
