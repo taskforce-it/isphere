@@ -43,7 +43,6 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     private static final String CRLF = "\r\n"; //$NON-NLS-1$
 
     private IResource fResource;
-    private boolean considerDate;
     private boolean ignoreCase;
     private int column;
     private boolean hasDate;
@@ -53,7 +52,6 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase, boolean hasCompareFilters) {
 
         this.fResource = fResource;
-        this.considerDate = considerDate;
         this.ignoreCase = ignoreCase;
 
         if (considerDate || hasCompareFilters) {

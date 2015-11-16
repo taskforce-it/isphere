@@ -18,8 +18,6 @@ import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFil
  */
 public class CompareEditorConfiguration extends CompareConfiguration {
 
-    private static final String ISPHERE_COMPARE_PLUGIN_ID = "biz.isphere.comparefilters"; //$NON-NLS-1$
-
     private static String CONSIDER_DATE = "biz.isphere.core.compareeditor.considerDate"; //$NON-NLS-1$
 
     private static String IGNORE_CASE = "biz.isphere.core.compareeditor.ignoreCase"; //$NON-NLS-1$
