@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.core
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.adapter.swt.widgets
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
