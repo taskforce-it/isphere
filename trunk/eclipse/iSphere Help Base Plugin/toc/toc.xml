@@ -21,6 +21,7 @@
       <topic label="Setting up RDP and SVN" href="html/contributions/setup/setup_rdp_svn.html" />
       <topic label="Setting up iSphere" href="html/contributions/setup/setup_isphere.html" />
       <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
+      <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
    </topic>
    <topic label="Utilities" >
       <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc.html" />
