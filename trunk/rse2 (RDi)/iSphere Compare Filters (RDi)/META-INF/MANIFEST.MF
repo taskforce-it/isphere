@@ -12,9 +12,9 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base,
  biz.isphere.core,
  biz.isphere.rse,
- biz.isphere.adapter
+ biz.isphere.adapter,
+ biz.isphere.dummy.compile.eclipse.compare;resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6

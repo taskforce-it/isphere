@@ -21,6 +21,4 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base,
  biz.isphere.messagesubsystem
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6

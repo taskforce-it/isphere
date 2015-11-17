@@ -7,4 +7,3 @@ Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
