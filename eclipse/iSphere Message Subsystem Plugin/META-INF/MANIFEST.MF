@@ -12,10 +12,9 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
  biz.isphere.core
-Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/mail.jar,
  lib/activation.jar
 Export-Package: biz.isphere.messagesubsystem.rse
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6

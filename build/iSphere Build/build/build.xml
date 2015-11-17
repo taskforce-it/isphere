@@ -327,7 +327,10 @@
     *   and creates the version tag file.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
+	<!-- DISABLED: updateExecutionEnvironment
 	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber,updateExecutionEnvironment, updateStylesheets, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
+	-->
+	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, updateStylesheets, createTagFile, refreshProjects" description="Build iSphere SourceForge Site">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Finished iSphere build ${build.version}             |</echo>
