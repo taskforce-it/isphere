@@ -72,6 +72,7 @@ for your environment:
 <tr><td>build.files.enabled</td><td>-</td><td>Specifies whether the plug-in is built.</td></tr>
 <tr><td>build.web.enabled</td><td>-</td><td>Specifies whether the HTML update site page is built.</td></tr>
 <tr><td>build.help.enabled</td><td>-</td><td>Specifies whether the HTML help pages are built.</td></tr>
+<tr><td>build.home.enabled</td><td>-</td><td>Specifies whether the iSphere home page is built.</td></tr>
 </table>
 <p>
 <u>ftp.properties</u>
@@ -115,7 +116,10 @@ like this:
 <pre class="code">
 build.files.enabled=<font color="blue">true</font>
 build.web.enabled=<font color="blue">true</font>
-build.help.enabled=<font color="blue">false</font></pre>Property <i>build.help.enabled</i> could also be set to <i>true</i> if you want to update the help pages, too.</td></tr>
+build.help.enabled=<font color="blue">false</font>
+build.home.enabled=<font color="blue">false</font></pre>
+Property <i>build.help.enabled</i> could also be set to <i>true</i> if you want to update the help pages, too.<br>
+Property <i>build.home.enabled</i> could also be set to <i>true</i> if you want to update the iSphere home page, too.<p></td></tr>
 <tr><td nowrap valign="top">Step 3:</td><td>Open <i>build.xml</i>.</td></tr>
 <tr><td nowrap valign="top">Step 4:</td><td>Select <i>Run As, Ant Build</i> from the context menu of target <i>downloadISphereLibrary</i>. 
 <tr><td nowrap valign="top">Step 5:</td><td>Select <i>Run As, Ant Build</i> from the context menu of target <i>build</i>. 
@@ -140,7 +144,8 @@ This example describes how to use the ANT build script in order to build the iSp
 <pre class="code">
 build.files.enabled=<font color="blue">false</font>
 build.web.enabled=<font color="blue">false</font>
-build.help.enabled=<font color="blue">true</font></pre></td></tr>
+build.help.enabled=<font color="blue">true</font>
+build.home.enabled=<font color="blue">false</font></pre></td></tr>
 <tr><td nowrap valign="top">Step 3:</td><td>Open <i>build.xml</i>.</td></tr>
 <tr><td nowrap valign="top">Step 4:</td><td>Select <i>Run As, Ant Build</i> from the context menu of target <i>build</i>. 
 That will open the <i>Ant Configuration Selection window</i>. Select the <i>RDi</i> or <i>WDSCi</i> configuration depending 
@@ -151,6 +156,14 @@ iSphere Build build.xml (WDSC)</pre></td></tr>
 <tr><td nowrap valign="top">Step 5:</td><td>Execute target <i>createSourceForgeFiles</i> to create the help pages.</td></tr>
 <tr><td nowrap valign="top">Step 6:</td><td>Execute target <i>uploadSourceForgeFiles</i> to upload the help files to SourceForge. You will be asked for your SourceForge password.<br><font color="red">The password is shown in clear text!</font></td></tr>
 </table>
+<p>
+<a id="master_stylesheet"></a>
+<h2>Master Help Stylesheet</h2>
+<p>
+The master help stylesheet file is located in folder:
+<pre class="codeIndent">[workspace]\iSphere Build\build\templates\stylesheet.css</pre>
+<p>
+It is copied to the help projects by ANT target <i>updateStylesheets</i>.
 <p>
 <a id="object_build"></a>
 <h2>Object Build</h2>
