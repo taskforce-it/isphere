@@ -1,5 +1,17 @@
 
 
+Changelog: iSphere 2.7.1 beta 3
+-------------------------------
+ • Added warning message that is displayed when the iSphere
+   compare filters are not installed in RDi 9.5. 
+
+
+Changelog: iSphere 2.7.1 beta 2
+-------------------------------
+ • Added "iSphere Compare Filters Compile-Dummy (RDi)" to compile
+   iSphere from RDi 8.0. 
+
+
 Changelog: iSphere 2.7.1 beta 1
 -------------------------------
  • Fixed problem of lost change dates of source members saved 
