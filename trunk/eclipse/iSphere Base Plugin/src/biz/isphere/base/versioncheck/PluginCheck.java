@@ -10,7 +10,6 @@ package biz.isphere.base.versioncheck;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,26 +43,26 @@ public final class PluginCheck implements IObsoleteBundles {
         }
         return false;
     }
-    
+
     public static Version getVersion(String aPluginID) {
-        
+
         if (!hasPlugin(aPluginID)) {
             return null;
         }
 
-        Dictionary headers = Platform.getBundle(aPluginID).getHeaders();
+        Dictionary<?, ?> headers = Platform.getBundle(aPluginID).getHeaders();
         if (headers == null) {
             return null;
         }
-        
+
         Object version = headers.get("Bundle-Version");
         if (version instanceof String) {
             return new Version((String)version);
         }
-        
-        return null; 
+
+        return null;
     }
-    
+
     private void performBundleCheck() {
         final List<Bundle> tObsoleteBundles = verifyInstalledBundles();
         if (tObsoleteBundles.size() == 0) {
