@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 import biz.isphere.base.Messages;
 
@@ -40,6 +41,15 @@ public final class PluginCheck implements IObsoleteBundles {
             return true;
         }
         return false;
+    }
+    
+    public static Version getVersion(String aPluginID) {
+        
+        if (!hasPlugin(aPluginID)) {
+            return null;
+        }
+        
+        return Platform.getBundle(aPluginID).getVersion();
     }
     
     private void performBundleCheck() {
