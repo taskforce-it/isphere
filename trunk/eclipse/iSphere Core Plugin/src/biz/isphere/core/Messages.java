@@ -1082,6 +1082,12 @@ public class Messages extends NLS {
 
     public static String Label_fileExtension_colon;
 
+    /*
+     * Warning messages
+     */
+    
+    public static String Compare_Filters_not_installed_message;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

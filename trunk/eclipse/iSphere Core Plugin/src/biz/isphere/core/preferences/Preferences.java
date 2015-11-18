@@ -63,6 +63,8 @@ public final class Preferences {
 
     private static final String DOMAIN = ISpherePlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
+    private static final String WARNING_BASE_KEY = DOMAIN + "SHOW_WARNING."; //$NON-NLS-1$
+    
     private static final String SPOOLED_FILES_SAVE_DIRECTORY = DOMAIN + "SPOOLED_FILES.SAVE.DIRECTORY"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_CONVERSION_PDF_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_PDF.COMMAND"; //$NON-NLS-1$
@@ -191,6 +193,14 @@ public final class Preferences {
      * Preferences: GETTER
      */
 
+    public boolean isShowWarningMessage(String showWarningKey) {
+        String key = getShowWarningKey(showWarningKey);
+        if (!preferenceStore.contains(key)) {
+            return true;
+        }
+        return preferenceStore.getBoolean(key);
+    }
+    
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
     }
@@ -392,6 +402,10 @@ public final class Preferences {
      * Preferences: SETTER
      */
 
+    public void setShowWarningMessage(String showWarningKey, boolean enable) {
+        preferenceStore.setValue(getShowWarningKey(showWarningKey), enable);
+    }
+
     public void setISphereLibrary(String aLibrary) {
         preferenceStore.setValue(ISPHERE_LIBRARY, aLibrary.trim());
     }
@@ -537,6 +551,8 @@ public final class Preferences {
      */
 
     public void initializeDefaultPreferences() {
+        preferenceStore.setDefault(getShowWarningKey(Warning.COMPARE_FILTERS_NOT_INSTALLED), true);
+        
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
@@ -1000,5 +1016,9 @@ public final class Preferences {
         timeFormats.put("us (hh:mm:ss AM/PM)", "KK:mm:ss a");
 
         return timeFormats;
+    }
+    
+    private String getShowWarningKey(String showWarningKey) {
+        return WARNING_BASE_KEY + showWarningKey;
     }
 }
