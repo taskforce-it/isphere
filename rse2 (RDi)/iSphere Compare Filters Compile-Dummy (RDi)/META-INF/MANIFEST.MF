@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Compile Eclipse Compare Dummy (RDi)
 Bundle-SymbolicName: biz.isphere.dummy.compile.eclipse.compare;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.eclipse.compare.Activator
+Bundle-Activator: org.eclipse.compare.ISphereCompareFilterCompilePlugin
 Bundle-Vendor: iSphere Project Team
 Export-Package: org.eclipse.compare
 Require-Bundle: org.eclipse.osgi,
