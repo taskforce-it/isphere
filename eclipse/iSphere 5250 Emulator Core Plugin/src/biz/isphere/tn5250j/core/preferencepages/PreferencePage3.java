@@ -123,30 +123,30 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
 	
 	protected void setStoreToValues() {
 		if (buttonMSActive.getSelection()) {
-			store.setValue("DE.TASKFORCE.TN5250J.MSACTIVE", "Y");
+			store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "Y");
 		}
 		else {
-			store.setValue("DE.TASKFORCE.TN5250J.MSACTIVE", "");
+			store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "");
 		}
-		store.setValue("DE.TASKFORCE.TN5250J.MSHSIZE", textMSHorizontalSize.getText());
-		store.setValue("DE.TASKFORCE.TN5250J.MSVSIZE", textMSVerticalSize.getText());
+		store.setValue("BIZ.ISPHERE.TN5250J.MSHSIZE", textMSHorizontalSize.getText());
+		store.setValue("BIZ.ISPHERE.TN5250J.MSVSIZE", textMSVerticalSize.getText());
 	}
 	
 	protected void setStoreToDefaults() {
-		store.setToDefault("DE.TASKFORCE.TN5250J.MSACTIVE");
-		store.setToDefault("DE.TASKFORCE.TN5250J.MSHSIZE");
-		store.setToDefault("DE.TASKFORCE.TN5250J.MSVSIZE");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.MSACTIVE");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.MSHSIZE");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.MSVSIZE");
 	}
 	
 	protected void setScreenToValues() {
-		if (store.getString("DE.TASKFORCE.TN5250J.MSACTIVE").equals("Y")) {
+		if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
 			buttonMSActive.setSelection(true);
 		}
 		else {
 			buttonMSActive.setSelection(false);
 		}
-		textMSHorizontalSize.setText(store.getString("DE.TASKFORCE.TN5250J.MSHSIZE"));
-		textMSVerticalSize.setText(store.getString("DE.TASKFORCE.TN5250J.MSVSIZE"));
+		textMSHorizontalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
+		textMSVerticalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
 	}
 	
 	public void init(IWorkbench workbench) {

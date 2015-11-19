@@ -146,7 +146,7 @@ public class SessionDetail {
 		textPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		textPort.setTextLimit(5);
 		if (actionType == DialogActionTypes.CREATE) {
-			textPort.setText(store.getString("DE.TASKFORCE.TN5250J.PORT"));
+			textPort.setText(store.getString("BIZ.ISPHERE.TN5250J.PORT"));
 		} 
 		else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
 			textPort.setText(session.getPort());
@@ -167,7 +167,7 @@ public class SessionDetail {
 			comboCodePage.add(codePages[idx]);
 		}
 		if (actionType == DialogActionTypes.CREATE) {
-			comboCodePage.setText(store.getString("DE.TASKFORCE.TN5250J.CODEPAGE"));
+			comboCodePage.setText(store.getString("BIZ.ISPHERE.TN5250J.CODEPAGE"));
 		} 
 		else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
 			comboCodePage.setText(session.getCodePage());
@@ -193,7 +193,7 @@ public class SessionDetail {
 		buttonScreenSize27_132.setText("27*132");
 		
 		if (actionType == DialogActionTypes.CREATE) {
-			if (store.getString("DE.TASKFORCE.TN5250J.SCREENSIZE").equals("132")) {
+			if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals("132")) {
 				buttonScreenSize27_132.setSelection(true);
 			}
 			else {
@@ -221,7 +221,7 @@ public class SessionDetail {
 		buttonEnhancedMode = new Button(compositeGeneral, SWT.CHECK);
 		
 		if (actionType == DialogActionTypes.CREATE) {
-			if (store.getString("DE.TASKFORCE.TN5250J.ENHANCEDMODE").equals("Y")) {
+			if (store.getString("BIZ.ISPHERE.TN5250J.ENHANCEDMODE").equals("Y")) {
 				buttonEnhancedMode.setSelection(true);
 			}
 			else {
@@ -257,7 +257,7 @@ public class SessionDetail {
 		buttonEditor.setText(Messages.getString("Editor"));
 		
 		if (actionType == DialogActionTypes.CREATE) {
-			if (store.getString("DE.TASKFORCE.TN5250J.AREA").equals("*VIEW")) {
+			if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals("*VIEW")) {
 				buttonView.setSelection(true);
 			}
 			else {

@@ -60,17 +60,17 @@ public class CreateSession {
 
 	    // Set the minimum size
 		IPreferenceStore store = TN5250JCorePlugin.getDefault().getPreferenceStore();
-		if (store.getString("DE.TASKFORCE.TN5250J.MSACTIVE").equals("Y")) {
+		if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
 			int hSize;
 			try {
-				hSize = Integer.parseInt(store.getString("DE.TASKFORCE.TN5250J.MSHSIZE"));
+				hSize = Integer.parseInt(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
 			} 
 			catch (NumberFormatException e1) {
 				hSize = 0;
 			}
 			int vSize;
 			try {
-				vSize = Integer.parseInt(store.getString("DE.TASKFORCE.TN5250J.MSVSIZE"));
+				vSize = Integer.parseInt(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
 			} 
 			catch (NumberFormatException e1) {
 				vSize = 0;

@@ -3,14 +3,14 @@
       id="biz.isphere.tn5250j.rse"
       label="TN5250J for RDi 8.0+"
       version="2.7.0.r"
-      provider-name="Task Force IT-Consulting GmbH">
+      provider-name="iSphere Project Team">
 
    <description>
       TN5250J for RDi 8.0+
    </description>
 
    <copyright>
-      (c) Copyright Task Force IT-Consulting GmbH 2008, 2012. All rights reserved.
+      (c) Copyright iSphere Project Team 2008, 2012. All rights reserved.
    </copyright>
 
    <license>

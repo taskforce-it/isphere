@@ -231,7 +231,7 @@ public class Session {
 			session.setArea(properties.getProperty("Area"));
 		}
 		else {
-			session.setArea(store.getString("DE.TASKFORCE.TN5250J.AREA"));
+			session.setArea(store.getString("BIZ.ISPHERE.TN5250J.AREA"));
 		}
 		if (properties.getProperty("User") != null) {
 			session.setUser(properties.getProperty("User"));

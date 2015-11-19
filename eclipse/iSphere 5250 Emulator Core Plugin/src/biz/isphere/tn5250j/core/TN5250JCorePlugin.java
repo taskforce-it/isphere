@@ -83,14 +83,14 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
 	}
 	
 	protected void initializePreferenceStoreDefaults(){
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.PORT", "23");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.CODEPAGE", "");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.SCREENSIZE", "132");
-	//	getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.ENHANCEDMODE", "Y");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.AREA", "*VIEW");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.MSACTIVE", "N");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.MSHSIZE", "0");
-		getPreferenceStore().setDefault("DE.TASKFORCE.TN5250J.MSVSIZE", "0");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.PORT", "23");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.CODEPAGE", "");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.SCREENSIZE", "132");
+	//	getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.ENHANCEDMODE", "Y");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.AREA", "*VIEW");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSACTIVE", "N");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSHSIZE", "0");
+		getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSVSIZE", "0");
 	}
 	
 	public static URL getInstallURL() {
