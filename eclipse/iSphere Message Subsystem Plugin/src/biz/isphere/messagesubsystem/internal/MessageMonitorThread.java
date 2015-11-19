@@ -11,7 +11,9 @@
 
 package biz.isphere.messagesubsystem.internal;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -32,11 +34,13 @@ public class MessageMonitorThread extends Thread {
     private IMessageHandler messageHandler;
 
     private boolean monitoring;
+    private boolean isStartUp;
+    private List<ReceivedMessage> receivedMessages;
     private String errorMessage;
 
     private final static String END_MONITORING = "*END_MONITORING"; //$NON-NLS-1$
     private static final String REMOVE_ALL = "*REMOVE_ALL"; //$NON-NLS-1$
-    private final static int WAIT_SECS = 20;
+    private final static int WAIT_SECS = 5;
 
     public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, IMessageHandler messageHandler) {
         super("iSphere Message Monitor");
@@ -50,6 +54,7 @@ public class MessageMonitorThread extends Thread {
     public void run() {
 
         monitoring = true;
+        isStartUp = true;
 
         /*
          * Use a timeout for locking the message queue when starting the message
@@ -62,9 +67,23 @@ public class MessageMonitorThread extends Thread {
 
         while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
             try {
-                QueuedMessage message = messageQueue.receive(null, WAIT_SECS, MessageQueue.OLD, MessageQueue.ANY);
-                if (monitoring && (message != null)) {
-                    handleMessage(message);
+                QueuedMessage message;
+                if (isStartUp) {
+                    message = messageQueue.receive(null, 0, MessageQueue.OLD, MessageQueue.ANY);
+                } else {
+                    message = messageQueue.receive(null, WAIT_SECS, MessageQueue.OLD, MessageQueue.ANY);
+                }
+
+                if (monitoring) {
+                    if (message != null) {
+                        handleMessage(message, isStartUp);
+                    } else {
+                        if (receivedMessages != null) {
+                            handleBufferedMessages(receivedMessages);
+                            receivedMessages = null;
+                        }
+                        isStartUp = false;
+                    }
                 }
             } catch (Exception e) {
                 if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
@@ -101,7 +120,7 @@ public class MessageMonitorThread extends Thread {
         monitoring = false;
     }
 
-    private void handleMessage(QueuedMessage message) throws Exception {
+    private void handleMessage(QueuedMessage message, boolean isStartUp) throws Exception {
 
         if (REMOVE_ALL.equals(message.getText())) {
             messageQueue.remove();
@@ -111,10 +130,21 @@ public class MessageMonitorThread extends Thread {
             monitoring = false;
         } else {
             if (messageQueue.isIncluded(message)) {
-                if (messageHandler != null) {
-                    messageHandler.handleMessage(new ReceivedMessage(message));
+                if (isStartUp) {
+                    if (receivedMessages == null) {
+                        receivedMessages = new ArrayList<ReceivedMessage>();
+                    }
+                    receivedMessages.add(new ReceivedMessage(message));
+                } else {
+                    if (messageHandler != null) {
+                        messageHandler.handleMessage(new ReceivedMessage(message));
+                    }
                 }
             }
         }
+    }
+
+    private void handleBufferedMessages(List<ReceivedMessage> messages) throws Exception {
+        messageHandler.handleMessages(messages);
     }
 }

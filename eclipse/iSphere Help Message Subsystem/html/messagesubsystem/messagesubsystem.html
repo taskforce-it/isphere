@@ -91,7 +91,7 @@
 	<p>The command must be executed from the job that holds the lock.
 	<p>
 		The message queue is not immediately unlocked when option <i>Monitor
-			message queue</i> is unchecked. It can take up to 20 seconds until the
+		message queue</i> is unchecked. It can take up to 5 seconds until the
 		lock has been removed.
 	<h2>Remove Messages</h2>
 	<p>Actually messages cannot be removed from a monitored message queue, because
@@ -107,7 +107,7 @@
 	</table>
 	<h2>End Message Monitor</h2>
 	<p>Message monitoring ends, when the <i>Monitor message queue</i> checkbox is
-	   unchecked. That may take up to 20 seconds, because of the receive message
+	   unchecked. That may take up to 5 seconds, because of the receive message
 	   timeout. You can also end the message monitor from a 5250 command line or
 	   any program by sending <i>*END_MONITORING</i> to a monitored message queue
 	   like this:
