@@ -139,40 +139,40 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 	}
 	
 	protected void setStoreToValues() {
-		store.setValue("DE.TASKFORCE.TN5250J.PORT", textPort.getText());
-		store.setValue("DE.TASKFORCE.TN5250J.CODEPAGE", comboCodePage.getText());
+		store.setValue("BIZ.ISPHERE.TN5250J.PORT", textPort.getText());
+		store.setValue("BIZ.ISPHERE.TN5250J.CODEPAGE", comboCodePage.getText());
 		if (buttonScreenSize27_132.getSelection()) {
-			store.setValue("DE.TASKFORCE.TN5250J.SCREENSIZE", "132");
+			store.setValue("BIZ.ISPHERE.TN5250J.SCREENSIZE", "132");
 		}
 		else {
-			store.setValue("DE.TASKFORCE.TN5250J.SCREENSIZE", "");
+			store.setValue("BIZ.ISPHERE.TN5250J.SCREENSIZE", "");
 		}
 	//	if (buttonEnhancedMode.getSelection()) {
-	//		store.setValue("DE.TASKFORCE.TN5250J.ENHANCEDMODE", "Y");
+	//		store.setValue("BIZ.ISPHERE.TN5250J.ENHANCEDMODE", "Y");
 	//	}
 	//	else {
-	//		store.setValue("DE.TASKFORCE.TN5250J.ENHANCEDMODE", "");
+	//		store.setValue("BIZ.ISPHERE.TN5250J.ENHANCEDMODE", "");
 	//	}
 		if (buttonView.getSelection()) {
-			store.setValue("DE.TASKFORCE.TN5250J.AREA", "*VIEW");
+			store.setValue("BIZ.ISPHERE.TN5250J.AREA", "*VIEW");
 		}
 		else {
-			store.setValue("DE.TASKFORCE.TN5250J.AREA", "*EDITOR");
+			store.setValue("BIZ.ISPHERE.TN5250J.AREA", "*EDITOR");
 		}
 	}
 	
 	protected void setStoreToDefaults() {
-		store.setToDefault("DE.TASKFORCE.TN5250J.PORT");
-		store.setToDefault("DE.TASKFORCE.TN5250J.CODEPAGE");
-		store.setToDefault("DE.TASKFORCE.TN5250J.SCREENSIZE");
-	//	store.setToDefault("DE.TASKFORCE.TN5250J.ENHANCEDMODE");
-		store.setToDefault("DE.TASKFORCE.TN5250J.AREA");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.PORT");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.CODEPAGE");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.SCREENSIZE");
+	//	store.setToDefault("BIZ.ISPHERE.TN5250J.ENHANCEDMODE");
+		store.setToDefault("BIZ.ISPHERE.TN5250J.AREA");
 	}
 	
 	protected void setScreenToValues() {
-		textPort.setText(store.getString("DE.TASKFORCE.TN5250J.PORT"));
-		comboCodePage.setText(store.getString("DE.TASKFORCE.TN5250J.CODEPAGE"));
-		if (store.getString("DE.TASKFORCE.TN5250J.SCREENSIZE").equals("132")) {
+		textPort.setText(store.getString("BIZ.ISPHERE.TN5250J.PORT"));
+		comboCodePage.setText(store.getString("BIZ.ISPHERE.TN5250J.CODEPAGE"));
+		if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals("132")) {
 			buttonScreenSize24_80.setSelection(false);
 			buttonScreenSize27_132.setSelection(true);
 		}
@@ -180,13 +180,13 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 			buttonScreenSize24_80.setSelection(true);
 			buttonScreenSize27_132.setSelection(false);
 		}
-	//	if (store.getString("DE.TASKFORCE.TN5250J.ENHANCEDMODE").equals("Y")) {
+	//	if (store.getString("BIZ.ISPHERE.TN5250J.ENHANCEDMODE").equals("Y")) {
 	//		buttonEnhancedMode.setSelection(true);
 	//	}
 	//	else {
 	//		buttonEnhancedMode.setSelection(false);
 	//	}
-		if (store.getString("DE.TASKFORCE.TN5250J.AREA").equals("*VIEW")) {
+		if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals("*VIEW")) {
 			buttonView.setSelection(true);
 			buttonEditor.setSelection(false);
 		}
