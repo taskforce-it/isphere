@@ -4,7 +4,7 @@ Bundle-Name: TN5250J Core
 Bundle-SymbolicName: biz.isphere.tn5250j.core;singleton:=true
 Bundle-Version: 2.7.0.r
 Bundle-Activator: biz.isphere.tn5250j.core.TN5250JCorePlugin
-Bundle-Vendor: Task Force IT-Consulting GmbH
+Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

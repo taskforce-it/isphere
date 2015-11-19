@@ -2,69 +2,69 @@
 <?eclipse version="3.2"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.editors">
+   <extension point="org.eclipse.ui.editors">
+   
       <editor
             name=""
-            icon="icons/tn5250j.gif"
-            class="de.taskforce.tn5250j.rse.sessionseditor.SessionsEditor"
-            id="de.taskforce.tn5250j.rse.sessionseditor.SessionsEditor"/>
+            icon="icons/tn5250j.png"
+            class="biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor"
+            id="biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor"/>
+            
       <editor
             name=""
-            icon="icons/tn5250j.gif"
-            class="de.taskforce.tn5250j.rse.designereditor.DesignerEditor"
-            id="de.taskforce.tn5250j.rse.designereditor.DesignerEditor"/>
+            icon="icons/tn5250j.png"
+            class="biz.isphere.tn5250j.rse.designereditor.DesignerEditor"
+            id="biz.isphere.tn5250j.rse.designereditor.DesignerEditor"/>
+            
    </extension>
  
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="TN5250J"
-            id="de.taskforce.tn5250j">
-      </category>
+   <extension point="org.eclipse.ui.views">
+
       <view
-            name="%TN5250J_Sessions"
-            icon="icons/tn5250j.gif"
-            category="de.taskforce.tn5250j"
-            class="de.taskforce.tn5250j.rse.sessionsview.SessionsView"
-            id="de.taskforce.tn5250j.rse.sessionsview.SessionsView">
+            name="%iSphere_5250_Sessions"
+            icon="icons/tn5250j.png"
+            category="biz.isphere.core.views.categories"
+            class="biz.isphere.tn5250j.rse.sessionsview.SessionsView"
+            id="biz.isphere.tn5250j.rse.sessionsview.SessionsView">
       </view>
+
       <view
-            name="%TN5250J_Designer"
-            icon="icons/tn5250j.gif"
-            category="de.taskforce.tn5250j"
-            class="de.taskforce.tn5250j.rse.designerview.DesignerView"
-            id="de.taskforce.tn5250j.rse.designerview.DesignerView">
+            name="%iSphere_5250_Designer"
+            icon="icons/tn5250j.png"
+            category="biz.isphere.core.views.categories"
+            class="biz.isphere.tn5250j.rse.designerview.DesignerView"
+            id="biz.isphere.tn5250j.rse.designerview.DesignerView">
       </view>
+
    </extension>
 
    <extension 
          point="com.ibm.etools.systems.core.subsystemfactory">
         <factory
-             id="de.taskforce.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
+             id="biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
              systemtypes="iSeries"
-             name="TN5250J"
-             class="de.taskforce.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
-             category="5250Sessions"
-             vendor="Task Force IT-Consulting GmbH"
-             icon="icons/tn5250j.gif"
-             iconlive="icons/tn5250j.gif">
+             name="%iSphere_5250_Emulator"
+             class="biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystemFactory"
+             category="biz.isphere.tn5250j"
+             vendor="iSphere Project Team"
+             icon="icons/tn5250j.png"
+             iconlive="icons/tn5250j.png">
         </factory>
    </extension>
     
 	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
 		<dynamicPopupMenuExtension
 			name="TN5250J Designer"
-			class="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction"
-			id="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction">
+			class="biz.isphere.tn5250j.rse.actions.DesignerOpenWithAction"
+			id="biz.isphere.tn5250j.rse.actions.DesignerOpenWithAction">
 	    </dynamicPopupMenuExtension>
 	</extension>  
 	
 	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
 		<dynamicPopupMenuExtension
 			name="TN5250J Designer"
-			class="de.taskforce.tn5250j.rse.actions.DesignerBrowseWithAction"
-			id="de.taskforce.tn5250j.rse.actions.DesignerOpenWithAction">
+			class="biz.isphere.tn5250j.rse.actions.DesignerBrowseWithAction"
+			id="biz.isphere.tn5250j.rse.actions.DesignerOpenWithAction">
 	    </dynamicPopupMenuExtension>
 	</extension>  
 
