@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TN5250J
-Bundle-SymbolicName: org.tn5250j
-Bundle-Version: 0.6.0.2
+Bundle-SymbolicName: biz.isphere.tn5250j.base
+Bundle-Version: 2.7.0.r
 Bundle-Activator: org.tn5250j.TN5250JPlugin
-Bundle-Vendor: Task Force IT-Consulting GmbH
+Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
