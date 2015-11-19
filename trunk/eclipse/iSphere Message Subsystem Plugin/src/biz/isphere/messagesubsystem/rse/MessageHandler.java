@@ -11,6 +11,9 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+import java.util.List;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -22,11 +25,34 @@ import com.ibm.as400.access.QueuedMessage;
 public class MessageHandler implements IMessageHandler {
 
     private IQueuedMessageSubsystem queuedMessageSubSystem;
+    private boolean createOKToAllButton;
+    private boolean isOKToAll;
 
     public MessageHandler(IQueuedMessageSubsystem queuedMessageSubSystem) {
         super();
 
         this.queuedMessageSubSystem = queuedMessageSubSystem;
+        this.createOKToAllButton = false;
+        this.isOKToAll = false;
+    }
+
+    public void handleMessages(List<ReceivedMessage> messages) {
+
+        if (messages == null) {
+            return;
+        }
+
+        this.isOKToAll = false;
+        if (messages.size() == 1) {
+            createOKToAllButton = false;
+        } else {
+            createOKToAllButton = true;
+        }
+        for (ReceivedMessage receivedMessage : messages) {
+            handleMessage(receivedMessage);
+        }
+        this.isOKToAll = false;
+        createOKToAllButton = false;
     }
 
     public void handleMessage(ReceivedMessage message) {
@@ -95,11 +121,21 @@ public class MessageHandler implements IMessageHandler {
                     }
                 }
 
-                if (MonitoringAttributes.NOTIFICATION_TYPE_DIALOG.equals(handling)) {
+                if (!isOKToAll && MonitoringAttributes.NOTIFICATION_TYPE_DIALOG.equals(handling)) {
 
                     Display.getDefault().beep();
-                    QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false);
-                    dialog.open();
+                    QueuedMessageDialog dialog;
+                    if (msg.getType() == QueuedMessage.INQUIRY) {
+                        dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false, false);
+                    } else {
+                        dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false, createOKToAllButton);
+                    }
+
+                    int rc = dialog.open();
+                    if (rc == IDialogConstants.YES_TO_ALL_ID) {
+                        createOKToAllButton = false;
+                        isOKToAll = true;
+                    }
                 }
 
                 if (!MonitoringAttributes.NOTIFICATION_TYPE_BEEP.equals(handling)) {

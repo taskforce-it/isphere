@@ -11,7 +11,11 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+import java.util.List;
 
 public interface IMessageHandler {
+    
+    public void handleMessages(List<ReceivedMessage> messages);
+
     public void handleMessage(ReceivedMessage message);
 }

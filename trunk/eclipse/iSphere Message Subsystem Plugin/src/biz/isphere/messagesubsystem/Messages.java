@@ -162,6 +162,8 @@ public class Messages extends NLS {
 
     public static String Monitor;
 
+    public static String OK_To_All_LABEL;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

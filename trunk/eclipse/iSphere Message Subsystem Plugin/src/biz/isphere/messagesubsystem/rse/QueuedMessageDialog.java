@@ -15,6 +15,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,6 +44,7 @@ public class QueuedMessageDialog extends XDialog {
     private ReceivedMessage queuedMessage;
     private Text responseText;
     private boolean createCancelButton;
+    private boolean createOKToAllButton;
     private BasicMessageFormatter messageFormatter;
 
     public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage) {
@@ -49,9 +52,14 @@ public class QueuedMessageDialog extends XDialog {
     }
 
     public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage, boolean createCancelButton) {
+        this(shell, queuedMessage, createCancelButton, false);
+    }
+
+    public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage, boolean createCancelButton, boolean createOKToAllButton) {
         super(shell);
         this.queuedMessage = queuedMessage;
         this.createCancelButton = createCancelButton;
+        this.createOKToAllButton = createOKToAllButton;
         this.messageFormatter = new BasicMessageFormatter();
     }
 
@@ -171,6 +179,18 @@ public class QueuedMessageDialog extends XDialog {
 
     @Override
     public void okPressed() {
+        processInquiryMessage();
+        super.okPressed();
+    }
+
+    public void okToAllPressed() {
+        processInquiryMessage();
+        setReturnCode(IDialogConstants.YES_TO_ALL_ID);
+        close();
+    }
+
+    private void processInquiryMessage() {
+
         if (queuedMessage.getType() == QueuedMessage.INQUIRY) {
             if ((responseText.getText() != null) && (responseText.getText().trim().length() > 0)) {
                 MessageQueue messageQueue = queuedMessage.getQueue();
@@ -184,12 +204,30 @@ public class QueuedMessageDialog extends XDialog {
                 }
             }
         }
-        super.okPressed();
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        Button okToAll = createButton(parent, IDialogConstants.YES_TO_ALL_ID, Messages.OK_To_All_LABEL, false);
+        if (okToAll != null) {
+            okToAll.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent arg0) {
+                    okToAllPressed();
+                }
+
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                }
+            });
+        }
+        super.createButtonsForButtonBar(parent);
     }
 
     @Override
     protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
         if (id == IDialogConstants.CANCEL_ID && !createCancelButton) {
+            return null;
+        }
+        if (id == IDialogConstants.YES_TO_ALL_ID && !createOKToAllButton) {
             return null;
         }
         return super.createButton(parent, id, label, defaultButton);
