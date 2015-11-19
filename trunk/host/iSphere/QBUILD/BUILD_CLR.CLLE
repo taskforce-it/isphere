@@ -41,6 +41,8 @@
              DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
              DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
              DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
+             DCL        VAR(&DDSSRC ) TYPE(*CHAR) LEN(10) VALUE('QDDSSRC')
+             DCL        VAR(&CLSRC ) TYPE(*CHAR) LEN(10) VALUE('QCLSRC')
 
              DLTF       FILE(&TMPLIB/&SAVF)
              MONMSG     MSGID(CPF2105)
@@ -109,6 +111,10 @@
                 DLTF       FILE(&PRDLIB/&WCOSRC)
                 MONMSG     MSGID(CPF2105)
                 DLTF       FILE(&PRDLIB/&SRCTOOLS)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&DDSSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&CLSRC)
                 MONMSG     MSGID(CPF2105)
              ENDDO
 

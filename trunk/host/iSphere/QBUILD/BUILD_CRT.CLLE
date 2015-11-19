@@ -48,6 +48,8 @@
              DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
              DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
              DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
+             DCL        VAR(&DDSSRC   ) TYPE(*CHAR) LEN(10) VALUE('QDDSSRC')
+             DCL        VAR(&CLSRC    ) TYPE(*CHAR) LEN(10) VALUE('QCLSRC')
 
              DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
              DCL        VAR(&DTACPR   ) TYPE(*CHAR) LEN(10) VALUE('*HIGH')
@@ -226,6 +228,12 @@
                 CRTDUPOBJ  OBJ(&SRCTOOLS) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
                              TOLIB(&PRDLIB) DATA(*YES)
 
+                CRTDUPOBJ  OBJ(&DDSSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+                             TOLIB(&PRDLIB) DATA(*YES)
+
+                CRTDUPOBJ  OBJ(&CLSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+                             TOLIB(&PRDLIB) DATA(*YES)
+
              ENDDO
 
              /* ----------------------------------------------- */
@@ -332,6 +340,21 @@
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
+             /* ----------------------------------------------- */
+             /* Create display files                            */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('COMPARE') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('DESIGNER') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('EDITOR') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create service programs                         */
@@ -408,6 +431,30 @@
             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO5') +
                          LIB(&PRDLIB) OBJ(*DFT) +
                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create programs: 5250 Emulator                  */
+             /* ----------------------------------------------- */
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('COMPARE') +
+                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('DESIGNER') +
+                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('EDITOR') LIB(&PRDLIB) +
+                         OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
+                         TGTRLS(&TGTRLS)
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('HANDLER') +
+                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DESIGNERW') +
+                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create programs: Wrapper FNDSTR                 */
