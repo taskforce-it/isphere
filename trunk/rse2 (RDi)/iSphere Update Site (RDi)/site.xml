@@ -18,6 +18,15 @@
    <feature url="features/biz.isphere.comparefilters_2.7.1.b003.jar" id="biz.isphere.comparefilters" version="2.7.1.b003">
       <category name="iSphere for RDi 9.5+"/>
    </feature>
+   <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
+      <category name="iSphere TN5250J for RDi 8.0+"/>
+   </feature>
+   <feature url="features/biz.isphere.tn5250j.core_2.7.1.b003.jar" id="biz.isphere.tn5250j.core" version="2.7.1.b003">
+      <category name="iSphere TN5250J for RDi 8.0+"/>
+   </feature>
+   <feature url="features/biz.isphere.tn5250j.rse_2.7.1.b003.jar" id="biz.isphere.tn5250j.rse" version="2.7.1.b003">
+      <category name="iSphere TN5250J for RDi 8.0+"/>
+   </feature>
    <category-def name="iSphere for RDi 8.0+" label="iSphere for RDi 8.0+">
       <description>
          iSphere for RDi 8.0+
@@ -26,6 +35,11 @@
    <category-def name="iSphere for RDi 9.5+" label="iSphere for RDi 9.5+ (additions)">
       <description>
          Optional additions for RDi 9.5+
+      </description>
+   </category-def>
+   <category-def name="iSphere TN5250J for RDi 8.0+" label="iSphere TN5250J for RDi 8.0+">
+      <description>
+         iSphere TN5250J emulator for RDi 8.0+
       </description>
    </category-def>
 </site>
