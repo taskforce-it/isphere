@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.tn5250j.rse"
-      label="TN5250J for WDSCi 7.0"
-      version="2.7.0.r"
+      label="iSphere TN5250J for WDSCi 7.0"
+      version="2.7.1.b003"
       provider-name="iSphere Project Team">
 
    <description>
