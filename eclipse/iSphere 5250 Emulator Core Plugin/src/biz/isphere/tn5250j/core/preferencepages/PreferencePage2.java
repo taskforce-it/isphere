@@ -45,6 +45,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         store = getPreferenceStore();
     }
 
+    @Override
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);
@@ -118,18 +119,21 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         return container;
     }
 
+    @Override
     protected void performApply() {
         setStoreToValues();
         setScreenToValues();
         super.performApply();
     }
 
+    @Override
     protected void performDefaults() {
         setStoreToDefaults();
         setScreenToValues();
         super.performDefaults();
     }
 
+    @Override
     public boolean performOk() {
         setStoreToValues();
         return super.performOk();

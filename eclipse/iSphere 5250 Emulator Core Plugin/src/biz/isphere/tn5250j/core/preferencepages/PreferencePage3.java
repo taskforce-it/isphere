@@ -39,6 +39,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
         store = getPreferenceStore();
     }
 
+    @Override
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);
@@ -60,6 +61,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
 
         textMSHorizontalSize = new Text(container, SWT.BORDER);
         textMSHorizontalSize.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 try {
                     Integer.parseInt(textMSHorizontalSize.getText());
@@ -81,6 +83,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
 
         textMSVerticalSize = new Text(container, SWT.BORDER);
         textMSVerticalSize.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 try {
                     Integer.parseInt(textMSVerticalSize.getText());
@@ -102,18 +105,21 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
         return container;
     }
 
+    @Override
     protected void performApply() {
         setStoreToValues();
         setScreenToValues();
         super.performApply();
     }
 
+    @Override
     protected void performDefaults() {
         setStoreToDefaults();
         setScreenToValues();
         super.performDefaults();
     }
 
+    @Override
     public boolean performOk() {
         setStoreToValues();
         return super.performOk();

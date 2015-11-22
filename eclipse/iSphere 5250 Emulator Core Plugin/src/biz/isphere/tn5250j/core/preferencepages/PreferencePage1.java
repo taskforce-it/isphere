@@ -32,6 +32,7 @@ public class PreferencePage1 extends PreferencePage implements IWorkbenchPrefere
         noDefaultAndApplyButton();
     }
 
+    @Override
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);

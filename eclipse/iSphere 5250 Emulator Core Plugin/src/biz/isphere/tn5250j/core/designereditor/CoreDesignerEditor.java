@@ -11,9 +11,10 @@ package biz.isphere.tn5250j.core.designereditor;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditor;
 
 public abstract class CoreDesignerEditor extends TN5250JEditor {
- 	
-	public boolean isMultiSession() {
-		return false;
-	}
-	
+
+    @Override
+    public boolean isMultiSession() {
+        return false;
+    }
+
 }

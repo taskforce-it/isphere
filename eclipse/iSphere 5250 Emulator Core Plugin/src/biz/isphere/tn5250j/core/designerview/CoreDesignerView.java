@@ -11,9 +11,10 @@ package biz.isphere.tn5250j.core.designerview;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
 public abstract class CoreDesignerView extends TN5250JView {
- 	
-	public boolean isMultiSession() {
-		return false;
-	}
-	
+
+    @Override
+    public boolean isMultiSession() {
+        return false;
+    }
+
 }
