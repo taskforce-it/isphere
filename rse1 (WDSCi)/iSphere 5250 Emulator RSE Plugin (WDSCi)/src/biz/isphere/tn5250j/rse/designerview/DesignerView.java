@@ -11,5 +11,7 @@ package biz.isphere.tn5250j.rse.designerview;
 import biz.isphere.tn5250j.core.designerview.CoreDesignerView;
 
 public class DesignerView extends CoreDesignerView {
-	
+
+    public static final String ID = "biz.isphere.tn5250j.rse.designerview.DesignerView"; //$NON-NLS-1$ 
+
 }
