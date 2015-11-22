@@ -20,23 +20,25 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class DesignerPanel extends CoreDesignerPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	public DesignerPanel(TN5250JInfo tn5250jInfo, Session session, Shell shell) {
-		super(tn5250jInfo, session, shell);
-	}
-	
-	public TN5250JGUI getTN5250JGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
-		return new DesignerGUI(tn5250jInfo, session5250);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public String getHost() {
-		DesignerInfo designerInfo = (DesignerInfo)getTN5250JInfo();
-		IBMiConnection iSeriesConnection = IBMiConnection.getConnection(designerInfo.getRSEProfil(), designerInfo.getRSEConnection());
-		if (iSeriesConnection != null) {
-			return iSeriesConnection.getHostName();
-		}
-		return "";
-	}
+    public DesignerPanel(TN5250JInfo tn5250jInfo, Session session, Shell shell) {
+        super(tn5250jInfo, session, shell);
+    }
+
+    @Override
+    public TN5250JGUI getTN5250JGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
+        return new DesignerGUI(tn5250jInfo, session5250);
+    }
+
+    @Override
+    public String getHost() {
+        DesignerInfo designerInfo = (DesignerInfo)getTN5250JInfo();
+        IBMiConnection iSeriesConnection = IBMiConnection.getConnection(designerInfo.getRSEProfil(), designerInfo.getRSEConnection());
+        if (iSeriesConnection != null) {
+            return iSeriesConnection.getHostName();
+        }
+        return "";
+    }
 
 }

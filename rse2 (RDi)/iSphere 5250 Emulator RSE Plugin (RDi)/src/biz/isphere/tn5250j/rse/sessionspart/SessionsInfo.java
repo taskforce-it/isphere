@@ -17,52 +17,53 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 
 public class SessionsInfo extends CoreSessionsInfo {
-	
-	private String rseProfil;
-	private String rseConnection;
 
-	public SessionsInfo(ITN5250JPart tn5250jPart) {
-		super(tn5250jPart);
-		rseProfil = "";
-		rseConnection = "";
-	}
+    private String rseProfil;
+    private String rseConnection;
 
-	public String getRSEProfil() {
-		return rseProfil;
-	}
+    public SessionsInfo(ITN5250JPart tn5250jPart) {
+        super(tn5250jPart);
+        rseProfil = "";
+        rseConnection = "";
+    }
 
-	public void setRSEProfil(String rseProfil) {
-		this.rseProfil = rseProfil;
-		setConnection(this.rseProfil + "-" + this.rseConnection);
-	}
+    public String getRSEProfil() {
+        return rseProfil;
+    }
 
-	public String getRSEConnection() {
-		return rseConnection;
-	}
+    public void setRSEProfil(String rseProfil) {
+        this.rseProfil = rseProfil;
+        setConnection(this.rseProfil + "-" + this.rseConnection);
+    }
 
-	public void setRSEConnection(String rseConnection) {
-		this.rseConnection = rseConnection;
-		setConnection(this.rseProfil + "-" + this.rseConnection);
-	}
+    public String getRSEConnection() {
+        return rseConnection;
+    }
 
-	public String getTN5250JDescription() {
-		return rseConnection + "/" + getSession();
-	}
+    public void setRSEConnection(String rseConnection) {
+        this.rseConnection = rseConnection;
+        setConnection(this.rseProfil + "-" + this.rseConnection);
+    }
 
-	public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-		SessionsInfo sessionsInfo = (SessionsInfo) tn5250jInfo;
-		if (rseProfil.equals(sessionsInfo.getRSEProfil()) &&
-			rseConnection.equals(sessionsInfo.getRSEConnection()) && 
-			getSession().equals(sessionsInfo.getSession())) {
-			return true;
-		} 
-		else {
-			return false;
-		}
-	}
+    @Override
+    public String getTN5250JDescription() {
+        return rseConnection + "/" + getSession();
+    }
 
-	public TN5250JPanel getTN5250JPanel(Session session, Shell shell) {
-		return new SessionsPanel(this, session, shell);
-	}
-	
+    @Override
+    public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
+        SessionsInfo sessionsInfo = (SessionsInfo)tn5250jInfo;
+        if (rseProfil.equals(sessionsInfo.getRSEProfil()) && rseConnection.equals(sessionsInfo.getRSEConnection())
+            && getSession().equals(sessionsInfo.getSession())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public TN5250JPanel getTN5250JPanel(Session session, Shell shell) {
+        return new SessionsPanel(this, session, shell);
+    }
+
 }

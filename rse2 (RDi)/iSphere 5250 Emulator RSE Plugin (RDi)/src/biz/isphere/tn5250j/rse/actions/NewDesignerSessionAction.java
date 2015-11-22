@@ -29,55 +29,57 @@ import biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystem;
 
 public class NewDesignerSessionAction implements IObjectActionDelegate {
 
-	private ArrayList<TN5250JSubSystem> selectedSubSystems;
-	
-	public NewDesignerSessionAction() {
-		selectedSubSystems = new ArrayList<TN5250JSubSystem>();
-	}
+    private ArrayList<TN5250JSubSystem> selectedSubSystems;
 
-	public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-	}
+    public NewDesignerSessionAction() {
+        selectedSubSystems = new ArrayList<TN5250JSubSystem>();
+    }
 
-	public void run(IAction action) {
-		for (int idx = 0; idx < selectedSubSystems.size(); idx++) {
-			Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName()));
-			session.setConnection(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName());
-			session.setName("_DESIGNER");
-			session.setProgram("DESIGNERW");
-			session.setLibrary("%ISPHERE%");
-			SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName()), DialogActionTypes.CREATE, session);
-			if (sessionDetailDialog.open() == Dialog.OK) {
-				RSESession rseSession = new RSESession(selectedSubSystems.get(idx), session.getName(), session);
-				rseSession.create(selectedSubSystems.get(idx));
-			}
-		}
-	}
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+    }
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		selectedSubSystems.clear();
-		boolean enabled = true;
-		Iterator<?> theSet = ((IStructuredSelection)selection).iterator();
-		while (theSet.hasNext()) {
-			Object object = theSet.next();
-			if (object instanceof TN5250JSubSystem) {
-				selectedSubSystems.add((TN5250JSubSystem)object);
-				if (!isEnabled(((TN5250JSubSystem)object).getSystemProfileName(), ((TN5250JSubSystem)object).getHostAliasName())) {
-					enabled = false;
-				}
-			}
-		}
-		action.setEnabled(enabled);
-	}
+    public void run(IAction action) {
+        for (int idx = 0; idx < selectedSubSystems.size(); idx++) {
+            Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
+                + selectedSubSystems.get(idx).getHostAliasName()));
+            session.setConnection(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName());
+            session.setName("_DESIGNER");
+            session.setProgram("DESIGNERW");
+            session.setLibrary("%ISPHERE%");
+            SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
+                    + selectedSubSystems.get(idx).getHostAliasName()), DialogActionTypes.CREATE, session);
+            if (sessionDetailDialog.open() == Dialog.OK) {
+                RSESession rseSession = new RSESession(selectedSubSystems.get(idx), session.getName(), session);
+                rseSession.create(selectedSubSystems.get(idx));
+            }
+        }
+    }
 
-	public boolean isEnabled(String profil, String connection) {
-		String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
-		File fileDesigner = new File(designer);
-		if (fileDesigner.exists()) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
+    public void selectionChanged(IAction action, ISelection selection) {
+        selectedSubSystems.clear();
+        boolean enabled = true;
+        Iterator<?> theSet = ((IStructuredSelection)selection).iterator();
+        while (theSet.hasNext()) {
+            Object object = theSet.next();
+            if (object instanceof TN5250JSubSystem) {
+                selectedSubSystems.add((TN5250JSubSystem)object);
+                if (!isEnabled(((TN5250JSubSystem)object).getSystemProfileName(), ((TN5250JSubSystem)object).getHostAliasName())) {
+                    enabled = false;
+                }
+            }
+        }
+        action.setEnabled(enabled);
+    }
+
+    public boolean isEnabled(String profil, String connection) {
+        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
+        File fileDesigner = new File(designer);
+        if (fileDesigner.exists()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }
