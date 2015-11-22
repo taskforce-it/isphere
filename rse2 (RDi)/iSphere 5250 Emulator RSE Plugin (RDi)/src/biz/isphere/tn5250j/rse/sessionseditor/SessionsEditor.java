@@ -12,4 +12,6 @@ import biz.isphere.tn5250j.core.sessionseditor.CoreSessionsEditor;
 
 public class SessionsEditor extends CoreSessionsEditor {
 
+    public static final String ID = "biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor";
+
 }
