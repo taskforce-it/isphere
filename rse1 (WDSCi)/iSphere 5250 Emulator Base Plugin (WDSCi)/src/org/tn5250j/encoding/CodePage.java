@@ -27,24 +27,22 @@
 package org.tn5250j.encoding;
 
 /**
- *
+ * 
  * This class controls the translation from EBCDIC to ASCII and ASCII to EBCDIC
- *
+ * 
  */
-public abstract class CodePage
-{
-  protected CodePage(String encoding)
-  {
-    this.encoding = encoding;
-  }
+public abstract class CodePage {
+    protected CodePage(String encoding) {
+        this.encoding = encoding;
+    }
 
-  public abstract char ebcdic2uni (int index);
-  public abstract byte uni2ebcdic (char index);
+    public abstract char ebcdic2uni(int index);
 
-  public String getEncoding ()
-  {
-     return encoding;
-  }
+    public abstract byte uni2ebcdic(char index);
 
-  protected String encoding;
+    public String getEncoding() {
+        return encoding;
+    }
+
+    protected String encoding;
 }

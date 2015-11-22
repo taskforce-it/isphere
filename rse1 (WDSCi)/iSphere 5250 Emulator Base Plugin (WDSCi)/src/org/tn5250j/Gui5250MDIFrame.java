@@ -1,4 +1,5 @@
 package org.tn5250j;
+
 /**
  * Title: Gui5250MDIFrame.java
  * Copyright:   Copyright (c) 2001
@@ -41,607 +42,606 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-public class Gui5250MDIFrame extends GUIViewInterface implements
-                                                    ChangeListener,
-                                                    TN5250jConstants,
-                                                    SessionListener,
-                                                    SessionJumpListener {
+public class Gui5250MDIFrame extends GUIViewInterface implements ChangeListener, TN5250jConstants, SessionListener, SessionJumpListener {
 
-   BorderLayout borderLayout1 = new BorderLayout();
-//   My5250 me;
-//   private SessionManager manager;
-   private ImageIcon focused = null;
-   private ImageIcon unfocused = null;
-   private int selectedIndex = 0;
-   private JDesktopPane desktop;
-   static int openFrameCount = 0;
-   private Vector myFrameList;
-   private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
+    BorderLayout borderLayout1 = new BorderLayout();
+    // My5250 me;
+    // private SessionManager manager;
+    private ImageIcon focused = null;
+    private ImageIcon unfocused = null;
+    private int selectedIndex = 0;
+    private JDesktopPane desktop;
+    static int openFrameCount = 0;
+    private Vector myFrameList;
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
-   //Construct the frame
-   public Gui5250MDIFrame(My5250 m) {
-      super(m);
-      enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-      try  {
-         jbInit();
-      }
-      catch(Exception e) {
-         log.warn("In constructor: "+e);
-      }
-   }
+    // Construct the frame
+    public Gui5250MDIFrame(My5250 m) {
+        super(m);
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        try {
+            jbInit();
+        } catch (Exception e) {
+            log.warn("In constructor: " + e);
+        }
+    }
 
-   //Component initialization
-  private void jbInit() throws Exception  {
+    // Component initialization
+    private void jbInit() throws Exception {
 
-      desktop = new JDesktopPane();
-      // Install our custom desktop manager
-      desktop.setDesktopManager(new MyDesktopMgr());
-      setContentPane(desktop);
-      myFrameList = new Vector(3);
+        desktop = new JDesktopPane();
+        // Install our custom desktop manager
+        desktop.setDesktopManager(new MyDesktopMgr());
+        setContentPane(desktop);
+        myFrameList = new Vector(3);
 
-      if (sequence > 0)
-         setTitle("tn5250j <" + sequence + ">- " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-      else
-         setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        if (sequence > 0)
+            setTitle("tn5250j <" + sequence + ">- " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        else
+            setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
 
-      if (packFrame)
-         pack();
-      else
-         validate();
+        if (packFrame)
+            pack();
+        else
+            validate();
 
-   }
+    }
 
-   public void centerFrame() {
+    @Override
+    public void centerFrame() {
 
-      //Center the window
-      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension frameSize = getSize();
-      if (frameSize.height > screenSize.height)
-         frameSize.height = screenSize.height;
-      if (frameSize.width > screenSize.width)
-         frameSize.width = screenSize.width;
+        // Center the window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = getSize();
+        if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
+        if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
 
-      setLocation((screenSize.width - frameSize.width) / 2,
-                     (screenSize.height - frameSize.height) / 2);
+        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
+    }
 
-   }
+    // Overridden so we can exit on System Close
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+            me.closingDown(this);
+        }
+    }
 
-   //Overridden so we can exit on System Close
-   protected void processWindowEvent(WindowEvent e) {
-      super.processWindowEvent(e);
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
-         me.closingDown(this);
-      }
-   }
+    @Override
+    public void update(Graphics g) {
+        paint(g);
+    }
 
+    @Override
+    public void onSessionJump(SessionJumpEvent jumpEvent) {
 
-   public void update(Graphics g) {
-      paint(g);
-   }
+        switch (jumpEvent.getJumpDirection()) {
 
-   public void onSessionJump(SessionJumpEvent jumpEvent) {
-
-      switch (jumpEvent.getJumpDirection()) {
-
-         case JUMP_PREVIOUS:
+        case JUMP_PREVIOUS:
             prevSession();
             break;
-         case JUMP_NEXT:
+        case JUMP_NEXT:
             nextSession();
             break;
-      }
-   }
+        }
+    }
 
-   private MyInternalFrame getNextInternalFrame() {
+    private MyInternalFrame getNextInternalFrame() {
 
+        JInternalFrame[] frames = desktop.getAllFrames();
+        JInternalFrame miv = desktop.getSelectedFrame();
 
-      JInternalFrame[] frames = (JInternalFrame[])desktop.getAllFrames();
-      JInternalFrame miv = desktop.getSelectedFrame();
+        if (miv == null) return null;
 
-      if (miv == null)
-         return null;
+        int index = desktop.getIndexOf(miv);
 
-      int index = desktop.getIndexOf(miv);
+        if (index == -1) return null;
 
-      if (index == -1)
-         return null;
+        MyInternalFrame mix = (MyInternalFrame)frames[index];
 
-      MyInternalFrame mix = (MyInternalFrame)frames[index];
+        int seq = mix.getInternalId();
+        index = 0;
 
-      int seq = mix.getInternalId();
-      index  = 0;
+        for (int x = 0; x < myFrameList.size(); x++) {
 
-      for (int x = 0; x < myFrameList.size(); x++) {
+            MyInternalFrame mif = (MyInternalFrame)myFrameList.get(x);
+            log.debug(" current index " + x + " count " + frames.length + " has focus " + mif.isActive() + " title " + mif.getTitle() + " seq " + seq
+                + " id " + mif.getInternalId());
 
-         MyInternalFrame mif = (MyInternalFrame)myFrameList.get(x);
-		 log.debug(" current index " + x + " count " + frames.length + " has focus " +
-                        mif.isActive() + " title " + mif.getTitle() + " seq " + seq +
-                       " id " + mif.getInternalId());
+            if (mix.equals(mif)) {
+                index = x + 1;
+                break;
+            }
+        }
 
-         if (mix.equals(mif)) {
-            index = x + 1;
-            break;
-         }
-      }
+        if (index > myFrameList.size() - 1) {
+            index = 0;
+        }
 
-      if (index > myFrameList.size() - 1) {
-         index = 0;
-      }
+        return (MyInternalFrame)myFrameList.get(index);
 
-      return (MyInternalFrame)myFrameList.get(index);
+    }
 
+    private void nextSession() {
 
+        MyInternalFrame mif = getNextInternalFrame();
 
-   }
+        if (mif != null) {
+            try {
 
-   private void nextSession() {
+                if (mif.isIcon()) {
+                    mif.setIcon(false);
+                }
+                mif.setSelected(true);
 
+            } catch (java.beans.PropertyVetoException e) {
+                log.warn(e.getMessage());
+            }
+        }
+        // System.out.println(" current index " + index + " count " +
+        // desktop.getComponentCount());
 
-      MyInternalFrame mif = getNextInternalFrame();
+    }
 
-      if (mif != null) {
-         try {
+    private void prevSession() {
 
+        JInternalFrame[] frames = desktop.getAllFrames();
+        JInternalFrame miv = desktop.getSelectedFrame();
+
+        if (miv == null) return;
+
+        int index = desktop.getIndexOf(miv);
+
+        if (index == -1) return;
+
+        MyInternalFrame mix = (MyInternalFrame)frames[index];
+
+        int seq = mix.getInternalId();
+        index = 0;
+
+        for (int x = 0; x < myFrameList.size(); x++) {
+
+            MyInternalFrame mif = (MyInternalFrame)myFrameList.get(x);
+            log.debug(" current index " + x + " count " + frames.length + " has focus " + mif.isActive() + " title " + mif.getTitle() + " seq " + seq
+                + " id " + mif.getInternalId());
+
+            if (mix.equals(mif)) {
+                index = x - 1;
+                break;
+            }
+        }
+
+        if (index < 0) {
+            index = myFrameList.size() - 1;
+        }
+
+        try {
+            MyInternalFrame mif = (MyInternalFrame)myFrameList.get(index);
             if (mif.isIcon()) {
-               mif.setIcon(false);
+                mif.setIcon(false);
             }
             mif.setSelected(true);
 
-         }
-         catch (java.beans.PropertyVetoException e) {
+        } catch (java.beans.PropertyVetoException e) {
             log.warn(e.getMessage());
-         }
-      }
-//      System.out.println(" current index " + index + " count " + desktop.getComponentCount());
+        }
+        // System.out.println(" current index " + index + " count " +
+        // desktop.getComponentCount());
 
-   }
+    }
 
-   private void prevSession() {
+    @Override
+    public void setIcons(ImageIcon focused, ImageIcon unfocused) {
 
-      JInternalFrame[] frames = (JInternalFrame[])desktop.getAllFrames();
-      JInternalFrame miv = desktop.getSelectedFrame();
+    }
 
-      if (miv == null)
-         return;
+    public void stateChanged(ChangeEvent e) {
 
-      int index = desktop.getIndexOf(miv);
+    }
 
-      if (index == -1)
-         return;
+    @Override
+    public void addSessionView(String tabText, SessionGUI session) {
 
-      MyInternalFrame mix = (MyInternalFrame)frames[index];
+        MyInternalFrame frame = new MyInternalFrame();
+        frame.setVisible(true);
+        desktop.add(frame);
+        myFrameList.add(frame);
+        selectedIndex = desktop.getComponentCount();
+        frame.setContentPane(session);
 
-      int seq = mix.getInternalId();
-      index  = 0;
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {
+        }
+        session.addSessionListener(this);
+        session.addSessionJumpListener(this);
+        try {
+            frame.setMaximum(true);
+        } catch (java.beans.PropertyVetoException pve) {
+            log.warn("Can not set maximum " + pve.getMessage());
+        }
 
-      for (int x = 0; x < myFrameList.size(); x++) {
+    }
 
-         MyInternalFrame mif = (MyInternalFrame)myFrameList.get(x);
-		 log.debug(" current index " + x + " count " + frames.length + " has focus " +
-                        mif.isActive() + " title " + mif.getTitle() + " seq " + seq +
-                        " id " + mif.getInternalId());
+    @Override
+    public void removeSessionView(SessionGUI targetSession) {
 
-         if (mix.equals(mif)) {
-            index = x - 1;
-            break;
-         }
-      }
+        int index = getIndexOfSession(targetSession);
+        MyInternalFrame nextMIF = getNextInternalFrame();
+        log.info("session found and closing down " + index);
+        targetSession.removeSessionListener(this);
+        targetSession.removeSessionJumpListener(this);
+        JInternalFrame[] frames = desktop.getAllFrames();
+        MyInternalFrame mif = (MyInternalFrame)frames[index];
+        int count = getSessionViewCount();
+        log.debug(" num of frames before removal " + myFrameList.size());
+        myFrameList.remove(mif);
+        log.debug(" num of frames left " + myFrameList.size());
+        desktop.remove(index);
 
-      if (index < 0) {
-         index = myFrameList.size() - 1;
-      }
+        if (nextMIF != null) {
+            try {
 
-      try {
-         MyInternalFrame mif = (MyInternalFrame)myFrameList.get(index);
-         if (mif.isIcon()) {
-            mif.setIcon(false);
-         }
-         mif.setSelected(true);
+                nextMIF.setSelected(true);
 
-      }
-      catch (java.beans.PropertyVetoException e) {
-         log.warn(e.getMessage());
-      }
-//      System.out.println(" current index " + index + " count " + desktop.getComponentCount());
+            } catch (java.beans.PropertyVetoException e) {
+                log.warn(e.getMessage());
+            }
+        }
 
-   }
+        this.repaint();
 
-   public void setIcons(ImageIcon focused, ImageIcon unfocused) {
+    }
 
-   }
+    @Override
+    public int getSessionViewCount() {
 
-   public void stateChanged(ChangeEvent e) {
+        return desktop.getAllFrames().length;
+    }
 
+    @Override
+    public SessionGUI getSessionAt(int index) {
 
-   }
+        JInternalFrame[] frames = desktop.getAllFrames();
+        SessionGUI s = (SessionGUI)frames[index].getContentPane();
 
-   public void addSessionView(String tabText,SessionGUI session) {
+        return s;
+    }
 
-      MyInternalFrame frame = new MyInternalFrame();
-      frame.setVisible(true);
-      desktop.add(frame);
-      myFrameList.add(frame);
-      selectedIndex = desktop.getComponentCount();
-      frame.setContentPane(session);
+    @Override
+    public void onSessionChanged(SessionChangeEvent changeEvent) {
 
-      try {
-         frame.setSelected(true);
-      } catch (java.beans.PropertyVetoException e) {}
-      session.addSessionListener(this);
-      session.addSessionJumpListener(this);
-      try {
-         frame.setMaximum(true);
-      }
-      catch (java.beans.PropertyVetoException pve) {
-         log.warn("Can not set maximum " + pve.getMessage());
-      }
+        SessionGUI ses = (SessionGUI)changeEvent.getSource();
 
-   }
-
-   public void removeSessionView(SessionGUI targetSession) {
-
-      int index = getIndexOfSession(targetSession);
-      MyInternalFrame nextMIF = getNextInternalFrame();
-      log.info("session found and closing down " + index);
-      targetSession.removeSessionListener(this);
-      targetSession.removeSessionJumpListener(this);
-      JInternalFrame[] frames = (JInternalFrame[])desktop.getAllFrames();
-      MyInternalFrame mif = (MyInternalFrame)frames[index];
-      int count = getSessionViewCount();
-	  log.debug(" num of frames before removal " + myFrameList.size());
-      myFrameList.remove(mif);
-	  log.debug(" num of frames left " + myFrameList.size());
-      desktop.remove(index);
-
-      if (nextMIF != null) {
-         try {
-
-            nextMIF.setSelected(true);
-
-
-         }
-         catch (java.beans.PropertyVetoException e) {
-            log.warn(e.getMessage());
-         }
-      }
-
-      this.repaint();
-
-   }
-
-   public int getSessionViewCount() {
-
-      return desktop.getAllFrames().length;
-   }
-
-   public SessionGUI getSessionAt( int index) {
-
-      JInternalFrame[] frames = (JInternalFrame[])desktop.getAllFrames();
-      SessionGUI s = (SessionGUI)frames[index].getContentPane();
-
-      return s;
-   }
-
-   public void onSessionChanged(SessionChangeEvent changeEvent) {
-
-      SessionGUI ses = (SessionGUI)changeEvent.getSource();
-
-      switch (changeEvent.getState()) {
-         case STATE_CONNECTED:
+        switch (changeEvent.getState()) {
+        case STATE_CONNECTED:
 
             final String d = ses.getAllocDeviceName();
             if (d != null) {
-               log.info(changeEvent.getState() + " " + d);
-               final int index = getIndexOfSession(ses);
+                log.info(changeEvent.getState() + " " + d);
+                final int index = getIndexOfSession(ses);
 
-			   log.debug(" index of session " + index + " num frames " + desktop.getAllFrames().length);
-               if (index == -1)
-                  return;
-               Runnable tc = new Runnable () {
-                  public void run() {
-                     JInternalFrame[] frames = desktop.getAllFrames();
-                     int id = ((MyInternalFrame)frames[index]).getInternalId();
-                     frames[index].setTitle("#" + id + " " + d);
-                  }
-               };
-               SwingUtilities.invokeLater(tc);
+                log.debug(" index of session " + index + " num frames " + desktop.getAllFrames().length);
+                if (index == -1) return;
+                Runnable tc = new Runnable() {
+                    public void run() {
+                        JInternalFrame[] frames = desktop.getAllFrames();
+                        int id = ((MyInternalFrame)frames[index]).getInternalId();
+                        frames[index].setTitle("#" + id + " " + d);
+                    }
+                };
+                SwingUtilities.invokeLater(tc);
 
             }
             break;
-      }
+        }
 
-   }
+    }
 
-   public boolean containsSession(SessionGUI session) {
+    @Override
+    public boolean containsSession(SessionGUI session) {
 
-      return getIndexOfSession(session) >= 0;
+        return getIndexOfSession(session) >= 0;
 
-   }
+    }
 
-   public int getIndexOfSession(SessionGUI session) {
+    public int getIndexOfSession(SessionGUI session) {
 
-      JInternalFrame[] frames = (JInternalFrame[])desktop.getAllFrames();
-      int index = -1;
+        JInternalFrame[] frames = desktop.getAllFrames();
+        int index = -1;
 
-      for (int idx = 0; idx < frames.length; idx++) {
-         SessionGUI ses = (SessionGUI)frames[idx].getContentPane();
-         if (ses.equals(session)) {
-            index = idx;
-            return index;
-         }
-      }
-
-      return index;
-
-   }
-
-   private void calculateVisibility() {
-      JInternalFrame[] frames = desktop.getAllFrames();
-      for (int i = 0; i < frames.length; i++) {
-          JInternalFrame frame = frames[i];
-          if (!frame.isIcon()) {
-              Component[] c = frame.getContentPane().getComponents();
-              for (int j = 0; j < c.length; j++) {
-                  Component component = c[j];
-                  if (desktop.getBounds().intersects(calculateBoundsInFrame(component))) {
-                      component.setVisible(true);
-                  }
-                  else {
-                      //off desktop
-                      component.setVisible(false);
-                  }
-              }
-          }
-      }
-
-      for (int i = 0; i < frames.length; i++) {
-          JInternalFrame frame1 = frames[i];
-          if (!frame1.isIcon()) {
-              for (int j = 0; j < frames.length; j++) {
-                  JInternalFrame frame2 = frames[j];
-                  if (!frame2.isIcon()) {
-                      //Is frame 1 in front of frame 2?
-                      if (desktop.getIndexOf(frame1) < desktop.getIndexOf(frame2)) {
-                          Component[] c = frame2.getContentPane().getComponents();
-                          for (int k = 0; k < c.length; k++) {
-                              Component component = c[k];
-                              if (frame1.getBounds().contains(calculateBoundsInFrame(component))) {
-                                  component.setVisible(false);
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
-
-   private Rectangle calculateBoundsInFrame(Component component) {
-     Rectangle componentBoundsInFrame = component.getBounds();
-     //This only works in the simplest case, need to recurse to JInternalFrame
-     Point p1 = component.getParent().getLocation();
-     Point p2 = component.getParent().getParent().getLocation();
-     Point p3 = component.getParent().getParent().getParent().getLocation();
-     Point p4 = component.getParent().getParent().getParent().getParent().getLocation();
-     componentBoundsInFrame = new Rectangle(p1.x + p2.x + p3.x + p4.x, p1.y + p2.y + p3.y + p4.y, componentBoundsInFrame.width, componentBoundsInFrame.height);
-     componentBoundsInFrame = componentBoundsInFrame.intersection(desktop.getBounds());
-     return componentBoundsInFrame;
-   }
-
-   public class MyInternalFrame extends JInternalFrame {
-
-      static final int xOffset = 30, yOffset = 30;
-      private int internalId = 0;
-      private boolean activated;
-
-      public MyInternalFrame() {
-         super("#" + (++openFrameCount),
-              true, //resizable
-              true, //closable
-              true, //maximizable
-              true);//iconifiable
-
-         internalId = openFrameCount;
-
-         //...Create the GUI and put it in the window...
-
-         //...Then set the window size or call pack...
-         setSize(600,500);
-
-         //Set the window's location.
-         setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
-
-         addInternalFrameListener(new InternalFrameAdapter() {
-
-            public void internalFrameClosing(InternalFrameEvent e) {
-//               displayMessage("Internal frame closing", e);
-//               calculateVisibility();
-               disconnectMe();
+        for (int idx = 0; idx < frames.length; idx++) {
+            SessionGUI ses = (SessionGUI)frames[idx].getContentPane();
+            if (ses.equals(session)) {
+                index = idx;
+                return index;
             }
+        }
 
-            public void internalFrameClosed(InternalFrameEvent e) {
-//               displayMessage("Internal frame closed", e);
-               disconnectMe();
-//               calculateVisibility();
+        return index;
+
+    }
+
+    private void calculateVisibility() {
+        JInternalFrame[] frames = desktop.getAllFrames();
+        for (int i = 0; i < frames.length; i++) {
+            JInternalFrame frame = frames[i];
+            if (!frame.isIcon()) {
+                Component[] c = frame.getContentPane().getComponents();
+                for (int j = 0; j < c.length; j++) {
+                    Component component = c[j];
+                    if (desktop.getBounds().intersects(calculateBoundsInFrame(component))) {
+                        component.setVisible(true);
+                    } else {
+                        // off desktop
+                        component.setVisible(false);
+                    }
+                }
             }
+        }
 
-            public void internalFrameOpened(InternalFrameEvent e) {
-//               displayMessage("Internal frame opened", e);
-//               calculateVisibility();
+        for (int i = 0; i < frames.length; i++) {
+            JInternalFrame frame1 = frames[i];
+            if (!frame1.isIcon()) {
+                for (int j = 0; j < frames.length; j++) {
+                    JInternalFrame frame2 = frames[j];
+                    if (!frame2.isIcon()) {
+                        // Is frame 1 in front of frame 2?
+                        if (desktop.getIndexOf(frame1) < desktop.getIndexOf(frame2)) {
+                            Component[] c = frame2.getContentPane().getComponents();
+                            for (int k = 0; k < c.length; k++) {
+                                Component component = c[k];
+                                if (frame1.getBounds().contains(calculateBoundsInFrame(component))) {
+                                    component.setVisible(false);
+                                }
+                            }
+                        }
+                    }
+                }
             }
+        }
+    }
 
-            public void internalFrameIconified(InternalFrameEvent e) {
-//               displayMessage("Internal frame iconified", e);
-//               calculateVisibility();
-//               e.getInternalFrame().getContentPane().setVisible(false);
-            }
+    private Rectangle calculateBoundsInFrame(Component component) {
+        Rectangle componentBoundsInFrame = component.getBounds();
+        // This only works in the simplest case, need to recurse to
+        // JInternalFrame
+        Point p1 = component.getParent().getLocation();
+        Point p2 = component.getParent().getParent().getLocation();
+        Point p3 = component.getParent().getParent().getParent().getLocation();
+        Point p4 = component.getParent().getParent().getParent().getParent().getLocation();
+        componentBoundsInFrame = new Rectangle(p1.x + p2.x + p3.x + p4.x, p1.y + p2.y + p3.y + p4.y, componentBoundsInFrame.width,
+            componentBoundsInFrame.height);
+        componentBoundsInFrame = componentBoundsInFrame.intersection(desktop.getBounds());
+        return componentBoundsInFrame;
+    }
 
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-//               displayMessage("Internal frame deiconified", e);
-//               calculateVisibility();
-//               e.getInternalFrame().getContentPane().setVisible(true);
-            }
+    public class MyInternalFrame extends JInternalFrame {
 
-            public void internalFrameActivated(InternalFrameEvent e) {
-//               displayMessage("Internal frame activated", e);
-               activated = true;
-//               calculateVisibility();
-            }
+        static final int xOffset = 30, yOffset = 30;
+        private int internalId = 0;
+        private boolean activated;
 
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-               activated = false;
-//               calculateVisibility();
-//               displayMessage("Internal frame deactivated", e);
-            }
+        public MyInternalFrame() {
+            super("#" + (++openFrameCount), true, // resizable
+                true, // closable
+                true, // maximizable
+                true);// iconifiable
 
+            internalId = openFrameCount;
+
+            // ...Create the GUI and put it in the window...
+
+            // ...Then set the window size or call pack...
+            setSize(600, 500);
+
+            // Set the window's location.
+            setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
+
+            addInternalFrameListener(new InternalFrameAdapter() {
+
+                @Override
+                public void internalFrameClosing(InternalFrameEvent e) {
+                    // displayMessage("Internal frame closing", e);
+                    // calculateVisibility();
+                    disconnectMe();
+                }
+
+                @Override
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    // displayMessage("Internal frame closed", e);
+                    disconnectMe();
+                    // calculateVisibility();
+                }
+
+                @Override
+                public void internalFrameOpened(InternalFrameEvent e) {
+                    // displayMessage("Internal frame opened", e);
+                    // calculateVisibility();
+                }
+
+                @Override
+                public void internalFrameIconified(InternalFrameEvent e) {
+                    // displayMessage("Internal frame iconified", e);
+                    // calculateVisibility();
+                    // e.getInternalFrame().getContentPane().setVisible(false);
+                }
+
+                @Override
+                public void internalFrameDeiconified(InternalFrameEvent e) {
+                    // displayMessage("Internal frame deiconified", e);
+                    // calculateVisibility();
+                    // e.getInternalFrame().getContentPane().setVisible(true);
+                }
+
+                @Override
+                public void internalFrameActivated(InternalFrameEvent e) {
+                    // displayMessage("Internal frame activated", e);
+                    activated = true;
+                    // calculateVisibility();
+                }
+
+                @Override
+                public void internalFrameDeactivated(InternalFrameEvent e) {
+                    activated = false;
+                    // calculateVisibility();
+                    // displayMessage("Internal frame deactivated", e);
+                }
 
             });
 
-          }
-         void displayMessage(String prefix, InternalFrameEvent e) {
+        }
+
+        void displayMessage(String prefix, InternalFrameEvent e) {
             String s = prefix + ": " + e.getSource();
             System.out.println(s + '\n');
-         }
+        }
 
-//         void hideMe() {
-//            this.setVisible(false);
-//
-//         }
+        // void hideMe() {
+        // this.setVisible(false);
+        //
+        // }
 
-         public int getInternalId() {
+        public int getInternalId() {
 
             return internalId;
 
-         }
+        }
 
-         public boolean isActive() {
+        public boolean isActive() {
 
             return activated;
 
-         }
+        }
 
-         public void setSelected(boolean selected)
-               throws java.beans.PropertyVetoException {
+        @Override
+        public void setSelected(boolean selected) throws java.beans.PropertyVetoException {
             super.setSelected(selected);
-         }
+        }
 
-         public void paintme() {
+        public void paintme() {
             repaint();
-         }
-         public void update(Graphics g) {
-            paint(g);
-         }
+        }
 
-         private void disconnectMe() {
+        @Override
+        public void update(Graphics g) {
+            paint(g);
+        }
+
+        private void disconnectMe() {
 
             SessionGUI s = (SessionGUI)getContentPane();
             me.closeSession(s);
-         }
+        }
 
-         public void resizeMe() {
+        public void resizeMe() {
 
             if (getContentPane() instanceof SessionGUI) {
-               SessionGUI s = (SessionGUI)getContentPane();
-               s.resizeMe();
+                SessionGUI s = (SessionGUI)getContentPane();
+                s.resizeMe();
             }
-         }
+        }
 
-         public void setBounds(int newX, int newY, int newWidth, int newHeight) {
+        @Override
+        public void setBounds(int newX, int newY, int newWidth, int newHeight) {
 
             boolean didResize = (getWidth() != newWidth || getHeight() != newHeight);
             super.setBounds(newX, newY, newWidth, newHeight);
-            if (didResize)
-               resizeMe();
+            if (didResize) resizeMe();
 
-         }
+        }
 
-   }
+    }
 
-   // A DesktopManager that keeps its frames inside the desktop.
-     public class MyDesktopMgr extends DefaultDesktopManager {
+    // A DesktopManager that keeps its frames inside the desktop.
+    public class MyDesktopMgr extends DefaultDesktopManager {
 
-       // We'll tag internal frames that are being resized using a client
-       // property with the name RESIZING.  Used in setBoundsForFrame().
-       protected static final String RESIZING = "RESIZING";
+        // We'll tag internal frames that are being resized using a client
+        // property with the name RESIZING. Used in setBoundsForFrame().
+        protected static final String RESIZING = "RESIZING";
 
-       public void beginResizingFrame(JComponent f, int dir) {
-         f.putClientProperty(RESIZING, Boolean.TRUE);
-       }
+        @Override
+        public void beginResizingFrame(JComponent f, int dir) {
+            f.putClientProperty(RESIZING, Boolean.TRUE);
+        }
 
-       public void endResizingFrame(JComponent f) {
-         f.putClientProperty(RESIZING, Boolean.FALSE);
+        @Override
+        public void endResizingFrame(JComponent f) {
+            f.putClientProperty(RESIZING, Boolean.FALSE);
 
-       }
+        }
 
-       public void endDraggingFrame(JComponent f) {
-           JInternalFrame frame = (JInternalFrame)f;
-//           ((Gui5250)frame.getContentPane()).getScreen().controllersG2D = null;
+        @Override
+        public void endDraggingFrame(JComponent f) {
+            JInternalFrame frame = (JInternalFrame)f;
+            // ((Gui5250)frame.getContentPane()).getScreen().controllersG2D =
+            // null;
             f.validate();
-       }
+        }
 
-      // workaround for bug 4326562
-      public void deiconifyFrame(JInternalFrame f) {
-          super.deiconifyFrame(f);
-          f.toFront();
-      }
+        // workaround for bug 4326562
+        @Override
+        public void deiconifyFrame(JInternalFrame f) {
+            super.deiconifyFrame(f);
+            f.toFront();
+        }
 
-       // This is called any time a frame is moved or resized.  This
-       // implementation keeps the frame from leaving the desktop.
-       public void setBoundsForFrame(JComponent f, int x, int y, int w, int h) {
+        // This is called any time a frame is moved or resized. This
+        // implementation keeps the frame from leaving the desktop.
+        @Override
+        public void setBoundsForFrame(JComponent f, int x, int y, int w, int h) {
 
-         log.info(" we are adjusting ");
-         if (f instanceof MyInternalFrame == false) {
-           super.setBoundsForFrame(f, x, y, w, h); // only deal w/internal frames
-         }
-         else {
-           MyInternalFrame frame = (MyInternalFrame)f;
+            log.info(" we are adjusting ");
+            if (f instanceof MyInternalFrame == false) {
+                super.setBoundsForFrame(f, x, y, w, h); // only deal w/internal
+                                                        // frames
+            } else {
+                MyInternalFrame frame = (MyInternalFrame)f;
 
-           // Figure out if we are being resized (otherwise it's just a move)
-           boolean resizing = false;
-           Object r = frame.getClientProperty(RESIZING);
-           if (r != null && r instanceof Boolean) {
-             resizing = ((Boolean)r).booleanValue();
-           }
+                // Figure out if we are being resized (otherwise it's just a
+                // move)
+                boolean resizing = false;
+                Object r = frame.getClientProperty(RESIZING);
+                if (r != null && r instanceof Boolean) {
+                    resizing = ((Boolean)r).booleanValue();
+                }
 
-           JDesktopPane desk = frame.getDesktopPane();
-           Dimension d = desk.getSize();
+                JDesktopPane desk = frame.getDesktopPane();
+                Dimension d = desk.getSize();
 
-           // Nothing all that fancy below, just figuring out how to adjust
-           // to keep the frame on the desktop.
-           if (x < 0) {              // too far left?
-             if (resizing)
-               w += x;               // don't get wider!
-             x=0;                    // flush against the left side
-           }
-           else {
-             if (x+w>d.width) {      // too far right?
-              if (resizing)
-                w = d.width-x;       // don't get wider!
-              else
-                x = d.width-w;       // flush against the right side
-             }
-           }
-           if (y < 0) {              // too high?
-             if (resizing)
-               h += y;               // don't get taller!
-             y=0;                    // flush against the top
-           }
-           else {
-             if (y+h > d.height) {   // too low?
-               if (resizing)
-                 h = d.height - y;   // don't get taller!
-               else
-                 y = d.height-h;     // flush against the bottom
-             }
-           }
+                // Nothing all that fancy below, just figuring out how to adjust
+                // to keep the frame on the desktop.
+                if (x < 0) { // too far left?
+                    if (resizing) w += x; // don't get wider!
+                    x = 0; // flush against the left side
+                } else {
+                    if (x + w > d.width) { // too far right?
+                        if (resizing)
+                            w = d.width - x; // don't get wider!
+                        else
+                            x = d.width - w; // flush against the right side
+                    }
+                }
+                if (y < 0) { // too high?
+                    if (resizing) h += y; // don't get taller!
+                    y = 0; // flush against the top
+                } else {
+                    if (y + h > d.height) { // too low?
+                        if (resizing)
+                            h = d.height - y; // don't get taller!
+                        else
+                            y = d.height - h; // flush against the bottom
+                    }
+                }
 
-           // Set 'em the way we like 'em
-           super.setBoundsForFrame(f, x, y, w, h);
-//           ((MyInternalFrame)f).resizeMe();
-         }
+                // Set 'em the way we like 'em
+                super.setBoundsForFrame(f, x, y, w, h);
+                // ((MyInternalFrame)f).resizeMe();
+            }
 
-       }
+        }
 
-     }
+    }
 }

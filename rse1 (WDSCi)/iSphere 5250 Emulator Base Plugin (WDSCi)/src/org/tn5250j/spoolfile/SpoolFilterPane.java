@@ -1,4 +1,5 @@
 package org.tn5250j.spoolfile;
+
 /**
  * Title: SpoolExporter.java
  * Copyright:   Copyright (c) 2002
@@ -29,103 +30,103 @@ import javax.swing.JTabbedPane;
 
 public class SpoolFilterPane extends JTabbedPane {
 
-   private UserTabPanel user;
-   private OutputQueueTabPanel queue;
-//   private JobTabPanel job;
-   private SpoolNameTabPanel spoolName;
-   private UserDataTabPanel userData;
+    private UserTabPanel user;
+    private OutputQueueTabPanel queue;
+    // private JobTabPanel job;
+    private SpoolNameTabPanel spoolName;
+    private UserDataTabPanel userData;
 
-   public SpoolFilterPane() {
-      try {
-         jbInit();
-      }
-      catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
-   private void jbInit() throws Exception {
-      user = new UserTabPanel();
-      queue = new OutputQueueTabPanel();
-//      job = new JobTabPanel();
-      spoolName = new SpoolNameTabPanel();
-      userData = new UserDataTabPanel();
+    public SpoolFilterPane() {
+        try {
+            jbInit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-      this.addTab("User",user);
-      this.addTab("Output Queue",queue);
-//      this.addTab("Job",job);
-      this.addTab("Spool Name",spoolName);
-      this.addTab("User Data",userData);
+    private void jbInit() throws Exception {
+        user = new UserTabPanel();
+        queue = new OutputQueueTabPanel();
+        // job = new JobTabPanel();
+        spoolName = new SpoolNameTabPanel();
+        userData = new UserDataTabPanel();
 
-   }
+        this.addTab("User", user);
+        this.addTab("Output Queue", queue);
+        // this.addTab("Job",job);
+        this.addTab("Spool Name", spoolName);
+        this.addTab("User Data", userData);
 
-   public String getUser() {
-      return user.getUser();
-   }
+    }
 
-   public void setUser(String filter) {
-      user.setUser(filter);
-      setSelectedComponent(user);
-   }
+    public String getUser() {
+        return user.getUser();
+    }
 
-   public String getQueue() {
-      return queue.getQueue();
-   }
+    public void setUser(String filter) {
+        user.setUser(filter);
+        setSelectedComponent(user);
+    }
 
-   public String getLibrary() {
+    public String getQueue() {
+        return queue.getQueue();
+    }
 
-      return queue.getLibrary();
+    public String getLibrary() {
 
-   }
+        return queue.getLibrary();
 
-   public String getJobName() {
-      return " ";
-   }
+    }
 
-   public String getJobUser() {
-      return " ";
+    public String getJobName() {
+        return " ";
+    }
 
-   }
+    public String getJobUser() {
+        return " ";
 
-   public String getJobNumber() {
-      return " ";
+    }
 
-   }
+    public String getJobNumber() {
+        return " ";
 
-   public String getUserData() {
-      return userData.getUserData();
+    }
 
-   }
+    public String getUserData() {
+        return userData.getUserData();
 
-   public void setUserData(String filter) {
+    }
 
-      userData.setUserData(filter);
-      setSelectedComponent(userData);
-   }
+    public void setUserData(String filter) {
 
-   public String getSpoolName() {
-      return spoolName.getSpoolName();
+        userData.setUserData(filter);
+        setSelectedComponent(userData);
+    }
 
-   }
+    public String getSpoolName() {
+        return spoolName.getSpoolName();
 
-   public void setSpoolName(String filter) {
+    }
 
-      spoolName.setSpoolName(filter);
-      setSelectedComponent(spoolName);
-   }
+    public void setSpoolName(String filter) {
 
-   /**
-    * Reset the values in the current panel to default values
-    */
-   public void resetCurrent() {
-      ((QueueFilterInterface)this.getSelectedComponent()).reset();
-   }
+        spoolName.setSpoolName(filter);
+        setSelectedComponent(spoolName);
+    }
 
-   /**
-    * Reset the values in all filter panels to default values
-    */
-   public void resetAll() {
-      for (int x = 0; x < this.getTabCount(); x++) {
-         ((QueueFilterInterface)this.getComponent(x)).reset();
-      }
-   }
+    /**
+     * Reset the values in the current panel to default values
+     */
+    public void resetCurrent() {
+        ((QueueFilterInterface)this.getSelectedComponent()).reset();
+    }
+
+    /**
+     * Reset the values in all filter panels to default values
+     */
+    public void resetAll() {
+        for (int x = 0; x < this.getTabCount(); x++) {
+            ((QueueFilterInterface)this.getComponent(x)).reset();
+        }
+    }
 }

@@ -25,6 +25,7 @@
  */
 package org.tn5250j.keyboard.actions;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -41,16 +42,13 @@ import org.tn5250j.tools.XTFRFile;
  */
 public class TransferAction extends EmulatorAction implements TN5250jConstants {
 
-   public TransferAction(SessionGUI session, KeyMapper keyMap) {
-      super(session,
-            MNEMONIC_FILE_TRANSFER,
-            KeyStroke.getKeyStroke(KeyEvent.VK_T,KeyEvent.ALT_MASK),
-            keyMap);
+    public TransferAction(SessionGUI session, KeyMapper keyMap) {
+        super(session, MNEMONIC_FILE_TRANSFER, KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-      XTFRFile xtrf = new XTFRFile((Frame)SwingUtilities.getRoot(session),
-                                    session.getVT(),session);
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        XTFRFile xtrf = new XTFRFile((Frame)SwingUtilities.getRoot(session), session.getVT(), session);
+    }
 }

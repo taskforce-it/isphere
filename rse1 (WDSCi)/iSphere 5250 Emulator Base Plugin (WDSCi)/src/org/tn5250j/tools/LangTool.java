@@ -30,93 +30,81 @@ import java.text.MessageFormat;
 
 public final class LangTool {
 
-   static Locale locale;
-   static ResourceBundle labels = null;
+    static Locale locale;
+    static ResourceBundle labels = null;
 
-   public static void init() {
-      if (labels != null)
-         return;
+    public static void init() {
+        if (labels != null) return;
 
-      locale = Locale.getDefault();
-//      System.out.println(locale);
-      init("tn5250jMsgs");
-   }
+        locale = Locale.getDefault();
+        // System.out.println(locale);
+        init("tn5250jMsgs");
+    }
 
-   public static void init(Locale l) {
-      if (labels != null)
-         return;
+    public static void init(Locale l) {
+        if (labels != null) return;
 
-      locale = l;
-//      System.out.println(locale);
-      init("tn5250jMsgs");
-   }
+        locale = l;
+        // System.out.println(locale);
+        init("tn5250jMsgs");
+    }
 
-   public static void init(String initMsgFile) {
-      if (labels != null)
-         return;
+    public static void init(String initMsgFile) {
+        if (labels != null) return;
 
-      try {
-         labels = ResourceBundle.getBundle(initMsgFile,locale);
-      }
-      catch (MissingResourceException mre) {
-         System.out.println(mre.getLocalizedMessage());
-      }
+        try {
+            labels = ResourceBundle.getBundle(initMsgFile, locale);
+        } catch (MissingResourceException mre) {
+            System.out.println(mre.getLocalizedMessage());
+        }
 
-   }
+    }
 
-   public static String getString(String key) {
+    public static String getString(String key) {
 
-      try {
-         return labels.getString(key);
-      }
-      catch (MissingResourceException mre) {
-         System.out.println(mre.getLocalizedMessage());
-         return key;
-      }
+        try {
+            return labels.getString(key);
+        } catch (MissingResourceException mre) {
+            System.out.println(mre.getLocalizedMessage());
+            return key;
+        }
 
-   }
+    }
 
-   public static String getString(String key, String defaultString) {
+    public static String getString(String key, String defaultString) {
 
+        try {
+            return labels.getString(key);
+        } catch (MissingResourceException mre) {
+            // System.out.println(mre.getLocalizedMessage());
+            return defaultString;
+        }
 
-      try {
-         return labels.getString(key);
-      }
-      catch (MissingResourceException mre) {
-//         System.out.println(mre.getLocalizedMessage());
-         return defaultString;
-      }
+    }
 
-   }
+    public static String messageFormat(String key, Object[] args) {
 
-   public static String messageFormat (String key,Object[] args) {
+        return MessageFormat.format(getString(key), args);
 
-      return MessageFormat.format(getString(key),args);
+    }
 
+    // helper method for now
+    static void iterateKeys() {
 
-   }
+        try {
+            ResourceBundle labels = ResourceBundle.getBundle("tn5250jMsgs", locale);
 
-   // helper method for now
-   static void iterateKeys() {
+            Enumeration bundleKeys = labels.getKeys();
 
-      try {
-         ResourceBundle labels = ResourceBundle.getBundle("tn5250jMsgs",locale);
+            while (bundleKeys.hasMoreElements()) {
+                String key = (String)bundleKeys.nextElement();
+                String value = labels.getString(key);
+                System.out.println("key = " + key + ", " + "value = " + value);
+            }
+        } catch (MissingResourceException mre) {
+            System.out.println(mre.getLocalizedMessage());
+        }
 
-         Enumeration bundleKeys = labels.getKeys();
-
-         while (bundleKeys.hasMoreElements()) {
-            String key = (String)bundleKeys.nextElement();
-            String value  = labels.getString(key);
-            System.out.println("key = " + key + ", " +
-              "value = " + value);
-         }
-      }
-      catch (MissingResourceException mre) {
-         System.out.println(mre.getLocalizedMessage());
-      }
-
-   }
-
-
+    }
 
 }

@@ -1,4 +1,5 @@
 package org.tn5250j.spoolfile;
+
 /**
  * Title: OutputQueueTabPanel.java
  * Copyright:   Copyright (c) 2002
@@ -32,106 +33,104 @@ import org.tn5250j.tools.*;
 import org.tn5250j.event.ToggleDocumentListener;
 import org.tn5250j.gui.ToggleDocument;
 
-public class OutputQueueTabPanel extends JPanel implements QueueFilterInterface,
-                                                         ToggleDocumentListener {
+public class OutputQueueTabPanel extends JPanel implements QueueFilterInterface, ToggleDocumentListener {
 
-   JRadioButton all;
-   JRadioButton select;
-   JTextField queue;
-   JTextField library;
+    JRadioButton all;
+    JRadioButton select;
+    JTextField queue;
+    JTextField library;
 
-   public OutputQueueTabPanel() {
-      try {
-         jbInit();
-      }
-      catch(Exception ex) {
-         ex.printStackTrace();
-      }
-   }
+    public OutputQueueTabPanel() {
+        try {
+            jbInit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-   void jbInit() throws Exception {
+    void jbInit() throws Exception {
 
-      setLayout(new AlignLayout(2,5,5));
+        setLayout(new AlignLayout(2, 5, 5));
 
-      all = new JRadioButton("All");
-      all.setSelected(true);
+        all = new JRadioButton("All");
+        all.setSelected(true);
 
-      select = new JRadioButton("Select Output Queue");
-      select.addItemListener(new java.awt.event.ItemListener() {
-         public void itemStateChanged(ItemEvent e) {
-            select_itemStateChanged(e);
-         }
-      });
+        select = new JRadioButton("Select Output Queue");
+        select.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                select_itemStateChanged(e);
+            }
+        });
 
-      library = new JTextField(10);
-      ToggleDocument td1 = new ToggleDocument();
-      td1.addToggleDocumentListener(this);
-      library.setDocument(td1);
-      queue = new JTextField(10);
-      ToggleDocument td2 = new ToggleDocument();
-      td2.addToggleDocumentListener(this);
-      queue.setDocument(td2);
+        library = new JTextField(10);
+        ToggleDocument td1 = new ToggleDocument();
+        td1.addToggleDocumentListener(this);
+        library.setDocument(td1);
+        queue = new JTextField(10);
+        ToggleDocument td2 = new ToggleDocument();
+        td2.addToggleDocumentListener(this);
+        queue.setDocument(td2);
 
-      ButtonGroup bg = new ButtonGroup();
-      bg.add(all);
-      bg.add(select);
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(all);
+        bg.add(select);
 
-      add(all);
-      add(new JLabel(""));
-      add(select);
-      add(queue);
-      add(new JLabel("Output queue library"));
-      add(library);
+        add(all);
+        add(new JLabel(""));
+        add(select);
+        add(queue);
+        add(new JLabel("Output queue library"));
+        add(library);
 
-      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-   }
+    }
 
-   /**
-    * Reset to default value(s)
-    */
-   public void reset() {
+    /**
+     * Reset to default value(s)
+     */
+    public void reset() {
 
-      library.setText("");
-      queue.setText("");
-      all.setSelected(true);
+        library.setText("");
+        queue.setText("");
+        all.setSelected(true);
 
-   }
+    }
 
-   void select_itemStateChanged(ItemEvent e) {
-//      if (select.isSelected()) {
-//         queue.setEnabled(true);
-//         library.setEnabled(true);
-//      }
-//      else {
-//         queue.setEnabled(false);
-//         library.setEnabled(false);
-//      }
-   }
+    void select_itemStateChanged(ItemEvent e) {
+        // if (select.isSelected()) {
+        // queue.setEnabled(true);
+        // library.setEnabled(true);
+        // }
+        // else {
+        // queue.setEnabled(false);
+        // library.setEnabled(false);
+        // }
+    }
 
-   public void toggleNotEmpty() {
+    public void toggleNotEmpty() {
 
-      select.setSelected(true);
+        select.setSelected(true);
 
-   }
+    }
 
-   public void toggleEmpty() {
+    public void toggleEmpty() {
 
-   }
+    }
 
-   public String getQueue() {
-      if (all.isSelected())
-         return "%ALL%";
-      else
-         return queue.getText().trim();
-   }
+    public String getQueue() {
+        if (all.isSelected())
+            return "%ALL%";
+        else
+            return queue.getText().trim();
+    }
 
-   public String getLibrary() {
+    public String getLibrary() {
 
-      if (all.isSelected())
-         return "%ALL%";
-      else
-         return library.getText().trim();
+        if (all.isSelected())
+            return "%ALL%";
+        else
+            return library.getText().trim();
 
-   }
+    }
 }

@@ -44,470 +44,452 @@ import org.tn5250j.interfaces.GUIViewInterface;
 import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.gui.TN5250jTabbedPane;
 
-public class Gui5250Frame extends GUIViewInterface implements
-                                                    ChangeListener,
-                                                    TN5250jConstants,
-                                                    SessionListener,
-                                                    TabClosedListener,
-                                                    SessionJumpListener {
+public class Gui5250Frame extends GUIViewInterface implements ChangeListener, TN5250jConstants, SessionListener, TabClosedListener,
+    SessionJumpListener {
 
-   BorderLayout borderLayout1 = new BorderLayout();
-//   JTabbedPane sessionPane = new JTabbedPane();
-   TN5250jTabbedPane sessionPane = new TN5250jTabbedPane();
-   private int selectedIndex = 0;
-   private boolean embedded = false;
-   private boolean hideTabBar = false;
-   public static int count = 0;
-   private TN5250jLogger log = TN5250jLogFactory.getLogger (this.getClass());
+    BorderLayout borderLayout1 = new BorderLayout();
+    // JTabbedPane sessionPane = new JTabbedPane();
+    TN5250jTabbedPane sessionPane = new TN5250jTabbedPane();
+    private int selectedIndex = 0;
+    private boolean embedded = false;
+    private boolean hideTabBar = false;
+    public static int count = 0;
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
+    // Construct the frame
+    public Gui5250Frame(My5250 m) {
+        super(m);
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        try {
+            jbInit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-   //Construct the frame
-   public Gui5250Frame(My5250 m) {
-      super(m);
-      enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-      try  {
-         jbInit();
-      }
-      catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
+    // Component initialization
+    private void jbInit() throws Exception {
 
-   //Component initialization
-   private void jbInit() throws Exception  {
+        this.getContentPane().setLayout(borderLayout1);
 
-      this.getContentPane().setLayout(borderLayout1);
+        // update the frame sequences
+        frameSeq = sequence++;
 
-      // update the frame sequences
-      frameSeq = sequence++;
-      
-      
-//      try
-//      {
-//        ClassLoader loader = Gui5250Frame.class.getClassLoader();
-//        if (loader == null)
-//          loader = ClassLoader.getSystemClassLoader();
-//
-//        Class       tabClass;
-//        Constructor keyProcessorConstructor;
-//
-//        try {
-//           String className = "org.tn5250j.gui.TN5250jTabbedPane";
-//           if (!OperatingSystem.hasJava14())
-//              className += "13";
-//
-//           tabClass = loader.loadClass(className);
-//           tabConstructor = tabkeyProcessorClass.getConstructor(null);
-//           Object obj = keyProcessorConstructor.newInstance(null);
-//      }
-//      catch (Throwable t) {
-//      }
-      
-      sessionPane.setBorder(BorderFactory.createEtchedBorder());
-      sessionPane.setBounds(new Rectangle(78, 57, 5, 5));
-      sessionPane.setOpaque(true);
-      sessionPane.setRequestFocusEnabled(false);
-      sessionPane.setDoubleBuffered(false);
+        // try
+        // {
+        // ClassLoader loader = Gui5250Frame.class.getClassLoader();
+        // if (loader == null)
+        // loader = ClassLoader.getSystemClassLoader();
+        //
+        // Class tabClass;
+        // Constructor keyProcessorConstructor;
+        //
+        // try {
+        // String className = "org.tn5250j.gui.TN5250jTabbedPane";
+        // if (!OperatingSystem.hasJava14())
+        // className += "13";
+        //
+        // tabClass = loader.loadClass(className);
+        // tabConstructor = tabkeyProcessorClass.getConstructor(null);
+        // Object obj = keyProcessorConstructor.newInstance(null);
+        // }
+        // catch (Throwable t) {
+        // }
 
-      sessionPane.addChangeListener(this);
-      sessionPane.addtabCloseListener(this);
+        sessionPane.setBorder(BorderFactory.createEtchedBorder());
+        sessionPane.setBounds(new Rectangle(78, 57, 5, 5));
+        sessionPane.setOpaque(true);
+        sessionPane.setRequestFocusEnabled(false);
+        sessionPane.setDoubleBuffered(false);
 
-      Properties props = ConfigureFactory.getInstance().
-                           getProperties(ConfigureFactory.SESSIONS);
+        sessionPane.addChangeListener(this);
+        sessionPane.addtabCloseListener(this);
 
-      if (props.getProperty("emul.hideTabBar","no").equals("yes"))
-         hideTabBar = true;
+        Properties props = ConfigureFactory.getInstance().getProperties(ConfigureFactory.SESSIONS);
 
-      if (!hideTabBar) {
-         this.getContentPane().add(sessionPane, BorderLayout.CENTER);
-      }
+        if (props.getProperty("emul.hideTabBar", "no").equals("yes")) hideTabBar = true;
 
-      if (count == 0) setSessionTitle();
+        if (!hideTabBar) {
+            this.getContentPane().add(sessionPane, BorderLayout.CENTER);
+        }
 
-      if (packFrame)
-         pack();
-      else
-         validate();
+        if (count == 0) setSessionTitle();
 
+        if (packFrame)
+            pack();
+        else
+            validate();
 
-   }
+    }
 
-   public void centerFrame() {
+    @Override
+    public void centerFrame() {
 
-      if (packFrame)
-         pack();
-      else
-         validate();
+        if (packFrame)
+            pack();
+        else
+            validate();
 
-      //Center the window
-      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension frameSize = getSize();
-      if (frameSize.height > screenSize.height)
-         frameSize.height = screenSize.height;
-      if (frameSize.width > screenSize.width)
-         frameSize.width = screenSize.width;
+        // Center the window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = getSize();
+        if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
+        if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
 
-      setLocation((screenSize.width - frameSize.width) / 2,
-                     (screenSize.height - frameSize.height) / 2);
+        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
+    }
 
-   }
+    @Override
+    public int getFrameSequence() {
 
-   public int getFrameSequence() {
+        return frameSeq;
+    }
 
-      return frameSeq;
-   }
+    // Overridden so we can exit on System Close
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+            me.closingDown(this);
+        }
+    }
 
-   //Overridden so we can exit on System Close
-   protected void processWindowEvent(WindowEvent e) {
-      super.processWindowEvent(e);
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
-         me.closingDown(this);
-      }
-   }
+    @Override
+    public void update(Graphics g) {
+        paint(g);
+    }
 
+    @Override
+    public void onSessionJump(SessionJumpEvent jumpEvent) {
 
-   public void update(Graphics g) {
-      paint(g);
-   }
+        switch (jumpEvent.getJumpDirection()) {
 
-   public void onSessionJump(SessionJumpEvent jumpEvent) {
-
-      switch (jumpEvent.getJumpDirection()) {
-
-         case JUMP_PREVIOUS:
+        case JUMP_PREVIOUS:
             prevSession();
             break;
-         case JUMP_NEXT:
+        case JUMP_NEXT:
             nextSession();
             break;
-      }
-   }
+        }
+    }
 
-   private void nextSession() {
+    private void nextSession() {
 
-      final int index = sessionPane.getSelectedIndex();
-      sessionPane.setForegroundAt(index,Color.black);
-//      sessionPane.setIconAt(index,unfocused);
-      sessionPane.setIconAt(unfocused,index);
+        final int index = sessionPane.getSelectedIndex();
+        sessionPane.setForegroundAt(index, Color.black);
+        // sessionPane.setIconAt(index,unfocused);
+        sessionPane.setIconAt(unfocused, index);
 
-
-      SwingUtilities.invokeLater(new Runnable() {
-         public void run() {
-            int index1 = index;
-            if (index1 < sessionPane.getTabCount() - 1) {
-               sessionPane.setSelectedIndex(++index1);
-               sessionPane.setForegroundAt(index1,Color.blue);
-//               sessionPane.setIconAt(index1,focused);
-               sessionPane.setIconAt(focused,index1);
-
-            }
-            else {
-               sessionPane.setSelectedIndex(0);
-               sessionPane.setForegroundAt(0,Color.blue);
-//               sessionPane.setIconAt(0,focused);
-               sessionPane.setIconAt(focused,0);
-
-            }
-
-            ((SessionGUI)sessionPane.getComponent(sessionPane.getSelectedIndex())).grabFocus();
-
-            setSessionTitle();
-       }
-      });
-
-   }
-
-   private void prevSession() {
-
-      final int index = sessionPane.getSelectedIndex();
-      sessionPane.setForegroundAt(index,Color.black);
-//      sessionPane.setIconAt(index,unfocused);
-      sessionPane.setIconAt(unfocused,index);
-
-      SwingUtilities.invokeLater(new Runnable() {
-         public void run() {
-            int index1 = index;
-            if (index1 == 0) {
-               sessionPane.setSelectedIndex(sessionPane.getTabCount() - 1);
-               sessionPane.setForegroundAt(sessionPane.getSelectedIndex(),Color.blue);
-//               sessionPane.setIconAt(sessionPane.getSelectedIndex(),focused);
-               sessionPane.setIconAt(focused,sessionPane.getSelectedIndex());
-
-            }
-            else {
-               sessionPane.setSelectedIndex(--index1);
-               sessionPane.setForegroundAt(index1,Color.blue);
-//               sessionPane.setIconAt(index1,focused);
-               sessionPane.setIconAt(focused,index1);
-
-            }
-
-            ((SessionGUI)sessionPane.getComponent(sessionPane.getSelectedIndex())).grabFocus();
-            setSessionTitle();
-       }
-      });
-   }
-
-   public void stateChanged(ChangeEvent e) {
-
-//      JTabbedPane p = (JTabbedPane)e.getSource();
-      TN5250jTabbedPane p = (TN5250jTabbedPane)e.getSource();
-
-      p.setForegroundAt(selectedIndex,Color.black);
-//      p.setIconAt(selectedIndex,unfocused);
-      p.setIconAt(unfocused,selectedIndex);
-
-      SessionGUI sg = (SessionGUI)p.getComponentAt(selectedIndex);
-      sg.setVisible(false);
-
-      sg = (SessionGUI)p.getSelectedComponent();
-
-      if (sg == null)
-         return;
-
-      sg.setVisible(true);
-      sg.grabFocus();
-
-      selectedIndex = p.getSelectedIndex();
-      p.setForegroundAt(selectedIndex,Color.blue);
-//      p.setIconAt(selectedIndex,focused);
-      p.setIconAt(focused,selectedIndex);
-
-      setSessionTitle();
-
-   }
-
-   private void setSessionTitle() {
-
-      SessionGUI ses = getSessionAt(selectedIndex);
-
-      if (ses != null && ses.getAllocDeviceName() != null && ses.isConnected()) {
-         if (sequence - 1 > 0)
-            setTitle(ses.getAllocDeviceName() + " - tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-         else
-            setTitle(ses.getAllocDeviceName() + " - tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-      }
-      else {
-
-         if (sequence - 1 > 0)
-            setTitle("tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-         else
-            setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-      }
-
-		count +=1;
-
-   }
-
-   public void addSessionView(String tabText,SessionGUI sessionView) {
-
-      final SessionGUI session = sessionView;
-
-      if (hideTabBar && sessionPane.getTabCount() == 0 && !embedded) {
-
-         this.getContentPane().add(session, BorderLayout.CENTER);
-         session.addSessionListener(this);
-
-         session.resizeMe();
-         repaint();
-         if (packFrame)
-            pack();
-         else
-            validate();
-         embedded = true;
-         session.grabFocus();
-         setSessionTitle();
-      }
-      else {
-
-         if (hideTabBar && sessionPane.getTabCount() == 0 ) {
-            SessionGUI ses = null;
-            for (int x=0; x < this.getContentPane().getComponentCount(); x++) {
-
-               if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
-                  ses = (SessionGUI)(this.getContentPane().getComponent(x));
-                  this.getContentPane().remove(x);
-                  break;
-               }
-            }
-
-            //ses = (Session)(this.getContentPane().getComponent(0));
-//            sessionPane.addTab(tabText,focused,ses);
-            sessionPane.addTab(tabText,ses,focused);
-            final SessionGUI finalSession = ses;
-
-            SwingUtilities.invokeLater(new Runnable() {
-               public void run() {
-                  finalSession.resizeMe();
-                  finalSession.repaint();
-               }
-            });
-
-
-            if (ses.getAllocDeviceName() != null)
-               sessionPane.setTitleAt(0,ses.getAllocDeviceName());
-            else
-               sessionPane.setTitleAt(0,ses.getSessionName());
-
-            ses.addSessionListener(this);
-            ses.addSessionJumpListener(this);
-
-            this.getContentPane().add(sessionPane, BorderLayout.CENTER);
-            SwingUtilities.invokeLater(new Runnable() {
-               public void run() {
-                  repaint();
-                  finalSession.grabFocus();
-               }
-            });
-         }
-
-//         sessionPane.addTab(tabText,focused,session);
-         sessionPane.addTab(tabText,session,focused);
-
-         sessionPane.setForegroundAt(sessionPane.getSelectedIndex(),Color.black);
-//         sessionPane.setIconAt(sessionPane.getSelectedIndex(),unfocused);
-         sessionPane.setIconAt(unfocused,sessionPane.getSelectedIndex());
-
-         sessionPane.setSelectedIndex(sessionPane.getTabCount()-1);
-         sessionPane.setForegroundAt(sessionPane.getSelectedIndex(),Color.blue);
-//         sessionPane.setIconAt(sessionPane.getSelectedIndex(),focused);
-         sessionPane.setIconAt(focused,sessionPane.getSelectedIndex());
-
-         session.addSessionListener(this);
-         session.addSessionJumpListener(this);
-
-         SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-               session.resizeMe();
-               session.repaint();
-               session.grabFocus();
+                int index1 = index;
+                if (index1 < sessionPane.getTabCount() - 1) {
+                    sessionPane.setSelectedIndex(++index1);
+                    sessionPane.setForegroundAt(index1, Color.blue);
+                    // sessionPane.setIconAt(index1,focused);
+                    sessionPane.setIconAt(focused, index1);
+
+                } else {
+                    sessionPane.setSelectedIndex(0);
+                    sessionPane.setForegroundAt(0, Color.blue);
+                    // sessionPane.setIconAt(0,focused);
+                    sessionPane.setIconAt(focused, 0);
+
+                }
+
+                ((SessionGUI)sessionPane.getComponent(sessionPane.getSelectedIndex())).grabFocus();
+
+                setSessionTitle();
             }
-         });
-      }
-   }
+        });
 
-   public void tabClosed(int tabToBeClosed){
+    }
 
-      me.closeSession(this.getSessionAt(tabToBeClosed));
-   }
+    private void prevSession() {
 
-   public void removeSessionView(SessionGUI targetSession) {
+        final int index = sessionPane.getSelectedIndex();
+        sessionPane.setForegroundAt(index, Color.black);
+        // sessionPane.setIconAt(index,unfocused);
+        sessionPane.setIconAt(unfocused, index);
 
-      if (hideTabBar && sessionPane.getTabCount() == 0) {
-         for (int x=0; x < getContentPane().getComponentCount(); x++) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                int index1 = index;
+                if (index1 == 0) {
+                    sessionPane.setSelectedIndex(sessionPane.getTabCount() - 1);
+                    sessionPane.setForegroundAt(sessionPane.getSelectedIndex(), Color.blue);
+                    // sessionPane.setIconAt(sessionPane.getSelectedIndex(),focused);
+                    sessionPane.setIconAt(focused, sessionPane.getSelectedIndex());
 
-            if (getContentPane().getComponent(x) instanceof SessionGUI) {
-               getContentPane().remove(x);
+                } else {
+                    sessionPane.setSelectedIndex(--index1);
+                    sessionPane.setForegroundAt(index1, Color.blue);
+                    // sessionPane.setIconAt(index1,focused);
+                    sessionPane.setIconAt(focused, index1);
+
+                }
+
+                ((SessionGUI)sessionPane.getComponent(sessionPane.getSelectedIndex())).grabFocus();
+                setSessionTitle();
             }
-         }
-      }
-      else {
+        });
+    }
 
-         int index = sessionPane.indexOfComponent(targetSession);
-         log.info("session found and closing down " + index);
-         targetSession.removeSessionListener(this);
-         targetSession.removeSessionJumpListener(this);
-         int tabs = sessionPane.getTabCount();
-         sessionPane.remove(index);
-         tabs--;
+    public void stateChanged(ChangeEvent e) {
 
+        // JTabbedPane p = (JTabbedPane)e.getSource();
+        TN5250jTabbedPane p = (TN5250jTabbedPane)e.getSource();
 
-         if (index < tabs) {
-            sessionPane.setSelectedIndex(index);
-            sessionPane.setForegroundAt(index,Color.blue);
-//            sessionPane.setIconAt(index,focused);
-            sessionPane.setIconAt(focused,index);
-            ((SessionGUI)sessionPane.getComponentAt(index)).requestFocus();
-         }
-         else {
+        p.setForegroundAt(selectedIndex, Color.black);
+        // p.setIconAt(selectedIndex,unfocused);
+        p.setIconAt(unfocused, selectedIndex);
 
-            if (tabs > 0) {
-               sessionPane.setSelectedIndex(0);
-               sessionPane.setForegroundAt(0,Color.blue);
-//               sessionPane.setIconAt(0,focused);
-               sessionPane.setIconAt(focused,0);
-               ((SessionGUI)sessionPane.getComponentAt(0)).requestFocus();
+        SessionGUI sg = (SessionGUI)p.getComponentAt(selectedIndex);
+        sg.setVisible(false);
+
+        sg = (SessionGUI)p.getSelectedComponent();
+
+        if (sg == null) return;
+
+        sg.setVisible(true);
+        sg.grabFocus();
+
+        selectedIndex = p.getSelectedIndex();
+        p.setForegroundAt(selectedIndex, Color.blue);
+        // p.setIconAt(selectedIndex,focused);
+        p.setIconAt(focused, selectedIndex);
+
+        setSessionTitle();
+
+    }
+
+    private void setSessionTitle() {
+
+        SessionGUI ses = getSessionAt(selectedIndex);
+
+        if (ses != null && ses.getAllocDeviceName() != null && ses.isConnected()) {
+            if (sequence - 1 > 0)
+                setTitle(ses.getAllocDeviceName() + " - tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+            else
+                setTitle(ses.getAllocDeviceName() + " - tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        } else {
+
+            if (sequence - 1 > 0)
+                setTitle("tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+            else
+                setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        }
+
+        count += 1;
+
+    }
+
+    @Override
+    public void addSessionView(String tabText, SessionGUI sessionView) {
+
+        final SessionGUI session = sessionView;
+
+        if (hideTabBar && sessionPane.getTabCount() == 0 && !embedded) {
+
+            this.getContentPane().add(session, BorderLayout.CENTER);
+            session.addSessionListener(this);
+
+            session.resizeMe();
+            repaint();
+            if (packFrame)
+                pack();
+            else
+                validate();
+            embedded = true;
+            session.grabFocus();
+            setSessionTitle();
+        } else {
+
+            if (hideTabBar && sessionPane.getTabCount() == 0) {
+                SessionGUI ses = null;
+                for (int x = 0; x < this.getContentPane().getComponentCount(); x++) {
+
+                    if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
+                        ses = (SessionGUI)(this.getContentPane().getComponent(x));
+                        this.getContentPane().remove(x);
+                        break;
+                    }
+                }
+
+                // ses = (Session)(this.getContentPane().getComponent(0));
+                // sessionPane.addTab(tabText,focused,ses);
+                sessionPane.addTab(tabText, ses, focused);
+                final SessionGUI finalSession = ses;
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        finalSession.resizeMe();
+                        finalSession.repaint();
+                    }
+                });
+
+                if (ses.getAllocDeviceName() != null)
+                    sessionPane.setTitleAt(0, ses.getAllocDeviceName());
+                else
+                    sessionPane.setTitleAt(0, ses.getSessionName());
+
+                ses.addSessionListener(this);
+                ses.addSessionJumpListener(this);
+
+                this.getContentPane().add(sessionPane, BorderLayout.CENTER);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        repaint();
+                        finalSession.grabFocus();
+                    }
+                });
             }
 
-         }
-      }
-   }
+            // sessionPane.addTab(tabText,focused,session);
+            sessionPane.addTab(tabText, session, focused);
 
-   public int getSessionViewCount() {
+            sessionPane.setForegroundAt(sessionPane.getSelectedIndex(), Color.black);
+            // sessionPane.setIconAt(sessionPane.getSelectedIndex(),unfocused);
+            sessionPane.setIconAt(unfocused, sessionPane.getSelectedIndex());
 
-      if (hideTabBar && sessionPane.getTabCount() == 0) {
-         for (int x=0; x < this.getContentPane().getComponentCount(); x++) {
+            sessionPane.setSelectedIndex(sessionPane.getTabCount() - 1);
+            sessionPane.setForegroundAt(sessionPane.getSelectedIndex(), Color.blue);
+            // sessionPane.setIconAt(sessionPane.getSelectedIndex(),focused);
+            sessionPane.setIconAt(focused, sessionPane.getSelectedIndex());
 
-            if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
-               return 1;
+            session.addSessionListener(this);
+            session.addSessionJumpListener(this);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    session.resizeMe();
+                    session.repaint();
+                    session.grabFocus();
+                }
+            });
+        }
+    }
+
+    public void tabClosed(int tabToBeClosed) {
+
+        me.closeSession(this.getSessionAt(tabToBeClosed));
+    }
+
+    @Override
+    public void removeSessionView(SessionGUI targetSession) {
+
+        if (hideTabBar && sessionPane.getTabCount() == 0) {
+            for (int x = 0; x < getContentPane().getComponentCount(); x++) {
+
+                if (getContentPane().getComponent(x) instanceof SessionGUI) {
+                    getContentPane().remove(x);
+                }
             }
-         }
-         return 0;
-      }
-      else
-         return sessionPane.getTabCount();
-   }
+        } else {
 
-   public SessionGUI getSessionAt( int index) {
+            int index = sessionPane.indexOfComponent(targetSession);
+            log.info("session found and closing down " + index);
+            targetSession.removeSessionListener(this);
+            targetSession.removeSessionJumpListener(this);
+            int tabs = sessionPane.getTabCount();
+            sessionPane.remove(index);
+            tabs--;
 
-      if (hideTabBar && sessionPane.getTabCount() == 0) {
-         for (int x=0; x < this.getContentPane().getComponentCount(); x++) {
+            if (index < tabs) {
+                sessionPane.setSelectedIndex(index);
+                sessionPane.setForegroundAt(index, Color.blue);
+                // sessionPane.setIconAt(index,focused);
+                sessionPane.setIconAt(focused, index);
+                ((SessionGUI)sessionPane.getComponentAt(index)).requestFocus();
+            } else {
 
-            if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
-               return (SessionGUI)getContentPane().getComponent(x);
+                if (tabs > 0) {
+                    sessionPane.setSelectedIndex(0);
+                    sessionPane.setForegroundAt(0, Color.blue);
+                    // sessionPane.setIconAt(0,focused);
+                    sessionPane.setIconAt(focused, 0);
+                    ((SessionGUI)sessionPane.getComponentAt(0)).requestFocus();
+                }
+
             }
-         }
-         return null;
-      }
-      else {
-         if (sessionPane.getTabCount() <= 0)
+        }
+    }
+
+    @Override
+    public int getSessionViewCount() {
+
+        if (hideTabBar && sessionPane.getTabCount() == 0) {
+            for (int x = 0; x < this.getContentPane().getComponentCount(); x++) {
+
+                if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
+                    return 1;
+                }
+            }
+            return 0;
+        } else
+            return sessionPane.getTabCount();
+    }
+
+    @Override
+    public SessionGUI getSessionAt(int index) {
+
+        if (hideTabBar && sessionPane.getTabCount() == 0) {
+            for (int x = 0; x < this.getContentPane().getComponentCount(); x++) {
+
+                if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
+                    return (SessionGUI)getContentPane().getComponent(x);
+                }
+            }
             return null;
-         return (SessionGUI)sessionPane.getComponentAt(index);
-      }
-   }
+        } else {
+            if (sessionPane.getTabCount() <= 0) return null;
+            return (SessionGUI)sessionPane.getComponentAt(index);
+        }
+    }
 
-   public void onSessionChanged(SessionChangeEvent changeEvent) {
+    @Override
+    public void onSessionChanged(SessionChangeEvent changeEvent) {
 
-      Session5250 ses5250 = (Session5250)changeEvent.getSource();
-      SessionGUI ses = ses5250.getGUI();
+        Session5250 ses5250 = (Session5250)changeEvent.getSource();
+        SessionGUI ses = ses5250.getGUI();
 
-      switch (changeEvent.getState()) {
-         case STATE_CONNECTED:
+        switch (changeEvent.getState()) {
+        case STATE_CONNECTED:
 
             final String d = ses.getAllocDeviceName();
             if (d != null) {
-               System.out.println(changeEvent.getState() + " " + d);
-               final int index = sessionPane.indexOfComponent(ses);
-               if (index >= 0) {
-                  Runnable tc = new Runnable () {
-                     public void run() {
-                        sessionPane.setTitleAt(index,d);
-                     }
-                  };
-                  SwingUtilities.invokeLater(tc);
-               }
-               setSessionTitle();
+                System.out.println(changeEvent.getState() + " " + d);
+                final int index = sessionPane.indexOfComponent(ses);
+                if (index >= 0) {
+                    Runnable tc = new Runnable() {
+                        public void run() {
+                            sessionPane.setTitleAt(index, d);
+                        }
+                    };
+                    SwingUtilities.invokeLater(tc);
+                }
+                setSessionTitle();
 
             }
             break;
-      }
-   }
+        }
+    }
 
-   public boolean containsSession(SessionGUI session) {
+    @Override
+    public boolean containsSession(SessionGUI session) {
 
-      if (hideTabBar && sessionPane.getTabCount() == 0) {
-         for (int x=0; x < this.getContentPane().getComponentCount(); x++) {
+        if (hideTabBar && sessionPane.getTabCount() == 0) {
+            for (int x = 0; x < this.getContentPane().getComponentCount(); x++) {
 
-            if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
-               return ((SessionGUI)getContentPane().getComponent(x)).equals(session);
+                if (this.getContentPane().getComponent(x) instanceof SessionGUI) {
+                    return ((SessionGUI)getContentPane().getComponent(x)).equals(session);
+                }
             }
-         }
-         return false;
-      }
-      else
-         return (sessionPane.indexOfComponent(session) >= 0);
+            return false;
+        } else
+            return (sessionPane.indexOfComponent(session) >= 0);
 
-   }
+    }
 
 }

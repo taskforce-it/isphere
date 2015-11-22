@@ -61,6 +61,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
         menu.add("group.openwith", this);
     }
 
+    @Override
     public void run() {
         if (arrayListSelection.size() > 0) {
             for (Iterator iterMembers = arrayListSelection.iterator(); iterMembers.hasNext();) {

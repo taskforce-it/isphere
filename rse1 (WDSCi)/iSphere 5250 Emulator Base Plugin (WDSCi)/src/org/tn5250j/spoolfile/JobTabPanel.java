@@ -1,4 +1,5 @@
 package org.tn5250j.spoolfile;
+
 /**
  * Title: OutputQueueTabPanel.java
  * Copyright:   Copyright (c) 2002
@@ -31,106 +32,104 @@ import org.tn5250j.tools.*;
 
 public class JobTabPanel extends JPanel implements QueueFilterInterface {
 
-   JRadioButton all;
-   JRadioButton select;
-   JTextField jobName;
-   JTextField jobUser;
-   JTextField jobNumber;
+    JRadioButton all;
+    JRadioButton select;
+    JTextField jobName;
+    JTextField jobUser;
+    JTextField jobNumber;
 
-   public JobTabPanel() {
-      try {
-         jbInit();
-      }
-      catch(Exception ex) {
-         ex.printStackTrace();
-      }
-   }
+    public JobTabPanel() {
+        try {
+            jbInit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-   void jbInit() throws Exception {
+    void jbInit() throws Exception {
 
-      setLayout(new AlignLayout(2,5,5));
+        setLayout(new AlignLayout(2, 5, 5));
 
-      all = new JRadioButton("All");
-      all.setSelected(true);
+        all = new JRadioButton("All");
+        all.setSelected(true);
 
-      select = new JRadioButton("Job Name");
-      select.addItemListener(new java.awt.event.ItemListener() {
-         public void itemStateChanged(ItemEvent e) {
-            select_itemStateChanged(e);
-         }
-      });
+        select = new JRadioButton("Job Name");
+        select.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                select_itemStateChanged(e);
+            }
+        });
 
-      jobName = new JTextField("*CURRENT",10);
-      jobUser = new JTextField(10);
-      jobNumber = new JTextField(10);
-      jobName.setEnabled(false);
-      jobUser.setEnabled(false);
-      jobNumber.setEnabled(false);
+        jobName = new JTextField("*CURRENT", 10);
+        jobUser = new JTextField(10);
+        jobNumber = new JTextField(10);
+        jobName.setEnabled(false);
+        jobUser.setEnabled(false);
+        jobNumber.setEnabled(false);
 
-      ButtonGroup bg = new ButtonGroup();
-      bg.add(all);
-      bg.add(select);
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(all);
+        bg.add(select);
 
-      add(all);
-      add(new JLabel(""));
-      add(select);
-      add(jobName);
-      add(new JLabel("Job User"));
-      add(jobUser);
-      add(new JLabel("Job Number"));
-      add(jobNumber);
+        add(all);
+        add(new JLabel(""));
+        add(select);
+        add(jobName);
+        add(new JLabel("Job User"));
+        add(jobUser);
+        add(new JLabel("Job Number"));
+        add(jobNumber);
 
-      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-   }
+    }
 
-   /**
-    * Reset to default value(s)
-    */
-   public void reset() {
+    /**
+     * Reset to default value(s)
+     */
+    public void reset() {
 
-      jobName.setText("*CURRENT");
-      jobUser.setText("");
-      jobNumber.setText("");
-      all.setSelected(true);
+        jobName.setText("*CURRENT");
+        jobUser.setText("");
+        jobNumber.setText("");
+        all.setSelected(true);
 
-   }
+    }
 
-   void select_itemStateChanged(ItemEvent e) {
-      if (select.isSelected()) {
-         jobName.setEnabled(true);
-         jobUser.setEnabled(true);
-         jobNumber.setEnabled(true);
-      }
-      else {
-         jobName.setEnabled(false);
-         jobUser.setEnabled(false);
-         jobNumber.setEnabled(false);
-      }
-   }
+    void select_itemStateChanged(ItemEvent e) {
+        if (select.isSelected()) {
+            jobName.setEnabled(true);
+            jobUser.setEnabled(true);
+            jobNumber.setEnabled(true);
+        } else {
+            jobName.setEnabled(false);
+            jobUser.setEnabled(false);
+            jobNumber.setEnabled(false);
+        }
+    }
 
-   public String getJobName() {
-      if (all.isSelected())
-         return "%ALL%";
-      else
-         return jobName.getText().trim();
-   }
+    public String getJobName() {
+        if (all.isSelected())
+            return "%ALL%";
+        else
+            return jobName.getText().trim();
+    }
 
-   public String getJobUser() {
+    public String getJobUser() {
 
-      if (all.isSelected())
-         return "%ALL%";
-      else
-         return jobUser.getText().trim();
+        if (all.isSelected())
+            return "%ALL%";
+        else
+            return jobUser.getText().trim();
 
-   }
+    }
 
-   public String getJobNumber() {
+    public String getJobNumber() {
 
-      if (all.isSelected())
-         return "%ALL%";
-      else
-         return jobNumber.getText().trim();
+        if (all.isSelected())
+            return "%ALL%";
+        else
+            return jobNumber.getText().trim();
 
-   }
+    }
 }

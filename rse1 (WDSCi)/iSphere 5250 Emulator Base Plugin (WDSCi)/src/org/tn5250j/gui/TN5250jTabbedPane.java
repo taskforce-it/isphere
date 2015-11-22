@@ -26,219 +26,215 @@ import java.util.Vector;
 import org.tn5250j.event.TabClosedListener;
 
 /**
- *
+ * 
  * This class provides an instance of the a JTabbedPane that paints a closable
  * (X) on each tab when the cursor enters a tab.
- *
+ * 
  */
-public class TN5250jTabbedPane extends JTabbedPane implements MouseListener,
-																					MouseMotionListener{
+public class TN5250jTabbedPane extends JTabbedPane implements MouseListener, MouseMotionListener {
 
-   // the currectly drawn tab that an X is drawn on
-   int tabNumber;
-   // the region that the X is drawn in the tab
-   Rectangle closeRect;
-   // closable tab listener.
-   private Vector closeListeners;
+    // the currectly drawn tab that an X is drawn on
+    int tabNumber;
+    // the region that the X is drawn in the tab
+    Rectangle closeRect;
+    // closable tab listener.
+    private Vector closeListeners;
 
-   public TN5250jTabbedPane() {
-      super();
-//      this.setUI(new MyBasicTabbedPaneUI());
-      addMouseListener(this);
-      addMouseMotionListener(this);
-   }
+    public TN5250jTabbedPane() {
+        super();
+        // this.setUI(new MyBasicTabbedPaneUI());
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
 
-  public void addTab(String title, Component component, Icon extraIcon) {
-    super.addTab(title, new CloseTabIcon(extraIcon), component);
-  }
+    public void addTab(String title, Component component, Icon extraIcon) {
+        super.addTab(title, new CloseTabIcon(extraIcon), component);
+    }
 
-  public void setIconAt(Icon extraIcon, int index) {
-    super.setIconAt(index, new CloseTabIcon(extraIcon));
-  }
+    public void setIconAt(Icon extraIcon, int index) {
+        super.setIconAt(index, new CloseTabIcon(extraIcon));
+    }
 
-  public void mouseClicked(MouseEvent e) {
-      int tabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
-      if (tabNumber < 0)
-         return;
-      if (closeRect.contains(e.getX(), e.getY())) {
-         //the tab is being closed
-         fireTabClosed(tabNumber);
+    public void mouseClicked(MouseEvent e) {
+        int tabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
+        if (tabNumber < 0) return;
+        if (closeRect.contains(e.getX(), e.getY())) {
+            // the tab is being closed
+            fireTabClosed(tabNumber);
 
-      }
-   }
+        }
+    }
 
-   public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e) {
 
-   }
+    }
 
-   public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(MouseEvent e) {
 
-      int stabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
+        int stabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
 
-      if (stabNumber >= 0) {
+        if (stabNumber >= 0) {
 
-         if (stabNumber != tabNumber) {
+            if (stabNumber != tabNumber) {
 
+                repaint();
+            }
+
+            tabNumber = stabNumber;
+
+            Rectangle tabRect = getUI().getTabBounds(this, tabNumber);
+
+            // System.out.println(tabNumber + " " + tabRect.x
+            // + " " + tabRect.y
+            // + " " + tabRect.width
+            // + " " + tabRect.height);
+
+            Graphics g = this.getGraphics();
+
+            closeRect = ((CloseTabIcon)getIconAt(tabNumber)).getBounds();
+
+            if (closeRect.contains(e.getX(), e.getY()))
+                paintClosableX(g, closeRect.x, closeRect.y, Color.red);
+            else
+                paintClosableX(g, closeRect.x, closeRect.y, Color.black);
+
+        }
+
+        else {
             repaint();
-         }
+        }
+    }
 
-         tabNumber = stabNumber;
+    private void paintClosableX(Graphics g, int x, int y, Color x_color) {
 
-         Rectangle tabRect = getUI().getTabBounds(this,tabNumber);
+        int x_pos = x;
+        int y_pos = y;
 
-//         System.out.println(tabNumber + " " + tabRect.x
-//               								+ " " + tabRect.y
-//               								+ " " + tabRect.width
-//               								+ " " + tabRect.height);
+        Color col = g.getColor();
 
-         Graphics g = this.getGraphics();
+        g.setColor(x_color);
 
-         closeRect =((CloseTabIcon)getIconAt(tabNumber)).getBounds();
+        int y_p = y + 2;
+        g.drawLine(x + 1, y_p, x + 12, y_p);
+        g.drawLine(x + 1, y_p + 13, x + 12, y_p + 13);
+        g.drawLine(x, y_p + 1, x, y_p + 12);
+        g.drawLine(x + 13, y_p + 1, x + 13, y_p + 12);
+        g.drawLine(x + 3, y_p + 3, x + 10, y_p + 10);
+        g.drawLine(x + 3, y_p + 4, x + 9, y_p + 10);
+        g.drawLine(x + 4, y_p + 3, x + 10, y_p + 9);
+        g.drawLine(x + 10, y_p + 3, x + 3, y_p + 10);
+        g.drawLine(x + 10, y_p + 4, x + 4, y_p + 10);
+        g.drawLine(x + 9, y_p + 3, x + 3, y_p + 9);
+        g.setColor(col);
 
-         if (closeRect.contains(e.getX(), e.getY()))
-            paintClosableX(g,closeRect.x ,closeRect.y,Color.red);
-         else
-            paintClosableX(g,closeRect.x ,closeRect.y,Color.black);
+    }
 
-      }
+    public void mouseEntered(MouseEvent e) {
 
-      else {
-         repaint();
-      }
-   }
+    }
 
-   private void paintClosableX(Graphics g, int x, int y, Color x_color) {
+    public void mouseExited(MouseEvent e) {
+        tabNumber = -1;
+        repaint();
 
-      int x_pos = x;
-      int y_pos = y;
+    }
 
-      Color col = g.getColor();
+    public void mousePressed(MouseEvent e) {
+    }
 
-      g.setColor(x_color);
+    public void mouseReleased(MouseEvent e) {
 
-      int y_p = y + 2;
-      g.drawLine(x + 1, y_p, x + 12, y_p);
-      g.drawLine(x + 1, y_p + 13, x + 12, y_p + 13);
-      g.drawLine(x, y_p + 1, x, y_p + 12);
-      g.drawLine(x + 13, y_p + 1, x + 13, y_p + 12);
-      g.drawLine(x + 3, y_p + 3, x + 10, y_p + 10);
-      g.drawLine(x + 3, y_p + 4, x + 9, y_p + 10);
-      g.drawLine(x + 4, y_p + 3, x + 10, y_p + 9);
-      g.drawLine(x + 10, y_p + 3, x + 3, y_p + 10);
-      g.drawLine(x + 10, y_p + 4, x + 4, y_p + 10);
-      g.drawLine(x + 9, y_p + 3, x + 3, y_p + 9);
-      g.setColor(col);
+    }
 
-   }
-   public void mouseEntered(MouseEvent e) {
+    /**
+     * Add a TabClosedListener to the listener list.
+     * 
+     * @param listener The TabClosedListener to be added
+     */
+    public synchronized void addtabCloseListener(TabClosedListener listener) {
 
+        if (closeListeners == null) {
+            closeListeners = new java.util.Vector(3);
+        }
+        closeListeners.addElement(listener);
 
-   }
+    }
 
-   public void mouseExited(MouseEvent e) {
-      tabNumber = -1;
-      repaint();
+    /**
+     * Remove a TabClosedListener from the listener list.
+     * 
+     * @param listener The TabClosedListener to be removed
+     */
+    public synchronized void removeTabCloseListener(TabClosedListener listener) {
+        if (closeListeners == null) {
+            return;
+        }
+        closeListeners.removeElement(listener);
 
-   }
+    }
 
-   public void mousePressed(MouseEvent e) {
-   }
+    public void fireTabClosed(int tabToClose) {
+        if (closeListeners != null) {
+            int size = closeListeners.size();
+            for (int i = 0; i < size; i++) {
+                TabClosedListener target = (TabClosedListener)closeListeners.elementAt(i);
+                target.tabClosed(tabToClose);
+            }
+        }
 
-   public void mouseReleased(MouseEvent e) {
+    }
 
-   }
+    /**
+     * The class which generates the 'X' icon for the tabs. The constructor
+     * accepts an icon which is extra to the 'X' icon, so you can have tabs like
+     * in JBuilder. This value is null if no extra icon is required.
+     */
+    class CloseTabIcon implements Icon {
+        private int x_pos;
+        private int y_pos;
+        private int width;
+        private int height;
+        private Icon fileIcon;
 
-   /**
-    * Add a TabClosedListener to the listener list.
-    *
-    * @param listener  The TabClosedListener to be added
-    */
-   public synchronized void addtabCloseListener(TabClosedListener listener) {
+        public CloseTabIcon(Icon fileIcon) {
+            this.fileIcon = fileIcon;
+            width = 16;
+            height = 16;
+        }
 
-      if (closeListeners == null) {
-          closeListeners = new java.util.Vector(3);
-      }
-      closeListeners.addElement(listener);
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            this.x_pos = x;
+            this.y_pos = y;
+            Color col = g.getColor();
+            g.setColor(Color.black);
+            int y_p = y + 2;
+            g.drawLine(x + 1, y_p, x + 12, y_p);
+            g.drawLine(x + 1, y_p + 13, x + 12, y_p + 13);
+            g.drawLine(x, y_p + 1, x, y_p + 12);
+            g.drawLine(x + 13, y_p + 1, x + 13, y_p + 12);
+            g.drawLine(x + 3, y_p + 3, x + 10, y_p + 10);
+            g.drawLine(x + 3, y_p + 4, x + 9, y_p + 10);
+            g.drawLine(x + 4, y_p + 3, x + 10, y_p + 9);
+            g.drawLine(x + 10, y_p + 3, x + 3, y_p + 10);
+            g.drawLine(x + 10, y_p + 4, x + 4, y_p + 10);
+            g.drawLine(x + 9, y_p + 3, x + 3, y_p + 9);
+            g.setColor(col);
+            if (fileIcon != null) {
+                fileIcon.paintIcon(c, g, x + width, y_p);
+            }
+        }
 
-   }
+        public int getIconWidth() {
+            return width + (fileIcon != null ? fileIcon.getIconWidth() : 0);
+        }
 
-   /**
-    * Remove a TabClosedListener from the listener list.
-    *
-    * @param listener  The TabClosedListener to be removed
-    */
-   public synchronized void removeTabCloseListener(TabClosedListener listener) {
-      if (closeListeners == null) {
-          return;
-      }
-      closeListeners.removeElement(listener);
+        public int getIconHeight() {
+            return height;
+        }
 
-   }
-
-   public void fireTabClosed(int tabToClose) {
-      if (closeListeners != null) {
-         int size = closeListeners.size();
-         for (int i = 0; i < size; i++) {
-            TabClosedListener target =
-                    (TabClosedListener)closeListeners.elementAt(i);
-            target.tabClosed(tabToClose);
-         }
-      }
-
-
-   }
-
-   /**
-    * The class which generates the 'X' icon for the tabs. The constructor
-    * accepts an icon which is extra to the 'X' icon, so you can have tabs
-    * like in JBuilder. This value is null if no extra icon is required.
-    */
-   class CloseTabIcon implements Icon {
-     private int x_pos;
-     private int y_pos;
-     private int width;
-     private int height;
-     private Icon fileIcon;
-
-     public CloseTabIcon(Icon fileIcon) {
-       this.fileIcon=fileIcon;
-       width=16;
-       height=16;
-     }
-
-     public void paintIcon(Component c, Graphics g, int x, int y) {
-       this.x_pos=x;
-       this.y_pos=y;
-       Color col=g.getColor();
-       g.setColor(Color.black);
-       int y_p=y+2;
-       g.drawLine(x+1, y_p, x+12, y_p);
-       g.drawLine(x+1, y_p+13, x+12, y_p+13);
-       g.drawLine(x, y_p+1, x, y_p+12);
-       g.drawLine(x+13, y_p+1, x+13, y_p+12);
-       g.drawLine(x+3, y_p+3, x+10, y_p+10);
-       g.drawLine(x+3, y_p+4, x+9, y_p+10);
-       g.drawLine(x+4, y_p+3, x+10, y_p+9);
-       g.drawLine(x+10, y_p+3, x+3, y_p+10);
-       g.drawLine(x+10, y_p+4, x+4, y_p+10);
-       g.drawLine(x+9, y_p+3, x+3, y_p+9);
-       g.setColor(col);
-       if (fileIcon != null) {
-         fileIcon.paintIcon(c, g, x+width, y_p);
-       }
-     }
-
-     public int getIconWidth() {
-       return width + (fileIcon != null? fileIcon.getIconWidth() : 0);
-     }
-
-     public int getIconHeight() {
-       return height;
-     }
-
-     public Rectangle getBounds() {
-       return new Rectangle(x_pos, y_pos, width, height);
-     }
-   }
+        public Rectangle getBounds() {
+            return new Rectangle(x_pos, y_pos, width, height);
+        }
+    }
 
 }

@@ -28,203 +28,175 @@ package org.tn5250j.keyboard.configure;
 import java.awt.event.KeyEvent;
 
 /**
- * This class extends label so that we can display text as well as capture
- * the key stroke(s) to assign to keys.
+ * This class extends label so that we can display text as well as capture the
+ * key stroke(s) to assign to keys.
  */
 public class KeyGetter extends KeyGetterInterface {
 
-   public KeyGetter() {
-      super();
+    public KeyGetter() {
+        super();
 
-   }
+    }
 
-   /*
-   * We have to jump through some hoops to avoid
-   * trying to print non-printing characters
-   * such as Shift.  (Not only do they not print,
-   * but if you put them in a String, the characters
-   * afterward won't show up in the text area.)
-   */
-   private void displayInfo(KeyEvent e){
+    /*
+     * We have to jump through some hoops to avoid trying to print non-printing
+     * characters such as Shift. (Not only do they not print, but if you put
+     * them in a String, the characters afterward won't show up in the text
+     * area.)
+     */
+    private void displayInfo(KeyEvent e) {
 
-      String charString, keyCodeString, modString, tmpString,isString,
-               locString,typeStr;
+        String charString, keyCodeString, modString, tmpString, isString, locString, typeStr;
 
-      switch(e.getID()) {
-         case KeyEvent.KEY_PRESSED:
+        switch (e.getID()) {
+        case KeyEvent.KEY_PRESSED:
             typeStr = "KEY_PRESSED";
             break;
-         case KeyEvent.KEY_RELEASED:
+        case KeyEvent.KEY_RELEASED:
             typeStr = "KEY_RELEASED";
             break;
-         case KeyEvent.KEY_TYPED:
+        case KeyEvent.KEY_TYPED:
             typeStr = "KEY_TYPED";
             break;
-         default:
+        default:
             typeStr = "unknown type";
-      }
+        }
 
-      char c = e.getKeyChar();
-      int keyCode = e.getKeyCode();
-      int modifiers = e.getModifiers();
-      int location = e.getKeyLocation();
+        char c = e.getKeyChar();
+        int keyCode = e.getKeyCode();
+        int modifiers = e.getModifiers();
+        int location = e.getKeyLocation();
 
-      if (Character.isISOControl(c)) {
-         charString = "key character = "
-                    + "(an unprintable control character)";
-      } else {
-         charString = "key character = '"
-                    + c + "'";
-      }
+        if (Character.isISOControl(c)) {
+            charString = "key character = " + "(an unprintable control character)";
+        } else {
+            charString = "key character = '" + c + "'";
+        }
 
-      keyCodeString = "key code = " + keyCode
-                     + " ("
-                     + KeyEvent.getKeyText(keyCode)
-                     + ")";
-      if(keyCode == KeyEvent.VK_PREVIOUS_CANDIDATE) {
+        keyCodeString = "key code = " + keyCode + " (" + KeyEvent.getKeyText(keyCode) + ")";
+        if (keyCode == KeyEvent.VK_PREVIOUS_CANDIDATE) {
 
-         keyCodeString += " previous candidate ";
+            keyCodeString += " previous candidate ";
 
-      }
+        }
 
-      if(keyCode == KeyEvent.VK_DEAD_ABOVEDOT ||
-            keyCode == KeyEvent.VK_DEAD_ABOVERING ||
-            keyCode == KeyEvent.VK_DEAD_ACUTE ||
-            keyCode == KeyEvent.VK_DEAD_BREVE ||
-            keyCode == KeyEvent.VK_DEAD_CIRCUMFLEX
+        if (keyCode == KeyEvent.VK_DEAD_ABOVEDOT || keyCode == KeyEvent.VK_DEAD_ABOVERING || keyCode == KeyEvent.VK_DEAD_ACUTE
+            || keyCode == KeyEvent.VK_DEAD_BREVE || keyCode == KeyEvent.VK_DEAD_CIRCUMFLEX
 
-         ) {
+        ) {
 
-         keyCodeString += " dead key ";
+            keyCodeString += " dead key ";
 
-      }
+        }
 
-      modString = "modifiers = " + modifiers;
-      tmpString = KeyEvent.getKeyModifiersText(modifiers);
-      if (tmpString.length() > 0) {
-         modString += " (" + tmpString + ")";
-      } else {
-         modString += " (no modifiers)";
-      }
+        modString = "modifiers = " + modifiers;
+        tmpString = KeyEvent.getKeyModifiersText(modifiers);
+        if (tmpString.length() > 0) {
+            modString += " (" + tmpString + ")";
+        } else {
+            modString += " (no modifiers)";
+        }
 
-      locString = "location = (UNKNOWN)";
+        locString = "location = (UNKNOWN)";
 
-      switch (location) {
-         case KeyEvent.KEY_LOCATION_LEFT:
+        switch (location) {
+        case KeyEvent.KEY_LOCATION_LEFT:
             locString = "location = " + location + " (LEFT)";
             break;
-         case KeyEvent.KEY_LOCATION_NUMPAD:
+        case KeyEvent.KEY_LOCATION_NUMPAD:
             locString = "location = " + location + " (NUM_PAD)";
             break;
-         case KeyEvent.KEY_LOCATION_RIGHT:
+        case KeyEvent.KEY_LOCATION_RIGHT:
             locString = "location = " + location + " (RIGHT)";
             break;
-         case KeyEvent.KEY_LOCATION_STANDARD:
+        case KeyEvent.KEY_LOCATION_STANDARD:
             locString = "location = " + location + " (STANDARD)";
             break;
-         default:
+        default:
             locString = "location = " + location + " (UNKNOWN)";
             break;
 
-      }
+        }
 
-      isString = "isKeys = isActionKey (" + e.isActionKey() + ")" +
-                      " isAltDown (" + e.isAltDown() + ")" +
-                      " isAltGraphDown (" + e.isAltGraphDown() + ")" +
-                      " isAltGraphDownLinux (" + isAltGr + ")" +
-                      " isControlDown (" + e.isControlDown() + ")" +
-                      " isMetaDown (" + e.isMetaDown() + ")" +
-                      " isShiftDown (" + e.isShiftDown() + ")";
+        isString = "isKeys = isActionKey (" + e.isActionKey() + ")" + " isAltDown (" + e.isAltDown() + ")" + " isAltGraphDown (" + e.isAltGraphDown()
+            + ")" + " isAltGraphDownLinux (" + isAltGr + ")" + " isControlDown (" + e.isControlDown() + ")" + " isMetaDown (" + e.isMetaDown() + ")"
+            + " isShiftDown (" + e.isShiftDown() + ")";
 
+        String newline = "\n";
 
-      String newline = "\n";
+        System.out.println(typeStr + newline + "    " + charString + newline + "    " + keyCodeString + newline + "    " + modString + newline
+            + "    " + locString + newline + "    " + isString + newline);
 
-      System.out.println(typeStr + newline
-                        + "    " + charString + newline
-                        + "    " + keyCodeString + newline
-                        + "    " + modString + newline
-                        + "    " + locString + newline
-                        + "    " + isString + newline);
+    }
 
-   }
+    @Override
+    void processVTKeyPressed(KeyEvent e) {
 
-   void processVTKeyPressed(KeyEvent e){
+        displayInfo(e);
+        int keyCode = e.getKeyCode();
 
-      displayInfo(e);
-      int keyCode = e.getKeyCode();
+        if (isLinux && keyCode == KeyEvent.VK_ALT_GRAPH) {
 
-      if (isLinux && keyCode == KeyEvent.VK_ALT_GRAPH) {
+            isAltGr = true;
+        }
 
-         isAltGr = true;
-      }
+        // be careful with the control key
+        if (keyCode == KeyEvent.VK_UNDEFINED || keyCode == KeyEvent.VK_CAPS_LOCK || keyCode == KeyEvent.VK_SHIFT || keyCode == KeyEvent.VK_ALT
+            || keyCode == KeyEvent.VK_ALT_GRAPH || keyCode == KeyEvent.VK_CONTROL) {
 
-      // be careful with the control key
-      if (keyCode == KeyEvent.VK_UNDEFINED ||
-            keyCode == KeyEvent.VK_CAPS_LOCK ||
-            keyCode == KeyEvent.VK_SHIFT ||
-            keyCode == KeyEvent.VK_ALT ||
-            keyCode == KeyEvent.VK_ALT_GRAPH ||
-            keyCode == KeyEvent.VK_CONTROL
-         ) {
+            return;
+        }
 
-         return;
-      }
+        // be careful with the control key !!!!!!
+        if (!e.isAltDown() || !e.isShiftDown() || !e.isControlDown() || keyCode != KeyEvent.VK_CONTROL && // be
+                                                                                                            // careful
+                                                                                                            // about
+                                                                                                            // removing
+                                                                                                            // this
+                                                                                                            // line
+            !e.isActionKey()) {
 
-      // be careful with the control key !!!!!!
-      if (!e.isAltDown() ||
-         !e.isShiftDown() ||
-         !e.isControlDown() ||
-         keyCode != KeyEvent.VK_CONTROL &&  // be careful about removing this line
-         !e.isActionKey()) {
-
-//            if (keyCode == KeyEvent.VK_ESCAPE ||
-//               keyCode == KeyEvent.VK_CONTROL ||
-//               keyCode == KeyEvent.VK_BACK_SPACE) {
-//               displayInfo(e,"Pressed added");
+            // if (keyCode == KeyEvent.VK_ESCAPE ||
+            // keyCode == KeyEvent.VK_CONTROL ||
+            // keyCode == KeyEvent.VK_BACK_SPACE) {
+            // displayInfo(e,"Pressed added");
             keyevent = e;
             dialog.setVisible(false);
             dialog.dispose();
-//            }
-      }
-   }
+            // }
+        }
+    }
 
-   void processVTKeyTyped(KeyEvent e){
+    @Override
+    void processVTKeyTyped(KeyEvent e) {
 
-       displayInfo(e);
-      int keycode = e.getKeyCode();
-      if (e.isAltDown() ||
-         e.isShiftDown() ||
-         e.isControlDown() ||
-         e.isActionKey() ||
-         keycode == KeyEvent.VK_CONTROL) {
+        displayInfo(e);
+        int keycode = e.getKeyCode();
+        if (e.isAltDown() || e.isShiftDown() || e.isControlDown() || e.isActionKey() || keycode == KeyEvent.VK_CONTROL) {
 
-         keyevent = e;
-//            displayInfo(e,"Released added ");
-         dialog.setVisible(false);
-         dialog.dispose();
-      }
+            keyevent = e;
+            // displayInfo(e,"Released added ");
+            dialog.setVisible(false);
+            dialog.dispose();
+        }
 
-   }
+    }
 
-   void processVTKeyReleased(KeyEvent e){
-         displayInfo(e);
-      if (isLinux && e.getKeyCode() == KeyEvent.VK_ALT_GRAPH) {
+    @Override
+    void processVTKeyReleased(KeyEvent e) {
+        displayInfo(e);
+        if (isLinux && e.getKeyCode() == KeyEvent.VK_ALT_GRAPH) {
 
-         isAltGr = false;
-      }
-      int keycode = e.getKeyCode();
-      if (e.isAltDown() ||
-         e.isShiftDown() ||
-         e.isControlDown() ||
-         e.isActionKey() ||
-         keycode == KeyEvent.VK_CONTROL) {
+            isAltGr = false;
+        }
+        int keycode = e.getKeyCode();
+        if (e.isAltDown() || e.isShiftDown() || e.isControlDown() || e.isActionKey() || keycode == KeyEvent.VK_CONTROL) {
 
-
-         keyevent = e;
-//            displayInfo(e,"Released added");
-         dialog.setVisible(false);
-         dialog.dispose();
-      }
-  }
+            keyevent = e;
+            // displayInfo(e,"Released added");
+            dialog.setVisible(false);
+            dialog.dispose();
+        }
+    }
 
 }

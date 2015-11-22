@@ -26,119 +26,113 @@ import org.tn5250j.tools.logging.*;
 import org.tn5250j.interfaces.SessionManagerInterface;
 import org.tn5250j.*;
 
-
 /**
- * The SessionManager is the central repository for access to all sessions.
- * The SessionManager contains a list of all Session objects available.
+ * The SessionManager is the central repository for access to all sessions. The
+ * SessionManager contains a list of all Session objects available.
  */
 public class SessionManager implements SessionManagerInterface, TN5250jConstants {
 
-   static private Sessions sessions;
-   static private Vector configs;
+    static private Sessions sessions;
+    static private Vector configs;
 
-   private TN5250jLogger log = TN5250jLogFactory.getLogger (this.getClass());
-   /**
-    * A handle to the unique SessionManager class
-    */
-   static private SessionManager _instance;
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
+    /**
+     * A handle to the unique SessionManager class
+     */
+    static private SessionManager _instance;
 
-   /**
-    * The constructor is made protected to allow overriding.
-    */
-   protected SessionManager() {
-      if (_instance == null) {
-         // initialize the settings information
-         initialize();
-         // set our instance to this one.
-         _instance = this;
-      }
-   }
+    /**
+     * The constructor is made protected to allow overriding.
+     */
+    protected SessionManager() {
+        if (_instance == null) {
+            // initialize the settings information
+            initialize();
+            // set our instance to this one.
+            _instance = this;
+        }
+    }
 
-   /**
-    *
-    * @return The unique instance of this class.
-    */
-   static public SessionManager instance() {
+    /**
+     * 
+     * @return The unique instance of this class.
+     */
+    static public SessionManager instance() {
 
-      if (_instance == null) {
-         _instance = new SessionManager();
-      }
-      return _instance;
+        if (_instance == null) {
+            _instance = new SessionManager();
+        }
+        return _instance;
 
-   }
+    }
 
-   private void initialize() {
-      log.info("New session Manager initialized");
-      sessions = new Sessions();
-      configs = new Vector(3);
+    private void initialize() {
+        log.info("New session Manager initialized");
+        sessions = new Sessions();
+        configs = new Vector(3);
 
-   }
+    }
 
-   public Sessions getSessions() {
-      return sessions;
-   }
+    public Sessions getSessions() {
+        return sessions;
+    }
 
-   public void closeSession(String sessionName) {
+    public void closeSession(String sessionName) {
 
-      SessionGUI session = ((Session5250)sessions.item(sessionName)).getGUI();
-      if (session != null)
-         closeSession(session);
+        SessionGUI session = (sessions.item(sessionName)).getGUI();
+        if (session != null) closeSession(session);
 
-   }
+    }
 
-   public void closeSession(SessionGUI sessionObject) {
+    public void closeSession(SessionGUI sessionObject) {
 
-      sessionObject.closeDown();
-      sessions.removeSession(((SessionGUI)sessionObject).getSession());
+        sessionObject.closeDown();
+        sessions.removeSession((sessionObject).getSession());
 
-   }
+    }
 
-   public Session5250 openSession(Properties sesProps, String configurationResource
-                                                , String sessionName) {
-//                                             throws TN5250jException {
+    public Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
+        // throws TN5250jException {
 
-      if(sessionName == null)
-         sesProps.put(SESSION_TERM_NAME,sesProps.getProperty(SESSION_HOST));
-      else
-         sesProps.put(SESSION_TERM_NAME,sessionName);
+        if (sessionName == null)
+            sesProps.put(SESSION_TERM_NAME, sesProps.getProperty(SESSION_HOST));
+        else
+            sesProps.put(SESSION_TERM_NAME, sessionName);
 
-      if (configurationResource == null)
-         configurationResource = "";
+        if (configurationResource == null) configurationResource = "";
 
-      sesProps.put(SESSION_CONFIG_RESOURCE
-                        ,configurationResource);
+        sesProps.put(SESSION_CONFIG_RESOURCE, configurationResource);
 
-      Enumeration e = configs.elements();
-      SessionConfig useConfig = null;
+        Enumeration e = configs.elements();
+        SessionConfig useConfig = null;
 
-      while(e.hasMoreElements()) {
-         SessionConfig conf = (SessionConfig)e.nextElement();
-         if (conf.getSessionName().equals(sessionName)) {
-            useConfig = conf;
-         }
-      }
+        while (e.hasMoreElements()) {
+            SessionConfig conf = (SessionConfig)e.nextElement();
+            if (conf.getSessionName().equals(sessionName)) {
+                useConfig = conf;
+            }
+        }
 
-      if (useConfig == null) {
+        if (useConfig == null) {
 
-         useConfig = new SessionConfig(configurationResource,sessionName);
-         configs.add(useConfig);
-      }
+            useConfig = new SessionConfig(configurationResource, sessionName);
+            configs.add(useConfig);
+        }
 
-      Session5250 newSession = new Session5250(sesProps,configurationResource,
-                                          sessionName,useConfig);
-      sessions.addSession(newSession);
-      return newSession;
+        Session5250 newSession = new Session5250(sesProps, configurationResource, sessionName, useConfig);
+        sessions.addSession(newSession);
+        return newSession;
 
-   }
+    }
 
-   /**
-    * Convenience method to add a session that is instatiated outside of
-    * SessionManager.  An example would be the ProtocolBean.
-    *
-    * @param newSession
-    */
-   public void addSession(Session5250 newSession) {
+    /**
+     * Convenience method to add a session that is instatiated outside of
+     * SessionManager. An example would be the ProtocolBean.
+     * 
+     * @param newSession
+     */
+    public void addSession(Session5250 newSession) {
 
-      sessions.addSession(newSession);
-   }
+        sessions.addSession(newSession);
+    }
 }

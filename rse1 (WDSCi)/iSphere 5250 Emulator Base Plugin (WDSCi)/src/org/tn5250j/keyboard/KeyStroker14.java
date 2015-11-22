@@ -29,86 +29,59 @@ import java.awt.event.KeyEvent;
 
 /**
  * This class is basically a wrapper for KeyEvent that is used internally to the
- * project instead of KeyEvents.  Uses getKeyLocation for 1.4 and greater.
- *
+ * project instead of KeyEvents. Uses getKeyLocation for 1.4 and greater.
+ * 
  */
 public class KeyStroker14 extends KeyStroker {
 
+    public KeyStroker14(KeyEvent ke) {
 
-   public KeyStroker14(KeyEvent ke) {
+        super(ke);
 
-      super(ke);
+        location = ke.getKeyLocation();
+        hashCode = keyCode + (isShiftDown ? 1 : 0) + (isControlDown ? 1 : 0) + (isAltDown ? 1 : 0) + (isAltGrDown ? 1 : 0) + location;
 
-      location = ke.getKeyLocation();
-      hashCode = keyCode +
-                  (isShiftDown ? 1 : 0) +
-                  (isControlDown ? 1 : 0) +
-                  (isAltDown ? 1 : 0) +
-                  (isAltGrDown ? 1 : 0) +
-                  location;
+    }
 
-   }
+    public KeyStroker14(KeyEvent ke, boolean isAltGrDown) {
 
-   public KeyStroker14(KeyEvent ke, boolean isAltGrDown) {
+        super(ke, isAltGrDown);
+        this.location = ke.getKeyLocation();
 
-      super(ke,isAltGrDown);
-      this.location = ke.getKeyLocation();
+        hashCode = keyCode + (isShiftDown ? 1 : 0) + (isControlDown ? 1 : 0) + (isAltDown ? 1 : 0) + (isAltGrDown ? 1 : 0) + location;
 
-      hashCode = keyCode +
-                  (isShiftDown ? 1 : 0) +
-                  (isControlDown ? 1 : 0) +
-                  (isAltDown ? 1 : 0) +
-                  (isAltGrDown ? 1 : 0) +
-                  location;
+    }
 
-   }
+    public KeyStroker14(int keyCode, boolean isShiftDown, boolean isControlDown, boolean isAltDown, boolean isAltGrDown, int location) {
 
-   public KeyStroker14(int keyCode,
-                           boolean isShiftDown,
-                           boolean isControlDown,
-                           boolean isAltDown,
-                           boolean isAltGrDown,
-                           int location) {
+        super(keyCode, isShiftDown, isControlDown, isAltDown, isAltGrDown, location);
+    }
 
-      super(keyCode, isShiftDown,isControlDown,isAltDown,isAltGrDown,location);
-   }
+    @Override
+    public void setAttributes(KeyEvent ke, boolean isAltGr) {
 
-   public void setAttributes(KeyEvent ke,boolean isAltGr) {
+        keyCode = ke.getKeyCode();
+        isShiftDown = ke.isShiftDown();
+        isControlDown = ke.isControlDown();
+        isAltDown = ke.isAltDown();
+        isAltGrDown = isAltGr;
+        location = ke.getKeyLocation();
 
-      keyCode = ke.getKeyCode();
-      isShiftDown = ke.isShiftDown();
-      isControlDown = ke.isControlDown();
-      isAltDown = ke.isAltDown();
-      isAltGrDown = isAltGr;
-      location = ke.getKeyLocation();
+        hashCode = keyCode + (isShiftDown ? 1 : 0) + (isControlDown ? 1 : 0) + (isAltDown ? 1 : 0) + (isAltGrDown ? 1 : 0) + location;
+    }
 
-      hashCode = keyCode +
-                  (isShiftDown ? 1 : 0) +
-                  (isControlDown ? 1 : 0) +
-                  (isAltDown ? 1 : 0) +
-                  (isAltGrDown ? 1 : 0) +
-                  location;
-   }
+    @Override
+    public boolean equals(KeyEvent ke) {
 
-   public boolean equals(KeyEvent ke) {
+        return (keyCode == ke.getKeyCode() && isShiftDown == ke.isShiftDown() && isControlDown == ke.isControlDown() && isAltDown == ke.isAltDown()
+            && isAltGrDown == ke.isAltGraphDown() && location == ke.getKeyLocation());
+    }
 
-      return (keyCode == ke.getKeyCode() &&
-             isShiftDown == ke.isShiftDown() &&
-             isControlDown == ke.isControlDown() &&
-             isAltDown == ke.isAltDown() &&
-             isAltGrDown == ke.isAltGraphDown() &&
-             location == ke.getKeyLocation());
-   }
+    @Override
+    public boolean equals(KeyEvent ke, boolean altGrDown) {
 
-   public boolean equals(KeyEvent ke,boolean altGrDown) {
-
-      return (keyCode == ke.getKeyCode() &&
-             isShiftDown == ke.isShiftDown() &&
-             isControlDown == ke.isControlDown() &&
-             isAltDown == ke.isAltDown() &&
-             isAltGrDown == altGrDown &&
-             location == ke.getKeyLocation());
-   }
+        return (keyCode == ke.getKeyCode() && isShiftDown == ke.isShiftDown() && isControlDown == ke.isControlDown() && isAltDown == ke.isAltDown()
+            && isAltGrDown == altGrDown && location == ke.getKeyLocation());
+    }
 
 }
-

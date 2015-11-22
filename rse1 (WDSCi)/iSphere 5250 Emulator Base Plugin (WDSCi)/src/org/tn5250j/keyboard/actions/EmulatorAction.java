@@ -38,42 +38,41 @@ import org.tn5250j.interfaces.OptionAccessFactory;
  */
 public abstract class EmulatorAction extends AbstractAction {
 
-   // content pane to be used if needed by subclasses
-   protected SessionGUI session;
+    // content pane to be used if needed by subclasses
+    protected SessionGUI session;
 
-   public EmulatorAction(SessionGUI session, String name) {
+    public EmulatorAction(SessionGUI session, String name) {
 
-      super(name);
-      this.session = session;
-   }
+        super(name);
+        this.session = session;
+    }
 
-   public EmulatorAction(SessionGUI session, String name, KeyStroke ks, KeyMapper keyMap) {
+    public EmulatorAction(SessionGUI session, String name, KeyStroke ks, KeyMapper keyMap) {
 
-      this(session,name);
+        this(session, name);
 
-      setKeyStroke(name, ks, keyMap);
-   }
+        setKeyStroke(name, ks, keyMap);
+    }
 
-   protected void setKeyStroke(String action, KeyStroke ks, KeyMapper keyMap) {
+    protected void setKeyStroke(String action, KeyStroke ks, KeyMapper keyMap) {
 
-      if (OptionAccessFactory.getInstance().isRestrictedOption(action))
-         return;
+        if (OptionAccessFactory.getInstance().isRestrictedOption(action)) return;
 
-      if (KeyMapper.isKeyStrokeDefined(action)) {
-         ks = KeyMapper.getKeyStroke(action);
-      }
+        if (KeyMapper.isKeyStrokeDefined(action)) {
+            ks = KeyMapper.getKeyStroke(action);
+        }
 
-      session.getInputMap().put(ks,action);
-      session.getActionMap().put(action, this );
+        session.getInputMap().put(ks, action);
+        session.getActionMap().put(action, this);
 
-      // check for alternate
-      if (KeyMapper.isKeyStrokeDefined(action + ".alt2")) {
-         ks = KeyMapper.getKeyStroke(action + ".alt2");
-         session.getInputMap().put(ks,action);
-         session.getActionMap().put(action,this );
-      }
+        // check for alternate
+        if (KeyMapper.isKeyStrokeDefined(action + ".alt2")) {
+            ks = KeyMapper.getKeyStroke(action + ".alt2");
+            session.getInputMap().put(ks, action);
+            session.getActionMap().put(action, this);
+        }
 
-   }
+    }
 
-   abstract public void actionPerformed(ActionEvent e);
+    abstract public void actionPerformed(ActionEvent e);
 }

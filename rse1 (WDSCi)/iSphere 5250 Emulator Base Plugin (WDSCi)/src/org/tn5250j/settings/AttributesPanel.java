@@ -37,142 +37,137 @@ import org.tn5250j.SessionConfig;
  */
 public abstract class AttributesPanel extends JPanel {
 
-   Properties props;
-   Properties schemaProps;
-   static final String nodePrefix = "sa.node";
-   String name;
-   SessionConfig changes = null;
+    Properties props;
+    Properties schemaProps;
+    static final String nodePrefix = "sa.node";
+    String name;
+    SessionConfig changes = null;
 
-   // content pane to be used if needed by subclasses
-   JPanel contentPane;
+    // content pane to be used if needed by subclasses
+    JPanel contentPane;
 
-   public AttributesPanel(SessionConfig config) {
-      this(config,"",nodePrefix);
-   }
+    public AttributesPanel(SessionConfig config) {
+        this(config, "", nodePrefix);
+    }
 
-   public AttributesPanel(SessionConfig config, String name) {
-      this(config,name,nodePrefix);
-   }
+    public AttributesPanel(SessionConfig config, String name) {
+        this(config, name, nodePrefix);
+    }
 
-   public AttributesPanel(SessionConfig config, String name, String prefix) {
-      super();
-      changes = config;
-      props = config.getProperties();
-      this.name = LangTool.getString(prefix + name);
-      // define layout
-      setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    public AttributesPanel(SessionConfig config, String name, String prefix) {
+        super();
+        changes = config;
+        props = config.getProperties();
+        this.name = LangTool.getString(prefix + name);
+        // define layout
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-      try {
-         initPanel();
-      }
-      catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
+        try {
+            initPanel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-   public abstract void initPanel() throws Exception;
+    public abstract void initPanel() throws Exception;
 
-   public abstract void applyAttributes();
+    public abstract void applyAttributes();
 
-   public abstract void save();
+    public abstract void save();
 
-   protected final String getStringProperty(String prop) {
+    protected final String getStringProperty(String prop) {
 
-      if (changes.isPropertyExists(prop))
-         return changes.getStringProperty(prop);
-      else
-         return "";
+        if (changes.isPropertyExists(prop))
+            return changes.getStringProperty(prop);
+        else
+            return "";
 
-   }
+    }
 
-   protected final String getStringProperty(String prop,String defaultValue) {
+    protected final String getStringProperty(String prop, String defaultValue) {
 
-      if (changes.isPropertyExists(prop)) {
-         String p = changes.getStringProperty(prop);
-         if (p.length() > 0)
-            return p;
-         else
+        if (changes.isPropertyExists(prop)) {
+            String p = changes.getStringProperty(prop);
+            if (p.length() > 0)
+                return p;
+            else
+                return defaultValue;
+        } else
             return defaultValue;
-      }
-      else
-         return defaultValue;
 
-   }
+    }
 
-   protected final int getIntProperty(String prop) {
+    protected final int getIntProperty(String prop) {
 
-      return changes.getIntegerProperty(prop);
+        return changes.getIntegerProperty(prop);
 
-   }
+    }
 
-   protected final Color getColorProperty(String prop) {
+    protected final Color getColorProperty(String prop) {
 
-      if (changes.isPropertyExists(prop)) {
-         Color c = new Color(changes.getIntegerProperty(prop));
-         return c;
-      }
-      else
-         return null;
+        if (changes.isPropertyExists(prop)) {
+            Color c = new Color(changes.getIntegerProperty(prop));
+            return c;
+        } else
+            return null;
 
-   }
+    }
 
-   protected Color getColorProperty(String prop, Color defColor) {
+    protected Color getColorProperty(String prop, Color defColor) {
 
-      if (changes.isPropertyExists(prop)) {
-         Color c = new Color(changes.getIntegerProperty(prop));
-         return c;
-      }
-      else
-         return defColor;
+        if (changes.isPropertyExists(prop)) {
+            Color c = new Color(changes.getIntegerProperty(prop));
+            return c;
+        } else
+            return defColor;
 
-   }
+    }
 
-   protected final boolean getBooleanProperty(String prop) {
+    protected final boolean getBooleanProperty(String prop) {
 
-      if (changes.isPropertyExists(prop)) {
-         String b = changes.getStringProperty(prop).toLowerCase();
-         if (b.equals("yes") || b.equals("true"))
-            return true;
-         else
+        if (changes.isPropertyExists(prop)) {
+            String b = changes.getStringProperty(prop).toLowerCase();
+            if (b.equals("yes") || b.equals("true"))
+                return true;
+            else
+                return false;
+        } else
             return false;
-      }
-      else
-         return false;
 
-   }
+    }
 
-   protected final boolean getBooleanProperty(String prop, boolean dflt) {
+    protected final boolean getBooleanProperty(String prop, boolean dflt) {
 
-      if (changes.isPropertyExists(prop)) {
-         String b = changes.getStringProperty(prop).toLowerCase();
-         if (b.equals("yes") || b.equals("true"))
-            return true;
-         else
-            return false;
-      }
-      else
-         return dflt;
+        if (changes.isPropertyExists(prop)) {
+            String b = changes.getStringProperty(prop).toLowerCase();
+            if (b.equals("yes") || b.equals("true"))
+                return true;
+            else
+                return false;
+        } else
+            return dflt;
 
-   }
+    }
 
-   protected Rectangle getRectangleProperty(String key) {
+    protected Rectangle getRectangleProperty(String key) {
 
-      return changes.getRectangleProperty(key);
-   }
+        return changes.getRectangleProperty(key);
+    }
 
-   protected void setRectangleProperty(String key, Rectangle rect) {
+    protected void setRectangleProperty(String key, Rectangle rect) {
 
-      changes.setRectangleProperty(key,rect);
-   }
+        changes.setRectangleProperty(key, rect);
+    }
 
-   protected final void setProperty(String key, String val) {
+    protected final void setProperty(String key, String val) {
 
-      changes.setProperty(key,val);
+        changes.setProperty(key, val);
 
-   }
+    }
 
-   public String toString() {
-      return name;
-   }
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

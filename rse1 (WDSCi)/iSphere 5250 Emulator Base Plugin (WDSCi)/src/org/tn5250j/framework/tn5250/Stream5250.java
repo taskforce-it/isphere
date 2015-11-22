@@ -46,103 +46,96 @@ public class Stream5250 {
         return opCode;
     }
 
-    public final byte getNextByte()
-        throws Exception  {
-        if(pos > buffer.length)
+    public final byte getNextByte() throws Exception {
+        if (pos > buffer.length)
             throw new Exception("Buffer length exceeded: " + pos);
         else
             return buffer[pos++];
     }
 
-    public final void setPrevByte()
-        throws Exception {
-        if(pos == 0) {
+    public final void setPrevByte() throws Exception {
+        if (pos == 0) {
             throw new Exception("Index equals zero.");
-        }
-        else {
+        } else {
             pos--;
             return;
-      }
-   }
+        }
+    }
 
-   /**
-    * Returns where we are in the buffer
-    * @return position in the buffer
-    */
-   public final int getCurrentPos() {
-      return pos;
-   }
+    /**
+     * Returns where we are in the buffer
+     * 
+     * @return position in the buffer
+     */
+    public final int getCurrentPos() {
+        return pos;
+    }
 
-   public final byte getByteOffset(int off)
-        throws Exception  {
+    public final byte getByteOffset(int off) throws Exception {
 
-        if((pos + off ) > buffer.length)
+        if ((pos + off) > buffer.length)
             throw new Exception("Buffer length exceeded: " + pos);
         else
             return buffer[pos + off];
 
-   }
+    }
 
-   public final boolean size() {
-      return pos >= streamSize;
-   }
+    public final boolean size() {
+        return pos >= streamSize;
+    }
 
+    /**
+     * Determines if any more bytes are available in the buffer to be processed.
+     * 
+     * @return yes or no
+     */
+    public final boolean hasNext() {
 
-   /**
-    * Determines if any more bytes are available in the buffer to be processed.
-    * @return yes or no
-    */
-   public final boolean hasNext() {
+        // return pos >= buffer.length;
+        return pos < streamSize;
+    }
 
-//      return pos >= buffer.length;
-      return pos < streamSize;
-   }
+    /**
+     * This routine will retrieve a segment based on the first two bytes being
+     * the length of the segment.
+     * 
+     * @return a new byte array containing the bytes of the segment.
+     * @throws Exception
+     */
+    public final byte[] getSegment() throws Exception {
 
-   /**
-    * This routine will retrieve a segment based on the first two bytes being
-    * the length of the segment.
-    *
-    * @return a new byte array containing the bytes of the segment.
-    * @throws Exception
-    */
-   public final byte[] getSegment() throws Exception {
+        // The first two bytes contain the length of the segment.
+        int length = ((buffer[pos] & 0xff) << 8 | (buffer[pos + 1] & 0xff));
+        // allocate space for it.
+        byte[] segment = new byte[length];
 
-      // The first two bytes contain the length of the segment.
-      int length = ((buffer[pos] & 0xff )<< 8 | (buffer[pos+1] & 0xff));
-      // allocate space for it.
-      byte[] segment = new byte[length];
+        getSegment(segment, length, true);
 
-      getSegment(segment,length,true);
+        return segment;
+    }
 
-      return segment;
-   }
+    /**
+     * This routine will retrieve a byte array based on the first two bytes
+     * being the length of the segment.
+     * 
+     * @param segment - byte array
+     * @param length - length of segment to return
+     * @param adjustPos - adjust the position of the buffer to the end of the
+     *        seg ment
+     * @throws Exception
+     */
+    public final void getSegment(byte[] segment, int length, boolean adjustPos) throws Exception {
 
+        // If the length is larger than what is available throw an exception
+        if ((pos + length) > buffer.length) throw new Exception("Buffer length exceeded: start " + pos + " length " + length);
+        // use the system array copy to move the bytes from the buffer
+        // to the allocated byte array
+        System.arraycopy(buffer, pos, segment, 0, length);
 
-   /**
-    * This routine will retrieve a byte array based on the first two bytes being
-    * the length of the segment.
-    *
-    * @param segment - byte array
-    * @param length - length of segment to return
-    * @param adjustPos - adjust the position of the buffer to the end of the seg
-    *                      ment
-    * @throws Exception
-    */
-   public final void getSegment(byte[] segment, int length, boolean adjustPos)
-               throws Exception {
+        // update the offset to be after the segment so the next byte can be
+        // read
+        if (adjustPos) pos += length;
 
-      // If the length is larger than what is available throw an exception
-      if((pos + length ) > buffer.length)
-            throw new Exception("Buffer length exceeded: start " + pos
-                                 + " length " + length);
-      // use the system array copy to move the bytes from the buffer
-      //    to the allocated byte array
-      System.arraycopy(buffer,pos,segment,0,length);
-
-      // update the offset to be after the segment so the next byte can be read
-      if (adjustPos)
-         pos +=length;
-
-   }
+    }
 
 }

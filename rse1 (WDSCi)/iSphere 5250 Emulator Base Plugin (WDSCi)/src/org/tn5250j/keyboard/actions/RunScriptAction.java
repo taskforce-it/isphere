@@ -25,6 +25,7 @@
  */
 package org.tn5250j.keyboard.actions;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -39,16 +40,14 @@ import org.tn5250j.tools.Macronizer;
  */
 public class RunScriptAction extends EmulatorAction implements TN5250jConstants {
 
-   public RunScriptAction(SessionGUI session, KeyMapper keyMap) {
-      super(session,
-            MNEMONIC_RUN_SCRIPT,
-            KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_MASK),
-            keyMap);
+    public RunScriptAction(SessionGUI session, KeyMapper keyMap) {
+        super(session, MNEMONIC_RUN_SCRIPT, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     Macronizer.showRunScriptDialog(session);
-     session.getFocusForMe();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Macronizer.showRunScriptDialog(session);
+        session.getFocusForMe();
+    }
 }

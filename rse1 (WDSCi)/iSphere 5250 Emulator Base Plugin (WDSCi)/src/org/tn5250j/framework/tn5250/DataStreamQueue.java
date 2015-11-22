@@ -29,78 +29,79 @@ import java.util.Vector;
 
 public class DataStreamQueue {
 
-   private final Object lock = new Object();
-   private final Vector vector;
-   public DataStreamQueue () {
-      vector = new Vector();
-   }
+    private final Object lock = new Object();
+    private final Vector vector;
 
-   /**
-    * @todo redo the throttling of large queues that are backed up
-    *       This is the cause of numerous painting bugs.
-    * @return a datastream object from queue
-    * @throws InterruptedException
-    */
-   public Object get() throws InterruptedException {
-      synchronized (lock) {
-         // wait until there is something to read
-         while (isEmpty()) {
-            lock.wait();
-         }
+    public DataStreamQueue() {
+        vector = new Vector();
+    }
 
-         /**
-          * @todo here is the throttling code to look at
-          *
-          * just something here to try.  OK it works but we need to be a little
-          *     more intelligent with the throttling.
-          */
-         if (vector.size() >= 20) {
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-            vector.remove(0);
-//            System.out.println(vector.size());
-         }
+    /**
+     * @todo redo the throttling of large queues that are backed up This is the
+     *       cause of numerous painting bugs.
+     * @return a datastream object from queue
+     * @throws InterruptedException
+     */
+    public Object get() throws InterruptedException {
+        synchronized (lock) {
+            // wait until there is something to read
+            while (isEmpty()) {
+                lock.wait();
+            }
+
+            /**
+             * @todo here is the throttling code to look at
+             * 
+             * just something here to try. OK it works but we need to be a
+             * little more intelligent with the throttling.
+             */
+            if (vector.size() >= 20) {
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                vector.remove(0);
+                // System.out.println(vector.size());
+            }
             // we have the lock and state we're seeking
-         return vector.remove(0);
-      }
-   }
+            return vector.remove(0);
+        }
+    }
 
-   public boolean isEmpty() {
+    public boolean isEmpty() {
 
-      return vector.isEmpty();
-   }
+        return vector.isEmpty();
+    }
 
-   public void clear() {
+    public void clear() {
 
-      synchronized (lock) {
-         vector.clear();
-         lock.notifyAll();
-      }
+        synchronized (lock) {
+            vector.clear();
+            lock.notifyAll();
+        }
 
-   }
+    }
 
-   public void put(Object o) {
-      synchronized (lock) {
-         vector.addElement(o);
-//         if (vector.size() > 5)
-//            System.out.println(vector.size());
-         // tell waiting threads to wake up
-         lock.notifyAll();
-      }
-   }
+    public void put(Object o) {
+        synchronized (lock) {
+            vector.addElement(o);
+            // if (vector.size() > 5)
+            // System.out.println(vector.size());
+            // tell waiting threads to wake up
+            lock.notifyAll();
+        }
+    }
 }

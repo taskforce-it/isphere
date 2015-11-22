@@ -11,6 +11,7 @@ package biz.isphere.tn5250j.rse.actions;
 import java.io.File;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.tn5250j.rse.DialogActionTypes;
@@ -26,44 +27,46 @@ import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 
 public class NewDesignerSessionAction extends SystemBaseAction {
 
-	private String profil;
-	private String connection;
-	
-	public NewDesignerSessionAction(String profil, String connection, Shell parent) {
-		super(Messages.getString("New_designer_session"), parent);
-		this.profil = profil;
-		this.connection = connection;
-		setAvailableOffline(true);
-		setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DESIGNER));
-	}
+    private String profil;
+    private String connection;
 
-	public void run() {
-		if (getFirstSelection() instanceof SubSystem) {
-			SubSystem subSystem = (SubSystem)getFirstSelection();
-			if (subSystem != null) {
-				Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection));
-				session.setConnection(profil + "-" + connection);
-				session.setName("_DESIGNER");
-				session.setProgram("DESIGNERW");
-				session.setLibrary("%ISPHERE%");
-				SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection), DialogActionTypes.CREATE, session);
-				if (sessionDetailDialog.open() == Dialog.OK) {
-					RSESession rseSession = new RSESession(subSystem, session.getName(), session);
-					rseSession.create(subSystem);
-				}
-			}
-		}
-	}
+    public NewDesignerSessionAction(String profil, String connection, Shell parent) {
+        super(Messages.getString("New_designer_session"), parent);
+        this.profil = profil;
+        this.connection = connection;
+        setAvailableOffline(true);
+        setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DESIGNER));
+    }
 
-	public boolean isEnabled() {
-		String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
-		File fileDesigner = new File(designer);
-		if (fileDesigner.exists()) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
+    @Override
+    public void run() {
+        if (getFirstSelection() instanceof SubSystem) {
+            SubSystem subSystem = (SubSystem)getFirstSelection();
+            if (subSystem != null) {
+                Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection));
+                session.setConnection(profil + "-" + connection);
+                session.setName("_DESIGNER");
+                session.setProgram("DESIGNERW");
+                session.setLibrary("%ISPHERE%");
+                SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(profil + "-"
+                    + connection), DialogActionTypes.CREATE, session);
+                if (sessionDetailDialog.open() == Window.OK) {
+                    RSESession rseSession = new RSESession(subSystem, session.getName(), session);
+                    rseSession.create(subSystem);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
+        File fileDesigner = new File(designer);
+        if (fileDesigner.exists()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }

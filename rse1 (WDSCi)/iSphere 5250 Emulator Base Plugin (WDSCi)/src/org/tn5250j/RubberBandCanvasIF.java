@@ -1,4 +1,5 @@
 package org.tn5250j;
+
 /**
  * Title: tn5250J
  * Copyright:   Copyright (c) 2001
@@ -29,14 +30,21 @@ import java.awt.*;
 import java.awt.event.*;
 
 public interface RubberBandCanvasIF {
-   void addMouseListener(MouseListener l);
-   void addMouseMotionListener(MouseMotionListener l);
-   void areaBounded(RubberBand b, int startX, int startY, int endX, int endY);
-   boolean canDrawRubberBand(RubberBand band);
-   Point translateStart(Point startPoint);
-   Point translateEnd(Point endPoint);
-   Color getBackground();
-//   Graphics getGraphics();
-   Graphics getDrawingGraphics();
+    void addMouseListener(MouseListener l);
+
+    void addMouseMotionListener(MouseMotionListener l);
+
+    void areaBounded(RubberBand b, int startX, int startY, int endX, int endY);
+
+    boolean canDrawRubberBand(RubberBand band);
+
+    Point translateStart(Point startPoint);
+
+    Point translateEnd(Point endPoint);
+
+    Color getBackground();
+
+    // Graphics getGraphics();
+    Graphics getDrawingGraphics();
 
 }

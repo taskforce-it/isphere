@@ -1,4 +1,5 @@
 package org.tn5250j.settings;
+
 /**
  * Title: KeypadAttributesPanel
  * Copyright:   Copyright (c) 2001
@@ -33,52 +34,49 @@ import org.tn5250j.SessionConfig;
 
 public class KeypadAttributesPanel extends AttributesPanel {
 
-   JCheckBox kpCheck;
+    JCheckBox kpCheck;
 
-   public KeypadAttributesPanel(SessionConfig config ) {
-      super(config,"KP");
-   }
+    public KeypadAttributesPanel(SessionConfig config) {
+        super(config, "KP");
+    }
 
-   /**Component initialization*/
-   public void initPanel() throws Exception  {
+    /** Component initialization */
+    @Override
+    public void initPanel() throws Exception {
 
-      setLayout(new BorderLayout());
-      contentPane = new JPanel();
-      contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-      add(contentPane,BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-      // define Key Pad panel
-      JPanel kpp = new JPanel();
-      kpp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.kpp")));
-      kpCheck = new JCheckBox(LangTool.getString("sa.kpCheck"));
+        // define Key Pad panel
+        JPanel kpp = new JPanel();
+        kpp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.kpp")));
+        kpCheck = new JCheckBox(LangTool.getString("sa.kpCheck"));
 
-      if (getStringProperty("keypad").equals("Yes"))
-         kpCheck.setSelected(true);
+        if (getStringProperty("keypad").equals("Yes")) kpCheck.setSelected(true);
 
-      kpp.add(kpCheck);
+        kpp.add(kpCheck);
 
-      contentPane.add(kpp);
+        contentPane.add(kpp);
 
-   }
+    }
 
-   public void save() {
+    @Override
+    public void save() {
 
-   }
+    }
 
-   public void applyAttributes() {
+    @Override
+    public void applyAttributes() {
 
-      if (kpCheck.isSelected()) {
-         changes.firePropertyChange(this,"keypad",
-                           getStringProperty("keypad"),
-                           "Yes");
-         setProperty("keypad","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"keypad",
-                           getStringProperty("keypad"),
-                           "No");
-         setProperty("keypad","No");
-      }
+        if (kpCheck.isSelected()) {
+            changes.firePropertyChange(this, "keypad", getStringProperty("keypad"), "Yes");
+            setProperty("keypad", "Yes");
+        } else {
+            changes.firePropertyChange(this, "keypad", getStringProperty("keypad"), "No");
+            setProperty("keypad", "No");
+        }
 
-   }
+    }
 }

@@ -23,140 +23,127 @@ package org.tn5250j.framework.tn5250;
 
 import org.tn5250j.tools.logging.*;
 
-
 public class KeyStrokenizer {
-   
-   private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
-   
-   public KeyStrokenizer() {
 
-      sb = new StringBuffer();
-      setKeyStrokes(null);
-   }
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
-   public void setKeyStrokes (String strokes) {
+    public KeyStrokenizer() {
 
-      if (strokes != null) {
-         keyStrokes.setLength(0);
-		 log.debug("set "+ keyStrokes);
-         length = strokes.length();
-      }
-      else {
+        sb = new StringBuffer();
+        setKeyStrokes(null);
+    }
 
-         keyStrokes = new StringBuffer();
-         length = 0;
+    public void setKeyStrokes(String strokes) {
 
-      }
-      keyStrokes.append(strokes);
-      index = 0;
+        if (strokes != null) {
+            keyStrokes.setLength(0);
+            log.debug("set " + keyStrokes);
+            length = strokes.length();
+        } else {
 
-   }
+            keyStrokes = new StringBuffer();
+            length = 0;
 
-   public boolean hasMoreKeyStrokes() {
-      return length > index;
-   }
+        }
+        keyStrokes.append(strokes);
+        index = 0;
 
-   public String nextKeyStroke() {
+    }
 
-      String s = "";
-      boolean gotOne = false;
-      int start = index;
-      if(length > index) {
-         sb.setLength(0);
+    public boolean hasMoreKeyStrokes() {
+        return length > index;
+    }
 
-         char c = keyStrokes.charAt(index);
-         switch(c) {
+    public String nextKeyStroke() {
+
+        String s = "";
+        boolean gotOne = false;
+        int start = index;
+        if (length > index) {
+            sb.setLength(0);
+
+            char c = keyStrokes.charAt(index);
+            switch (c) {
             case '[':
-               sb.append(c);
-               index++;
+                sb.append(c);
+                index++;
 
-               // we need to throw an error here
-               if(index >= length) {
-                  log.warn(" mnemonic key was incomplete :1 " +
-                                       "at position " + index + " len " + length );
-               }
-               else {
-                  c = keyStrokes.charAt(index);
+                // we need to throw an error here
+                if (index >= length) {
+                    log.warn(" mnemonic key was incomplete :1 " + "at position " + index + " len " + length);
+                } else {
+                    c = keyStrokes.charAt(index);
 
-                  if(c == '[')
-                       index++;
-                  else {
-                     while(!gotOne) {
+                    if (c == '[')
+                        index++;
+                    else {
+                        while (!gotOne) {
 
-                        if(c == ']') { // did we find an ending
-                           sb.append(c);
-                           index++;
-                           gotOne = true;
+                            if (c == ']') { // did we find an ending
+                                sb.append(c);
+                                index++;
+                                gotOne = true;
+                            } else {
+                                sb.append(c);
+                                index++;
+                                // we need to throw an error here because we did
+                                // not
+                                // find an ending for the potential mnemonic
+                                if (index >= length) {
+                                    log.warn(" mnemonic key was incomplete ending not found :2 " + "at position " + index);
+                                }
+                                c = keyStrokes.charAt(index);
+                            }
                         }
-                        else {
-                           sb.append(c);
-                           index++;
-                           // we need to throw an error here because we did not
-                           //   find an ending for the potential mnemonic
-                           if(index >= length) {
-                              log.warn(
-                              " mnemonic key was incomplete ending not found :2 " +
-                                          "at position " + index);
-                           }
-                           c = keyStrokes.charAt(index);
-                        }
-                     }
-                  }
-               }
-               break;
+                    }
+                }
+                break;
 
             case ']':
-               index++;
-               if(index >= length) {
-                  log.warn(
-                  " mnemonic key was incomplete ending not found :3 " +
-                              "at position " + index);
-                  sb.append(c);
-                  index++;
+                index++;
+                if (index >= length) {
+                    log.warn(" mnemonic key was incomplete ending not found :3 " + "at position " + index);
+                    sb.append(c);
+                    index++;
 
-               }
-               else {
-                  c = keyStrokes.charAt(index);
-                  if(c == ']') {
-                     sb.append(c);
-                     index++;
-                  }
-                  else {
-                     log.warn(
-                     " mnemonic key was incomplete beginning not found :4 " +
-                                 "at position " + index);
-                  }
-               }
-               break;
+                } else {
+                    c = keyStrokes.charAt(index);
+                    if (c == ']') {
+                        sb.append(c);
+                        index++;
+                    } else {
+                        log.warn(" mnemonic key was incomplete beginning not found :4 " + "at position " + index);
+                    }
+                }
+                break;
             default:
-               sb.append(c);
-               index++;
-               break;
-         }
-         if(sb != null) {
-            s = new String(sb);
-         }
+                sb.append(c);
+                index++;
+                break;
+            }
+            if (sb != null) {
+                s = new String(sb);
+            }
 
-      }
-	  log.debug("next "+ keyStrokes);
+        }
+        log.debug("next " + keyStrokes);
 
-      return s;
-   }
+        return s;
+    }
 
-   public String getUnprocessedKeyStroked() {
+    public String getUnprocessedKeyStroked() {
 
+        if (index >= length)
+            return null;
+        else {
+            return keyStrokes.substring(index);
+        }
 
-      if(index >= length)
-         return null;
-      else {
-         return keyStrokes.substring(index);
-      }
+    }
 
-   }
-
-   private StringBuffer keyStrokes;
-   private StringBuffer sb;
-   private int index;
-   private int length;
+    private StringBuffer keyStrokes;
+    private StringBuffer sb;
+    private int index;
+    private int length;
 
 }

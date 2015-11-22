@@ -22,10 +22,10 @@ package org.tn5250j.interfaces;
 
 import org.tn5250j.SessionGUI;
 
-
 public interface SessionScrollerInterface {
 
-   public abstract void addMouseWheelListener(SessionGUI session);
-   public abstract void removeMouseWheelListener(SessionGUI session);
+    public abstract void addMouseWheelListener(SessionGUI session);
+
+    public abstract void removeMouseWheelListener(SessionGUI session);
 
 }

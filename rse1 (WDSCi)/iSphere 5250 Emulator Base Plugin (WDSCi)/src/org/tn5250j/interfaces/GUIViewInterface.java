@@ -31,42 +31,48 @@ import org.tn5250j.tools.GUIGraphicsUtils;
 
 public abstract class GUIViewInterface extends TN5250jFrame {
 
-   protected static My5250 me;
-   protected static int sequence;
-   protected int frameSeq;
-   protected ImageIcon focused = null;
-   protected ImageIcon unfocused = null;
+    protected static My5250 me;
+    protected static int sequence;
+    protected int frameSeq;
+    protected ImageIcon focused = null;
+    protected ImageIcon unfocused = null;
 
-   public GUIViewInterface(My5250 m) {
-      super();
-      me = m;
-      focused = GUIGraphicsUtils.getFocusedIcon();
-      unfocused = GUIGraphicsUtils.getUnFocusedIcon();
-   }
+    public GUIViewInterface(My5250 m) {
+        super();
+        me = m;
+        focused = GUIGraphicsUtils.getFocusedIcon();
+        unfocused = GUIGraphicsUtils.getUnFocusedIcon();
+    }
 
-   public int getFrameSequence() {
+    public int getFrameSequence() {
 
-      return frameSeq;
-   }
+        return frameSeq;
+    }
 
-   /**
-    * Set the icons to be used for focused and unfocused
-    *
-    * @param focused
-    * @param unfocused
-    */
-   public void setIcons(ImageIcon focused, ImageIcon unfocused) {
+    /**
+     * Set the icons to be used for focused and unfocused
+     * 
+     * @param focused
+     * @param unfocused
+     */
+    public void setIcons(ImageIcon focused, ImageIcon unfocused) {
 
-      this.focused = focused;
-      this.unfocused = unfocused;
-   }
+        this.focused = focused;
+        this.unfocused = unfocused;
+    }
 
-   public abstract void addSessionView(String descText,SessionGUI session);
-   public abstract void removeSessionView(SessionGUI targetSession);
-   public abstract boolean containsSession(SessionGUI session);
-   public abstract int getSessionViewCount();
-   public abstract SessionGUI getSessionAt( int index);
-   public abstract void onSessionJump(SessionJumpEvent jumpEvent);
-   public abstract void onSessionChanged(SessionChangeEvent changeEvent);
+    public abstract void addSessionView(String descText, SessionGUI session);
+
+    public abstract void removeSessionView(SessionGUI targetSession);
+
+    public abstract boolean containsSession(SessionGUI session);
+
+    public abstract int getSessionViewCount();
+
+    public abstract SessionGUI getSessionAt(int index);
+
+    public abstract void onSessionJump(SessionJumpEvent jumpEvent);
+
+    public abstract void onSessionChanged(SessionChangeEvent changeEvent);
 
 }

@@ -33,61 +33,53 @@ import java.util.HashMap;
  */
 public class CharMappings {
 
-// note to myself - execute the following on linux to obtain others
-// EXAMPLE *** recode -v -h ebcdic-cp-es > ebcdic284.txt
+    // note to myself - execute the following on linux to obtain others
+    // EXAMPLE *** recode -v -h ebcdic-cp-es > ebcdic284.txt
 
-   public static final String DFT_ENC = "37";
-   public static final int NATIVE_CP = 0;
-   public static final int TOOLBOX_CP = 1;
+    public static final String DFT_ENC = "37";
+    public static final int NATIVE_CP = 0;
+    public static final int TOOLBOX_CP = 1;
 
+    public static String[] getAvailableCodePages() {
+        return NativeCodePage.acp;
+    }
 
-   public static String[] getAvailableCodePages()
-   {
-      return  NativeCodePage.acp;
-   }
-
-   public static String[] getAvailableCodePages(int which)
-   {
-      switch (which) {
-         case TOOLBOX_CP:
+    public static String[] getAvailableCodePages(int which) {
+        switch (which) {
+        case TOOLBOX_CP:
             return ToolboxCodePage.acp;
-         default:
+        default:
             return getAvailableCodePages();
-      }
-   }
+        }
+    }
 
-   public static CodePage getCodePage(String encoding)
-   {
-     if (map.containsKey(encoding))
-     {
-       return (CodePage) map.get(encoding);
-     }
+    public static CodePage getCodePage(String encoding) {
+        if (map.containsKey(encoding)) {
+            return (CodePage)map.get(encoding);
+        }
 
-     CodePage cp = NativeCodePage.getCodePage(encoding);
-     if (cp != null)
-     {
-       map.put(encoding, cp);
-       return cp;
-     }
+        CodePage cp = NativeCodePage.getCodePage(encoding);
+        if (cp != null) {
+            map.put(encoding, cp);
+            return cp;
+        }
 
-     cp = ToolboxCodePage.getCodePage(encoding);
-     if (cp != null)
-     {
-       map.put(encoding, cp);
-       return cp;
-     }
+        cp = ToolboxCodePage.getCodePage(encoding);
+        if (cp != null) {
+            map.put(encoding, cp);
+            return cp;
+        }
 
-     cp = JavaCodePage.getCodePage(encoding);
-     if (cp != null)
-     {
-       map.put(encoding, cp);
-       return cp;
-     }
+        cp = JavaCodePage.getCodePage(encoding);
+        if (cp != null) {
+            map.put(encoding, cp);
+            return cp;
+        }
 
-     // unsupported codepage
-     // ==> return default;
-     return NativeCodePage.getCodePage(DFT_ENC);
-   }
+        // unsupported codepage
+        // ==> return default;
+        return NativeCodePage.getCodePage(DFT_ENC);
+    }
 
-   private static final HashMap map = new HashMap();
+    private static final HashMap map = new HashMap();
 }

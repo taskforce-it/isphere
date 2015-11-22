@@ -28,137 +28,129 @@ import org.tn5250j.Session5250;
 import org.tn5250j.tools.logging.*;
 import org.tn5250j.interfaces.SessionsInterface;
 
-
 /**
- * Contains a collection of Session objects. This list is a static snapshot
- * of the list of Session objects available at the time of the snapshot.
+ * Contains a collection of Session objects. This list is a static snapshot of
+ * the list of Session objects available at the time of the snapshot.
  */
-public class Sessions implements SessionsInterface,ActionListener {
+public class Sessions implements SessionsInterface, ActionListener {
 
-   private Vector sessions = null;
-   private int count = 0;
-   private Timer heartBeater;
+    private Vector sessions = null;
+    private int count = 0;
+    private Timer heartBeater;
 
-   private TN5250jLogger  log = TN5250jLogFactory.getLogger (this.getClass());
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
-   public Sessions() {
+    public Sessions() {
 
-      sessions = new Vector();
-   }
+        sessions = new Vector();
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
 
-      Session5250 ses;
-      for (int x = 0; x < sessions.size(); x++) {
-         try {
-            ses = (Session5250)sessions.get(x);
-            if (ses.isConnected() && ses.isSendKeepAlive()) {
-               ses.getVT().sendHeartBeat();
-               log.info(" sent heartbeat to " +  ses.getSessionName());
+        Session5250 ses;
+        for (int x = 0; x < sessions.size(); x++) {
+            try {
+                ses = (Session5250)sessions.get(x);
+                if (ses.isConnected() && ses.isSendKeepAlive()) {
+                    ses.getVT().sendHeartBeat();
+                    log.info(" sent heartbeat to " + ses.getSessionName());
+                }
+            } catch (Exception ex) {
+                log.warn(ex.getMessage());
             }
-         }
-         catch (Exception ex) {
-            log.warn(ex.getMessage());
-         }
-      }
+        }
 
-   }
+    }
 
-   protected void addSession(Session5250 newSession) {
-      sessions.add(newSession);
-      log.debug("adding Session: "+newSession.getSessionName());
-      if (newSession.isSendKeepAlive() && heartBeater == null) {
-         heartBeater = new Timer(15000,this);
-//         heartBeater = new Timer(3000,this);
-         heartBeater.start();
+    protected void addSession(Session5250 newSession) {
+        sessions.add(newSession);
+        log.debug("adding Session: " + newSession.getSessionName());
+        if (newSession.isSendKeepAlive() && heartBeater == null) {
+            heartBeater = new Timer(15000, this);
+            // heartBeater = new Timer(3000,this);
+            heartBeater.start();
 
-      }
-      ++count;
-   }
+        }
+        ++count;
+    }
 
-   protected void removeSession(Session5250 session) {
-      log.debug("Removing session: "+session.getSessionName());
-      if (session != null) {
-         if (session.isConnected())
-            session.disconnect();
-         sessions.remove(session);
-         --count;
-      }
-   }
+    protected void removeSession(Session5250 session) {
+        log.debug("Removing session: " + session.getSessionName());
+        if (session != null) {
+            if (session.isConnected()) session.disconnect();
+            sessions.remove(session);
+            --count;
+        }
+    }
 
-   protected void removeSession(String sessionName) {
-      log.debug("Remove session by name: "+sessionName);
-      removeSession((Session5250)item(sessionName));
+    protected void removeSession(String sessionName) {
+        log.debug("Remove session by name: " + sessionName);
+        removeSession(item(sessionName));
 
-   }
+    }
 
-   protected void removeSession(int index) {
-   	  log.debug("Remove session by index: "+index);
-//      removeSession((SessionGUI)(((Session5250)item(index)).getGUI()));
-      removeSession(item(index));
-   }
+    protected void removeSession(int index) {
+        log.debug("Remove session by index: " + index);
+        // removeSession((SessionGUI)(((Session5250)item(index)).getGUI()));
+        removeSession(item(index));
+    }
 
-   public int getCount() {
+    public int getCount() {
 
-      return count;
-   }
+        return count;
+    }
 
-   public Session5250 item (int index) {
+    public Session5250 item(int index) {
 
-      return (Session5250)sessions.get(index);
+        return (Session5250)sessions.get(index);
 
-   }
+    }
 
-   public Session5250 item (String sessionName) {
+    public Session5250 item(String sessionName) {
 
-      Session5250 s = null;
-      int x = 0;
+        Session5250 s = null;
+        int x = 0;
 
-      while (x < sessions.size()) {
+        while (x < sessions.size()) {
 
-         s = (Session5250)sessions.get(x);
+            s = (Session5250)sessions.get(x);
 
-         if (s.getSessionName().equals(sessionName))
-            return s;
+            if (s.getSessionName().equals(sessionName)) return s;
 
-         x++;
-      }
+            x++;
+        }
 
-      return null;
+        return null;
 
-   }
+    }
 
-   public Session5250 item (Session5250 sessionObject) {
+    public Session5250 item(Session5250 sessionObject) {
 
-      Session5250 s = null;
-      int x = 0;
+        Session5250 s = null;
+        int x = 0;
 
-      while (x < sessions.size()) {
+        while (x < sessions.size()) {
 
-         s = (Session5250)sessions.get(x);
+            s = (Session5250)sessions.get(x);
 
-         if (s.equals(sessionObject))
-            return s;
+            if (s.equals(sessionObject)) return s;
 
-         x++;
-      }
+            x++;
+        }
 
-      return null;
+        return null;
 
-   }
+    }
 
-   public Vector getSessionsList() {
-      Vector newS = new Vector(sessions.size());
-      for (int x = 0; x < sessions.size(); x++)
-         newS.add(sessions.get(x));
-      return newS;
-   }
+    public Vector getSessionsList() {
+        Vector newS = new Vector(sessions.size());
+        for (int x = 0; x < sessions.size(); x++)
+            newS.add(sessions.get(x));
+        return newS;
+    }
 
-   public void refresh() {
+    public void refresh() {
 
-
-
-   }
-
+    }
 
 }

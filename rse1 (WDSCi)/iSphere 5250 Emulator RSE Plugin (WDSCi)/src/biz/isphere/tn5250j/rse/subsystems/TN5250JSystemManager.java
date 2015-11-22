@@ -13,29 +13,31 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
 
 public class TN5250JSystemManager extends AbstractSystemManager {
-	
-	private static TN5250JSystemManager inst;
 
-	protected TN5250JSystemManager() {
-		super();
-	}
+    private static TN5250JSystemManager inst;
 
-	public static TN5250JSystemManager getTN5250JSystemManager() {
-		if (inst == null)
-			inst = new TN5250JSystemManager();
-		return inst;
-	}
+    protected TN5250JSystemManager() {
+        super();
+    }
 
-	public ISystem createSystemObject(SubSystem subsystem) {
-		return new TN5250JSystem(subsystem);
-	}
+    public static TN5250JSystemManager getTN5250JSystemManager() {
+        if (inst == null) inst = new TN5250JSystemManager();
+        return inst;
+    }
 
-	public boolean sharesSystem(SubSystem otherSubSystem) {
-		return (otherSubSystem instanceof ITN5250JSubSystem);
-	}
+    @Override
+    public ISystem createSystemObject(SubSystem subsystem) {
+        return new TN5250JSystem(subsystem);
+    }
 
-	public Class getSubSystemCommonInterface(SubSystem subsystem) {
-		return ITN5250JSubSystem.class;
-	}
+    @Override
+    public boolean sharesSystem(SubSystem otherSubSystem) {
+        return (otherSubSystem instanceof ITN5250JSubSystem);
+    }
+
+    @Override
+    public Class getSubSystemCommonInterface(SubSystem subsystem) {
+        return ITN5250JSubSystem.class;
+    }
 
 }

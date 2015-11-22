@@ -28,33 +28,29 @@ import org.tn5250j.tools.GUIGraphicsUtils;
 
 public class TN5250jFrame extends JFrame {
 
-   protected boolean packFrame = false;
+    protected boolean packFrame = false;
 
-   public TN5250jFrame() {
-      super();
-      setIconImage(GUIGraphicsUtils.getApplicationIcon().getImage());
+    public TN5250jFrame() {
+        super();
+        setIconImage(GUIGraphicsUtils.getApplicationIcon().getImage());
 
-   }
+    }
 
-   public void centerFrame() {
+    public void centerFrame() {
 
-      if (packFrame)
-         pack();
-      else
-         validate();
+        if (packFrame)
+            pack();
+        else
+            validate();
 
-      //Center the window
-      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension frameSize = getSize();
-      if (frameSize.height > screenSize.height)
-         frameSize.height = screenSize.height;
-      if (frameSize.width > screenSize.width)
-         frameSize.width = screenSize.width;
+        // Center the window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = getSize();
+        if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
+        if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
 
-      setLocation((screenSize.width - frameSize.width) / 2,
-                     (screenSize.height - frameSize.height) / 2);
+        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
-
-   }
+    }
 
 }

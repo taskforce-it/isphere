@@ -33,80 +33,73 @@ import org.tn5250j.SessionConfig;
 
 public class MouseAttributesPanel extends AttributesPanel {
 
-   JCheckBox dceCheck;
-   JCheckBox mwCheck;
+    JCheckBox dceCheck;
+    JCheckBox mwCheck;
 
-   public MouseAttributesPanel(SessionConfig config ) {
-      super(config,"Mouse");
-   }
+    public MouseAttributesPanel(SessionConfig config) {
+        super(config, "Mouse");
+    }
 
-   /**Component initialization*/
-   public void initPanel() throws Exception  {
+    /** Component initialization */
+    @Override
+    public void initPanel() throws Exception {
 
-      setLayout(new BorderLayout());
-      contentPane = new JPanel();
-      contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-      add(contentPane,BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-      // define double click as enter
-      JPanel dcep = new JPanel();
-      dcep.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.doubleClick")));
+        // define double click as enter
+        JPanel dcep = new JPanel();
+        dcep.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.doubleClick")));
 
-      dceCheck = new JCheckBox(LangTool.getString("sa.sendEnter"));
+        dceCheck = new JCheckBox(LangTool.getString("sa.sendEnter"));
 
-      // check if double click sends enter
-      dceCheck.setSelected(getStringProperty("doubleClick").equals("Yes"));
+        // check if double click sends enter
+        dceCheck.setSelected(getStringProperty("doubleClick").equals("Yes"));
 
-      dcep.add(dceCheck);
+        dcep.add(dceCheck);
 
-      // define double click as enter
-      JPanel mwp = new JPanel();
-      mwp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.mouseWheel")));
+        // define double click as enter
+        JPanel mwp = new JPanel();
+        mwp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.mouseWheel")));
 
-      mwCheck = new JCheckBox(LangTool.getString("sa.activateMW"));
+        mwCheck = new JCheckBox(LangTool.getString("sa.activateMW"));
 
-      // check if mouse wheel active
-      mwCheck.setSelected(getStringProperty("mouseWheel").equals("Yes"));
+        // check if mouse wheel active
+        mwCheck.setSelected(getStringProperty("mouseWheel").equals("Yes"));
 
-      mwp.add(mwCheck);
+        mwp.add(mwCheck);
 
-      contentPane.add(dcep);
-      contentPane.add(mwp);
+        contentPane.add(dcep);
+        contentPane.add(mwp);
 
-   }
+    }
 
-   public void save() {
+    @Override
+    public void save() {
 
-   }
+    }
 
-   public void applyAttributes() {
+    @Override
+    public void applyAttributes() {
 
-      //  double click enter
-      if (dceCheck.isSelected()) {
-         changes.firePropertyChange(this,"doubleClick",
-                           getStringProperty("doubleClick"),
-                           "Yes");
-         setProperty("doubleClick","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"doubleClick",
-                           getStringProperty("doubleClick"),
-                           "No");
-         setProperty("doubleClick","No");
-      }
+        // double click enter
+        if (dceCheck.isSelected()) {
+            changes.firePropertyChange(this, "doubleClick", getStringProperty("doubleClick"), "Yes");
+            setProperty("doubleClick", "Yes");
+        } else {
+            changes.firePropertyChange(this, "doubleClick", getStringProperty("doubleClick"), "No");
+            setProperty("doubleClick", "No");
+        }
 
-      if (mwCheck.isSelected()) {
-         changes.firePropertyChange(this,"mouseWheel",
-                           getStringProperty("mouseWheel"),
-                           "Yes");
-         setProperty("mouseWheel","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"mouseWheel",
-                           getStringProperty("mouseWheel"),
-                           "No");
-         setProperty("mouseWheel","No");
-      }
+        if (mwCheck.isSelected()) {
+            changes.firePropertyChange(this, "mouseWheel", getStringProperty("mouseWheel"), "Yes");
+            setProperty("mouseWheel", "Yes");
+        } else {
+            changes.firePropertyChange(this, "mouseWheel", getStringProperty("mouseWheel"), "No");
+            setProperty("mouseWheel", "No");
+        }
 
-   }
+    }
 }

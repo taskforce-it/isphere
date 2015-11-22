@@ -34,116 +34,120 @@ import org.tn5250j.interfaces.OptionAccessFactory;
 import org.tn5250j.tools.LangTool;
 
 /**
- * Utility class for referencing the global options allowed for access
- * of which at most one instance can exist per VM.
- *
+ * Utility class for referencing the global options allowed for access of which
+ * at most one instance can exist per VM.
+ * 
  * Use OptionAccessFactory.instance() to access this instance.
  */
 public class OptionAccess extends OptionAccessFactory implements TN5250jConstants {
 
-   /**
-    * A handle to the unique OptionAccess class
-    */
-   static private OptionAccess _instance;
+    /**
+     * A handle to the unique OptionAccess class
+     */
+    static private OptionAccess _instance;
 
-   /**
-    * A handle to non valid options.
-    */
-   static private Vector restricted = new Vector();
+    /**
+     * A handle to non valid options.
+     */
+    static private Vector restricted = new Vector();
 
-   /**
-    * The constructor is made protected to allow overriding.
-    */
-   public OptionAccess() {
-       if (_instance == null) {
-           // initialize the settings information
-           initialize();
-           // set our instance to this one.
-           _instance = this;
-       }
-   }
+    /**
+     * The constructor is made protected to allow overriding.
+     */
+    public OptionAccess() {
+        if (_instance == null) {
+            // initialize the settings information
+            initialize();
+            // set our instance to this one.
+            _instance = this;
+        }
+    }
 
-   /**
-    *
-    * @return The unique instance of this class.
-    */
-   static public OptionAccess instance() {
+    /**
+     * 
+     * @return The unique instance of this class.
+     */
+    static public OptionAccess instance() {
 
-      if (_instance == null) {
-         _instance = new OptionAccess();
-      }
-      return _instance;
+        if (_instance == null) {
+            _instance = new OptionAccess();
+        }
+        return _instance;
 
-   }
+    }
 
-   /**
-    * Initialize the properties registry for use later.
-    *
-    */
-   private void initialize() {
+    /**
+     * Initialize the properties registry for use later.
+     * 
+     */
+    private void initialize() {
 
-      loadOptions();
-   }
+        loadOptions();
+    }
 
-   /**
-    * Load a list of available options
-    */
-   private void loadOptions() {
+    /**
+     * Load a list of available options
+     */
+    private void loadOptions() {
 
-      restricted.clear();
-		String restrictedProp =
-			ConfigureFactory.getInstance().getProperties(
-				ConfigureFactory.SESSIONS).getProperty("emul.restricted");
+        restricted.clear();
+        String restrictedProp = ConfigureFactory.getInstance().getProperties(ConfigureFactory.SESSIONS).getProperty("emul.restricted");
 
-      if (restrictedProp != null) {
-         int x = 0;
-         StringTokenizer tokenizer = new StringTokenizer(restrictedProp, ";");
-         while (tokenizer.hasMoreTokens()) {
-            restricted.add(tokenizer.nextToken());
-         }
-      }
+        if (restrictedProp != null) {
+            int x = 0;
+            StringTokenizer tokenizer = new StringTokenizer(restrictedProp, ";");
+            while (tokenizer.hasMoreTokens()) {
+                restricted.add(tokenizer.nextToken());
+            }
+        }
 
-   }
+    }
 
-   public Vector getOptions() {
+    @Override
+    public Vector getOptions() {
 
-      Vector v = new Vector(mnemonicData.length);
-      for (int x = 0; x < mnemonicData.length; x++) {
-         v.add(mnemonicData[x]);
-      }
+        Vector v = new Vector(mnemonicData.length);
+        for (int x = 0; x < mnemonicData.length; x++) {
+            v.add(mnemonicData[x]);
+        }
 
-      Collections.sort(v);
+        Collections.sort(v);
 
-      return v;
-   }
+        return v;
+    }
 
-   public Vector getOptionDescriptions() {
+    @Override
+    public Vector getOptionDescriptions() {
 
-      Vector v = new Vector(mnemonicData.length);
-      for (int x = 0; x < mnemonicData.length; x++) {
-         v.add(LangTool.getString("key."+mnemonicData[x]));
-      }
+        Vector v = new Vector(mnemonicData.length);
+        for (int x = 0; x < mnemonicData.length; x++) {
+            v.add(LangTool.getString("key." + mnemonicData[x]));
+        }
 
-      Collections.sort(v);
-      return v;
-   }
+        Collections.sort(v);
+        return v;
+    }
 
-   public boolean isValidOption(String option) {
+    @Override
+    public boolean isValidOption(String option) {
 
-      return !restricted.contains(option);
-   }
+        return !restricted.contains(option);
+    }
 
-   public boolean isRestrictedOption(String option) {
+    @Override
+    public boolean isRestrictedOption(String option) {
 
-      return restricted.contains(option);
-   }
+        return restricted.contains(option);
+    }
 
-   public int getNumberOfRestrictedOptions() {
+    @Override
+    public int getNumberOfRestrictedOptions() {
 
-      return restricted.size();
-   }
+        return restricted.size();
+    }
 
-   public void reload() {
-      loadOptions();
-   }
+    @Override
+    public void reload() {
+        loadOptions();
+    }
 }

@@ -22,82 +22,86 @@
  */
 package org.tn5250j.tools.logging;
 
-
 /**
  * An implementation of the TN5250jLogger to provide logger instances to the
  * console - System.out or System.err.
  */
 public class ConsoleLogger extends TN5250jLogger {
 
-   private String clazz;
+    private String clazz;
 
-      ConsoleLogger () {
+    ConsoleLogger() {
 
-   }
+    }
 
-   public void initialize(final String clazz) {
-      this.clazz = clazz;
-//      logLevel = Integer.parseInt(ConfigureFactory.getInstance().getProperty(
-//                  "emulator.logLevel", INFO + ""));
-      //logLevel = INFO;
-   }
+    @Override
+    public void initialize(final String clazz) {
+        this.clazz = clazz;
+        // logLevel =
+        // Integer.parseInt(ConfigureFactory.getInstance().getProperty(
+        // "emulator.logLevel", INFO + ""));
+        // logLevel = INFO;
+    }
 
-   // printing methods:
-   public void debug(Object message) {
-      if (isDebugEnabled())
-         System.out.println("DEBUG ["+clazz+"] "+ message);
-   }
+    // printing methods:
+    @Override
+    public void debug(Object message) {
+        if (isDebugEnabled()) System.out.println("DEBUG [" + clazz + "] " + message);
+    }
 
-   public void info(Object message) {
-      if (logLevel >= INFO)
-         System.out.println("INFO ["+clazz+"] "+ message);
+    @Override
+    public void info(Object message) {
+        if (logLevel >= INFO) System.out.println("INFO [" + clazz + "] " + message);
 
-   }
+    }
 
-   public void warn(Object message) {
-      if (logLevel >= WARN)
-         System.out.println("WARN ["+clazz+"] "+ message);
+    @Override
+    public void warn(Object message) {
+        if (logLevel >= WARN) System.out.println("WARN [" + clazz + "] " + message);
 
-   }
+    }
 
-   public void warn(Object message, Throwable obj1) {
-      if (logLevel >= WARN)
-         System.out.println("WARN ["+clazz+"] "+ new StringBuffer(32).append(message)
-                                                    .append(obj1.getMessage()));
-   }
+    @Override
+    public void warn(Object message, Throwable obj1) {
+        if (logLevel >= WARN) System.out.println("WARN [" + clazz + "] " + new StringBuffer(32).append(message).append(obj1.getMessage()));
+    }
 
-   public void error(Object message) {
-      if (logLevel >= ERROR)
-         System.err.println("ERROR ["+clazz+"] "+ message);
+    @Override
+    public void error(Object message) {
+        if (logLevel >= ERROR) System.err.println("ERROR [" + clazz + "] " + message);
 
-   }
+    }
 
-   public void fatal(Object message) {
-      if (logLevel >= FATAL)
-         System.err.println("FATAL ["+clazz+"] "+ message);
+    @Override
+    public void fatal(Object message) {
+        if (logLevel >= FATAL) System.err.println("FATAL [" + clazz + "] " + message);
 
-   }
+    }
 
-   public boolean isDebugEnabled() {
-      if (logLevel == DEBUG)
-         return true;
-      else
-         return false;
-   }
+    @Override
+    public boolean isDebugEnabled() {
+        if (logLevel == DEBUG)
+            return true;
+        else
+            return false;
+    }
 
-   public boolean isInfoEnabled() {
-      if (logLevel >= INFO)
-         return true;
-      else
-         return false;
-   }
+    @Override
+    public boolean isInfoEnabled() {
+        if (logLevel >= INFO)
+            return true;
+        else
+            return false;
+    }
 
-   public int getLevel() {
-      return logLevel;
-   }
+    @Override
+    public int getLevel() {
+        return logLevel;
+    }
 
-   public void setLevel(int newLevel) {
-      logLevel = newLevel;
-   }
+    @Override
+    public void setLevel(int newLevel) {
+        logLevel = newLevel;
+    }
 
 }

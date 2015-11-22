@@ -12,7 +12,6 @@ import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
 
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -20,16 +19,18 @@ public class DesignerBrowseWithAction extends DesignerOpenWithAction {
 
     public DesignerBrowseWithAction() {
         setContextMenuGroup("group.browsewith");
-		setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_BROWSE_DESIGNER));
+        setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_BROWSE_DESIGNER));
     }
 
+    @Override
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
         setShell(shell);
         menu.add("group.browsewith", this);
     }
 
-	protected String getMode() {
-		return "*BROWSE";
-	}
+    @Override
+    protected String getMode() {
+        return "*BROWSE";
+    }
 
 }

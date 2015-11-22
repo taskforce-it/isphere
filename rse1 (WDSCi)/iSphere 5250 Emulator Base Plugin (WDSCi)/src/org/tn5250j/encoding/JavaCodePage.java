@@ -31,59 +31,46 @@ import sun.io.CharToByteConverter;
 import sun.io.ByteToCharConverter;
 
 class JavaCodePage extends CodePage {
-  JavaCodePage(String encoding, CharToByteConverter c2b, ByteToCharConverter b2c)
-  {
-    super(encoding);
-    this.c2b = c2b;
-    this.b2c = b2c;
-  }
-
-  public char ebcdic2uni (int index)
-  {
-    try
-    {
-      return b2c.convertAll(new byte[] { (byte) index})[0];
-    }
-    catch (CharConversionException cce)
-    {
-      return ' ';
-    }
-  }
-
-  public byte uni2ebcdic (char index)
-  {
-    try
-    {
-      return c2b.convertAll(new char[] {index})[0];
-    }
-    catch (CharConversionException cce)
-    {
-      return 0x0;
-    }
-  }
-
-  public static CodePage getCodePage(String encoding)
-  {
-    CharToByteConverter c2b;
-    ByteToCharConverter b2c;
-    try
-    {
-      c2b = CharToByteConverter.getConverter(encoding);
-      b2c = ByteToCharConverter.getConverter(encoding);
-    }
-    catch (UnsupportedEncodingException uee)
-    {
-      c2b = null;
-      b2c = null;
+    JavaCodePage(String encoding, CharToByteConverter c2b, ByteToCharConverter b2c) {
+        super(encoding);
+        this.c2b = c2b;
+        this.b2c = b2c;
     }
 
-    if ( (c2b != null) && (b2c != null) )
-      return new JavaCodePage(encoding, c2b, b2c);
+    @Override
+    public char ebcdic2uni(int index) {
+        try {
+            return b2c.convertAll(new byte[] { (byte)index })[0];
+        } catch (CharConversionException cce) {
+            return ' ';
+        }
+    }
 
-    return null;
-  }
+    @Override
+    public byte uni2ebcdic(char index) {
+        try {
+            return c2b.convertAll(new char[] { index })[0];
+        } catch (CharConversionException cce) {
+            return 0x0;
+        }
+    }
 
+    public static CodePage getCodePage(String encoding) {
+        CharToByteConverter c2b;
+        ByteToCharConverter b2c;
+        try {
+            c2b = CharToByteConverter.getConverter(encoding);
+            b2c = ByteToCharConverter.getConverter(encoding);
+        } catch (UnsupportedEncodingException uee) {
+            c2b = null;
+            b2c = null;
+        }
 
-  private CharToByteConverter c2b;
-  private ByteToCharConverter b2c;
+        if ((c2b != null) && (b2c != null)) return new JavaCodePage(encoding, c2b, b2c);
+
+        return null;
+    }
+
+    private CharToByteConverter c2b;
+    private ByteToCharConverter b2c;
 }

@@ -24,112 +24,124 @@ package org.tn5250j.tools.logging;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
 /**
  * An implementation of the TN5250jLogger to provide log4j logger instances.
  */
 public class Log4jLogger extends TN5250jLogger {
 
-   private Logger log;
+    private Logger log;
 
-   Log4jLogger () {
+    Log4jLogger() {
 
-   }
+    }
 
-   public void initialize(final String clazz) {
-      log = Logger.getLogger(clazz);
-   }
+    @Override
+    public void initialize(final String clazz) {
+        log = Logger.getLogger(clazz);
+    }
 
-   // printing methods:
-   public void debug(Object message) {
-      log.debug(message);
-   }
+    // printing methods:
+    @Override
+    public void debug(Object message) {
+        log.debug(message);
+    }
 
-   public void info(Object message) {
-      log.info(message);
-   }
+    @Override
+    public void info(Object message) {
+        log.info(message);
+    }
 
-   public void warn(Object message) {
-      log.warn(message);
+    @Override
+    public void warn(Object message) {
+        log.warn(message);
 
-   }
+    }
 
-   public void warn(Object message, Throwable throw1) {
-      log.warn(message, throw1);
-   }
+    @Override
+    public void warn(Object message, Throwable throw1) {
+        log.warn(message, throw1);
+    }
 
-   public void error(Object message) {
-      log.error(message);
+    @Override
+    public void error(Object message) {
+        log.error(message);
 
-   }
+    }
 
-   public void fatal(Object message) {
-      log.fatal(message);
+    @Override
+    public void fatal(Object message) {
+        log.fatal(message);
 
-   }
+    }
 
-   public boolean isDebugEnabled() {
-      return log.isDebugEnabled();
-   }
+    @Override
+    public boolean isDebugEnabled() {
+        return log.isDebugEnabled();
+    }
 
-   public boolean isInfoEnabled() {
-      return log.isInfoEnabled();
-   }
+    @Override
+    public boolean isInfoEnabled() {
+        return log.isInfoEnabled();
+    }
 
-   public void setLevel(int newLevel) {
+    @Override
+    public void setLevel(int newLevel) {
 
-      switch (newLevel) {
-      	case OFF:
-            log.setLevel((Level)Level.OFF);
+        switch (newLevel) {
+        case OFF:
+            log.setLevel(Level.OFF);
 
-      		break;
-
-         case DEBUG:
-            log.setLevel((Level)Level.DEBUG);
             break;
 
-         case INFO:
-            log.setLevel((Level)Level.INFO);
+        case DEBUG:
+            log.setLevel(Level.DEBUG);
             break;
 
-         case WARN:
-            log.setLevel((Level)Level.WARN);
+        case INFO:
+            log.setLevel(Level.INFO);
             break;
 
-         case ERROR:
-            log.setLevel((Level)Level.ERROR);
+        case WARN:
+            log.setLevel(Level.WARN);
             break;
 
-         case FATAL:
-            log.setLevel((Level)Level.FATAL);
+        case ERROR:
+            log.setLevel(Level.ERROR);
             break;
 
-      }
+        case FATAL:
+            log.setLevel(Level.FATAL);
+            break;
 
-   }
+        }
 
-   public int getLevel() {
+    }
 
-      switch (log.getLevel().toInt()) {
+    @Override
+    public int getLevel() {
 
-         case (org.apache.log4j.Level.DEBUG_INT):
+        switch (log.getLevel().toInt()) {
+
+        case (Priority.DEBUG_INT):
             return DEBUG;
 
-         case (org.apache.log4j.Level.INFO_INT):
+        case (Priority.INFO_INT):
             return INFO;
 
-         case (org.apache.log4j.Level.WARN_INT):
+        case (Priority.WARN_INT):
             return WARN;
 
-         case (org.apache.log4j.Level.ERROR_INT):
+        case (Priority.ERROR_INT):
             return ERROR;
 
-         case (org.apache.log4j.Level.FATAL_INT):
+        case (Priority.FATAL_INT):
             return FATAL;
-         default:
+        default:
             return WARN;
 
-      }
+        }
 
-   }
+    }
 }

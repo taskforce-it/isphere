@@ -13,20 +13,19 @@ import com.ibm.etools.systems.core.ui.view.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class RSESessionAdapterFactory extends AbstractSystemRemoteAdapterFactory implements IAdapterFactory {
-	
-	private RSESessionAdapter rseSessionAdapter = new RSESessionAdapter();
 
-	public RSESessionAdapterFactory() {
-		super();
-	}
+    private RSESessionAdapter rseSessionAdapter = new RSESessionAdapter();
 
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		ISystemViewElementAdapter adapter = null;
-		if (adaptableObject instanceof RSESession)
-			adapter = rseSessionAdapter;
-		if ((adapter != null) && (adapterType == IPropertySource.class))
-			adapter.setPropertySourceInput(adaptableObject);
-		return adapter;
-	}
-	
+    public RSESessionAdapterFactory() {
+        super();
+    }
+
+    @Override
+    public Object getAdapter(Object adaptableObject, Class adapterType) {
+        ISystemViewElementAdapter adapter = null;
+        if (adaptableObject instanceof RSESession) adapter = rseSessionAdapter;
+        if ((adapter != null) && (adapterType == IPropertySource.class)) adapter.setPropertySourceInput(adaptableObject);
+        return adapter;
+    }
+
 }
