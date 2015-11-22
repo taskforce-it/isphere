@@ -1,56 +1,57 @@
 package org.tn5250j.gui;
+
 /*
-=====================================================================
+ =====================================================================
 
-  DefaultSortTableModel.java
+ DefaultSortTableModel.java
 
-  Created by Claude Duguay
-  Copyright (c) 2002
-   This was taken from a Java Pro magazine article
-   http://www.fawcette.com/javapro/codepage.asp?loccode=jp0208
+ Created by Claude Duguay
+ Copyright (c) 2002
+ This was taken from a Java Pro magazine article
+ http://www.fawcette.com/javapro/codepage.asp?loccode=jp0208
 
-   I have NOT asked for permission to use this.
+ I have NOT asked for permission to use this.
 
-=====================================================================
-*/
+ =====================================================================
+ */
 
-import java.util.*;
-import javax.swing.table.*;
+import java.util.Collections;
+import java.util.Vector;
 
-public class DefaultSortTableModel  extends DefaultTableModel
-                                    implements SortTableModel {
+import javax.swing.table.DefaultTableModel;
 
-   private static final long serialVersionUID = 1L;
+public class DefaultSortTableModel extends DefaultTableModel implements SortTableModel {
 
-public DefaultSortTableModel() {}
+    private static final long serialVersionUID = 1L;
 
-   public DefaultSortTableModel(int rows, int cols) {
-      super(rows, cols);
-   }
+    public DefaultSortTableModel() {
+    }
 
-   public DefaultSortTableModel(Object[][] data, Object[] names) {
-      super(data, names);
-   }
+    public DefaultSortTableModel(int rows, int cols) {
+        super(rows, cols);
+    }
 
-   public DefaultSortTableModel(Object[] names, int rows) {
-      super(names, rows);
-   }
+    public DefaultSortTableModel(Object[][] data, Object[] names) {
+        super(data, names);
+    }
 
-   public DefaultSortTableModel(Vector names, int rows) {
-      super(names, rows);
-   }
+    public DefaultSortTableModel(Object[] names, int rows) {
+        super(names, rows);
+    }
 
-   public DefaultSortTableModel(Vector data, Vector names) {
-      super(data, names);
-   }
+    public DefaultSortTableModel(Vector names, int rows) {
+        super(names, rows);
+    }
 
-   public boolean isSortable(int col) {
-      return true;
-   }
+    public DefaultSortTableModel(Vector data, Vector names) {
+        super(data, names);
+    }
 
-   public void sortColumn(int col, boolean ascending) {
-      Collections.sort(getDataVector(),
-         new ColumnComparator(col, ascending));
-   }
+    public boolean isSortable(int col) {
+        return true;
+    }
+
+    public void sortColumn(int col, boolean ascending) {
+        Collections.sort(getDataVector(), new ColumnComparator(col, ascending));
+    }
 }
-

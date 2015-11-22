@@ -44,143 +44,139 @@ import org.tn5250j.tools.system.OperatingSystem;
  *
  */
 public abstract class KeyboardHandler extends KeyAdapter implements KeyChangeListener {
-	
-   protected Session5250 session;
-   protected SessionPanel sessionGui;
-   protected Screen5250 screen;
-   protected boolean isLinux;
-   protected boolean isAltGr;
-   protected boolean keyProcessed = false;
-   protected KeyMapper keyMap;
-   protected String lastKeyStroke = null;
-   protected StringBuffer recordBuffer;
-   protected boolean recording;
 
-   /**
-    * Creates a new keyboard handler.
-    * @param session The session that will be sent the keys
-    */
-   public KeyboardHandler(Session5250 session) {
+    protected Session5250 session;
+    protected SessionPanel sessionGui;
+    protected Screen5250 screen;
+    protected boolean isLinux;
+    protected boolean isAltGr;
+    protected boolean keyProcessed = false;
+    protected KeyMapper keyMap;
+    protected String lastKeyStroke = null;
+    protected StringBuffer recordBuffer;
+    protected boolean recording;
 
-      this.session = session;
-      this.screen = session.getScreen();
-      sessionGui = session.getGUI();
+    /**
+     * Creates a new keyboard handler.
+     * 
+     * @param session The session that will be sent the keys
+     */
+    public KeyboardHandler(Session5250 session) {
 
-//      String os = System.getProperty("os.name");
-//      if (os.toLowerCase().indexOf("linux") != -1) {
-//         System.out.println("using os " + os);
-//         isLinux = true;
-//      }
+        this.session = session;
+        this.screen = session.getScreen();
+        sessionGui = session.getGUI();
 
-      isLinux = OperatingSystem.isUnix();
+        // String os = System.getProperty("os.name");
+        // if (os.toLowerCase().indexOf("linux") != -1) {
+        // System.out.println("using os " + os);
+        // isLinux = true;
+        // }
 
-      keyMap = new KeyMapper();
-      KeyMapper.init();
+        isLinux = OperatingSystem.isUnix();
 
-      KeyMapper.addKeyChangeListener(this);
+        keyMap = new KeyMapper();
+        KeyMapper.init();
 
-      // initialize the keybingings of the components InputMap
-      initKeyBindings();
+        KeyMapper.addKeyChangeListener(this);
 
+        // initialize the keybingings of the components InputMap
+        initKeyBindings();
 
-   }
+    }
 
-   public static KeyboardHandler getKeyboardHandlerInstance (Session5250 session) {
+    public static KeyboardHandler getKeyboardHandlerInstance(Session5250 session) {
 
-      return new DefaultKeyboardHandler(session);
-   }
+        return new DefaultKeyboardHandler(session);
+    }
 
-   abstract void initKeyBindings();
+    abstract void initKeyBindings();
 
-   protected InputMap getInputMap() {
+    protected InputMap getInputMap() {
 
-      return sessionGui.getInputMap();
-   }
+        return sessionGui.getInputMap();
+    }
 
-   protected ActionMap getActionMap() {
+    protected ActionMap getActionMap() {
 
-      return sessionGui.getActionMap();
-   }
+        return sessionGui.getActionMap();
+    }
 
-   public void onKeyChanged() {
+    public void onKeyChanged() {
 
-      getInputMap().clear();
-      getActionMap().clear();
-      initKeyBindings();
+        getInputMap().clear();
+        getActionMap().clear();
+        initKeyBindings();
 
-   }
+    }
 
-   public abstract boolean isKeyStrokeDefined(String accelKey);
-   public abstract KeyStroke getKeyStroke(String accelKey);
+    public abstract boolean isKeyStrokeDefined(String accelKey);
 
-   public String getRecordBuffer() {
-      return recordBuffer.toString();
-   }
+    public abstract KeyStroke getKeyStroke(String accelKey);
 
-   public void startRecording() {
+    public String getRecordBuffer() {
+        return recordBuffer.toString();
+    }
 
-      recording = true;
-      recordBuffer = new StringBuffer();
+    public void startRecording() {
 
-   }
+        recording = true;
+        recordBuffer = new StringBuffer();
 
-   public void stopRecording() {
+    }
 
-      recording = false;
-      recordBuffer = null;
-   }
+    public void stopRecording() {
 
-   public boolean isRecording() {
+        recording = false;
+        recordBuffer = null;
+    }
 
-      return recording;
-   }
+    public boolean isRecording() {
 
-   /**
-    *  Remove the references to all listeners before closing
-    *
-    *  Added by Luc to fix a memory leak.
-    */
-   public void sessionClosed(SessionPanel session) {
-      keyMap.removeKeyChangeListener(this);
-   }
+        return recording;
+    }
 
-   protected boolean emulatorAction(KeyStroke ks, KeyEvent e){
+    /**
+     * Remove the references to all listeners before closing Added by Luc to fix
+     * a memory leak.
+     */
+    public void sessionClosed(SessionPanel session) {
+        keyMap.removeKeyChangeListener(this);
+    }
 
-      if (sessionGui == null)
-         return false;
+    protected boolean emulatorAction(KeyStroke ks, KeyEvent e) {
 
-      InputMap map = getInputMap();
-      ActionMap am = getActionMap();
+        if (sessionGui == null) return false;
 
-      if(map != null && am != null && sessionGui.isEnabled()) {
-         Object binding = map.get(ks);
-         Action action = (binding == null) ? null : am.get(binding);
-         if (action != null) {
-            return true;
-         }
-      }
-      return false;
-   }
+        InputMap map = getInputMap();
+        ActionMap am = getActionMap();
 
+        if (map != null && am != null && sessionGui.isEnabled()) {
+            Object binding = map.get(ks);
+            Action action = (binding == null) ? null : am.get(binding);
+            if (action != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-   /**
-    * Utility method, calls one of <code>keyPressed()</code>,
-    * <code>keyReleased()</code>, or <code>keyTyped()</code>.
-    */
-   public void processKeyEvent(KeyEvent evt) {
-      switch(evt.getID())
-      {
-      case KeyEvent.KEY_TYPED:
-         keyTyped(evt);
-         break;
-      case KeyEvent.KEY_PRESSED:
-         keyPressed(evt);
-         break;
-      case KeyEvent.KEY_RELEASED:
-         keyReleased(evt);
-         break;
-      }
-   }
+    /**
+     * Utility method, calls one of <code>keyPressed()</code>,
+     * <code>keyReleased()</code>, or <code>keyTyped()</code>.
+     */
+    public void processKeyEvent(KeyEvent evt) {
+        switch (evt.getID()) {
+        case KeyEvent.KEY_TYPED:
+            keyTyped(evt);
+            break;
+        case KeyEvent.KEY_PRESSED:
+            keyPressed(evt);
+            break;
+        case KeyEvent.KEY_RELEASED:
+            keyReleased(evt);
+            break;
+        }
+    }
 
 }
-

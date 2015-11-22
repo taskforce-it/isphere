@@ -39,18 +39,16 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class HotspotsAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public HotspotsAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_HOTSPOTS,
-            KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.ALT_MASK),
-            keyMap);
+    public HotspotsAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_HOTSPOTS, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.toggleHotSpots();
-   }
+        session.toggleHotSpots();
+    }
 }

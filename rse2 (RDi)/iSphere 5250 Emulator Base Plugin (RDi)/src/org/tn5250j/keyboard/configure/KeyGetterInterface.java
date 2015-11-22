@@ -25,11 +25,10 @@
  */
 package org.tn5250j.keyboard.configure;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 
@@ -38,82 +37,84 @@ import org.tn5250j.tools.system.OperatingSystem;
 /**
  * This class is not really an interface but an class that extends label so that
  * we can display text as well as capture the key stroke(s) to assign to keys.
- *
- * The extending classes must override the key capture methods:
- *
- *    abstract private void processVTKeyPressed(KeyEvent e);
- *    abstract private void processVTKeyTyped(KeyEvent e);
- *    abstract private void processVTKeyReleased(KeyEvent e);
- *
+ * The extending classes must override the key capture methods: abstract private
+ * void processVTKeyPressed(KeyEvent e); abstract private void
+ * processVTKeyTyped(KeyEvent e); abstract private void
+ * processVTKeyReleased(KeyEvent e);
  */
-//ISPHERE - OLD - START
+// ISPHERE - OLD - START
 // public abstract class KeyGetterInterface extends JLabel {
-//ISPHERE - OLD - END
-//ISPHERE - NEW - START
+// ISPHERE - OLD - END
+// ISPHERE - NEW - START
 public abstract class KeyGetterInterface extends JTextField {
-//ISPHERE - NEW - END
+    // ISPHERE - NEW - END
 
-   private static final long serialVersionUID = 1L;
-KeyEvent keyevent;
-   boolean isAltGr;
-   boolean isLinux;
-   JDialog dialog;
+    private static final long serialVersionUID = 1L;
+    KeyEvent keyevent;
+    boolean isAltGr;
+    boolean isLinux;
+    JDialog dialog;
 
-   public KeyGetterInterface() {
-      super();
+    public KeyGetterInterface() {
+        super();
 
-      // ISPHERE - NEW - START
-      this.setEditable(false);
-      this.setBorder(BorderFactory.createEmptyBorder());
-      // ISPHERE - NEW - END
-      
-      if (OperatingSystem.isUnix() && !OperatingSystem.isMacOS()) {
-         isLinux = true;
-      }
+        // ISPHERE - NEW - START
+        this.setEditable(false);
+        this.setBorder(BorderFactory.createEmptyBorder());
+        // ISPHERE - NEW - END
 
-      addKeyListener(new KeyAdapter() {
+        if (OperatingSystem.isUnix() && !OperatingSystem.isMacOS()) {
+            isLinux = true;
+        }
 
+        addKeyListener(new KeyAdapter() {
+
+            @Override
             public void keyTyped(KeyEvent e) {
-                  processVTKeyTyped(e);
+                processVTKeyTyped(e);
 
             }
 
+            @Override
             public void keyPressed(KeyEvent ke) {
 
-               processVTKeyPressed(ke);
+                processVTKeyPressed(ke);
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
 
-               processVTKeyReleased(e);
+                processVTKeyReleased(e);
 
             }
 
-      });
+        });
 
-   }
+    }
 
-   public void setDialog(JDialog dialog) {
+    public void setDialog(JDialog dialog) {
 
-      this.dialog = dialog;
+        this.dialog = dialog;
 
-   }
+    }
 
-   public boolean isFocusTraversable () {
-      return true;
-   }
+    @Override
+    public boolean isFocusTraversable() {
+        return true;
+    }
 
-   /**
-    * Override to inform focus manager that component is managing focus changes.
-    * This is to capture the tab and shift+tab keys.
-    */
-   public boolean isManagingFocus() {
-      return true;
-   }
+    /**
+     * Override to inform focus manager that component is managing focus
+     * changes. This is to capture the tab and shift+tab keys.
+     */
+    @Override
+    public boolean isManagingFocus() {
+        return true;
+    }
 
-   abstract void processVTKeyPressed(KeyEvent e);
+    abstract void processVTKeyPressed(KeyEvent e);
 
-   abstract void processVTKeyTyped(KeyEvent e);
+    abstract void processVTKeyTyped(KeyEvent e);
 
-   abstract void processVTKeyReleased(KeyEvent e);
+    abstract void processVTKeyReleased(KeyEvent e);
 }

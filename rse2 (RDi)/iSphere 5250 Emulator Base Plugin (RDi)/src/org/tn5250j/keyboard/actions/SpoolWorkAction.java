@@ -39,17 +39,15 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class SpoolWorkAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public SpoolWorkAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_SPOOL_FILE,
-            KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.ALT_MASK),
-            keyMap);
+    public SpoolWorkAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_SPOOL_FILE, KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     session.actionSpool();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        session.actionSpool();
+    }
 }

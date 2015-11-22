@@ -38,55 +38,57 @@ import org.tn5250j.tools.LangTool;
 
 public class TabAttributesPanel extends AttributesPanel {
 
-	private static final long serialVersionUID = 1L;
-	JCheckBox tabCloseCheck;
+    private static final long serialVersionUID = 1L;
+    JCheckBox tabCloseCheck;
 
-	public TabAttributesPanel(SessionConfig config) {
-		super(config,"Tabs");
-	}
+    public TabAttributesPanel(SessionConfig config) {
+        super(config, "Tabs");
+    }
 
-	// Component initialization
-	public void initPanel() throws Exception {
+    // Component initialization
+    @Override
+    public void initPanel() throws Exception {
 
-		setLayout(new BorderLayout());
-		contentPane = new JPanel();
-		contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-		add(contentPane,BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-		// Define close tab confirmation panel
-		JPanel tabConfirm = new JPanel();
-		tabConfirm.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.titleTabOptions")));
+        // Define close tab confirmation panel
+        JPanel tabConfirm = new JPanel();
+        tabConfirm.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.titleTabOptions")));
 
-		tabCloseCheck = new JCheckBox(LangTool.getString("sa.confirmTabClose"));
+        tabCloseCheck = new JCheckBox(LangTool.getString("sa.confirmTabClose"));
 
-		// Check if tab close confirmation is to be checked
-		tabCloseCheck.setSelected(getStringProperty("confirmTabClose").equals("Yes"));
+        // Check if tab close confirmation is to be checked
+        tabCloseCheck.setSelected(getStringProperty("confirmTabClose").equals("Yes"));
 
-		tabConfirm.add(tabCloseCheck);
+        tabConfirm.add(tabCloseCheck);
 
-		contentPane.add(tabConfirm);
+        contentPane.add(tabConfirm);
 
-	}
+    }
 
-	public void save() {
+    @Override
+    public void save() {
 
-	}
+    }
 
-	public void applyAttributes() {
+    @Override
+    public void applyAttributes() {
 
-		String value = "";
+        String value = "";
 
-		if (tabCloseCheck.isSelected()) {
-			value = "Yes";
-		} else {
-			value = "No";
-		}
+        if (tabCloseCheck.isSelected()) {
+            value = "Yes";
+        } else {
+            value = "No";
+        }
 
-		changes.firePropertyChange(this, "confirmTabClose", getStringProperty("confirmTabClose"), value);
+        changes.firePropertyChange(this, "confirmTabClose", getStringProperty("confirmTabClose"), value);
 
-		setProperty("confirmTabClose",value);
+        setProperty("confirmTabClose", value);
 
-	}
+    }
 
 }
-

@@ -25,22 +25,23 @@
  */
 package org.tn5250j.gui;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+
+import javax.swing.JComboBox;
 
 public class TN5250jFontsSelection extends JComboBox {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public TN5250jFontsSelection() {
-      super();
-      // fonts
-      Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+    public TN5250jFontsSelection() {
+        super();
+        // fonts
+        Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
-      for (int x = 0; x < fonts.length; x++) {
-         if (fonts[x].getFontName().indexOf('.') < 0)
-            addItem(fonts[x].getFontName());
-      }
+        for (int x = 0; x < fonts.length; x++) {
+            if (fonts[x].getFontName().indexOf('.') < 0) addItem(fonts[x].getFontName());
+        }
 
-   }
+    }
 }

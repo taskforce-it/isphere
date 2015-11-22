@@ -38,61 +38,60 @@ import org.tn5250j.tools.LangTool;
 
 /**
  * Small dialog asking the user to confirm the close tab request
- *
+ * 
  * @author duncanc
  */
 public class ConfirmTabCloseDialog {
 
-	private final static String[] OPTIONS = new String[] {  LangTool.getString("key.labelClose"), LangTool.getString("ss.optCancel") };
+    private final static String[] OPTIONS = new String[] { LangTool.getString("key.labelClose"), LangTool.getString("ss.optCancel") };
 
-	private final Component parent;
+    private final Component parent;
 
-	private JDialog dialog;
-	private JOptionPane pane;
+    private JDialog dialog;
+    private JOptionPane pane;
 
+    /**
+     * @param parent
+     */
+    public ConfirmTabCloseDialog(Component parent) {
+        super();
+        this.parent = parent;
+        initLayout();
+    }
 
-	/**
-	 * @param parent
-	 */
-	public ConfirmTabCloseDialog(Component parent) {
-		super();
-		this.parent = parent;
-		initLayout();
-	}
+    private void initLayout() {
+        Object[] messages = new Object[1];
+        {
+            JPanel srp = new JPanel();
+            srp.setLayout(new BorderLayout());
+            JLabel jl = new JLabel("Are you sure you want to close this tab?");
+            srp.add(jl, BorderLayout.NORTH);
+            messages[0] = srp;
+        }
 
-	private void initLayout() {
-		Object[] messages = new Object[1];
-		{
-			JPanel srp = new JPanel();
-			srp.setLayout(new BorderLayout());
-			JLabel jl = new JLabel("Are you sure you want to close this tab?");
-			srp.add(jl, BorderLayout.NORTH);
-			messages[0] = srp;
-		}
+        pane = new JOptionPane(messages, // the dialog message array
+            JOptionPane.QUESTION_MESSAGE, // message type
+            JOptionPane.DEFAULT_OPTION, // option type
+            null, // optional icon, use null to use the default icon
+            OPTIONS, // options string array, will be made into buttons
+            OPTIONS[0]);
 
-		pane = new JOptionPane(messages, // the dialog message array
-				JOptionPane.QUESTION_MESSAGE, // message type
-				JOptionPane.DEFAULT_OPTION, // option type
-				null, // optional icon, use null to use the default icon
-				OPTIONS, // options string array, will be made into buttons
-				OPTIONS[0]);
+        dialog = pane.createDialog(parent, LangTool.getString("sa.confirmTabClose"));
 
-		dialog = pane.createDialog(parent,  LangTool.getString("sa.confirmTabClose"));
+    }
 
-	}
-
-	/**
-	 * Shows the dialog and returns the true if the close was confirmed
-	 * or false if the operation was canceled.
-	 *
-	 * @return
-	 */
-	public boolean show() {
-		dialog.setVisible(true);
-		if (OPTIONS[0].equals(pane.getValue())) {
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Shows the dialog and returns the true if the close was confirmed or false
+     * if the operation was canceled.
+     * 
+     * @return
+     */
+    public boolean show() {
+        dialog.setVisible(true);
+        if (OPTIONS[0].equals(pane.getValue())) {
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -42,18 +42,15 @@ import org.tn5250j.tools.XTFRFile;
  */
 public class TransferAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public TransferAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_FILE_TRANSFER,
-            KeyStroke.getKeyStroke(KeyEvent.VK_T,KeyEvent.ALT_MASK),
-            keyMap);
+    public TransferAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_FILE_TRANSFER, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-      new XTFRFile((Frame)SwingUtilities.getRoot(session),
-                                    session.getVT(),session);
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        new XTFRFile((Frame)SwingUtilities.getRoot(session), session.getVT(), session);
+    }
 }

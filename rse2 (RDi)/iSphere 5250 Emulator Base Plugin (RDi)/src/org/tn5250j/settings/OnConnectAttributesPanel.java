@@ -1,4 +1,5 @@
 package org.tn5250j.settings;
+
 /**
  * Title: SignoffAttributesPanel
  * Copyright:   Copyright (c) 2001
@@ -25,54 +26,59 @@ package org.tn5250j.settings;
  *
  */
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
 
-import org.tn5250j.tools.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.tn5250j.SessionConfig;
+import org.tn5250j.tools.LangTool;
 
 public class OnConnectAttributesPanel extends AttributesPanel {
 
-   private static final long serialVersionUID = 1L;
-JTextField connectMacro;
+    private static final long serialVersionUID = 1L;
+    JTextField connectMacro;
 
-   public OnConnectAttributesPanel(SessionConfig config ) {
-      super(config,"OnConnect");
-   }
+    public OnConnectAttributesPanel(SessionConfig config) {
+        super(config, "OnConnect");
+    }
 
-   /**Component initialization*/
-   public void initPanel() throws Exception  {
+    /** Component initialization */
+    @Override
+    public void initPanel() throws Exception {
 
-      setLayout(new BorderLayout());
-      contentPane = new JPanel();
-      contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-      add(contentPane,BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-      // define onConnect macro to run
-      JPanel ocMacrop = new JPanel();
-      ocMacrop.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.connectMacro")));
+        // define onConnect macro to run
+        JPanel ocMacrop = new JPanel();
+        ocMacrop.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.connectMacro")));
 
-      connectMacro = new JTextField();
-      connectMacro.setColumns(30);
+        connectMacro = new JTextField();
+        connectMacro.setColumns(30);
 
-      // sets the connect macro
-      connectMacro.setText(getStringProperty("connectMacro"));
+        // sets the connect macro
+        connectMacro.setText(getStringProperty("connectMacro"));
 
-      ocMacrop.add(connectMacro);
-      contentPane.add(ocMacrop);
+        ocMacrop.add(connectMacro);
+        contentPane.add(ocMacrop);
 
-   }
+    }
 
-   public void save() {
+    @Override
+    public void save() {
 
-   }
+    }
 
-   public void applyAttributes() {
+    @Override
+    public void applyAttributes() {
 
-      changes.firePropertyChange(this,"connectMacro",
-                        getStringProperty("connectMacro"),
-                        connectMacro.getText());
-      setProperty("connectMacro",connectMacro.getText());
+        changes.firePropertyChange(this, "connectMacro", getStringProperty("connectMacro"), connectMacro.getText());
+        setProperty("connectMacro", connectMacro.getText());
 
-   }
+    }
 }

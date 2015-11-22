@@ -27,19 +27,17 @@
 package org.tn5250j.encoding;
 
 /**
- *
  * This class controls the translation from EBCDIC to ASCII and ASCII to EBCDIC
- *
  */
 public abstract class AbstractCodePage implements ICodePage {
 
-	protected AbstractCodePage(String encoding) {
-		this.encoding = encoding;
-	}
+    protected AbstractCodePage(String encoding) {
+        this.encoding = encoding;
+    }
 
-	public String getEncoding() {
-		return encoding;
-	}
+    public String getEncoding() {
+        return encoding;
+    }
 
-	protected String encoding;
+    protected String encoding;
 }

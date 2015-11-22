@@ -39,18 +39,16 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class JumpPrevAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public JumpPrevAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_JUMP_PREV,
-            KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,KeyEvent.ALT_MASK),
-            keyMap);
+    public JumpPrevAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_JUMP_PREV, KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.prevSession();
-   }
+        session.prevSession();
+    }
 }

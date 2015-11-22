@@ -39,17 +39,15 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class EmailAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public EmailAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_E_MAIL,
-            KeyStroke.getKeyStroke(KeyEvent.VK_E,KeyEvent.ALT_MASK),
-            keyMap);
+    public EmailAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_E_MAIL, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     session.sendScreenEMail();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        session.sendScreenEMail();
+    }
 }

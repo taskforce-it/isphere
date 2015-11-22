@@ -39,16 +39,15 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class OpenSameAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public OpenSameAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,TN5250jConstants.MNEMONIC_OPEN_SAME,
-            KeyStroke.getKeyStroke(KeyEvent.VK_U,KeyEvent.ALT_MASK),
-            keyMap);
-   }
+    public OpenSameAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_OPEN_SAME, KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.ALT_MASK), keyMap);
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.startDuplicateSession();
-   }
+        session.startDuplicateSession();
+    }
 }
