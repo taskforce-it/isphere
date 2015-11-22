@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.tn5250j.core"
       label="iSphere TN5250J Core"
-      version="2.7.1.b003"
+      version="2.7.1.b004"
       provider-name="iSphere Project Team">
 
    <description>
