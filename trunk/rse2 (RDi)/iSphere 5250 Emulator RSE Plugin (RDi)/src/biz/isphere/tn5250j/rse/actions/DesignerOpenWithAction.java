@@ -28,7 +28,9 @@ import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditorInput;
 import biz.isphere.tn5250j.core.tn5250jpart.DisplaySession;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
+import biz.isphere.tn5250j.rse.designereditor.DesignerEditor;
 import biz.isphere.tn5250j.rse.designerpart.DesignerInfo;
+import biz.isphere.tn5250j.rse.designerview.DesignerView;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
@@ -56,12 +58,9 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
     }
 
     public void run(IAction arg0) {
-    	for (int idx = 0; idx < selectedMembers.length; idx++) {
-    		startDesigner(
-    				selectedMembers[idx].getConnection(), 
-    				selectedMembers[idx], 
-    				getMode());
-    	}
+        for (int idx = 0; idx < selectedMembers.length; idx++) {
+            startDesigner(selectedMembers[idx].getConnection(), selectedMembers[idx], getMode());
+        }
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
@@ -93,96 +92,85 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
         return selectedMembersList.toArray(new QSYSRemoteSourceMember[selectedMembersList.size()]);
     }
 
-	private void startDesigner(IBMiConnection ibmiConnection, IQSYSMember member, String mode) {
-    	try {
-    		AS400 as400 = ibmiConnection.getAS400ToolboxObject();
-    		IQSYSJob iseriesJob = ibmiConnection.getServerJob(null);
-    		Job job = new Job(as400, iseriesJob.getJobName(), iseriesJob.getUserName(), iseriesJob.getJobNumber());
-        	String stringCurrentLibrary = "*CRTDFT";
-        	String stringLibraryList = "";
-    		if (job.getCurrentLibraryExistence()) {
-    			stringCurrentLibrary = job.getCurrentLibrary();
-    		}
-    		String[] user = job.getUserLibraryList();
-    		for (int y=0; y < user.length; y++) {
-				stringLibraryList = stringLibraryList + " " + user[y];
-    		}
-			
-    		String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(ibmiConnection.getProfileName() + "-" + ibmiConnection.getConnectionName());
-    		String connection = ibmiConnection.getProfileName() + "-" + ibmiConnection.getConnectionName();
-    		String name = "_DESIGNER";
-    		
-    		Session session = Session.load(sessionDirectory, connection, name);
-    		if (session != null) {
-    		
-    			String area = session.getArea();
- 
-        		ITN5250JPart tn5250jPart = null;
-        		
-    			if (area.equals("*VIEW")) {
+    private void startDesigner(IBMiConnection ibmiConnection, IQSYSMember member, String mode) {
+        try {
+            AS400 as400 = ibmiConnection.getAS400ToolboxObject();
+            IQSYSJob iseriesJob = ibmiConnection.getServerJob(null);
+            Job job = new Job(as400, iseriesJob.getJobName(), iseriesJob.getUserName(), iseriesJob.getJobNumber());
+            String stringCurrentLibrary = "*CRTDFT";
+            String stringLibraryList = "";
+            if (job.getCurrentLibraryExistence()) {
+                stringCurrentLibrary = job.getCurrentLibrary();
+            }
+            String[] user = job.getUserLibraryList();
+            for (int y = 0; y < user.length; y++) {
+                stringLibraryList = stringLibraryList + " " + user[y];
+            }
 
-    				tn5250jPart = (ITN5250JPart)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("biz.isphere.tn5250j.rse.designerview.DesignerView"));
-    				
-    			}
-    			else if (area.equals("*EDITOR")) {
- 
-    				TN5250JEditorInput editorInput = 
-    					new TN5250JEditorInput(
-    							"biz.isphere.tn5250j.rse.designereditor.DesignerEditor", 
-    							Messages.getString("iSphere_5250_Designer"), 
-    							"TN5250J", 
-    							TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));
-    				
-    				tn5250jPart = (ITN5250JPart)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.tn5250j.rse.designereditor.DesignerEditor");
-    				
-    			}
-        		
-    			if (tn5250jPart != null) {
+            String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(ibmiConnection.getProfileName() + "-"
+                + ibmiConnection.getConnectionName());
+            String connection = ibmiConnection.getProfileName() + "-" + ibmiConnection.getConnectionName();
+            String name = "_DESIGNER";
 
-    				DesignerInfo designerInfo = new DesignerInfo(tn5250jPart);
-            		designerInfo.setRSEProfil(ibmiConnection.getProfileName());
-            		designerInfo.setRSEConnection(ibmiConnection.getConnectionName());
-            		designerInfo.setSession("_DESIGNER");
-            		designerInfo.setLibrary(member.getLibrary());
-            		designerInfo.setSourceFile(member.getFile());
-            		designerInfo.setMember(member.getName());
-            		String editor = "*SEU";
-            		if (member.getType().equals("DSPF")) {
-            			editor = "*SDA";
-            		}
-            		else if (member.getType().equals("PRTF")) {
-            			editor = "*RLU";
-            		}
-            		designerInfo.setEditor(editor);
-            		designerInfo.setMode(mode);
-            		designerInfo.setCurrentLibrary(stringCurrentLibrary);
-            		designerInfo.setLibraryList(stringLibraryList);
+            Session session = Session.load(sessionDirectory, connection, name);
+            if (session != null) {
 
-        			DisplaySession.run(sessionDirectory, connection, name, designerInfo);
-    				
-    			}
-    			
-    		}
-			
-    	} 
-    	catch (SystemMessageException e2) {
-		} 
-    	catch (AS400SecurityException e) {
-		} 
-    	catch (ErrorCompletingRequestException e) {
-		} 
-    	catch (InterruptedException e) {
-		} 
-    	catch (IOException e) {
-		} 
-    	catch (ObjectDoesNotExistException e) {
-		} 
-    	catch (PartInitException e) {
-		}
-	}
+                String area = session.getArea();
 
-	protected String getMode() {
-		return "*EDIT";
-	}
-   
+                ITN5250JPart tn5250jPart = null;
+
+                if (area.equals("*VIEW")) {
+
+                    tn5250jPart = (ITN5250JPart)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DesignerView.ID));
+
+                } else if (area.equals("*EDITOR")) {
+
+                    TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.iSphere_5250_Designer, "TN5250J",
+                        TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));
+
+                    tn5250jPart = (ITN5250JPart)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                        .openEditor(editorInput, DesignerEditor.ID);
+
+                }
+
+                if (tn5250jPart != null) {
+
+                    DesignerInfo designerInfo = new DesignerInfo(tn5250jPart);
+                    designerInfo.setRSEProfil(ibmiConnection.getProfileName());
+                    designerInfo.setRSEConnection(ibmiConnection.getConnectionName());
+                    designerInfo.setSession("_DESIGNER");
+                    designerInfo.setLibrary(member.getLibrary());
+                    designerInfo.setSourceFile(member.getFile());
+                    designerInfo.setMember(member.getName());
+                    String editor = "*SEU";
+                    if (member.getType().equals("DSPF")) {
+                        editor = "*SDA";
+                    } else if (member.getType().equals("PRTF")) {
+                        editor = "*RLU";
+                    }
+                    designerInfo.setEditor(editor);
+                    designerInfo.setMode(mode);
+                    designerInfo.setCurrentLibrary(stringCurrentLibrary);
+                    designerInfo.setLibraryList(stringLibraryList);
+
+                    DisplaySession.run(sessionDirectory, connection, name, designerInfo);
+
+                }
+
+            }
+
+        } catch (SystemMessageException e2) {
+        } catch (AS400SecurityException e) {
+        } catch (ErrorCompletingRequestException e) {
+        } catch (InterruptedException e) {
+        } catch (IOException e) {
+        } catch (ObjectDoesNotExistException e) {
+        } catch (PartInitException e) {
+        }
+    }
+
+    protected String getMode() {
+        return "*EDIT";
+    }
+
 }
