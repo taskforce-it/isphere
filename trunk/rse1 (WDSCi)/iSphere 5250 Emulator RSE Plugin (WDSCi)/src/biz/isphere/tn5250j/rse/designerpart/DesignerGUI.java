@@ -15,10 +15,10 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
 public class DesignerGUI extends CoreDesignerGUI {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DesignerGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
-		super(tn5250jInfo, session5250);
-	}
+    public DesignerGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
+        super(tn5250jInfo, session5250);
+    }
 
 }

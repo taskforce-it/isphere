@@ -25,7 +25,7 @@
  */
 package org.tn5250j.keyboard.actions;
 
-
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -39,16 +39,14 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class GuiAction extends EmulatorAction implements TN5250jConstants {
 
-   public GuiAction(SessionGUI session, KeyMapper keyMap) {
-      super(session,
-            MNEMONIC_GUI,
-            KeyStroke.getKeyStroke(KeyEvent.VK_G,KeyEvent.ALT_MASK),
-            keyMap);
+    public GuiAction(SessionGUI session, KeyMapper keyMap) {
+        super(session, MNEMONIC_GUI, KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.getScreen().toggleGUIInterface();
-   }
+        session.getScreen().toggleGUIInterface();
+    }
 }

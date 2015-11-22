@@ -25,6 +25,7 @@
  */
 package org.tn5250j.keyboard.actions;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -41,25 +42,22 @@ import org.tn5250j.mailtools.SendEMailDialog;
  */
 public class QuickEmailAction extends EmulatorAction implements TN5250jConstants {
 
-   public QuickEmailAction(SessionGUI session, KeyMapper keyMap) {
-      super(session,
-            MNEMONIC_QUICK_MAIL,
-            KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.ALT_MASK),
-            keyMap);
+    public QuickEmailAction(SessionGUI session, KeyMapper keyMap) {
+        super(session, MNEMONIC_QUICK_MAIL, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      Runnable emailIt = new Runnable() {
-         public void run() {
-            new SendEMailDialog((JFrame)SwingUtilities.getRoot(session),
-                  session,false);
-         }
+        Runnable emailIt = new Runnable() {
+            public void run() {
+                new SendEMailDialog((JFrame)SwingUtilities.getRoot(session), session, false);
+            }
 
-      };
+        };
 
-      SwingUtilities.invokeLater(emailIt);
+        SwingUtilities.invokeLater(emailIt);
 
-   }
+    }
 }

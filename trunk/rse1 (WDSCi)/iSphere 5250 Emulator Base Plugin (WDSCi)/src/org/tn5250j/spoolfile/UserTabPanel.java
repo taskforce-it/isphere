@@ -32,94 +32,92 @@ import org.tn5250j.tools.AlignLayout;
 import org.tn5250j.event.ToggleDocumentListener;
 import org.tn5250j.gui.ToggleDocument;
 
-public class UserTabPanel extends JPanel implements QueueFilterInterface,
-                                                         ToggleDocumentListener {
+public class UserTabPanel extends JPanel implements QueueFilterInterface, ToggleDocumentListener {
 
-   JRadioButton all;
-   JRadioButton select;
-   JTextField user;;
+    JRadioButton all;
+    JRadioButton select;
+    JTextField user;;
 
-   public UserTabPanel() {
-      try {
-         jbInit();
-      }
-      catch(Exception ex) {
-         ex.printStackTrace();
-      }
-   }
+    public UserTabPanel() {
+        try {
+            jbInit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-   void jbInit() throws Exception {
+    void jbInit() throws Exception {
 
-      setLayout(new AlignLayout(2,5,5));
+        setLayout(new AlignLayout(2, 5, 5));
 
-      all = new JRadioButton("All");
+        all = new JRadioButton("All");
 
-      all.setSelected(false);
+        all.setSelected(false);
 
-      select = new JRadioButton("User");
-      select.setSelected(true);
-      select.addItemListener(new java.awt.event.ItemListener() {
-         public void itemStateChanged(ItemEvent e) {
-            select_itemStateChanged(e);
-         }
-      });
+        select = new JRadioButton("User");
+        select.setSelected(true);
+        select.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                select_itemStateChanged(e);
+            }
+        });
 
-      user = new JTextField("*CURRENT",15);
-      ToggleDocument td = new ToggleDocument();
-      td.addToggleDocumentListener(this);
-      user.setDocument(td);
-      user.setText("*CURRENT");
+        user = new JTextField("*CURRENT", 15);
+        ToggleDocument td = new ToggleDocument();
+        td.addToggleDocumentListener(this);
+        user.setDocument(td);
+        user.setText("*CURRENT");
 
-      ButtonGroup bg = new ButtonGroup();
-      bg.add(all);
-      bg.add(select);
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(all);
+        bg.add(select);
 
-      add(all);
-      add(new JLabel(""));
-      add(select);
-      add(user);
+        add(all);
+        add(new JLabel(""));
+        add(select);
+        add(user);
 
-      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-   }
+    }
 
-   /**
-    * Reset to default value(s)
-    */
-   public void reset() {
+    /**
+     * Reset to default value(s)
+     */
+    public void reset() {
 
-//      user.setEnabled(true);
-      user.setText("*CURRENT");
-      select.setSelected(true);
+        // user.setEnabled(true);
+        user.setText("*CURRENT");
+        select.setSelected(true);
 
-   }
+    }
 
-   void select_itemStateChanged(ItemEvent e) {
-//      if (select.isSelected())
-//         user.setEnabled(true);
-//      else
-//         user.setEnabled(false);
-   }
+    void select_itemStateChanged(ItemEvent e) {
+        // if (select.isSelected())
+        // user.setEnabled(true);
+        // else
+        // user.setEnabled(false);
+    }
 
-   public void toggleNotEmpty() {
+    public void toggleNotEmpty() {
 
-      select.setSelected(true);
+        select.setSelected(true);
 
-   }
+    }
 
-   public void toggleEmpty() {
+    public void toggleEmpty() {
 
-   }
+    }
 
-   public String getUser() {
-      if (all.isSelected())
-         return "*ALL";
-      else
-         return user.getText().trim();
-   }
+    public String getUser() {
+        if (all.isSelected())
+            return "*ALL";
+        else
+            return user.getText().trim();
+    }
 
-   public void setUser(String filter) {
+    public void setUser(String filter) {
 
-      user.setText(filter);
-   }
+        user.setText(filter);
+    }
 }

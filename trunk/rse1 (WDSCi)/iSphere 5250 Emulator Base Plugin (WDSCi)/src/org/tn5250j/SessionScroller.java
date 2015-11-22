@@ -37,86 +37,78 @@ import org.tn5250j.framework.tn5250.Screen5250;
  */
 public class SessionScroller implements SessionScrollerInterface, TN5250jConstants {
 
-   Screen5250 screen;
-   SessionGUI session;
-   static boolean useJava14;
+    Screen5250 screen;
+    SessionGUI session;
+    static boolean useJava14;
 
-   SessionScrollerInterface _instance;
+    SessionScrollerInterface _instance;
 
-   /**
-    * String value for the jdk 1.4 version of Scroller
-    */
-   private static final String      SCROLLER_NAME14 = "org.tn5250j.SessionScroller14";
+    /**
+     * String value for the jdk 1.4 version of Scroller
+     */
+    private static final String SCROLLER_NAME14 = "org.tn5250j.SessionScroller14";
 
-   static {
+    static {
 
-      useJava14 = OperatingSystem.hasJava14() && !OperatingSystem.isMacOS();
+        useJava14 = OperatingSystem.hasJava14() && !OperatingSystem.isMacOS();
 
-   }
+    }
 
-	public SessionScroller() {
+    public SessionScroller() {
 
-	}
+    }
 
+    protected SessionScrollerInterface getScrollerInstance(SessionGUI ses) {
 
-   protected SessionScrollerInterface getScrollerInstance(SessionGUI ses) {
+        if (_instance != null) return _instance;
 
-      if (_instance != null)
-         return _instance;
-
-      if (!useJava14) {
-         _instance = this;
-         return _instance;
-      }
-
-      screen = ses.getScreen();
-      session = ses;
-
-      Class       scroller_class;
-
-      Constructor constructor1;
-
-      try {
-
-         ClassLoader loader = SessionScroller.class.getClassLoader();
-
-         if (loader == null)
-           loader = ClassLoader.getSystemClassLoader();
-
-         scroller_class       = loader.loadClass(SCROLLER_NAME14);
-
-         constructor1 = scroller_class.getConstructor(new Class[] {SessionGUI.class});
-
-         try {
-            Object obj= constructor1.newInstance(new Object[] {session});
-            _instance = (SessionScrollerInterface)obj;
-
-         }
-         catch (Throwable crap) {
+        if (!useJava14) {
             _instance = this;
-         }
+            return _instance;
+        }
 
+        screen = ses.getScreen();
+        session = ses;
 
-      }
-      catch (Throwable t) {
-         _instance = this;
-         scroller_class = null;
-         constructor1  = null;
-      }
+        Class scroller_class;
 
-      _instance.addMouseWheelListener(session);
-      return _instance;
+        Constructor constructor1;
 
-   }
+        try {
 
-   public void addMouseWheelListener(SessionGUI ses) {
+            ClassLoader loader = SessionScroller.class.getClassLoader();
 
+            if (loader == null) loader = ClassLoader.getSystemClassLoader();
 
-   }
+            scroller_class = loader.loadClass(SCROLLER_NAME14);
 
-   public void removeMouseWheelListener(SessionGUI ses) {
+            constructor1 = scroller_class.getConstructor(new Class[] { SessionGUI.class });
 
+            try {
+                Object obj = constructor1.newInstance(new Object[] { session });
+                _instance = (SessionScrollerInterface)obj;
 
-   }
+            } catch (Throwable crap) {
+                _instance = this;
+            }
+
+        } catch (Throwable t) {
+            _instance = this;
+            scroller_class = null;
+            constructor1 = null;
+        }
+
+        _instance.addMouseWheelListener(session);
+        return _instance;
+
+    }
+
+    public void addMouseWheelListener(SessionGUI ses) {
+
+    }
+
+    public void removeMouseWheelListener(SessionGUI ses) {
+
+    }
 
 }

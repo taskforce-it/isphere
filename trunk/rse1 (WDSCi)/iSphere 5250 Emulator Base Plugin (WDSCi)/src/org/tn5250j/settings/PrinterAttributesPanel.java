@@ -1,4 +1,5 @@
 package org.tn5250j.settings;
+
 /**
  * Title: PrinterAttributesPanel
  * Copyright:   Copyright (c) 2001
@@ -36,246 +37,206 @@ import org.tn5250j.gui.*;
 
 public class PrinterAttributesPanel extends AttributesPanel {
 
-   JCheckBox defaultPrinter;
-   JButton setPortAttributes;
-   JButton setLandAttributes;
-   Paper pappyPort;
-   Paper pappyLand;
-   JComboBox fontsList;
-   TN5250jFontsSelection fs;
+    JCheckBox defaultPrinter;
+    JButton setPortAttributes;
+    JButton setLandAttributes;
+    Paper pappyPort;
+    Paper pappyLand;
+    JComboBox fontsList;
+    TN5250jFontsSelection fs;
 
-   public PrinterAttributesPanel(SessionConfig config ) {
-      super(config,"Printer");
-   }
+    public PrinterAttributesPanel(SessionConfig config) {
+        super(config, "Printer");
+    }
 
-   /**Component initialization*/
-   public void initPanel() throws Exception  {
+    /** Component initialization */
+    @Override
+    public void initPanel() throws Exception {
 
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-      setLayout(new BorderLayout());
-      contentPane = new JPanel();
-      contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-      add(contentPane,BorderLayout.NORTH);
+        // define ppPanel panel
+        JPanel ppp = new JPanel();
+        ppp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.print")));
+        defaultPrinter = new JCheckBox(LangTool.getString("sa.defaultPrinter"));
 
-      // define ppPanel panel
-      JPanel ppp = new JPanel();
-      ppp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.print")));
-      defaultPrinter = new JCheckBox(LangTool.getString("sa.defaultPrinter"));
+        if (getStringProperty("defaultPrinter").equals("Yes")) defaultPrinter.setSelected(true);
 
-      if (getStringProperty("defaultPrinter").equals("Yes"))
-         defaultPrinter.setSelected(true);
+        ppp.add(defaultPrinter);
 
-      ppp.add(defaultPrinter);
+        // --- Create a printerJob object
+        PrinterJob printJob = PrinterJob.getPrinterJob();
 
-      //--- Create a printerJob object
-      PrinterJob printJob = PrinterJob.getPrinterJob ();
+        // will have to remember this for the next time.
+        // Always set a page format before call setPrintable to
+        // set the orientation.
+        PageFormat pf = printJob.defaultPage();
 
-      // will have to remember this for the next time.
-      //   Always set a page format before call setPrintable to
-      //   set the orientation.
-      PageFormat pf = printJob.defaultPage();
+        pappyPort = pf.getPaper();
 
-      pappyPort = pf.getPaper();
+        pappyLand = pf.getPaper();
 
-      pappyLand = pf.getPaper();
+        // Portrait paper parameters
+        if (getStringProperty("print.portWidth").length() != 0 && getStringProperty("print.portHeight").length() != 0
+            && getStringProperty("print.portImageWidth").length() != 0 && getStringProperty("print.portImageHeight").length() != 0
+            && getStringProperty("print.portImage.X").length() != 0 && getStringProperty("print.portImage.Y").length() != 0) {
 
-      // Portrait paper parameters
-      if (getStringProperty("print.portWidth").length() != 0 &&
-            getStringProperty("print.portHeight").length() != 0 &&
-            getStringProperty("print.portImageWidth").length() != 0 &&
-            getStringProperty("print.portImageHeight").length() != 0 &&
-            getStringProperty("print.portImage.X").length() != 0 &&
-            getStringProperty("print.portImage.Y").length() != 0) {
+            pappyPort.setSize(Double.parseDouble(getStringProperty("print.portWidth")), Double.parseDouble(getStringProperty("print.portHeight")));
 
-         pappyPort.setSize(Double.parseDouble(getStringProperty("print.portWidth")),
-                           Double.parseDouble(getStringProperty("print.portHeight")));
+            pappyPort.setImageableArea(Double.parseDouble(getStringProperty("print.portImage.X")), Double
+                .parseDouble(getStringProperty("print.portImage.Y")), Double.parseDouble(getStringProperty("print.portImageWidth")), Double
+                .parseDouble(getStringProperty("print.portImageHeight")));
+        }
 
-         pappyPort.setImageableArea(Double.parseDouble(getStringProperty("print.portImage.X")),
-                           Double.parseDouble(getStringProperty("print.portImage.Y")),
-                           Double.parseDouble(getStringProperty("print.portImageWidth")),
-                           Double.parseDouble(getStringProperty("print.portImageHeight")));
-      }
+        // Landscape paper parameters
+        if (getStringProperty("print.landWidth").length() != 0 && getStringProperty("print.landHeight").length() != 0
+            && getStringProperty("print.landImageWidth").length() != 0 && getStringProperty("print.landImageHeight").length() != 0
+            && getStringProperty("print.landImage.X").length() != 0 && getStringProperty("print.landImage.Y").length() != 0) {
 
-      // Landscape paper parameters
-      if (getStringProperty("print.landWidth").length() != 0 &&
-            getStringProperty("print.landHeight").length() != 0 &&
-            getStringProperty("print.landImageWidth").length() != 0 &&
-            getStringProperty("print.landImageHeight").length() != 0 &&
-            getStringProperty("print.landImage.X").length() != 0 &&
-            getStringProperty("print.landImage.Y").length() != 0) {
+            pappyLand.setSize(Double.parseDouble(getStringProperty("print.landWidth")), Double.parseDouble(getStringProperty("print.landHeight")));
 
-         pappyLand.setSize(Double.parseDouble(getStringProperty("print.landWidth")),
-                           Double.parseDouble(getStringProperty("print.landHeight")));
+            pappyLand.setImageableArea(Double.parseDouble(getStringProperty("print.landImage.X")), Double
+                .parseDouble(getStringProperty("print.landImage.Y")), Double.parseDouble(getStringProperty("print.landImageWidth")), Double
+                .parseDouble(getStringProperty("print.landImageHeight")));
+        }
 
-         pappyLand.setImageableArea(Double.parseDouble(getStringProperty("print.landImage.X")),
-                           Double.parseDouble(getStringProperty("print.landImage.Y")),
-                           Double.parseDouble(getStringProperty("print.landImageWidth")),
-                           Double.parseDouble(getStringProperty("print.landImageHeight")));
-      }
+        // define page panel
+        JPanel page = new JPanel();
+        page.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.pageParameters")));
 
-      // define page panel
-      JPanel page = new JPanel();
-      page.setBorder(BorderFactory.createTitledBorder(
-                           LangTool.getString("sa.pageParameters")));
+        page.setLayout(new BorderLayout());
+        setPortAttributes = new JButton(LangTool.getString("sa.columns24"));
 
-      page.setLayout(new BorderLayout());
-      setPortAttributes = new JButton(LangTool.getString("sa.columns24"));
+        setPortAttributes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getPortraitAttributes();
+            }
+        });
 
-		setPortAttributes.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getPortraitAttributes();
-			}
-		});
+        setLandAttributes = new JButton(LangTool.getString("sa.columns132"));
 
-      setLandAttributes = new JButton(LangTool.getString("sa.columns132"));
+        setLandAttributes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getLandscapeAttributes();
+            }
+        });
 
-		setLandAttributes.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getLandscapeAttributes();
-			}
-		});
+        // now create page dialog holder panel
+        JPanel pagePage = new JPanel();
 
-      // now create page dialog holder panel
-      JPanel pagePage = new JPanel();
+        pagePage.add(setPortAttributes);
+        pagePage.add(setLandAttributes);
 
-      pagePage.add(setPortAttributes);
-      pagePage.add(setLandAttributes);
+        page.add(pagePage, BorderLayout.NORTH);
 
-      page.add(pagePage,BorderLayout.NORTH);
+        // now create fonts selection
+        JPanel pageFont = new JPanel();
+        fs = new TN5250jFontsSelection();
 
-      // now create fonts selection
-      JPanel pageFont = new JPanel();
-      fs = new TN5250jFontsSelection();
+        if (getStringProperty("print.font").length() != 0) {
+            fs.setSelectedItem(getStringProperty("print.font"));
+        }
 
-      if (getStringProperty("print.font").length() != 0) {
-         fs.setSelectedItem(getStringProperty("print.font"));
-      }
+        pageFont.add(fs);
 
-      pageFont.add(fs);
+        page.add(pageFont, BorderLayout.SOUTH);
+        contentPane.add(ppp);
+        contentPane.add(page);
 
-      page.add(pageFont,BorderLayout.SOUTH);
-      contentPane.add(ppp);
-      contentPane.add(page);
+    }
 
-   }
+    private void getPortraitAttributes() {
 
-   private void getPortraitAttributes() {
+        PrinterJob printJob = PrinterJob.getPrinterJob();
 
-      PrinterJob printJob = PrinterJob.getPrinterJob ();
+        PageFormat documentPageFormat = new PageFormat();
+        documentPageFormat.setOrientation(PageFormat.PORTRAIT);
+        documentPageFormat.setPaper(pappyPort);
 
-      PageFormat documentPageFormat = new PageFormat ();
-      documentPageFormat.setOrientation(PageFormat.PORTRAIT);
-      documentPageFormat.setPaper(pappyPort);
+        documentPageFormat = printJob.pageDialog(documentPageFormat);
 
-      documentPageFormat = printJob.pageDialog (documentPageFormat);
+        pappyPort = documentPageFormat.getPaper();
 
-      pappyPort = documentPageFormat.getPaper();
+    }
 
+    private void getLandscapeAttributes() {
 
-   }
+        PrinterJob printJob = PrinterJob.getPrinterJob();
 
-   private void getLandscapeAttributes() {
+        PageFormat documentPageFormat = new PageFormat();
+        documentPageFormat.setOrientation(PageFormat.LANDSCAPE);
+        documentPageFormat.setPaper(pappyLand);
 
-      PrinterJob printJob = PrinterJob.getPrinterJob ();
+        documentPageFormat = printJob.pageDialog(documentPageFormat);
 
-      PageFormat documentPageFormat = new PageFormat ();
-      documentPageFormat.setOrientation(PageFormat.LANDSCAPE);
-      documentPageFormat.setPaper(pappyLand);
+        pappyLand = documentPageFormat.getPaper();
 
-      documentPageFormat = printJob.pageDialog (documentPageFormat);
+    }
 
-      pappyLand = documentPageFormat.getPaper();
+    @Override
+    public void save() {
 
+    }
 
-   }
+    @Override
+    public void applyAttributes() {
 
-   public void save() {
+        if (defaultPrinter.isSelected()) {
+            changes.firePropertyChange(this, "defaultPrinter", getStringProperty("defaultPrinter"), "Yes");
+            setProperty("defaultPrinter", "Yes");
+        } else {
+            changes.firePropertyChange(this, "defaultPrinter", getStringProperty("defaultPrinter"), "No");
+            setProperty("defaultPrinter", "No");
+        }
 
-   }
+        // portrait parameters
+        changes.firePropertyChange(this, "print.portWidth", getStringProperty("print.portWidth"), new Double(pappyPort.getWidth()));
+        setProperty("print.portWidth", Double.toString(pappyPort.getWidth()));
 
-   public void applyAttributes() {
+        changes
+            .firePropertyChange(this, "print.portImageWidth", getStringProperty("print.portImageWidth"), new Double(pappyPort.getImageableWidth()));
+        setProperty("print.portImageWidth", Double.toString(pappyPort.getImageableWidth()));
 
-      if (defaultPrinter.isSelected()) {
-         changes.firePropertyChange(this,"defaultPrinter",
-                           getStringProperty("defaultPrinter"),
-                           "Yes");
-         setProperty("defaultPrinter","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"defaultPrinter",
-                           getStringProperty("defaultPrinter"),
-                           "No");
-         setProperty("defaultPrinter","No");
-      }
+        changes.firePropertyChange(this, "print.portHeight", getStringProperty("print.portHeight"), new Double(pappyPort.getHeight()));
+        setProperty("print.portHeight", Double.toString(pappyPort.getHeight()));
 
-      // portrait parameters
-      changes.firePropertyChange(this,"print.portWidth",
-                        getStringProperty("print.portWidth"),
-                        new Double(pappyPort.getWidth()));
-      setProperty("print.portWidth",Double.toString(pappyPort.getWidth()));
+        changes.firePropertyChange(this, "print.portImageHeight", getStringProperty("print.portImageHeight"), new Double(pappyPort
+            .getImageableHeight()));
+        setProperty("print.portImageHeight", Double.toString(pappyPort.getImageableHeight()));
 
-      changes.firePropertyChange(this,"print.portImageWidth",
-                        getStringProperty("print.portImageWidth"),
-                        new Double(pappyPort.getImageableWidth()));
-      setProperty("print.portImageWidth",Double.toString(pappyPort.getImageableWidth()));
+        changes.firePropertyChange(this, "print.portImage.X", getStringProperty("print.portImage.X"), new Double(pappyPort.getImageableX()));
+        setProperty("print.portImage.X", Double.toString(pappyPort.getImageableX()));
 
-      changes.firePropertyChange(this,"print.portHeight",
-                        getStringProperty("print.portHeight"),
-                        new Double(pappyPort.getHeight()));
-      setProperty("print.portHeight",Double.toString(pappyPort.getHeight()));
+        changes.firePropertyChange(this, "print.portImage.Y", getStringProperty("print.portImage.Y"), new Double(pappyPort.getImageableY()));
+        setProperty("print.portImage.Y", Double.toString(pappyPort.getImageableY()));
 
-      changes.firePropertyChange(this,"print.portImageHeight",
-                        getStringProperty("print.portImageHeight"),
-                        new Double(pappyPort.getImageableHeight()));
-      setProperty("print.portImageHeight",Double.toString(pappyPort.getImageableHeight()));
+        // landscape parameters
+        changes.firePropertyChange(this, "print.landWidth", getStringProperty("print.landWidth"), new Double(pappyLand.getWidth()));
+        setProperty("print.landWidth", Double.toString(pappyLand.getWidth()));
 
-      changes.firePropertyChange(this,"print.portImage.X",
-                        getStringProperty("print.portImage.X"),
-                        new Double(pappyPort.getImageableX()));
-      setProperty("print.portImage.X",Double.toString(pappyPort.getImageableX()));
+        changes
+            .firePropertyChange(this, "print.landImageWidth", getStringProperty("print.landImageWidth"), new Double(pappyLand.getImageableWidth()));
+        setProperty("print.landImageWidth", Double.toString(pappyLand.getImageableWidth()));
 
-      changes.firePropertyChange(this,"print.portImage.Y",
-                        getStringProperty("print.portImage.Y"),
-                        new Double(pappyPort.getImageableY()));
-      setProperty("print.portImage.Y",Double.toString(pappyPort.getImageableY()));
+        changes.firePropertyChange(this, "print.landHeight", getStringProperty("print.landHeight"), new Double(pappyLand.getHeight()));
+        setProperty("print.landHeight", Double.toString(pappyLand.getHeight()));
 
-      // landscape parameters
-      changes.firePropertyChange(this,"print.landWidth",
-                        getStringProperty("print.landWidth"),
-                        new Double(pappyLand.getWidth()));
-      setProperty("print.landWidth",Double.toString(pappyLand.getWidth()));
+        changes.firePropertyChange(this, "print.landImageHeight", getStringProperty("print.landImageHeight"), new Double(pappyLand
+            .getImageableHeight()));
+        setProperty("print.landImageHeight", Double.toString(pappyLand.getImageableHeight()));
 
-      changes.firePropertyChange(this,"print.landImageWidth",
-                        getStringProperty("print.landImageWidth"),
-                        new Double(pappyLand.getImageableWidth()));
-      setProperty("print.landImageWidth",Double.toString(pappyLand.getImageableWidth()));
+        changes.firePropertyChange(this, "print.landImage.X", getStringProperty("print.landImage.X"), new Double(pappyLand.getImageableX()));
+        setProperty("print.landImage.X", Double.toString(pappyLand.getImageableX()));
 
-      changes.firePropertyChange(this,"print.landHeight",
-                        getStringProperty("print.landHeight"),
-                        new Double(pappyLand.getHeight()));
-      setProperty("print.landHeight",Double.toString(pappyLand.getHeight()));
+        changes.firePropertyChange(this, "print.landImage.Y", getStringProperty("print.landImage.Y"), new Double(pappyLand.getImageableY()));
+        setProperty("print.landImage.Y", Double.toString(pappyLand.getImageableY()));
 
-      changes.firePropertyChange(this,"print.landImageHeight",
-                        getStringProperty("print.landImageHeight"),
-                        new Double(pappyLand.getImageableHeight()));
-      setProperty("print.landImageHeight",Double.toString(pappyLand.getImageableHeight()));
-
-      changes.firePropertyChange(this,"print.landImage.X",
-                        getStringProperty("print.landImage.X"),
-                        new Double(pappyLand.getImageableX()));
-      setProperty("print.landImage.X",Double.toString(pappyLand.getImageableX()));
-
-      changes.firePropertyChange(this,"print.landImage.Y",
-                        getStringProperty("print.landImage.Y"),
-                        new Double(pappyLand.getImageableY()));
-      setProperty("print.landImage.Y",Double.toString(pappyLand.getImageableY()));
-
-
-      if (fs.getSelectedItem() != null) {
-         changes.firePropertyChange(this,"print.font",
-                           getStringProperty("print.font"),
-                           (String)fs.getSelectedItem());
-         setProperty("print.font",(String)fs.getSelectedItem());
-      }
-   }
+        if (fs.getSelectedItem() != null) {
+            changes.firePropertyChange(this, "print.font", getStringProperty("print.font"), fs.getSelectedItem());
+            setProperty("print.font", (String)fs.getSelectedItem());
+        }
+    }
 }

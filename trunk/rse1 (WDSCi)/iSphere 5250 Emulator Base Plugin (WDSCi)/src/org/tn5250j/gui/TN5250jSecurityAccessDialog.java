@@ -28,19 +28,16 @@ import org.tn5250j.gui.TN5250jFrame;
 
 public class TN5250jSecurityAccessDialog {
 
-   // set so outsiders can not initialize the dialog.
-   private TN5250jSecurityAccessDialog() {
+    // set so outsiders can not initialize the dialog.
+    private TN5250jSecurityAccessDialog() {
 
-   }
+    }
 
-   static public void showErrorMessage(SecurityException se) {
+    static public void showErrorMessage(SecurityException se) {
 
-      TN5250jFrame parent = new TN5250jFrame();
-      JOptionPane.showMessageDialog(parent,LangTool.getString("messages.SADMessage")
-                                    + se.getMessage()
-                                    ,LangTool.getString("messages.SADTitle"),
-                                    JOptionPane.ERROR_MESSAGE);
+        TN5250jFrame parent = new TN5250jFrame();
+        JOptionPane.showMessageDialog(parent, LangTool.getString("messages.SADMessage") + se.getMessage(), LangTool.getString("messages.SADTitle"),
+            JOptionPane.ERROR_MESSAGE);
 
-
-   }
+    }
 }

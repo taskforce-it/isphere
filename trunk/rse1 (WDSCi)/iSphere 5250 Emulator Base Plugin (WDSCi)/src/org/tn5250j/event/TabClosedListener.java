@@ -21,6 +21,6 @@ package org.tn5250j.event;
 
 public interface TabClosedListener {
 
-   public void tabClosed(int tabToBeClosed);
+    public void tabClosed(int tabToBeClosed);
 
 }

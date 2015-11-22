@@ -33,70 +33,66 @@ import javax.swing.JOptionPane;
 
 /**
  * This class is used to trust certificates exchanged during an SSL socket
- * handshake.  It allows the user to accept the certificate so that connections
- * can be made without requiring the server to have a certificate signed by a
- * CA (Verisign, Thawte, etc.).
- *  
+ * handshake. It allows the user to accept the certificate so that connections
+ * can be made without requiring the server to have a certificate signed by a CA
+ * (Verisign, Thawte, etc.).
+ * 
  * @author Stephen M. Kennedy <skennedy@tenthpowertech.com>
- * @deprecated.  no longer used.
- *
+ * @deprecated. no longer used.
+ * 
  */
 public class X509CertificateTrustManager implements X509TrustManager {
 
-  KeyStore ks = null;
-  TrustManager[] trustManagers;
-  //X509TrustManager trustManager = null;
+    KeyStore ks = null;
+    TrustManager[] trustManagers;
 
-  public X509CertificateTrustManager(TrustManager[] managers, KeyStore keyStore) {
-    trustManagers = managers;
-    ks = keyStore;
-  }
+    // X509TrustManager trustManager = null;
 
-  public void checkClientTrusted(X509Certificate[] chain, String type) throws CertificateException {
-  	throw new SecurityException("checkClientTrusted unsupported");
-  }
-  
-  
-  /**
-   * Checks the server certificate.  If it isn't trusted by the trust manager
-   * passed to the constructor, then the user will be prompted to accept the
-   * certificate.
-   */
-  public void checkServerTrusted(X509Certificate[] chain, String type) 
-  		throws CertificateException {
-    try {
-    	for (int i=0; i<trustManagers.length; i++) {
-    		if (trustManagers[i] instanceof X509TrustManager)
-    			((X509TrustManager)trustManagers[i]).checkServerTrusted(chain,type);
-    	}
-      return;
-    } catch (CertificateException ce) {
-	      X509Certificate cert = chain[0];
-	      String certInfo = "Version: " + cert.getVersion() + "\n";
-	      certInfo = certInfo.concat("Serial Number: " + cert.getSerialNumber()+"\n");
-	      certInfo = certInfo.concat("Signature Algorithm: " + cert.getSigAlgName()+"\n");
-	      certInfo = certInfo.concat("Issuer: " + cert.getIssuerDN().getName()+"\n");
-	      certInfo = certInfo.concat("Valid From: " + cert.getNotBefore()+"\n");
-	      certInfo = certInfo.concat("Valid To: " + cert.getNotAfter()+"\n");
-	      certInfo = certInfo.concat("Subject DN: " + cert.getSubjectDN().getName()+"\n");
-	      certInfo = certInfo.concat("Public Key: " + cert.getPublicKey().getFormat()+"\n");
-	
-	      int accept = JOptionPane.showConfirmDialog(null,certInfo,
-	                  "Accept Certificate",javax.swing.JOptionPane.YES_NO_OPTION);
-	      if (accept != JOptionPane.YES_OPTION) {
-	        throw new java.security.cert.CertificateException("Certificate Not Accepted");
-	      }
-    	}
-  }
+    public X509CertificateTrustManager(TrustManager[] managers, KeyStore keyStore) {
+        trustManagers = managers;
+        ks = keyStore;
+    }
 
-  public X509Certificate[] getAcceptedIssuers() {
-  	ArrayList list = new ArrayList(10);
-	for (int i=0; i<trustManagers.length; i++) {
-		if (trustManagers[i] instanceof X509TrustManager)
-			list.addAll(Arrays.asList(((X509TrustManager)trustManagers[i]).getAcceptedIssuers()));
-	}
-	X509Certificate[] acceptedIssuers = new X509Certificate[list.size()];
-	acceptedIssuers = (X509Certificate[])list.toArray(acceptedIssuers);
-    return acceptedIssuers;
-  }
+    public void checkClientTrusted(X509Certificate[] chain, String type) throws CertificateException {
+        throw new SecurityException("checkClientTrusted unsupported");
+    }
+
+    /**
+     * Checks the server certificate. If it isn't trusted by the trust manager
+     * passed to the constructor, then the user will be prompted to accept the
+     * certificate.
+     */
+    public void checkServerTrusted(X509Certificate[] chain, String type) throws CertificateException {
+        try {
+            for (int i = 0; i < trustManagers.length; i++) {
+                if (trustManagers[i] instanceof X509TrustManager) ((X509TrustManager)trustManagers[i]).checkServerTrusted(chain, type);
+            }
+            return;
+        } catch (CertificateException ce) {
+            X509Certificate cert = chain[0];
+            String certInfo = "Version: " + cert.getVersion() + "\n";
+            certInfo = certInfo.concat("Serial Number: " + cert.getSerialNumber() + "\n");
+            certInfo = certInfo.concat("Signature Algorithm: " + cert.getSigAlgName() + "\n");
+            certInfo = certInfo.concat("Issuer: " + cert.getIssuerDN().getName() + "\n");
+            certInfo = certInfo.concat("Valid From: " + cert.getNotBefore() + "\n");
+            certInfo = certInfo.concat("Valid To: " + cert.getNotAfter() + "\n");
+            certInfo = certInfo.concat("Subject DN: " + cert.getSubjectDN().getName() + "\n");
+            certInfo = certInfo.concat("Public Key: " + cert.getPublicKey().getFormat() + "\n");
+
+            int accept = JOptionPane.showConfirmDialog(null, certInfo, "Accept Certificate", javax.swing.JOptionPane.YES_NO_OPTION);
+            if (accept != JOptionPane.YES_OPTION) {
+                throw new java.security.cert.CertificateException("Certificate Not Accepted");
+            }
+        }
+    }
+
+    public X509Certificate[] getAcceptedIssuers() {
+        ArrayList list = new ArrayList(10);
+        for (int i = 0; i < trustManagers.length; i++) {
+            if (trustManagers[i] instanceof X509TrustManager) list.addAll(Arrays.asList(((X509TrustManager)trustManagers[i]).getAcceptedIssuers()));
+        }
+        X509Certificate[] acceptedIssuers = new X509Certificate[list.size()];
+        acceptedIssuers = (X509Certificate[])list.toArray(acceptedIssuers);
+        return acceptedIssuers;
+    }
 }

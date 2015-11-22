@@ -1,4 +1,5 @@
 package org.tn5250j;
+
 /**
  * Title: Gui5250SplitFrame
  * Copyright:   Copyright (c) 2001
@@ -40,359 +41,350 @@ import org.tn5250j.event.SessionListener;
 import org.tn5250j.event.SessionChangeEvent;
 import org.tn5250j.framework.common.SessionManager;
 
-public class Gui5250SplitFrame extends GUIViewInterface implements
-                                                    TN5250jConstants,
-                                                    SessionListener,
-                                                    SessionJumpListener {
+public class Gui5250SplitFrame extends GUIViewInterface implements TN5250jConstants, SessionListener, SessionJumpListener {
 
-   BorderLayout borderLayout1 = new BorderLayout();
-   JSplitPane sessionPane;
-   private SessionManager manager;
-   private int selectedIndex = 0;
+    BorderLayout borderLayout1 = new BorderLayout();
+    JSplitPane sessionPane;
+    private SessionManager manager;
+    private int selectedIndex = 0;
 
-   private Vector sessionList;
-   private JList sessionPicker;
-   private DefaultListModel lm = new DefaultListModel();
-   private JPanel sessionPanel;
-   private JScrollPane scroller;
-   private JPanel toolsPanel;
+    private Vector sessionList;
+    private JList sessionPicker;
+    private DefaultListModel lm = new DefaultListModel();
+    private JPanel sessionPanel;
+    private JScrollPane scroller;
+    private JPanel toolsPanel;
 
-   private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
-   //Construct the frame
-   public Gui5250SplitFrame(My5250 m) {
+    // Construct the frame
+    public Gui5250SplitFrame(My5250 m) {
 
-      super(m);
+        super(m);
 
-      enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-      try  {
-         jbInit();
-      }
-      catch(Exception e) {
-         log.warn("In constructor: "+e);
-      }
-   }
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        try {
+            jbInit();
+        } catch (Exception e) {
+            log.warn("In constructor: " + e);
+        }
+    }
 
-   //Component initialization
-   private void jbInit() throws Exception  {
+    // Component initialization
+    private void jbInit() throws Exception {
 
-      this.getContentPane().setLayout(borderLayout1);
+        this.getContentPane().setLayout(borderLayout1);
 
-      if (sequence > 0)
-         setTitle("tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
-      else
-         setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        if (sequence > 0)
+            setTitle("tn5250j <" + sequence + "> - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
+        else
+            setTitle("tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer);
 
-      // update the frame sequences
-      frameSeq = sequence++;
+        // update the frame sequences
+        frameSeq = sequence++;
 
-      sessionList = new Vector(3);
+        sessionList = new Vector(3);
 
-//    note to myself if needed on how to add a listener to the the divider of
-//    of a scroll pane.  This is really a pain in the ass to figure out.
-//
-//      You can use a mouse listener but you cannot add a mouse listener
-//         directly to a split pane. You will have to get the splitpanedivider
-//          and then add the mouselistener to that.
-//
-//      (((BasicSplitPaneUI)yoursplitpane.getUI()).getDivider()).addMouseListener(yourmouselistener);      // create the split pane
-      sessionPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-      sessionPane.setOneTouchExpandable(true);
-      sessionPane.setContinuousLayout(true);
+        // note to myself if needed on how to add a listener to the the divider
+        // of
+        // of a scroll pane. This is really a pain in the ass to figure out.
+        //
+        // You can use a mouse listener but you cannot add a mouse listener
+        // directly to a split pane. You will have to get the splitpanedivider
+        // and then add the mouselistener to that.
+        //
+        // (((BasicSplitPaneUI)yoursplitpane.getUI()).getDivider()).addMouseListener(yourmouselistener);
+        // // create the split pane
+        sessionPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        sessionPane.setOneTouchExpandable(true);
+        sessionPane.setContinuousLayout(true);
 
-      sessionPane.setBorder(BorderFactory.createEtchedBorder());
-      sessionPane.setOpaque(true);
-      sessionPane.setRequestFocusEnabled(false);
-      sessionPane.setDoubleBuffered(false);
+        sessionPane.setBorder(BorderFactory.createEtchedBorder());
+        sessionPane.setOpaque(true);
+        sessionPane.setRequestFocusEnabled(false);
+        sessionPane.setDoubleBuffered(false);
 
-      this.getContentPane().add(sessionPane, BorderLayout.CENTER);
-      sessionPanel = new JPanel();
-      sessionPanel.setLayout(new BorderLayout());
+        this.getContentPane().add(sessionPane, BorderLayout.CENTER);
+        sessionPanel = new JPanel();
+        sessionPanel.setLayout(new BorderLayout());
 
-      sessionPane.setLeftComponent(sessionPanel);
+        sessionPane.setLeftComponent(sessionPanel);
 
+        toolsPanel = new JPanel();
+        toolsPanel.setLayout(new BorderLayout());
 
-      toolsPanel = new JPanel();
-      toolsPanel.setLayout(new BorderLayout());
+        sessionPane.setRightComponent(toolsPanel);
 
-      sessionPane.setRightComponent(toolsPanel);
+        sessionPicker = new JList(lm);
+        sessionPicker.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        SessionRenderer renderer = new SessionRenderer();
+        sessionPicker.setCellRenderer(renderer);
 
-      sessionPicker = new JList(lm);
-      sessionPicker.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      SessionRenderer renderer = new SessionRenderer();
-      sessionPicker.setCellRenderer(renderer);
-
-      // add list selection listener to our functions list so that we
-      //   can display the mapped key(s) to the function when a new
-      //   function is selected.
-      sessionPicker.addListSelectionListener(new ListSelectionListener() {
-         public void valueChanged(ListSelectionEvent lse) {
-            if (!lse.getValueIsAdjusting()) {
-               showSelectedSession(sessionPicker.getSelectedIndex());
+        // add list selection listener to our functions list so that we
+        // can display the mapped key(s) to the function when a new
+        // function is selected.
+        sessionPicker.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent lse) {
+                if (!lse.getValueIsAdjusting()) {
+                    showSelectedSession(sessionPicker.getSelectedIndex());
+                }
             }
-         }
-      });
+        });
 
-      if (packFrame)
-         pack();
-      else
-         validate();
+        if (packFrame)
+            pack();
+        else
+            validate();
 
-   }
+    }
 
-   //Overridden so we can exit on System Close
-   protected void processWindowEvent(WindowEvent e) {
-      super.processWindowEvent(e);
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
-         me.closingDown(this);
-      }
-   }
+    // Overridden so we can exit on System Close
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+            me.closingDown(this);
+        }
+    }
 
+    void showSelectedSession(int whichOne) {
 
-   void showSelectedSession(int whichOne) {
+        if (whichOne < 0 || whichOne > sessionList.size() - 1) return;
 
-      if (whichOne < 0 || whichOne > sessionList.size() - 1)
-         return;
+        SessionGUI session = (SessionGUI)sessionList.get(whichOne);
+        sessionPicker.setSelectedIndex(whichOne);
 
-      SessionGUI session = (SessionGUI)sessionList.get(whichOne);
-      sessionPicker.setSelectedIndex(whichOne);
+        SessionGUI current = getCurrentViewedSession();
 
-      SessionGUI current = getCurrentViewedSession();
+        if (current != null) current.setVisible(false);
 
-      if (current != null)
-         current.setVisible(false);
+        // now remove all components from the panel
+        sessionPanel.removeAll();
+        // set the session to visible so that we get screen updates again
+        session.setVisible(true);
 
-      // now remove all components from the panel
-      sessionPanel.removeAll();
-      // set the session to visible so that we get screen updates again
-      session.setVisible(true);
+        // add the session to the panel so that we can see it.
+        sessionPanel.add(session, BorderLayout.CENTER);
+        // make sure we update the screen
+        sessionPanel.revalidate();
+        sessionPanel.repaint();
+        // make sure we have the focus after switching.
+        session.grabFocus();
+    }
 
-      // add the session to the panel so that we can see it.
-      sessionPanel.add(session,BorderLayout.CENTER);
-      // make sure we update the screen
-      sessionPanel.revalidate();
-      sessionPanel.repaint();
-      // make sure we have the focus after switching.
-      session.grabFocus();
-   }
+    @Override
+    public void update(Graphics g) {
+        paint(g);
+        sessionPanel.repaint();
+    }
 
-   public void update(Graphics g) {
-      paint(g);
-      sessionPanel.repaint();
-   }
+    @Override
+    public void onSessionJump(SessionJumpEvent jumpEvent) {
 
-   public void onSessionJump(SessionJumpEvent jumpEvent) {
+        switch (jumpEvent.getJumpDirection()) {
 
-      switch (jumpEvent.getJumpDirection()) {
-
-         case JUMP_PREVIOUS:
+        case JUMP_PREVIOUS:
             prevSession();
             break;
-         case JUMP_NEXT:
+        case JUMP_NEXT:
             nextSession();
             break;
-      }
-   }
+        }
+    }
 
-   /**
-    * Helper method to return the currently viewed session
-    *
-    * @return
-    */
-   private SessionGUI getCurrentViewedSession() {
+    /**
+     * Helper method to return the currently viewed session
+     * 
+     * @return
+     */
+    private SessionGUI getCurrentViewedSession() {
 
-      SessionGUI current = null;
-      Component[] comps = sessionPanel.getComponents();
-      int count = comps.length;
-      // make the current session non visible to keep from over writting the
-      //  session screens.
-      for (int x = 0; x < count; x++) {
+        SessionGUI current = null;
+        Component[] comps = sessionPanel.getComponents();
+        int count = comps.length;
+        // make the current session non visible to keep from over writting the
+        // session screens.
+        for (int x = 0; x < count; x++) {
 
-         if (comps[x] instanceof SessionGUI) {
-            current = (SessionGUI)comps[x];
-         }
-      }
+            if (comps[x] instanceof SessionGUI) {
+                current = (SessionGUI)comps[x];
+            }
+        }
 
-      return current;
+        return current;
 
-   }
+    }
 
-   /**
-    * Bring the next session to front
-    */
-   private void nextSession() {
+    /**
+     * Bring the next session to front
+     */
+    private void nextSession() {
 
-      SessionGUI current = getCurrentViewedSession();
+        SessionGUI current = getCurrentViewedSession();
 
-      int index = sessionList.indexOf(current) + 1;
+        int index = sessionList.indexOf(current) + 1;
 
-      int size = sessionList.size() - 1;
+        int size = sessionList.size() - 1;
 
-      if (index > size)
-         showSelectedSession(0);
-      else
-         showSelectedSession(index);
-   }
+        if (index > size)
+            showSelectedSession(0);
+        else
+            showSelectedSession(index);
+    }
 
-   /**
-    * Bring the previous session to front
-    */
-   private void prevSession() {
+    /**
+     * Bring the previous session to front
+     */
+    private void prevSession() {
 
-      SessionGUI current = getCurrentViewedSession();
+        SessionGUI current = getCurrentViewedSession();
 
-      int index = sessionList.indexOf(current) - 1;
+        int index = sessionList.indexOf(current) - 1;
 
-      int size = sessionList.size() - 1;
+        int size = sessionList.size() - 1;
 
-      if (index < 0)
-         showSelectedSession(size);
-      else
-         showSelectedSession(index);
+        if (index < 0)
+            showSelectedSession(size);
+        else
+            showSelectedSession(index);
 
-   }
+    }
 
-   /**
-    * Add a session to the view
-    *
-    * @param sessionName
-    * @param session
-    */
-   public void addSessionView(String sessionName,SessionGUI session) {
+    /**
+     * Add a session to the view
+     * 
+     * @param sessionName
+     * @param session
+     */
+    @Override
+    public void addSessionView(String sessionName, SessionGUI session) {
 
-      lm.addElement(session);
+        lm.addElement(session);
 
-      if (sessionList.size() == 0) {
-         sessionList.addElement(session);
-         sessionPanel.add(session,BorderLayout.CENTER);
-         scroller = new JScrollPane();
-         scroller.setViewportView(sessionPicker);
-         toolsPanel.add(scroller,BorderLayout.CENTER);
-         sessionPane.setDividerLocation(0.90);
-      }
-      else {
-         sessionList.addElement(session);
-         sessionPicker.setSelectedIndex(sessionList.size()-1);
-      }
+        if (sessionList.size() == 0) {
+            sessionList.addElement(session);
+            sessionPanel.add(session, BorderLayout.CENTER);
+            scroller = new JScrollPane();
+            scroller.setViewportView(sessionPicker);
+            toolsPanel.add(scroller, BorderLayout.CENTER);
+            sessionPane.setDividerLocation(0.90);
+        } else {
+            sessionList.addElement(session);
+            sessionPicker.setSelectedIndex(sessionList.size() - 1);
+        }
 
-      // add ourselves to the listner list
-      session.addSessionListener(this);
-      session.addSessionJumpListener(this);
+        // add ourselves to the listner list
+        session.addSessionListener(this);
+        session.addSessionJumpListener(this);
 
-      // now show it to the user
-      showSelectedSession(sessionList.size()-1);
+        // now show it to the user
+        showSelectedSession(sessionList.size() - 1);
 
+    }
 
-   }
+    @Override
+    public void removeSessionView(SessionGUI targetSession) {
 
-   public void removeSessionView(SessionGUI targetSession) {
+        int index = sessionList.indexOf(targetSession);
 
+        lm.remove(index);
 
-      int index = sessionList.indexOf(targetSession);
+        if (index > 0 || index == sessionList.size() - 1) prevSession();
+        if (index == 0) nextSession();
 
-      lm.remove(index);
+        sessionList.remove(targetSession);
 
-      if (index > 0 || index == sessionList.size() - 1)
-         prevSession();
-      if (index == 0)
-         nextSession();
+        updateScrollPane();
 
-      sessionList.remove(targetSession);
+    }
 
-      updateScrollPane();
+    /**
+     * Return the count of views contained in the frame
+     * 
+     * @return
+     */
+    @Override
+    public int getSessionViewCount() {
 
-   }
+        return sessionList.size();
 
-   /**
-    * Return the count of views contained in the frame
-    * @return
-    */
-   public int getSessionViewCount() {
+    }
 
-      return sessionList.size();
+    /**
+     * Return the Session object at the specific index.
+     * 
+     * @param index
+     * @return
+     */
+    @Override
+    public SessionGUI getSessionAt(int index) {
 
-   }
+        return (SessionGUI)sessionList.get(index);
+    }
 
-   /**
-    * Return the Session object at the specific index.
-    *
-    * @param index
-    * @return
-    */
-   public SessionGUI getSessionAt( int index) {
+    @Override
+    public void onSessionChanged(SessionChangeEvent changeEvent) {
 
-      return (SessionGUI)sessionList.get(index);
-   }
+        updateScrollPane();
+    }
 
-   public void onSessionChanged(SessionChangeEvent changeEvent) {
+    /**
+     * Update the scroll pane whenever something changes
+     */
+    private void updateScrollPane() {
 
-      updateScrollPane();
-   }
+        scroller.invalidate();
+        scroller.repaint();
+    }
 
-   /**
-    * Update the scroll pane whenever something changes
-    */
-   private void updateScrollPane() {
+    @Override
+    public boolean containsSession(SessionGUI session) {
 
-      scroller.invalidate();
-      scroller.repaint();
-   }
+        return sessionList.contains(session);
 
-   public boolean containsSession(SessionGUI session) {
+    }
 
-      return sessionList.contains(session);
+    /**
+     * List renderer for sessions
+     */
+    class SessionRenderer extends JLabel implements ListCellRenderer {
 
-   }
+        public SessionRenderer() {
+            setOpaque(true);
+            setHorizontalAlignment(LEFT);
+            setVerticalAlignment(CENTER);
+        }
 
-   /**
-    * List renderer for sessions
-    */
-   class SessionRenderer extends JLabel
-                       implements ListCellRenderer {
+        /*
+         * This method finds the image and text corresponding to the selected
+         * value and returns the label, set up to display the text and image.
+         */
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-      public SessionRenderer() {
-         setOpaque(true);
-         setHorizontalAlignment(LEFT);
-         setVerticalAlignment(CENTER);
-      }
+            // Get the selected index. (The index param isn't
+            // always valid, so just use the value.)
+            SessionGUI ses = (SessionGUI)value;
 
-      /*
-       * This method finds the image and text corresponding
-       * to the selected value and returns the label, set up
-       * to display the text and image.
-       */
-      public Component getListCellRendererComponent(
-                                       JList list,
-                                       Object value,
-                                       int index,
-                                       boolean isSelected,
-                                       boolean cellHasFocus) {
+            // set the correct focused or unfocused and selected or unselected
+            // colors
+            if (isSelected) {
+                setIcon(focused);
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setIcon(unfocused);
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
 
-         //Get the selected index. (The index param isn't
-         //always valid, so just use the value.)
-         SessionGUI ses = (SessionGUI)value;
+            // Set the text of this label.
+            if (ses.getAllocDeviceName() != null)
+                setText(ses.getAllocDeviceName());
+            else
+                setText(ses.getSessionName());
 
-         // set the correct focused or unfocused and selected or unselected
-         //  colors
-         if (isSelected) {
-            setIcon(focused);
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
-         }
-         else {
-            setIcon(unfocused);
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
-         }
-
-         //Set the text of this label.
-         if (ses.getAllocDeviceName() != null)
-            setText(ses.getAllocDeviceName());
-         else
-            setText(ses.getSessionName());
-
-         return this;
-      }
-   }
+            return this;
+        }
+    }
 
 }

@@ -1,4 +1,3 @@
-
 /**
  * Title: tn5250J
  * Copyright:   Copyright (c) 2001
@@ -36,94 +35,86 @@ import org.tn5250j.gui.TN5250jFileChooser;
 
 public class SendScreenToFile {
 
-   Screen5250 screen;
-   private TN5250jLogger log = TN5250jLogFactory.getLogger (this.getClass());
+    Screen5250 screen;
+    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
-   //  Change sent by Luc - LDC to pass a parent frame like the other dialogs
-   Frame  parent;
+    // Change sent by Luc - LDC to pass a parent frame like the other dialogs
+    Frame parent;
 
-   public SendScreenToFile(Frame parent, Screen5250 scrn) {
+    public SendScreenToFile(Frame parent, Screen5250 scrn) {
 
-      screen = scrn;
-      this.parent = parent;
+        screen = scrn;
+        this.parent = parent;
 
-      try {
-         jbInit();
-      }
-      catch(Exception ex) {
-         log.warn("Error in constructor: "+ ex.getMessage());
+        try {
+            jbInit();
+        } catch (Exception ex) {
+            log.warn("Error in constructor: " + ex.getMessage());
 
-      }
-   }
+        }
+    }
 
-   void jbInit() throws Exception {
-      getPCFile();
+    void jbInit() throws Exception {
+        getPCFile();
 
-   }
+    }
 
-   /**
-    * Get the local file from a file chooser
-    */
-   private void getPCFile() {
+    /**
+     * Get the local file from a file chooser
+     */
+    private void getPCFile() {
 
-      String workingDir = System.getProperty("user.dir");
-      TN5250jFileChooser pcFileChooser = new TN5250jFileChooser(workingDir);
+        String workingDir = System.getProperty("user.dir");
+        TN5250jFileChooser pcFileChooser = new TN5250jFileChooser(workingDir);
 
-//      int ret = pcFileChooser.showSaveDialog(new JFrame());
-      int ret = pcFileChooser.showSaveDialog(parent);
+        // int ret = pcFileChooser.showSaveDialog(new JFrame());
+        int ret = pcFileChooser.showSaveDialog(parent);
 
-      // check to see if something was actually chosen
-      if (ret == JFileChooser.APPROVE_OPTION) {
-         File file = pcFileChooser.getSelectedFile();
+        // check to see if something was actually chosen
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            File file = pcFileChooser.getSelectedFile();
 
-         StringBuffer sb = new StringBuffer();
-         char[] s = screen.getScreenAsChars();
-         int c = screen.getColumns();
-         int l = screen.getRows() * c;
-         int col = 0;
-         for (int x = 0; x < l; x++,col++) {
-            sb.append(s[x]);
-            if (col == c) {
-               sb.append('\n');
-               col = 0;
-            }
-         }
-
-         writeToFile(sb.toString(),file);
-
-      }
-
-   }
-
-
-   private void writeToFile(String sc,File file) {
-
-      FileOutputStream out = null;
-      try {
-         out = new FileOutputStream(file);
-         out.write(sc.getBytes());
-         out.flush();
-         out.close();
-
-      }
-      catch (FileNotFoundException fnfe) {
-         log.warn("fnfe: " + fnfe.getMessage());
-      }
-      catch (IOException ioe) {
-         log.warn("ioe: " + ioe.getMessage());
-      }
-      finally {
-         if (out != null)
-            try {
-               out.close();
-            }
-            catch (IOException exc) {
-               log.warn("ioe finally: " + exc.getMessage());
+            StringBuffer sb = new StringBuffer();
+            char[] s = screen.getScreenAsChars();
+            int c = screen.getColumns();
+            int l = screen.getRows() * c;
+            int col = 0;
+            for (int x = 0; x < l; x++, col++) {
+                sb.append(s[x]);
+                if (col == c) {
+                    sb.append('\n');
+                    col = 0;
+                }
             }
 
-      }
+            writeToFile(sb.toString(), file);
 
+        }
 
-   }
+    }
+
+    private void writeToFile(String sc, File file) {
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            out.write(sc.getBytes());
+            out.flush();
+            out.close();
+
+        } catch (FileNotFoundException fnfe) {
+            log.warn("fnfe: " + fnfe.getMessage());
+        } catch (IOException ioe) {
+            log.warn("ioe: " + ioe.getMessage());
+        } finally {
+            if (out != null) try {
+                out.close();
+            } catch (IOException exc) {
+                log.warn("ioe finally: " + exc.getMessage());
+            }
+
+        }
+
+    }
 
 }

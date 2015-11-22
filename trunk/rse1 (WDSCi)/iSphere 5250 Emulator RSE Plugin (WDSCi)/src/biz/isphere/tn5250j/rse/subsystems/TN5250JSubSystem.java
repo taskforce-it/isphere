@@ -17,65 +17,66 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemImpl;
 import com.ibm.etools.systems.subsystems.impl.*;
 
-
 public class TN5250JSubSystem extends DefaultSubSystemImpl {
-	
-	private RSESession[] rseSessions = null;
 
-	public TN5250JSubSystem() {
-		super();
-	}
+    private RSESession[] rseSessions = null;
 
-	public AbstractSystemManager getSystemManager() {
-		return TN5250JSystemManager.getTN5250JSystemManager();
-	}
+    public TN5250JSubSystem() {
+        super();
+    }
 
-	public Object getObjectWithAbsoluteName(String key) {
-		if (key.startsWith("Session_")) {
-			String sessionName = key.substring(8);
-			RSESession[] rseSessions = getRSESessions();
-			for (int idx = 0; idx < rseSessions.length; idx++)
-				if (rseSessions[idx].getName().equals(sessionName))
-					return rseSessions[idx];
-		}
-		return null;
-	}
+    @Override
+    public AbstractSystemManager getSystemManager() {
+        return TN5250JSystemManager.getTN5250JSystemManager();
+    }
 
-	public boolean hasChildren() {
-		if (getRSESessions().length == 0) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
+    @Override
+    public Object getObjectWithAbsoluteName(String key) {
+        if (key.startsWith("Session_")) {
+            String sessionName = key.substring(8);
+            RSESession[] rseSessions = getRSESessions();
+            for (int idx = 0; idx < rseSessions.length; idx++)
+                if (rseSessions[idx].getName().equals(sessionName)) return rseSessions[idx];
+        }
+        return null;
+    }
 
-	public Object[] getChildren() {
-		return getRSESessions();
-	}
+    @Override
+    public boolean hasChildren() {
+        if (getRSESessions().length == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-	public RSESession[] getRSESessions() {
+    @Override
+    public Object[] getChildren() {
+        return getRSESessions();
+    }
 
-		ArrayList<RSESession> arrayListRSESessions = new ArrayList<RSESession>();
-		
-		String directory = TN5250JRSEPlugin.getRSESessionDirectory(getSystemProfileName() + "-" + getSystemConnectionName()) ;
-		File directoryTN5250J = new File(directory);
-		if (!directoryTN5250J.exists()) {
-			directoryTN5250J.mkdir();
-		}
-		
-		String stringSessions[] = new File(directory).list();
-		for (int idx = 0; idx < stringSessions.length; idx++) {
-			RSESession rseSession = RSESession.load(this, stringSessions[idx]);
-			if (rseSession != null) {
-				arrayListRSESessions.add(rseSession);
-			}
-		} 
+    public RSESession[] getRSESessions() {
 
-		rseSessions = new RSESession[arrayListRSESessions.size()];
-		arrayListRSESessions.toArray(rseSessions);
-			
-		return rseSessions;
-	}
+        ArrayList<RSESession> arrayListRSESessions = new ArrayList<RSESession>();
+
+        String directory = TN5250JRSEPlugin.getRSESessionDirectory(getSystemProfileName() + "-" + getSystemConnectionName());
+        File directoryTN5250J = new File(directory);
+        if (!directoryTN5250J.exists()) {
+            directoryTN5250J.mkdir();
+        }
+
+        String stringSessions[] = new File(directory).list();
+        for (int idx = 0; idx < stringSessions.length; idx++) {
+            RSESession rseSession = RSESession.load(this, stringSessions[idx]);
+            if (rseSession != null) {
+                arrayListRSESessions.add(rseSession);
+            }
+        }
+
+        rseSessions = new RSESession[arrayListRSESessions.size()];
+        arrayListRSESessions.toArray(rseSessions);
+
+        return rseSessions;
+    }
 
 }

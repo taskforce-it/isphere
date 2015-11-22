@@ -34,57 +34,56 @@ import org.tn5250j.framework.tn5250.Screen5250;
  * Session Scroller to allow the use of the mouse wheel to move the list on the
  * screen up and down.
  */
-public class SessionScroller14 implements SessionScrollerInterface,
-                                             MouseWheelListener,TN5250jConstants {
+public class SessionScroller14 implements SessionScrollerInterface, MouseWheelListener, TN5250jConstants {
 
-   Screen5250 screen;
+    Screen5250 screen;
 
-	public SessionScroller14(SessionGUI ses) {
+    public SessionScroller14(SessionGUI ses) {
 
-      screen = ses.getScreen();
-	}
+        screen = ses.getScreen();
+    }
 
-   public void addMouseWheelListener(SessionGUI ses) {
+    public void addMouseWheelListener(SessionGUI ses) {
 
-      ses.addMouseWheelListener(this);
+        ses.addMouseWheelListener(this);
 
-   }
+    }
 
-   public void removeMouseWheelListener(SessionGUI ses) {
+    public void removeMouseWheelListener(SessionGUI ses) {
 
-      ses.removeMouseWheelListener(this);
+        ses.removeMouseWheelListener(this);
 
-   }
+    }
 
-   public void mouseWheelMoved(MouseWheelEvent e) {
+    public void mouseWheelMoved(MouseWheelEvent e) {
 
-//       String message;
-       int notches = e.getWheelRotation();
-       if (notches < 0) {
-//           message = "Mouse wheel moved UP "
-//                        + -notches + " notch(es)" + newline;
+        // String message;
+        int notches = e.getWheelRotation();
+        if (notches < 0) {
+            // message = "Mouse wheel moved UP "
+            // + -notches + " notch(es)" + newline;
             screen.sendKeys(MNEMONIC_PAGE_UP);
-       } else {
-//           message = "Mouse wheel moved DOWN "
-//                        + notches + " notch(es)" + newline;
+        } else {
+            // message = "Mouse wheel moved DOWN "
+            // + notches + " notch(es)" + newline;
             screen.sendKeys(MNEMONIC_PAGE_DOWN);
-       }
-//          if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-//              message += "    Scroll type: WHEEL_UNIT_SCROLL" + newline;
-//              message += "    Scroll amount: " + e.getScrollAmount()
-//                      + " unit increments per notch" + newline;
-//              message += "    Units to scroll: " + e.getUnitsToScroll()
-//                      + " unit increments" + newline;
-//              message += "    Vertical unit increment: "
-//   //               + scrollPane.getVerticalScrollBar().getUnitIncrement(1)
-//                  + " pixels" + newline;
-//          } else { //scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
-//              message += "    Scroll type: WHEEL_BLOCK_SCROLL" + newline;
-//              message += "    Vertical block increment: "
-//   //               + scrollPane.getVerticalScrollBar().getBlockIncrement(1)
-//                  + " pixels" + newline;
-//          }
-//          System.out.println(message);
-//          System.out.println(e);
-   }
+        }
+        // if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+        // message += " Scroll type: WHEEL_UNIT_SCROLL" + newline;
+        // message += " Scroll amount: " + e.getScrollAmount()
+        // + " unit increments per notch" + newline;
+        // message += " Units to scroll: " + e.getUnitsToScroll()
+        // + " unit increments" + newline;
+        // message += " Vertical unit increment: "
+        // // + scrollPane.getVerticalScrollBar().getUnitIncrement(1)
+        // + " pixels" + newline;
+        // } else { //scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
+        // message += " Scroll type: WHEEL_BLOCK_SCROLL" + newline;
+        // message += " Vertical block increment: "
+        // // + scrollPane.getVerticalScrollBar().getBlockIncrement(1)
+        // + " pixels" + newline;
+        // }
+        // System.out.println(message);
+        // System.out.println(e);
+    }
 }

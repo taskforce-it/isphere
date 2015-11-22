@@ -9,6 +9,7 @@
 package biz.isphere.tn5250j.rse.actions;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.tn5250j.rse.DialogActionTypes;
@@ -22,22 +23,25 @@ import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 
 public class DeleteSessionAction extends SystemBaseAction {
 
-	public DeleteSessionAction(Shell parent) {
-		super(Messages.getString("Delete_session"), parent);
-		setAvailableOffline(true);
-		setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DELETE));
-	}
+    public DeleteSessionAction(Shell parent) {
+        super(Messages.getString("Delete_session"), parent);
+        setAvailableOffline(true);
+        setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DELETE));
+    }
 
-	public void run() {
-		if (getFirstSelection() instanceof RSESession) {
-			RSESession rseSession = (RSESession)getFirstSelection();
-			if (rseSession != null) {
-				SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection()), DialogActionTypes.DELETE, rseSession.getSession());
-				if (sessionDetailDialog.open() == Dialog.OK) {
-					rseSession.delete(rseSession.getSubSystem());
-				}
-			}
-		}
-	}
+    @Override
+    public void run() {
+        if (getFirstSelection() instanceof RSESession) {
+            RSESession rseSession = (RSESession)getFirstSelection();
+            if (rseSession != null) {
+                SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession
+                    .getRSEProfil()
+                    + "-" + rseSession.getRSEConnection()), DialogActionTypes.DELETE, rseSession.getSession());
+                if (sessionDetailDialog.open() == Window.OK) {
+                    rseSession.delete(rseSession.getSubSystem());
+                }
+            }
+        }
+    }
 
 }

@@ -12,167 +12,161 @@ import org.tn5250j.framework.common.*;
 //import org.tn5250j.swing.JTerminal;
 
 public class My5250App extends JApplet implements TN5250jConstants {
-   boolean isStandalone = true;
-   private SessionManager manager;
+    boolean isStandalone = true;
+    private SessionManager manager;
 
-   private TN5250jLogger log;
+    private TN5250jLogger log;
 
-   /**Get a parameter value*/
-   public String getParameter(String key, String def) {
+    /** Get a parameter value */
+    public String getParameter(String key, String def) {
 
-      return isStandalone ? System.getProperty(key, def) :
-         (getParameter(key) != null ? getParameter(key) : def);
-   }
+        return isStandalone ? System.getProperty(key, def) : (getParameter(key) != null ? getParameter(key) : def);
+    }
 
-   /**Construct the applet*/
-   public My5250App() {
+    /** Construct the applet */
+    public My5250App() {
 
-   }
-   /**Initialize the applet*/
-   public void init() {
-      try {
-         jbInit();
-      }
-      catch(Exception e) {
-      	if (log == null)
-            System.out.println(e.getMessage());
-         else
-         	log.warn("In constructor: ", e);
-      }
-   }
+    }
 
-   /**Component initialization*/
-   private void jbInit() throws Exception {
-      this.setSize(new Dimension(400,300));
+    /** Initialize the applet */
+    @Override
+    public void init() {
+        try {
+            jbInit();
+        } catch (Exception e) {
+            if (log == null)
+                System.out.println(e.getMessage());
+            else
+                log.warn("In constructor: ", e);
+        }
+    }
 
-      if (isSpecified("-L"))
-      	LangTool.init(parseLocale(getParameter("-L")));
-      else
-      	LangTool.init();
+    /** Component initialization */
+    private void jbInit() throws Exception {
+        this.setSize(new Dimension(400, 300));
 
-     //Let's check some permissions
-     try {
-        System.getProperty(".java.policy");
-     }
-     catch (SecurityException e) {
-        e.printStackTrace();
-        TN5250jSecurityAccessDialog.showErrorMessage(e);
-        return;
-     }
-     log = TN5250jLogFactory.getLogger (this.getClass());
+        if (isSpecified("-L"))
+            LangTool.init(parseLocale(getParameter("-L")));
+        else
+            LangTool.init();
 
-      Properties sesProps = new Properties();
-      log.info(" We have loaded a new one");
+        // Let's check some permissions
+        try {
+            System.getProperty(".java.policy");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            TN5250jSecurityAccessDialog.showErrorMessage(e);
+            return;
+        }
+        log = TN5250jLogFactory.getLogger(this.getClass());
 
-      // Start loading properties - Host must exist
-      sesProps.put(SESSION_HOST,getParameter("host"));
+        Properties sesProps = new Properties();
+        log.info(" We have loaded a new one");
 
-      if (isSpecified("-e"))
-         sesProps.put(SESSION_TN_ENHANCED,"1");
+        // Start loading properties - Host must exist
+        sesProps.put(SESSION_HOST, getParameter("host"));
 
-      if (isSpecified("-p")) {
-         sesProps.put(SESSION_HOST_PORT,getParameter("-p"));
-      }
+        if (isSpecified("-e")) sesProps.put(SESSION_TN_ENHANCED, "1");
 
-//      if (isSpecified("-f",args))
-//         propFileName = getParm("-f",args);
+        if (isSpecified("-p")) {
+            sesProps.put(SESSION_HOST_PORT, getParameter("-p"));
+        }
 
-      if (isSpecified("-cp"))
-         sesProps.put(SESSION_CODE_PAGE ,getParameter("-cp"));
+        // if (isSpecified("-f",args))
+        // propFileName = getParm("-f",args);
 
-      if (isSpecified("-gui"))
-         sesProps.put(SESSION_USE_GUI,"1");
+        if (isSpecified("-cp")) sesProps.put(SESSION_CODE_PAGE, getParameter("-cp"));
 
-      if (isSpecified("-132"))
-         sesProps.put(SESSION_SCREEN_SIZE,SCREEN_SIZE_27X132_STR);
-      else
-         sesProps.put(SESSION_SCREEN_SIZE,SCREEN_SIZE_24X80_STR);
+        if (isSpecified("-gui")) sesProps.put(SESSION_USE_GUI, "1");
 
-      // socks proxy host argument
-      if (isSpecified("-sph")) {
-         sesProps.put(SESSION_PROXY_HOST ,getParameter("-sph"));
-      }
+        if (isSpecified("-132"))
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
+        else
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
 
-      // socks proxy port argument
-      if (isSpecified("-spp"))
-         sesProps.put(SESSION_PROXY_PORT ,getParameter("-spp"));
+        // socks proxy host argument
+        if (isSpecified("-sph")) {
+            sesProps.put(SESSION_PROXY_HOST, getParameter("-sph"));
+        }
 
-      // check if device name is specified
-      if (isSpecified("-dn"))
-         sesProps.put(SESSION_DEVICE_NAME ,getParameter("-dn"));
+        // socks proxy port argument
+        if (isSpecified("-spp")) sesProps.put(SESSION_PROXY_PORT, getParameter("-spp"));
 
-      loadSystemProperty("SESSION_CONNECT_USER");
-      loadSystemProperty("SESSION_CONNECT_PASSWORD");
-      loadSystemProperty("SESSION_CONNECT_PROGRAM");
-      loadSystemProperty("SESSION_CONNECT_LIBRARY");
-      loadSystemProperty("SESSION_CONNECT_MENU");
+        // check if device name is specified
+        if (isSpecified("-dn")) sesProps.put(SESSION_DEVICE_NAME, getParameter("-dn"));
 
-      manager = SessionManager.instance();
-      final Session5250 s = manager.openSession(sesProps,"","Test Applet");
-      final SessionGUI gui = new SessionGUI(s);
-//      final JTerminal jt = new JTerminal(s);
+        loadSystemProperty("SESSION_CONNECT_USER");
+        loadSystemProperty("SESSION_CONNECT_PASSWORD");
+        loadSystemProperty("SESSION_CONNECT_PROGRAM");
+        loadSystemProperty("SESSION_CONNECT_LIBRARY");
+        loadSystemProperty("SESSION_CONNECT_MENU");
 
-      this.getContentPane().add(gui);
+        manager = SessionManager.instance();
+        final Session5250 s = manager.openSession(sesProps, "", "Test Applet");
+        final SessionGUI gui = new SessionGUI(s);
+        // final JTerminal jt = new JTerminal(s);
 
-      s.connect();
-      SwingUtilities.invokeLater(new Runnable() {
-         public void run() {
-//            jt.grabFocus();
-            gui.grabFocus();
-         }
-      });
+        this.getContentPane().add(gui);
 
-   }
+        s.connect();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // jt.grabFocus();
+                gui.grabFocus();
+            }
+        });
 
-   private void loadSystemProperty(String param) {
+    }
 
-      if (isSpecified(param))
-         System.getProperties().put(param,getParameter(param));
+    private void loadSystemProperty(String param) {
 
-   }
+        if (isSpecified(param)) System.getProperties().put(param, getParameter(param));
 
-   /**Get Applet information*/
-   public String getAppletInfo() {
-      return "tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer + " - Jave tn5250 Client";
-   }
+    }
 
-   /**Get parameter info*/
-   public String[][] getParameterInfo() {
-      return null;
-   }
+    /** Get Applet information */
+    @Override
+    public String getAppletInfo() {
+        return "tn5250j - " + tn5250jRelease + tn5250jVersion + tn5250jSubVer + " - Jave tn5250 Client";
+    }
 
-   /**
-    * Tests if a parameter was specified or not.
-    */
-   private boolean isSpecified(String parm) {
+    /** Get parameter info */
+    @Override
+    public String[][] getParameterInfo() {
+        return null;
+    }
 
-      if (getParameter(parm) != null) {
-         log.info("Parameter " + parm + " is specified as: " + getParameter(parm));
-         return true;
-      }
-      return false;
-   }
+    /**
+     * Tests if a parameter was specified or not.
+     */
+    private boolean isSpecified(String parm) {
 
-   /**
-    * Returns a local specified by the string localString
-    */
-   protected static Locale parseLocale(String localString) {
-      int x = 0;
-      String[] s = {"","",""};
-      StringTokenizer tokenizer = new StringTokenizer(localString, "_");
-      while (tokenizer.hasMoreTokens()) {
-         s[x++] = tokenizer.nextToken();
-      }
-      return new Locale(s[0],s[1],s[2]);
-   }
+        if (getParameter(parm) != null) {
+            log.info("Parameter " + parm + " is specified as: " + getParameter(parm));
+            return true;
+        }
+        return false;
+    }
 
-   //static initializer for setting look & feel
-   static {
-      try {
-         //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-      }
-      catch(Exception e) {
-      }
-   }
+    /**
+     * Returns a local specified by the string localString
+     */
+    protected static Locale parseLocale(String localString) {
+        int x = 0;
+        String[] s = { "", "", "" };
+        StringTokenizer tokenizer = new StringTokenizer(localString, "_");
+        while (tokenizer.hasMoreTokens()) {
+            s[x++] = tokenizer.nextToken();
+        }
+        return new Locale(s[0], s[1], s[2]);
+    }
+
+    // static initializer for setting look & feel
+    static {
+        try {
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+        }
+    }
 }

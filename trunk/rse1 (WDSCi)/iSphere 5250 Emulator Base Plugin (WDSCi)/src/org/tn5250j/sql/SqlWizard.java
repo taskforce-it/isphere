@@ -37,118 +37,108 @@ import org.tn5250j.tools.GUIGraphicsUtils;
 import org.tn5250j.tools.system.OperatingSystem;
 
 /**
- *
+ * 
  */
 
 public class SqlWizard extends JFrame {
 
-   private SQLConnection connection;
-   private AS400 system;
-   private SQLQueryBuilderPane queryBuilder;
-   private SQLResultSetTablePane tablePane;
-   private String name;
-   private String password;
-   private String host;
-   private String queryText;
-   private JTextArea queryTextArea;
+    private SQLConnection connection;
+    private AS400 system;
+    private SQLQueryBuilderPane queryBuilder;
+    private SQLResultSetTablePane tablePane;
+    private String name;
+    private String password;
+    private String host;
+    private String queryText;
+    private JTextArea queryTextArea;
 
-   public SqlWizard(String host, String name, String password ) {
+    public SqlWizard(String host, String name, String password) {
 
-      this.host = host;
-      this.name = name;
-      this.password = password;
+        this.host = host;
+        this.name = name;
+        this.password = password;
 
-      enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
-      try {
-         jbInit();
-      }
-      catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
+        try {
+            jbInit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-   private void jbInit() throws Exception {
+    private void jbInit() throws Exception {
 
-      try {
+        try {
 
-         setIconImage(GUIGraphicsUtils.getApplicationIcon().getImage());
+            setIconImage(GUIGraphicsUtils.getApplicationIcon().getImage());
 
-         // set title
-         setTitle(LangTool.getString("xtfr.wizardTitle"));
+            // set title
+            setTitle(LangTool.getString("xtfr.wizardTitle"));
 
-         // Load the JDBC driver.
-         Driver driver2 = (Driver)Class.forName("com.ibm.as400.access.AS400JDBCDriver").newInstance();
-         DriverManager.registerDriver(driver2);
+            // Load the JDBC driver.
+            Driver driver2 = (Driver)Class.forName("com.ibm.as400.access.AS400JDBCDriver").newInstance();
+            DriverManager.registerDriver(driver2);
 
-         // Get a connection to the database.  Since we do not
-         // provide a user id or password, a prompt will appear.
-         connection = new SQLConnection("jdbc:as400://" + host, name, password);
+            // Get a connection to the database. Since we do not
+            // provide a user id or password, a prompt will appear.
+            connection = new SQLConnection("jdbc:as400://" + host, name, password);
 
-         // Create an SQLQueryBuilderPane
-         // object. Assume that "connection"
-         // is an SQLConnection object that is
-         // created and initialized elsewhere.
-         queryBuilder = new SQLQueryBuilderPane(connection);
-         queryBuilder.setTableSchemas(new String[] {"*USRLIBL"});
+            // Create an SQLQueryBuilderPane
+            // object. Assume that "connection"
+            // is an SQLConnection object that is
+            // created and initialized elsewhere.
+            queryBuilder = new SQLQueryBuilderPane(connection);
+            queryBuilder.setTableSchemas(new String[] { "*USRLIBL" });
 
-         // Load the data needed for the query
-         // builder.
-         queryBuilder.load();
+            // Load the data needed for the query
+            // builder.
+            queryBuilder.load();
 
-         JButton done = new JButton(LangTool.getString("xtfr.tableDone"));
-         done.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-               fillQueryTextArea();
+            JButton done = new JButton(LangTool.getString("xtfr.tableDone"));
+            done.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    fillQueryTextArea();
 
-            }
-         });
-         JPanel panel = new JPanel();
-         panel.add(done);
-         getContentPane().add(queryBuilder, BorderLayout.CENTER);
-         getContentPane().add(panel, BorderLayout.SOUTH);
+                }
+            });
+            JPanel panel = new JPanel();
+            panel.add(done);
+            getContentPane().add(queryBuilder, BorderLayout.CENTER);
+            getContentPane().add(panel, BorderLayout.SOUTH);
 
-         Dimension max = new Dimension(OperatingSystem.getScreenBounds().width,
-                                       OperatingSystem.getScreenBounds().height);
+            Dimension max = new Dimension(OperatingSystem.getScreenBounds().width, OperatingSystem.getScreenBounds().height);
 
-         pack();
+            pack();
 
-         if (getSize().width > max.width)
-            setSize(max.width,getSize().height);
+            if (getSize().width > max.width) setSize(max.width, getSize().height);
 
-         if (getSize().height > max.height)
-            setSize(getSize().width,max.height);
+            if (getSize().height > max.height) setSize(getSize().width, max.height);
 
-         //Center the window
-         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-         Dimension frameSize = getSize();
-         if (frameSize.height > screenSize.height)
-            frameSize.height = screenSize.height;
-         if (frameSize.width > screenSize.width)
-            frameSize.width = screenSize.width;
+            // Center the window
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension frameSize = getSize();
+            if (frameSize.height > screenSize.height) frameSize.height = screenSize.height;
+            if (frameSize.width > screenSize.width) frameSize.width = screenSize.width;
 
-         setLocation((screenSize.width - frameSize.width) / 2,
-                        (screenSize.height - frameSize.height) / 2);
+            setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
-         setVisible(true);
-      }
-      catch (ClassNotFoundException cnfe) {
+            setVisible(true);
+        } catch (ClassNotFoundException cnfe) {
 
-         JOptionPane.showMessageDialog(null,"Error loading AS400 JDBC Driver",
-                                             "Error",
-                                             JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error loading AS400 JDBC Driver", "Error", JOptionPane.ERROR_MESSAGE);
 
-      }
-   }
+        }
+    }
 
-   private void fillQueryTextArea() {
-      queryTextArea.append(queryBuilder.getQuery());
+    private void fillQueryTextArea() {
+        queryTextArea.append(queryBuilder.getQuery());
 
-      this.setVisible(false);
-      this.dispose();
-   }
+        this.setVisible(false);
+        this.dispose();
+    }
 
-   public void setQueryTextArea(JTextArea qta) {
-      queryTextArea = qta;
-   }
+    public void setQueryTextArea(JTextArea qta) {
+        queryTextArea = qta;
+    }
 }

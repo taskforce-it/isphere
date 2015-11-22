@@ -15,10 +15,10 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
 public class SessionsGUI extends CoreSessionsGUI {
 
-	private static final long serialVersionUID = 1L;
-	
-	public SessionsGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
-		super(tn5250jInfo, session5250);
-	}
+    private static final long serialVersionUID = 1L;
+
+    public SessionsGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
+        super(tn5250jInfo, session5250);
+    }
 
 }

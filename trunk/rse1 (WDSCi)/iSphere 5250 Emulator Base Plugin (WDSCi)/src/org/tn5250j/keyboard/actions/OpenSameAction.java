@@ -25,6 +25,7 @@
  */
 package org.tn5250j.keyboard.actions;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -38,14 +39,13 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class OpenSameAction extends EmulatorAction implements TN5250jConstants {
 
-   public OpenSameAction(SessionGUI session, KeyMapper keyMap) {
-      super(session,MNEMONIC_OPEN_SAME,
-            KeyStroke.getKeyStroke(KeyEvent.VK_U,KeyEvent.ALT_MASK),
-            keyMap);
-   }
+    public OpenSameAction(SessionGUI session, KeyMapper keyMap) {
+        super(session, MNEMONIC_OPEN_SAME, KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_MASK), keyMap);
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.startDuplicateSession();
-   }
+        session.startDuplicateSession();
+    }
 }

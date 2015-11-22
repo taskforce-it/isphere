@@ -15,22 +15,25 @@ import com.ibm.etools.systems.subsystems.impl.AbstractSystem;
 
 public class TN5250JSystem extends AbstractSystem {
 
-	private boolean connected = false;
+    private boolean connected = false;
 
-	public TN5250JSystem(SubSystem subsystem) {
-		super(subsystem);
-	}
+    public TN5250JSystem(SubSystem subsystem) {
+        super(subsystem);
+    }
 
-	public boolean isConnected() {
-		return connected;
-	}
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
 
-	public void connect(IProgressMonitor monitor) throws Exception {
-		connected = true;
-	}
+    @Override
+    public void connect(IProgressMonitor monitor) throws Exception {
+        connected = true;
+    }
 
-	public void disconnect() throws Exception {
-		connected = false;
-	}
+    @Override
+    public void disconnect() throws Exception {
+        connected = false;
+    }
 
 }

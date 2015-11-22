@@ -30,21 +30,19 @@ import java.beans.PropertyChangeEvent;
 
 public class SessionConfigEvent extends PropertyChangeEvent {
 
+    /**
+     * Constructs a new <code>SessionConfigChangeEvent</code>.
+     * 
+     * @param source The bean that fired the event.
+     * @param propertyName The programmatic name of the property that was
+     *        changed.
+     * @param oldValue The old value of the property.
+     * @param newValue The new value of the property.
+     */
+    public SessionConfigEvent(Object source, String propertyName, Object oldValue, Object newValue) {
 
-   /**
-   * Constructs a new <code>SessionConfigChangeEvent</code>.
-   *
-   * @param source  The bean that fired the event.
-   * @param propertyName  The programmatic name of the property
-   *		that was changed.
-   * @param oldValue  The old value of the property.
-   * @param newValue  The new value of the property.
-   */
-   public SessionConfigEvent(Object source, String propertyName,
-              Object oldValue, Object newValue) {
+        super(source, propertyName, oldValue, newValue);
 
-      super(source, propertyName, oldValue, newValue);
-
-   }
+    }
 
 }

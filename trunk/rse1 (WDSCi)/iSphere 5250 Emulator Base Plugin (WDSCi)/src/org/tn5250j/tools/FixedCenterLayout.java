@@ -177,8 +177,8 @@ public class FixedCenterLayout implements LayoutManager2, Serializable {
     }
 
     /**
-     * Invalidates the layout, indicating that if the layout manager
-     * has cached information it should be discarded.
+     * Invalidates the layout, indicating that if the layout manager has cached
+     * information it should be discarded.
      */
     public void invalidateLayout(Container target) {
     }
@@ -190,26 +190,26 @@ public class FixedCenterLayout implements LayoutManager2, Serializable {
         synchronized (target.getTreeLock()) {
             Insets insets = target.getInsets();
             int top = insets.top;
-            //	int bottom = target.getHeight() - insets.bottom;
+            // int bottom = target.getHeight() - insets.bottom;
             int bottom = target.getBounds().height - insets.bottom;
             int left = insets.left;
-            //	int right = target.getWidth() - insets.right;
+            // int right = target.getWidth() - insets.right;
             int right = target.getBounds().width - insets.right;
 
-            int leftCenter = (right-left)/2;
+            int leftCenter = (right - left) / 2;
             int rightCenter = leftCenter;
 
             if (center != null) {
                 Dimension d = center.getPreferredSize();
-                leftCenter = (right-left-d.width)/2;
-                rightCenter = leftCenter+d.width;
-                center.setBounds(leftCenter, top, d.width, bottom-top);
+                leftCenter = (right - left - d.width) / 2;
+                rightCenter = leftCenter + d.width;
+                center.setBounds(leftCenter, top, d.width, bottom - top);
             }
             if (west != null) {
-                west.setBounds(left, top, leftCenter-left-hgap, bottom-top);
+                west.setBounds(left, top, leftCenter - left - hgap, bottom - top);
             }
             if (east != null) {
-                east.setBounds(rightCenter+hgap, top, right-rightCenter-2*hgap, bottom-top);
+                east.setBounds(rightCenter + hgap, top, right - rightCenter - 2 * hgap, bottom - top);
             }
         }
     }
@@ -234,6 +234,7 @@ public class FixedCenterLayout implements LayoutManager2, Serializable {
     /**
      * Returns a string representation of the state of this layout.
      */
+    @Override
     public String toString() {
         return getClass().getName() + "[hgap=" + hgap + "]";
 

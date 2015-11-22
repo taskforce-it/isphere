@@ -28,9 +28,8 @@ package org.tn5250j.event;
 
 public interface ScreenListener {
 
-   public void onScreenChanged(int inUpdate, int startRow, int startCol,
-                                             int endRow, int endCol);
+    public void onScreenChanged(int inUpdate, int startRow, int startCol, int endRow, int endCol);
 
-   public void onScreenSizeChanged(int rows, int cols);
+    public void onScreenSizeChanged(int rows, int cols);
 
 }

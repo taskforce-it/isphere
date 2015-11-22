@@ -33,319 +33,298 @@ import org.tn5250j.framework.common.SessionManager;
 /**
  * A host session
  */
-public class Session5250 implements SessionInterface,TN5250jConstants {
+public class Session5250 implements SessionInterface, TN5250jConstants {
 
-   private String configurationResource;
-   private String sessionName;
-   private boolean connected;
-   private int sessionType;
-   protected Properties sesProps;
-   private Vector listeners;
-   private SessionChangeEvent sce;
-   private String sslType;
-   private boolean heartBeat;
-   String propFileName;
-   protected SessionConfig sesConfig;
-   tnvt vt;
-   Screen5250 screen;
-   SessionGUI guiComponent;
+    private String configurationResource;
+    private String sessionName;
+    private boolean connected;
+    private int sessionType;
+    protected Properties sesProps;
+    private Vector listeners;
+    private SessionChangeEvent sce;
+    private String sslType;
+    private boolean heartBeat;
+    String propFileName;
+    protected SessionConfig sesConfig;
+    tnvt vt;
+    Screen5250 screen;
+    SessionGUI guiComponent;
 
-   // WVL - LDC : TR.000300 : Callback scenario from 5250
-   private boolean scan; // = false;
-   private ScanListener scanListener; // = null;
+    // WVL - LDC : TR.000300 : Callback scenario from 5250
+    private boolean scan; // = false;
+    private ScanListener scanListener; // = null;
 
-   public Session5250 (Properties props, String configurationResource,
-                     String sessionName,
-                     SessionConfig config) {
+    public Session5250(Properties props, String configurationResource, String sessionName, SessionConfig config) {
 
-      propFileName = config.getConfigurationResource();
+        propFileName = config.getConfigurationResource();
 
-      sesConfig = config;
-      this.configurationResource = configurationResource;
-      this.sessionName = sessionName;
-      sesProps = props;
-      sce = new SessionChangeEvent(this);
+        sesConfig = config;
+        this.configurationResource = configurationResource;
+        this.sessionName = sessionName;
+        sesProps = props;
+        sce = new SessionChangeEvent(this);
 
-      if (sesProps.containsKey(SESSION_HEART_BEAT))
-         heartBeat = true;
+        if (sesProps.containsKey(SESSION_HEART_BEAT)) heartBeat = true;
 
-      screen = new Screen5250();
+        screen = new Screen5250();
 
-      //screen.setVT(vt);
+        // screen.setVT(vt);
 
-   }
+    }
 
-   public String getConfigurationResource() {
+    public String getConfigurationResource() {
 
-      return configurationResource;
+        return configurationResource;
 
-   }
+    }
 
-   public SessionConfig getConfiguration() {
+    public SessionConfig getConfiguration() {
 
-      return sesConfig;
-   }
+        return sesConfig;
+    }
 
-   public SessionManager getSessionManager() {
-      return SessionManager.instance();
-   }
+    public SessionManager getSessionManager() {
+        return SessionManager.instance();
+    }
 
-   public boolean isConnected() {
+    public boolean isConnected() {
 
-      if (vt == null)
-         return false;
-      else
-         return vt.isConnected();
+        if (vt == null)
+            return false;
+        else
+            return vt.isConnected();
 
-   }
+    }
 
-   public boolean isSendKeepAlive() {
-      return heartBeat;
-   }
+    public boolean isSendKeepAlive() {
+        return heartBeat;
+    }
 
-   public Properties getConnectionProperties() {
-      return sesProps;
-   }
+    public Properties getConnectionProperties() {
+        return sesProps;
+    }
 
-   public void setGUI (SessionGUI gui) {
-      guiComponent = gui;
-   }
+    public void setGUI(SessionGUI gui) {
+        guiComponent = gui;
+    }
 
-   public SessionGUI getGUI() {
-      return guiComponent;
-   }
-   public String getSessionName() {
-      return sessionName;
-   }
+    public SessionGUI getGUI() {
+        return guiComponent;
+    }
 
-   public String getAllocDeviceName() {
-      if (vt != null)
-         return vt.getAllocatedDeviceName();
-      else
-         return null;
-   }
+    public String getSessionName() {
+        return sessionName;
+    }
 
-   public int getSessionType() {
+    public String getAllocDeviceName() {
+        if (vt != null)
+            return vt.getAllocatedDeviceName();
+        else
+            return null;
+    }
 
-      return sessionType;
+    public int getSessionType() {
 
-   }
+        return sessionType;
 
-   public String getHostName() {
-      return vt.getHostName();
-   }
+    }
 
-   public Screen5250 getScreen() {
+    public String getHostName() {
+        return vt.getHostName();
+    }
 
-      return screen;
+    public Screen5250 getScreen() {
 
-   }
+        return screen;
 
-   public void connect() {
+    }
 
-      String proxyPort = "1080"; // default socks proxy port
-      boolean enhanced = false;
-      boolean support132 = false;
-      int port = 23; // default telnet port
+    public void connect() {
 
-      enhanced = sesProps.containsKey(SESSION_TN_ENHANCED);
+        String proxyPort = "1080"; // default socks proxy port
+        boolean enhanced = false;
+        boolean support132 = false;
+        int port = 23; // default telnet port
 
-      if (sesProps.containsKey(SESSION_SCREEN_SIZE))
-         if (((String)sesProps.getProperty(SESSION_SCREEN_SIZE)).equals(SCREEN_SIZE_27X132_STR))
-            support132 = true;
+        enhanced = sesProps.containsKey(SESSION_TN_ENHANCED);
 
-      final tnvt vt = new tnvt(this,screen,enhanced,support132);
-      setVT(vt);
+        if (sesProps.containsKey(SESSION_SCREEN_SIZE))
+            if ((sesProps.getProperty(SESSION_SCREEN_SIZE)).equals(SCREEN_SIZE_27X132_STR)) support132 = true;
 
-//      vt.setController(this);
+        final tnvt vt = new tnvt(this, screen, enhanced, support132);
+        setVT(vt);
 
-      if (sesProps.containsKey(SESSION_PROXY_PORT))
-         proxyPort = (String)sesProps.getProperty(SESSION_PROXY_PORT);
+        // vt.setController(this);
 
-      if (sesProps.containsKey(SESSION_PROXY_HOST))
-         vt.setProxy((String)sesProps.getProperty(SESSION_PROXY_HOST),
-                     proxyPort);
+        if (sesProps.containsKey(SESSION_PROXY_PORT)) proxyPort = sesProps.getProperty(SESSION_PROXY_PORT);
 
-      if (sesProps.containsKey(TN5250jConstants.SSL_TYPE)) {
-         sslType = (String)sesProps.getProperty(TN5250jConstants.SSL_TYPE);
-      }
-      else {
-         // set default to none
-         sslType = TN5250jConstants.SSL_TYPE_NONE;
-      }
+        if (sesProps.containsKey(SESSION_PROXY_HOST)) vt.setProxy(sesProps.getProperty(SESSION_PROXY_HOST), proxyPort);
 
-      vt.setSSLType(sslType);
+        if (sesProps.containsKey(TN5250jConstants.SSL_TYPE)) {
+            sslType = sesProps.getProperty(TN5250jConstants.SSL_TYPE);
+        } else {
+            // set default to none
+            sslType = TN5250jConstants.SSL_TYPE_NONE;
+        }
 
-      if (sesProps.containsKey(SESSION_CODE_PAGE))
-         vt.setCodePage((String)sesProps.getProperty(SESSION_CODE_PAGE));
+        vt.setSSLType(sslType);
 
-      if (sesProps.containsKey(SESSION_DEVICE_NAME))
-         vt.setDeviceName((String)sesProps.getProperty(SESSION_DEVICE_NAME));
+        if (sesProps.containsKey(SESSION_CODE_PAGE)) vt.setCodePage(sesProps.getProperty(SESSION_CODE_PAGE));
 
-      if (sesProps.containsKey(SESSION_HOST_PORT)) {
-         port = Integer.parseInt((String)sesProps.getProperty(SESSION_HOST_PORT));
-      }
-      else {
-         // set to default 23 of telnet
-         port = 23;
-      }
+        if (sesProps.containsKey(SESSION_DEVICE_NAME)) vt.setDeviceName(sesProps.getProperty(SESSION_DEVICE_NAME));
 
-      final String ses = (String)sesProps.getProperty(SESSION_HOST);
-      final int portp = port;
+        if (sesProps.containsKey(SESSION_HOST_PORT)) {
+            port = Integer.parseInt(sesProps.getProperty(SESSION_HOST_PORT));
+        } else {
+            // set to default 23 of telnet
+            port = 23;
+        }
 
-      // lets set this puppy up to connect within its own thread
-      Runnable connectIt = new Runnable() {
+        final String ses = sesProps.getProperty(SESSION_HOST);
+        final int portp = port;
+
+        // lets set this puppy up to connect within its own thread
+        Runnable connectIt = new Runnable() {
             public void run() {
-               vt.connect(ses,portp);
+                vt.connect(ses, portp);
             }
 
         };
 
-      // now lets set it to connect within its own daemon thread
-      //    this seems to work better and is more responsive than using
-      //    swingutilities's invokelater
-      Thread ct = new Thread(connectIt);
-      ct.setDaemon(true);
-      ct.start();
+        // now lets set it to connect within its own daemon thread
+        // this seems to work better and is more responsive than using
+        // swingutilities's invokelater
+        Thread ct = new Thread(connectIt);
+        ct.setDaemon(true);
+        ct.start();
 
-   }
+    }
 
-   public void disconnect() {
+    public void disconnect() {
 
-      connected = false;
-      vt.disconnect();
+        connected = false;
+        vt.disconnect();
 
-   }
+    }
 
-   // WVL - LDC : TR.000300 : Callback scenario from 5250
-   protected void setVT(tnvt v)
-   {
-     vt = v;
-     screen.setVT(vt);
-     if (vt != null)
-       vt.setScanningEnabled(this.scan);
-   }
+    // WVL - LDC : TR.000300 : Callback scenario from 5250
+    protected void setVT(tnvt v) {
+        vt = v;
+        screen.setVT(vt);
+        if (vt != null) vt.setScanningEnabled(this.scan);
+    }
 
-   public tnvt getVT() {
-      return vt;
-   }
+    public tnvt getVT() {
+        return vt;
+    }
 
-   // WVL - LDC : TR.000300 : Callback scenario from 5250
-   /**
-    * Enables or disables scanning.
-    *
-    * @param scan enables scanning when true; disables otherwise.
-    *
-    * @see tnvt#setCommandScanning(boolean);
-    * @see tnvt#isCommandScanning();
-    * @see tnvt#scan();
-    * @see tnvt#parseCommand();
-    * @see scanned(String,String)
-    */
-   public void setScanningEnabled(boolean scan)
-   {
-     this.scan = scan;
+    // WVL - LDC : TR.000300 : Callback scenario from 5250
+    /**
+     * Enables or disables scanning.
+     * 
+     * @param scan enables scanning when true; disables otherwise.
+     * 
+     * @see tnvt#setCommandScanning(boolean);
+     * @see tnvt#isCommandScanning();
+     * @see tnvt#scan();
+     * @see tnvt#parseCommand();
+     * @see scanned(String,String)
+     */
+    public void setScanningEnabled(boolean scan) {
+        this.scan = scan;
 
-     if (this.vt != null)
-       this.vt.setScanningEnabled(scan);
-   }
+        if (this.vt != null) this.vt.setScanningEnabled(scan);
+    }
 
-   // WVL - LDC : TR.000300 : Callback scenario from 5250
-   /**
-    * Checks whether scanning is enabled.
-    *
-    * @return true if command scanning is enabled; false otherwise.
-    *
-    * @see tnvt#setCommandScanning(boolean);
-    * @see tnvt#isCommandScanning();
-    * @see tnvt#scan();
-    * @see tnvt#parseCommand();
-    * @see scanned(String,String)
-    */
-   public boolean isScanningEnabled()
-   {
-     if (this.vt != null)
-       return this.vt.isScanningEnabled();
+    // WVL - LDC : TR.000300 : Callback scenario from 5250
+    /**
+     * Checks whether scanning is enabled.
+     * 
+     * @return true if command scanning is enabled; false otherwise.
+     * 
+     * @see tnvt#setCommandScanning(boolean);
+     * @see tnvt#isCommandScanning();
+     * @see tnvt#scan();
+     * @see tnvt#parseCommand();
+     * @see scanned(String,String)
+     */
+    public boolean isScanningEnabled() {
+        if (this.vt != null) return this.vt.isScanningEnabled();
 
-     return this.scan;
-   }
+        return this.scan;
+    }
 
-   // WVL - LDC : TR.000300 : Callback scenario from 5250
-   /**
-    * This is the callback method for the TNVT when sensing the action cmd
-    * screen pattern (!# at position 0,0).
-    *
-    * This is <strong>NOT a threadsafe method</strong> and will be called
-    * from the TNVT read thread!
-    *
-    * @param command discovered in the 5250 stream.
-    * @param remainder are all the other characters on the screen.
-    *
-    * @see tnvt#setCommandScanning(boolean);
-    * @see tnvt#isCommandScanning();
-    * @see tnvt#scan();
-    * @see tnvt#parseCommand();
-    * @see scanned(String,String)
-    */
-  public void scanned(String command, String remainder)
-  {
-    if (scanListener != null)
-      scanListener.scanned(command, remainder);
-   }
+    // WVL - LDC : TR.000300 : Callback scenario from 5250
+    /**
+     * This is the callback method for the TNVT when sensing the action cmd
+     * screen pattern (!# at position 0,0).
+     * 
+     * This is <strong>NOT a threadsafe method</strong> and will be called from
+     * the TNVT read thread!
+     * 
+     * @param command discovered in the 5250 stream.
+     * @param remainder are all the other characters on the screen.
+     * 
+     * @see tnvt#setCommandScanning(boolean);
+     * @see tnvt#isCommandScanning();
+     * @see tnvt#scan();
+     * @see tnvt#parseCommand();
+     * @see scanned(String,String)
+     */
+    public void scanned(String command, String remainder) {
+        if (scanListener != null) scanListener.scanned(command, remainder);
+    }
 
-   public void addScanListener(ScanListener listener)
-   {
-     scanListener = ScanMulticaster.add(scanListener, listener);
-   }
+    public void addScanListener(ScanListener listener) {
+        scanListener = ScanMulticaster.add(scanListener, listener);
+    }
 
-   public void removeScanListener(ScanListener listener)
-   {
-     scanListener = ScanMulticaster.remove(scanListener, listener);
-   }
+    public void removeScanListener(ScanListener listener) {
+        scanListener = ScanMulticaster.remove(scanListener, listener);
+    }
 
-   /**
-    * Notify all registered listeners of the onSessionChanged event.
-    *
-    * @param state  The state change property object.
-    */
-   public void fireSessionChanged(int state) {
+    /**
+     * Notify all registered listeners of the onSessionChanged event.
+     * 
+     * @param state The state change property object.
+     */
+    public void fireSessionChanged(int state) {
 
-      if (listeners != null) {
-         int size = listeners.size();
-         for (int i = 0; i < size; i++) {
-            SessionListener target =
-                    (SessionListener)listeners.elementAt(i);
-            sce.setState(state);
-            target.onSessionChanged(sce);
-         }
-      }
-   }
+        if (listeners != null) {
+            int size = listeners.size();
+            for (int i = 0; i < size; i++) {
+                SessionListener target = (SessionListener)listeners.elementAt(i);
+                sce.setState(state);
+                target.onSessionChanged(sce);
+            }
+        }
+    }
 
-   /**
-    * Add a SessionListener to the listener list.
-    *
-    * @param listener  The SessionListener to be added
-    */
-   public synchronized void addSessionListener(SessionListener listener) {
+    /**
+     * Add a SessionListener to the listener list.
+     * 
+     * @param listener The SessionListener to be added
+     */
+    public synchronized void addSessionListener(SessionListener listener) {
 
-      if (listeners == null) {
-          listeners = new java.util.Vector(3);
-      }
-      listeners.addElement(listener);
+        if (listeners == null) {
+            listeners = new java.util.Vector(3);
+        }
+        listeners.addElement(listener);
 
-   }
+    }
 
-   /**
-    * Remove a SessionListener from the listener list.
-    *
-    * @param listener  The SessionListener to be removed
-    */
-   public synchronized void removeSessionListener(SessionListener listener) {
-      if (listeners == null) {
-          return;
-      }
-      listeners.removeElement(listener);
+    /**
+     * Remove a SessionListener from the listener list.
+     * 
+     * @param listener The SessionListener to be removed
+     */
+    public synchronized void removeSessionListener(SessionListener listener) {
+        if (listeners == null) {
+            return;
+        }
+        listeners.removeElement(listener);
 
-   }
+    }
 
 }
