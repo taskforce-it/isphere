@@ -36,6 +36,7 @@ import biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystem;
 
 public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
 
+    @Override
     public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup) {
 
         IAction changeSessionAction = new ChangeSessionAction(parent);
@@ -49,6 +50,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
     }
 
+    @Override
     public ImageDescriptor getImageDescriptor(Object element) {
         return TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_TN5250J);
     }
@@ -61,10 +63,12 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
         return "Session_" + ((RSESession)element).getName();
     }
 
+    @Override
     public String getType(Object element) {
         return "Session";
     }
 
+    @Override
     public Object getParent(Object element) {
         return null;
     }
@@ -73,38 +77,47 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
         return false;
     }
 
+    @Override
     public boolean hasChildren(IAdaptable adaptable) {
         return false;
     }
 
+    @Override
     public Object[] getChildren(IAdaptable adaptable, IProgressMonitor progressMonitor) {
         return null;
     }
 
+    @Override
     protected IPropertyDescriptor[] internalGetPropertyDescriptors() {
         return null;
     }
 
+    @Override
     public Object internalGetPropertyValue(Object key) {
         return null;
     }
 
+    @Override
     public boolean canRename(Object element) {
         return false;
     }
 
+    @Override
     public boolean showRename(Object element) {
         return false;
     }
 
+    @Override
     public boolean canDelete(Object element) {
         return false;
     }
 
+    @Override
     public boolean showDelete(Object element) {
         return false;
     }
 
+    @Override
     public boolean showRefresh(Object element) {
         return false;
     }
@@ -154,6 +167,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
         return false;
     }
 
+    @Override
     public boolean handleDoubleClick(Object element) {
 
         RSESession rseSession = (RSESession)element;

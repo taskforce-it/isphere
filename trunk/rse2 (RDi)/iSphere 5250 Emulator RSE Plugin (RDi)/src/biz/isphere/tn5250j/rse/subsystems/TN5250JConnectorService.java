@@ -10,101 +10,105 @@ package biz.isphere.tn5250j.rse.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 
 public class TN5250JConnectorService extends AbstractConnectorService {
 
-	private boolean connected = false;
+    private boolean connected = false;
 
-	public TN5250JConnectorService(IHost host) {
-		super("connectorservice.devr.name", "connectorservice.devr.desc", host, 0);
-	}
+    public TN5250JConnectorService(IHost host) {
+        super("connectorservice.devr.name", "connectorservice.devr.desc", host, 0);
+    }
 
-	public boolean isConnected() {
-		return connected;
-	}
-	
-	protected void internalConnect(IProgressMonitor monitor) throws Exception {
-		connected=true;
-	}
+    public boolean isConnected() {
+        return connected;
+    }
 
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
-		connected=false;
-	}
+    @Override
+    protected void internalConnect(IProgressMonitor monitor) throws Exception {
+        connected = true;
+    }
 
-	public boolean supportsRemoteServerLaunching() {
-		return false;
-	}
+    @Override
+    public void internalDisconnect(IProgressMonitor monitor) throws Exception {
+        connected = false;
+    }
 
-	public boolean supportsServerLaunchProperties() {
-		return false;
-	}
+    @Override
+    public boolean supportsRemoteServerLaunching() {
+        return false;
+    }
 
-	public void acquireCredentials(boolean arg0) throws OperationCanceledException {
-	}
+    @Override
+    public boolean supportsServerLaunchProperties() {
+        return false;
+    }
 
-	public void clearCredentials() {
-	}
+    public void acquireCredentials(boolean arg0) throws OperationCanceledException {
+    }
 
-	public void clearPassword(boolean arg0, boolean arg1) {
-	}
+    public void clearCredentials() {
+    }
 
-	public String getUserId() {
-		return null;
-	}
+    public void clearPassword(boolean arg0, boolean arg1) {
+    }
 
-	public boolean hasPassword(boolean arg0) {
-		return false;
-	}
+    public String getUserId() {
+        return null;
+    }
 
-	public boolean inheritsCredentials() {
-		return false;
-	}
+    public boolean hasPassword(boolean arg0) {
+        return false;
+    }
 
-	public boolean isSuppressed() {
-		return false;
-	}
+    public boolean inheritsCredentials() {
+        return false;
+    }
 
-	public void removePassword() {
-	}
+    public boolean isSuppressed() {
+        return false;
+    }
 
-	public void removeUserId() {
-	}
+    public void removePassword() {
+    }
 
-	public boolean requiresPassword() {
-		return false;
-	}
+    public void removeUserId() {
+    }
 
-	public boolean requiresUserId() {
-		return false;
-	}
+    public boolean requiresPassword() {
+        return false;
+    }
 
-	public void savePassword() {
-	}
+    public boolean requiresUserId() {
+        return false;
+    }
 
-	public void saveUserId() {
-	}
+    public void savePassword() {
+    }
 
-	public void setPassword(String arg0, String arg1, boolean arg2, boolean arg3) {
-	}
+    public void saveUserId() {
+    }
 
-	public void setSuppressed(boolean arg0) {
-	}
+    public void setPassword(String arg0, String arg1, boolean arg2, boolean arg3) {
+    }
 
-	public void setUserId(String arg0) {
-	}
+    public void setSuppressed(boolean arg0) {
+    }
 
-	public boolean sharesCredentials() {
-		return false;
-	}
+    public void setUserId(String arg0) {
+    }
 
-	public boolean supportsPassword() {
-		return false;
-	}
+    public boolean sharesCredentials() {
+        return false;
+    }
 
-	public boolean supportsUserId() {
-		return false;
-	}
-	
+    public boolean supportsPassword() {
+        return false;
+    }
+
+    public boolean supportsUserId() {
+        return false;
+    }
+
 }

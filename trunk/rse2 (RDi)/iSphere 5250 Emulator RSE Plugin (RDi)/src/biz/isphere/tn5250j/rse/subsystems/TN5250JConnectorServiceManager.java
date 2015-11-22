@@ -8,35 +8,37 @@
 
 package biz.isphere.tn5250j.rse.subsystems;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.model.IHost;
 
 public class TN5250JConnectorServiceManager extends AbstractConnectorServiceManager {
 
-	private static TN5250JConnectorServiceManager inst;
+    private static TN5250JConnectorServiceManager inst;
 
-	public TN5250JConnectorServiceManager() {
-		super();
-	}
+    public TN5250JConnectorServiceManager() {
+        super();
+    }
 
-	public static TN5250JConnectorServiceManager getInstance() {
-		if (inst == null)
-			inst = new TN5250JConnectorServiceManager();
-		return inst;
-	}
+    public static TN5250JConnectorServiceManager getInstance() {
+        if (inst == null) inst = new TN5250JConnectorServiceManager();
+        return inst;
+    }
 
-	public IConnectorService createConnectorService(IHost host) {
-		return new TN5250JConnectorService(host);
-	}
+    @Override
+    public IConnectorService createConnectorService(IHost host) {
+        return new TN5250JConnectorService(host);
+    }
 
-	public boolean sharesSystem(ISubSystem otherSubSystem) {
-		return (otherSubSystem instanceof ITN5250JSubSystem);
-	}
+    @Override
+    public boolean sharesSystem(ISubSystem otherSubSystem) {
+        return (otherSubSystem instanceof ITN5250JSubSystem);
+    }
 
-	public Class<ITN5250JSubSystem> getSubSystemCommonInterface(ISubSystem subsystem) {
-		return ITN5250JSubSystem.class;
-	}
+    @Override
+    public Class<ITN5250JSubSystem> getSubSystemCommonInterface(ISubSystem subsystem) {
+        return ITN5250JSubSystem.class;
+    }
 
 }

@@ -14,14 +14,15 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DesignerBrowseWithAction extends DesignerOpenWithAction {
 
-	public DesignerBrowseWithAction() {
-	}
+    public DesignerBrowseWithAction() {
+    }
 
-	public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
-	}
+    public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
+    }
 
-	protected String getMode() {
-		return "*BROWSE";
-	}
+    @Override
+    protected String getMode() {
+        return "*BROWSE";
+    }
 
 }

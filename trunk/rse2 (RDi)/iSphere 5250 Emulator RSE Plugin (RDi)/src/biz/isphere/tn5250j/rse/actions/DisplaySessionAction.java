@@ -8,8 +8,8 @@
 
 package biz.isphere.tn5250j.rse.actions;
 
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
@@ -19,19 +19,21 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 
 public class DisplaySessionAction extends SystemBaseAction {
 
-	public DisplaySessionAction(Shell parent) {
-		super(Messages.getString("Display_session"), parent);
-		setAvailableOffline(true);
-		setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DISPLAY));
-	}
+    public DisplaySessionAction(Shell parent) {
+        super(Messages.getString("Display_session"), parent);
+        setAvailableOffline(true);
+        setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DISPLAY));
+    }
 
-	public void run() {
-		if (getFirstSelection() instanceof RSESession) {
-			RSESession rseSession = (RSESession)getFirstSelection();
-			if (rseSession != null) {
-				new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection()), DialogActionTypes.DISPLAY, rseSession.getSession()).open();
-			}
-		}
-	}
+    @Override
+    public void run() {
+        if (getFirstSelection() instanceof RSESession) {
+            RSESession rseSession = (RSESession)getFirstSelection();
+            if (rseSession != null) {
+                new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-"
+                    + rseSession.getRSEConnection()), DialogActionTypes.DISPLAY, rseSession.getSession()).open();
+            }
+        }
+    }
 
 }

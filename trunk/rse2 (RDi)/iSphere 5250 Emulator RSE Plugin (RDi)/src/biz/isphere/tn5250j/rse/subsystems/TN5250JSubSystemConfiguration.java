@@ -15,28 +15,32 @@ import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
 public class TN5250JSubSystemConfiguration extends SubSystemConfiguration {
 
-	public TN5250JSubSystemConfiguration() {
-		super();
-	}
+    public TN5250JSubSystemConfiguration() {
+        super();
+    }
 
-	public ISubSystem createSubSystemInternal(IHost host) {
-	   	return new TN5250JSubSystem(host, getConnectorService(host));
-	}
-	
-	public IConnectorService getConnectorService(IHost host) {
-		return TN5250JConnectorServiceManager.getInstance().getConnectorService(host, ITN5250JSubSystem.class);
-	}
+    @Override
+    public ISubSystem createSubSystemInternal(IHost host) {
+        return new TN5250JSubSystem(host, getConnectorService(host));
+    }
 
-	public boolean supportsUserId() {
-		return false;
-	}
+    @Override
+    public IConnectorService getConnectorService(IHost host) {
+        return TN5250JConnectorServiceManager.getInstance().getConnectorService(host, ITN5250JSubSystem.class);
+    }
 
-	public boolean supportsServerLaunchProperties(IHost host) {
-		return false;
-	}
+    public boolean supportsUserId() {
+        return false;
+    }
 
-	public boolean supportsFilters() {
-		return false;
-	}
+    @Override
+    public boolean supportsServerLaunchProperties(IHost host) {
+        return false;
+    }
+
+    @Override
+    public boolean supportsFilters() {
+        return false;
+    }
 
 }
