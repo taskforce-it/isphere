@@ -1,13 +1,14 @@
 package org.tn5250j.tools;
 
-import javax.swing.*;
-
 import java.awt.Toolkit;
-import java.text.*;
+import java.text.NumberFormat;
+import java.text.ParseException;
+
+import javax.swing.JTextField;
 
 public class DecimalField extends JTextField {
     private static final long serialVersionUID = 1L;
-	private NumberFormat format;
+    private NumberFormat format;
 
     public DecimalField(double value, int columns, NumberFormat f) {
         super(columns);

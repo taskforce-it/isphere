@@ -26,17 +26,16 @@
 package org.tn5250j.tools.encoder;
 
 import java.awt.Component;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Interface that defines an encoder
  */
 public interface Encoder {
-   /**
-    * Encode the specified component on the specified stream
-    */
-   public void encode(Component component, OutputStream stream) throws IOException, EncoderException;
+    /**
+     * Encode the specified component on the specified stream
+     */
+    public void encode(Component component, OutputStream stream) throws IOException, EncoderException;
 
 }
-

@@ -25,12 +25,13 @@
  */
 package org.tn5250j.keyboard.actions;
 
-import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
-import org.tn5250j.TN5250jConstants;
+import javax.swing.KeyStroke;
+
 import org.tn5250j.SessionPanel;
+import org.tn5250j.TN5250jConstants;
 import org.tn5250j.keyboard.KeyMapper;
 
 /**
@@ -38,17 +39,15 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class PrintAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public PrintAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_PRINT_SCREEN,
-            KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.ALT_MASK),
-            keyMap);
+    public PrintAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_PRINT_SCREEN, KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     session.printMe();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        session.printMe();
+    }
 }

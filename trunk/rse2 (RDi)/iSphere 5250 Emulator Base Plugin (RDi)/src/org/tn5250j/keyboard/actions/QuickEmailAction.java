@@ -42,27 +42,24 @@ import org.tn5250j.mailtools.SendEMailDialog;
  */
 public class QuickEmailAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public QuickEmailAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_QUICK_MAIL,
-            KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.ALT_MASK),
-            keyMap);
+    public QuickEmailAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_QUICK_MAIL, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      Runnable emailIt = new Runnable() {
-         public void run() {
-            new SendEMailDialog((JFrame)SwingUtilities.getRoot(session),
-                  session,false);
-         }
+        Runnable emailIt = new Runnable() {
+            public void run() {
+                new SendEMailDialog((JFrame)SwingUtilities.getRoot(session), session, false);
+            }
 
-      };
+        };
 
-      SwingUtilities.invokeLater(emailIt);
+        SwingUtilities.invokeLater(emailIt);
 
-   }
+    }
 }

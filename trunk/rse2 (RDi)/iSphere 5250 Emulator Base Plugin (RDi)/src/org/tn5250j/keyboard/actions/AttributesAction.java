@@ -39,17 +39,15 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class AttributesAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public AttributesAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-            TN5250jConstants.MNEMONIC_DISP_ATTRIBUTES,
-            KeyStroke.getKeyStroke(KeyEvent.VK_D,KeyEvent.ALT_MASK),
-            keyMap);
+    public AttributesAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_DISP_ATTRIBUTES, KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     session.actionAttributes();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        session.actionAttributes();
+    }
 }

@@ -33,27 +33,31 @@ package org.tn5250j.settings;
  */
 public enum ColumnSeparator {
 
-	Hide, Dot, Line, ShortLine;
-	
-	/**
-	 * searches the enumeration for the given name, case insensitive
-	 *  
-	 * @param name
-	 * @return the corresponding enum value OR default value, if name not matches 
-	 */
-	public static ColumnSeparator getFromName(String name) {
-		ColumnSeparator result = DEFAULT;
-		if (name == null) return result; 
-		for (ColumnSeparator sep : ColumnSeparator.values()) {
-			if (name.equalsIgnoreCase(sep.toString())) {
-				return sep;
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * default Line
-	 */
-	public static ColumnSeparator DEFAULT = Hide;
+    Hide,
+    Dot,
+    Line,
+    ShortLine;
+
+    /**
+     * searches the enumeration for the given name, case insensitive
+     * 
+     * @param name
+     * @return the corresponding enum value OR default value, if name not
+     *         matches
+     */
+    public static ColumnSeparator getFromName(String name) {
+        ColumnSeparator result = DEFAULT;
+        if (name == null) return result;
+        for (ColumnSeparator sep : ColumnSeparator.values()) {
+            if (name.equalsIgnoreCase(sep.toString())) {
+                return sep;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * default Line
+     */
+    public static ColumnSeparator DEFAULT = Hide;
 }

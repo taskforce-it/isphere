@@ -25,90 +25,85 @@
  */
 package org.tn5250j.settings;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
 
-import org.tn5250j.tools.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+
 import org.tn5250j.SessionConfig;
+import org.tn5250j.tools.LangTool;
 
 public class ErrorResetAttributesPanel extends AttributesPanel {
 
-   private static final long serialVersionUID = 1L;
-JCheckBox resetRequired;
-   JCheckBox backspaceError;
+    private static final long serialVersionUID = 1L;
+    JCheckBox resetRequired;
+    JCheckBox backspaceError;
 
-   public ErrorResetAttributesPanel(SessionConfig config ) {
-      super(config,"ErrorReset");
-   }
+    public ErrorResetAttributesPanel(SessionConfig config) {
+        super(config, "ErrorReset");
+    }
 
-   /**Component initialization*/
-   public void initPanel() throws Exception  {
+    /** Component initialization */
+    @Override
+    public void initPanel() throws Exception {
 
-      setLayout(new BorderLayout());
-      contentPane = new JPanel();
-      contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-      add(contentPane,BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        add(contentPane, BorderLayout.NORTH);
 
-      // define error reset
-      JPanel reset = new JPanel();
-      reset.setBorder(BorderFactory.createTitledBorder(
-                           LangTool.getString("sa.titleErrorReset")));
+        // define error reset
+        JPanel reset = new JPanel();
+        reset.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.titleErrorReset")));
 
-      resetRequired = new JCheckBox(LangTool.getString("sa.errorReset"));
+        resetRequired = new JCheckBox(LangTool.getString("sa.errorReset"));
 
-      // check if reset required is set or not
-      resetRequired.setSelected(getStringProperty("resetRequired").equals("Yes"));
+        // check if reset required is set or not
+        resetRequired.setSelected(getStringProperty("resetRequired").equals("Yes"));
 
-      reset.add(resetRequired);
+        reset.add(resetRequired);
 
-      // define backspace error
-      JPanel backspace = new JPanel();
-      backspace.setBorder(BorderFactory.createTitledBorder(
-                           LangTool.getString("sa.titleBackspace")));
+        // define backspace error
+        JPanel backspace = new JPanel();
+        backspace.setBorder(BorderFactory.createTitledBorder(LangTool.getString("sa.titleBackspace")));
 
-      backspaceError = new JCheckBox(LangTool.getString("sa.errorBackspace"));
+        backspaceError = new JCheckBox(LangTool.getString("sa.errorBackspace"));
 
-      // check if backspace error is set or not
-      backspaceError.setSelected(getStringProperty("backspaceError","Yes").equals("Yes"));
+        // check if backspace error is set or not
+        backspaceError.setSelected(getStringProperty("backspaceError", "Yes").equals("Yes"));
 
-      backspace.add(backspaceError);
+        backspace.add(backspaceError);
 
-      contentPane.add(reset);
-      contentPane.add(backspace);
+        contentPane.add(reset);
+        contentPane.add(backspace);
 
-   }
+    }
 
-   public void save() {
+    @Override
+    public void save() {
 
-   }
+    }
 
-   public void applyAttributes() {
+    @Override
+    public void applyAttributes() {
 
-      if (resetRequired.isSelected()) {
-         changes.firePropertyChange(this,"resetRequired",
-                           getStringProperty("resetRequired"),
-                           "Yes");
-         setProperty("resetRequired","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"resetRequired",
-                           getStringProperty("resetRequired"),
-                           "No");
-         setProperty("resetRequired","No");
-      }
+        if (resetRequired.isSelected()) {
+            changes.firePropertyChange(this, "resetRequired", getStringProperty("resetRequired"), "Yes");
+            setProperty("resetRequired", "Yes");
+        } else {
+            changes.firePropertyChange(this, "resetRequired", getStringProperty("resetRequired"), "No");
+            setProperty("resetRequired", "No");
+        }
 
-      if (backspaceError.isSelected()) {
-         changes.firePropertyChange(this,"backspaceError",
-                           getStringProperty("backspaceError"),
-                           "Yes");
-         setProperty("backspaceError","Yes");
-      }
-      else {
-         changes.firePropertyChange(this,"backspaceError",
-                           getStringProperty("backspaceError"),
-                           "No");
-         setProperty("backspaceError","No");
-      }
+        if (backspaceError.isSelected()) {
+            changes.firePropertyChange(this, "backspaceError", getStringProperty("backspaceError"), "Yes");
+            setProperty("backspaceError", "Yes");
+        } else {
+            changes.firePropertyChange(this, "backspaceError", getStringProperty("backspaceError"), "No");
+            setProperty("backspaceError", "No");
+        }
 
-   }
+    }
 }

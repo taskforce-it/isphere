@@ -36,28 +36,28 @@ import org.tn5250j.framework.tn5250.Screen5250;
  */
 public class SessionScroller implements MouseWheelListener {
 
-	private Screen5250 screen = null;;
+    private Screen5250 screen = null;;
 
-	public void addMouseWheelListener(SessionPanel ses) {
-		this.screen = ses.getScreen();
-		ses.addMouseWheelListener(this);
-	}
+    public void addMouseWheelListener(SessionPanel ses) {
+        this.screen = ses.getScreen();
+        ses.addMouseWheelListener(this);
+    }
 
-	public void removeMouseWheelListener(SessionPanel ses) {
-		this.screen = null;
-		ses.removeMouseWheelListener(this);
-	}
+    public void removeMouseWheelListener(SessionPanel ses) {
+        this.screen = null;
+        ses.removeMouseWheelListener(this);
+    }
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (this.screen != null) {
-			int notches = e.getWheelRotation();
-			if (notches < 0) {
-				screen.sendKeys(TN5250jConstants.MNEMONIC_PAGE_UP);
-			} else {
-				screen.sendKeys(TN5250jConstants.MNEMONIC_PAGE_DOWN);
-			}
-		}
-	}
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (this.screen != null) {
+            int notches = e.getWheelRotation();
+            if (notches < 0) {
+                screen.sendKeys(TN5250jConstants.MNEMONIC_PAGE_UP);
+            } else {
+                screen.sendKeys(TN5250jConstants.MNEMONIC_PAGE_DOWN);
+            }
+        }
+    }
 
 }

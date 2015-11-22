@@ -39,18 +39,16 @@ import org.tn5250j.keyboard.KeyMapper;
  */
 public class CopyAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public CopyAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_COPY,
-            KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.ALT_MASK),
-            keyMap);
+    public CopyAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_COPY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-      session.actionCopy();
-   }
+        session.actionCopy();
+    }
 }

@@ -40,18 +40,16 @@ import org.tn5250j.tools.Macronizer;
  */
 public class RunScriptAction extends EmulatorAction {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-public RunScriptAction(SessionPanel session, KeyMapper keyMap) {
-      super(session,
-    		  TN5250jConstants.MNEMONIC_RUN_SCRIPT,
-            KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_MASK),
-            keyMap);
+    public RunScriptAction(SessionPanel session, KeyMapper keyMap) {
+        super(session, TN5250jConstants.MNEMONIC_RUN_SCRIPT, KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_MASK), keyMap);
 
-   }
+    }
 
-   public void actionPerformed(ActionEvent e) {
-     Macronizer.showRunScriptDialog(session);
-     session.getFocusForMe();
-   }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Macronizer.showRunScriptDialog(session);
+        session.getFocusForMe();
+    }
 }
