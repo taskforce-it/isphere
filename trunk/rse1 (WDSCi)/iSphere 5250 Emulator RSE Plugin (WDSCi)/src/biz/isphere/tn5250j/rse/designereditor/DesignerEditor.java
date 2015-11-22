@@ -11,5 +11,7 @@ package biz.isphere.tn5250j.rse.designereditor;
 import biz.isphere.tn5250j.core.designereditor.CoreDesignerEditor;
 
 public class DesignerEditor extends CoreDesignerEditor {
-	
+
+    public static final String ID = "biz.isphere.tn5250j.rse.designereditor.DesignerEditor"; //$NON-NLS-N$
+
 }

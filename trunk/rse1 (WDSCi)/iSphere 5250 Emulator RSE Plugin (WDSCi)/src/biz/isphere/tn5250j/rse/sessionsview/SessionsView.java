@@ -12,4 +12,6 @@ import biz.isphere.tn5250j.core.sessionsview.CoreSessionsView;
 
 public class SessionsView extends CoreSessionsView {
 
+    public static final String ID = "biz.isphere.tn5250j.rse.sessionsview.SessionsView"; //$NON-NLS-1$
+
 }
