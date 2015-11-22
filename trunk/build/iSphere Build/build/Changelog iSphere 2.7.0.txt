@@ -2,6 +2,7 @@
 
 Changelog: iSphere 2.7.1 beta 4
 -------------------------------
+ • Added iSphere 5250 emulator (based on TN5250J).
  • Added "OK to All" button to the message popup window of the
    message monitor.
  • Reduced wait time on message queue from 20 to 5 seconds.
