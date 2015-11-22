@@ -44,4 +44,10 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="biz.isphere.tn5250j.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>
