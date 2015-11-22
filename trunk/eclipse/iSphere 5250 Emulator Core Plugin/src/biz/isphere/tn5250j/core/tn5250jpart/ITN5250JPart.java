@@ -12,18 +12,18 @@ import org.eclipse.swt.custom.CTabFolder;
 
 public interface ITN5250JPart {
 
-	public CTabFolder getTabFolderSessions();
+    public CTabFolder getTabFolderSessions();
 
-	public void addTN5250JPanel(TN5250JPanel tn5250jPanel);
+    public void addTN5250JPanel(TN5250JPanel tn5250jPanel);
 
-	public void removeTN5250JPanel(TN5250JPanel tn5250jPanel);
+    public void removeTN5250JPanel(TN5250JPanel tn5250jPanel);
 
-	public boolean isMultiSession();
+    public boolean isMultiSession();
 
-	public void setAddSession(boolean value);
-	
-	public void setRemoveSession(boolean value);
+    public void setAddSession(boolean value);
 
-	public void setBindingService(boolean value);
-	
+    public void setRemoveSession(boolean value);
+
+    public void setBindingService(boolean value);
+
 }

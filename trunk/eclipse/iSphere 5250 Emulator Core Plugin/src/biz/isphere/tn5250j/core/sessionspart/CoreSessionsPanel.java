@@ -15,15 +15,16 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 
 public abstract class CoreSessionsPanel extends TN5250JPanel {
-	
-	private static final long serialVersionUID = 1L;
-	
-	public CoreSessionsPanel(TN5250JInfo tn5250jInfo, Session session, Shell shell) {
-		super(tn5250jInfo, session, shell);
-	}
 
-	public String getHost() {
-		return "";
-	}
-	
+    private static final long serialVersionUID = 1L;
+
+    public CoreSessionsPanel(TN5250JInfo tn5250jInfo, Session session, Shell shell) {
+        super(tn5250jInfo, session, shell);
+    }
+
+    @Override
+    public String getHost() {
+        return "";
+    }
+
 }

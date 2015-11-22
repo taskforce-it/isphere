@@ -9,20 +9,20 @@
 package biz.isphere.tn5250j.core.tn5250jpart;
 
 public class ConnectSession extends Thread {
-	
-	private TN5250JPanel tn5250j;
 
-	public ConnectSession(TN5250JPanel tn5250j) {
-		this.tn5250j = tn5250j;
-	}
+    private TN5250JPanel tn5250j;
 
-	public void run() {
-		try {
-			Thread.sleep(500);
-		} 
-		catch (InterruptedException e) {
-		}
-		tn5250j.getSession5250().connect();
-	}
+    public ConnectSession(TN5250JPanel tn5250j) {
+        this.tn5250j = tn5250j;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
+        tn5250j.getSession5250().connect();
+    }
 
 }

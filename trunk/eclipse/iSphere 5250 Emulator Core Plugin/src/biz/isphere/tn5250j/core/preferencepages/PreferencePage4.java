@@ -26,6 +26,7 @@ public class PreferencePage4 extends PreferencePage implements IWorkbenchPrefere
         super();
     }
 
+    @Override
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);

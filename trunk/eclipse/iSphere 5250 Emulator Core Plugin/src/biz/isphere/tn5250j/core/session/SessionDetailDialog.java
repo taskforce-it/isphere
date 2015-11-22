@@ -34,6 +34,7 @@ public class SessionDetailDialog extends Dialog {
         this.session = session;
     }
 
+    @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout(SWT.VERTICAL));
@@ -44,22 +45,26 @@ public class SessionDetailDialog extends Dialog {
         return container;
     }
 
+    @Override
     protected void okPressed() {
         if (sessionDetail.processButtonPressed()) {
             super.okPressed();
         }
     }
 
+    @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
         createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
     }
 
+    @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.Session);
     }
 
+    @Override
     protected Point getInitialSize() {
         Point point = getShell().computeSize(400, SWT.DEFAULT, true);
         return point;

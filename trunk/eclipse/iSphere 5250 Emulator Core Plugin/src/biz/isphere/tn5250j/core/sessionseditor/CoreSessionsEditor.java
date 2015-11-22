@@ -11,9 +11,10 @@ package biz.isphere.tn5250j.core.sessionseditor;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditor;
 
 public abstract class CoreSessionsEditor extends TN5250JEditor {
-	
-	public boolean isMultiSession() {
-		return true;
-	}
-	
+
+    @Override
+    public boolean isMultiSession() {
+        return true;
+    }
+
 }

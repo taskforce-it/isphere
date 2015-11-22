@@ -14,148 +14,146 @@ import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
 public abstract class CoreDesignerInfo extends TN5250JInfo {
-	
-	private String connection;
-	private String session;
-	private String library;
-	private String sourceFile;
-	private String member;
-	private String editor;
-	private String mode;
-	private String currentLibrary;
-	private String libraryList;
-	private Object[] visibleObject;
-	private StructuredViewer structuredViewer;
-	private Object objectToBeSelected;
 
-	public CoreDesignerInfo(ITN5250JPart tn5250jPart) {
-		super(tn5250jPart);
-		connection = "";
-		session = "";
-		library = "";
-		sourceFile = "";
-		member = "";
-		editor = "";
-		mode = "";
-		currentLibrary = "";
-		libraryList = "";
-		visibleObject = null;
-		structuredViewer = null;
-		objectToBeSelected = null;
-	}
+    private String connection;
+    private String session;
+    private String library;
+    private String sourceFile;
+    private String member;
+    private String editor;
+    private String mode;
+    private String currentLibrary;
+    private String libraryList;
+    private Object[] visibleObject;
+    private StructuredViewer structuredViewer;
+    private Object objectToBeSelected;
 
-	public String getConnection() {
-		return connection;
-	}
+    public CoreDesignerInfo(ITN5250JPart tn5250jPart) {
+        super(tn5250jPart);
+        connection = "";
+        session = "";
+        library = "";
+        sourceFile = "";
+        member = "";
+        editor = "";
+        mode = "";
+        currentLibrary = "";
+        libraryList = "";
+        visibleObject = null;
+        structuredViewer = null;
+        objectToBeSelected = null;
+    }
 
-	public void setConnection(String connection) {
-		this.connection = connection;
-	}
+    public String getConnection() {
+        return connection;
+    }
 
-	public String getSession() {
-		return session;
-	}
+    public void setConnection(String connection) {
+        this.connection = connection;
+    }
 
-	public void setSession(String session) {
-		this.session = session;
-	}
+    public String getSession() {
+        return session;
+    }
 
-	public String getLibrary() {
-		return library;
-	}
+    public void setSession(String session) {
+        this.session = session;
+    }
 
-	public void setLibrary(String library) {
-		this.library = library;
-	}
+    public String getLibrary() {
+        return library;
+    }
 
-	public String getSourceFile() {
-		return sourceFile;
-	}
+    public void setLibrary(String library) {
+        this.library = library;
+    }
 
-	public void setSourceFile(String sourceFile) {
-		this.sourceFile = sourceFile;
-	}
+    public String getSourceFile() {
+        return sourceFile;
+    }
 
-	public String getMember() {
-		return member;
-	}
+    public void setSourceFile(String sourceFile) {
+        this.sourceFile = sourceFile;
+    }
 
-	public void setMember(String member) {
-		this.member = member;
-	}
+    public String getMember() {
+        return member;
+    }
 
-	public String getEditor() {
-		return editor;
-	}
+    public void setMember(String member) {
+        this.member = member;
+    }
 
-	public void setEditor(String editor) {
-		this.editor = editor;
-	}
+    public String getEditor() {
+        return editor;
+    }
 
-	public String getMode() {
-		return mode;
-	}
+    public void setEditor(String editor) {
+        this.editor = editor;
+    }
 
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
+    public String getMode() {
+        return mode;
+    }
 
-	public String getCurrentLibrary() {
-		return currentLibrary;
-	}
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
 
-	public void setCurrentLibrary(String currentLibrary) {
-		this.currentLibrary = currentLibrary;
-	}
+    public String getCurrentLibrary() {
+        return currentLibrary;
+    }
 
-	public String getLibraryList() {
-		return libraryList;
-	}
+    public void setCurrentLibrary(String currentLibrary) {
+        this.currentLibrary = currentLibrary;
+    }
 
-	public void setLibraryList(String libraryList) {
-		this.libraryList = libraryList;
-	}
+    public String getLibraryList() {
+        return libraryList;
+    }
 
-	public Object[] getVisibleObject() {
-		return visibleObject;
-	}
+    public void setLibraryList(String libraryList) {
+        this.libraryList = libraryList;
+    }
 
-	public void setVisibleObject(Object[] visibleObject) {
-		this.visibleObject = visibleObject;
-	}
+    public Object[] getVisibleObject() {
+        return visibleObject;
+    }
 
-	public StructuredViewer getStructuredViewer() {
-		return structuredViewer;
-	}
+    public void setVisibleObject(Object[] visibleObject) {
+        this.visibleObject = visibleObject;
+    }
 
-	public void setStructuredViewer(StructuredViewer structuredViewer) {
-		this.structuredViewer = structuredViewer;
-	}
+    public StructuredViewer getStructuredViewer() {
+        return structuredViewer;
+    }
 
-	public Object getObjectToBeSelected() {
-		return objectToBeSelected;
-	}
+    public void setStructuredViewer(StructuredViewer structuredViewer) {
+        this.structuredViewer = structuredViewer;
+    }
 
-	public void setObjectToBeSelected(Object objectToBeSelected) {
-		this.objectToBeSelected = objectToBeSelected;
-	}
+    public Object getObjectToBeSelected() {
+        return objectToBeSelected;
+    }
 
-	public String getTN5250JDescription() {
-		return connection + "-" + library + "/" + sourceFile + "(" + member + ")";
-	}
-	
-	public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-		CoreDesignerInfo designerInfo = (CoreDesignerInfo)tn5250jInfo;
-		if (connection.equals(designerInfo.getConnection()) &&
-			session.equals(designerInfo.getSession()) &&
-			library.equals(designerInfo.getLibrary()) &&
-			sourceFile.equals(designerInfo.getSourceFile()) &&
-			member.equals(designerInfo.getMember())) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
+    public void setObjectToBeSelected(Object objectToBeSelected) {
+        this.objectToBeSelected = objectToBeSelected;
+    }
+
+    @Override
+    public String getTN5250JDescription() {
+        return connection + "-" + library + "/" + sourceFile + "(" + member + ")";
+    }
+
+    @Override
+    public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
+        CoreDesignerInfo designerInfo = (CoreDesignerInfo)tn5250jInfo;
+        if (connection.equals(designerInfo.getConnection()) && session.equals(designerInfo.getSession()) && library.equals(designerInfo.getLibrary())
+            && sourceFile.equals(designerInfo.getSourceFile()) && member.equals(designerInfo.getMember())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
