@@ -21,48 +21,48 @@ import biz.isphere.tn5250j.core.Messages;
 
 public class SessionDetailDialog extends Dialog {
 
-	private SessionDetail sessionDetail;
-	private String sessionDirectory;
-	private int actionType;
-	private Session session;
-	
-	public SessionDetailDialog(Shell parentShell, String sessionDirectory, int actionType, Session session) {
-		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		this.sessionDirectory = sessionDirectory;
-		this.actionType = actionType;
-		this.session = session;
-	}
-	
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new FillLayout(SWT.VERTICAL));
-        	
-		sessionDetail = new SessionDetail(sessionDirectory, actionType, session);
-		sessionDetail.createContents(container);
-				
-		return container;
-	}
-	
-	protected void okPressed() {
-		if (sessionDetail.processButtonPressed()) {
-			super.okPressed();
-		}
-	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("Cancel"), false);
-	}
+    private SessionDetail sessionDetail;
+    private String sessionDirectory;
+    private int actionType;
+    private Session session;
 
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(Messages.getString("Session"));
-	}
-	
-	protected Point getInitialSize() {
-		Point point = getShell().computeSize(400, SWT.DEFAULT, true);	
-		return point;
-	}
+    public SessionDetailDialog(Shell parentShell, String sessionDirectory, int actionType, Session session) {
+        super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        this.sessionDirectory = sessionDirectory;
+        this.actionType = actionType;
+        this.session = session;
+    }
+
+    protected Control createDialogArea(Composite parent) {
+        Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new FillLayout(SWT.VERTICAL));
+
+        sessionDetail = new SessionDetail(sessionDirectory, actionType, session);
+        sessionDetail.createContents(container);
+
+        return container;
+    }
+
+    protected void okPressed() {
+        if (sessionDetail.processButtonPressed()) {
+            super.okPressed();
+        }
+    }
+
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, Messages.OK, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, Messages.Cancel, false);
+    }
+
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Session);
+    }
+
+    protected Point getInitialSize() {
+        Point point = getShell().computeSize(400, SWT.DEFAULT, true);
+        return point;
+    }
 
 }

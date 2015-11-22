@@ -28,128 +28,124 @@ import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 
 public class PreferencePage3 extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private IPreferenceStore store;
-	private Button buttonMSActive;
-	private Text textMSHorizontalSize;
-	private Text textMSVerticalSize;
+    private IPreferenceStore store;
+    private Button buttonMSActive;
+    private Text textMSHorizontalSize;
+    private Text textMSVerticalSize;
 
-	public PreferencePage3() {
-		super();
-		setPreferenceStore(TN5250JCorePlugin.getDefault().getPreferenceStore());
-		store = getPreferenceStore();
-	}
-	
-	public Control createContents(Composite parent) {
+    public PreferencePage3() {
+        super();
+        setPreferenceStore(TN5250JCorePlugin.getDefault().getPreferenceStore());
+        store = getPreferenceStore();
+    }
 
-		Composite container = new Composite(parent, SWT.NONE);
-		final GridLayout gridLayoutx = new GridLayout();
-		gridLayoutx.numColumns = 2;
-		container.setLayout(gridLayoutx);
-		
-		// Minimal size - Active
-		
-		final Label labelMSActive = new Label(container, SWT.NONE);
-		labelMSActive.setText(Messages.getString("Active") + ":");
-		
-		buttonMSActive = new Button(container, SWT.CHECK);
-		
-		// Minimal size - Horizontal size
-		
-		final Label labelMSHorizontalSize = new Label(container, SWT.NONE);
-		labelMSHorizontalSize.setText(Messages.getString("Horizontal_size") + ":");
+    public Control createContents(Composite parent) {
 
-		textMSHorizontalSize = new Text(container, SWT.BORDER);
-		textMSHorizontalSize.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				try {
-					Integer.parseInt(textMSHorizontalSize.getText());
-					setErrorMessage(null);
-					setValid(true);
-				} 
-				catch (NumberFormatException e1) {
-					setErrorMessage(Messages.getString("The_value_in_field_'Horizontal_size'_is_not_valid."));
-					setValid(false);
-				}
-			}
-		});
-		textMSHorizontalSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		textMSHorizontalSize.setTextLimit(4);
-		
-		// Minimal size - Vertical size
-		
-		final Label labelMSVerticalSize = new Label(container, SWT.NONE);
-		labelMSVerticalSize.setText(Messages.getString("Vertical_size") + ":");
+        Composite container = new Composite(parent, SWT.NONE);
+        final GridLayout gridLayoutx = new GridLayout();
+        gridLayoutx.numColumns = 2;
+        container.setLayout(gridLayoutx);
 
-		textMSVerticalSize = new Text(container, SWT.BORDER);
-		textMSVerticalSize.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				try {
-					Integer.parseInt(textMSVerticalSize.getText());
-					setErrorMessage(null);
-					setValid(true);
-				} 
-				catch (NumberFormatException e1) {
-					setErrorMessage(Messages.getString("The_value_in_field_'Vertical_size'_is_not_valid."));
-					setValid(false);
-				}
-			}
-		});
-		textMSVerticalSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		textMSVerticalSize.setTextLimit(4);
+        // Minimal size - Active
 
-		// Miscellaneous
-		
-		setScreenToValues();
-		
-		return container;
-	}
+        final Label labelMSActive = new Label(container, SWT.NONE);
+        labelMSActive.setText(Messages.Active_colon);
 
-	protected void performApply() {
-		setStoreToValues();
-		setScreenToValues();
-		super.performApply();
-	}
+        buttonMSActive = new Button(container, SWT.CHECK);
 
-	protected void performDefaults() {
-		setStoreToDefaults();
-		setScreenToValues();
-		super.performDefaults();
-	}
+        // Minimal size - Horizontal size
 
-	public boolean performOk() {
-		setStoreToValues();
-		return super.performOk();
-	}
-	
-	protected void setStoreToValues() {
-		if (buttonMSActive.getSelection()) {
-			store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "Y");
-		}
-		else {
-			store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "");
-		}
-		store.setValue("BIZ.ISPHERE.TN5250J.MSHSIZE", textMSHorizontalSize.getText());
-		store.setValue("BIZ.ISPHERE.TN5250J.MSVSIZE", textMSVerticalSize.getText());
-	}
-	
-	protected void setStoreToDefaults() {
-		store.setToDefault("BIZ.ISPHERE.TN5250J.MSACTIVE");
-		store.setToDefault("BIZ.ISPHERE.TN5250J.MSHSIZE");
-		store.setToDefault("BIZ.ISPHERE.TN5250J.MSVSIZE");
-	}
-	
-	protected void setScreenToValues() {
-		if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
-			buttonMSActive.setSelection(true);
-		}
-		else {
-			buttonMSActive.setSelection(false);
-		}
-		textMSHorizontalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
-		textMSVerticalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
-	}
-	
-	public void init(IWorkbench workbench) {
-	}
+        final Label labelMSHorizontalSize = new Label(container, SWT.NONE);
+        labelMSHorizontalSize.setText(Messages.Horizontal_size_colon);
+
+        textMSHorizontalSize = new Text(container, SWT.BORDER);
+        textMSHorizontalSize.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                try {
+                    Integer.parseInt(textMSHorizontalSize.getText());
+                    setErrorMessage(null);
+                    setValid(true);
+                } catch (NumberFormatException e1) {
+                    setErrorMessage(Messages.The_value_in_field_Horizontal_size_is_not_valid);
+                    setValid(false);
+                }
+            }
+        });
+        textMSHorizontalSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textMSHorizontalSize.setTextLimit(4);
+
+        // Minimal size - Vertical size
+
+        final Label labelMSVerticalSize = new Label(container, SWT.NONE);
+        labelMSVerticalSize.setText(Messages.Vertical_size_colon);
+
+        textMSVerticalSize = new Text(container, SWT.BORDER);
+        textMSVerticalSize.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                try {
+                    Integer.parseInt(textMSVerticalSize.getText());
+                    setErrorMessage(null);
+                    setValid(true);
+                } catch (NumberFormatException e1) {
+                    setErrorMessage(Messages.The_value_in_field_Vertical_size_is_not_valid);
+                    setValid(false);
+                }
+            }
+        });
+        textMSVerticalSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        textMSVerticalSize.setTextLimit(4);
+
+        // Miscellaneous
+
+        setScreenToValues();
+
+        return container;
+    }
+
+    protected void performApply() {
+        setStoreToValues();
+        setScreenToValues();
+        super.performApply();
+    }
+
+    protected void performDefaults() {
+        setStoreToDefaults();
+        setScreenToValues();
+        super.performDefaults();
+    }
+
+    public boolean performOk() {
+        setStoreToValues();
+        return super.performOk();
+    }
+
+    protected void setStoreToValues() {
+        if (buttonMSActive.getSelection()) {
+            store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "Y");
+        } else {
+            store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "");
+        }
+        store.setValue("BIZ.ISPHERE.TN5250J.MSHSIZE", textMSHorizontalSize.getText());
+        store.setValue("BIZ.ISPHERE.TN5250J.MSVSIZE", textMSVerticalSize.getText());
+    }
+
+    protected void setStoreToDefaults() {
+        store.setToDefault("BIZ.ISPHERE.TN5250J.MSACTIVE");
+        store.setToDefault("BIZ.ISPHERE.TN5250J.MSHSIZE");
+        store.setToDefault("BIZ.ISPHERE.TN5250J.MSVSIZE");
+    }
+
+    protected void setScreenToValues() {
+        if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
+            buttonMSActive.setSelection(true);
+        } else {
+            buttonMSActive.setSelection(false);
+        }
+        textMSHorizontalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
+        textMSVerticalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
+    }
+
+    public void init(IWorkbench workbench) {
+    }
 
 }
