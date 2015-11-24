@@ -211,6 +211,7 @@ public class KeyConfigure extends JDialog implements ActionListener {
         JPanel fp = new JPanel();
 
         JComboBox whichKeys = new JComboBox();
+        whichKeys.setMaximumSize(new Dimension(Short.MAX_VALUE, whichKeys.getPreferredSize().height));
         whichKeys.addItem(LangTool.getString("key.labelKeys"));
         whichKeys.addItem(LangTool.getString("key.labelMacros"));
         whichKeys.addItem(LangTool.getString("key.labelSpecial"));
@@ -248,7 +249,11 @@ public class KeyConfigure extends JDialog implements ActionListener {
         JPanel dp = new JPanel();
         dp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("key.labelMapTo")));
 
-        dp.setLayout(new BoxLayout(dp, BoxLayout.Y_AXIS));
+        dp.setLayout(new BorderLayout());
+
+        // create key map panel
+        JPanel keyMapPanel = new JPanel();
+        keyMapPanel.setLayout(new BorderLayout());
 
         // create primary map panel
         JPanel primeKeyMapPanel = new JPanel();
@@ -302,8 +307,10 @@ public class KeyConfigure extends JDialog implements ActionListener {
         altKeyMapPanel.add(locAlt, BorderLayout.CENTER);
 
         // add the map panels for display
-        dp.add(primeKeyMapPanel);
-        dp.add(altKeyMapPanel);
+        keyMapPanel.add(primeKeyMapPanel, BorderLayout.NORTH);
+        keyMapPanel.add(altKeyMapPanel, BorderLayout.SOUTH);
+
+        dp.add(keyMapPanel, BorderLayout.NORTH);
 
         return dp;
     }
