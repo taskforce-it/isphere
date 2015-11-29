@@ -387,6 +387,19 @@
             typefilter="*">
       </page>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.propertyPages">
+
+      <page
+            class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
+            id="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
+            name="iSphere"
+            objectClass="com.ibm.etools.systems.model.SystemConnection">
+         
+      </page>
+      
+   </extension>
 
    <extension point="org.eclipse.ui.viewActions"> 
       <viewContribution 

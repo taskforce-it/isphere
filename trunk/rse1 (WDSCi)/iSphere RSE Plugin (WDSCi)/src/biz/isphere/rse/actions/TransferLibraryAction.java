@@ -14,6 +14,7 @@ import org.eclipse.emf.common.ui.action.WorkbenchWindowActionDelegate;
 import org.eclipse.jface.action.IAction;
 
 import biz.isphere.core.internal.handler.TransferLibraryHandler;
+import biz.isphere.core.preferences.Preferences;
 
 public class TransferLibraryAction extends WorkbenchWindowActionDelegate {
 
@@ -21,7 +22,12 @@ public class TransferLibraryAction extends WorkbenchWindowActionDelegate {
 
     public void run(IAction action) {
         try {
-            TransferLibraryHandler handler = new TransferLibraryHandler();
+
+            String hostName = Preferences.getInstance().getHostName();
+            int port = Preferences.getInstance().getFtpPortNumber();
+            String iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
+
+            TransferLibraryHandler handler = new TransferLibraryHandler(hostName, port, iSphereLibrary);
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
         } catch (ExecutionException e) {

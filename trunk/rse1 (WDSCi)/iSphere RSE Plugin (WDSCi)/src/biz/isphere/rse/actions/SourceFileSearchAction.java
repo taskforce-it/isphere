@@ -223,7 +223,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
         if (as400 != null && jdbcConnection != null) {
 
-            if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+            if (ISphereHelper.checkISphereLibrary(shell, _connection.getConnectionName())) {
 
                 SearchDialog dialog = new SearchDialog(shell, _searchElements, true);
                 if (dialog.open() == Dialog.OK) {
@@ -235,7 +235,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(as400, jdbcConnection, dialog.getSearchOptions(),
+                    new SearchExec().execute(_connection.getConnectionName(), jdbcConnection, dialog.getSearchOptions(),
                         new ArrayList<SearchElement>(_searchElements.values()), postRun);
 
                 }
