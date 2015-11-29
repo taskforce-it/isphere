@@ -217,7 +217,7 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
         Properties propertySet = ensurePropertySet(host);
 
-        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, Preferences.getInstance().getISphereLibrary());
+        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, Preferences.getInstance().getISphereLibrary()); // CHECKED
         loadPropertyValue(propertySet, ConnectionProperties.USE_CONNECTION_SPECIFIC_SETTINGS, Boolean.toString(false));
 
         return propertySet;
