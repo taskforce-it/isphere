@@ -12,6 +12,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
@@ -23,6 +24,8 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     private String mode;
     private Image titleImage;
 
+    // CMONE
+    @CMOne
     public AbstractObjectEditorInput(AS400 anAS400, RemoteObject anRemoteObject, String aMode, String anImageID) {
         as400 = anAS400;
         remoteObject = anRemoteObject;
