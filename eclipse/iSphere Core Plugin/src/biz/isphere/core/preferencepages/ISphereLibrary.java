@@ -116,7 +116,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         Label labelIShereLibraryVersion = new Label(container, SWT.NONE);
         labelIShereLibraryVersion.setLayoutData(createLabelLayoutData());
-        labelIShereLibraryVersion.setText("Version:");
+        labelIShereLibraryVersion.setText(Messages.Version_colon);
 
         textISphereLibraryVersion = new Label(container, SWT.NONE);
         textISphereLibraryVersion.setLayoutData(createTextLayoutData());
