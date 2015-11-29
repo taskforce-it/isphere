@@ -18,6 +18,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 
@@ -78,6 +79,8 @@ public class MessageFileEditor extends EditorPart {
         return false;
     }
 
+    // CMONE
+    @CMOne
     public static void openEditor(AS400 as400, RemoteObject remoteObject, String mode) {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
             try {
@@ -89,5 +92,5 @@ public class MessageFileEditor extends EditorPart {
             }
         }
     }
-    
+
 }
