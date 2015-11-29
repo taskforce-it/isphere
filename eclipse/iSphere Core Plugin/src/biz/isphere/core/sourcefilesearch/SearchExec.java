@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchOptions;
 
@@ -354,7 +355,7 @@ public class SearchExec {
 
     private SearchResult[] _searchResults = null;
 
-    // This method will be used by CMOne
+    @CMOne(info = "This method will be used by CMOne")
     public SearchResult[] executeJoin(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements) {
 
         Search search = new Search(_as400, _jdbcConnection, _searchOptions, _searchElements, null);

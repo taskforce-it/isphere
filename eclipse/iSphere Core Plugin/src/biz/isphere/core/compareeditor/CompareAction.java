@@ -29,6 +29,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.Member;
 
 public class CompareAction {
@@ -41,8 +42,7 @@ public class CompareAction {
     private String editorTitle;
     private CompareInput fInput;
 
-    // Don`t change this constructor due to CMOne compatibility reasons
-
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
 

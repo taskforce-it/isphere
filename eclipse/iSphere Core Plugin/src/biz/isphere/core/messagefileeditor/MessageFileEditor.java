@@ -79,7 +79,6 @@ public class MessageFileEditor extends EditorPart {
         return false;
     }
 
-    // CMONE
     @CMOne
     public static void openEditor(AS400 as400, RemoteObject remoteObject, String mode) {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
@@ -92,5 +91,4 @@ public class MessageFileEditor extends EditorPart {
             }
         }
     }
-
 }
