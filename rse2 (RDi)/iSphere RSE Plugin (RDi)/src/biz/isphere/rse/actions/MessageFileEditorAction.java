@@ -62,7 +62,7 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
                         if (as400 != null) {
 
                             RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
-                            MessageFileEditor.openEditor(as400, remoteObject, IEditor.EDIT);
+                            MessageFileEditor.openEditor(connectionName, remoteObject, IEditor.EDIT);
 
                         }
                     }

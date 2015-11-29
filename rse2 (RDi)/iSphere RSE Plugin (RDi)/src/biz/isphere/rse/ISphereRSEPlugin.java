@@ -18,12 +18,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import biz.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
@@ -61,11 +63,15 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         ISpherePlugin.setSearchArgumentsListEditor(true);
         ISpherePlugin.setSearchArgumentsListEditorProvider(new SearchArgumentsListEditorProvider());
         setupAdapters();
+
+        RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(ConnectionManager.getInstance());
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
+
+        ConnectionManager.dispose();
     }
 
     public static ISphereRSEPlugin getDefault() {
@@ -77,7 +83,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
     }
 
-    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    @CMOne(info="Don`t change this method due to CMOne compatibility reasons")
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
@@ -119,5 +125,4 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
     public static void logError(String message, Exception e) {
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
-
 }
