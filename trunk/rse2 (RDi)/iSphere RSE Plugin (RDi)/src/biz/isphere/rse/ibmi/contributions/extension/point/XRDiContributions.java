@@ -13,7 +13,10 @@ import java.sql.Connection;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -28,6 +31,16 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
  */
 public class XRDiContributions implements IIBMiHostContributions {
 
+    public String getISphereLibrary(String connectionName) {
+        
+        ConnectionProperties connectionProperties = ConnectionManager.getInstance().getConnectionProperties(connectionName);
+        if (connectionProperties != null && connectionProperties.useISphereLibraryName()) {
+            return connectionProperties.getISphereLibraryName();
+        }
+
+        return Preferences.getInstance().getISphereLibrary(); // CHECKED
+    }
+    
     /**
      * Finds a matching system for a given host name.
      * 

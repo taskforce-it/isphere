@@ -69,6 +69,15 @@
             properties="subsystem"
             type="java.lang.Object">
 		</propertyTester>
+
+      	<propertyTester
+            class="biz.isphere.adapter.propertytester.IHostPropertyTester"
+            id="biz.isphere.adapter.propertytester.IHostPropertyTester"
+            namespace="biz.isphere.adapter.propertytester.ihost"
+            properties="id"
+            type="java.lang.Object">
+		</propertyTester>
+		
    </extension>
    
    <extension
@@ -641,6 +650,7 @@
    
    <extension
          point="org.eclipse.ui.propertyPages">
+         
       <page
             class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
             id="biz.isphere.rse.spooledfiles.SpooledFileProperties"
@@ -652,6 +662,19 @@
             typecategoryfilter="*"
             typefilter="*">
       </page>
+
+      <page
+            class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
+            id="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
+            name="%ConnectionProperties_iSphere"
+            objectClass="org.eclipse.rse.core.model.IHost">
+            
+         <enabledWhen>
+            <test property="biz.isphere.adapter.propertytester.ihost.id" value="org.eclipse.rse.systemtype.iseries" forcePluginActivation="true" />
+         </enabledWhen>
+         
+      </page>
+      
    </extension>
 
    <extension point="org.eclipse.ui.viewActions"> 

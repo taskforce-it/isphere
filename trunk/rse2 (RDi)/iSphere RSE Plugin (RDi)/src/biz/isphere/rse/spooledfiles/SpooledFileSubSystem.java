@@ -19,13 +19,12 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.rse.connection.ConnectionManager;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
@@ -44,7 +43,7 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
         InterruptedException {
         SpooledFileResource[] spooledFileResources;
         try {
-            SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(),
+            SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getConnectionName(),
                 getToolboxJDBCConnection(), filterString);
             spooledFileResources = new SpooledFileResource[spooledFiles.length];
             for (int i = 0; i < spooledFileResources.length; i++) {
@@ -87,13 +86,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
         return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
     }
 
-    public AS400 getToolboxAS400Object() {
-        AS400 as400 = null;
-        try {
-            as400 = IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
-        } catch (SystemMessageException e) {
-        }
-        return as400;
+    public String getConnectionName() {
+        return ConnectionManager.getConnectionName(getHost());
     }
 
     public Connection getToolboxJDBCConnection() {

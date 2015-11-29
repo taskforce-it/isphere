@@ -16,14 +16,23 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import biz.isphere.core.internal.handler.TransferLibraryHandler;
+import biz.isphere.core.preferences.Preferences;
 
+/**
+ * This action is assigned to menu option "Transfer iSphere Library".
+ */
 public class TransferLibraryAction implements IWorkbenchWindowActionDelegate {
 
     public static final String ID = "biz.isphere.rse.actions.TransferLibraryAction";
 
     public void run(IAction action) {
         try {
-            TransferLibraryHandler handler = new TransferLibraryHandler();
+
+            String hostName = Preferences.getInstance().getHostName();
+            int port = Preferences.getInstance().getFtpPortNumber();
+            String iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
+
+            TransferLibraryHandler handler = new TransferLibraryHandler(hostName, port, iSphereLibrary);
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
         } catch (ExecutionException e) {

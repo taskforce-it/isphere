@@ -421,7 +421,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             IHost tHost = (IHost)tSelection.getFirstElement();
 
             IBMiConnection tConnection = IBMiConnection.getConnection(tHost);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject())) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getConnectionName())) {
                 return false;
             }
 
