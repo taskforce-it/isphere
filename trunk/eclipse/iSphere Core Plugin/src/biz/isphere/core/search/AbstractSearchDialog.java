@@ -31,6 +31,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractSearchDialog extends XDialog implements Listener {
@@ -55,8 +56,9 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private static final String TO_COLUMN = "toColumn";
     private static final String FROM_COLUMN = "fromColumn";
 
-    // CMOne settings
+    @CMOne(info = "CMOne settings")
     private static final String TEXT_STRING = "textString";
+    @CMOne(info = "CMOne settings")
     private static final String IGNORE_CASE = "ignoreCase";
 
     public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption) {
@@ -99,45 +101,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         groupAttributes.setLayout(new GridLayout(2, false));
 
         if (!_editor) {
-
-            /*
-             * Create dialog for CMOne
-             */
-
-            String searchString = getSearchArgument();
-            if (searchString.equals("")) {
-                searchString = Messages.Enter_search_string_here;
-            }
-
-            Label labelString = new Label(groupAttributes, SWT.NONE);
-            labelString.setText(Messages.String_colon);
-
-            textString = WidgetFactory.createText(groupAttributes);
-            textString.setText(searchString);
-            textString.setTextLimit(40);
-            textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            textString.addModifyListener(new ModifyListener() {
-                public void modifyText(ModifyEvent event) {
-                    setOKButtonEnablement();
-                }
-            });
-
-            Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
-            labelCaseSensitive.setText(Messages.Case_sensitive_colon);
-
-            Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
-            GridLayout editableLayout = new GridLayout();
-            editableLayout.numColumns = 2;
-            groupCaseSensitive.setLayout(editableLayout);
-
-            buttonCaseNo = WidgetFactory.createRadioButton(groupCaseSensitive);
-            buttonCaseNo.setText(Messages.No);
-            buttonCaseNo.setSelection(true);
-
-            buttonCaseYes = WidgetFactory.createRadioButton(groupCaseSensitive);
-            buttonCaseYes.setText(Messages.Yes);
-            buttonCaseYes.setSelection(false);
-
+            createDialogForCMOne(groupAttributes);
         }
 
         Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
@@ -202,6 +166,44 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         loadScreenValues();
 
         return container;
+    }
+
+    @CMOne(info = "Create dialog for CMOne")
+    private void createDialogForCMOne(Group groupAttributes) {
+
+        String searchString = getSearchArgument();
+        if (searchString.equals("")) {
+            searchString = Messages.Enter_search_string_here;
+        }
+
+        Label labelString = new Label(groupAttributes, SWT.NONE);
+        labelString.setText(Messages.String_colon);
+
+        textString = WidgetFactory.createText(groupAttributes);
+        textString.setText(searchString);
+        textString.setTextLimit(40);
+        textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        textString.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                setOKButtonEnablement();
+            }
+        });
+
+        Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
+        labelCaseSensitive.setText(Messages.Case_sensitive_colon);
+
+        Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
+        GridLayout editableLayout = new GridLayout();
+        editableLayout.numColumns = 2;
+        groupCaseSensitive.setLayout(editableLayout);
+
+        buttonCaseNo = WidgetFactory.createRadioButton(groupCaseSensitive);
+        buttonCaseNo.setText(Messages.No);
+        buttonCaseNo.setSelection(true);
+
+        buttonCaseYes = WidgetFactory.createRadioButton(groupCaseSensitive);
+        buttonCaseYes.setText(Messages.Yes);
+        buttonCaseYes.setSelection(false);
     }
 
     public void setOKButtonEnablement() {

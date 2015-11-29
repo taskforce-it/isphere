@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
@@ -64,6 +65,7 @@ public class SearchResult {
      * 
      * @return host name
      */
+    @CMOne(info = "This method is used by CMOne and must not be used by the iSphere plug-in.")
     public String getHostName() {
         return hostName;
     }
@@ -75,6 +77,7 @@ public class SearchResult {
      * 
      * @param hostName
      */
+    @CMOne(info = "This method is for compatibility to CMOne.")
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }

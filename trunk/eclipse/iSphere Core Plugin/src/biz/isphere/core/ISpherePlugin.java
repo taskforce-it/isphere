@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
@@ -262,7 +263,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_OPEN, getImageDescriptor(IMAGE_OPEN));
     }
 
-    // Don`t change this method due to CMOne compatibility reasons
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
