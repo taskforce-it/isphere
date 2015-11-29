@@ -68,7 +68,7 @@ public class ISphereHelper {
 
     @CMOne(info = "This method is used by CMOne by MessageFileEditor.openEditor()")
     public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
-        return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary());
+        return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary()); // CHECKED
     }
 
     public static boolean checkISphereLibrary(Shell shell, AS400 as400, String library) {
