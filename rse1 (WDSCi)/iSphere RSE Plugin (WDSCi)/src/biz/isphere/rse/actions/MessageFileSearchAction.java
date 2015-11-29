@@ -225,7 +225,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
         if (as400 != null && connectionName != null && jdbcConnection != null) {
 
-            if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+            if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
 
                 SearchDialog dialog = new SearchDialog(shell, _searchElements, true);
                 if (dialog.open() == Dialog.OK) {

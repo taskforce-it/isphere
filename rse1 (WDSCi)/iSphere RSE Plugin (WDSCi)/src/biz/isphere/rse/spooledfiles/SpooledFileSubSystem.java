@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.IISeriesSubSystem;
@@ -59,7 +60,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
         java.lang.InterruptedException {
         SpooledFileResource[] spooledFileResources;
         try {
-            SpooledFile[] spooledFiles = base.internalResolveFilterString(SystemPlugin.getActiveWorkbenchShell(), getToolboxAS400Object(),
+            SpooledFile[] spooledFiles = base.internalResolveFilterString(SystemPlugin.getActiveWorkbenchShell(), getConnectionName(),
                 getToolboxJDBCConnection(), filterString);
             spooledFileResources = new SpooledFileResource[spooledFiles.length];
             for (int i = 0; i < spooledFileResources.length; i++) {
@@ -104,6 +105,10 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
 
     public FileSubSystem getObjectSubSystem() {
         return ISeriesConnection.getConnection(getSystemConnection()).getISeriesFileSubSystem();
+    }
+
+    public String getConnectionName() {
+        return ConnectionManager.getConnectionName(getSystemConnection());
     }
 
     public AS400 getToolboxAS400Object() {

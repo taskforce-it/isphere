@@ -22,7 +22,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.adapter,
  biz.isphere.base,
  org.eclipse.emf.common.ui,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ com.ibm.etools.systems.logging
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
  biz.isphere.rse.compareeditor,

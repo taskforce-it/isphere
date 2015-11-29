@@ -401,7 +401,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             SystemConnection tHost = (SystemConnection)tSelection.getFirstElement();
 
             ISeriesConnection tConnection = ISeriesConnection.getConnection(tHost);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getAS400ToolboxObject(getShell()))) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getConnectionName())) {
                 return false;
             }
 
@@ -451,7 +451,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 }
             }
 
-            new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getJDBCConnection(null, false), searchOptions,
+            new SearchExec().execute(tConnection.getConnectionName(), tConnection.getJDBCConnection(null, false), searchOptions,
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
