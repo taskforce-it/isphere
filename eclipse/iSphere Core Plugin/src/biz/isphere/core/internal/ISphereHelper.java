@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -59,6 +61,12 @@ public class ISphereHelper {
         return buildDate;
     }
 
+    public static boolean checkISphereLibrary(Shell shell, String connectionName) {
+        AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary(connectionName));
+    }
+
+    @CMOne(info = "This method is used by CMOne by MessageFileEditor.openEditor()")
     public static boolean checkISphereLibrary(Shell shell, AS400 as400) {
         return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary());
     }

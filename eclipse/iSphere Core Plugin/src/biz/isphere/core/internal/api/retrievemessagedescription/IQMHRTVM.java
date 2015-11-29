@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 import biz.isphere.core.messagefileeditor.MessageDescription;
@@ -65,7 +66,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * @throws PropertyVetoException
      */
     private IQMHRTVM(AS400 system, String connectionName, String format) {
-        super(system, "IQMHRTVM", ISpherePlugin.getISphereLibrary());
+        super(system, "IQMHRTVM", IBMiHostContributionsHandler.getISphereLibrary(connectionName));
 
         this.connectionName = connectionName;
         this.format = format;
@@ -114,7 +115,6 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * Retrieves all message descriptions of the message file.
      * 
      * @param monitor - monitor
-     * 
      * @return array of message descriptions
      */
     public MessageDescription[] retrieveAllMessageDescriptions() {
@@ -125,7 +125,6 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * Retrieves all message descriptions of the message file.
      * 
      * @param monitor - monitor
-     * 
      * @return array of message descriptions
      */
     public MessageDescription[] retrieveAllMessageDescriptions(IProgressMonitor monitor) {
@@ -214,11 +213,11 @@ public class IQMHRTVM extends APIProgramCallDocument {
             return new IQMHRTVMResult(getSystem(), connectionName, messageFile, library, getParameterList()[0].getOutputData(), format);
         }
 
-//        AS400Message[] msgList = getMessageList();
-//        for (int j = 0; j < msgList.length; j++) {
-//            ISpherePlugin.logError(msgList[j].getID() + " - " + msgList[j].getText(), null); //$NON-NLS-1$
-//        }
-//        ISpherePlugin.logError("*** Call to IQMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
+        // AS400Message[] msgList = getMessageList();
+        // for (int j = 0; j < msgList.length; j++) {
+        //            ISpherePlugin.logError(msgList[j].getID() + " - " + msgList[j].getText(), null); //$NON-NLS-1$
+        // }
+        //        ISpherePlugin.logError("*** Call to IQMHRTVM failed. See previous messages ***", null); //$NON-NLS-1$
         return null;
     }
 

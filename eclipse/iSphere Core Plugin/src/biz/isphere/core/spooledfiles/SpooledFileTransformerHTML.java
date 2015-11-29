@@ -12,8 +12,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import biz.isphere.core.ISpherePlugin;
-
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.SpooledFile;
 
@@ -21,13 +19,13 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
 
     private BufferedWriter writer = null;
 
-    public SpooledFileTransformerHTML(SpooledFile spooledFile) {
-        super(spooledFile);
+    public SpooledFileTransformerHTML(String connectionName, SpooledFile spooledFile) {
+        super(connectionName, spooledFile);
     }
 
     @Override
     protected QSYSObjectPathName getWorkstationCustomizationObject() {
-        return new QSYSObjectPathName(ISpherePlugin.getISphereLibrary(), "SPLFHTML", "WSCST");
+        return new QSYSObjectPathName(getISphereLibrary(), "SPLFHTML", "WSCST");
     }
 
     @Override

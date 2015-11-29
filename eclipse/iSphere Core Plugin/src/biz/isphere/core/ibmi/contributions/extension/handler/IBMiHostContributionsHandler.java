@@ -24,14 +24,25 @@ public class IBMiHostContributionsHandler {
     private static final String EXTENSION_ID = "biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions";
 
     public static boolean hasContribution() {
-        
+
         if (getContributionsFactory() == null) {
             return false;
         }
-        
+
         return true;
     }
-    
+
+    public static String getISphereLibrary(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getISphereLibrary(connectionName);
+    }
+
     public static AS400 findSystem(String hostName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -42,7 +53,7 @@ public class IBMiHostContributionsHandler {
 
         return factory.findSystem(hostName);
     }
-    
+
     public static AS400 getSystem(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -72,7 +83,7 @@ public class IBMiHostContributionsHandler {
      * @return RDi contributions factory or null
      */
     private static IIBMiHostContributions getContributionsFactory() {
-        
+
         IIBMiHostContributions factory = null;
 
         IExtensionRegistry tRegistry = Platform.getExtensionRegistry();

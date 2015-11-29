@@ -12,12 +12,10 @@ import java.sql.Connection;
 
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.as400.access.AS400;
-
 public class SpooledFileBaseSubSystem {
 
-    public SpooledFile[] internalResolveFilterString(Shell shell, AS400 as400, Connection jdbcConnection, String filterString) {
-        return SpooledFileFactory.getSpooledFiles(shell, as400, jdbcConnection, new SpooledFileFilter(filterString));
+    public SpooledFile[] internalResolveFilterString(Shell shell, String connectionName, Connection jdbcConnection, String filterString) {
+        return SpooledFileFactory.getSpooledFiles(shell, connectionName, jdbcConnection, new SpooledFileFilter(filterString));
     }
 
 }

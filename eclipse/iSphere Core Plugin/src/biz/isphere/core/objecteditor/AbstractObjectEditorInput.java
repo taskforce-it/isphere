@@ -13,6 +13,7 @@ import org.eclipse.ui.IEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
@@ -24,10 +25,16 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     private String mode;
     private Image titleImage;
 
-    // CMONE
     @CMOne
     public AbstractObjectEditorInput(AS400 anAS400, RemoteObject anRemoteObject, String aMode, String anImageID) {
         as400 = anAS400;
+        remoteObject = anRemoteObject;
+        mode = aMode;
+        titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);
+    }
+
+    public AbstractObjectEditorInput(String connectionName, RemoteObject anRemoteObject, String aMode, String anImageID) {
+        as400 = IBMiHostContributionsHandler.getSystem(connectionName);
         remoteObject = anRemoteObject;
         mode = aMode;
         titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);

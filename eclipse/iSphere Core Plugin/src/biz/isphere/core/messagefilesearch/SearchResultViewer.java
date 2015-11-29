@@ -184,7 +184,7 @@ public class SearchResultViewer {
                         String description = _searchResult.getDescription();
 
                         RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
-                        MessageFileEditor.openEditor(_searchResult.getAS400(), remoteObject, IEditor.EDIT);
+                        MessageFileEditor.openEditor(_searchResult.getConnectionName(), remoteObject, IEditor.EDIT);
                     }
                 }
             }
@@ -423,7 +423,7 @@ public class SearchResultViewer {
                 String description = _searchResult.getDescription();
 
                 RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
-                MessageFileEditor.openEditor(_searchResult.getAS400(), remoteObject, IEditor.EDIT);
+                MessageFileEditor.openEditor(connectionName, remoteObject, IEditor.EDIT);
             }
         }
     }

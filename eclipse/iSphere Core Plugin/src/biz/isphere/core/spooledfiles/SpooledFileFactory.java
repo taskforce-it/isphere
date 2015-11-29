@@ -17,17 +17,19 @@ import java.util.ArrayList;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 
 import com.ibm.as400.access.AS400;
 
 public class SpooledFileFactory {
 
-    public static SpooledFile[] getSpooledFiles(Shell shell, AS400 as400, Connection jdbcConnection, SpooledFileFilter filter) {
+    public static SpooledFile[] getSpooledFiles(Shell shell, String connectionName, Connection jdbcConnection, SpooledFileFilter filter) {
 
-        if (ISphereHelper.checkISphereLibrary(shell, as400)) {
+        if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
 
-            String iSphereLibrary = ISpherePlugin.getISphereLibrary();
+            AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+            String iSphereLibrary = ISpherePlugin.getISphereLibrary(connectionName);
 
             String currentLibrary = null;
             try {
@@ -94,9 +96,8 @@ public class SpooledFileFactory {
 
                             try {
 
-                                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + ISpherePlugin.getISphereLibrary()
-                                    + _separator + "SPLF WHERE SFHDL = ? ORDER BY SFHDL, SFCNT", ResultSet.TYPE_SCROLL_INSENSITIVE,
-                                    ResultSet.CONCUR_READ_ONLY);
+                                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + iSphereLibrary + _separator
+                                    + "SPLF WHERE SFHDL = ? ORDER BY SFHDL, SFCNT", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                                 preparedStatementSelect.setString(1, Integer.toString(handle));
                                 resultSet = preparedStatementSelect.executeQuery();
 
@@ -120,6 +121,7 @@ public class SpooledFileFactory {
                                     _spooledFile.setCopies(resultSet.getInt("SFCOPIES"));
                                     _spooledFile.setPages(resultSet.getInt("SFPAGES"));
                                     _spooledFile.setCurrentPage(0);
+                                    _spooledFile.setConnectionName(connectionName);
 
                                     arrayListSpooledFiles.add(_spooledFile);
 

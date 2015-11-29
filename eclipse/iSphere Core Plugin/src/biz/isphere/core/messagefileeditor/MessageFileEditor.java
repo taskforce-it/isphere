@@ -79,12 +79,24 @@ public class MessageFileEditor extends EditorPart {
         return false;
     }
 
-    @CMOne
+    @CMOne(info = "This method is used by CMOne")
     public static void openEditor(AS400 as400, RemoteObject remoteObject, String mode) {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
             try {
 
                 MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, remoteObject, mode);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
+
+            } catch (PartInitException e) {
+            }
+        }
+    }
+
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) {
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
+            try {
+
+                MessageFileEditorInput editorInput = new MessageFileEditorInput(connectionName, remoteObject, mode);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
 
             } catch (PartInitException e) {
