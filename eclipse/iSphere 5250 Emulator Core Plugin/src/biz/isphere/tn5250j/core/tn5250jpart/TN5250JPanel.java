@@ -201,7 +201,7 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         } else if (parameter.equals("SESSION_CONNECT_LIBRARY")) {
             String library = session.getLibrary();
             if (library.equals("%ISPHERE%")) {
-                library = ISpherePlugin.getISphereLibrary();
+                library = ISpherePlugin.getISphereLibrary(tn5250jInfo.getRSEConnection());
             }
             return library;
         } else if (parameter.equals("SESSION_CONNECT_MENU")) {

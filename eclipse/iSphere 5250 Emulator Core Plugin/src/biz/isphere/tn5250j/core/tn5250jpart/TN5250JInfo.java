@@ -36,4 +36,6 @@ public abstract class TN5250JInfo {
         return tn5250jPart;
     }
 
+    public abstract String getRSEConnection();
+
 }
