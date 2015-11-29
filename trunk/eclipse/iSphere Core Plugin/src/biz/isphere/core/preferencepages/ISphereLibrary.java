@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -36,8 +35,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
-import biz.isphere.core.internal.TransferISphereLibrary;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -125,13 +124,14 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         Button buttonTransfer = WidgetFactory.createPushButton(container);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent event) {
                 String hostName = textHostName.getText();
                 int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-                TransferISphereLibrary statusDialog = new TransferISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-                    .getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM, iSphereLibrary, hostName, ftpPort);
-                if (statusDialog.connect()) {
-                    statusDialog.open();
+                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary);
+                try {
+                    handler.execute(null);
+                } catch (Throwable e) {
+                    ISpherePlugin.logError("Failed to transfer iSphere library.", e); //$NON-NLS-1$
                 }
             }
         });
@@ -175,7 +175,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         ISpherePlugin.getDefault();
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText("" + Preferences.getInstance().getFtpPortNumber());
-        iSphereLibrary = Preferences.getInstance().getISphereLibrary();
+        iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
 
         setScreenValues();
     }

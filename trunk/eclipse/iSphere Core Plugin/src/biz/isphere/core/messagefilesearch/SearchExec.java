@@ -72,7 +72,7 @@ public class SearchExec {
             this._searchElements = _searchElements;
             this._searchPostRun = _searchPostRun;
 
-            iSphereLibrary = ISpherePlugin.getISphereLibrary();
+            iSphereLibrary = ISpherePlugin.getISphereLibrary(this._connectionName);
 
         }
 
@@ -105,7 +105,7 @@ public class SearchExec {
 
                         if (_handle > 0) {
 
-                            SearchElement.setSearchElements(_jdbcConnection, _handle, _searchElements);
+                            SearchElement.setSearchElements(_connectionName, _jdbcConnection, _handle, _searchElements);
 
                             int _numberOfSearchElements = new XFNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
@@ -147,7 +147,8 @@ public class SearchExec {
                             monitor.done();
 
                             if (!_cancel) {
-                                _searchResults = SearchResult.getSearchResults(_jdbcConnection, _handle, _as400, _connectionName, _hostName);
+                                _searchResults = SearchResult.getSearchResults(iSphereLibrary, _jdbcConnection, _handle, _as400, _connectionName,
+                                    _hostName);
                             }
 
                             new XFNDSTR_clear().run(_as400, _handle);

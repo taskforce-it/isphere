@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
@@ -122,7 +121,8 @@ public class SearchResult {
         this.messageIds = messageIds;
     }
 
-    public static SearchResult[] getSearchResults(Connection jdbcConnection, int handle, AS400 as400, String connectionName, String hostName) {
+    public static SearchResult[] getSearchResults(String iSphereLibrary, Connection jdbcConnection, int handle, AS400 as400, String connectionName,
+        String hostName) {
 
         String _separator;
         try {
@@ -139,7 +139,7 @@ public class SearchResult {
 
         try {
 
-            preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + ISpherePlugin.getISphereLibrary() + _separator
+            preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + iSphereLibrary + _separator
                 + "XFNDSTRO WHERE XOHDL = ? ORDER BY XOHDL, XOLIB, XOMSGF", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             preparedStatementSelect.setString(1, Integer.toString(handle));
             resultSet = preparedStatementSelect.executeQuery();
@@ -176,7 +176,7 @@ public class SearchResult {
 
                     _searchResult = new SearchResult();
                     _searchResult.setConnectionName(connectionName);
-                    _searchResult.setHostName(hostName);
+                    _searchResult.setHostName(hostName); // CMOne compatibility
                     _searchResult.setLibrary(library);
                     _searchResult.setMessageFile(messageFile);
 

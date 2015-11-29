@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintParameterList;
@@ -40,13 +41,20 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
      */
     protected static final byte DC1 = 0x11;
 
+    private String connectionName;
+
     private SpooledFile spooledFile;
 
     private DecimalFormat jobNumberFormat;
 
-    public AbstractSpooledFileTransformer(SpooledFile spooledFile) {
+    public AbstractSpooledFileTransformer(String connectionName, SpooledFile spooledFile) {
+        this.connectionName = connectionName;
         this.spooledFile = spooledFile;
         this.jobNumberFormat = new DecimalFormat("000000");
+    }
+
+    protected String getISphereLibrary() {
+        return ISpherePlugin.getISphereLibrary(connectionName);
     }
 
     protected String getName() {

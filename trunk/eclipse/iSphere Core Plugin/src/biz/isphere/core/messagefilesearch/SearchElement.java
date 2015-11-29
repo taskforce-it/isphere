@@ -61,7 +61,7 @@ public class SearchElement {
         this.data = data;
     }
 
-    public static void setSearchElements(Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
+    public static void setSearchElements(String connectionName, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
         String _separator;
         try {
@@ -88,7 +88,8 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + ISpherePlugin.getISphereLibrary() + _separator + "XFNDSTRI (XIHDL, XILIB, XIMSGF) VALUES");
+                sqlInsert.append("INSERT INTO " + ISpherePlugin.getISphereLibrary(connectionName) + _separator
+                    + "XFNDSTRI (XIHDL, XILIB, XIMSGF) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {

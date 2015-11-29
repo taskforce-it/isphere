@@ -25,6 +25,7 @@ import org.osgi.framework.Constants;
 
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
@@ -278,8 +279,14 @@ public class ISpherePlugin extends AbstractUIPlugin {
         return installURL;
     }
 
+    public static String getISphereLibrary(String connectionName) {
+        String library = IBMiHostContributionsHandler.getISphereLibrary(connectionName);
+        return library;
+    }
+
     public static String getISphereLibrary() {
-        return Preferences.getInstance().getISphereLibrary();
+    	String library = Preferences.getInstance().getISphereLibrary(); // CHECKED
+        return library;
     }
 
     public static IEditor getEditor() {

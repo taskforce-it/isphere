@@ -21,9 +21,28 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.TransferISphereLibrary;
-import biz.isphere.core.preferences.Preferences;
 
+/**
+ * This class is the action handler of the "TransferLibraryAction".
+ */
 public class TransferLibraryHandler extends AbstractHandler implements IHandler {
+
+    private String hostName;
+    private int ftpPort;
+    private String iSphereLibrary;
+
+    /**
+     * Default constructor, used by the Eclipse framework.
+     */
+    public TransferLibraryHandler() {
+        super();
+    }
+
+    public TransferLibraryHandler(String hostName, int ftpPort, String iSphereLibrary) {
+        this.hostName = hostName;
+        this.ftpPort = ftpPort;
+        this.iSphereLibrary = iSphereLibrary;
+    }
 
     /*
      * (non-Javadoc)
@@ -36,10 +55,6 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
         try {
 
             Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-
-            String hostName = Preferences.getInstance().getHostName();
-            int ftpPort = Preferences.getInstance().getFtpPortNumber();
-            String iSphereLibrary = Preferences.getInstance().getISphereLibrary();
 
             if (StringHelper.isNullOrEmpty(iSphereLibrary)) {
                 MessageDialog.openError(shell, Messages.Error, Messages.iSphere_library_not_set_in_preferences);

@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import biz.isphere.core.ISpherePlugin;
-
 public class SearchElement {
 
     private String library;
@@ -71,7 +69,7 @@ public class SearchElement {
         this.data = data;
     }
 
-    public static void setSearchElements(Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
+    public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
         String _separator;
         try {
@@ -98,7 +96,7 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + ISpherePlugin.getISphereLibrary() + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR) VALUES");
+                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {

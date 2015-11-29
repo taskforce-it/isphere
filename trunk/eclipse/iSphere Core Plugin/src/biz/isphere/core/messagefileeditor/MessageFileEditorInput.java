@@ -23,6 +23,10 @@ public class MessageFileEditorInput extends AbstractObjectEditorInput {
         super(anAS400, remoteObject, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
     }
 
+    public MessageFileEditorInput(String connectionName, RemoteObject remoteObject, String aMode) {
+        super(connectionName, remoteObject, aMode, ISpherePlugin.IMAGE_MESSAGE_FILE);
+    }
+
     public boolean exists() {
         return false;
     }

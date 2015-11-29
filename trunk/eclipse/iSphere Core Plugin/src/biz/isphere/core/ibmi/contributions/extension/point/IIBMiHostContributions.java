@@ -14,6 +14,8 @@ import com.ibm.as400.access.AS400;
 
 public interface IIBMiHostContributions {
 
+    public String getISphereLibrary(String connectionName);
+
     /**
      * Returns an AS400 object for a given host name.
      * 
@@ -21,7 +23,7 @@ public interface IIBMiHostContributions {
      * @return AS400 object that is associated to the host
      */
     public AS400 findSystem(String hostName);
-    
+
     /**
      * Returns an AS400 object for a given connection name.
      * 

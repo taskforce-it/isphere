@@ -627,8 +627,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         if (input.getLeftMessageFile() != null && !isLeftMessageFileValid) {
             String connectionName = input.getLeftMessageFile().getConnectionName();
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), system)) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
                 isLeftMessageFileValid = false;
@@ -639,8 +638,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         if (input.getRightMessageFile() != null && !isRightMessageFileValid) {
             String connectionName = input.getRightMessageFile().getConnectionName();
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), system)) {
+            if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
                 isRightMessageFileValid = false;

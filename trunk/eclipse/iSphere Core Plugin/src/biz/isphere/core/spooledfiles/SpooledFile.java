@@ -99,6 +99,8 @@ public class SpooledFile {
 
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
 
+    private String connectionName;
+
     public SpooledFile() {
         as400 = null;
         file = "";
@@ -292,6 +294,14 @@ public class SpooledFile {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public Object getConnectionName() {
+        return connectionName;
+    }
+
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
@@ -642,7 +652,7 @@ public class SpooledFile {
 
         if (_default) {
             command = "CVTSPLF FROMFILE(&SPLF) SPLNBR(&SPLFNBR) JOB(&JOBNBR/&JOBUSR/&JOBNAME) TOSTREAM('&STMF') TODIR('&STMFDIR') STCODPAG(&CODPAG) TOFMT(&FMT) STOPT(*REPLACE)";
-            library = ISpherePlugin.getISphereLibrary();
+            library = ISpherePlugin.getISphereLibrary(connectionName);
 
         } else {
             command = conversionCommand;
@@ -702,11 +712,11 @@ public class SpooledFile {
         ISpooledFileTransformer transformer = null;
 
         if (IPreferences.OUTPUT_FORMAT_TEXT.equals(format)) {
-            transformer = new SpooledFileTransformerText(getToolboxSpooledFile());
+            transformer = new SpooledFileTransformerText(connectionName, getToolboxSpooledFile());
         } else if (IPreferences.OUTPUT_FORMAT_HTML.equals(format)) {
-            transformer = new SpooledFileTransformerHTML(getToolboxSpooledFile());
+            transformer = new SpooledFileTransformerHTML(connectionName, getToolboxSpooledFile());
         } else if (IPreferences.OUTPUT_FORMAT_PDF.equals(format)) {
-            transformer = new SpooledFileTransformerPDF(getToolboxSpooledFile());
+            transformer = new SpooledFileTransformerPDF(connectionName, getToolboxSpooledFile());
         } else {
             return false;
         }

@@ -42,8 +42,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
     private boolean fitToPage = false;
 
-    public SpooledFileTransformerPDF(SpooledFile spooledFile) {
-        super(spooledFile);
+    public SpooledFileTransformerPDF(String connectionName, SpooledFile spooledFile) {
+        super(connectionName, spooledFile);
         pageSizes = getPageSizes_DIN_A4_Portrait();
     }
 
@@ -55,7 +55,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      */
     @Override
     protected QSYSObjectPathName getWorkstationCustomizationObject() {
-        return new QSYSObjectPathName(ISpherePlugin.getISphereLibrary(), "SPLFPDF", "WSCST");
+        return new QSYSObjectPathName(getISphereLibrary(), "SPLFPDF", "WSCST");
     }
 
     /**
