@@ -10,9 +10,14 @@ package biz.isphere.core.connection.rse;
 
 import java.util.Properties;
 
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.preferences.Preferences;
+
 public class ConnectionProperties {
 
     public static final String CONNECTION_NAME = "connection.name";
+    public static final String ISPHERE_FTP_HOST_NAME = "connection.isphere.ftp.host";
+    public static final String ISPHERE_FTP_PORT_NUMBER = "connection.isphere.ftp.port";
     public static final String ISPHERE_LIBRARY_NAME = "connection.isphere.library";
     public static final String USE_CONNECTION_SPECIFIC_SETTINGS = "connection.use.settings";
 
@@ -29,6 +34,22 @@ public class ConnectionProperties {
 
     public String getConnectionName() {
         return properties.getProperty(CONNECTION_NAME);
+    }
+
+    public String getFtpHostName() {
+        return properties.getProperty(ISPHERE_FTP_HOST_NAME);
+    }
+
+    public void setFtpHostName(String name) {
+        properties.setProperty(ISPHERE_FTP_HOST_NAME, name);
+    }
+
+    public int getFtpPortNumber() {
+        return IntHelper.tryParseInt(properties.getProperty(ISPHERE_FTP_PORT_NUMBER), Preferences.getInstance().getDefaultFtpPortNumber()).intValue();
+    }
+
+    public void setFtpPortNumber(int port) {
+        properties.setProperty(ISPHERE_FTP_PORT_NUMBER, Integer.toString(port));
     }
 
     public String getISphereLibraryName() {

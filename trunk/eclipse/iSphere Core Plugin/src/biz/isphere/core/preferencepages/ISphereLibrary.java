@@ -174,7 +174,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         ISpherePlugin.getDefault();
         textHostName.setText(Preferences.getInstance().getHostName());
-        textFtpPortNumber.setText("" + Preferences.getInstance().getFtpPortNumber());
+        textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
 
         setScreenValues();
@@ -183,7 +183,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     protected void setScreenToDefaultValues() {
 
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
-        textFtpPortNumber.setText("" + Preferences.getInstance().getDefaultFtpPortNumber());
+        textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
 
         setScreenValues();
