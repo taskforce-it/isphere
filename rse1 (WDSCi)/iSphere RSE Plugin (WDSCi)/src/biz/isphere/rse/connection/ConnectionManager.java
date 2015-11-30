@@ -218,9 +218,11 @@ public class ConnectionManager implements ISystemModelChangeListener {
         Properties propertySet = ensurePropertySet(host);
 
         updatePropertiesConnection(host, propertySet);
-        
-        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, Preferences.getInstance().getISphereLibrary()); // CHECKED
+
         loadPropertyValue(propertySet, ConnectionProperties.USE_CONNECTION_SPECIFIC_SETTINGS, Boolean.toString(false));
+        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_HOST_NAME, Preferences.getInstance().getHostName());
+        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_PORT_NUMBER, Integer.toString(Preferences.getInstance().getFtpPortNumber()));
+        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, Preferences.getInstance().getISphereLibrary()); // CHECKED
 
         return propertySet;
     }
