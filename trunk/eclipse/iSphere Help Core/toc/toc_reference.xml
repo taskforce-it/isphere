@@ -6,6 +6,8 @@
   </topic>
   <topic label="Appearance" href="html/appearance/appearance.html"> 
   </topic>
+  <topic label="Connection Properties" href="html/connection/properties.html"> 
+  </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
     <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
