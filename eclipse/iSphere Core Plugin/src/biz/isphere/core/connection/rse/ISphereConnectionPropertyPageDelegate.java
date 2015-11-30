@@ -16,6 +16,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -27,12 +28,15 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IDisplayErrorDialog;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -46,9 +50,12 @@ public class ISphereConnectionPropertyPageDelegate {
     private String iSphereLibrary;
     private Validator validatorLibrary;
 
+    private Button checkBoxUseConnectionSpecificSettings;
+    private Text textFtpHostName;
+    private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Label textISphereLibraryVersion;
-    private Button checkBoxUseConnectionSpecificSettings;
+    private Button buttonTransfer;
 
     /**
      * Constructor for SamplePropertyPage.
@@ -79,6 +86,7 @@ public class ISphereConnectionPropertyPageDelegate {
         checkBoxUseConnectionSpecificSettings.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 setControlEnablement();
+                updateISphereLibraryVersion();
             }
 
             public void widgetDefaultSelected(SelectionEvent arg0) {
@@ -93,6 +101,9 @@ public class ISphereConnectionPropertyPageDelegate {
 
     public void performSave(ConnectionProperties connectionProperties) {
 
+        connectionProperties.setFtpHostName(textFtpHostName.getText());
+        connectionProperties
+            .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         connectionProperties.setISphereLibraryName(iSphereLibrary);
         connectionProperties.setUseISphereLibraryName(checkBoxUseConnectionSpecificSettings.getSelection());
     }
@@ -104,15 +115,23 @@ public class ISphereConnectionPropertyPageDelegate {
     public void setControlEnablement() {
 
         if (checkBoxUseConnectionSpecificSettings.getSelection()) {
+            textFtpHostName.setEnabled(true);
+            textFtpPortNumber.setEnabled(true);
             textISphereLibrary.setEnabled(true);
+            buttonTransfer.setEnabled(true);
         } else {
+            textFtpHostName.setEnabled(false);
+            textFtpPortNumber.setEnabled(false);
             textISphereLibrary.setEnabled(false);
+            buttonTransfer.setEnabled(false);
         }
 
     }
 
     public void setScreenToValues(ConnectionProperties connectionProperties) {
 
+        textFtpHostName.setText(connectionProperties.getFtpHostName());
+        textFtpPortNumber.setText(Integer.toString(connectionProperties.getFtpPortNumber()));
         iSphereLibrary = connectionProperties.getISphereLibraryName();
         checkBoxUseConnectionSpecificSettings.setSelection(connectionProperties.useISphereLibraryName());
 
@@ -121,6 +140,8 @@ public class ISphereConnectionPropertyPageDelegate {
 
     private void setScreenToDefaultValues() {
 
+        textFtpHostName.setText(Preferences.getInstance().getDefaultHostName());
+        textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         checkBoxUseConnectionSpecificSettings.setSelection(false);
 
@@ -136,18 +157,36 @@ public class ISphereConnectionPropertyPageDelegate {
 
         Composite parent = createDefaultComposite(container, ""); //$NON-NLS-1$
 
-        // Label for Library field
+        Label labelHostName = new Label(parent, SWT.NONE);
+        labelHostName.setLayoutData(createLabelLayoutData());
+        labelHostName.setText(Messages.Host_name_colon);
+
+        textFtpHostName = WidgetFactory.createText(parent);
+        textFtpHostName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                updateISphereLibraryVersion();
+            }
+        });
+        textFtpHostName.setLayoutData(createTextLayoutData());
+
+        Label labelFtpPortNumber = new Label(parent, SWT.NONE);
+        labelFtpPortNumber.setLayoutData(createLabelLayoutData());
+        labelFtpPortNumber.setText(Messages.FTP_port_number_colon);
+
+        textFtpPortNumber = WidgetFactory.createIntegerText(parent);
+        textFtpPortNumber.setTextLimit(5);
+        textFtpPortNumber.setLayoutData(createTextLayoutData());
+
         Label labelISphereLibrary = new Label(parent, SWT.NONE);
         labelISphereLibrary.setLayoutData(createLabelLayoutData());
         labelISphereLibrary.setText(Messages.iSphere_library_colon);
 
-        // Library text field
         textISphereLibrary = WidgetFactory.createUpperCaseText(parent);
         textISphereLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
-                if (validateISphereLibraryName()) {
+                if (!validateISphereLibraryName()) {
                     setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
                     setValid(false);
                 } else {
@@ -170,6 +209,23 @@ public class ISphereConnectionPropertyPageDelegate {
 
         textISphereLibraryVersion = new Label(parent, SWT.NONE);
         textISphereLibraryVersion.setLayoutData(createTextLayoutData());
+
+        buttonTransfer = WidgetFactory.createPushButton(parent);
+        buttonTransfer.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                String hostName = textFtpHostName.getText();
+                int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
+                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary);
+                try {
+                    handler.execute(null);
+                } catch (Throwable e) {
+                    ISpherePlugin.logError("Failed to transfer iSphere library.", e); //$NON-NLS-1$
+                }
+            }
+        });
+        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
         validatorLibrary = Validator.getLibraryNameInstance();
 
@@ -212,6 +268,10 @@ public class ISphereConnectionPropertyPageDelegate {
     }
 
     private String getISphereLibraryVersion(String connectionName, String library) {
+
+        if (!checkBoxUseConnectionSpecificSettings.getSelection()) {
+            return ""; //$NON-NLS-1$
+        }
 
         if (StringHelper.isNullOrEmpty(connectionName) || StringHelper.isNullOrEmpty(library)) {
             return Messages.not_found;
