@@ -1084,6 +1084,8 @@ public class Messages extends NLS {
 
     public static String Version_colon;
 
+    public static String Use_connection_specific_settings;
+
     /*
      * Warning messages
      */
