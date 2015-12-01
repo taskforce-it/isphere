@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.tn5250j.core.Messages;
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditorInput;
 import biz.isphere.tn5250j.core.tn5250jpart.DisplaySession;
@@ -110,7 +111,7 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
             String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(ibmiConnection.getProfileName() + "-"
                 + ibmiConnection.getConnectionName());
             String connection = ibmiConnection.getProfileName() + "-" + ibmiConnection.getConnectionName();
-            String name = "_DESIGNER";
+            String name = ISession.DESIGNER;
 
             Session session = Session.load(sessionDirectory, connection, name);
             if (session != null) {
@@ -138,7 +139,7 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
                     DesignerInfo designerInfo = new DesignerInfo(tn5250jPart);
                     designerInfo.setRSEProfil(ibmiConnection.getProfileName());
                     designerInfo.setRSEConnection(ibmiConnection.getConnectionName());
-                    designerInfo.setSession("_DESIGNER");
+                    designerInfo.setSession(ISession.DESIGNER);
                     designerInfo.setLibrary(member.getLibrary());
                     designerInfo.setSourceFile(member.getFile());
                     designerInfo.setMember(member.getName());
