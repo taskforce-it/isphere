@@ -206,7 +206,6 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
         // TODO: store all properties except for PATH and CONNECTION_NAME
         savePropertyValue(propertiesList, ConnectionProperties.USE_CONNECTION_SPECIFIC_SETTINGS, propertySet);
-        savePropertyValue(propertiesList, ConnectionProperties.ISPHERE_FTP_HOST_NAME, propertySet);
         savePropertyValue(propertiesList, ConnectionProperties.ISPHERE_FTP_PORT_NUMBER, propertySet);
         savePropertyValue(propertiesList, ConnectionProperties.ISPHERE_LIBRARY_NAME, propertySet);
     }
@@ -247,10 +246,12 @@ public class ConnectionManager implements ISystemModelChangeListener {
         loadPropertyValue(propertySet, ConnectionProperties.CONNECTION_NAME, propertiesList);
 
         loadPropertyValue(propertySet, ConnectionProperties.USE_CONNECTION_SPECIFIC_SETTINGS, propertiesList, Boolean.toString(false));
-        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_HOST_NAME, propertiesList, Preferences.getInstance().getHostName());
         loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_PORT_NUMBER, propertiesList,
             Integer.toString(Preferences.getInstance().getFtpPortNumber()));
         loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, propertiesList, Preferences.getInstance().getISphereLibrary()); // CHECKED
+
+        // Transient connection properties coming from the RSE connection
+        propertiesList.put(ConnectionProperties.ISPHERE_FTP_HOST_NAME, host.getHostName());
 
         return propertiesList;
     }

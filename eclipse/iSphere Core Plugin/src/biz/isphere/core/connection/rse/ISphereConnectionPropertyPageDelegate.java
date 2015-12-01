@@ -46,6 +46,7 @@ public class ISphereConnectionPropertyPageDelegate {
 
     private IDisplayErrorDialog parent;
     private String connectionName;
+    private String ftpHostName;
 
     private String iSphereLibrary;
     private Validator validatorLibrary;
@@ -55,16 +56,27 @@ public class ISphereConnectionPropertyPageDelegate {
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Label textISphereLibraryVersion;
+    private Button buttonUpdateISphereLibraryVersion;
     private Button buttonTransfer;
+
+    private boolean updateISphereLibraryVersion;
 
     /**
      * Constructor for SamplePropertyPage.
      */
-    public ISphereConnectionPropertyPageDelegate(IDisplayErrorDialog parent, String connectionName) {
+    public ISphereConnectionPropertyPageDelegate(IDisplayErrorDialog parent, String connectionName, String ftpHostName) {
         super();
 
         this.parent = parent;
         this.connectionName = connectionName;
+
+        if (ftpHostName == null) {
+            this.ftpHostName = "";
+        } else {
+            this.ftpHostName = ftpHostName;
+        }
+
+        this.updateISphereLibraryVersion = false;
     }
 
     public void performDefaults() {
@@ -101,7 +113,6 @@ public class ISphereConnectionPropertyPageDelegate {
 
     public void performSave(ConnectionProperties connectionProperties) {
 
-        connectionProperties.setFtpHostName(textFtpHostName.getText());
         connectionProperties
             .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         connectionProperties.setISphereLibraryName(iSphereLibrary);
@@ -118,19 +129,24 @@ public class ISphereConnectionPropertyPageDelegate {
             textFtpHostName.setEnabled(true);
             textFtpPortNumber.setEnabled(true);
             textISphereLibrary.setEnabled(true);
+            if (updateISphereLibraryVersion) {
+                buttonUpdateISphereLibraryVersion.setEnabled(false);
+            } else {
+                buttonUpdateISphereLibraryVersion.setEnabled(true);
+            }
             buttonTransfer.setEnabled(true);
         } else {
             textFtpHostName.setEnabled(false);
             textFtpPortNumber.setEnabled(false);
             textISphereLibrary.setEnabled(false);
+            buttonUpdateISphereLibraryVersion.setEnabled(false);
             buttonTransfer.setEnabled(false);
         }
-
     }
 
     public void setScreenToValues(ConnectionProperties connectionProperties) {
 
-        textFtpHostName.setText(connectionProperties.getFtpHostName());
+        textFtpHostName.setText(ftpHostName);
         textFtpPortNumber.setText(Integer.toString(connectionProperties.getFtpPortNumber()));
         iSphereLibrary = connectionProperties.getISphereLibraryName();
         checkBoxUseConnectionSpecificSettings.setSelection(connectionProperties.useISphereLibraryName());
@@ -140,7 +156,7 @@ public class ISphereConnectionPropertyPageDelegate {
 
     private void setScreenToDefaultValues() {
 
-        textFtpHostName.setText(Preferences.getInstance().getDefaultHostName());
+        textFtpHostName.setText(ftpHostName);
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         checkBoxUseConnectionSpecificSettings.setSelection(false);
@@ -161,7 +177,7 @@ public class ISphereConnectionPropertyPageDelegate {
         labelHostName.setLayoutData(createLabelLayoutData());
         labelHostName.setText(Messages.Host_name_colon);
 
-        textFtpHostName = WidgetFactory.createText(parent);
+        textFtpHostName = WidgetFactory.createReadOnlyText(parent);
         textFtpHostName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 updateISphereLibraryVersion();
@@ -208,7 +224,19 @@ public class ISphereConnectionPropertyPageDelegate {
         labelIShereLibraryVersion.setText("Version:");
 
         textISphereLibraryVersion = new Label(parent, SWT.NONE);
-        textISphereLibraryVersion.setLayoutData(createTextLayoutData());
+        textISphereLibraryVersion.setLayoutData(createTextLayoutData(1));
+
+        buttonUpdateISphereLibraryVersion = WidgetFactory.createPushButton(parent);
+        buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH).createImage());
+        buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent arg0) {
+                updateISphereLibraryVersion = true;
+                updateISphereLibraryVersion();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
 
         buttonTransfer = WidgetFactory.createPushButton(parent);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
@@ -224,7 +252,7 @@ public class ISphereConnectionPropertyPageDelegate {
                 }
             }
         });
-        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
         validatorLibrary = Validator.getLibraryNameInstance();
@@ -242,7 +270,7 @@ public class ISphereConnectionPropertyPageDelegate {
     private Composite createDefaultComposite(Composite parent, String text) {
 
         Group group = new Group(parent, SWT.NULL);
-        GridLayout layout = new GridLayout(2, false);
+        GridLayout layout = new GridLayout(3, false);
         group.setLayout(layout);
         group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         group.setText(text);
@@ -255,25 +283,37 @@ public class ISphereConnectionPropertyPageDelegate {
     }
 
     private GridData createTextLayoutData() {
-        return new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        return createTextLayoutData(2);
+    }
+
+    private GridData createTextLayoutData(int horizontalSpan) {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
     }
 
     private void updateISphereLibraryVersion() {
-        String text = getISphereLibraryVersion(connectionName, textISphereLibrary.getText());
+        String text = getISphereLibraryVersion(connectionName, textISphereLibrary.getText(), ftpHostName);
         if (text == null) {
             return;
         }
 
         textISphereLibraryVersion.setText(text);
+
+        setControlEnablement();
     }
 
-    private String getISphereLibraryVersion(String connectionName, String library) {
+    private String getISphereLibraryVersion(String connectionName, String library, String hostName) {
+
+        if (!updateISphereLibraryVersion) {
+            return ""; //$NON-NLS-1$
+        }
 
         if (!checkBoxUseConnectionSpecificSettings.getSelection()) {
+            updateISphereLibraryVersion = false;
             return ""; //$NON-NLS-1$
         }
 
         if (StringHelper.isNullOrEmpty(connectionName) || StringHelper.isNullOrEmpty(library)) {
+            updateISphereLibraryVersion = false;
             return Messages.not_found;
         }
 
@@ -283,8 +323,13 @@ public class ISphereConnectionPropertyPageDelegate {
 
             AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
             if (as400 == null) {
-                return Messages.bind(Messages.Host_A_not_found, connectionName);
+                updateISphereLibraryVersion = false;
+                return Messages.bind(Messages.Host_A_not_found_or_connected, hostName);
             }
+
+            /*
+             * From here on start updating library version automatically.
+             */
 
             version = ISphereHelper.getISphereLibraryVersion(as400, library);
             if (version == null) {
@@ -298,7 +343,8 @@ public class ISphereConnectionPropertyPageDelegate {
 
             DateFormat dateFormatter = Preferences.getInstance().getDateFormatter();
             DateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
-            return version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
+            version = version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
+            return version;
 
         } catch (Throwable e) {
             return null;

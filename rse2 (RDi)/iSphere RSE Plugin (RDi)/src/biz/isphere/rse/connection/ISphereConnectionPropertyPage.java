@@ -54,7 +54,7 @@ public class ISphereConnectionPropertyPage extends SystemBasePropertyPage implem
     @Override
     protected Control createContentArea(Composite container) {
 
-        delegate = new ISphereConnectionPropertyPageDelegate(this, getConnectionName());
+        delegate = new ISphereConnectionPropertyPageDelegate(this, getConnectionName(), getFtpHostName());
 
         Control parent = delegate.createContentArea(container);
 
@@ -87,6 +87,17 @@ public class ISphereConnectionPropertyPage extends SystemBasePropertyPage implem
         if (element instanceof IHost) {
             IHost host = (IHost)element;
             return ConnectionManager.getConnectionName(host);
+        }
+
+        return null;
+    }
+
+    private String getFtpHostName() {
+        
+        Object element = getElement();
+        if (element instanceof IHost) {
+            IHost host = (IHost)element;
+            return host.getHostName();
         }
 
         return null;
