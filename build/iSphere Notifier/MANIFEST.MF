@@ -2,6 +2,6 @@ Manifest-Version: 1.0
 Bundle-Version: 2.7.0.r
 X-Bundle-Update-Library: true
 X-Bundle-Info: New Release!
-X-Beta-Version: 2.7.1.b004
+X-Beta-Version: 2.7.1.b005
 X-Beta-Update-Library: false
-X-Beta-Info: ALL: iSphere 5250 Emulator. RDi 9.5: Preserve source dates when saving member from compare/merge editor. (Update with Help > Install New Software.) All: Message monitor filter options.
+X-Beta-Info: ALL: iSphere 5250 Emulator; connection specific iSphere library; message monitor filter options. -- RDi 9.5: Preserve source dates when saving member from compare/merge editor. (Update with Help > Install New Software.)
