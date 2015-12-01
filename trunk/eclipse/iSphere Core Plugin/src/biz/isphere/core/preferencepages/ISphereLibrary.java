@@ -19,6 +19,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,11 +52,18 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Label textISphereLibraryVersion;
+    private Button buttonUpdateISphereLibraryVersion;
+    private Button buttonTransfer;
+
+    private boolean updateISphereLibraryVersion;
 
     public ISphereLibrary() {
         super();
+
         setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
+        
+        this.updateISphereLibraryVersion = false;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         Composite container = new Composite(parent, SWT.NONE);
         final GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 2;
+        gridLayout.numColumns = 3;
         container.setLayout(gridLayout);
 
         Label labelHostName = new Label(container, SWT.NONE);
@@ -119,9 +127,21 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelIShereLibraryVersion.setText(Messages.Version_colon);
 
         textISphereLibraryVersion = new Label(container, SWT.NONE);
-        textISphereLibraryVersion.setLayoutData(createTextLayoutData());
+        textISphereLibraryVersion.setLayoutData(createTextLayoutData(1));
 
-        Button buttonTransfer = WidgetFactory.createPushButton(container);
+        buttonUpdateISphereLibraryVersion = WidgetFactory.createPushButton(container);
+        buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH).createImage());
+        buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent arg0) {
+                updateISphereLibraryVersion = true;
+                updateISphereLibraryVersion();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
+        buttonTransfer = WidgetFactory.createPushButton(container);
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -135,7 +155,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
                 }
             }
         });
-        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
         setScreenToValues();
@@ -161,6 +181,15 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         return super.performOk();
     }
 
+    private void setControlEnablement() {
+        
+        if (updateISphereLibraryVersion) {
+            buttonUpdateISphereLibraryVersion.setEnabled(false);
+        } else {
+            buttonUpdateISphereLibraryVersion.setEnabled(true);
+        }
+    }
+    
     protected void setStoreToValues() {
 
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
@@ -202,7 +231,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     }
 
     private GridData createTextLayoutData() {
-        return new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        return createTextLayoutData(2);
+    }
+
+    private GridData createTextLayoutData(int horizontalSpan) {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
     }
 
     private void updateISphereLibraryVersion() {
@@ -212,11 +245,18 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         }
 
         textISphereLibraryVersion.setText(text);
+
+        setControlEnablement();
     }
 
     private String getISphereLibraryVersion(String hostName, String library) {
 
+        if (!updateISphereLibraryVersion) {
+            return ""; //$NON-NLS-1$
+        }
+
         if (StringHelper.isNullOrEmpty(hostName) || StringHelper.isNullOrEmpty(library)) {
+            updateISphereLibraryVersion = false;
             return Messages.not_found;
         }
 
@@ -226,8 +266,13 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
             AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
             if (as400 == null) {
-                return Messages.bind(Messages.Host_A_not_found, hostName);
+                updateISphereLibraryVersion = false;
+                return Messages.bind(Messages.Host_A_not_found_or_connected, hostName);
             }
+
+            /*
+             * From here on start updating library version automatically.
+             */
 
             version = ISphereHelper.getISphereLibraryVersion(as400, library);
             if (version == null) {
@@ -241,7 +286,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
             DateFormat dateFormatter = Preferences.getInstance().getDateFormatter();
             DateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
-            return version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
+            version = version + " - " + dateFormatter.format(dateParser.parse(buildDate)); //$NON-NLS-1$
+            return version;
 
         } catch (Throwable e) {
             return null;

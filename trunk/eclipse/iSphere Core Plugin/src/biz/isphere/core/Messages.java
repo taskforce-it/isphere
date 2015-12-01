@@ -1054,7 +1054,7 @@ public class Messages extends NLS {
 
     public static String Tooltip_Specifies_the_format_for_displaying_time_values;
 
-    public static String Host_A_not_found;
+    public static String Host_A_not_found_or_connected;
 
     public static String not_found;
 
