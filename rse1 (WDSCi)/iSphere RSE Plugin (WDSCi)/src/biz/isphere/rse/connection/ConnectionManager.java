@@ -220,9 +220,11 @@ public class ConnectionManager implements ISystemModelChangeListener {
         updatePropertiesConnection(host, propertySet);
 
         loadPropertyValue(propertySet, ConnectionProperties.USE_CONNECTION_SPECIFIC_SETTINGS, Boolean.toString(false));
-        loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_HOST_NAME, Preferences.getInstance().getHostName());
         loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_FTP_PORT_NUMBER, Integer.toString(Preferences.getInstance().getFtpPortNumber()));
         loadPropertyValue(propertySet, ConnectionProperties.ISPHERE_LIBRARY_NAME, Preferences.getInstance().getISphereLibrary()); // CHECKED
+
+        // Transient connection properties coming from the RSE connection
+        propertySet.put(ConnectionProperties.ISPHERE_FTP_HOST_NAME, host.getHostName());
 
         return propertySet;
     }
