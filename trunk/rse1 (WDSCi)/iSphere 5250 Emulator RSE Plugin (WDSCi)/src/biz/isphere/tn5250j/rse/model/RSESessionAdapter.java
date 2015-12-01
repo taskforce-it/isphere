@@ -17,6 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import biz.isphere.tn5250j.core.Messages;
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditorInput;
 import biz.isphere.tn5250j.core.tn5250jpart.DisplaySession;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
@@ -176,7 +177,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
             if (area.equals("*VIEW")) {
 
-                if (rseSession.getName().equals("_DESIGNER")) {
+                if (rseSession.getName().equals(ISession.DESIGNER)) {
 
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DesignerView.ID);
 
@@ -197,7 +198,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
             } else if (area.equals("*EDITOR")) {
 
-                if (rseSession.getName().equals("_DESIGNER")) {
+                if (rseSession.getName().equals(ISession.DESIGNER)) {
 
                     TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.iSphere_5250_Designer, "TN5250J",
                         TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));

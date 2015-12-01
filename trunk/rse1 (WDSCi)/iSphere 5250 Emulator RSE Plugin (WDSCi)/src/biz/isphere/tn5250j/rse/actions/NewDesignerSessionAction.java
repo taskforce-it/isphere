@@ -10,10 +10,12 @@ package biz.isphere.tn5250j.rse.actions;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.tn5250j.core.session.ISession;
+import biz.isphere.tn5250j.core.session.Session;
+import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
 import biz.isphere.tn5250j.rse.Messages;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
@@ -21,9 +23,6 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 
 import com.ibm.etools.systems.core.ui.actions.SystemBaseAction;
 import com.ibm.etools.systems.subsystems.SubSystem;
-
-import biz.isphere.tn5250j.core.session.Session;
-import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 
 public class NewDesignerSessionAction extends SystemBaseAction {
 
@@ -45,7 +44,7 @@ public class NewDesignerSessionAction extends SystemBaseAction {
             if (subSystem != null) {
                 Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection));
                 session.setConnection(profil + "-" + connection);
-                session.setName("_DESIGNER");
+                session.setName(ISession.DESIGNER);
                 session.setProgram("DESIGNERW");
                 session.setLibrary("%ISPHERE%");
                 SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(profil + "-"
@@ -60,7 +59,7 @@ public class NewDesignerSessionAction extends SystemBaseAction {
 
     @Override
     public boolean isEnabled() {
-        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
+        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + ISession.DESIGNER;
         File fileDesigner = new File(designer);
         if (fileDesigner.exists()) {
             return false;
