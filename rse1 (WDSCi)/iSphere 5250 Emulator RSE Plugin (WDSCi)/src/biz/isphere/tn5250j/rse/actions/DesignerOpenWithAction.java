@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditorInput;
 import biz.isphere.tn5250j.core.tn5250jpart.DisplaySession;
@@ -105,7 +106,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
             if (member != null) {
                 if (!(new File(TN5250JRSEPlugin.getRSESessionDirectory(member.getISeriesConnection().getProfileName() + "-"
                     + member.getISeriesConnection().getConnectionName())
-                    + File.separator + "_DESIGNER").exists())) {
+                    + File.separator + ISession.DESIGNER).exists())) {
                     return false;
                 }
             }
@@ -138,7 +139,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
             String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(iSeriesConnection.getProfileName() + "-"
                 + iSeriesConnection.getConnectionName());
             String connection = iSeriesConnection.getProfileName() + "-" + iSeriesConnection.getConnectionName();
-            String name = "_DESIGNER";
+            String name = ISession.DESIGNER;
 
             Session session = Session.load(sessionDirectory, connection, name);
             if (session != null) {
@@ -166,7 +167,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
                     DesignerInfo designerInfo = new DesignerInfo(tn5250jPart);
                     designerInfo.setRSEProfil(iSeriesConnection.getProfileName());
                     designerInfo.setRSEConnection(iSeriesConnection.getConnectionName());
-                    designerInfo.setSession("_DESIGNER");
+                    designerInfo.setSession(ISession.DESIGNER);
                     designerInfo.setLibrary(member.getLibraryName());
                     designerInfo.setSourceFile(member.getFile());
                     designerInfo.setMember(member.getName());
