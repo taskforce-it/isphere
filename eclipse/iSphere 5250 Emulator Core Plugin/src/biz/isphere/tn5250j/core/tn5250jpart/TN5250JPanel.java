@@ -25,6 +25,7 @@ import org.tn5250j.tools.LangTool;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.session.Session;
 
 public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
@@ -200,7 +201,7 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             return session.getProgram();
         } else if (parameter.equals("SESSION_CONNECT_LIBRARY")) {
             String library = session.getLibrary();
-            if (library.equals("%ISPHERE%")) {
+            if (library.equals(ISession.ISPHERE_PRODUCT_LIBRARY)) {
                 library = ISpherePlugin.getISphereLibrary(tn5250jInfo.getRSEConnection());
             }
             return library;

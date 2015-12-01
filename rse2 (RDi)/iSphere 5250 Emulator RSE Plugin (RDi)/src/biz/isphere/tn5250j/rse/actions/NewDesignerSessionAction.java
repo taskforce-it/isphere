@@ -20,6 +20,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
@@ -43,9 +44,9 @@ public class NewDesignerSessionAction implements IObjectActionDelegate {
             Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
                 + selectedSubSystems.get(idx).getHostAliasName()));
             session.setConnection(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName());
-            session.setName("_DESIGNER");
+            session.setName(ISession.DESIGNER);
             session.setProgram("DESIGNERW");
-            session.setLibrary("%ISPHERE%");
+            session.setLibrary(ISession.ISPHERE_PRODUCT_LIBRARY);
             SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
                     + selectedSubSystems.get(idx).getHostAliasName()), DialogActionTypes.CREATE, session);
@@ -73,7 +74,7 @@ public class NewDesignerSessionAction implements IObjectActionDelegate {
     }
 
     public boolean isEnabled(String profil, String connection) {
-        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + "_DESIGNER";
+        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + ISession.DESIGNER;
         File fileDesigner = new File(designer);
         if (fileDesigner.exists()) {
             return false;

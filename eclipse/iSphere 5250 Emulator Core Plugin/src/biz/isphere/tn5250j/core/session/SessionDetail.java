@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -45,7 +46,7 @@ public class SessionDetail {
     private Text textUser;
     private Text textPassWord;
     private Text textProgram;
-    private Text textLibrary;
+    private Combo textLibrary;
     private Text textMenu;
     private StatusLineManager statusLineManager;
     private String sessionDirectory;
@@ -129,7 +130,7 @@ public class SessionDetail {
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textDevice.setText(session.getDevice());
         }
-        if (textName.getText().equals("_DESIGNER") || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+        if (textName.getText().equals(ISession.DESIGNER) || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textDevice.setEnabled(false);
         }
 
@@ -323,7 +324,7 @@ public class SessionDetail {
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textProgram.setText(session.getProgram());
         }
-        if (textName.getText().equals("_DESIGNER") || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+        if (textName.getText().equals(ISession.DESIGNER) || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textProgram.setEnabled(false);
         }
 
@@ -332,7 +333,8 @@ public class SessionDetail {
         final Label labelLibrary = new Label(groupSignOnMask, SWT.NONE);
         labelLibrary.setText(Messages.Library_colon);
 
-        textLibrary = new Text(groupSignOnMask, SWT.BORDER);
+        textLibrary = new Combo(groupSignOnMask, SWT.BORDER);
+        textLibrary.setItems(new String[]{ISession.ISPHERE_PRODUCT_LIBRARY});
         textLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textLibrary.setTextLimit(10);
         if (actionType == DialogActionTypes.CREATE) {
@@ -340,7 +342,7 @@ public class SessionDetail {
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textLibrary.setText(session.getLibrary());
         }
-        if (textName.getText().equals("_DESIGNER") || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+        if (textName.getText().equals(ISession.DESIGNER) || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textLibrary.setEnabled(false);
         }
 
@@ -357,7 +359,7 @@ public class SessionDetail {
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textMenu.setText(session.getMenu());
         }
-        if (textName.getText().equals("_DESIGNER") || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+        if (textName.getText().equals(ISession.DESIGNER) || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textMenu.setEnabled(false);
         }
 
@@ -372,13 +374,13 @@ public class SessionDetail {
         // Set focus
 
         if (actionType == DialogActionTypes.CREATE) {
-            if (textName.getText().equals("_DESIGNER")) {
+            if (textName.getText().equals(ISession.DESIGNER)) {
                 textPort.setFocus();
             } else {
                 textName.setFocus();
             }
         } else if (actionType == DialogActionTypes.CHANGE) {
-            if (textName.getText().equals("_DESIGNER")) {
+            if (textName.getText().equals(ISession.DESIGNER)) {
                 textPort.setFocus();
             } else {
                 textDevice.setFocus();
@@ -450,7 +452,7 @@ public class SessionDetail {
 
             // The name _DESIGNER' is reserved.
 
-            if (session.getName().equals("") && textName.getText().equals("_DESIGNER")) {
+            if (session.getName().equals("") && textName.getText().equals(ISession.DESIGNER)) {
                 setErrorMessage(Messages.The_name_DESIGNER_is_reserved);
                 textName.setFocus();
                 return false;
@@ -511,7 +513,7 @@ public class SessionDetail {
 
         // The value in field 'User' is not valid.
 
-        if (textName.getText().equals("_DESIGNER") && textUser.getText().equals("")) {
+        if (textName.getText().equals(ISession.DESIGNER) && textUser.getText().equals("")) {
             setErrorMessage(Messages.The_value_in_field_User_is_not_valid);
             textUser.setFocus();
             return false;
@@ -519,7 +521,7 @@ public class SessionDetail {
 
         // The value in field 'Password' is not valid.
 
-        if (textName.getText().equals("_DESIGNER") && textPassWord.getText().equals("")) {
+        if (textName.getText().equals(ISession.DESIGNER) && textPassWord.getText().equals("")) {
             setErrorMessage(Messages.The_value_in_field_Password_is_not_valid);
             textPassWord.setFocus();
             return false;
