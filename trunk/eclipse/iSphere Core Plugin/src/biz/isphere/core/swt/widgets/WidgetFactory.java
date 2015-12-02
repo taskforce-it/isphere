@@ -9,9 +9,11 @@
 package biz.isphere.core.swt.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -47,6 +49,23 @@ public final class WidgetFactory {
             instance = new WidgetFactory();
         }
         return instance;
+    }
+
+    /**
+     * Produces a separator.
+     * 
+     * @param parent - parent composite
+     * @return separator
+     */
+    public static Label createSeparator(Composite parent) {
+
+        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        separator.setLayoutData(gridData);
+
+        return separator;
     }
 
     /**

@@ -64,7 +64,9 @@ public final class Preferences {
     private static final String DOMAIN = ISpherePlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
     private static final String WARNING_BASE_KEY = DOMAIN + "SHOW_WARNING."; //$NON-NLS-1$
-    
+
+    private static final String SPOOLED_FILES_LOAD_ASYNCHRONOUSLY = DOMAIN + "SPOOLED_FILES.LOAD.ASYNCHRONOUSLY"; //$NON-NLS-1$
+
     private static final String SPOOLED_FILES_SAVE_DIRECTORY = DOMAIN + "SPOOLED_FILES.SAVE.DIRECTORY"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_CONVERSION_PDF_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_PDF.COMMAND"; //$NON-NLS-1$
@@ -200,7 +202,7 @@ public final class Preferences {
         }
         return preferenceStore.getBoolean(key);
     }
-    
+
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
     }
@@ -235,6 +237,10 @@ public final class Preferences {
 
     public String getSourceFileSearchString() {
         return preferenceStore.getString(SOURCEFILESEARCH_SEARCHSTRING);
+    }
+
+    public boolean isLoadSpooledFilesAsynchronousliy() {
+        return preferenceStore.getBoolean(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY);
     }
 
     public String getSpooledFileConversionDefaultFormat() {
@@ -442,6 +448,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCEFILESEARCH_SEARCHSTRING, aSearchString.trim());
     }
 
+    public void setLoadSpooledFilesAsynchronousliy(boolean asynchronously) {
+        preferenceStore.setValue(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, asynchronously);
+    }
+
     public void setSpooledFileDefaultFormat(String aFormat) {
         preferenceStore.setValue(SPOOLED_FILES_DEFAULT_FORMAT, aFormat);
     }
@@ -552,7 +562,7 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
         preferenceStore.setDefault(getShowWarningKey(Warning.COMPARE_FILTERS_NOT_INSTALLED), true);
-        
+
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
@@ -562,6 +572,7 @@ public final class Preferences {
         preferenceStore.setDefault(URL_FOR_UPDATES, getDefaultURLForUpdates());
         preferenceStore.setDefault(LAST_VERSION_FOR_UPDATES, getDefaultLastVersionForUpdates());
 
+        preferenceStore.setDefault(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, getDefaultLoadSpooledFilesAsynchronously());
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
@@ -662,6 +673,10 @@ public final class Preferences {
      */
     public String getDefaultLastVersionForUpdates() {
         return "0.0.0.r";
+    }
+
+    public boolean getDefaultLoadSpooledFilesAsynchronously() {
+        return false;
     }
 
     /**
@@ -1017,7 +1032,7 @@ public final class Preferences {
 
         return timeFormats;
     }
-    
+
     private String getShowWarningKey(String showWarningKey) {
         return WARNING_BASE_KEY + showWarningKey;
     }

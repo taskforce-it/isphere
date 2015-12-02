@@ -33,6 +33,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
 
+    private Button buttonLoadAsynchronously;
+    private boolean isLoadAsynchronously;
+
     private Button buttonDefaultFormatText;
     private Button buttonDefaultFormatHTML;
     private Button buttonDefaultFormatPDF;
@@ -417,6 +420,17 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Label labelSubstitutionVariable93 = new Label(groupSubstitutionVariables, SWT.NONE);
         labelSubstitutionVariable93.setText(Messages.Format);
 
+        buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
+        buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
+        buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
+            }
+        });
+        
+//        WidgetFactory.createSeparator(container);
+
         setScreenToValues();
 
         return container;
@@ -505,6 +519,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setStoreToValues() {
 
+        Preferences.getInstance().setLoadSpooledFilesAsynchronousliy(isLoadAsynchronously);
         Preferences.getInstance().setSpooledFileDefaultFormat(defaultFormat);
 
         Preferences.getInstance().setSpooledFileConversionText(conversionText);
@@ -523,6 +538,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToValues() {
 
+        isLoadAsynchronously = Preferences.getInstance().isLoadSpooledFilesAsynchronousliy();
         defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
         conversionText = Preferences.getInstance().getSpooledFileConversionText();
@@ -543,6 +559,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToDefaultValues() {
 
+        isLoadAsynchronously = Preferences.getInstance().getDefaultLoadSpooledFilesAsynchronously();
         defaultFormat = Preferences.getInstance().getDefaultSpooledFileConversionDefaultFormat();
 
         conversionText = Preferences.getInstance().getDefaultSpooledFileConversionText();
@@ -563,6 +580,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenValues() {
 
+        buttonLoadAsynchronously.setSelection(isLoadAsynchronously);
+        
         buttonDefaultFormatText.setSelection(false);
         buttonDefaultFormatHTML.setSelection(false);
         buttonDefaultFormatPDF.setSelection(false);
