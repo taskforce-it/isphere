@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ccsid.CcsidUtil;
 
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintParameterList;
@@ -168,17 +169,16 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
             // TODO: remove getTargetCodePage()
             // TODO: remove getLineChar()
 
-            // int ccsid =
-            // spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
+            int ccsid = spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
 
-            // CcsidUtil util = new CcsidUtil();
-            // String ascii = util.getAsciiCodepage(ccsid);
-            //
-            // if (ascii != null) {
-            // reader = new BufferedReader(new InputStreamReader(in, ascii));
-            // } else {
-            reader = new BufferedReader(new InputStreamReader(in));
-            // }
+            CcsidUtil util = new CcsidUtil();
+            String ascii = util.getAsciiCodepage(ccsid);
+
+            if (ascii != null) {
+                reader = new BufferedReader(new InputStreamReader(in, ascii));
+            } else {
+                reader = new BufferedReader(new InputStreamReader(in));
+            }
 
             openPrinter(target);
             initPrinter();
