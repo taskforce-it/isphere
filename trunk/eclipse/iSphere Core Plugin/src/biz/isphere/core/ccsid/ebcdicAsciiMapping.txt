@@ -1,3 +1,8 @@
+#
+# Mapping of Ebcdic CCSID to ASCII codepage.
+# This mapping table is used by the CcsidUitl class,
+# which is used by the SpooledFileTransformer class.
+# See: https://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzalu/rbaqbmst226.htm
 037=Cp437
 273=Cp850
 277=Cp850
@@ -8,7 +13,7 @@
 285=Cp850
 297=Cp850
 420=Cp864
-423=Cp869
+423=Cp851
 424=Cp856
 500=Cp850
 838=Cp874
@@ -19,3 +24,4 @@
 905=Cp857
 1025=Cp850
 1026=Cp857
+1141=Cp858
