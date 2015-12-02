@@ -1,5 +1,10 @@
 
 
+Changelog: iSphere 2.7.1 beta 6
+-------------------------------
+ • Added option for downloading spooled files asynchronously.
+
+
 Changelog: iSphere 2.7.1 beta 5
 -------------------------------
  • Added iSphere specific connection properties.

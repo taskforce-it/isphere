@@ -17,20 +17,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.Buffer;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditorInput;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
@@ -48,6 +56,8 @@ import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.RequestNotSupportedException;
 
 public class SpooledFile {
+
+    private static final String ISPHERE_IFS_TMP_DIRECTORY = "/tmp/"; //$NON-NLS-N$
 
     private AS400 as400;
 
@@ -534,65 +544,87 @@ public class SpooledFile {
         return getCreationDateFormated() + "   " + getCreationTimeFormated();
     }
 
+    public void asyncOpen(final String format, final Shell shell) {
+
+        Job job = new Job(Messages.Loading_spooled_file) {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+
+                String source = null;
+                boolean hasSpooledFile = false;
+
+                try {
+
+                    source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
+                    final IFile file = getLocalSpooledFile(format, source);
+                    if (file == null) {
+                        MessageDialogAsync.displayError(shell, Messages.Could_not_create_stream_file_for_spooled_file_on_host);
+                        return Status.OK_STATUS;
+                    }
+
+                    UIJob uiJob = new UIJob("") {
+
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor monitor) {
+                            try {
+                                openSpooledFileInEditor(format, file);
+                            } catch (Exception e) {
+                                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                            }
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    uiJob.schedule();
+
+                } catch (Exception e) {
+                    MessageDialogAsync.displayError(shell, ExceptionHelper.getLocalizedMessage(e));
+                } finally {
+
+                    if (hasSpooledFile) {
+                        try {
+                            deleteStreamFile(source);
+                        } catch (Exception e) {
+                            MessageDialogAsync.displayError(shell, ExceptionHelper.getLocalizedMessage(e));
+                        }
+                    }
+
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+    }
+
     public String open(String format) {
 
-        String source = "/tmp/" + getTemporaryName(format);
-        String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + getTemporaryName(format);
-
-        boolean doTransformSpooledFile = doTransformSpooledFile(format);
+        if (Preferences.getInstance().isLoadSpooledFilesAsynchronousliy()) {
+            asyncOpen(format, Display.getCurrent().getActiveShell());
+            return null;
+        }
+        
+        String source = null;
         boolean hasSpooledFile = false;
 
         try {
 
-            if (doTransformSpooledFile) {
-                hasSpooledFile = transformSpooledFile(format, target);
-            } else {
-                if (createStreamFile(format)) {
-                    hasSpooledFile = uploadStreamFile(source, target);
-                }
-            }
-
-            if (!hasSpooledFile) {
+            source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
+            IFile file = getLocalSpooledFile(format, source);
+            if (file == null) {
                 return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
             }
 
-            if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
-                ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
-            }
-
-            IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
-            file.refreshLocal(1, null);
-
-            if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-
-                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                org.eclipse.ui.ide.IDE.openEditor(page, file);
-
-            } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-
-                BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
-                    + getTemporaryName(format), null, target);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
-
-            } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-
-                BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
-                    + getTemporaryName(format), null, target);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
-
-            }
+            openSpooledFileInEditor(format, file);
 
         } catch (Exception e) {
-            return e.getMessage();
+            return ExceptionHelper.getLocalizedMessage(e);
         } finally {
 
             if (hasSpooledFile) {
                 try {
                     deleteStreamFile(source);
                 } catch (Exception e) {
-                    return e.getMessage();
+                    return ExceptionHelper.getLocalizedMessage(e);
                 }
             }
 
@@ -600,6 +632,53 @@ public class SpooledFile {
 
         return null;
 
+    }
+
+    private void openSpooledFileInEditor(String format, IFile file) throws PartInitException {
+        if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
+
+            IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            org.eclipse.ui.ide.IDE.openEditor(page, file);
+
+        } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
+
+            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
+                + getTemporaryName(format), null, file.getLocation().toOSString());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+
+        } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
+
+            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
+                + getTemporaryName(format), null, file.getLocation().toOSString());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+        }
+    }
+
+    private IFile getLocalSpooledFile(String format, String source) throws Exception {
+
+        boolean hasSpooledFile = false;
+        String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + getTemporaryName(format);
+
+        if (doTransformSpooledFile(format)) {
+            hasSpooledFile = transformSpooledFile(format, target);
+        } else {
+            if (createStreamFile(format)) {
+                hasSpooledFile = uploadStreamFile(source, target);
+            }
+        }
+
+        if (!hasSpooledFile) {
+            return null;
+        }
+
+        if (!ISpherePlugin.getDefault().getSpooledFilesProject().isOpen()) {
+            ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
+        }
+
+        IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
+        file.refreshLocal(1, null);
+
+        return file;
     }
 
     private boolean doTransformSpooledFile(String format) {
@@ -823,7 +902,7 @@ public class SpooledFile {
         if (file != null) {
             storeSaveDirectory(file);
 
-            String source = "/tmp/" + getTemporaryName(format);
+            String source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
             String target = file;
 
             boolean doTransformSpooledFile = doTransformSpooledFile(format);

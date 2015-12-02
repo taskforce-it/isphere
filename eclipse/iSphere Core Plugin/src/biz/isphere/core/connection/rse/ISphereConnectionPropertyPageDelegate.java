@@ -105,7 +105,7 @@ public class ISphereConnectionPropertyPageDelegate {
             }
         });
 
-        addSeparator(parent);
+        WidgetFactory.createSeparator(parent);
         addLibrarySection(parent);
 
         return parent;
@@ -257,14 +257,6 @@ public class ISphereConnectionPropertyPageDelegate {
 
         validatorLibrary = Validator.getLibraryNameInstance();
 
-    }
-
-    private void addSeparator(Composite parent) {
-        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        separator.setLayoutData(gridData);
     }
 
     private Composite createDefaultComposite(Composite parent, String text) {

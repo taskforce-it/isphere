@@ -1086,6 +1086,10 @@ public class Messages extends NLS {
 
     public static String Use_connection_specific_settings;
 
+    public static String Load_spooled_files_asynchronously;
+
+    public static String Loading_spooled_file;
+    
     /*
      * Warning messages
      */

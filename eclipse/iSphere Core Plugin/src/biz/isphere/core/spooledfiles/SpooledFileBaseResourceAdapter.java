@@ -28,6 +28,8 @@ public class SpooledFileBaseResourceAdapter {
 
         String defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
+//        splf.asyncOpen(defaultFormat, Display.getCurrent().getActiveShell());
+//        return true;
         String message = splf.open(defaultFormat);
         if (message == null) {
             return true;
