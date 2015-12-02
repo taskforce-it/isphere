@@ -137,7 +137,9 @@
              MONMSG     MSGID(CPF2104)
 
              ADDLIBLE   LIB(&PRDLIB) POSITION(*FIRST)
-             ADDLIBLE   LIB(&DEVLIB) POSITION(*AFTER &PRDLIB)
+             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+                ADDLIBLE   LIB(&DEVLIB) POSITION(*AFTER &PRDLIB)
+             ENDDO
 
              CHGVAR     VAR(&RSTLIBL) VALUE(&TRUE)
 

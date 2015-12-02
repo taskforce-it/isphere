@@ -37,6 +37,11 @@
 
              DCLF       FILE(QADSPOBJ) OPNID(OBJ)
 
+             SNDPGMMSG  MSGID(CPF9897) MSGF(QCPFMSG) +
+                          MSGDTA('Changing object owner ...') +
+                          TOPGMQ(*EXT) TOMSGQ(*TOPGMQ) +
+                          MSGTYPE(*STATUS)
+
              OVRDBF     FILE(QADSPOBJ) TOFILE(&TMPLIB/&TMPFILE) OVRSCOPE(*CALLLVL)
 
              DSPOBJD    OBJ(&PRDLIB/*ALL) OBJTYPE(*ALL) DETAIL(*BASIC) +
