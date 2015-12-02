@@ -3,6 +3,8 @@
 Changelog: iSphere 2.7.1 beta 6
 -------------------------------
  • Added option for downloading spooled files asynchronously.
+ • Fixed problem of missing German special characters when
+   transforming spooled files.
 
 
 Changelog: iSphere 2.7.1 beta 5
