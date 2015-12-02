@@ -39,6 +39,7 @@ import biz.isphere.core.dataspaceeditor.delegates.AbstractDataSpaceEditorDelegat
 import biz.isphere.core.dataspaceeditor.delegates.CharacterDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.DataSpaceEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.DecimalDataAreaEditorDelegate;
+import biz.isphere.core.dataspaceeditor.delegates.HexDataSpaceEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
@@ -218,7 +219,9 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
             return new DataSpaceEditorDelegate(this, selectedEditor);
         }
 
-        if (AbstractWrappedDataSpace.CHARACTER.equals(getWrappedDataArea().getDataType())) {
+        if (ISeries.USRSPC.equals(getWrappedDataArea().getObjectType())) {
+            return new HexDataSpaceEditorDelegate(this);
+        } else if (AbstractWrappedDataSpace.CHARACTER.equals(getWrappedDataArea().getDataType())) {
             return new CharacterDataAreaEditorDelegate(this);
         } else if (AbstractWrappedDataSpace.DECIMAL.equals(getWrappedDataArea().getDataType())) {
             return new DecimalDataAreaEditorDelegate(this);

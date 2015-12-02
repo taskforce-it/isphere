@@ -642,7 +642,9 @@ public class HexEditorInternal extends Composite implements FocusListener {
         }
 
         changesCounter++;
-        System.out.println("#" + changesCounter + ": Formatting hex buffer (" + numVisibleBytes + ") ...");
+        // TODO: remove System.out.println();
+        // System.out.println("#" + changesCounter + ": Formatting hex buffer ("
+        // + numVisibleBytes + ") ...");
 
         StringBuffer hexBuf = new StringBuffer(getFormattedHexBufferSize(numVisibleBytes));
         StringBuffer stringBuf = new StringBuffer(getBytesUsed());
@@ -702,7 +704,9 @@ public class HexEditorInternal extends Composite implements FocusListener {
         setLayout(createEditorLayout(1));
         setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, false, true));
 
-        Composite scrollableHeaderArea = new Composite(this, SWT.NONE);
+        Composite baseComposite = this;
+
+        Composite scrollableHeaderArea = new Composite(baseComposite, SWT.NONE);
         scrollableHeaderArea.setLayout(createScrollableAreaLayout());
 
         Composite headerArea = new Composite(scrollableHeaderArea, SWT.NONE);
@@ -716,7 +720,7 @@ public class HexEditorInternal extends Composite implements FocusListener {
 
         int numColumns = ((GridLayout)headerArea.getLayout()).numColumns;
 
-        Composite scrollableContainer = new Composite(this, SWT.NONE);
+        Composite scrollableContainer = new Composite(baseComposite, SWT.NONE);
         scrollableContainer.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, false, true));
         scrollableContainer.setLayout(new FillLayout());
 
@@ -733,6 +737,7 @@ public class HexEditorInternal extends Composite implements FocusListener {
         createOffsetArea(editorArea, innerStyle);
         createHexControl(editorArea, innerStyle, controlManager);
         createStringControl(editorArea, innerStyle, controlManager);
+        controlManager.setActiveControl(hexpart);
 
         scrollableEditorArea.setContent(editorArea);
         scrollableEditorArea.setExpandHorizontal(true);
@@ -873,23 +878,24 @@ public class HexEditorInternal extends Composite implements FocusListener {
 
         updateOffsetArea();
 
-        scrollableEditorArea.setMinSize(editorArea.computeSize(SWT.DEFAULT, 600));
+        scrollableEditorArea.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         editorArea.layout(true);
         editorArea.redraw();
 
         GridData gridData;
         gridData = (GridData)labelOffset.getParent().getLayoutData();
-        gridData.widthHint = offsetArea.getClientArea().width;
+        // gridData.widthHint = offsetArea.getClientArea().width;
+        gridData.widthHint = ((GridData)offsetArea.getLayoutData()).widthHint;
 
         gridData = (GridData)labelHex.getParent().getLayoutData();
-        gridData.widthHint = hexpart.getClientArea().width;
+        gridData.widthHint = hexpart.getClientArea().width + 3;
 
         gridData = (GridData)labelString.getParent().getLayoutData();
         gridData.horizontalAlignment = SWT.BEGINNING;
         gridData.verticalAlignment = SWT.FILL;
         gridData.grabExcessHorizontalSpace = false;
         gridData.grabExcessVerticalSpace = true;
-        gridData.widthHint = stringpart.getClientArea().width;
+        gridData.widthHint = stringpart.getClientArea().width + 3;
 
         if (insertMode) {
             setInsertMode(true);
@@ -1062,7 +1068,8 @@ public class HexEditorInternal extends Composite implements FocusListener {
 
     private void bufferChanged(int bytesUsed, boolean doFormat) {
 
-        System.out.println("Buffer changed!");
+        // TODO: remove System.out.println();
+        // System.out.println("Buffer changed!");
 
         if (bytesUsed != getBytesUsed()) {
             setMaxSize(bytesUsed);
