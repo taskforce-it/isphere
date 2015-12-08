@@ -18,6 +18,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -40,6 +41,14 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
 
     public AbstractDataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         dataAreaEditor = aDataAreaEditor;
+    }
+
+    public IEditorSite getEditorSite() {
+        return dataAreaEditor.getEditorSite();
+    }
+
+    protected void firePropertyChange(int propertyId) {
+        dataAreaEditor.firePropertyChange(propertyId);
     }
 
     /**
@@ -207,11 +216,55 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     }
 
     /**
+     * Returns the UndoAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return UndoAction to override the original behavior
+     */
+    public Action getUndoAction() {
+        return null;
+    }
+
+    /**
+     * Returns the RedoAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return RedoAction to override the original behavior
+     */
+    public Action getRedoAction() {
+        return null;
+    }
+
+    /**
+     * Returns the DeleteAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return DeleteAction to override the original behavior
+     */
+    public Action getDeleteAction() {
+        return null;
+    }
+
+    /**
+     * Returns the SelectAllAction that overrides the original action of the
+     * editor widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return SelectAllAction to override the original behavior
+     */
+    public Action getSelectAllAction() {
+        return null;
+    }
+
+    /**
      * Called by the editor part, when the parts is disposed. Overridden, to
      * dispose the clipboard.
      */
     public void dispose() {
-        if (clipboard != null) {
+        if (clipboard != null && !clipboard.isDisposed()) {
             clipboard.dispose();
         }
     }
@@ -298,6 +351,8 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     public abstract void setInitialFocus();
 
     public abstract void setEnabled(boolean isEnabled);
+
+    public abstract void updateActionsStatus();
 
     protected void resetDirtyFlag() {
         dataAreaEditor.setDirty(false);
