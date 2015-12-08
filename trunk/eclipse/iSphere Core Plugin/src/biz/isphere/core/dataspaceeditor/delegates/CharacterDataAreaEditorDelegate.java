@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -29,6 +30,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -66,6 +69,10 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     private Action cutAction;
     private Action copyAction;
     private Action pasteAction;
+    private Action undoAction;
+    private Action redoAction;
+    private Action deleteAction;
+    private Action selectAllAction;
     private Action findReplaceAction;
 
     private Composite parent;
@@ -154,6 +161,57 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     }
 
     /**
+     * Updates the status of actions: enables/disables them depending on whether
+     * there is text selected and whether inserting or overwriting is active.
+     * Undo/redo actions are enabled/disabled as well.
+     */
+    public void updateActionsStatus() {
+
+        boolean textSelected = dataAreaText.isSelected();
+        boolean lengthModifiable = textSelected && !dataAreaText.isOverwriteMode();
+
+        IAction action;
+        IActionBars bars = getEditorSite().getActionBars();
+
+        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
+        if (action != null) {
+            action.setEnabled(textSelected);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
+        if (action != null) {
+            action.setEnabled(false);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
+        if (action != null) {
+            action.setEnabled(false);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        bars.updateActionBars();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -218,6 +276,50 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
             pasteAction = new PasteAction();
         }
         return pasteAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getUndoAction() {
+        if (undoAction == null) {
+            undoAction = new UndoAction();
+        }
+        return undoAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getRedoAction() {
+        if (redoAction == null) {
+            redoAction = new RedoAction();
+        }
+        return redoAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getDeleteAction() {
+        if (deleteAction == null) {
+            deleteAction = new DeleteAction();
+        }
+        return deleteAction; // deleteAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getSelectAllAction() {
+        if (selectAllAction == null) {
+            selectAllAction = new SelectAllAction();
+        }
+        return null; // selectAllAction;
     }
 
     /**
@@ -637,6 +739,11 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 replaceSelection(text);
             }
         }
+
+        @Override
+        public String getId() {
+            return ActionFactory.PASTE.getId();
+        }
     };
 
     /**
@@ -659,6 +766,11 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 }
                 setClipboardText(text);
             }
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.COPY.getId();
         }
     }
 
@@ -683,6 +795,89 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 setClipboardText(text);
                 replaceSelection("");
             }
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.CUT.getId();
+        }
+    }
+
+    /**
+     * Class, that overrides the original "undo" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>no action</li>
+     * </ul>
+     */
+    private class UndoAction extends Action {
+        @Override
+        public void run() {
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.UNDO.getId();
+        }
+    }
+
+    /**
+     * Class, that overrides the original "redo" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>no action</li>
+     * </ul>
+     */
+    private class RedoAction extends Action {
+        @Override
+        public void run() {
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.REDO.getId();
+        }
+    }
+
+    /**
+     * Class, that overrides the original "delete" action of the SWT Text
+     * widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>no action</li>
+     * </ul>
+     */
+    private class DeleteAction extends Action {
+        @Override
+        public void run() {
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.DELETE.getId();
+        }
+    }
+
+    /**
+     * Class, that overrides the original "select all" action of the SWT Text
+     * widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>no action</li>
+     * </ul>
+     */
+    private class SelectAllAction extends Action {
+        @Override
+        public void run() {
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.SELECT_ALL.getId();
         }
     }
 

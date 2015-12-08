@@ -8,21 +8,41 @@
 
 package biz.isphere.core.dataspaceeditor.delegates;
 
+import java.nio.ByteBuffer;
+import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.wb.swt.SWTResourceManager;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.swt.widgets.CaretEvent;
-import biz.isphere.core.swt.widgets.CaretListener;
-import biz.isphere.core.swt.widgets.HexEditor;
+import biz.isphere.core.internal.FontHelper;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.hexeditor.HexTexts;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
 
 /**
  * Editor delegate that edits a *LGL data area.
@@ -32,14 +52,27 @@ import biz.isphere.core.swt.widgets.HexEditor;
  */
 public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
-    private HexEditor dataAreaText;
+    private HexTexts dataAreaText;
+
+    private Action cutAction;
+    private Action copyAction;
+    private Action pasteAction;
+    private Action undoAction;
+    private Action redoAction;
+    private Action deleteAction;
+    private Action selectAllAction;
+    private Action findReplaceAction;
 
     public HexDataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void createPartControl(Composite aParent) {
+
+        FontRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
+        registry.addListener(new ThemeChangedListener());
 
         ScrolledComposite editorAreaScrollable = new ScrolledComposite(aParent, SWT.H_SCROLL | SWT.NONE);
         editorAreaScrollable.setLayout(new GridLayout(1, false));
@@ -50,6 +83,25 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         Composite editorArea = createEditorArea(editorAreaScrollable, 3);
         editorArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        Label lblCcsid = new Label(editorArea, SWT.NONE);
+        GridData lblCcsidLayoutData = new GridData();
+        lblCcsidLayoutData.widthHint = AbstractDataSpaceEditor.VALUE_LABEL_WIDTH_HINT;
+        lblCcsidLayoutData.verticalAlignment = GridData.BEGINNING;
+        lblCcsid.setLayoutData(lblCcsidLayoutData);
+        lblCcsid.setText("Ccsid:");
+
+        Composite horizontalSpacer1 = new Composite(editorArea, SWT.NONE);
+        GridData horizontalSpacerLayoutData1 = new GridData();
+        horizontalSpacerLayoutData1.widthHint = AbstractDataSpaceEditor.SPACER_WIDTH_HINT;
+        horizontalSpacerLayoutData1.heightHint = 1;
+        horizontalSpacer1.setLayoutData(horizontalSpacerLayoutData1);
+
+        Combo comboCcsid = WidgetFactory.createCombo(editorArea);
+        GridData comboCcsidLayoutData = new GridData();
+        comboCcsidLayoutData.widthHint = AbstractDataSpaceEditor.VALUE_LABEL_WIDTH_HINT;
+        comboCcsidLayoutData.verticalAlignment = GridData.BEGINNING;
+        comboCcsid.setLayoutData(comboCcsidLayoutData);
+
         Label lblValue = new Label(editorArea, SWT.NONE);
         GridData lblValueLayoutData = new GridData();
         lblValueLayoutData.widthHint = AbstractDataSpaceEditor.VALUE_LABEL_WIDTH_HINT;
@@ -57,13 +109,15 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         lblValue.setLayoutData(lblValueLayoutData);
         lblValue.setText(Messages.Value_colon);
 
-        Composite horizontalSpacer = new Composite(editorArea, SWT.NONE);
-        GridData horizontalSpacerLayoutData = new GridData();
-        horizontalSpacerLayoutData.widthHint = AbstractDataSpaceEditor.SPACER_WIDTH_HINT;
-        horizontalSpacerLayoutData.heightHint = 1;
-        horizontalSpacer.setLayoutData(horizontalSpacerLayoutData);
+        Composite horizontalSpacer2 = new Composite(editorArea, SWT.NONE);
+        GridData horizontalSpacerLayoutData2 = new GridData();
+        horizontalSpacerLayoutData2.widthHint = AbstractDataSpaceEditor.SPACER_WIDTH_HINT;
+        horizontalSpacerLayoutData2.heightHint = 1;
+        horizontalSpacer2.setLayoutData(horizontalSpacerLayoutData2);
 
-        dataAreaText = new HexEditor(editorArea, SWT.BORDER, 0, 16, 8);
+        dataAreaText = new HexTexts(editorArea, SWT.BORDER);
+        dataAreaText.setFont(getEditorFont());
+        dataAreaText.setModes(HexTexts.OVERWRITE);
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.FILL, false, true);
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
 
@@ -78,24 +132,85 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         editorAreaScrollable.setMinSize(editorArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         // Set screen value
+        BinaryContent binaryContent = null;
         try {
-            dataAreaText.setByteData(getWrappedDataSpace().getBytes());
+            binaryContent = new BinaryContent(getWrappedDataSpace().getBytes());
+            dataAreaText.setContentProvider(binaryContent);
         } catch (Throwable e) {
         }
 
         // Add 'dirty' listener
-        dataAreaText.addModifyListener(new ModifyListener() {
-
-            public void modifyText(ModifyEvent arg0) {
+        BinaryContent.ModifyListener modifyListener = new BinaryContent.ModifyListener() {
+            public void modified() {
                 setEditorDirty();
             }
-        });
+        };
+        binaryContent.addModifyListener(modifyListener);
 
-        dataAreaText.addCaretListener(new CaretListener() {
-            public void caretMoved(CaretEvent event) {
-                getStatusBar().setPosition((event.caretOffset / 2) + 1);
+        dataAreaText.addStateChangeListener(new HexTexts.StateChangeListener() {
+            public void changed() {
+                updateActionsStatus();
             }
         });
+
+        dataAreaText.addLongSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateActionsStatus();
+                getStatusBar().setPosition((int)dataAreaText.getCaretPos());
+            }
+        });
+    }
+
+    /**
+     * Updates the status of actions: enables/disables them depending on whether
+     * there is text selected and whether inserting or overwriting is active.
+     * Undo/redo actions are enabled/disabled as well.
+     */
+    public void updateActionsStatus() {
+
+        boolean textSelected = dataAreaText.isSelected();
+        boolean lengthModifiable = textSelected && !dataAreaText.isOverwriteMode();
+
+        IAction action;
+        IActionBars bars = getEditorSite().getActionBars();
+
+        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
+        if (action != null) {
+            action.setEnabled(textSelected);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
+        if (action != null) {
+            action.setEnabled(dataAreaText.canUndo());
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
+        if (action != null) {
+            action.setEnabled(dataAreaText.canRedo());
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        bars.updateActionBars();
     }
 
     /**
@@ -109,7 +224,10 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         try {
-            getWrappedDataSpace().setBytes(dataAreaText.getByteData());
+            // getWrappedDataSpace().setBytes(dataAreaText.getContent().get(dst,
+            // position));
+            ByteBuffer buffer = ByteBuffer.allocate((int)dataAreaText.getContent().length());
+            dataAreaText.getContent().get(buffer, 0);
             handleSaveResult(aMonitor, null);
         } catch (Throwable e) {
             handleSaveResult(aMonitor, e);
@@ -121,4 +239,220 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         dataAreaText.setFocus();
     }
 
+    /**
+     * Returns the font used for the ruler, offset column and editor.
+     * 
+     * @return font for ruler, offset column and editor
+     */
+    private Font getEditorFont() {
+        return FontHelper.getFixedSizeFont();
+    }
+
+    /**
+     * Returns the CutAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return CutAction to override the original behavior
+     */
+    public Action getCutAction() {
+        if (cutAction == null) {
+            cutAction = new MyAction(dataAreaText, ActionFactory.CUT.getId());
+        }
+        return cutAction;
+    }
+
+    /**
+     * Returns the CopyAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return CopyAction to override the original behavior
+     */
+    public Action getCopyAction() {
+        if (copyAction == null) {
+            copyAction = new MyAction(dataAreaText, ActionFactory.COPY.getId());
+        }
+        return copyAction;
+    }
+
+    /**
+     * Returns the PasteAction that overrides the original action of the editor
+     * widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return PasteAction to override the original behavior
+     */
+    public Action getPasteAction() {
+        if (pasteAction == null) {
+            pasteAction = new MyAction(dataAreaText, ActionFactory.PASTE.getId());
+        }
+        return pasteAction;
+    }
+
+    public Action getUndoAction() {
+        if (undoAction == null) {
+            undoAction = new MyAction(dataAreaText, ActionFactory.UNDO.getId());
+        }
+        return undoAction;
+    }
+
+    public Action getRedoAction() {
+        if (redoAction == null) {
+            redoAction = new MyAction(dataAreaText, ActionFactory.REDO.getId());
+        }
+        return redoAction;
+    }
+
+    public Action getDeleteAction() {
+        if (deleteAction == null) {
+            deleteAction = new MyAction(dataAreaText, ActionFactory.DELETE.getId());
+        }
+        return deleteAction;
+    }
+
+    public Action getSelectAllAction() {
+        if (selectAllAction == null) {
+            selectAllAction = new MyAction(dataAreaText, ActionFactory.SELECT_ALL.getId());
+        }
+        return selectAllAction;
+    }
+
+    /**
+     * Returns the FindReplaceAction that overrides the original action of the
+     * editor widget.
+     * 
+     * @param anEditorPart - the editor part, that contains this editor delegate
+     * @return FindReplaceAction to override the original behavior
+     */
+    public Action getFindReplaceAction(EditorPart anEditorPart) {
+        if (findReplaceAction == null) {
+            findReplaceAction = new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedTextEditorMessages"), null,
+                anEditorPart);
+        }
+        return findReplaceAction;
+    }
+
+    /**
+     * Returns whether a find operation can be performed.
+     * 
+     * @return whether a find operation can be performed
+     */
+    public boolean canPerformFind() {
+        return true;
+    }
+
+    /**
+     * Searches for a string starting at the given widget offset and using the
+     * specified search directives. If a string has been found it is selected
+     * and its start offset is returned.
+     * 
+     * @param aWidgetOffset - the widget offset at which searching starts
+     * @param aFindString - the string which should be found
+     * @param aSearchForward - <code>true</code> searches forward,
+     *        <code>false</code> backwards
+     * @param aCaseSensitive - <code>true</code> performs a case sensitive
+     *        search, <code>false</code> an insensitive search
+     * @param aWholeWord - if <code>true</code> only occurrences are reported in
+     *        which the findString stands as a word by itself
+     */
+    public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
+        BinaryContentFinder.Match match = dataAreaText.findAndSelect(aWidgetOffset, aFindString, false, aSearchForward, aCaseSensitive);
+        if (!match.isFound()) {
+            return -1;
+        }
+        return (int)match.getStartPosition();
+    }
+
+    /**
+     * Returns the currently selected range of characters as a offset and length
+     * in widget coordinates.
+     * 
+     * @return the currently selected character range in widget coordinates
+     */
+    public Point getSelection() {
+        BinaryContent.RangeSelection selection = dataAreaText.getSelection();
+        return new Point((int)selection.start, (int)selection.getLength());
+    }
+
+    /**
+     * Returns the currently selected characters as a string.
+     * 
+     * @return the currently selected characters
+     */
+    public String getSelectionText() {
+        return "";
+    }
+
+    /**
+     * Returns whether this target can be modified.
+     * 
+     * @return <code>true</code> if target can be modified
+     */
+    public boolean isEditable() {
+        return dataAreaText.isEditable();
+    }
+
+    /**
+     * Replaces the currently selected range of characters with the given text.
+     * This target must be editable. Otherwise nothing happens.
+     * 
+     * @param aText - the substitution text
+     */
+    public void replaceSelection(String aText) {
+        return;
+    }
+
+    /**
+     * Class, that listens for changes on the FontRegistry in order to change
+     * the editor font, when the preferences are changed.
+     */
+    private class ThemeChangedListener implements IPropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (FontHelper.EDITOR_FIXED_SIZE.equals(event.getProperty())) {
+                if (event.getNewValue() instanceof FontData[]) {
+                    FontData[] fontDataArray = (FontData[])event.getNewValue();
+                    changeFont(fontDataArray[0]);
+                }
+            }
+        }
+
+        private void changeFont(FontData aFontData) {
+            Font font = SWTResourceManager.getFont(aFontData.getName(), aFontData.getHeight(), aFontData.getStyle());
+            dataAreaText.setFont(font);
+        }
+    }
+
+    private class MyAction extends Action {
+        private HexTexts myControl;
+        private String myId;
+
+        public MyAction(HexTexts control, String id) {
+            if (control == null) {
+                throw new IllegalArgumentException("Parameter 'control' must not be null.");
+            }
+            if (id == null) {
+                throw new IllegalArgumentException("Parameter 'id' must not be null.");
+            }
+            this.myControl = control;
+            this.myId = id;
+        }
+
+        @Override
+        public void run() {
+            if (myId.equals(ActionFactory.UNDO.getId()))
+                myControl.undo();
+            else if (myId.equals(ActionFactory.REDO.getId()))
+                myControl.redo();
+            else if (myId.equals(ActionFactory.CUT.getId()))
+                myControl.cut();
+            else if (myId.equals(ActionFactory.COPY.getId()))
+                myControl.copy();
+            else if (myId.equals(ActionFactory.PASTE.getId()))
+                myControl.paste();
+            else if (myId.equals(ActionFactory.DELETE.getId()))
+                myControl.deleteSelected();
+            else if (myId.equals(ActionFactory.SELECT_ALL.getId())) myControl.selectAll();
+        }
+    }
 }

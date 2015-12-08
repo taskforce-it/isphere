@@ -46,7 +46,7 @@ public class DataAreaText {
     private static final String CRLF = CR + LF;
     private static final String EOL_CHAR = "¤";
 
-    Text textControl;
+    private Text textControl;
 
     int maxLength;
     int lineLength;
@@ -177,6 +177,20 @@ public class DataAreaText {
         int start = selection.x - (selection.x / lineLengthIcludingCR) * CRLF.length();
         selection = new Point(start, start + length);
         return selection;
+    }
+
+    public boolean isSelected() {
+
+        Point selection = getSelection();
+        if (selection.x != selection.y) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isOverwriteMode() {
+        return !isInsertMode;
     }
 
     /**

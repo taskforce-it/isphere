@@ -119,6 +119,10 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         dataAreaText.setText(aValue);
     }
 
+    public void firePropertyChange(int propertyId) {
+        super.firePropertyChange(propertyId);
+    }
+
     @Override
     public void doSave(IProgressMonitor aMonitor) {
 
@@ -215,7 +219,11 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
                 }
             }
         }
-        if (selectedEditor != null || ISeries.USRSPC.equals(getWrappedDataArea().getObjectType())) {
+        if (selectedEditor != null /*
+                                    * ||
+                                    * ISeries.USRSPC.equals(getWrappedDataArea
+                                    * ().getObjectType())
+                                    */) {
             return new DataSpaceEditorDelegate(this, selectedEditor);
         }
 
@@ -253,20 +261,36 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
             handlerService.activateHandler("org.eclipse.ui.edit.findReplace", handler); //$NON-NLS-1$
         }
 
+        IActionBars actionBars = getEditorSite().getActionBars();
         if (editorDelegate.getCutAction() != null) {
-            IActionBars actionBars = getEditorSite().getActionBars();
             actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), editorDelegate.getCutAction());
         }
 
         if (editorDelegate.getCopyAction() != null) {
-            IActionBars actionBars = getEditorSite().getActionBars();
             actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), editorDelegate.getCopyAction());
         }
 
         if (editorDelegate.getPasteAction() != null) {
-            IActionBars actionBars = getEditorSite().getActionBars();
             actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editorDelegate.getPasteAction());
         }
+
+        if (editorDelegate.getUndoAction() != null) {
+            actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), editorDelegate.getUndoAction());
+        }
+
+        if (editorDelegate.getRedoAction() != null) {
+            actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), editorDelegate.getRedoAction());
+        }
+
+        if (editorDelegate.getDeleteAction() != null) {
+            actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), editorDelegate.getDeleteAction());
+        }
+
+        if (editorDelegate.getSelectAllAction() != null) {
+            actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), editorDelegate.getSelectAllAction());
+        }
+
+        editorDelegate.updateActionsStatus();
     }
 
     /**
