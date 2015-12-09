@@ -22,6 +22,7 @@ import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
+import biz.isphere.core.swt.widgets.hexeditor.HexText;
 
 /**
  * Factory for creating SWT widgets.
@@ -467,6 +468,13 @@ public final class WidgetFactory {
         return radioButton;
     }
 
+    public static HexText createHexText(Composite parent) {
+        
+        HexText hexText = new HexText(parent, SWT.NONE); 
+        
+        return hexText;
+    }
+    
     /*
      * Private worker procedures, doing the actual work.
      */

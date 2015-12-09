@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2015 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,6 +165,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
      * there is text selected and whether inserting or overwriting is active.
      * Undo/redo actions are enabled/disabled as well.
      */
+    @Override
     public void updateActionsStatus() {
 
         boolean textSelected = dataAreaText.isSelected();
@@ -209,6 +210,14 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         }
 
         bars.updateActionBars();
+    }
+
+    /**
+     * Updates the status line.
+     */
+    @Override
+    public void updateStatusLine() {
+
     }
 
     /**
@@ -337,6 +346,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canPerformFind() {
         return true;
     }
@@ -344,6 +354,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
 
         // Tested regular expression beforehand
@@ -450,6 +461,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public Point getSelection() {
         int start = dataAreaText.getSelection().x;
         int length = dataAreaText.getSelection().y - start;
@@ -460,6 +472,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getSelectionText() {
         return dataAreaText.getSelectionText();
     }
@@ -467,6 +480,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEditable() {
         return dataAreaText.isEnabled();
     }
@@ -474,6 +488,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     /**
      * {@inheritDoc}
      */
+    @Override
     public void replaceSelection(String aText) {
         dataAreaText.replaceTextRange(getSelection(), aText);
     }

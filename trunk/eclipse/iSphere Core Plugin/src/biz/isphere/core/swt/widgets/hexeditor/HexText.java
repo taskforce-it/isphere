@@ -1,6 +1,6 @@
-/*
+/*******************************************************************************
  * javahexeditor, a java hex editor
- * Copyright (C) 2006, 2009 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
+ * Copyright (C) 2006-2015 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
  * The official javahexeditor site is sourceforge.net/projects/javahexeditor
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+ * 
+ * Contributors:
+ *     iSphere Project Owners - Maintenance and enhancements
+ *******************************************************************************/
+
 package biz.isphere.core.swt.widgets.hexeditor;
 
 import java.io.IOException;
@@ -87,7 +91,7 @@ import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
  * 
  * @author Jordi
  */
-public final class HexTexts extends Composite {
+public final class HexText extends Composite {
 
     /**
      * Used to notify changes in state 'overwrite/insert' and 'canUndo/canRedo'.
@@ -125,6 +129,9 @@ public final class HexTexts extends Composite {
     private static final int SET_TEXT = 0;
     private static final int SHIFT_FORWARD = 1; // frame
     private static final int SHIFT_BACKWARD = 2;
+
+    private static int HEX_EDITOR = 1;
+    private static int CHAR_EDITOR = 2;
 
     public static final int OVERWRITE = 1; // CHANGED (new)
     public static final int INSERT = 2; // CHANGED (new)
@@ -265,11 +272,18 @@ public final class HexTexts extends Composite {
     }
 
     public void setCharset(String name) {
+
         if ((name == null) || (name.length() == 0)) {
             name = getSystemCharset();
         }
+
         charset = name;
+        // if (getContent() != null) {
+        // getContent().setCharset(name);
+        // }
+
         composeByteToCharMap();
+        redrawTextAreas(true);
     }
 
     /**
@@ -279,7 +293,7 @@ public final class HexTexts extends Composite {
      * @param hexString an hex string (ie. "0fdA1").
      * @return the byte[] value of the hex string
      */
-    public static byte[] hexStringToByte(String hexString) {
+    public byte[] hexStringToByte(String hexString) {
         if ((hexString.length() & 1) == 1) // nibbles promote to a full byte
             hexString = '0' + hexString;
         byte[] tmp = new byte[hexString.length() / 2];
@@ -547,7 +561,7 @@ public final class HexTexts extends Composite {
      * @param parent parent in the widget hierarchy
      * @param style not used for the moment
      */
-    public HexTexts(final Composite parent, int style) {
+    public HexText(final Composite parent, int style) {
         super(parent, style | SWT.BORDER | SWT.V_SCROLL);
 
         colorCaretLine = new Color(Display.getCurrent(), 232, 242, 254); // very
@@ -578,12 +592,11 @@ public final class HexTexts extends Composite {
                     // BinaryContentClipboard.CLIPBOARD_FILE_NAME,
                     // TextUtility.format(BinaryContentClipboard.CLIPBOARD_FILE_NAME_PASTED,
                     // "..."));
-
                 }
             }
         });
         initialize();
-        myLastFocusedTextArea = 1;
+        myLastFocusedTextArea = HEX_EDITOR;
         myPreviousLine = -1;
     }
 
@@ -711,8 +724,8 @@ public final class HexTexts extends Composite {
             @Override
             public void focusGained(FocusEvent e) {
                 drawUnfocusedCaret(false);
-                myLastFocusedTextArea = 1;
-                if (e.widget == charEdit) myLastFocusedTextArea = 2;
+                myLastFocusedTextArea = HEX_EDITOR;
+                if (e.widget == charEdit) myLastFocusedTextArea = CHAR_EDITOR;
                 getDisplay().asyncExec(new Runnable() {
                     public void run() {
                         drawUnfocusedCaret(true);
@@ -907,9 +920,16 @@ public final class HexTexts extends Composite {
      * space.
      */
     public void copy() {
-        if (myStart >= myEnd) return;
 
-        myClipboard.setContents(myContent, myStart, myEnd - myStart);
+        if (myStart >= myEnd) {
+            return;
+        }
+
+        if (myLastFocusedTextArea == HEX_EDITOR) {
+            myClipboard.setHexContents(myContent, myStart, myEnd - myStart);
+        } else {
+            myClipboard.setTextContents(myContent, charset, myStart, myEnd - myStart);
+        }
     }
 
     private StringBuilder cookAddresses(long address, int limit) {
@@ -1137,7 +1157,7 @@ public final class HexTexts extends Composite {
         Caret unfocusedCaret = null;
         int chars = 0;
         int shift = 0;
-        if (myLastFocusedTextArea == 1) {
+        if (myLastFocusedTextArea == HEX_EDITOR) {
             unfocusedCaret = charEdit.getCaret();
             unfocusedGC = styledText2GC;
         } else {
@@ -1469,7 +1489,9 @@ public final class HexTexts extends Composite {
     }
 
     void notifyLongSelectionListeners() {
-        if (myLongSelectionListeners.isEmpty()) return;
+        if (myLongSelectionListeners.isEmpty()) {
+            return;
+        }
 
         Event basicEvent = new Event();
         basicEvent.widget = this;
@@ -1500,16 +1522,25 @@ public final class HexTexts extends Composite {
      * case does nothing.
      */
     public void paste() {
+
         if (!myClipboard.hasContents()) {
             return;
         }
 
         handleSelectedPreModify();
         long caretPos = getCaretPos();
-        long total = myClipboard.getContents(myContent, caretPos, myInserting);
+
+        long total;
+        if (myLastFocusedTextArea == HEX_EDITOR) {
+            total = myClipboard.getHexContents(myContent, charset, caretPos, myInserting);
+        } else {
+            total = myClipboard.getTextContents(myContent, charset, caretPos, myInserting);
+        }
+
         myStart = caretPos;
         myEnd = caretPos + total;
         myCaretStickToStart = false;
+
         redrawTextAreas(true);
         restoreStateAfterModify();
     }
@@ -1898,6 +1929,7 @@ public final class HexTexts extends Composite {
 
         updateScrollBar();
         redrawTextAreas(true);
+
         notifyLongSelectionListeners();
         notifyListeners(SWT.Modify, null);
     }
@@ -1912,7 +1944,7 @@ public final class HexTexts extends Composite {
     @Override
     public boolean setFocus() {
         redrawCaret(false);
-        if (myLastFocusedTextArea == 1) {
+        if (myLastFocusedTextArea == HEX_EDITOR) {
             return hexEdit.setFocus();
         }
         return charEdit.setFocus();

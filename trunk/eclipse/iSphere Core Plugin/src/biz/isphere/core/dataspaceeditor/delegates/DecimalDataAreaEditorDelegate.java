@@ -100,7 +100,16 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
      * there is text selected and whether inserting or overwriting is active.
      * Undo/redo actions are enabled/disabled as well.
      */
+    @Override
     public void updateActionsStatus() {
+
+    }
+
+    /**
+     * Updates the status line.
+     */
+    @Override
+    public void updateStatusLine() {
 
     }
 

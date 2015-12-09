@@ -1,6 +1,6 @@
-/*
+/*******************************************************************************
  * javahexeditor, a java hex editor
- * Copyright (C) 2006, 2009 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
+ * Copyright (C) 2006-2015 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
  * The official javahexeditor site is sourceforge.net/projects/javahexeditor
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+ * 
+ * Contributors:
+ *     iSphere Project Owners - Maintenance and enhancements
+ *******************************************************************************/
+
 package biz.isphere.core.swt.widgets.hexeditor.internal;
 
 import java.util.ArrayList;
@@ -34,34 +38,33 @@ public final class FindReplaceHistory {
      * be interpreted as text or as hex value(s).
      */
     public static final class Entry {
-	private String stringValue;
-	private boolean hex;
+        private String stringValue;
+        private boolean hex;
 
-	public Entry(String stringValue, boolean selected) {
-	    if (stringValue == null) {
-		throw new IllegalArgumentException(
-			"Parameter 'stringValue' must not be null.");
-	    }
+        public Entry(String stringValue, boolean selected) {
+            if (stringValue == null) {
+                throw new IllegalArgumentException("Parameter 'stringValue' must not be null."); //$NON-NLS-1$
+            }
 
-	    this.stringValue = stringValue;
-	    this.hex = selected;
-	}
+            this.stringValue = stringValue;
+            this.hex = selected;
+        }
 
-	public String getStringValue() {
-	    return stringValue;
-	}
+        public String getStringValue() {
+            return stringValue;
+        }
 
-	public boolean isHex() {
-	    return hex;
-	}
+        public boolean isHex() {
+            return hex;
+        }
     }
 
     private List<Entry> findList;
     private List<Entry> replaceList;
 
     public FindReplaceHistory() {
-	findList = new ArrayList<Entry>();
-	replaceList = new ArrayList<Entry>();
+        findList = new ArrayList<Entry>();
+        replaceList = new ArrayList<Entry>();
     }
 
     /**
@@ -71,8 +74,7 @@ public final class FindReplaceHistory {
      *         not <code>null</code>.
      */
     public List<Entry> getFindList() {
-
-	return findList;
+        return findList;
     }
 
     /**
@@ -82,8 +84,7 @@ public final class FindReplaceHistory {
      *         not <code>null</code>.
      */
     public List<Entry> getReplaceList() {
-
-	return replaceList;
+        return replaceList;
     }
 
 }
