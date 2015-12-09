@@ -36,6 +36,7 @@
       <editor
             name=""
             icon="icons/user_space.gif"
+            contributorClass="biz.isphere.rse.userspaceeditor.UserSpaceEditorActionBarContributor"
             class="biz.isphere.rse.userspaceeditor.UserSpaceEditor"
             id="biz.isphere.rse.userspaceeditor.UserSpaceEditor"/>
       <editor
