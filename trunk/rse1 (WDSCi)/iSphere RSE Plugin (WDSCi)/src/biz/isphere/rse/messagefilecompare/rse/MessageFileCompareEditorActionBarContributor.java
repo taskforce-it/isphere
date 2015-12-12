@@ -6,17 +6,16 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.userspaceeditor;
+package biz.isphere.rse.messagefilecompare.rse;
 
-import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
+import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditorActionBarContributor;
 
-public class UserSpaceEditorActionBarContributor extends AbstractDataSpaceEditorActionBarContributor {
+public class MessageFileCompareEditorActionBarContributor extends AbstractMessageFileCompareEditorActionBarContributor {
 
     @Override
     public String getStatusLineId() {
         return StatusLine.STATUS_LINE_ID + "_" + getClass().getName();
     }
-
 
 }
