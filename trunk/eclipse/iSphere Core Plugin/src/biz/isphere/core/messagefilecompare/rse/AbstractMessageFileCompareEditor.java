@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -67,7 +66,6 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDescriptionHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.internal.StatusBar;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefilecompare.MessageFileCompareEditorInput;
 import biz.isphere.core.messagefilecompare.TableContentProvider;
@@ -124,11 +122,12 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Composite headerArea;
     private Composite optionsArea;
 
-    private CLabel statusInfo;
-    private CLabel statusBarFilterText;
-
     private boolean isComparing;
     private boolean isSynchronizing;
+
+    private StatusLine statusLine;
+    private String statusMessage;
+    private int numFilteredItems;
 
     public AbstractMessageFileCompareEditor() {
 
@@ -460,10 +459,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         footerArea.setLayout(new GridLayout(1, false));
         footerArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        StatusBar statusBar = new StatusBar(footerArea, false);
-        statusInfo = statusBar.createStatusBarLabel(""); //$NON-NLS-1$
-        statusBar.createStatusBarImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
-        statusBarFilterText = statusBar.createStatusBarLabel("", 50, SWT.CENTER); //$NON-NLS-1$
+        // StatusBar statusBar = new StatusBar(footerArea, false);
+        //        statusMessage = statusBar.createStatusBarLabel(""); //$NON-NLS-1$
+        // statusBar.createStatusBarImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
+        //        numFilteredItems = statusBar.createStatusBarLabel("", 50, SWT.CENTER); //$NON-NLS-1$
 
     }
 
@@ -700,23 +699,22 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private void displayCompareStatus() {
 
-        if (statusInfo != null) {
-            if (isWorking()) {
-                statusInfo.setText(Messages.Working);
-            } else if (selectionChanged) {
-                if (StringHelper.isNullOrEmpty(lblLeftMessageFile.getText()) || StringHelper.isNullOrEmpty(lblRightMessageFile.getText())) {
-                    statusInfo.setText(Messages.Please_select_the_missing_message_file_then_press_Compare_to_start);
-                } else {
-                    statusInfo.setText(Messages.Please_press_Compare_to_start);
-                }
-                statusBarFilterText.setText("");//$NON-NLS-1$
+        if (isWorking()) {
+            statusMessage = Messages.Working;
+        } else if (selectionChanged) {
+            if (StringHelper.isNullOrEmpty(lblLeftMessageFile.getText()) || StringHelper.isNullOrEmpty(lblRightMessageFile.getText())) {
+                statusMessage = Messages.Please_select_the_missing_message_file_then_press_Compare_to_start;
             } else {
-                TableStatistics tableStatistics = getTableStatistics();
-                statusInfo.setText(tableStatistics.toString());
-                statusBarFilterText.setText(Integer.toString(tableStatistics.getFilteredElements()));
+                statusMessage = Messages.Please_press_Compare_to_start;
             }
+            numFilteredItems = 0;//$NON-NLS-1$
+        } else {
+            TableStatistics tableStatistics = getTableStatistics();
+            statusMessage = tableStatistics.toString();
+            numFilteredItems = tableStatistics.getFilteredElements();
         }
-
+        
+        updateStatusLine();
     }
 
     /**
@@ -1318,5 +1316,34 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 }
             }
         }
+    }
+
+    public void setStatusLine(StatusLine statusLine) {
+        this.statusLine = statusLine;
+    }
+
+    public void updateActionsStatusAndStatusLine() {
+        updateActionsStatus();
+        updateStatusLine();
+    }
+
+    private void updateActionsStatus() {
+
+    }
+
+    private void updateStatusLine() {
+
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowNumItems(true);
+        statusLine.setShowMessage(true);
+
+        if (statusLine != null) {
+            statusLine.setMessage(statusMessage);
+            statusLine.setNumItems(numFilteredItems);
+        }
+
     }
 }

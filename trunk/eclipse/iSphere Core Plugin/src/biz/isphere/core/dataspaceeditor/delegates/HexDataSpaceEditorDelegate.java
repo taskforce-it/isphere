@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,7 +34,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
@@ -46,9 +47,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
-import biz.isphere.core.dataspaceeditor.StatusLineContributionItem;
 import biz.isphere.core.internal.FontHelper;
-import biz.isphere.core.internal.StatusBar;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
@@ -72,6 +71,8 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     private Action deleteAction;
     private Action selectAllAction;
     private Action findReplaceAction;
+
+    private String statusMessage;
 
     public HexDataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -116,7 +117,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         comboCcsid.setItems(listOfCcsids);
         comboCcsid.setData("CCSIDS", ccsids);
         GridData comboCcsidGd = new GridData();
-        comboCcsidGd.widthHint = 150;
+        comboCcsidGd.widthHint = 240;
         comboCcsid.setLayoutData(comboCcsidGd);
         comboCcsid.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -187,16 +188,19 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         } catch (Throwable e) {
         }
 
+        // Set screen value
+        dataAreaText.setContentProvider(binaryContent);
+        dataAreaText.setCharset(findCharset(ccsids, comboCcsid.getText()));
+
         // Add 'dirty' listener
-        BinaryContent.ModifyListener modifyListener = new BinaryContent.ModifyListener() {
-            public void modified() {
+        dataAreaText.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event paramEvent) {
                 setEditorDirty();
             }
-        };
-        binaryContent.addModifyListener(modifyListener);
+        });
 
         dataAreaText.addStateChangeListener(new HexText.StateChangeListener() {
-            public void changed() {
+            public void changed(HexText.StateChangeEvent event) {
                 updateActionsStatus();
                 updateStatusLine();
             }
@@ -209,10 +213,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
                 updateStatusLine();
             }
         });
-
-        // Set screen value
-        dataAreaText.setContentProvider(binaryContent);
-        dataAreaText.setCharset(findCharset(ccsids, comboCcsid.getText()));
     }
 
     private Properties loadCcsids() {
@@ -252,6 +252,11 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         return System.getProperty("file.encoding", "utf-8");
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessage = message;
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.
@@ -260,7 +265,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     @Override
     public void updateActionsStatus() {
 
-        boolean textSelected = dataAreaText.isSelected();
+        boolean textSelected = dataAreaText != null && dataAreaText.isSelected();
         boolean lengthModifiable = textSelected && !dataAreaText.isOverwriteMode();
 
         IAction action;
@@ -283,12 +288,12 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
         action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
         if (action != null) {
-            action.setEnabled(dataAreaText.canUndo());
+            action.setEnabled(dataAreaText != null && dataAreaText.canUndo());
         }
 
         action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
         if (action != null) {
-            action.setEnabled(dataAreaText.canRedo());
+            action.setEnabled(dataAreaText != null && dataAreaText.canRedo());
         }
 
         action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
@@ -307,17 +312,26 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     @Override
     public void updateStatusLine() {
 
-        IContributionItem item = getStatusLineManager().find(StatusLine.STATUS_LINE_ID);
-        if (item instanceof StatusLineContributionItem) {
-            StatusLine statusLine = ((StatusLineContributionItem)item).getStatusLine();
-            if (statusLine != null) {
-                long position = dataAreaText.getCaretPos();
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowMode(true);
+        statusLine.setShowPosition(true);
+        statusLine.setShowValue(true);
+        statusLine.setShowMessage(true);
+
+        if (statusLine != null) {
+            statusLine.setMessage(statusMessage);
+            statusMessage = null;
+            if (dataAreaText != null) {
                 if (dataAreaText.isSelected()) {
-                    statusLine.updateSelectionValue(dataAreaText.getSelection(), dataAreaText.getActualValue());
+                    statusLine.setSelection(dataAreaText.getSelection(), dataAreaText.getActualValue());
                 } else {
-                    statusLine.updatePositionValue(position, dataAreaText.getActualValue());
+                    statusLine.setPosition(dataAreaText.getCaretPosition(), dataAreaText.getActualValue());
                 }
-                statusLine.updateInsertMode(!dataAreaText.isOverwriteMode());
+                statusLine.setInsertMode(!dataAreaText.isOverwriteMode());
             }
         }
     }
@@ -327,14 +341,15 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
      */
     @Override
     public void setEnabled(boolean isEnabled) {
+        if (dataAreaText == null) {
+            return;
+        }
         dataAreaText.setEnabled(isEnabled);
     }
 
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         try {
-            // getWrappedDataSpace().setBytes(dataAreaText.getContent().get(dst,
-            // position));
             ByteBuffer buffer = ByteBuffer.allocate((int)dataAreaText.getContent().length());
             dataAreaText.getContent().get(buffer, 0);
             handleSaveResult(aMonitor, null);
@@ -345,6 +360,9 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
     @Override
     public void setInitialFocus() {
+        if (dataAreaText == null) {
+            return;
+        }
         dataAreaText.setFocus();
     }
 
@@ -491,8 +509,8 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
      */
     @Override
     public Point getSelection() {
-        BinaryContent.RangeSelection selection = dataAreaText.getSelection();
-        return new Point((int)selection.start, (int)selection.getLength());
+        Point selection = dataAreaText.getSelection();
+        return new Point(selection.x, selection.y - selection.x);
     }
 
     /**
@@ -526,11 +544,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         return;
     }
 
-    @Override
-    public StatusBar createStatusBar(Composite editorParent) {
-        return null;
-    }
-
     /**
      * Class, that listens for changes on the FontRegistry in order to change
      * the editor font, when the preferences are changed.
@@ -560,7 +573,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
                 throw new IllegalArgumentException("Parameter 'control' must not be null.");
             }
             if (id == null) {
-                throw new IllegalArgumentException("Parameter 'id' must not be null.");
+                throw new IllegalArgumentException("Parameter 'id' must not be null."); //$NON-NLS-1$
             }
             this.myControl = control;
             this.myId = id;
@@ -568,19 +581,25 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
         @Override
         public void run() {
-            if (myId.equals(ActionFactory.UNDO.getId()))
+            if (myControl == null) {
+                return;
+            }
+
+            if (myId.equals(ActionFactory.UNDO.getId())) {
                 myControl.undo();
-            else if (myId.equals(ActionFactory.REDO.getId()))
+            } else if (myId.equals(ActionFactory.REDO.getId())) {
                 myControl.redo();
-            else if (myId.equals(ActionFactory.CUT.getId()))
+            } else if (myId.equals(ActionFactory.CUT.getId())) {
                 myControl.cut();
-            else if (myId.equals(ActionFactory.COPY.getId()))
+            } else if (myId.equals(ActionFactory.COPY.getId())) {
                 myControl.copy();
-            else if (myId.equals(ActionFactory.PASTE.getId()))
+            } else if (myId.equals(ActionFactory.PASTE.getId())) {
                 myControl.paste();
-            else if (myId.equals(ActionFactory.DELETE.getId()))
+            } else if (myId.equals(ActionFactory.DELETE.getId())) {
                 myControl.deleteSelected();
-            else if (myId.equals(ActionFactory.SELECT_ALL.getId())) myControl.selectAll();
+            } else if (myId.equals(ActionFactory.SELECT_ALL.getId())) {
+                myControl.selectAll();
+            }
         }
     }
 }

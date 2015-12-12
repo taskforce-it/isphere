@@ -15,17 +15,19 @@ public class StatusChangedEvent extends EventObject {
     private static final long serialVersionUID = -3632244163034792956L;
 
     public int topIndex;
-    public int position;
+    public int start;
+    public int end;
     public int row;
     public int column;
     public boolean insertMode;
     public boolean dirty;
     public String message;
 
-    public StatusChangedEvent(Object aSource, int aTopIndex, int aPosition, int aRow, int aColumn, boolean anInsertMode, boolean anIsDirty) {
+    public StatusChangedEvent(Object aSource, int aTopIndex, int aStart, int anEnd, int aRow, int aColumn, boolean anInsertMode, boolean anIsDirty) {
         super(aSource);
         topIndex = aTopIndex;
-        position = aPosition;
+        start = aStart;
+        end = anEnd;
         row = aRow;
         column = aColumn;
         insertMode = anInsertMode;
@@ -41,7 +43,8 @@ public class StatusChangedEvent extends EventObject {
         result = prime * result + (dirty ? 1231 : 1237);
         result = prime * result + (insertMode ? 1231 : 1237);
         result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + position;
+        result = prime * result + start;
+        result = prime * result + end;
         result = prime * result + row;
         result = prime * result + topIndex;
         return result;
@@ -59,7 +62,8 @@ public class StatusChangedEvent extends EventObject {
         if (message == null) {
             if (other.message != null) return false;
         } else if (!message.equals(other.message)) return false;
-        if (position != other.position) return false;
+        if (start != other.start) return false;
+        if (end != other.end) return false;
         if (row != other.row) return false;
         if (topIndex != other.topIndex) return false;
         return true;

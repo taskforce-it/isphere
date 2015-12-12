@@ -288,7 +288,7 @@ public class DataAreaText {
         return wrapped.toString() + EOL_CHAR;
     }
 
-    private int getCaretPosition() {
+    public int getCaretPosition() {
         int position = (getCaretRow() - 1) * lineLength + getCaretColumn();
         return position;
     }
@@ -356,11 +356,12 @@ public class DataAreaText {
     }
 
     private void performReplaceTextRange(int aStart, int aLength, String aNewText) {
-        if (getCaretPosition() + aNewText.length() - 1 > maxLength) {
+        
+        String text = getText();
+        if (text.length() - aLength + aNewText.length() > maxLength) {
             return;
         }
 
-        String text = getText();
         if (isInsertMode && !hasEnoughSpace(text, aLength, aNewText.length())) {
             fireStatusChangedEvent(Messages.Not_enough_space_to_insert_text);
             return;
@@ -397,7 +398,7 @@ public class DataAreaText {
         if (aText.length() == 0) {
             return text;
         }
-        text = text.substring(0, aStart) + aText + text.substring(aStart, maxLength - aText.length());
+        text = text.substring(0, aStart) + aText + text.substring(aStart);
         return text;
     }
 
@@ -427,8 +428,11 @@ public class DataAreaText {
     }
 
     private void fireStatusChangedEvent() {
-        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), getCaretPosition(), getCaretRow(),
-            getCaretColumn(), isInsertMode, isDirty);
+        int count = textControl.getSelectionCount();
+        int start = getCaretPosition();
+        int end = start + count;
+        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), start, end, getCaretRow(), getCaretColumn(),
+            isInsertMode, isDirty);
         if (lastStatusChangedEvent == null || !lastStatusChangedEvent.equals(event)) {
             fireStatusChangedEvent(event);
             lastStatusChangedEvent = event;
@@ -436,8 +440,11 @@ public class DataAreaText {
     }
 
     private void fireStatusChangedEvent(String aMessage) {
-        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), getCaretPosition(), getCaretRow(),
-            getCaretColumn(), isInsertMode, isDirty);
+        int count = textControl.getSelectionCount();
+        int start = getCaretPosition();
+        int end = start + count;
+        StatusChangedEvent event = new StatusChangedEvent(textControl, textControl.getTopIndex(), start, end, getCaretRow(), getCaretColumn(),
+            isInsertMode, isDirty);
         event.message = aMessage;
         if (lastStatusChangedEvent == null || !lastStatusChangedEvent.equals(event)) {
             fireStatusChangedEvent(event);

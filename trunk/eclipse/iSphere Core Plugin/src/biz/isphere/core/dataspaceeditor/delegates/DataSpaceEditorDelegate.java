@@ -114,6 +114,11 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
         scrollableArea.setMinSize(dialogEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.

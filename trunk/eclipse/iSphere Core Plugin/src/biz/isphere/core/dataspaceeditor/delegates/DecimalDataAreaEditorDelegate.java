@@ -11,6 +11,8 @@ package biz.isphere.core.dataspaceeditor.delegates;
 import java.math.BigDecimal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -23,10 +25,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusLine;
+import biz.isphere.core.dataspaceeditor.controls.DataAreaText;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -40,6 +46,12 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
 
     private Text dataAreaText;
     private Validator validator;
+
+    private String statusMessage;
+
+    private Action cutAction;
+    private Action copyAction;
+    private Action pasteAction;
 
     public DecimalDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -95,6 +107,11 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         dataAreaText.addModifyListener(new TextControlModifyListener());
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessage = message;
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.
@@ -103,6 +120,48 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     @Override
     public void updateActionsStatus() {
 
+        boolean textSelected = dataAreaText.getSelectionText().length() > 0;
+        boolean lengthModifiable = textSelected;
+
+        IAction action;
+        IActionBars bars = getEditorSite().getActionBars();
+
+        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
+        if (action != null) {
+            action.setEnabled(textSelected);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
+        if (action != null) {
+            action.setEnabled(false);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
+        if (action != null) {
+            action.setEnabled(false);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
+        if (action != null) {
+            action.setEnabled(lengthModifiable);
+        }
+
+        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
+        if (action != null) {
+            action.setEnabled(true);
+        }
+
+        bars.updateActionBars();
     }
 
     /**
@@ -111,6 +170,20 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     @Override
     public void updateStatusLine() {
 
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowMode(false);
+        statusLine.setShowPosition(false);
+        statusLine.setShowValue(false);
+        statusLine.setShowMessage(true);
+
+        if (statusLine != null) {
+            statusLine.setMessage(statusMessage);
+            statusMessage = null;
+        }
     }
 
     /**
@@ -124,20 +197,176 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     @Override
     public void doSave(IProgressMonitor aMonitor) {
         if (!validator.validate(dataAreaText.getText())) {
-            getStatusBar().setMessage(Messages.Length_or_number_of_decimal_digits_on_value_not_valid);
+            setStatusMessage(Messages.Length_or_number_of_decimal_digits_on_value_not_valid);
             aMonitor.setCanceled(true);
             return;
         } else {
-            getStatusBar().setMessage("");
+            setStatusMessage("");
         }
 
         Throwable exception = getWrappedDataSpace().setValue(new BigDecimal(dataAreaText.getText()));
         handleSaveResult(aMonitor, exception);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSelectionText() {
+        return dataAreaText.getSelectionText();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void replaceSelection(String aText) {
+
+        Point selection = dataAreaText.getSelection();
+        int start = selection.x;
+        int length = selection.y - selection.x;
+
+        String text = dataAreaText.getText();
+        text = delete(text, start, start + length);
+        text = insert(text, start, aText);
+
+        dataAreaText.setText(text);
+    }
+
+    private String delete(String aText, int aStart, int anEnd) {
+        if (aStart == anEnd) {
+            return aText;
+        }
+        aText = aText.substring(0, aStart) + aText.substring(anEnd) + StringHelper.getFixLength(" ", anEnd - aStart);
+        return aText;
+    }
+
+    private String insert(String text, int aStart, String aText) {
+        if (aText.length() == 0) {
+            return text;
+        }
+        text = text.substring(0, aStart) + aText + text.substring(aStart);
+        return text;
+    }
+
     @Override
     public void setInitialFocus() {
         dataAreaText.setFocus();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getCutAction() {
+        if (cutAction == null) {
+            cutAction = new CutAction();
+        }
+        return cutAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getCopyAction() {
+        if (copyAction == null) {
+            copyAction = new CopyAction();
+        }
+        return copyAction;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Action getPasteAction() {
+        if (pasteAction == null) {
+            pasteAction = new PasteAction();
+        }
+        return pasteAction;
+    }
+
+    /**
+     * Class, that overrides the original "paste" action of the SWT Text widget.
+     * <ul>
+     * <li>Text of multiple lines<br>
+     * Lines are expanded to the current line length of the editor. If one line
+     * exceeds the line length of the editor, all new line characters are
+     * removed.</li>
+     * <li>Single line text<br>
+     * The text is inserted as it is.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#replaceTextRange(Point, String)
+     */
+    private class PasteAction extends Action {
+        @Override
+        public void run() {
+            String text = getClipboardText();
+            if (StringHelper.isNullOrEmpty(text)) {
+                return;
+            }
+            replaceSelection(text);
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.PASTE.getId();
+        }
+    };
+
+    /**
+     * Class, that overrides the original "copy" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>Text is returned with no linefeeds, of course.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#getSelectionText(Point, String)
+     */
+    private class CopyAction extends Action {
+        @Override
+        public void run() {
+            String text = getSelectionText();
+            if (StringHelper.isNullOrEmpty(text)) {
+                return;
+            }
+            setClipboardText(text);
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.COPY.getId();
+        }
+    }
+
+    /**
+     * Class, that overrides the original "cut" action of the SWT Text widget.
+     * <p>
+     * Intended behavior:
+     * <ul>
+     * <li>Text is returned with no linefeeds, of course.</li>
+     * </ul>
+     * 
+     * @see DataAreaText#getSelectionText(Point, String)
+     */
+    private class CutAction extends Action {
+        @Override
+        public void run() {
+            String text = getSelectionText();
+            if (StringHelper.isNullOrEmpty(text)) {
+                return;
+            }
+            setClipboardText(text);
+            replaceSelection("");
+        }
+
+        @Override
+        public String getId() {
+            return ActionFactory.CUT.getId();
+        }
     }
 
     /**
@@ -157,7 +386,14 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
                 Text widget = (Text)event.getSource();
                 String currentText = widget.getText();
                 Point selection = widget.getSelection();
-                String previewText = currentText.substring(0, selection.x) + event.text + currentText.substring(selection.y);
+
+                String previewText;
+                if (event.text.length() > 1) {
+                    previewText = event.text;
+                } else {
+                    previewText = currentText.substring(0, selection.x) + event.text + currentText.substring(selection.y);
+                }
+
                 if (StringHelper.count(previewText, '.') > 1) {
                     event.doit = false;
                 }
@@ -182,10 +418,13 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         public void keyReleased(KeyEvent event) {
             Text widget = (Text)event.getSource();
             if (!validator.validate(widget.getText())) {
-                getStatusBar().setMessage(Messages.Length_or_number_of_decimal_digits_on_value_not_valid);
+                // getStatusBar().setMessage(Messages.Length_or_number_of_decimal_digits_on_value_not_valid);
+                statusMessage = Messages.Length_or_number_of_decimal_digits_on_value_not_valid;
             } else {
-                getStatusBar().setMessage("");
+                // getStatusBar().setMessage("");
+                statusMessage = null;
             }
+            updateStatusLine();
         }
 
         public void keyPressed(KeyEvent event) {
