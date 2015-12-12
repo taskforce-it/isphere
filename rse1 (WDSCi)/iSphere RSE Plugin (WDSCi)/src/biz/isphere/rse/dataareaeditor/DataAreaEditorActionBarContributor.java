@@ -6,17 +6,16 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.userspaceeditor;
+package biz.isphere.rse.dataareaeditor;
 
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
 
-public class UserSpaceEditorActionBarContributor extends AbstractDataSpaceEditorActionBarContributor {
+public class DataAreaEditorActionBarContributor extends AbstractDataSpaceEditorActionBarContributor {
 
     @Override
     public String getStatusLineId() {
         return StatusLine.STATUS_LINE_ID + "_" + getClass().getName();
     }
-
 
 }

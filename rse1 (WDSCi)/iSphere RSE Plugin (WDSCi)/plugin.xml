@@ -32,6 +32,7 @@
             name=""
             icon="icons/data_area.gif"
             class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
+            contributorClass="biz.isphere.rse.dataareaeditor.DataAreaEditorActionBarContributor"
             id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
       <editor
             name=""
