@@ -23,21 +23,22 @@
 
 package biz.isphere.core.dataspaceeditor;
 
+import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FontHelper;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.RangeSelection;
 
 /**
  * Status line component of the editor. Displays the current position, the
  * insert/overwrite status and the value at the cursor position.
  */
-public final class StatusLine extends Composite {
+public final class StatusLine {
 
     public static final String STATUS_LINE_ID = "biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor.StatusLine";
 
@@ -48,69 +49,78 @@ public final class StatusLine extends Composite {
     private static final String OPEN_PARANTHESIS = " ("; //$NON-NLS-1$
     private static final String MINUS = " - "; //$NON-NLS-1$
 
-    private Label positionLabel;
-    private Label valueLabel;
-    private Label insertModeLabel;
+    private CLabel modeLabel;
+    private CLabel positionLabel;
+    private CLabel valueLabel;
+    private CLabel messageLabel;
 
-    /**
-     * Create a status line part
-     * 
-     * @param parent parent in the widget hierarchy
-     */
-    public StatusLine(Composite parent) {
-        super(parent, SWT.NONE);
-        initialize();
-    }
+    private int modeWidthHint = -1;
+    private int positionWidthHint = -1;
+    private int valueWidthHint = -1;
+    private int messageWidthHint = -1;
 
-    private void initialize() {
+    boolean showMode = true;
+    boolean showPosition = true;
+    boolean showValue = true;
+    boolean showMessage = true;
 
-        GridLayout statusLayout = new GridLayout(0, false);
-        statusLayout.marginHeight = 0;
-        setLayout(statusLayout);
+    private String mode = "";
+    private long start;
+    private long end = -1;
+    private byte value;
+    private String message = "";
 
-        addSeparator(this);
-        insertModeLabel = addLabel(this, Math.max(Messages.Mode_Insert.length(), Messages.Mode_Overwrite.length()));
+    public void fill(Composite parent) {
+
+        addSeparator(parent);
+        modeLabel = addLabel(parent, Math.max(Messages.Mode_Insert.length(), Messages.Mode_Overwrite.length()), modeWidthHint);
+        modeWidthHint = getWidthHint(modeLabel);
 
         /*
          * size = start + MINUS + end + PARENTHESIS + start + MINUS + end +
          * PARENTHESIS
          */
-        addSeparator(this);
-        positionLabel = addLabel(this, 10 + 3 + 10 + 2 + 4 + 3 + 4 + 1);
+        addSeparator(parent);
+        positionLabel = addLabel(parent, 10 + 3 + 10 + 2 + 4 + 3 + 4 + 1, positionWidthHint);
+        positionWidthHint = getWidthHint(positionLabel);
 
         /*
          * size = decimal + EQUALITY_SIGN + hex + EQUALITY_SIGN + binary
          */
-        addSeparator(this);
-        valueLabel = addLabel(this, 2 + 3 + 4 + 3 + 8);
+        addSeparator(parent);
+        valueLabel = addLabel(parent, 2 + 3 + 4 + 3 + 8, valueWidthHint);
+        valueWidthHint = getWidthHint(valueLabel);
+
+        addSeparator(parent);
+        messageLabel = addLabel(parent, 200, messageWidthHint);
+        messageWidthHint = getWidthHint(messageLabel);
+
+        updateControls();
     }
 
-    private void addSeparator(Composite parent) {
-
-        Label separator = new Label(parent, SWT.SEPARATOR);
-        GridData gridData = new GridData();
-        gridData.grabExcessVerticalSpace = true;
-        gridData.verticalAlignment = SWT.FILL;
-        separator.setLayoutData(gridData);
-
-        incrementColumns(parent);
+    public void setShowMode(boolean show) {
+        showMode = show;
     }
 
-    private Label addLabel(Composite parent, int numChars) {
-
-        Label label = new Label(this, SWT.SHADOW_NONE);
-        GridData gridData1 = new GridData(FontHelper.getFontCharWidth(label) * numChars, SWT.DEFAULT);
-        label.setLayoutData(gridData1);
-
-        incrementColumns(parent);
-
-        return label;
+    public void setShowPosition(boolean show) {
+        showPosition = show;
     }
 
-    private void incrementColumns(Composite parent) {
+    public void setShowValue(boolean show) {
+        showValue = show;
+    }
 
-        GridLayout layout = (GridLayout)getLayout();
-        layout.numColumns++;
+    public void setShowMessage(boolean show) {
+        showMessage = show;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+        updateControls();
+    }
+
+    public void setErrorMessage(String message) {
+        setMessage(message);
     }
 
     /**
@@ -118,13 +128,14 @@ public final class StatusLine extends Composite {
      * 
      * @param position
      * @param value
-     * @see #updatePosition
-     * @see #updateValue
+     * @see #formatPosition
+     * @see #formatValue
      */
-    public void updatePositionValue(long position, byte value) {
-
-        updatePosition(position);
-        updateValue(value);
+    public void setPosition(long position, byte value) {
+        this.start = position;
+        this.end = -1;
+        this.value = value;
+        updateControls();
     }
 
     /**
@@ -132,15 +143,16 @@ public final class StatusLine extends Composite {
      * 
      * @param rangeSelection
      * @param value
-     * @see #updateSelection
-     * @see #updateValue
+     * @see #formatformatSelection
+     * @see #formatValue
      */
-    public void updateSelectionValue(RangeSelection rangeSelection, byte value) {
+    public void setSelection(Point rangeSelection, byte value) {
         if (rangeSelection == null) {
             throw new IllegalArgumentException("Parameter 'rangeSelection' must not be null.");
         }
-        updateSelection(rangeSelection);
-        updateValue(value);
+        this.start = rangeSelection.x;
+        this.end = rangeSelection.y - 1;
+        updateControls();
     }
 
     /**
@@ -149,16 +161,73 @@ public final class StatusLine extends Composite {
      * @param insert <code>true</code> for insert mode, or <code>false</code>
      *        for overwrite
      */
-    public void updateInsertMode(boolean insert) {
-        if (isDisposed() || insertModeLabel.isDisposed()) {
-            return;
+    public void setInsertMode(boolean insert) {
+        if (insert) {
+            mode = Messages.Mode_Insert;
+        } else {
+            mode = Messages.Mode_Overwrite;
+        }
+        updateControls();
+    }
+
+    private void addSeparator(Composite parent) {
+
+        Label separator = new Label(parent, SWT.SEPARATOR);
+        StatusLineLayoutData gridData = new StatusLineLayoutData();
+        separator.setLayoutData(gridData);
+    }
+
+    private CLabel addLabel(Composite parent, int numChars, int widthHint) {
+
+        CLabel label = new CLabel(parent, SWT.SHADOW_NONE);
+        StatusLineLayoutData gridData1 = new StatusLineLayoutData();
+        if (widthHint > 0) {
+            gridData1.widthHint = widthHint;
+        } else {
+            gridData1.widthHint = (FontHelper.getFontCharWidth(label) * numChars) + 6;
+        }
+        label.setLayoutData(gridData1);
+
+        return label;
+    }
+
+    private void updateControls() {
+
+        if (isOKForUpdate(messageLabel)) {
+            if (message != null) {
+                messageLabel.setText(message);
+                messageLabel.setToolTipText(message);
+            } else {
+                messageLabel.setText(""); //$NON-NLS-1$
+                messageLabel.setToolTipText(""); //$NON-NLS-1$
+            }
+            messageLabel.setVisible(showMessage);
         }
 
-        if (insert) {
-            insertModeLabel.setText(Messages.Mode_Insert);
-        } else {
-            insertModeLabel.setText(Messages.Mode_Overwrite);
+        if (isOKForUpdate(modeLabel)) {
+            modeLabel.setText(mode);
+            modeLabel.setVisible(showMode);
         }
+
+        if (isOKForUpdate(positionLabel)) {
+            String text;
+            if (end < 0) {
+                text = formatPosition(start);
+            } else {
+                text = formatformatSelection(start, end);
+            }
+            positionLabel.setText(text);
+            positionLabel.setVisible(showPosition);
+        }
+
+        if (isOKForUpdate(valueLabel)) {
+            valueLabel.setText(formatValue(value));
+            valueLabel.setVisible(showValue);
+        }
+    }
+
+    private boolean isOKForUpdate(Control control) {
+        return control != null && !control.isDisposed();
     }
 
     /**
@@ -166,14 +235,8 @@ public final class StatusLine extends Composite {
      * 
      * @param position position to display
      */
-    private void updatePosition(long position) {
-        if (isDisposed() || positionLabel.isDisposed()) {
-            return;
-        }
-
-        String text = getDecimalValue(position);
-
-        positionLabel.setText(text);
+    private String formatPosition(long position) {
+        return getDecimalValue(position) + OPEN_PARANTHESIS + getHexValue(start) + CLOSE_PARANTHESIS;
     }
 
     /**
@@ -181,15 +244,9 @@ public final class StatusLine extends Composite {
      * 
      * @param value value to display
      */
-    private void updateValue(byte value) {
-        if (isDisposed() || positionLabel.isDisposed()) {
-            return;
-        }
-
+    private String formatValue(byte value) {
         int unsignedValue = value & 0xff;
-        String text = getDecimalValue(unsignedValue) + EQUALITY_SIGN + HEX_PREFIX + getHexValue(unsignedValue) + EQUALITY_SIGN + getBinaryValue(unsignedValue);
-
-        valueLabel.setText(text);
+        return getDecimalValue(unsignedValue) + EQUALITY_SIGN + getHexValue(unsignedValue) + EQUALITY_SIGN + getBinaryValue(unsignedValue);
     }
 
     /**
@@ -198,16 +255,9 @@ public final class StatusLine extends Composite {
      * 
      * @param rangeSelection selection array to display: [0] = start, [1] = end
      */
-    private void updateSelection(RangeSelection rangeSelection) {
-        if (isDisposed() || positionLabel.isDisposed()) {
-            return;
-        }
-
-        long from = rangeSelection.start;
-        long to = rangeSelection.end;
-        String text = getDecimalValue(from) + MINUS + getDecimalValue(to) + OPEN_PARANTHESIS + getHexValue(from) + MINUS + getHexValue(to) + CLOSE_PARANTHESIS;
-
-        positionLabel.setText(text);
+    private String formatformatSelection(long start, long end) {
+        return getDecimalValue(start) + MINUS + getDecimalValue(end) + OPEN_PARANTHESIS + getHexValue(start) + MINUS + getHexValue(end)
+            + CLOSE_PARANTHESIS;
     }
 
     private String getDecimalValue(long from) {
@@ -222,5 +272,10 @@ public final class StatusLine extends Composite {
         String binaryText = BINARY_PREFIX + Integer.toBinaryString(unsignedValue);
         binaryText = binaryText.substring(binaryText.length() - 8);
         return binaryText;
+    }
+
+    private int getWidthHint(Control control) {
+        StatusLineLayoutData layoutData = (StatusLineLayoutData)control.getLayoutData();
+        return layoutData.widthHint;
     }
 }

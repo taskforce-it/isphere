@@ -32,6 +32,7 @@
             name=""
             icon="icons/data_area.gif"
             class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
+            contributorClass="biz.isphere.rse.dataareaeditor.DataAreaEditorActionBarContributor"
             id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
       <editor
             name=""
@@ -43,6 +44,7 @@
             name=""
             icon="icons/compare_message_files.png"
             class="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"
+            contributorClass="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
             id="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"/>
 	</extension>
 

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusLine;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 /**
@@ -30,6 +31,8 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
     private Button dataAreaText;
+
+    private String statusMessage;
 
     public LogicalDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -79,6 +82,11 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         });
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessage = message;
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.
@@ -95,6 +103,20 @@ public class LogicalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     @Override
     public void updateStatusLine() {
 
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowMode(false);
+        statusLine.setShowPosition(false);
+        statusLine.setShowValue(false);
+        statusLine.setShowMessage(true);
+        
+        if (statusLine != null) {
+            statusLine.setMessage(statusMessage);
+            statusMessage = null;
+        }
     }
 
     /**

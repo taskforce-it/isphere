@@ -50,7 +50,9 @@ public abstract class AbstractWrappedDataSpace {
         this.remoteObject = remoteObject;
         this.dataType = retrieveDataSpaceType(as400, remoteObject);
         this.text = retrieveDescription(as400, remoteObject);
-        this.dataSpaceObject = getOrLoadDataSpace();
+        if (this.dataType != null) {
+            this.dataSpaceObject = getOrLoadDataSpace();
+        }
     }
 
     protected abstract AS400 getSystem(String connectionName) throws Exception;
@@ -405,6 +407,7 @@ public abstract class AbstractWrappedDataSpace {
 
     private byte[] getUserSpaceBytes() throws Throwable {
 
+        
         byte[] bytes;
         UserSpace userSpace = (UserSpace)getOrLoadDataSpace();
         bytes = new byte[userSpace.getLength()];

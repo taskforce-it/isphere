@@ -40,6 +40,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusLine;
 import biz.isphere.core.dataspaceeditor.controls.DataAreaText;
 import biz.isphere.core.dataspaceeditor.events.StatusChangedEvent;
 import biz.isphere.core.dataspaceeditor.events.StatusChangedListener;
@@ -65,6 +66,8 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     protected static int DEFAULT_EDITOR_WIDTH = 50; // default width on 5250
                                                     // screen
     private DataAreaText dataAreaText;
+
+    private String statusMessage;
 
     private Action cutAction;
     private Action copyAction;
@@ -160,6 +163,11 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         parent.addPaintListener(new ParentPaintListener());
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessage = message;
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.
@@ -169,7 +177,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     public void updateActionsStatus() {
 
         boolean textSelected = dataAreaText.isSelected();
-        boolean lengthModifiable = textSelected && !dataAreaText.isOverwriteMode();
+        boolean lengthModifiable = textSelected;
 
         IAction action;
         IActionBars bars = getEditorSite().getActionBars();
@@ -218,6 +226,28 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     @Override
     public void updateStatusLine() {
 
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowMode(true);
+        statusLine.setShowPosition(true);
+        statusLine.setShowValue(false);
+        statusLine.setShowMessage(true);
+
+        if (statusLine != null) {
+            statusLine.setMessage(statusMessage);
+            statusMessage = null;
+            if (dataAreaText != null) {
+                if (dataAreaText.isSelected()) {
+                    statusLine.setSelection(dataAreaText.getSelection(), (byte)0);
+                } else {
+                    statusLine.setPosition(dataAreaText.getCaretPosition(), (byte)0);
+                }
+                statusLine.setInsertMode(!dataAreaText.isOverwriteMode());
+            }
+        }
     }
 
     /**
@@ -939,16 +969,9 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 setEditorDirty();
             }
 
-            getStatusBar().setPosition(anEvent.position);
-            if (anEvent.insertMode) {
-                getStatusBar().setInfo(Messages.Mode_Insert);
-            } else {
-                getStatusBar().setInfo(Messages.Mode_Overwrite);
-            }
-            if (anEvent.message != null) {
-                getStatusBar().setMessage(anEvent.message);
-            }
-
+            updateActionsStatus();
+            updateStatusLine();
+            
             updateOffsetLabels(anEvent.topIndex);
         }
 

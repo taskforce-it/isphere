@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.dataspaceeditor;
+package biz.isphere.core.messagefilecompare.rse;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.widgets.Composite;

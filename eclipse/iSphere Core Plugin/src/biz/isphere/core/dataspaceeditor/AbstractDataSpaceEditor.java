@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -62,10 +63,25 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     private DataSpaceEditorRepository repository;
     private AbstractObjectLockManager objectLockManager;
     private String mode;
+    private ObjectLock objectLock;
+    private StatusLine statusLine;
 
     public AbstractDataSpaceEditor() {
         isDirty = false;
         objectLockManager = getObjectLockManager(0);
+    }
+
+    public void setStatusLine(StatusLine statusLine) {
+        this.statusLine = statusLine;
+    }
+
+    public StatusLine getStatusLine() {
+        return statusLine;
+    }
+
+    protected IStatusLineManager getStatusLineManager() {
+        IStatusLineManager manager = getEditorSite().getActionBars().getStatusLineManager();
+        return manager;
     }
 
     protected abstract AbstractObjectLockManager getObjectLockManager(int lockWaitTime);
@@ -82,19 +98,27 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         Composite header = new Composite(editorParent, SWT.NONE);
         header.setLayout(new GridLayout(3, false));
 
-        createHeadline(header, Messages.Type_colon, getWrappedDataArea().getDataType());
-        createHeadline(header, Messages.Length_colon, getWrappedDataArea().getLengthAsText());
-        createHeadline(header, Messages.Text_colon, getWrappedDataArea().getText());
+        String type = "";
+        String length = "0"; //$NON-NLS-1$
+        String text = "";
+        if (objectLock != null) {
+            type = getWrappedDataArea().getDataType();
+            length = getWrappedDataArea().getLengthAsText();
+            text = getWrappedDataArea().getText();
+        }
 
-        aParent.getClientArea();
+        createHeadline(header, Messages.Type_colon, type);
+        createHeadline(header, Messages.Length_colon, length);
+        createHeadline(header, Messages.Text_colon, text);
 
         editorDelegate = createEditorDelegate();
-        editorDelegate.createPartControl(editorParent);
-        editorDelegate.setStatusBar(editorDelegate.createStatusBar(editorParent));
+        if (objectLock != null) {
+            editorDelegate.createPartControl(editorParent);
+        }
 
         registerDelegateActions();
 
-        if (!IEditor.EDIT.equals(mode)) {
+        if (objectLock == null) {
             editorDelegate.setEnabled(false);
             editorDelegate.setStatusMessage(getObjectLockMessage(null));
         }
@@ -144,13 +168,18 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         AbstractObjectEditorInput input = (AbstractObjectEditorInput)anInput;
         try {
 
-            wrappedDataArea = createDataSpaceWrapper(input.getRemoteObject());
-            ObjectLock objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
+            objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
             if (objectLock == null) {
                 mode = IEditor.BROWSE;
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
             } else {
-                mode = IEditor.EDIT;
+                mode = input.getMode();
+            }
+
+            if (objectLock != null) {
+                wrappedDataArea = createDataSpaceWrapper(input.getRemoteObject());
+            } else {
+                wrappedDataArea = null;
             }
 
         } catch (Exception e) {
@@ -209,6 +238,10 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      */
     private AbstractDataSpaceEditorDelegate createEditorDelegate() {
 
+        if (getWrappedDataArea() == null) {
+            return new UnsupportedDataAreaEditorDelegate(this);
+        }
+
         DEditor selectedEditor = null;
         DEditor[] dEditors = repository.getDataSpaceEditorsForObject(getWrappedDataArea().getRemoteObject());
         if (dEditors != null) {
@@ -219,11 +252,8 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
                 }
             }
         }
-        if (selectedEditor != null /*
-                                    * ||
-                                    * ISeries.USRSPC.equals(getWrappedDataArea
-                                    * ().getObjectType())
-                                    */) {
+
+        if (selectedEditor != null) {
             return new DataSpaceEditorDelegate(this, selectedEditor);
         }
 

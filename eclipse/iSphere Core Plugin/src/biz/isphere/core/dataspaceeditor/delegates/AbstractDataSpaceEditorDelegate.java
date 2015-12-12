@@ -25,7 +25,7 @@ import org.eclipse.ui.part.EditorPart;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
-import biz.isphere.core.internal.StatusBar;
+import biz.isphere.core.dataspaceeditor.StatusLine;
 
 /**
  * Abstract class that implements the basic services of a data area editor
@@ -37,7 +37,6 @@ import biz.isphere.core.internal.StatusBar;
 public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTarget {
 
     private AbstractDataSpaceEditor dataAreaEditor;
-    private StatusBar statusBar;
     private Clipboard clipboard;
 
     public AbstractDataSpaceEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
@@ -46,6 +45,10 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
 
     protected IStatusLineManager getStatusLineManager() {
         return getEditorSite().getActionBars().getStatusLineManager();
+    }
+    
+    protected StatusLine getStatusLine() {
+        return dataAreaEditor.getStatusLine();
     }
 
     protected IEditorSite getEditorSite() {
@@ -63,64 +66,6 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      */
     protected AbstractWrappedDataSpace getWrappedDataSpace() {
         return dataAreaEditor.getWrappedDataArea();
-    }
-
-    /**
-     * Creates a status bar for the delegate.
-     * 
-     * @param editorParent - parent, the status bar is attached
-     * @return status bar
-     */
-    public StatusBar createStatusBar(Composite editorParent) {
-        return new StatusBar(editorParent);
-    }
-
-    /**
-     * Sets the status bar that displays the status of this editor delegate.
-     * 
-     * @param aStatusBar - status bar that displays the editor status
-     */
-    public void setStatusBar(StatusBar aStatusBar) {
-        statusBar = aStatusBar;
-    }
-
-    /**
-     * Sets a message that is shown in the status bar.
-     * 
-     * @param message - message text
-     */
-    public void setStatusMessage(String message) {
-        if (statusBar == null) {
-            return;
-        }
-
-        statusBar.setMessage(message);
-    }
-
-    /**
-     * Sets an info message that is shown in the status bar.
-     * 
-     * @param message - message text
-     */
-    public void setInfoMessage(String message) {
-        if (statusBar == null) {
-            return;
-        }
-
-        statusBar.setInfo(message);
-    }
-
-    /**
-     * Returns the status bar that displays the status of this editor.
-     * 
-     * @return status bar that displays the editor status
-     */
-    protected StatusBar getStatusBar() {
-        if (statusBar == null) {
-            return null;
-        }
-
-        return statusBar;
     }
 
     /**
@@ -190,10 +135,10 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      */
     protected void handleSaveResult(IProgressMonitor aMonitor, Throwable anException) {
         if (anException != null) {
-            statusBar.setMessage(ExceptionHelper.getLocalizedMessage(anException));
+            setStatusMessage(ExceptionHelper.getLocalizedMessage(anException));
             aMonitor.setCanceled(true);
         } else {
-            statusBar.setMessage(null);
+            setStatusMessage(null);
             resetDirtyFlag();
         }
     }
@@ -378,6 +323,8 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     public abstract void setInitialFocus();
 
     public abstract void setEnabled(boolean isEnabled);
+
+    public abstract void setStatusMessage(String message);
 
     public abstract void updateActionsStatus();
 

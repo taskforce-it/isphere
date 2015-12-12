@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusLine;
 
 /**
  * Fallback editor delegate that is used in case the is a unknown data area
@@ -24,6 +25,8 @@ import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDelegate {
 
     private Composite editorArea;
+
+    private String statusMessage;
 
     public UnsupportedDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -51,6 +54,11 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDe
 
     }
 
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessage = message;
+    }
+
     /**
      * Updates the status of actions: enables/disables them depending on whether
      * there is text selected and whether inserting or overwriting is active.
@@ -67,6 +75,13 @@ public class UnsupportedDataAreaEditorDelegate extends AbstractDataSpaceEditorDe
     @Override
     public void updateStatusLine() {
 
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setMessage(statusMessage);
+        statusMessage = null;
     }
 
     /**

@@ -31,6 +31,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,13 +52,29 @@ import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentActionHistor
 public final class BinaryContent {
 
     /**
-     * Used to notify changes in content
+     * Used to notify changes in content.
      */
     public static interface ModifyListener extends EventListener {
         /**
          * Notifies the listener that the content has just been changed
          */
-        public void modified();
+        public void modified(ModifyEvent event);
+    }
+
+    public static class ModifyEvent extends EventObject {
+
+        private static final long serialVersionUID = -7310989732480048994L;
+
+        public long position;
+        public long length;
+
+        public ModifyEvent(Object source, long position, long length) {
+            super(source);
+
+            this.position = position;
+            this.length = length;
+        }
+
     }
 
     public static final class RangeSelection {
@@ -238,18 +255,6 @@ public final class BinaryContent {
     }
 
     /**
-     * Add a listener to the list of listeners to be notified when there is a
-     * change in the content
-     * 
-     * @param listener to be notified of the change
-     */
-    public void addModifyListener(ModifyListener listener) {
-        if (listeners == null) listeners = new ArrayList<ModifyListener>();
-
-        listeners.add(listener);
-    }
-
-    /**
      * Tells whether a redo is possible
      * 
      * @return true if something can be redone
@@ -302,15 +307,21 @@ public final class BinaryContent {
      * @param length number of bytes to delete
      */
     public void delete(long position, long length) {
-        if (position < 0 || position >= length() || length < 1L) return;
+        if (isPositionOrLengthOutOfRange(position, length)) {
+            return;
+        }
 
         dirty = true;
         dirtySize = true;
-        if (length > length() - position) length = length() - position;
+        if (length > length() - position) {
+            length = length() - position;
+        }
+
         if (actions != null) {
             lastUpperNibblePosition = -1L;
             actions.eventPreModify(BinaryContentActionHistory.TYPE_DELETE, position, length == 1L);
         }
+
         if (myChanges != null && myChangesInserted && myChangesPosition <= position && myChangesPosition + myChanges.size() >= position + length) {
             int deleteStart = (int)(position - myChangesPosition);
             List<Integer> subList = myChanges.subList(deleteStart, deleteStart + (int)length);
@@ -328,7 +339,23 @@ public final class BinaryContent {
             commitChanges();
             deleteAndShift(position, length);
         }
-        notifyListeners();
+        notifyModifyListeners(position, length);
+    }
+
+    private boolean isPositionOrLengthOutOfRange(long position, long length) {
+        return isPositionOutOfRange(position) || isLengthOutOfRange(length);
+    }
+
+    private boolean isPositionOutOfRange(long position) {
+        return position < 0 || position >= length();
+    }
+
+    private boolean isPositionOutOfRangeForInsert(long position) {
+        return position < 0 || position > length();
+    }
+
+    private boolean isLengthOutOfRange(long length) {
+        return length < 1L || length > length();
     }
 
     void deleteAndShift(long start, long length) {
@@ -716,15 +743,21 @@ public final class BinaryContent {
      * @throws IOException
      */
     public void insert(byte source, long position) throws IOException {
-        if (position > length()) return;
+        if (isPositionOutOfRangeForInsert(position)) {
+            return;
+        }
 
         dirty = true;
         dirtySize = true;
         lastUpperNibblePosition = position;
-        if (actions != null) actions.eventPreModify(BinaryContentActionHistory.TYPE_INSERT, position, true);
+        if (actions != null) {
+            actions.eventPreModify(BinaryContentActionHistory.TYPE_INSERT, position, true);
+        }
+
         updateChanges(position, true);
         myChanges.set((int)(position - myChangesPosition), new Integer(source & 0x0ff));
-        notifyListeners();
+
+        notifyModifyListeners(position, 1);
     }
 
     /**
@@ -736,17 +769,25 @@ public final class BinaryContent {
      * @param position starting insert point
      */
     public void insert(ByteBuffer source, long position) {
-        if (source.remaining() < 1 || position > length()) return;
+        if (source.remaining() < 1 || isPositionOutOfRangeForInsert(position)) {
+            return;
+        }
 
         dirty = true;
         dirtySize = true;
         lastUpperNibblePosition = -1L;
-        if (actions != null) actions.eventPreModify(BinaryContentActionHistory.TYPE_INSERT, position, false);
+        if (actions != null) {
+            actions.eventPreModify(BinaryContentActionHistory.TYPE_INSERT, position, false);
+        }
+
         commitChanges();
         Range newRange = new Range(position, source, true);
         insertRange(newRange);
-        if (actions != null) actions.addInserted(newRange.clone());
-        notifyListeners();
+        if (actions != null) {
+            actions.addInserted(newRange.clone());
+        }
+
+        notifyModifyListeners(newRange.position, newRange.length);
     }
 
     /**
@@ -762,7 +803,7 @@ public final class BinaryContent {
     public void insert(File aFile, long position) throws IOException {
 
         long fileLength = aFile.length();
-        if (fileLength < 1L || position > length()) {
+        if (fileLength < 1L || isPositionOutOfRangeForInsert(position)) {
             return;
         }
 
@@ -783,7 +824,7 @@ public final class BinaryContent {
             actions.addInserted(newRange.clone());
         }
 
-        notifyListeners();
+        notifyModifyListeners(newRange.position, newRange.length);
     }
 
     private void insertRange(Range newRange) {
@@ -792,12 +833,15 @@ public final class BinaryContent {
     }
 
     private long[] insertRanges(List<Range> ranges) {
+
         Range firstRange = ranges.get(0);
         Range lastRange = ranges.get(ranges.size() - 1);
         splitAndShift(firstRange.position, lastRange.exclusiveEnd() - firstRange.position);
         ArrayList<Range> cloned = new ArrayList<Range>(ranges.size());
-        for (int i = 0; i < ranges.size(); ++i)
+        for (int i = 0; i < ranges.size(); ++i) {
             cloned.add((ranges.get(i)).clone());
+        }
+
         myRanges.addAll(cloned);
 
         return new long[] { firstRange.position, lastRange.exclusiveEnd() };
@@ -840,11 +884,39 @@ public final class BinaryContent {
         return result;
     }
 
-    private void notifyListeners() {
-        if (listeners == null) return;
+    /**
+     * Add a listener to the list of listeners to be notified when there is a
+     * change in the content
+     * 
+     * @param listener to be notified of the change
+     */
+    public void addModifyListener(ModifyListener listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<ModifyListener>();
+        }
+
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove a listener to the list of listeners to be notified when there is a
+     * change in the content
+     * 
+     * @param listener not to be notified of the change
+     */
+    public void removeModifyListener(ModifyListener listener) {
+        if (listeners != null) {
+            listeners.remove(listener);
+        }
+    }
+
+    private void notifyModifyListeners(long position, long length) {
+        if (listeners == null) {
+            return;
+        }
 
         for (int i = 0; i < listeners.size(); ++i) {
-            listeners.get(i).modified();
+            listeners.get(i).modified(new ModifyEvent(this, position, length));
         }
     }
 
@@ -880,7 +952,9 @@ public final class BinaryContent {
      * @throws IOException
      */
     public void overwrite(byte source, int offset, int length, long position) throws IOException {
-        if (offset < 0 || offset > 7 || length < 0 || position >= length()) return;
+        if (offset < 0 || offset > 7 || isPositionOrLengthOutOfRange(position, length)) {
+            return;
+        }
 
         dirty = true;
         if (actions != null) {
@@ -890,12 +964,17 @@ public final class BinaryContent {
                 actions.eventPreModify(BinaryContentActionHistory.TYPE_OVERWRITE, position, true);
             }
         }
-        if (length + offset > 8) length = 8 - offset;
+        if (length + offset > 8) {
+            length = 8 - offset;
+        }
+
         Range range = updateChanges(position, false);
+
         int previous = (myChanges.get((int)(position - myChangesPosition))).intValue();
         int mask = (0x0ff >>> offset) & (0x0ff << (8 - offset - length));
         int newValue = previous & ~mask | (source << (8 - offset - length)) & mask;
         myChanges.set((int)(position - myChangesPosition), new Integer(newValue));
+
         if (actions != null) {
             if (range == null)
                 actions.addLostByte(position, new Integer(previous));
@@ -908,9 +987,11 @@ public final class BinaryContent {
                 actions.addLostRange(clone);
             }
         }
+
         actionsOn(true);
         lastUpperNibblePosition = actions != null && offset == 0 && length == 4 ? position : -1L;
-        notifyListeners();
+
+        notifyModifyListeners(position, 1);
     }
 
     /**
@@ -922,7 +1003,9 @@ public final class BinaryContent {
      * @param position starting overwrite point
      */
     public void overwrite(ByteBuffer source, long position) {
-        if (source.remaining() > 0 && position < length()) overwriteInternal(new Range(position, source, true));
+        if (source.remaining() > 0 && !isPositionOutOfRange(position)) {
+            overwriteInternal(new Range(position, source, true));
+        }
     }
 
     /**
@@ -936,17 +1019,27 @@ public final class BinaryContent {
      *         and valid
      */
     void overwrite(File aFile, long position) throws IOException {
-        if (aFile.length() > 0L && position < length()) overwriteInternal(new Range(position, aFile, true));
+        if (aFile.length() > 0L && !isPositionOutOfRange(position)) {
+            overwriteInternal(new Range(position, aFile, true));
+        }
     }
 
     private void overwriteInternal(Range newRange) {
+
         dirty = true;
         lastUpperNibblePosition = -1L;
-        if (actions != null) actions.eventPreModify(BinaryContentActionHistory.TYPE_OVERWRITE, newRange.position, false);
+        if (actions != null) {
+            actions.eventPreModify(BinaryContentActionHistory.TYPE_OVERWRITE, newRange.position, false);
+        }
+
         commitChanges();
         overwriteRange(newRange);
-        if (actions != null) actions.addRangeToCurrentAction(newRange.clone());
-        notifyListeners();
+
+        if (actions != null) {
+            actions.addRangeToCurrentAction(newRange.clone());
+        }
+
+        notifyModifyListeners(newRange.position, newRange.length);
     }
 
     private void overwriteRange(Range aRange) {
@@ -986,10 +1079,14 @@ public final class BinaryContent {
      *         <code>null</code> if redo is not performed
      */
     public long[] redo() {
-        if (actions == null) return null;
+        if (actions == null) {
+            return null;
+        }
 
         Entry entry = actions.redoAction();
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
 
         long[] result = null;
         List<Range> ranges = entry.getRanges();
@@ -1002,19 +1099,10 @@ public final class BinaryContent {
             int size = ranges.size();
             result = overwriteRanges(ranges.subList(size - 1, size));
         }
-        notifyListeners();
+
+        notifyModifyListeners(result[0], result[1]-result[0]);
 
         return result;
-    }
-
-    /**
-     * Remove a listener to the list of listeners to be notified when there is a
-     * change in the content
-     * 
-     * @param listener not to be notified of the change
-     */
-    public void removeStateChangeListener(ModifyListener listener) {
-        if (listeners != null) listeners.remove(listener);
     }
 
     /**
@@ -1029,7 +1117,9 @@ public final class BinaryContent {
     }
 
     private void shiftRemainingRanges(long increment) {
-        if (increment == 0L) return;
+        if (increment == 0L) {
+            return;
+        }
 
         while (tailTree.hasNext()) {
             Range currentRange = tailTree.next();
@@ -1099,19 +1189,22 @@ public final class BinaryContent {
             // 0 to size - 1: overwritten ranges, last one: overwriter range
             result = overwriteRanges(ranges.subList(0, ranges.size() - 1));
         }
-        notifyListeners();
+        
+        notifyModifyListeners(result[0], result[1]-result[0]);
 
         return result;
     }
 
     private Range updateChanges(long position, boolean insert) throws IOException {
+        
         Range result = null;
+        
         if (myChanges != null) {
             long lowerLimit = myChangesPosition;
             long upperLimit = myChangesPosition + myChanges.size();
-            if (!insert && position >= lowerLimit && position < upperLimit) return result; // reuse
-                                                                                           // without
-                                                                                           // expanding
+            if (!insert && position >= lowerLimit && position < upperLimit){
+                return result; // reuse without expanding
+            }
 
             if (!insert) --lowerLimit;
             if (insert == myChangesInserted && position >= lowerLimit && position <= upperLimit) { // reuse
@@ -1132,11 +1225,15 @@ public final class BinaryContent {
             commitChanges();
 
         }
+        
         myChanges = new ArrayList<Integer>();
         myChanges.add(new Integer(getFromRanges(position)));
         myChangesInserted = insert;
         myChangesPosition = position;
-        if (!insert) result = getRangeAt(position);
+        
+        if (!insert) {
+            result = getRangeAt(position);
+        }
 
         return result;
     }
