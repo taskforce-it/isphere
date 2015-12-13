@@ -17,7 +17,7 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
-     /*         >>PARM<<  BNDSRVPGM((&LI/NBRRNG));                            */
+     /*         >>PARM<<  BNDSRVPGM(*LIBL/NBRRNG);                            */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
      /*         >>PARM<<  TGTRLS(&TR);                                        */
      /*         >>PARM<<  MODULE(&LI/SPLF);                                   */
