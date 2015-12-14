@@ -8,6 +8,12 @@
 
 package biz.isphere.core.preferencepages;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -17,6 +23,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -25,10 +32,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF;
+import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
@@ -70,6 +80,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionPDFLibrary;
     private Text textConversionPDFCommand;
     private String conversionPDFCommand;
+    private Combo comboConversionPDFPageSize;
+    private String conversionPDFPageSize;
 
     public ISphereSpooledFiles() {
         super();
@@ -85,6 +97,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         gridLayout.numColumns = 1;
         container.setLayout(gridLayout);
 
+        // Group: Default conversion
         Group groupDefaultFormat = new Group(container, SWT.NONE);
         groupDefaultFormat.setText(Messages.When_double_clicking_on_a_spooled_file_open_it_as);
         GridLayout gridLayoutDefaultFormat = new GridLayout();
@@ -119,6 +132,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
+        // Group: Text conversion
         Group groupConversionText = new Group(container, SWT.NONE);
         groupConversionText.setText(Messages.Conversion_to_format + " *TEXT");
         GridLayout gridLayoutConversionText = new GridLayout();
@@ -190,6 +204,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionTextCommand.setTextLimit(256);
 
+        // Group: HTML conversion
         Group groupConversionHTML = new Group(container, SWT.NONE);
         groupConversionHTML.setText(Messages.Conversion_to_format + " *HTML");
         GridLayout gridLayoutConversionHTML = new GridLayout();
@@ -261,6 +276,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionHTMLCommand.setTextLimit(256);
 
+        // Group: PDF conversion
         Group groupConversionPDF = new Group(container, SWT.NONE);
         groupConversionPDF.setText(Messages.Conversion_to_format + " *PDF");
         GridLayout gridLayoutConversionPDF = new GridLayout();
@@ -332,6 +348,20 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionPDFCommand.setTextLimit(256);
 
+
+        Label labelConversionPDFPageSize = new Label(groupConversionPDF, SWT.NONE);
+        labelConversionPDFPageSize.setText(Messages.PageSize_colon);
+        
+        comboConversionPDFPageSize = WidgetFactory.createReadOnlyCombo(groupConversionPDF);
+        comboConversionPDFPageSize.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                conversionPDFPageSize = comboConversionPDFPageSize.getText();
+            }
+        });
+        comboConversionPDFPageSize.setItems(loadAvailablePageSizes());
+
+        // Group: Replacement variables
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
         groupSubstitutionVariables.setText(Messages.Substitution_variables_for_conversion_commands);
         GridLayout gridLayoutSubstitutionVariables = new GridLayout();
@@ -428,12 +458,27 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
             }
         });
-        
-//        WidgetFactory.createSeparator(container);
 
         setScreenToValues();
 
         return container;
+    }
+
+    private String[] loadAvailablePageSizes() {
+
+        Set<PageSize> pagesSizes = SpooledFileTransformerPDF.getPageSizes();
+
+        List<String> pagesSizesList = new ArrayList<String>();
+        pagesSizesList.add(PageSize.PAGE_SIZE_CALCULATE);
+        for (Iterator<PageSize> iterator = pagesSizes.iterator(); iterator.hasNext();) {
+            SpooledFileTransformerPDF.PageSize pageSize = (PageSize)iterator.next();
+            pagesSizesList.add(pageSize.getFormat());
+        }
+
+        String[] pagesSizesSorted = pagesSizesList.toArray(new String[pagesSizesList.size()]);
+        Arrays.sort(pagesSizesSorted);
+
+        return pagesSizesSorted;
     }
 
     public void checkError() {
@@ -534,6 +579,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Preferences.getInstance().setSpooledFileConversionLibraryPDF(conversionPDFLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandPDF(conversionPDFCommand);
 
+        Preferences.getInstance().setSpooledFilePageSize(conversionPDFPageSize);
     }
 
     protected void setScreenToValues() {
@@ -552,6 +598,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionPDF = Preferences.getInstance().getSpooledFileConversionPDF();
         conversionPDFLibrary = Preferences.getInstance().getSpooledFileConversionPDFLibrary();
         conversionPDFCommand = Preferences.getInstance().getSpooledFileConversionPDFCommand();
+
+        conversionPDFPageSize = Preferences.getInstance().getSpooledFilePageSize();
 
         setScreenValues();
 
@@ -574,6 +622,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionPDFLibrary = Preferences.getInstance().getDefaultSpooledFileConversionPDFLibrary();
         conversionPDFCommand = Preferences.getInstance().getDefaultSpooledFileConversionPDFCommand();
 
+        conversionPDFPageSize = Preferences.getInstance().getDefaultSpooledFilePageSize();
+
         setScreenValues();
 
     }
@@ -581,7 +631,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     protected void setScreenValues() {
 
         buttonLoadAsynchronously.setSelection(isLoadAsynchronously);
-        
+
         buttonDefaultFormatText.setSelection(false);
         buttonDefaultFormatHTML.setSelection(false);
         buttonDefaultFormatPDF.setSelection(false);
@@ -674,6 +724,11 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             textConversionPDFCommand.setEnabled(false);
         }
 
+        if (!StringHelper.isNullOrEmpty(conversionPDFPageSize)) {
+            comboConversionPDFPageSize.setText(conversionPDFPageSize);
+        } else {
+            comboConversionPDFPageSize.setText(PageSize.PAGE_SIZE_A4);
+        }
     }
 
     public void init(IWorkbench workbench) {

@@ -43,10 +43,13 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
     protected static final byte DC1 = 0x11;
 
     private String connectionName;
-
     private SpooledFile spooledFile;
-
     private DecimalFormat jobNumberFormat;
+
+    private Float cpi;
+    private Integer lpi;
+    private Float pageWidth;
+    private Float pageHeight;
 
     public AbstractSpooledFileTransformer(String connectionName, SpooledFile spooledFile) {
         this.connectionName = connectionName;
@@ -84,39 +87,48 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
     protected float getPageHeight() {
 
-        Float length;
-        try {
-            length = spooledFile.getFloatAttribute(PrintObject.ATTR_PAGELEN);
-        } catch (Exception e) {
-            length = null;
+        if (pageHeight != null) {
+            return pageHeight;
         }
 
-        if (length == null) {
+        try {
+            pageHeight = spooledFile.getFloatAttribute(PrintObject.ATTR_PAGELEN);
+        } catch (Exception e) {
+            pageHeight = null;
+        }
+
+        if (pageHeight == null) {
             return 66;
         }
 
-        return length.floatValue();
+        return pageHeight.floatValue();
     }
 
     protected float getPageWidth() {
 
-        Float width;
-        try {
-            width = spooledFile.getFloatAttribute(PrintObject.ATTR_PAGEWIDTH);
-        } catch (Exception e) {
-            width = null;
+        if (pageWidth != null) {
+            return pageWidth;
         }
 
-        if (width == null) {
+        try {
+            pageWidth = spooledFile.getFloatAttribute(PrintObject.ATTR_PAGEWIDTH);
+        } catch (Exception e) {
+            pageWidth = null;
+        }
+
+        if (pageWidth == null) {
             return 132;
         }
 
-        return width.floatValue();
+        return pageWidth.floatValue();
     }
 
     protected int getLPI() {
 
-        Integer lpi;
+        if (lpi != null) {
+            return lpi;
+        }
+
         try {
             lpi = spooledFile.getIntegerAttribute(PrintObject.ATTR_LPI);
         } catch (Exception e) {
@@ -132,7 +144,10 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
 
     protected float getCPI() {
 
-        Float cpi;
+        if (cpi != null) {
+            return cpi;
+        }
+        
         try {
             cpi = spooledFile.getFloatAttribute(PrintObject.ATTR_CPI);
         } catch (Exception e) {
