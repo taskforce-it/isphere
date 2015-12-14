@@ -25,6 +25,7 @@ import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.sourcefilesearch.SearchResultManager;
+import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -86,6 +87,8 @@ public final class Preferences {
     private static final String SPOOLED_FILES_CONVERSION_TEXT_LIBRARY = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.LIBRARY"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_CONVERSION_TEXT = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILES_PAGE_SIZE = DOMAIN + "SPOOLED_FILES.PAGE_SIZE"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_DEFAULT_FORMAT = DOMAIN + "SPOOLED_FILES.DEFAULT_FORMAT"; //$NON-NLS-1$
 
@@ -289,6 +292,10 @@ public final class Preferences {
             return FileHelper.getDefaultRootDirectory();
         }
         return directory;
+    }
+
+    public String getSpooledFilePageSize() {
+        return preferenceStore.getString(SPOOLED_FILES_PAGE_SIZE);
     }
 
     public int getDataQueueMaximumMessageLength() {
@@ -496,6 +503,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_SAVE_DIRECTORY, aDirectory);
     }
 
+    public void setSpooledFilePageSize(String aPageSize) {
+        preferenceStore.setValue(SPOOLED_FILES_PAGE_SIZE, aPageSize);
+    }
+
     public void setDataQueueMaximumMessageLength(int length) {
         preferenceStore.setValue(MONITOR_DTAQ_LENGTH, length);
     }
@@ -586,6 +597,8 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF, getDefaultSpooledFileConversionPDF());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_COMMAND, getDefaultSpooledFileConversionPDFCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_LIBRARY, getDefaultSpooledFileConversionPDFLibrary());
+
+        preferenceStore.setDefault(SPOOLED_FILES_PAGE_SIZE, getDefaultSpooledFilePageSize());
 
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
@@ -774,6 +787,15 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileConversionPDFCommand() {
         return "";
+    }
+
+    /**
+     * Return the default page size for spooled file conversion to PDF.
+     * 
+     * @return default page size for PDF conversion
+     */
+    public String getDefaultSpooledFilePageSize() {
+        return PageSize.PAGE_SIZE_CALCULATE;
     }
 
     /**

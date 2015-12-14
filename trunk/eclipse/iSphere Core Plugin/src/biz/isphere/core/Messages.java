@@ -1089,6 +1089,8 @@ public class Messages extends NLS {
     public static String Load_spooled_files_asynchronously;
 
     public static String Loading_spooled_file;
+
+    public static String PageSize_colon;
     
     /*
      * Warning messages
