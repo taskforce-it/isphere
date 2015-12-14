@@ -42,13 +42,9 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private int DOTS_PER_INCH = 72;
 
     private Document document = null;
-
     private Font font = null;
-
     private Set<PageSize> pageSizes = null;
-
     private boolean fitToPage = false;
-
     private String leftMargin;
 
     public SpooledFileTransformerPDF(String connectionName, SpooledFile spooledFile) {
@@ -250,6 +246,19 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
     /**
      * Returns the font size measured in dots for a given CPI value.
+     * <pre>
+     * Relationship between font size and average character width:
+     * Courier 8, width = 7, factor = 1,143
+     * Courier 9, width = 7, factor = 1,286
+     * Courier 10, width = 8, factor = 1,25
+     * Courier 11, width = 9, factor = 1,22
+     * Courier 12, width = 10, factor = 1,2
+     * Courier 13, width = 10, factor = 1,3
+     * Courier 14, width = 11, factor = 1,273
+     * Courier 15, width = 12, factor = 1,25
+     * Courier 16, width = 13, factor = 1,231
+     * Courier 18, width = 14, factor = 1,286
+     * </pre>
      * 
      * @return font size
      * @see https://support.microsoft.com/en-us/kb/76388
@@ -257,17 +266,13 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private float getFontSize(Rectangle pageSize, PageMargins pageMargins) {
 
         float charWidth = (pageSize.getWidth() - (pageMargins.left + pageMargins.right)) / getPageWidth();
-        float charHeight = charWidth * 1.3F;
-
+        float charHeight = round(charWidth * 1.25F, 1);
+        
         return charHeight;
     }
 
     private PageMargins getPageMargins() {
         return new PageMargins(UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN);
-        // return new PageMargins(0.5F, 0.5F, 0.5F, 0.5F);
-        // return new PageMargins(1.0F, 1.0F, 1.0F, 1.0F);
-        // return new PageMargins(1.5F, 1.5F, 1.5F, 1.5F);
-        // return new PageMargins(2.0F, 2.0F, 2.0F, 2.2F);
     }
 
     /**
