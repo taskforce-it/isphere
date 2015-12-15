@@ -72,28 +72,36 @@ public final class StatusLine {
 
     public void fill(Composite parent) {
 
-        addSeparator(parent);
-        modeLabel = addLabel(parent, Math.max(Messages.Mode_Insert.length(), Messages.Mode_Overwrite.length()), modeWidthHint);
-        modeWidthHint = getWidthHint(modeLabel);
+        if (showMode) {
+            addSeparator(parent);
+            modeLabel = addLabel(parent, Math.max(Messages.Mode_Insert.length(), Messages.Mode_Overwrite.length()), modeWidthHint);
+            modeWidthHint = getWidthHint(modeLabel);
+        }
 
         /*
          * size = start + MINUS + end + PARENTHESIS + start + MINUS + end +
          * PARENTHESIS
          */
-        addSeparator(parent);
-        positionLabel = addLabel(parent, 10 + 3 + 10 + 2 + 4 + 3 + 4 + 1, positionWidthHint);
-        positionWidthHint = getWidthHint(positionLabel);
+        if (showPosition) {
+            addSeparator(parent);
+            positionLabel = addLabel(parent, 10 + 3 + 10 + 2 + 4 + 3 + 4 + 1, positionWidthHint);
+            positionWidthHint = getWidthHint(positionLabel);
+        }
 
         /*
          * size = decimal + EQUALITY_SIGN + hex + EQUALITY_SIGN + binary
          */
-        addSeparator(parent);
-        valueLabel = addLabel(parent, 2 + 3 + 4 + 3 + 8, valueWidthHint);
-        valueWidthHint = getWidthHint(valueLabel);
+        if (showValue) {
+            addSeparator(parent);
+            valueLabel = addLabel(parent, 2 + 3 + 4 + 3 + 8, valueWidthHint);
+            valueWidthHint = getWidthHint(valueLabel);
+        }
 
-        addSeparator(parent);
-        messageLabel = addLabel(parent, 200, messageWidthHint);
-        messageWidthHint = getWidthHint(messageLabel);
+        if (showMessage) {
+            addSeparator(parent);
+            messageLabel = addLabel(parent, 200, messageWidthHint);
+            messageWidthHint = getWidthHint(messageLabel);
+        }
 
         updateControls();
     }
