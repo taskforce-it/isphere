@@ -98,7 +98,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         lblCcsidLayoutData.widthHint = AbstractDataSpaceEditor.VALUE_LABEL_WIDTH_HINT;
         lblCcsidLayoutData.verticalAlignment = GridData.BEGINNING;
         lblCcsid.setLayoutData(lblCcsidLayoutData);
-        lblCcsid.setText("Ccsid:");
+        lblCcsid.setText(Messages.Ccsid_colon);
 
         Composite horizontalSpacer1 = new Composite(editorArea, SWT.NONE);
         GridData horizontalSpacerLayoutData1 = new GridData();
