@@ -105,7 +105,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         parent = aParent;
 
         FontRegistry registry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
-        registry.addListener(new ThemeChangedListener());
+        registry.addListener(new FontChangedListener());
 
         editorAreaScrollable = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.NONE);
         editorAreaScrollable.setLayout(new GridLayout(1, false));
@@ -947,7 +947,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
      * Class, that listens for changes on the FontRegistry in order to change
      * the editor font, when the preferences are changed.
      */
-    private class ThemeChangedListener implements IPropertyChangeListener {
+    private class FontChangedListener implements IPropertyChangeListener {
         public void propertyChange(PropertyChangeEvent event) {
             if (FontHelper.EDITOR_FIXED_SIZE.equals(event.getProperty())) {
                 if (event.getNewValue() instanceof FontData[]) {
