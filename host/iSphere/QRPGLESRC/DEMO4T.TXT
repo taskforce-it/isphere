@@ -21,6 +21,15 @@ The blank lines in this text are just for better reading. They
 are gracefully ignored by DEMO4. Line spacing is only controlled
 by the printer file.
 :LF.
+The %1% marker is associated to the HEADLINE1 record format,
+which has been defined with SPACEB(003) and SPACEA(002).
+:LF.
+The %2% marker is associated to the HEADLINE2 record format,
+which has been defined with SPACEB(002) and SPACEA(001).
+:LF.
+The STANDARD record format has been defined with SPACEB(001),
+which means that there is no empty line between two lines.
+:LF.
 However you can enforce blank lines with the ':LF.' marker.
 
 %1%Lorem Ipsum

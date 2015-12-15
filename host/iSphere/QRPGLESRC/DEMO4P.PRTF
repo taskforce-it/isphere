@@ -27,6 +27,7 @@
       *------------------------------------------------------------------------------------------*
      A          R NEW_PAGE
      A                                      SKIPB(003)
+     A                                      SPACEA(001)
      A                                      HIGHLIGHT
      A                                    11DFT('iSphere Demo Printer File +
      A                                      DIN A4 (portrait)')
