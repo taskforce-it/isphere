@@ -82,6 +82,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionPDFCommand;
     private Combo comboConversionPDFPageSize;
     private String conversionPDFPageSize;
+    private Button chkBoxAdjustFontSize;
+    private boolean adjustFontSize;
 
     public ISphereSpooledFiles() {
         super();
@@ -348,7 +350,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textConversionPDFCommand.setTextLimit(256);
 
-
         Label labelConversionPDFPageSize = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFPageSize.setText(Messages.PageSize_colon);
         
@@ -359,7 +360,18 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 conversionPDFPageSize = comboConversionPDFPageSize.getText();
             }
         });
+        comboConversionPDFPageSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         comboConversionPDFPageSize.setItems(loadAvailablePageSizes());
+        
+        chkBoxAdjustFontSize = WidgetFactory.createCheckbox(groupConversionPDF);
+        chkBoxAdjustFontSize.setText(Messages.Adjust_font_size);
+        chkBoxAdjustFontSize.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                adjustFontSize = chkBoxAdjustFontSize.getSelection();
+            }
+        });
+        chkBoxAdjustFontSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
         // Group: Replacement variables
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
@@ -580,6 +592,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Preferences.getInstance().setSpooledFileConversionCommandPDF(conversionPDFCommand);
 
         Preferences.getInstance().setSpooledFilePageSize(conversionPDFPageSize);
+        Preferences.getInstance().setSpooledFileAdjustFontSize(adjustFontSize);
     }
 
     protected void setScreenToValues() {
@@ -600,6 +613,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionPDFCommand = Preferences.getInstance().getSpooledFileConversionPDFCommand();
 
         conversionPDFPageSize = Preferences.getInstance().getSpooledFilePageSize();
+        adjustFontSize = Preferences.getInstance().getSpooledFileAdjustFontSize();
 
         setScreenValues();
 
@@ -623,6 +637,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionPDFCommand = Preferences.getInstance().getDefaultSpooledFileConversionPDFCommand();
 
         conversionPDFPageSize = Preferences.getInstance().getDefaultSpooledFilePageSize();
+        adjustFontSize = Preferences.getInstance().getDefaultSpooledFileAdjustFontSize();
 
         setScreenValues();
 
@@ -729,6 +744,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         } else {
             comboConversionPDFPageSize.setText(PageSize.PAGE_SIZE_A4);
         }
+        
+        chkBoxAdjustFontSize.setSelection(adjustFontSize);
     }
 
     public void init(IWorkbench workbench) {

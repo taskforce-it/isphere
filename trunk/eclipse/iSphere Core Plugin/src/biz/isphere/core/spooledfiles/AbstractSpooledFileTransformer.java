@@ -85,7 +85,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return userdata;
     }
 
-    protected float getPageHeight() {
+    protected float getPageHeightInLines() {
 
         if (pageHeight != null) {
             return pageHeight;
@@ -104,7 +104,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return pageHeight.floatValue();
     }
 
-    protected float getPageWidth() {
+    protected float getPageWidthInChars() {
 
         if (pageWidth != null) {
             return pageWidth;

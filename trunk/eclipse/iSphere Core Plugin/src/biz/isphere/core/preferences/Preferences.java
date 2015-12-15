@@ -90,6 +90,8 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_PAGE_SIZE = DOMAIN + "SPOOLED_FILES.PAGE_SIZE"; //$NON-NLS-1$
 
+    private static final String SPOOLED_FILES_ADJUST_FONT_SIZE = DOMAIN + "SPOOLED_FILES.ADJUST_FONT_SIZE"; //$NON-NLS-1$
+
     private static final String SPOOLED_FILES_DEFAULT_FORMAT = DOMAIN + "SPOOLED_FILES.DEFAULT_FORMAT"; //$NON-NLS-1$
 
     private static final String SOURCEFILESEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
@@ -296,6 +298,10 @@ public final class Preferences {
 
     public String getSpooledFilePageSize() {
         return preferenceStore.getString(SPOOLED_FILES_PAGE_SIZE);
+    }
+
+    public boolean getSpooledFileAdjustFontSize() {
+        return preferenceStore.getBoolean(SPOOLED_FILES_ADJUST_FONT_SIZE);
     }
 
     public int getDataQueueMaximumMessageLength() {
@@ -507,6 +513,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_PAGE_SIZE, aPageSize);
     }
 
+    public void setSpooledFileAdjustFontSize(boolean anAdjustSize) {
+        preferenceStore.setValue(SPOOLED_FILES_ADJUST_FONT_SIZE, anAdjustSize);
+    }
+
     public void setDataQueueMaximumMessageLength(int length) {
         preferenceStore.setValue(MONITOR_DTAQ_LENGTH, length);
     }
@@ -599,6 +609,7 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_LIBRARY, getDefaultSpooledFileConversionPDFLibrary());
 
         preferenceStore.setDefault(SPOOLED_FILES_PAGE_SIZE, getDefaultSpooledFilePageSize());
+        preferenceStore.setDefault(SPOOLED_FILES_ADJUST_FONT_SIZE, getDefaultSpooledFileAdjustFontSize());
 
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
@@ -796,6 +807,16 @@ public final class Preferences {
      */
     public String getDefaultSpooledFilePageSize() {
         return PageSize.PAGE_SIZE_CALCULATE;
+    }
+
+    /**
+     * Return whether the font size is adjusted to the page size for spooled
+     * file conversion to PDF.
+     * 
+     * @return default for adjusting the font size
+     */
+    public boolean getDefaultSpooledFileAdjustFontSize() {
+        return false;
     }
 
     /**
