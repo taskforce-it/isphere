@@ -28,6 +28,9 @@
   <topic label="Data Area Editor"  href="html/dataareaeditor/dataareaeditor.html"> 
     <topic label="Preferences" href="html/dataareaeditor/preferences/preferences.html" />
   </topic>
+  <topic label="User Space Editor"  href="html/userspaceeditor/userspaceeditor.html"> 
+    <topic label="Preferences" href="html/dataareaeditor/preferences/preferences.html" />
+  </topic>
   <topic label="Data Spaces" href="html/dataspaces/dataspaces.html"> 
     <topic label="Designer" href="html/dataspaces/designer/dataspaceeditordesigner.html" />
     <topic label="Editor"  href="html/dataspaces/editor/dataspaceeditor.html" />
