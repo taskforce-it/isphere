@@ -26,7 +26,7 @@
       //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
       /copy qcpysrc,h_spec
-     h dftactgrp(*no) actgrp(*caller)
+     h dftactgrp(*no) actgrp(*caller) bnddir('QC2LE')
 
      fQSRC      UF   F  512        DISK    usropn
      f                                     extfile(g_extFile)
@@ -75,6 +75,15 @@
      d                 pr              n   extproc(g_cbReplace)
      d  io_srcLine                               likeds(srcLine_t)
      d  i_srcInfo                          const likeds(srcInfo_t)
+
+     d open...
+     d                 pr                  extproc('open')
+     d  i_file                       10a   const
+     d  i_lib                        10a   const
+     d  i_mbr                        10a   const
+
+     d close...
+     d                 pr                  extproc('close')
 
       // Procedure prototype for procedure 'BUILD_RPLC'
 
