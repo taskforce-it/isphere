@@ -2,9 +2,16 @@
 
 Changelog: iSphere 2.7.1 beta 6
 -------------------------------
+ • Added user space editor.
+ • Added options "Page size" and "Adjust font size" for
+   PDF transformation.
  • Added option for downloading spooled files asynchronously.
+ • Moved status line items of data area and compare message file 
+   editors to standard Eclipse status line.
  • Fixed problem of missing German special characters when
    transforming spooled files.
+ • Fixed problem of hard-linked service programs for 
+   FNDSTR/NBRRNG, SPLF/NBRRNG and XFNDSTR/NBRRNG.
 
 
 Changelog: iSphere 2.7.1 beta 5
