@@ -27,6 +27,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDestination;
@@ -36,16 +37,14 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
-    // Unprintable margin, roughly 0.4F = 1cm
-    private static final float UNPRINTABLE_MARGIN = 0.4F;
-
-    private int DOTS_PER_INCH = 72;
+    private static int DOTS_PER_INCH = 72;
 
     private Document document = null;
     private Font font = null;
-    private Set<PageSize> pageSizes = null;
+    private Set<PageSize> pageSizesPortrait = null;
     private boolean fitToPage = false;
-    private String leftMargin;
+
+    private float fontSize;
 
     public SpooledFileTransformerPDF(String connectionName, SpooledFile spooledFile) {
         super(connectionName, spooledFile);
@@ -55,8 +54,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         } else {
             fitToPage = true;
         }
-        
-        pageSizes = getPageSizes_Portrait();
+
+        pageSizesPortrait = getPageSizes_Portrait();
     }
 
     /**
@@ -78,7 +77,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     @Override
     protected void openPrinter(String target) throws FileNotFoundException, DocumentException {
         document = createPFD(target);
-        skipToStartOfPage();
     }
 
     /**
@@ -116,16 +114,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     @Override
     protected void formfeed() throws DocumentException {
         document.newPage();
-        skipToStartOfPage();
-    }
-
-    private void skipToStartOfPage() throws DocumentException {
-        // Unprintable margin, roughly 0.4F = 1cm
-        int lineCount = (int)round(getLPI() * (document.topMargin()));
-        while (lineCount > 0) {
-            document.add(Chunk.NEWLINE);
-            lineCount--;
-        }
     }
 
     /**
@@ -141,15 +129,10 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      */
     @Override
     protected void print(String text) throws DocumentException {
-
-        if (leftMargin == null) {
-            // Unprintable margin, roughly 0.4F = 1cm
-            int marginCount = (int)round(getCPI() * (document.leftMargin()));
-            leftMargin = StringHelper.getFixLength("", marginCount);
-        }
-
-        Chunk chunk = new Chunk(leftMargin + text, font);
-        document.add(chunk);
+        Paragraph paragraph = new Paragraph(text, font);
+        paragraph.setLeading(0.0F);
+        paragraph.setSpacingBefore(font.getSize());
+        document.add(paragraph);
     }
 
     /**
@@ -161,6 +144,11 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      */
     private Set<PageSize> getPageSizes_Portrait() {
 
+        return getPageSizes();
+    }
+
+    private PageSize getFitToPageSize(int pageWidthInDots, int pageHeightInDots) {
+
         if (fitToPage) {
 
             PageSize fitToPageSize = null;
@@ -171,15 +159,17 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             }
 
             if (fitToPageSize == null) {
-                fitToPageSize = new PageSize(595.0F, 842.0F, PageSize.PAGE_SIZE_A4);
+                fitToPageSize = new PageSize(595, 842, PageSize.PAGE_SIZE_A4);
             }
 
-            TreeSet<PageSize> pageSizes = new TreeSet<PageSize>();
-            pageSizes.add(fitToPageSize); // A4
-            return pageSizes;
+            if (isLandscape(pageWidthInDots, pageHeightInDots)) {
+                fitToPageSize = new PageSize(fitToPageSize.getHeight(), fitToPageSize.getWidth(), fitToPageSize.getFormat());
+            }
+
+            return fitToPageSize;
         }
 
-        return getPageSizes();
+        return null;
     }
 
     private PageSize findPageSize(String pageSizeId) {
@@ -198,17 +188,17 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
         Set<PageSize> pageSizes = new TreeSet<PageSize>();
 
-        pageSizes.add(new PageSize(73.0F, 105.0F, "DIN A10")); // 1.02"  1.46"
-        pageSizes.add(new PageSize(105.0F, 148.0F, "DIN A9")); // 1.46", 2.05"
-        pageSizes.add(new PageSize(148.0F, 210.0F, "DIN A8")); // 2.05", 2.91"
-        pageSizes.add(new PageSize(210.0F, 297.0F, "DIN A7")); // 2.91", 4.13"
-        pageSizes.add(new PageSize(297.0F, 420.0F, "DIN A6")); // 4.13", 5.83"
-        pageSizes.add(new PageSize(420.0F, 595.0F, "DIN A5")); // 5.83", 8.27"
-        pageSizes.add(new PageSize(595.0F, 842.0F, PageSize.PAGE_SIZE_A4)); // 8.27", 11.69"
-        pageSizes.add(new PageSize(842.0F, 1191.0F, "DIN A3")); // 11.69", 16.54"
-        pageSizes.add(new PageSize(1191.0F, 1684.0F, "DIN A2")); // 16.54", 23.39"
-        pageSizes.add(new PageSize(1684.0F, 2384.0F, "DIN A1")); // 23.39", 33.11"
-        pageSizes.add(new PageSize(2384.0F, 3370.0F, "DIN A0")); // 33.11", 46.81"
+        pageSizes.add(new PageSize(73, 105, "DIN A10")); // 1.02"  1.46"
+        pageSizes.add(new PageSize(105, 148, "DIN A9")); // 1.46", 2.05"
+        pageSizes.add(new PageSize(148, 210, "DIN A8")); // 2.05", 2.91"
+        pageSizes.add(new PageSize(210, 297, "DIN A7")); // 2.91", 4.13"
+        pageSizes.add(new PageSize(297, 420, "DIN A6")); // 4.13", 5.83"
+        pageSizes.add(new PageSize(420, 595, "DIN A5")); // 5.83", 8.27"
+        pageSizes.add(new PageSize(595, 842, PageSize.PAGE_SIZE_A4)); // 8.27", 11.69"
+        pageSizes.add(new PageSize(842, 1191, "DIN A3")); // 11.69", 16.54"
+        pageSizes.add(new PageSize(1191, 1684, "DIN A2")); // 16.54", 23.39"
+        pageSizes.add(new PageSize(1684, 2384, "DIN A1")); // 23.39", 33.11"
+        pageSizes.add(new PageSize(2384, 3370, "DIN A0")); // 33.11", 46.81"
 
         return pageSizes;
     }
@@ -223,19 +213,26 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      */
     private Document createPFD(String aPath) throws FileNotFoundException, DocumentException {
 
-        Rectangle pageSize = findRequiredPageSize(getPageWidthInInches(), getPageHeightInInches());
-        PageMargins pageMargins = getPageMargins();
-        font = new Font(Font.FontFamily.COURIER, getFontSize(pageSize, pageMargins), Font.NORMAL, BaseColor.BLACK);
+        PageSize pageSize = null;
+        if (fitToPage) {
+            pageSize = getFitToPageSize(getPageWidthInDots(), getPageHeightInDots());
+        }
+
+        if (pageSize == null) {
+            pageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
+        }
+
+        fontSize = getFontSize(pageSize);
+        font = new Font(Font.FontFamily.COURIER, fontSize, Font.NORMAL, BaseColor.BLACK);
+        PageMargins pageMargins = getPageMargins(fontSize);
 
         Document pdf = new Document();
 
         PdfWriter writer = PdfWriter.getInstance(pdf, new FileOutputStream(aPath));
-        pdf.setPageSize(pageSize);
+        pdf.setPageSize(pageSize.getDimension());
         pdf.setMargins(pageMargins.getLeft(), pageMargins.getRight(), pageMargins.getTop(), pageMargins.getBottom());
-        pdf.setMarginMirroring(true);
+        pdf.setMarginMirroring(false);
 
-        writer.setInitialLeading(DOTS_PER_INCH / getLPI());
-        writer.setInitialLeading(round((font.getSize() * 1.1F), 1));
         writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
         writer.setPageEvent(new PageEventHandler());
 
@@ -245,92 +242,128 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     }
 
     /**
-     * Returns the font size measured in dots for a given CPI value.
+     * Returns the font size measured in dots for a given CPI value. The font
+     * size is returned with one decimal position.
+     * 
      * <pre>
-     * Relationship between font size and average character width:
-     * Courier 8, width = 7, factor = 1,143
-     * Courier 9, width = 7, factor = 1,286
-     * Courier 10, width = 8, factor = 1,25
-     * Courier 11, width = 9, factor = 1,22
-     * Courier 12, width = 10, factor = 1,2
-     * Courier 13, width = 10, factor = 1,3
-     * Courier 14, width = 11, factor = 1,273
-     * Courier 15, width = 12, factor = 1,25
-     * Courier 16, width = 13, factor = 1,231
-     * Courier 18, width = 14, factor = 1,286
+     * Factor verification:    Printed several documents with different sizes
+     *                         and measured the length of 43 characters.
+     *                         Calculated size of character like this:
+     *                           cm / Inch * Dots_per_inch / #Chars
+     *                         Calculated Size/Width like this:
+     *                           Font_Size / With 
+     * 
+     * Font Size    cm   Inch    Dots per Inch   #Chars  Width          Size/Width
+     *     7       6,3   2,54         72           43    4,153085515    1,685493827
+     *     8       7,2   2,54         72           43    4,746383446    1,685493827
+     *     9       8,1   2,54         72           43    5,339681377    1,685493827
+     *    10       9     2,54         72           43    5,932979308    1,685493827
+     *    11       9,9   2,54         72           43    6,526277239    1,685493827
+     *    12      10,8   2,54         72           43    7,119575169    1,685493827
+     *    13      11,7   2,54         72           43    7,7128731      1,685493827
+     *    14      12,6   2,54         72           43    8,306171031    1,685493827
+     *    15      13,5   2,54         72           43    8,899468962    1,685493827
+     *    16      14,4   2,54         72           43    9,492766893    1,685493827
      * </pre>
      * 
      * @return font size
      * @see https://support.microsoft.com/en-us/kb/76388
      */
-    private float getFontSize(Rectangle pageSize, PageMargins pageMargins) {
+    private synchronized float getFontSize(PageSize wantedPageSize) {
 
-        float charWidth = (pageSize.getWidth() - (pageMargins.left + pageMargins.right)) / getPageWidth();
-        float charHeight = round(charWidth * 1.25F, 1);
-        
-        return charHeight;
+        float charHeight = 120 / getCPI();
+
+        PageSize requiredPageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
+
+        float factorHeight = requiredPageSize.getHeight() / wantedPageSize.getHeight();
+        float factorWidth = requiredPageSize.getWidth() / wantedPageSize.getWidth();
+
+        if (factorHeight > factorWidth) {
+            charHeight = charHeight / factorHeight;
+        } else {
+            charHeight = charHeight / factorWidth;
+        }
+
+        boolean adjustCharSize = true;
+
+        if (adjustCharSize) {
+            if (charHeight * getPageHeightInLines() < wantedPageSize.getHeight()) {
+                charHeight = wantedPageSize.getHeight() / getPageHeightInLines();
+                charHeight = dropDecimals(charHeight);
+            }
+
+            float WIDTH_FACTOR = 1.685493827F;
+
+            int tCharHeight = (int)(charHeight + 0.5F); // round up
+            float tCharWidth = tCharHeight / WIDTH_FACTOR;
+            if (tCharWidth * getPageWidthInChars() > wantedPageSize.getWidth()) {
+                tCharWidth = wantedPageSize.getWidth() / getPageWidthInChars();
+                charHeight = tCharWidth * WIDTH_FACTOR;
+            }
+        }
+
+        return dropDecimals(charHeight);
     }
 
-    private PageMargins getPageMargins() {
-        return new PageMargins(UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN, UNPRINTABLE_MARGIN);
+    private float dropDecimals(float charHeight) {
+        return ((int)(charHeight * 10.0F)) / 10.0F;
+    }
+
+    private PageMargins getPageMargins(float fontSize) {
+        return new PageMargins(0, 0, (int)fontSize, 0);
     }
 
     /**
      * Computes the page size for a given page dimension. Height and width must
      * be passed in inches.
      * 
-     * @param pageWidth - page width
-     * @param pageHeight - page height
+     * @param pageWidth - page width in dots
+     * @param pageHeight - page height in dots
      * @return page dimension
      */
-    private Rectangle findRequiredPageSize(float pageWidthInInch, float pageHeightInInch) {
 
-        boolean isLandscape;
-        if (pageWidthInInch > pageHeightInInch) {
-            // Landscape
-            isLandscape = true;
-        } else {
-            // Portrait
-            isLandscape = false;
-        }
+    private PageSize findRequiredPageSize(int pageWidthInDots, int pageHeightInDots) {
 
-        if (fitToPage) {
-            PageSize requestedPageSize = pageSizes.iterator().next();
-            if (isLandscape) {
-                requestedPageSize = new PageSize(requestedPageSize.getHeight(), requestedPageSize.getWidth(), requestedPageSize.getFormat());
-            }
-            return requestedPageSize.getDimension();
-        }
+        boolean isLandscape = isLandscape(pageWidthInDots, pageHeightInDots);
 
-        float pageHeight = round(pageHeightInInch * DOTS_PER_INCH);
-        float pageWidth = round(pageWidthInInch * DOTS_PER_INCH);
+        PageSize actualPageSizePortrait;
 
         if (isLandscape) {
-            pageHeight = round(pageWidthInInch * DOTS_PER_INCH);
-            pageWidth = round(pageHeightInInch * DOTS_PER_INCH);
+            actualPageSizePortrait = new PageSize(pageHeightInDots, pageWidthInDots, "");
         } else {
-            pageHeight = round(pageHeightInInch * DOTS_PER_INCH);
-            pageWidth = round(pageWidthInInch * DOTS_PER_INCH);
+            actualPageSizePortrait = new PageSize(pageWidthInDots, pageHeightInDots, "");
         }
 
         PageSize pageSize = null;
-        for (Iterator<PageSize> iterator = pageSizes.iterator(); iterator.hasNext();) {
+        for (Iterator<PageSize> iterator = pageSizesPortrait.iterator(); iterator.hasNext();) {
             PageSize curentPageSize = iterator.next();
-            if (curentPageSize.getWidth() >= pageWidth && curentPageSize.getHeight() >= pageHeight) {
+            if (curentPageSize.compareTo(actualPageSizePortrait) > 0) {
                 pageSize = curentPageSize;
                 break;
             }
         }
 
         if (pageSize == null) {
-            return new PageSize(pageWidth, pageHeight, "*USRDEF").getDimension();
+            return new PageSize(pageWidthInDots, pageHeightInDots, "*USRDEF");
         } else {
             if (isLandscape) {
-                return new PageSize(pageSize.getHeight(), pageSize.getWidth(), pageSize.getFormat()).getDimension();
+                return new PageSize(pageSize.getHeight(), pageSize.getWidth(), pageSize.getFormat());
             } else {
-                return new PageSize(pageSize.getWidth(), pageSize.getHeight(), pageSize.getFormat()).getDimension();
+                return new PageSize(pageSize.getWidth(), pageSize.getHeight(), pageSize.getFormat());
             }
         }
+    }
+
+    private boolean isLandscape(int pageWidthInDots, int pageHeightInDots) {
+        boolean isLandscape;
+        if (pageWidthInDots > pageHeightInDots) {
+            // Landscape
+            isLandscape = true;
+        } else {
+            // Portrait
+            isLandscape = false;
+        }
+        return isLandscape;
     }
 
     /**
@@ -342,8 +375,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * 
      * @return page width in inches
      */
-    private float getPageWidthInInches() {
-        return super.getPageWidth() / getCPI();
+    private int getPageWidthInDots() {
+        return (int)(super.getPageWidthInChars() / getCPI() * DOTS_PER_INCH);
     }
 
     /**
@@ -355,8 +388,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
      * 
      * @return page width in inches
      */
-    private float getPageHeightInInches() {
-        return super.getPageHeight() / getLPI();
+    private int getPageHeightInDots() {
+        return (int)super.getPageHeightInLines() / getLPI() * DOTS_PER_INCH;
     }
 
     /**
@@ -383,14 +416,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         return ISpherePlugin.getDefault().getName() + " v" + ISpherePlugin.getDefault().getVersion();
     }
 
-    private static float round(float value) {
-        return round(value, 0);
-    }
-
-    private static float round(float value, int decPos) {
-        return (float)(Math.round(value * Math.pow(10, decPos)) / Math.pow(10, decPos));
-    }
-
     // -----------------------------------
     // Private internal classes
     // -----------------------------------
@@ -410,30 +435,50 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
     private static class PageMargins {
 
-        private float left;
-        private float right;
-        private float top;
-        private float bottom;
+        private int left;
+        private int right;
+        private int top;
+        private int bottom;
 
-        public PageMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
-            this.left = marginLeft;
-            this.right = marginRight;
-            this.top = marginTop;
-            this.bottom = marginBottom;
+        public PageMargins(int marginLeftInDots, int marginRightInDots, int marginTopInDots, int marginBottomInDots) {
+            this.left = marginLeftInDots;
+            this.right = marginRightInDots;
+            this.top = marginTopInDots;
+            this.bottom = marginBottomInDots;
         }
 
+        /**
+         * Return the left margin measured in dots
+         * 
+         * @return left margin in dots
+         */
         public float getLeft() {
             return left;
         }
 
+        /**
+         * Return the right margin measured in dots
+         * 
+         * @return right margin in dots
+         */
         public float getRight() {
             return right;
         }
 
+        /**
+         * Return the top margin measured in dots
+         * 
+         * @return top margin in dots
+         */
         public float getTop() {
             return top;
         }
 
+        /**
+         * Return the bottom margin measured in dots
+         * 
+         * @return bottom margin in dots
+         */
         public float getBottom() {
             return bottom;
         }
@@ -442,7 +487,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         public String toString() {
             return "margins (left: " + left + ", right: " + right + "top: " + top + ", bottom: " + bottom + ")";
         }
-
     }
 
     public static class PageSize implements Comparable<PageSize> {
@@ -451,30 +495,29 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         public static final String PAGE_SIZE_CALCULATE = "*CALCULATE"; //$NON-NLS-1$
 
         private String format;
-
         private Rectangle pageSize;
 
-        public PageSize(float aWidth, float aHeight, String aFormat) {
-            format = aFormat;
-            pageSize = new Rectangle(aWidth, aHeight);
+        public PageSize(int widthInDots, int heightInDots, String format) {
+            this.format = format;
+            this.pageSize = new Rectangle(widthInDots, heightInDots);
         }
 
         /**
-         * Return the page width measured in inches.
+         * Return the page width measured in dots.
          * 
          * @return Page width in inches.
          */
-        protected float getWidth() {
-            return round((pageSize.getRight() - pageSize.getLeft()), 2);
+        protected int getWidth() {
+            return (int)(pageSize.getRight() - pageSize.getLeft());
         }
 
         /**
-         * Return the page height measured in inches.
+         * Return the page height measured in dots.
          * 
-         * @return Page height in inches.
+         * @return Page height in dots.
          */
-        protected float getHeight() {
-            return round((pageSize.getTop() - pageSize.getBottom()), 2);
+        protected int getHeight() {
+            return (int)(pageSize.getTop() - pageSize.getBottom());
         }
 
         /**
@@ -493,7 +536,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
          */
         protected Rectangle getDimension() {
             return pageSize;
-            // return new Rectangle(getWidth(), getHeight());
         }
 
         /**
@@ -518,9 +560,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
         @Override
         public String toString() {
-            return format + " (" + pageSize.getWidth() + " x " + pageSize.getHeight() + ")";
+            return format + " (width: " + pageSize.getWidth() + ", height:" + pageSize.getHeight() + ")";
         }
-
     }
 
 }

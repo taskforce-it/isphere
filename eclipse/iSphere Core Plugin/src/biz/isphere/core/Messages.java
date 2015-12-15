@@ -1092,6 +1092,8 @@ public class Messages extends NLS {
 
     public static String PageSize_colon;
     
+    public static String Adjust_font_size;
+    
     /*
      * Warning messages
      */
