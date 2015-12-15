@@ -110,6 +110,8 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     @Override
     public void setStatusMessage(String message) {
         statusMessage = message;
+
+        updateStatusLine();
     }
 
     /**
@@ -180,10 +182,8 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         statusLine.setShowValue(false);
         statusLine.setShowMessage(true);
 
-        if (statusLine != null) {
-            statusLine.setMessage(statusMessage);
-            statusMessage = null;
-        }
+        statusLine.setMessage(statusMessage);
+        statusMessage = null;
     }
 
     /**

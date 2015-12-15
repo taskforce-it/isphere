@@ -12,7 +12,6 @@ import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -43,18 +42,21 @@ public final class StatusLine {
 
     public void fill(Composite parent) {
 
-        addSeparator(parent);
-        numItemsLabel = addLabel(parent, 5, numItemsWidthHint);
-        numItemsWidthHint = getWidthHint(numItemsLabel);
-        numItemsLabel.setAlignment(SWT.CENTER);
-        numItemsLabel.setText("55");
+        if (showNumItems) {
+            addSeparator(parent);
+            numItemsLabel = addLabel(parent, 5, numItemsWidthHint);
+            numItemsWidthHint = getWidthHint(numItemsLabel);
+            numItemsLabel.setAlignment(SWT.CENTER);
+            numItemsLabel.setText("55");
+            filterImageLabel = addImageLabel(parent, ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
+        }
 
-        filterImageLabel = addImageLabel(parent, ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
-
-        addSeparator(parent);
-        messageLabel = addLabel(parent, 250, messageWidthHint);
-        messageWidthHint = getWidthHint(messageLabel);
-        messageLabel.setText("foo");
+        if (showMessage) {
+            addSeparator(parent);
+            messageLabel = addLabel(parent, 250, messageWidthHint);
+            messageWidthHint = getWidthHint(messageLabel);
+            messageLabel.setText("foo");
+        }
 
         updateControls();
     }
