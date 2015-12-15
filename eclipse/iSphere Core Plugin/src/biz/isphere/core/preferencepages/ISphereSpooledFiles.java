@@ -294,6 +294,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 conversionPDF = IPreferences.SPLF_CONVERSION_DEFAULT;
                 textConversionPDFLibrary.setEnabled(false);
                 textConversionPDFCommand.setEnabled(false);
+                comboConversionPDFPageSize.setEnabled(false);
+                chkBoxAdjustFontSize.setEnabled(false);
                 checkError();
             }
         });
@@ -306,6 +308,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 conversionPDF = IPreferences.SPLF_CONVERSION_USER_DEFINED;
                 textConversionPDFLibrary.setEnabled(true);
                 textConversionPDFCommand.setEnabled(true);
+                comboConversionPDFPageSize.setEnabled(false);
+                chkBoxAdjustFontSize.setEnabled(false);
                 checkError();
             }
         });
@@ -318,6 +322,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 conversionPDF = IPreferences.SPLF_CONVERSION_TRANSFORM;
                 textConversionPDFLibrary.setEnabled(false);
                 textConversionPDFCommand.setEnabled(false);
+                comboConversionPDFPageSize.setEnabled(true);
+                chkBoxAdjustFontSize.setEnabled(true);
                 checkError();
             }
         });
@@ -352,7 +358,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         Label labelConversionPDFPageSize = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFPageSize.setText(Messages.PageSize_colon);
-        
+
         comboConversionPDFPageSize = WidgetFactory.createReadOnlyCombo(groupConversionPDF);
         comboConversionPDFPageSize.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -362,7 +368,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
         comboConversionPDFPageSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         comboConversionPDFPageSize.setItems(loadAvailablePageSizes());
-        
+
         chkBoxAdjustFontSize = WidgetFactory.createCheckbox(groupConversionPDF);
         chkBoxAdjustFontSize.setText(Messages.Adjust_font_size);
         chkBoxAdjustFontSize.addSelectionListener(new SelectionAdapter() {
@@ -744,7 +750,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         } else {
             comboConversionPDFPageSize.setText(PageSize.PAGE_SIZE_A4);
         }
-        
+
         chkBoxAdjustFontSize.setSelection(adjustFontSize);
     }
 
