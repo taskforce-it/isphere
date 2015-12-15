@@ -132,6 +132,9 @@
 
        enddo;
 
+       TEXT = *ALL'-';
+       write STANDARD;
+
        // Close files
        close DEMO4T;
        close DEMO4P;
