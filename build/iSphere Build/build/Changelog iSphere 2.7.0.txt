@@ -1,5 +1,10 @@
 
 
+Changelog: iSphere 2.8.0 beta 7
+-------------------------------
+ • Updated the iSphere library save file.
+
+
 Changelog: iSphere 2.8.0 beta 6
 -------------------------------
  • Added user space editor.
