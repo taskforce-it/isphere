@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 7/24/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate="12/17/2015">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2657,7 +2657,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8.3 - 23.07.2015 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.8.4 - 23.07.2015 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -3407,7 +3407,8 @@ srccssid=  "00273">
      D  prmtAction             6      6A
      D  cmdStrSyntax           7      7A
      D  msgRtvKey              8     11A
-     D  res_01                12     20A
+     D  ccsidCmdStr           12     15I 0                                      new V5R4
+     D  res_01                16     20A
       *
       *  Type of command processing.
       *  The type of command processing to be performed by the system.
@@ -6494,6 +6495,10 @@ srccssid=  "00273">
       *                            was not created when the creation        *
       *                            command had been executed implicitly.    *
       *                                                                     *
+      *  17.12.2015  Th.Raddatz    Fixed f_executeCommand(), which must     *
+      *                            pass 'f_executeCommand' case sensitive   *
+      *                            to p_getMsgInf();                        *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -8082,6 +8087,7 @@ srccssid=  "00273">
             optCtrl.prmtAction = cQCAPCMD_PROMPT_NEVER;
             optCtrl.cmdStrSyntax = cQCAPCMD_SYNTAX_SYSTEM;
             optCtrl.msgRtvKey = '';
+            optCtrl.ccsidCmdStr = 0;
             optCtrl.res_01 = *ALLx'00';
 
             errCode = f_newApiErrCode(cTrue);
@@ -8155,7 +8161,7 @@ srccssid=  "00273">
             if (not g_option.isEventf);
                clear PRZ0015;
                PRZ00151 = i_cmd;
-               p_getMsgInf('STRPREPRC': 'STRPREPRC2': 'F_EXECUTECOMMAND'
+               p_getMsgInf('STRPREPRC': 'STRPREPRC2': 'f_executeCommand'
                            : errCode.excID: msgID: msgDta: msgFile: msgLib);
                p_sndMsg(f_newMsg('PRZ0015': PRZ0015: cTYPE_DIAG));
                p_sndMsg(f_newMsg(msgID: msgDta: cTYPE_DIAG: msgFile: msgLib));
@@ -10010,4 +10016,4 @@ DLTMOD MODULE(&tolib/STRPREPRC4)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application STRPREPRC successfully installed.
 ]]>  </sendmsg>
-</upload>
+</upload> 
