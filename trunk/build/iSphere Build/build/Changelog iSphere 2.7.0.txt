@@ -3,6 +3,8 @@
 Changelog: iSphere 2.8.0 beta 7
 -------------------------------
  • Updated the iSphere library save file.
+ • STRPREPRC: Fixed problem that error messages were not properly
+   retrieved from the job log.
 
 
 Changelog: iSphere 2.8.0 beta 6
@@ -11,11 +13,11 @@ Changelog: iSphere 2.8.0 beta 6
  • Added options "Page size" and "Adjust font size" for
    PDF transformation.
  • Added option for downloading spooled files asynchronously.
- • Moved status line items of data area and compare message file 
+ • Moved status line items of data area and compare message file
    editors to standard Eclipse status line.
  • Fixed problem of missing German special characters when
    transforming spooled files.
- • Fixed problem of hard-linked service programs for 
+ • Fixed problem of hard-linked service programs for
    FNDSTR/NBRRNG, SPLF/NBRRNG and XFNDSTR/NBRRNG.
 
 
@@ -35,19 +37,19 @@ Changelog: iSphere 2.7.1 beta 4
 Changelog: iSphere 2.7.1 beta 3
 -------------------------------
  • Added warning message that is displayed when the iSphere
-   compare filters are not installed in RDi 9.5. 
+   compare filters are not installed in RDi 9.5.
 
 
 Changelog: iSphere 2.7.1 beta 2
 -------------------------------
  • Added "iSphere Compare Filters Compile-Dummy (RDi)" to compile
-   iSphere from RDi 8.0. 
+   iSphere from RDi 8.0.
 
 
 Changelog: iSphere 2.7.1 beta 1
 -------------------------------
- • Fixed problem of lost change dates of source members saved 
-   from the iSphere Compare/Merge editor. 
-   (Only for RDi 9.5+, requires installing the iSphere Compare 
+ • Fixed problem of lost change dates of source members saved
+   from the iSphere Compare/Merge editor.
+   (Only for RDi 9.5+, requires installing the iSphere Compare
     Filters plug-in.)
  • Added filter properties to the message monitor.
