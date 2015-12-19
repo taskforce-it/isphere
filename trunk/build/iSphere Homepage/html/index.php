@@ -26,7 +26,7 @@
       
         <table width="100%" border="0">
         <tr><td align="left" >
-        <a href="https://sourceforge.net/projects/isphere/"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="98" height="97" border="0" style="padding-right: 10px;"/></a>
+        <a href="https://sourceforge.net/projects/isphere/"><img src="assets/isphere.gif" alt="iSphere Plug-in" width="122" height="79" border="0" style="padding-right: 10px;"/></a>
         </td>
         <td align="left" width="100%" >
         <h1>iSphere Plug-in</h1>
