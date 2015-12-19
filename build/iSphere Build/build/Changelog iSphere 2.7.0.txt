@@ -1,10 +1,14 @@
 
 
+Changelog: iSphere 2.8.0 beta 8
+-------------------------------
+ • STRPREPRC: Fixed problem that error messages were not properly
+   retrieved from the job log.
+
+
 Changelog: iSphere 2.8.0 beta 7
 -------------------------------
  • Updated the iSphere library save file.
- • STRPREPRC: Fixed problem that error messages were not properly
-   retrieved from the job log.
 
 
 Changelog: iSphere 2.8.0 beta 6
