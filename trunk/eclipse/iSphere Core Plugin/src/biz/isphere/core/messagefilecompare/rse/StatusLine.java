@@ -28,7 +28,6 @@ public final class StatusLine {
     public static final String STATUS_LINE_ID = "biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditorActionBarContributor.StatusLine";
 
     private CLabel messageLabel;
-    private CLabel filterImageLabel;
     private CLabel numItemsLabel;
 
     private int messageWidthHint = -1;
@@ -48,7 +47,7 @@ public final class StatusLine {
             numItemsWidthHint = getWidthHint(numItemsLabel);
             numItemsLabel.setAlignment(SWT.CENTER);
             numItemsLabel.setText("55");
-            filterImageLabel = addImageLabel(parent, ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
+            addImageLabel(parent, ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
         }
 
         if (showMessage) {

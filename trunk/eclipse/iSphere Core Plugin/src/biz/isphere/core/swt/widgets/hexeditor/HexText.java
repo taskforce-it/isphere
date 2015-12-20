@@ -461,13 +461,8 @@ public final class HexText extends Composite {
     }
 
     private class MyMouseMoveListener implements MouseMoveListener {
-        int charLen;
 
         public MyMouseMoveListener(boolean hexContent) {
-            charLen = 1;
-            if (hexContent) {
-                charLen = 3;
-            }
         }
 
         public void mouseMove(MouseEvent paramMouseEvent) {
