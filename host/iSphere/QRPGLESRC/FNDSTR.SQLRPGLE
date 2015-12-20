@@ -593,7 +593,7 @@
                  :LITYP2,
                  :LIRLNG
               FROM
-                 SYSTABLES
+                 QSYS2/SYSTABLES
               WHERE
                  TABLE_SCHEMA = :XILIB AND
                  TABLE_NAME = :XIFILE;
