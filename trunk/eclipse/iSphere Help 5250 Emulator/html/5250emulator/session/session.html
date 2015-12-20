@@ -37,7 +37,7 @@
 			<td valign="top" nowrap>Device</td>
 			<td valign="top">-</td>
 			<td valign="top">The device name of your session on your host. Leave the device name blank for QPADEV* 
-			                 device names.</td>
+			                 sessions and enter a device name for named sessions.</td>
 		</tr>
 		<tr>
 			<td valign="top" nowrap>Port</td>
@@ -104,6 +104,31 @@
 	<a id="starting_multiple_sessions"></a>
 	<h2>Starting Multiple Sessions</h2>
 	<p>
+	<h3>As Editor Sessions</h2>
+	<p>
+	You need to create a 5250 session entry for each session that you want to run in the editor area.
+	The following example shows 4 session entries. The first two entries are named sessions, whereas
+	the last two entries are QPADEV* sessions.
+	<p>
+		<img src="assets/example_sessions.png" align="middle">
+	<p>
+	With that configuration you can start two QPADEV* sessions like that:
+	<p>
+		<img src="assets/example_sessions_qpadev.png" align="middle">
+	<p>
+	Or you can start named sessions ISPHERE* as shown below:
+	<p>
+		<img src="assets/example_sessions_isphere.png" align="middle">
+	<p>
+	<table>
+		<tr>
+			<td class="info">Editor sessions are more flexible, because you can configure their names
+			and you can start as much sessions as you want.</td>
+		</tr>
+	</table>
+	<p>
+	<h3>As View Sessions</h2>
+	<p>
 	You can add up to 3 additional sessions with the little plus button at the top right corner of
 	the view.
 	<p>
@@ -116,6 +141,13 @@
 	next session or "Alt-Arrow Down" to select the previous session.
 	<p>
     To close a session click on the little minus icon next to the plus icon. The current session will be closed.
+	<p>
+	<table>
+		<tr>
+			<td class="info">The advantage of view sessions over editor sessions is that you can view up to four
+			                 sessions at once.</td>
+		</tr>
+	</table>
 	<p>
 	<a id="using_eclipse_key_bindings"></a>
 	<h2>Using Eclipse Key Bindings</h2>
