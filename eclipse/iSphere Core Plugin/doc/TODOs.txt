@@ -5,7 +5,4 @@ iSphere TODO List
 * Display first bunch of messages in a list, when the messages monitor
   starts.  
 
-* Change embedded SQL from *SYS to *SQL syntax wherever possible.
-* Qualify SQL statements with QSYS2 library.
-
 * Think about how to ignore comments in iSphere source file search.
