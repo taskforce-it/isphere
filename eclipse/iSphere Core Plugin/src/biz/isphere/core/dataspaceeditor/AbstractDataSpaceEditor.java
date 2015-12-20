@@ -46,7 +46,6 @@ import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDeleg
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.internal.AbstractObjectLockManager;
-import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.RemoteObject;
@@ -62,7 +61,6 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     private AbstractDataSpaceEditorDelegate editorDelegate;
     private DataSpaceEditorRepository repository;
     private AbstractObjectLockManager objectLockManager;
-    private String mode;
     private ObjectLock objectLock;
     private StatusLine statusLine;
 
@@ -170,10 +168,10 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
 
             objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
             if (objectLock == null) {
-                mode = IEditor.BROWSE;
+                // mode = IEditor.BROWSE;
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
             } else {
-                mode = input.getMode();
+                // mode = input.getMode();
             }
 
             if (objectLock != null) {
