@@ -17,6 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
+ * SourceForge:
+ *     https://sourceforge.net/projects/javahexeditor/ 
+ * 
  * Contributors:
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
@@ -77,7 +80,6 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyEvent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyListener;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.RangeSelection;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentClipboard;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder.Match;
