@@ -15,11 +15,14 @@ import java.util.List;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
+import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400File;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.MemberDescription;
-import com.ibm.as400.access.ObjectDoesNotExistException;
+import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.SequentialFile;
 
 public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
@@ -209,11 +212,16 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         try {
             AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
-            MemberDescription fromMemberDescription = new MemberDescription(fromSystem, getFromLibrary(), getFromFile(), getFromMember());
-            fromText = (String)fromMemberDescription.getValue(MemberDescription.MEMBER_TEXT_DESCRIPTION);
-        } catch (ObjectDoesNotExistException e) {
-            setErrorMessage(Messages.bind(Messages.From_member_A_not_found, getFromQSYSName()));
-            return false;
+
+            QUSRMBRD qusrmbrd = new QUSRMBRD(fromSystem);
+            qusrmbrd.setFile(getFromFile(), getFromLibrary(), getFromMember());
+            MBRD0100 mbrd0100 = new MBRD0100(fromSystem);
+            if (qusrmbrd.execute(mbrd0100)) {
+                fromText = mbrd0100.getMeberDescription();
+            } else {
+                fromText = Messages.EMPTY;
+            }
+            
         } catch (Throwable e) {
             setErrorMessage(e.getLocalizedMessage());
         }
