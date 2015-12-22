@@ -2,6 +2,8 @@
 
 Changelog: iSphere 2.8.0 beta 8
 -------------------------------
+ • Added "Copy members" option to the iSphere source file search 
+   result view.
  • STRPREPRC: Fixed problem that error messages were not properly
    retrieved from the job log.
 

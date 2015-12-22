@@ -1,7 +1,6 @@
 iSphere TODO List
 -----------------
 
-* Add "copy to" option to the iSphere source file search result view.
 * Display first bunch of messages in a list, when the messages monitor
   starts.  
 

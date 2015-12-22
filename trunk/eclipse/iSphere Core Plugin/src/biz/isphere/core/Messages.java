@@ -14,6 +14,8 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.core.messages"; //$NON-NLS-1$
 
+    public static final String EMPTY = ""; //$NON-NLS-1$
+    
     public static String Activation;
 
     public static String Activation_colon;
@@ -1091,8 +1093,44 @@ public class Messages extends NLS {
     public static String Loading_spooled_file;
 
     public static String PageSize_colon;
-    
+
     public static String Adjust_font_size;
+
+    public static String Invalid_member_name;
+
+    public static String Cannot_copy_A_to_the_same_name;
+
+    public static String From_member_A_not_found;
+
+    public static String Target_member_A_already_exists;
+
+    public static String Invalid_library_name;
+
+    public static String Library_A_not_found;
+
+    public static String File_A_not_found;
+
+    public static String Failed_to_copy_one_or_more_items;
+
+    public static String Validation_ended_with_errors_Request_canceled;
+
+    public static String Copy_Members_headline;
+    
+    public static String To_file_colon;
+    
+    public static String To_library_colon;
+
+    public static String To_member_colhdg;
+
+    public static String Can_not_copy_member_twice_to_same_target_member;
+    
+    public static String Replace_existing_members;
+
+    public static String C_O_P_I_E_D;
+
+    public static String Validating_dots;
+    
+    public static String Copying_dots;
     
     /*
      * Warning messages

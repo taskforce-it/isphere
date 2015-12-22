@@ -19,6 +19,17 @@ public final class IBMiHelper {
     private static final SimpleDateFormat hhmmssFormatter = new SimpleDateFormat("HHmmss");
     private static final SimpleDateFormat yymmddFormetter = new SimpleDateFormat("yyMMdd");
 
+    public static String quote(String text) {
+        
+        StringBuilder quotedText = new StringBuilder();
+        
+        quotedText.append("'");
+        quotedText.append(text.replaceAll("'", "''"));
+        quotedText.append("'");
+        
+        return quotedText.toString();
+    }
+    
     public static String dateToCyymmdd(Date date, String defaultValue) {
 
         String cyymmdd;

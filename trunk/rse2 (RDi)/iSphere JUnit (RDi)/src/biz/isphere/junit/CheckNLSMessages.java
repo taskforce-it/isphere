@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
@@ -25,6 +26,8 @@ import java.util.Set;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
+
+import sun.java2d.pipe.LoopPipe;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -105,6 +108,10 @@ public class CheckNLSMessages {
 
         for (Field field : fields) {
 
+            if (Modifier.isFinal(field.getModifiers())){
+                continue;
+            }
+            
             // Prepare
             String nlsMessageConstant = field.getName();
             String messageText = properties.getProperty(nlsMessageConstant);

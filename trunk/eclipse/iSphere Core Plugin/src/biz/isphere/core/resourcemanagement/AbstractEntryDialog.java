@@ -124,7 +124,7 @@ public abstract class AbstractEntryDialog extends XDialog {
         labelRepository.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 
         textRepository = WidgetFactory.createText(compositeRepository);
-        textRepository.setText("");
+        textRepository.setText(Messages.EMPTY);
         textRepository.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         textRepository.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
@@ -200,7 +200,7 @@ public abstract class AbstractEntryDialog extends XDialog {
     private boolean checkRepositoryName() {
 
         String fileName = getRepositoryName();
-        if (fileName.equals("")) {
+        if (fileName.equals(Messages.EMPTY)) {
             if (okButton != null) okButton.setEnabled(false);
             setErrorMessage(Messages.Enter_a_file_name + ".");
             textRepository.setFocus();
@@ -212,7 +212,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             repository.getCanonicalPath();
         } catch (IOException e) {
             if (okButton != null) okButton.setEnabled(false);
-            setErrorMessage(Messages.Invalid_file_name + ".");
+            setErrorMessage(Messages.bind(Messages.Invalid_file_name, fileName));
             textRepository.setFocus();
             return false;
         }

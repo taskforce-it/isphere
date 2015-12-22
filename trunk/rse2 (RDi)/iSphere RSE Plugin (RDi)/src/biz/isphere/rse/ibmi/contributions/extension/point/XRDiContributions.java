@@ -12,6 +12,7 @@ import java.sql.Connection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
@@ -19,6 +20,11 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
@@ -31,8 +37,132 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
  */
 public class XRDiContributions implements IIBMiHostContributions {
 
+    /**
+     * Executes a given command for a given connection. 
+     * 
+     * @param connectionName - connection used for executing the command
+     * @param command - command that is executed
+     * @return error message text on error or <code>null</code> on success
+     */
+    public String executeCommand(String connectionName, String command) {
+
+        try {
+            IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+            if (connection == null) {
+                return "Connection '" + connectionName +  "' not found.";
+            }
+            
+            AS400 system = connection.getAS400ToolboxObject();
+
+            CommandCall commandCall = new CommandCall(system);
+            commandCall.run(command);
+            AS400Message[] messageList = commandCall.getMessageList();
+            if (messageList.length > 0) {
+                for (int idx = 0; idx < messageList.length; idx++) {
+                    if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                        return messageList[idx].getHelp();
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + connectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+
+        return null;
+
+    }
+
+    /**
+     * Returns whether a given library exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that is tested
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
+     */
+    public boolean checkLibrary(String connectionName, String libraryName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+
+        IQSYSLibrary library = null;
+        try {
+            library = connection.getLibrary(libraryName, null);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (library == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a given file exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that is tested
+     * @return <code>true</code>, when the file exists, else <code>false</code>.
+     */
+    public boolean checkFile(String connectionName, String libraryName, String fileName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+
+        IQSYSFile file = null;
+        try {
+            file = connection.getFile(libraryName, fileName, null);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (file == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a given member exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that should contain the member
+     * @param memberName - name of the member that is tested
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
+     */
+    public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+
+        IQSYSMember member = null;
+        try {
+            member = connection.getMember(libraryName, fileName, memberName, null);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (member == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns the name of the iSphere library that is associated to a given
+     * connection.
+     * 
+     * @param connectionName - name of the connection the name of the iSphere
+     *        library is returned for
+     * @return name of the iSphere library
+     */
     public String getISphereLibrary(String connectionName) {
-        
+
         ConnectionProperties connectionProperties = ConnectionManager.getInstance().getConnectionProperties(connectionName);
         if (connectionProperties != null && connectionProperties.useISphereLibraryName()) {
             return connectionProperties.getISphereLibraryName();
@@ -40,7 +170,7 @@ public class XRDiContributions implements IIBMiHostContributions {
 
         return Preferences.getInstance().getISphereLibrary(); // CHECKED
     }
-    
+
     /**
      * Finds a matching system for a given host name.
      * 
