@@ -9,19 +9,22 @@
 package biz.isphere.core.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
+import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 
 public interface IIBMiHostContributions {
     
     /**
-     * Executes a given command for a given connection. 
+     * Executes a given command for a given connection.
      * 
      * @param connectionName - connection used for executing the command
      * @param command - command that is executed
+     * @param rtnMessages - list of error messages or <code>null</code>
      * @return error message text on error or <code>null</code> on success
      */
-    public String executeCommand(String connectionName, String command);
+    public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages);
 
     /**
      * Checks whether a given library exists or not.
