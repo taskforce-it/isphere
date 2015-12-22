@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
@@ -288,14 +288,14 @@ public class CopyMemberDialog extends XDialog {
         return text;
     }
 
-    private TableViewerColumn addTableColumn(TableViewer table, String label) {
+    private TableColumn addTableColumn(TableViewer table, String label) {
         return addTableColumn(table, label, 120);
     }
 
-    private TableViewerColumn addTableColumn(TableViewer tableViewer, String label, int width) {
-        TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-        column.getColumn().setWidth(width);
-        column.getColumn().setText(label);
+    private TableColumn addTableColumn(TableViewer tableViewer, String label, int width) {
+        TableColumn column = new TableColumn(tableViewer.getTable(), SWT.NONE);
+        column.setWidth(width);
+        column.setText(label);
 
         return column;
     }
