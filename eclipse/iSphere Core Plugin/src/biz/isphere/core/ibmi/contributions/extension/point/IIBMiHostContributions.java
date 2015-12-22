@@ -13,7 +13,54 @@ import java.sql.Connection;
 import com.ibm.as400.access.AS400;
 
 public interface IIBMiHostContributions {
+    
+    /**
+     * Executes a given command for a given connection. 
+     * 
+     * @param connectionName - connection used for executing the command
+     * @param command - command that is executed
+     * @return error message text on error or <code>null</code> on success
+     */
+    public String executeCommand(String connectionName, String command);
 
+    /**
+     * Checks whether a given library exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that is tested
+     * @return <code>true</code>, when the library exists, else <code>false</code>.
+     */
+    public boolean checkLibrary(String connectionName, String libraryName);
+
+    /**
+     * Checks whether a given file exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that is tested
+     * @return <code>true</code>, when the file exists, else <code>false</code>.
+     */
+    public boolean checkFile(String connectionName, String libraryName, String fileName);
+
+    /**
+     * Checks whether a given member exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that should contain the member
+     * @param memberName - name of the member that is tested
+     * @return <code>true</code>, when the library exists, else <code>false</code>.
+     */
+    public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName);
+
+    /**
+     * Returns the name of the iSphere library that is associated to a given
+     * connection.
+     * 
+     * @param connectionName - name of the connection the name of the iSphere
+     *        library is returned for
+     * @return name of the iSphere library
+     */
     public String getISphereLibrary(String connectionName);
 
     /**

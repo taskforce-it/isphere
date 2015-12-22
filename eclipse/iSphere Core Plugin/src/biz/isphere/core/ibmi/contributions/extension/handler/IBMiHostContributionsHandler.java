@@ -32,6 +32,50 @@ public class IBMiHostContributionsHandler {
         return true;
     }
 
+    public static String executeCommand(String connectionName, String command) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return "RDi plug-in not installed."; //$NON-NLS-1$
+        }
+
+        return factory.executeCommand(connectionName, command);
+    }
+
+    public static boolean checkLibrary(String connectionName, String libraryName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.checkLibrary(connectionName, libraryName);
+    }
+
+    public static boolean checkFile(String connectionName, String libraryName, String fileName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.checkFile(connectionName, libraryName, fileName);
+    }
+
+    public static boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.checkMember(connectionName, libraryName, fileName, memberName);
+    }
+
     public static String getISphereLibrary(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
