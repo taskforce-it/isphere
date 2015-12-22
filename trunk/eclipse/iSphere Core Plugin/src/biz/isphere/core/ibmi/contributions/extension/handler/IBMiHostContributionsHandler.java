@@ -9,6 +9,7 @@
 package biz.isphere.core.ibmi.contributions.extension.handler;
 
 import java.sql.Connection;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 
 public class IBMiHostContributionsHandler {
 
@@ -33,6 +35,10 @@ public class IBMiHostContributionsHandler {
     }
 
     public static String executeCommand(String connectionName, String command) {
+        return executeCommand(connectionName, command, null);
+    }
+
+    public static String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -40,7 +46,7 @@ public class IBMiHostContributionsHandler {
             return "RDi plug-in not installed."; //$NON-NLS-1$
         }
 
-        return factory.executeCommand(connectionName, command);
+        return factory.executeCommand(connectionName, command, rtnMessages);
     }
 
     public static boolean checkLibrary(String connectionName, String libraryName) {

@@ -9,6 +9,7 @@
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
+import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
@@ -17,6 +18,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
@@ -38,39 +40,50 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 public class XRDiContributions implements IIBMiHostContributions {
 
     /**
-     * Executes a given command for a given connection. 
+     * Executes a given command for a given connection.
      * 
      * @param connectionName - connection used for executing the command
      * @param command - command that is executed
+     * @param rtnMessages - list of error messages or <code>null</code>
      * @return error message text on error or <code>null</code> on success
      */
-    public String executeCommand(String connectionName, String command) {
+    public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
 
         try {
+
             IBMiConnection connection = IBMiConnection.getConnection(connectionName);
             if (connection == null) {
-                return "Connection '" + connectionName +  "' not found.";
+                return Messages.bind(Messages.Connection_A_not_found, connectionName);
             }
-            
+
             AS400 system = connection.getAS400ToolboxObject();
 
+            String escapeMessage = null;
             CommandCall commandCall = new CommandCall(system);
-            commandCall.run(command);
-            AS400Message[] messageList = commandCall.getMessageList();
-            if (messageList.length > 0) {
-                for (int idx = 0; idx < messageList.length; idx++) {
-                    if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                        return messageList[idx].getHelp();
+            if (!commandCall.run(command)) {
+                AS400Message[] messageList = commandCall.getMessageList();
+                if (messageList.length > 0) {
+                    for (int idx = 0; idx < messageList.length; idx++) {
+                        if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                            escapeMessage = messageList[idx].getHelp();
+                        }
+                        if (rtnMessages != null) {
+                            rtnMessages.add(messageList[idx]);
+                        }
                     }
                 }
+                
+                if (escapeMessage == null) {
+                    escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
+                }
             }
+
+            return escapeMessage;
+
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + connectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
             return ExceptionHelper.getLocalizedMessage(e);
         }
-
-        return null;
-
     }
 
     /**

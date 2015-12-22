@@ -9,12 +9,15 @@
 package biz.isphere.core.sourcemembercopy;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import biz.isphere.base.internal.IBMiHelper;
+import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.MemberDescription;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 
@@ -95,12 +98,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     public boolean isCopied() {
         return copied;
     }
-    
+
     private void setCopyStatus(boolean copied) {
         this.copied = copied;
         setErrorMessage(null);
     }
-    
+
     public String getFromQSYSName() {
         return getQSYSName(getFromFile(), getFromLibrary(), getFromMember());
     }
@@ -199,7 +202,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         buffer.append(")");
         return buffer.toString();
     }
-    
+
     public boolean performCopyOperation(String fromConnectionName, String toConnectionName) {
 
         String fromText = null;
@@ -209,18 +212,19 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             MemberDescription fromMemberDescription = new MemberDescription(fromSystem, getFromLibrary(), getFromFile(), getFromMember());
             fromText = (String)fromMemberDescription.getValue(MemberDescription.MEMBER_TEXT_DESCRIPTION);
         } catch (ObjectDoesNotExistException e) {
-            setErrorMessage("Member " + getFromQSYSName() + " not found.");
+            setErrorMessage(Messages.bind(Messages.From_member_A_not_found, getFromQSYSName()));
             return false;
         } catch (Throwable e) {
             setErrorMessage(e.getLocalizedMessage());
         }
 
         String message;
+        List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
 
-        message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand());
+        message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand(), rtnMessages);
 
         if (message != null) {
-            setErrorMessage(message);
+            setErrorMessage(buildMMessageString(rtnMessages));
             return false;
         }
 
@@ -232,8 +236,23 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         }
 
         setCopyStatus(true);
-        
+
         return true;
+    }
+
+    private String buildMMessageString(List<AS400Message> rtnMessages) {
+
+        StringBuilder message = new StringBuilder();
+
+        Iterator<AS400Message> iterator = rtnMessages.iterator();
+        while (iterator.hasNext()) {
+            if (message.length() > 0) {
+                message.append(" "); //$NON-NLS-1$
+            }
+            message.append(iterator.next().getText());
+        }
+
+        return message.toString();
     }
 
     private String getChangeMemberTextCommand(String text) {
