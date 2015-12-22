@@ -127,8 +127,10 @@ public class Messages extends NLS {
 
     public static String Failed_to_load_data_from_file_colon_A;
 
-    public static String Use_connection_specific_settings;
-    
+    public static String Connection_A_not_found;
+
+    public static String Failed_to_execute_command_A;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
