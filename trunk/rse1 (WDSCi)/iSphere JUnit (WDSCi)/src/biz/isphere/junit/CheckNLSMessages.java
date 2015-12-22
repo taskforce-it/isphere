@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
@@ -103,6 +104,10 @@ public class CheckNLSMessages {
         String localeInfo = " (" + locale + ") ";
 
         for (Field field : fields) {
+
+            if (Modifier.isFinal(field.getModifiers())){
+                continue;
+            }
 
             // Prepare
             String nlsMessageConstant = field.getName();

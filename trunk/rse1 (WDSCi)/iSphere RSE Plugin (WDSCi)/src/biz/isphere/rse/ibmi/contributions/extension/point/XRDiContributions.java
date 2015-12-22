@@ -9,15 +9,23 @@
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
+import java.util.List;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.comm.interfaces.IISeriesFile;
+import com.ibm.etools.iseries.comm.interfaces.IISeriesMember;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.iseries.core.api.ISeriesLibrary;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 
 /**
@@ -28,6 +36,133 @@ import com.ibm.etools.systems.core.messages.SystemMessageException;
  * @author Thomas Raddatz
  */
 public class XRDiContributions implements IIBMiHostContributions {
+
+    /**
+     * Executes a given command for a given connection.
+     * 
+     * @param connectionName - connection used for executing the command
+     * @param command - command that is executed
+     * @param rtnMessages - list of error messages or <code>null</code>
+     * @return error message text on error or <code>null</code> on success
+     */
+    public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
+
+        try {
+
+            ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+            if (connection == null) {
+                return Messages.bind(Messages.Connection_A_not_found, connectionName);
+            }
+
+            AS400 system = connection.getAS400ToolboxObject(null);
+
+            String escapeMessage = null;
+            CommandCall commandCall = new CommandCall(system);
+            if (!commandCall.run(command)) {
+                AS400Message[] messageList = commandCall.getMessageList();
+                if (messageList.length > 0) {
+                    for (int idx = 0; idx < messageList.length; idx++) {
+                        if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                            escapeMessage = messageList[idx].getHelp();
+                        }
+                        if (rtnMessages != null) {
+                            rtnMessages.add(messageList[idx]);
+                        }
+                    }
+                }
+                
+                if (escapeMessage == null) {
+                    escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
+                }
+            }
+
+            return escapeMessage;
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + connectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+    }
+
+    /**
+     * Returns whether a given library exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that is tested
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
+     */
+    public boolean checkLibrary(String connectionName, String libraryName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+
+        ISeriesLibrary library = null;
+        try {
+            library = connection.getISeriesLibrary(null, libraryName);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (library == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a given file exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that is tested
+     * @return <code>true</code>, when the file exists, else <code>false</code>.
+     */
+    public boolean checkFile(String connectionName, String libraryName, String fileName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+
+        IISeriesFile file = null;
+        try {
+            file = connection.getISeriesFile(libraryName, fileName);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (file == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a given member exists or not.
+     * 
+     * @param connectionName - connection that is checked for a given library
+     * @param libraryName - library that should contain the file
+     * @param fileName - file that should contain the member
+     * @param memberName - name of the member that is tested
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
+     */
+    public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+
+        IISeriesMember member = null;
+        try {
+            member = connection.getISeriesMember(libraryName, fileName, memberName);
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (member == null) {
+            return false;
+        }
+
+        return true;
+    }
 
     public String getISphereLibrary(String connectionName) {
         
@@ -49,9 +184,9 @@ public class XRDiContributions implements IIBMiHostContributions {
 
         try {
             ISeriesConnection[] connections = ISeriesConnection.getConnections();
-            for (ISeriesConnection ibMiConnection : connections) {
-                if (ibMiConnection.getHostName().equalsIgnoreCase(hostName)) {
-                    return ibMiConnection.getAS400ToolboxObject(null);
+            for (ISeriesConnection ISeriesConnection : connections) {
+                if (ISeriesConnection.getHostName().equalsIgnoreCase(hostName)) {
+                    return ISeriesConnection.getAS400ToolboxObject(null);
                 }
             }
         } catch (SystemMessageException e) {
