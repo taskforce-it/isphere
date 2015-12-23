@@ -138,7 +138,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         }
 
         if (Preferences.getInstance().isSearchForUpdates()) {
-            SearchForUpdates search = new SearchForUpdates(false);
+            SearchForUpdates search = new SearchForUpdates();
             search.setUser(false);
             search.schedule();
         }

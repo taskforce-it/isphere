@@ -8,11 +8,15 @@
 
 package biz.isphere.core.preferencepages;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -31,6 +35,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.SearchForUpdates;
@@ -108,10 +113,15 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
             @Override
             public void widgetSelected(SelectionEvent e) {
                 
-                SearchForUpdates search = new SearchForUpdates(true);
-                search.addJobChangeListener(ISphereUpdates.this);
-                search.setUser(false);
-                search.schedule();
+                SearchForUpdates search;
+                try {
+                    search = new SearchForUpdates(new URL(urlForUpdates), true, searchForBetaVersions);
+                    search.addJobChangeListener(ISphereUpdates.this);
+                    search.setUser(false);
+                    search.schedule();
+                } catch (MalformedURLException e1) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "");
+                }
             }
         });
 
@@ -123,13 +133,15 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void checkError() {
-        if (checkUpdateURL()) {
+        
+        if (validateUpdateURL()) {
             setErrorMessage(null);
             setValid(true);
         } else {
             setErrorMessage(Messages.The_value_in_field_URL_for_updates_is_not_valid);
             setValid(false);
         }
+        
         setButtonEnablement();
     }
 
@@ -149,6 +161,16 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
     public boolean performOk() {
         setStoreToValues();
         return super.performOk();
+    }
+
+    @Override
+    public boolean isValid() {
+        
+        if (!validateUpdateURL()) {
+            return false;
+        }
+        
+        return super.isValid();
     }
 
     protected void setStoreToValues() {
@@ -182,7 +204,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
 
     private void setButtonEnablement() {
 
-        if (checkUpdateURL() && !isSearchingForUpdates) {
+        if (validateUpdateURL() && !isSearchingForUpdates) {
             buttonStartSearchForUpdates.setEnabled(true);
         } else {
             buttonStartSearchForUpdates.setEnabled(false);
@@ -195,8 +217,19 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         }
     }
 
-    protected boolean checkUpdateURL() {
-        return (urlForUpdates != null && urlForUpdates.trim().length() > 0);
+    protected boolean validateUpdateURL() {
+        
+        if (StringHelper.isNullOrEmpty(urlForUpdates)) {
+            return false;
+        }
+        
+        try {
+            new URL(urlForUpdates);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        
+        return true;
     }
 
     public void init(IWorkbench workbench) {
