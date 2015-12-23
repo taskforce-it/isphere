@@ -118,6 +118,8 @@
         <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0</a></td></tr>
         </table>
         <p/>
+        Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/help/">help</a> page for detailed installation instructions.
+        <p/>
         The iSphere beta versions are available here:
         <p/>
         <table class="nomargin">
@@ -125,7 +127,7 @@
         <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0 (beta)</a></td></tr>
         </table>
         <p/>
-        Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/help/">help</a> page for detailed installation instructions.
+        Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/beta-version/help/">help (beta version)</a> page for detailed installation instructions.
         </div>
         
         <h2 class="release">Help</h2>
