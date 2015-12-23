@@ -39,6 +39,8 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
+import biz.isphere.core.swt.widgets.tableviewer.TableViewerTooltipSupport;
+import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
 public class CopyMemberDialog extends XDialog {
 
@@ -198,7 +200,7 @@ public class CopyMemberDialog extends XDialog {
         textToFile = createNameField(mainArea, Messages.To_file_colon);
         textToLibrary = createNameField(mainArea, Messages.To_library_colon);
 
-        tableViewer = new TableViewer(mainArea, SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        tableViewer = new TableViewer(mainArea, SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         Table table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
         table.setLinesVisible(true);
@@ -216,6 +218,9 @@ public class CopyMemberDialog extends XDialog {
 
         TableViewerKeyBoardSupporter supporter = new TableViewerKeyBoardSupporter(tableViewer, true);
         supporter.startSupport();
+
+        TableViewerTooltipSupport tooltipSupport = new TableViewerTooltipSupport(tableViewer);
+        tooltipSupport.startSupport();
 
         chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
         chkBoxReplace.setText(Messages.Replace_existing_members);
@@ -404,7 +409,7 @@ public class CopyMemberDialog extends XDialog {
     /**
      * Content provider for the member list table.
      */
-    private class LabelProviderMemberItems extends LabelProvider implements ITableLabelProvider {
+    private class LabelProviderMemberItems extends LabelProvider implements TooltipProvider, ITableLabelProvider {
 
         public String getColumnText(Object element, int columnIndex) {
 
@@ -420,12 +425,7 @@ public class CopyMemberDialog extends XDialog {
             case COLUMN_TO_MEMBER:
                 return member.getToMember();
             case COLUMN_ERROR_MESSAGE:
-                if (member.isCopied()) {
-                    return Messages.C_O_P_I_E_D;
-                } else if (!StringHelper.isNullOrEmpty(member.getErrorMessage())) {
-                    return member.getErrorMessage();
-                }
-                return Messages.EMPTY;
+                return getErrorMessage(member);
 
             default:
                 return Messages.EMPTY;
@@ -434,6 +434,28 @@ public class CopyMemberDialog extends XDialog {
 
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
+        }
+
+        public String getTooltipText(Object element, int columnIndex) {
+            
+            CopyMemberItem member = (CopyMemberItem)element;
+            
+            switch(columnIndex) {
+            case COLUMN_ERROR_MESSAGE:
+                return getErrorMessage(member);
+            default:
+                return null;
+            }
+        }
+
+        private String getErrorMessage(CopyMemberItem member) {
+            if (member.isCopied()) {
+                return Messages.C_O_P_I_E_D;
+            } else if (!StringHelper.isNullOrEmpty(member.getErrorMessage())) {
+                return member.getErrorMessage();
+            } else {
+                return Messages.EMPTY;
+            }
         }
     }
 }
