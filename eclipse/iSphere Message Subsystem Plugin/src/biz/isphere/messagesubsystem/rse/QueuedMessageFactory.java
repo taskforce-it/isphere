@@ -11,6 +11,8 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+import biz.isphere.messagesubsystem.internal.FilteredMessageQueue;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
 

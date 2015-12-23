@@ -9,7 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.rse;
+package biz.isphere.messagesubsystem.internal;
 
 import java.text.DateFormat;
 
@@ -25,8 +25,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +40,9 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
+import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
+import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 public class QueuedMessageListDialog extends XDialog {
 

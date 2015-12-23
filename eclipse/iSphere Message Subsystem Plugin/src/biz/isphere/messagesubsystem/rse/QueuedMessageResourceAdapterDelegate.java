@@ -15,6 +15,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
 
 import com.ibm.as400.access.QueuedMessage;
 
