@@ -221,7 +221,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
         try {
             InputStream inStream = getClass().getClassLoader().getResourceAsStream(
-                "./biz/isphere/core/swt/widgets/hexeditor/internal/ccsid.properties");
+                "/biz/isphere/core/swt/widgets/hexeditor/internal/ccsid.properties");
             ccsids.load(inStream);
             return ccsids;
         } catch (Throwable e) {
