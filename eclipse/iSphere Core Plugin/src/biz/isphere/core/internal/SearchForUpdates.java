@@ -38,15 +38,24 @@ import biz.isphere.core.preferences.Preferences;
 public class SearchForUpdates extends Job {
 
     private boolean showResultAlways;
+    private boolean searchForBetaVersion;
+    private URL overriddenURL;
+
     private boolean newVersionAvailable;
     private String newVersionInfo;
     private boolean newRequiresUpdateLibrary;
     private Version currentVersion;
     private Version availableVersion;
 
-    public SearchForUpdates(boolean showResultAlways) {
+    public SearchForUpdates() {
+        this(null, false, Preferences.getInstance().isSearchForBetaVersions());
+    }
+
+    public SearchForUpdates(URL url, boolean showResultAlways, boolean searchForBetaVersion) {
         super(Messages.iSphere_Search_for_updates);
         this.showResultAlways = showResultAlways;
+        this.searchForBetaVersion = searchForBetaVersion;
+        this.overriddenURL = url;
     }
 
     protected IStatus run(IProgressMonitor monitor) {
@@ -64,7 +73,13 @@ public class SearchForUpdates extends Job {
 
             try {
 
-                URL url = new URL(Preferences.getInstance().getURLForUpdates());
+                URL url;
+                if (overriddenURL != null) {
+                    url = overriddenURL;
+                } else {
+                    url = new URL(Preferences.getInstance().getURLForUpdates());
+                }
+
                 URLConnection connection = url.openConnection();
                 if (connection instanceof HttpURLConnection) {
                     ((HttpURLConnection)connection).setRequestMethod("GET");
@@ -81,7 +96,7 @@ public class SearchForUpdates extends Job {
                     newRequiresUpdateLibrary = getBoolean(manifest, "X-Bundle-Update-Library", false);
                 }
 
-                if (!newVersionAvailable && (Preferences.getInstance().isSearchForBetaVersions())) {
+                if (!newVersionAvailable && searchForBetaVersion) {
                     Version availableBetaVersion = getVersion(manifest, "X-Beta-Version");
                     if (availableBetaVersion != null && availableBetaVersion.compareTo(currentVersion) > 0) {
                         availableVersion = availableBetaVersion;
@@ -203,13 +218,14 @@ public class SearchForUpdates extends Job {
     /**
      * Replaces characters that are not allowed in a MANIFEST.MF file. This way
      * we can specify comma and linefeed characters in a manifest file.
+     * 
      * <pre>
      * semicolon (;) -> comma (,)
      * </pre>
      * 
-     * @param manifest - 
-     * @param version - 
-     * @param replaceControlCharacter - 
+     * @param manifest -
+     * @param version -
+     * @param replaceControlCharacter -
      * @return replaced string
      */
     private String getString(Manifest manifest, String version, boolean replaceControlCharacter) {
