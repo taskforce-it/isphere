@@ -19,10 +19,7 @@ import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
 import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400File;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.QSYSObjectPathName;
-import com.ibm.as400.access.SequentialFile;
 
 public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
@@ -221,7 +218,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             } else {
                 fromText = Messages.EMPTY;
             }
-            
+
         } catch (Throwable e) {
             setErrorMessage(e.getLocalizedMessage());
         }
