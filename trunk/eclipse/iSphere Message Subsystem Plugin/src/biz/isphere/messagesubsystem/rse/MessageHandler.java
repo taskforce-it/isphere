@@ -11,6 +11,7 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -42,124 +43,159 @@ public class MessageHandler implements IMessageHandler {
             return;
         }
 
-        this.isOKToAll = false;
+        isOKToAll = false;
         if (messages.size() == 1) {
             createOKToAllButton = false;
         } else {
             createOKToAllButton = true;
         }
+
+        MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
+        List<ReceivedMessage> dialogMessages = new ArrayList<ReceivedMessage>();
+
         for (ReceivedMessage receivedMessage : messages) {
-            handleMessage(receivedMessage);
+            if (monitoringAttributes.isDialogHandler(receivedMessage)) {
+                dialogMessages.add(receivedMessage);
+            } else {
+                handleMessage(monitoringAttributes, receivedMessage);
+            }
         }
-        this.isOKToAll = false;
+
+        Display.getDefault()
+            .syncExec(new UIMessageHandler2(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
+
+        isOKToAll = false;
         createOKToAllButton = false;
     }
 
     public void handleMessage(ReceivedMessage message) {
+        handleMessage(new MonitoringAttributes(queuedMessageSubSystem), message);
+    }
 
-        MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
+    private void handleMessage(MonitoringAttributes monitoringAttributes, ReceivedMessage message) {
+
         if (!monitoringAttributes.isMonitoringEnabled()) {
             return;
         }
 
-        final ReceivedMessage msg = message;
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
+        Display.getDefault().syncExec(new UIMessageHandler(monitoringAttributes, message));
+    }
 
-                MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
+    private void removeInformationalMessage(final ReceivedMessage message, MonitoringAttributes monitoringAttributes) {
 
-                String handling = getMessageHandling(monitoringAttributes);
+        if (monitoringAttributes.isBeepHandler(message)) {
+            return;
+        }
 
-                if (MonitoringAttributes.NOTIFICATION_TYPE_BEEP.equals(handling)) {
-                    Display.getDefault().beep();
-                }
+        if (monitoringAttributes.isRemoveInformationalMessages() && (message.getType() != QueuedMessage.INQUIRY)) {
+            try {
+                message.getQueue().remove(message.getKey());
+            } catch (Exception e) {
+                // gracefully ignore exceptions
+            }
+        }
+    }
 
-                if (MonitoringAttributes.NOTIFICATION_TYPE_EMAIL.equals(handling)) {
+    private class UIMessageHandler implements Runnable {
 
-                    if (!monitoringAttributes.isValid()) {
-                        if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error,
-                            Messages.Email_Notification_Error_Message)) {
-                            if (msg.getType() == QueuedMessage.INQUIRY) {
+        private MonitoringAttributes monitoringAttributes;
+        private ReceivedMessage message;
+
+        public UIMessageHandler(MonitoringAttributes monitoringAttributes, ReceivedMessage message) {
+            this.monitoringAttributes = monitoringAttributes;
+            this.message = message;
+        }
+
+        public void run() {
+
+            if (monitoringAttributes.isBeepHandler(message)) {
+                Display.getDefault().beep();
+            }
+
+            if (monitoringAttributes.isEmailHandler(message)) {
+
+                if (!monitoringAttributes.isValid()) {
+                    if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error,
+                        Messages.Email_Notification_Error_Message)) {
+                        if (message.getType() == QueuedMessage.INQUIRY) {
+                            monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
+                        } else {
+                            monitoringAttributes.setInformationalMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
+                        }
+                    }
+                } else {
+
+                    MessageQueueMailMessenger messenger = new MessageQueueMailMessenger();
+                    messenger.setRecipients(new String[] { monitoringAttributes.getEmail() });
+                    messenger.setMailFrom(monitoringAttributes.getFrom());
+                    messenger.setHost(monitoringAttributes.getHost());
+                    messenger.setPort(monitoringAttributes.getPort());
+
+                    try {
+                        if (monitoringAttributes.isSmtpLogin()) {
+                            messenger.sendMail(message, monitoringAttributes.getSmtpUser(), monitoringAttributes.getSmtpPassword());
+                        } else {
+                            messenger.sendMail(message);
+                        }
+                    } catch (Exception e) {
+
+                        String errorMessage = e.getMessage();
+                        if (errorMessage == null) {
+                            errorMessage = e.toString();
+                        }
+
+                        errorMessage = errorMessage + Messages.Email_Notification_Properties_Error_message;
+                        Display.getDefault().beep();
+                        if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error, errorMessage)) {
+                            if (message.getType() == QueuedMessage.INQUIRY) {
                                 monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
                             } else {
                                 monitoringAttributes.setInformationalMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
                             }
-                            handling = getMessageHandling(monitoringAttributes);
-                        }
-                    } else {
-
-                        MessageQueueMailMessenger messenger = new MessageQueueMailMessenger();
-                        messenger.setRecipients(new String[] { monitoringAttributes.getEmail() });
-                        messenger.setMailFrom(monitoringAttributes.getFrom());
-                        messenger.setHost(monitoringAttributes.getHost());
-                        messenger.setPort(monitoringAttributes.getPort());
-
-                        try {
-                            if (monitoringAttributes.isSmtpLogin()) {
-                                messenger.sendMail(msg, monitoringAttributes.getSmtpUser(), monitoringAttributes.getSmtpPassword());
-                            } else {
-                                messenger.sendMail(msg);
-                            }
-                        } catch (Exception e) {
-
-                            String errorMessage = e.getMessage();
-                            if (errorMessage == null) {
-                                errorMessage = e.toString();
-                            }
-
-                            errorMessage = errorMessage + Messages.Email_Notification_Properties_Error_message;
-                            Display.getDefault().beep();
-                            if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error, errorMessage)) {
-                                if (msg.getType() == QueuedMessage.INQUIRY) {
-                                    monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
-                                } else {
-                                    monitoringAttributes.setInformationalMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
-                                }
-                                handling = getMessageHandling(monitoringAttributes);
-                            }
                         }
                     }
-                }
-
-                if (!isOKToAll && MonitoringAttributes.NOTIFICATION_TYPE_DIALOG.equals(handling)) {
-
-                    Display.getDefault().beep();
-                    QueuedMessageDialog dialog;
-                    if (msg.getType() == QueuedMessage.INQUIRY) {
-                        dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false, false);
-                    } else {
-                        dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), msg, false, createOKToAllButton);
-                    }
-
-                    int rc = dialog.open();
-                    if (rc == IDialogConstants.YES_TO_ALL_ID) {
-                        createOKToAllButton = false;
-                        isOKToAll = true;
-                    }
-                }
-
-                if (!MonitoringAttributes.NOTIFICATION_TYPE_BEEP.equals(handling)) {
-                    removeInformationalMessage(msg, monitoringAttributes);
                 }
             }
 
-            private String getMessageHandling(MonitoringAttributes monitoringAttributes) {
-                if (msg.getType() == QueuedMessage.INQUIRY) {
-                    return monitoringAttributes.getInqueryMessageNotificationType();
+            if (!isOKToAll && monitoringAttributes.isDialogHandler(message)) {
+
+                Display.getDefault().beep();
+                QueuedMessageDialog dialog;
+                if (message.getType() == QueuedMessage.INQUIRY) {
+                    dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, false);
                 } else {
-                    return monitoringAttributes.getInformationalMessageNotificationType();
+                    dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, createOKToAllButton);
+                }
+
+                int rc = dialog.open();
+                if (rc == IDialogConstants.YES_TO_ALL_ID) {
+                    createOKToAllButton = false;
+                    isOKToAll = true;
                 }
             }
 
-            private void removeInformationalMessage(final ReceivedMessage msg, MonitoringAttributes monitoringAttributes) {
+            removeInformationalMessage(message, monitoringAttributes);
+        }
+    }
 
-                if (monitoringAttributes.isRemoveInformationalMessages() && (msg.getType() != QueuedMessage.INQUIRY)) {
-                    try {
-                        msg.getQueue().remove(msg.getKey());
-                    } catch (Exception e) {
-                    }
-                }
+    private class UIMessageHandler2 implements Runnable {
+
+        private MonitoringAttributes monitoringAttributes;
+        private ReceivedMessage[] messages;
+
+        public UIMessageHandler2(MonitoringAttributes monitoringAttributes, ReceivedMessage[] messages) {
+            this.monitoringAttributes = monitoringAttributes;
+            this.messages = messages;
+        }
+
+        public void run() {
+
+            QueuedMessageListDialog dialog = new QueuedMessageListDialog(Display.getDefault().getActiveShell(), monitoringAttributes, messages);
+            dialog.open();
+
+            for (ReceivedMessage message : messages) {
+                removeInformationalMessage(message, monitoringAttributes);
             }
-        });
+        }
     }
 }

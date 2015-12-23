@@ -39,7 +39,7 @@ import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
 
 public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
-    public final static String ID = "biz.isphere.messagesubsystem.internal.MonitoringPropertiesPage";
+    public final static String ID = "biz.isphere.messagesubsystem.internal.MonitoringPropertiesPage"; //$NON-NLS-1$
 
     private IQueuedMessageSubsystem queuedMessageSubSystem;
     private MonitoringAttributes monitoringAttributes;
@@ -50,6 +50,8 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     private Composite prefGroup;
     private Combo inqCombo;
     private Combo infCombo;
+    private Button collectMessagesButton;
+    private Label collectMessagesLabel;
     private Group emailGroup;
     private Text emailText;
     private Text fromText;
@@ -118,6 +120,13 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         removeLabel = new Label(monGroup, SWT.NONE);
         removeLabel.setText(Messages.Remove_informational_messages_after_notification);
         removeLabel.setToolTipText(Messages.Remove_informational_messages_after_notification_tooltip);
+
+        collectMessagesButton = WidgetFactory.createCheckbox(monGroup);
+        collectMessagesButton.setToolTipText(Messages.Collect_informational_messages_on_startup_tooltip);
+
+        collectMessagesLabel = new Label(monGroup, SWT.NONE);
+        collectMessagesLabel.setText(Messages.Collect_informational_messages_on_startup);
+        collectMessagesLabel.setToolTipText(Messages.Collect_informational_messages_on_startup_tooltip);
 
         prefGroup = new Composite(propsGroup, SWT.NONE);
         GridLayout prefLayout = new GridLayout();
@@ -403,17 +412,27 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         if (!monitorButton.getSelection()) {
             removeButton.setVisible(false);
             removeLabel.setVisible(false);
+            collectMessagesButton.setVisible(false);
+            collectMessagesLabel.setVisible(false);
             prefGroup.setVisible(false);
             emailGroup.setVisible(false);
         } else {
             removeButton.setVisible(true);
             removeLabel.setVisible(true);
+            collectMessagesButton.setVisible(true);
+            collectMessagesLabel.setVisible(true);
 
             if (infCombo.getSelectionIndex() == infCombo.indexOf(Messages.Notification_type_Beep)) {
                 removeButton.setEnabled(false);
                 removeButton.setSelection(false);
             } else {
                 removeButton.setEnabled(true);
+            }
+
+            if (infCombo.getSelectionIndex() == infCombo.indexOf(Messages.Notification_type_Dialog)) {
+                collectMessagesButton.setEnabled(true);
+            } else {
+                collectMessagesButton.setEnabled(false);
             }
 
             prefGroup.setVisible(true);

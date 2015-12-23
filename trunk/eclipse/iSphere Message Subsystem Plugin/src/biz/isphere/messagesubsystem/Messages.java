@@ -16,6 +16,8 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.messagesubsystem.messages"; //$NON-NLS-1$
 
+    public static final String EMPTY = ""; //$NON-NLS-1$
+
     public static String Message_ID_colon;
 
     public static String From_job_colon;
@@ -163,6 +165,12 @@ public class Messages extends NLS {
     public static String Monitor;
 
     public static String OK_To_All_LABEL;
+
+    public static String Collect_informational_messages_on_startup;
+
+    public static String Collect_informational_messages_on_startup_tooltip;
+    
+    public static String Queued_Messages_title;
     
     static {
         // initialize resource bundle
