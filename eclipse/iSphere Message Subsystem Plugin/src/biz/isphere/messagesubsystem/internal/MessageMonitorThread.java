@@ -34,7 +34,7 @@ public class MessageMonitorThread extends Thread {
     private IMessageHandler messageHandler;
 
     private boolean monitoring;
-    private boolean isStartUp;
+    private boolean collectMessagesAtStartUp;
     private List<ReceivedMessage> receivedMessages;
     private String errorMessage;
 
@@ -53,8 +53,15 @@ public class MessageMonitorThread extends Thread {
     @Override
     public void run() {
 
+        // Workaround trying to catch the first message.
+        // Sometimes the first one is lost.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e2) {
+        }
+
         monitoring = true;
-        isStartUp = true;
+        collectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
 
         /*
          * Use a timeout for locking the message queue when starting the message
@@ -68,21 +75,21 @@ public class MessageMonitorThread extends Thread {
         while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
             try {
                 QueuedMessage message;
-                if (isStartUp) {
-                    message = messageQueue.receive(null, 0, MessageQueue.OLD, MessageQueue.ANY);
+                if (collectMessagesAtStartUp) {
+                    message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
                 } else {
                     message = messageQueue.receive(null, WAIT_SECS, MessageQueue.OLD, MessageQueue.ANY);
                 }
 
                 if (monitoring) {
                     if (message != null) {
-                        handleMessage(message, isStartUp);
+                        handleMessage(message, collectMessagesAtStartUp);
                     } else {
                         if (receivedMessages != null) {
                             handleBufferedMessages(receivedMessages);
                             receivedMessages = null;
                         }
-                        isStartUp = false;
+                        collectMessagesAtStartUp = false;
                     }
                 }
             } catch (Exception e) {

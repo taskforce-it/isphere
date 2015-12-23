@@ -18,6 +18,8 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.Messages;
 
+import com.ibm.as400.access.QueuedMessage;
+
 public class MonitoringAttributes {
 
     public final static String VENDOR_ID = "biz.isphere"; //$NON-NLS-1$
@@ -26,6 +28,7 @@ public class MonitoringAttributes {
     private final static String REMOVE = "biz.isphere.messagesubsystem.internal.remove"; //$NON-NLS-1$
     private final static String INQUIRY_NOTIFICATION = "biz.isphere.messagesubsystem.internal.inquiry"; //$NON-NLS-1$
     private final static String INFORMATIONAL_NOTIFICATION = "biz.isphere.messagesubsystem.internal.informational"; //$NON-NLS-1$
+    private final static String COLLECT_MESSAGES_ON_STARTUP = "biz.isphere.messagesubsystem.internal.collect"; //$NON-NLS-1$
     private final static String EMAIL_ADDRESS = "biz.isphere.messagesubsystem.internal.email"; //$NON-NLS-1$
     private final static String EMAIL_FROM = "biz.isphere.messagesubsystem.internal.from"; //$NON-NLS-1$
     private final static String EMAIL_PORT = "biz.isphere.messagesubsystem.internal.port"; //$NON-NLS-1$
@@ -42,6 +45,10 @@ public class MonitoringAttributes {
     public static final String INFORMATIONAL_MESSAGE_NOTIFICATION_TYPE_DEFAULT = NOTIFICATION_TYPE_BEEP;
     public static final String INQUIRY_MESSAGE_NOTIFICATION_TYPE_DEFAULT = NOTIFICATION_TYPE_DIALOG;
 
+    private static final String COLLECT_MESSAGES_ON_STARTUP_ENABLED = "true"; //$NON-NLS-1$
+    private static final String COLLECT_MESSAGES_ON_STARTUP_DISABLED = "false"; //$NON-NLS-1$
+    private static final boolean COLLECT_MESSAGES_ON_STARTUP_DEFAULT = Boolean.parseBoolean(COLLECT_MESSAGES_ON_STARTUP_ENABLED);
+    
     private static final String MONITORING_ENABLED = "true"; //$NON-NLS-1$
     private static final String MONITORING_DISABLED = "false"; //$NON-NLS-1$
     private static final boolean MONITORING_DEFAULT = Boolean.parseBoolean(MONITORING_DISABLED);
@@ -85,6 +92,26 @@ public class MonitoringAttributes {
         setSmtpLogin(SMTP_LOGIN_DEFAULT);
         setSmtpUser(SMTP_USER_DEFAULT);
         setSmtpPassword(SMTP_PASSWORD_DEFAULT);
+    }
+
+    public boolean isDialogHandler(ReceivedMessage message) {
+        return MonitoringAttributes.NOTIFICATION_TYPE_DIALOG.equals(getMessageHandling(message));
+    }
+
+    public boolean isEmailHandler(ReceivedMessage message) {
+        return MonitoringAttributes.NOTIFICATION_TYPE_EMAIL.equals(getMessageHandling(message));
+    }
+
+    public boolean isBeepHandler(ReceivedMessage message) {
+        return MonitoringAttributes.NOTIFICATION_TYPE_BEEP.equals(getMessageHandling(message));
+    }
+
+    private String getMessageHandling(ReceivedMessage message) {
+        if (message.getType() == QueuedMessage.INQUIRY) {
+            return getInqueryMessageNotificationType();
+        } else {
+            return getInformationalMessageNotificationType();
+        }
     }
 
     public boolean isMonitoringEnabled() {
@@ -199,6 +226,29 @@ public class MonitoringAttributes {
 
         String typeInternal = convertToInternalNotificationType(notificationType);
         setInformationalMessageNotificationType(typeInternal);
+    }
+
+    public boolean isCollectMessagesOnStartup() {
+
+        String monitorString = getVendorAttribute(COLLECT_MESSAGES_ON_STARTUP);
+        if (monitorString == null) {
+            return COLLECT_MESSAGES_ON_STARTUP_DEFAULT;
+        } else {
+            if (COLLECT_MESSAGES_ON_STARTUP_ENABLED.equals(monitorString)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public void setCollectMessagesOnStartup(boolean enabled) {
+
+        if (enabled) {
+            setVendorAttribute(COLLECT_MESSAGES_ON_STARTUP, COLLECT_MESSAGES_ON_STARTUP_ENABLED);
+        } else {
+            setVendorAttribute(COLLECT_MESSAGES_ON_STARTUP, COLLECT_MESSAGES_ON_STARTUP_DISABLED);
+        }
     }
 
     public String getEmail() {
