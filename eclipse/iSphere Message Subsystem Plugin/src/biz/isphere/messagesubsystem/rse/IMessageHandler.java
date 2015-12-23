@@ -9,11 +9,10 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.internal;
+package biz.isphere.messagesubsystem.rse;
 
 import java.util.List;
 
-import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 public interface IMessageHandler {
 
