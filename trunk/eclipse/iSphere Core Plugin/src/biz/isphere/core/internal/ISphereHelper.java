@@ -73,6 +73,10 @@ public class ISphereHelper {
 
     public static boolean checkISphereLibrary(Shell shell, AS400 as400, String library) {
 
+        if (as400 == null) {
+            return false;
+        }
+        
         String dataAreaISphereContent = readISphereDataArea(shell, as400, library);
         if (dataAreaISphereContent == null) {
             return false;
