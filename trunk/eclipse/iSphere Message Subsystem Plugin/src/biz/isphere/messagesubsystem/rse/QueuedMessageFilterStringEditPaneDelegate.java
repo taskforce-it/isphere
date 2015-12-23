@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
 
 public class QueuedMessageFilterStringEditPaneDelegate {
 

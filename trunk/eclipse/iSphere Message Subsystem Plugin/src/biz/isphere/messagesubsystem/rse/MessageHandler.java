@@ -19,16 +19,28 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.IMessageHandler;
 import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
+import biz.isphere.messagesubsystem.internal.QueuedMessageListDialog;
 
 import com.ibm.as400.access.QueuedMessage;
 
+/**
+ * This class handles messages that have been received by the message monitor
+ * thread.
+ */
 public class MessageHandler implements IMessageHandler {
 
     private IQueuedMessageSubsystem queuedMessageSubSystem;
     private boolean createOKToAllButton;
     private boolean isOKToAll;
 
+    /**
+     * Produces a MessageHandler object.
+     * 
+     * @param queuedMessageSubSystem - Queued message subsystem the handler is
+     *        associated to
+     */
     public MessageHandler(IQueuedMessageSubsystem queuedMessageSubSystem) {
         super();
 
@@ -37,6 +49,10 @@ public class MessageHandler implements IMessageHandler {
         this.isOKToAll = false;
     }
 
+    /**
+     * Handles a list of message that have been received by the message monitor
+     * thread on startup time.
+     */
     public void handleMessages(List<ReceivedMessage> messages) {
 
         if (messages == null) {
@@ -61,17 +77,26 @@ public class MessageHandler implements IMessageHandler {
             }
         }
 
-        Display.getDefault()
-            .syncExec(new UIMessageHandler2(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
+        Display.getDefault().syncExec(
+            new UIMessageListHandler(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
 
         isOKToAll = false;
         createOKToAllButton = false;
     }
 
+    /**
+     * Handles a message that has been received by the message monitor thread.
+     */
     public void handleMessage(ReceivedMessage message) {
         handleMessage(new MonitoringAttributes(queuedMessageSubSystem), message);
     }
 
+    /**
+     * Internal procedure that handles a given message.
+     * 
+     * @param monitoringAttributes - settings of the message monitor
+     * @param message - message that must be handled
+     */
     private void handleMessage(MonitoringAttributes monitoringAttributes, ReceivedMessage message) {
 
         if (!monitoringAttributes.isMonitoringEnabled()) {
@@ -81,6 +106,14 @@ public class MessageHandler implements IMessageHandler {
         Display.getDefault().syncExec(new UIMessageHandler(monitoringAttributes, message));
     }
 
+    /**
+     * Removes an informational message from the message queue, depending on the
+     * monitor settings. The "remove informational messages" option is ignored
+     * when the "Beep" handler is activated.
+     * 
+     * @param message - message that is removed from the message queue
+     * @param monitoringAttributes - settings of the message monitor
+     */
     private void removeInformationalMessage(final ReceivedMessage message, MonitoringAttributes monitoringAttributes) {
 
         if (monitoringAttributes.isBeepHandler(message)) {
@@ -96,6 +129,12 @@ public class MessageHandler implements IMessageHandler {
         }
     }
 
+    /**
+     * Internal class that handles the actual received messages.
+     * <p>
+     * Optionally removes informational messages from the message queue
+     * afterwards, depending on the message monitor settings.
+     */
     private class UIMessageHandler implements Runnable {
 
         private MonitoringAttributes monitoringAttributes;
@@ -178,12 +217,19 @@ public class MessageHandler implements IMessageHandler {
         }
     }
 
-    private class UIMessageHandler2 implements Runnable {
+    /**
+     * Internal class that displays the list of pending informational messages,
+     * when the message monitor starts.
+     * <p>
+     * Optionally removes the messages from the message queue afterwards,
+     * depending on the message monitor settings.
+     */
+    private class UIMessageListHandler implements Runnable {
 
         private MonitoringAttributes monitoringAttributes;
         private ReceivedMessage[] messages;
 
-        public UIMessageHandler2(MonitoringAttributes monitoringAttributes, ReceivedMessage[] messages) {
+        public UIMessageListHandler(MonitoringAttributes monitoringAttributes, ReceivedMessage[] messages) {
             this.monitoringAttributes = monitoringAttributes;
             this.messages = messages;
         }

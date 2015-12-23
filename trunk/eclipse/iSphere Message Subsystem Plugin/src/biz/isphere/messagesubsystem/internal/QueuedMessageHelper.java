@@ -9,7 +9,7 @@
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
 
-package biz.isphere.messagesubsystem.rse;
+package biz.isphere.messagesubsystem.internal;
 
 import java.util.ArrayList;
 import java.util.List;

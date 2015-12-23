@@ -18,6 +18,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.internal.FilteredMessageQueue;
+import biz.isphere.messagesubsystem.internal.IMessageHandler;
 import biz.isphere.messagesubsystem.internal.MessageMonitorThread;
 
 import com.ibm.as400.access.AS400;

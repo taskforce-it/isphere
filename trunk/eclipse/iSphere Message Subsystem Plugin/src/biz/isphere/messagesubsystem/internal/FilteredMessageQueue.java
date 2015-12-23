@@ -9,10 +9,12 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
-package biz.isphere.messagesubsystem.rse;
+package biz.isphere.messagesubsystem.internal;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
