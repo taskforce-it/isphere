@@ -25,6 +25,7 @@ import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.sourcefilesearch.SearchResultManager;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 
 /**
@@ -58,6 +59,11 @@ public final class Preferences {
      */
     private Map<String, String> timeFormats;
 
+    /**
+     * List of suggested spooled file names.
+     */
+    private Map<String, String> suggestedSpooledFileNames;
+
     /*
      * Preferences keys:
      */
@@ -67,6 +73,8 @@ public final class Preferences {
     private static final String WARNING_BASE_KEY = DOMAIN + "SHOW_WARNING."; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_LOAD_ASYNCHRONOUSLY = DOMAIN + "SPOOLED_FILES.LOAD.ASYNCHRONOUSLY"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILES_SUGGESTED_FILE_NAME = DOMAIN + "SPOOLED_FILES.SUGGESTED.FILE_NAME"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_SAVE_DIRECTORY = DOMAIN + "SPOOLED_FILES.SAVE.DIRECTORY"; //$NON-NLS-1$
 
@@ -246,6 +254,10 @@ public final class Preferences {
 
     public boolean isLoadSpooledFilesAsynchronousliy() {
         return preferenceStore.getBoolean(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY);
+    }
+
+    public String getSpooledFilesSuggestedFileName() {
+        return preferenceStore.getString(SPOOLED_FILES_SUGGESTED_FILE_NAME);
     }
 
     public String getSpooledFileConversionDefaultFormat() {
@@ -465,6 +477,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, asynchronously);
     }
 
+    public void setSpooledFilesSuggestedFileName(String fileName) {
+        preferenceStore.setValue(SPOOLED_FILES_SUGGESTED_FILE_NAME, fileName);
+    }
+
     public void setSpooledFileDefaultFormat(String aFormat) {
         preferenceStore.setValue(SPOOLED_FILES_DEFAULT_FORMAT, aFormat);
     }
@@ -594,6 +610,7 @@ public final class Preferences {
         preferenceStore.setDefault(LAST_VERSION_FOR_UPDATES, getDefaultLastVersionForUpdates());
 
         preferenceStore.setDefault(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, getDefaultLoadSpooledFilesAsynchronously());
+        preferenceStore.setDefault(SPOOLED_FILES_SUGGESTED_FILE_NAME, getDefaultSpooledFilesSuggestedFileName());
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
@@ -701,6 +718,10 @@ public final class Preferences {
 
     public boolean getDefaultLoadSpooledFilesAsynchronously() {
         return false;
+    }
+
+    public String getDefaultSpooledFilesSuggestedFileName() {
+        return "*SIMPLE";
     }
 
     /**
@@ -1061,6 +1082,26 @@ public final class Preferences {
         return timeFormats;
     }
 
+    public String[] getSpooledFileSuggestedNames() {
+
+        Set<String> names = getSpooledFileSuggestedNamesMap().keySet();
+
+        String[] suggestedNames = names.toArray(new String[names.size()]);
+        Arrays.sort(suggestedNames);
+
+        return suggestedNames;
+    }
+
+    public String getSuggestedSpooledFileName() {
+
+        String key = getSpooledFilesSuggestedFileName();
+        if (!getSpooledFileSuggestedNamesMap().containsKey(key)) {
+            return key;
+        }
+
+        return getSpooledFileSuggestedNamesMap().get(key);
+    }
+
     private Map<String, String> getTimeFormatsMap() {
 
         if (timeFormats != null) {
@@ -1070,10 +1111,28 @@ public final class Preferences {
         timeFormats = new HashMap<String, String>();
 
         timeFormats.put(getDefaultDateFormatLabel(), null);
-        timeFormats.put("de (hh:mm:ss)", "HH:mm:ss");
-        timeFormats.put("us (hh:mm:ss AM/PM)", "KK:mm:ss a");
+        timeFormats.put("de (hh:mm:ss)", "HH:mm:ss"); //$NON-NLS-1$
+        timeFormats.put("us (hh:mm:ss AM/PM)", "KK:mm:ss a"); //$NON-NLS-1$
 
         return timeFormats;
+    }
+
+    private Map<String, String> getSpooledFileSuggestedNamesMap() {
+
+        if (suggestedSpooledFileNames != null) {
+            return suggestedSpooledFileNames;
+        }
+
+        final String UNDERSCORE = "_"; //$NON-NLS-1$
+
+        suggestedSpooledFileNames = new HashMap<String, String>();
+
+        suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
+        suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
+        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
+
+        return suggestedSpooledFileNames;
     }
 
     private String getShowWarningKey(String showWarningKey) {
