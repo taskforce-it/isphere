@@ -43,6 +43,20 @@
 	<h3>Adjust font size</h3>
 	Check that option when you want iSphere to adjust the font size for best fit
 	with the page size.
+	<h3>Suggested file name</h3>
+	Specifies the file name that is suggested, when saving a spooled file. The possible options are:
+	<p>
+	<table width="90%">
+		<tr><td valign="top" nowrap>*DEFAULT</td><td valign="top">-</td>
+		    <td valign="top">Constant value 'spooled_file', which matches the old behavior.</td></tr>
+		<tr><td valign="top" nowrap>*QUALIFIED</td><td valign="top">-</td>
+		    <td valign="top">Full qualified name, made of the attributes of the spooled file.</td></tr>
+		<tr><td valign="top" nowrap>*SIMPLE</td><td valign="top">-</td>
+		    <td valign="top">The simple name of the spooled file.</td></tr>
+		<tr><td valign="top" nowrap>user defined</td><td align="left" valign="top">-</td>
+		    <td valign="top">Custom name. Optionally use the substitution variables to create a 
+		                     specific name for a given spooled file.</td></tr>
+	</table>
 	<h3>Load Spooled Files Asynchronously</h3>
 	Specifies whether spooled files are transfered to the PC asynchronously. When this
 	option is checked, spooled files are transfered by a background process.

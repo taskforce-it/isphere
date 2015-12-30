@@ -57,7 +57,19 @@ import com.ibm.as400.access.RequestNotSupportedException;
 
 public class SpooledFile {
 
-    private static final String ISPHERE_IFS_TMP_DIRECTORY = "/tmp/"; //$NON-NLS-N$
+    public static final String VARIABLE_SPLFNBR = "&SPLFNBR";
+    public static final String VARIABLE_SPLF = "&SPLF";
+    public static final String VARIABLE_JOBNBR = "&JOBNBR";
+    public static final String VARIABLE_JOBUSR = "&JOBUSR";
+    public static final String VARIABLE_JOBNAME = "&JOBNAME";
+    public static final String VARIABLE_JOBSYS = "&JOBSYS";
+    public static final String VARIABLE_STMFDIR = "&STMFDIR";
+    public static final String VARIABLE_STMF = "&STMF";
+    public static final String VARIABLE_CODPAG = "&CODPAG";
+    public static final String VARIABLE_FMT = "&FMT";
+
+    private static final String IBMI_FILE_SEPARATOR = "/";
+    private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; //$NON-NLS-N$
 
     private AS400 as400;
 
@@ -555,7 +567,7 @@ public class SpooledFile {
 
                 try {
 
-                    source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
+                    source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
                     final IFile file = getLocalSpooledFile(format, source);
                     if (file == null) {
                         MessageDialogAsync.displayError(shell, Messages.Could_not_create_stream_file_for_spooled_file_on_host);
@@ -602,13 +614,13 @@ public class SpooledFile {
             asyncOpen(format, Display.getCurrent().getActiveShell());
             return null;
         }
-        
+
         String source = null;
         boolean hasSpooledFile = false;
 
         try {
 
-            source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
+            source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
             IFile file = getLocalSpooledFile(format, source);
             if (file == null) {
                 return Messages.Could_not_create_stream_file_for_spooled_file_on_host;
@@ -730,7 +742,10 @@ public class SpooledFile {
         String library = null;
 
         if (_default) {
-            command = "CVTSPLF FROMFILE(&SPLF) SPLNBR(&SPLFNBR) JOB(&JOBNBR/&JOBUSR/&JOBNAME) TOSTREAM('&STMF') TODIR('&STMFDIR') STCODPAG(&CODPAG) TOFMT(&FMT) STOPT(*REPLACE)";
+            command = "CVTSPLF FROMFILE(" + SpooledFile.VARIABLE_SPLF + ") SPLNBR(" + SpooledFile.VARIABLE_SPLFNBR + ") JOB("
+                + SpooledFile.VARIABLE_JOBNBR + "/" + SpooledFile.VARIABLE_JOBUSR + "/" + SpooledFile.VARIABLE_JOBNAME + ") TOSTREAM('"
+                + SpooledFile.VARIABLE_STMF + "') TODIR('" + SpooledFile.VARIABLE_STMFDIR + "') STCODPAG(" + SpooledFile.VARIABLE_CODPAG + ") TOFMT("
+                + SpooledFile.VARIABLE_FMT + ") STOPT(*REPLACE)";
             library = ISpherePlugin.getISphereLibrary(connectionName);
 
         } else {
@@ -738,15 +753,7 @@ public class SpooledFile {
             library = conversionCommandLibrary;
         }
 
-        command = command.replaceAll("&SPLFNBR", Integer.toString(fileNumber));
-        command = command.replaceAll("&SPLF", file);
-        command = command.replaceAll("&JOBNBR", jobNumber);
-        command = command.replaceAll("&JOBUSR", jobUser);
-        command = command.replaceAll("&JOBNAME", jobName);
-        command = command.replaceAll("&STMFDIR", "/tmp");
-        command = command.replaceAll("&STMF", getTemporaryName(format));
-        command = command.replaceAll("&CODPAG", "1252");
-        command = command.replaceAll("&FMT", format);
+        command = replaceReplacementVariables(format, command);
 
         String currentLibrary = null;
 
@@ -784,6 +791,22 @@ public class SpooledFile {
 
         return false;
 
+    }
+
+    private String replaceReplacementVariables(String format, String command) {
+
+        command = command.replaceAll(VARIABLE_SPLFNBR, Integer.toString(fileNumber));
+        command = command.replaceAll(VARIABLE_SPLF, file);
+        command = command.replaceAll(VARIABLE_JOBNBR, jobNumber);
+        command = command.replaceAll(VARIABLE_JOBUSR, jobUser);
+        command = command.replaceAll(VARIABLE_JOBNAME, jobName);
+        command = command.replaceAll(VARIABLE_JOBSYS, getJobSystem());
+        command = command.replaceAll(VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
+        command = command.replaceAll(VARIABLE_STMF, getTemporaryName(format));
+        command = command.replaceAll(VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
+        command = command.replaceAll(VARIABLE_FMT, format);
+
+        return command;
     }
 
     private boolean transformSpooledFile(String format, String target) throws Exception {
@@ -895,14 +918,15 @@ public class SpooledFile {
         dialog.setFilterNames(new String[] { fileDescription, "All Files" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
-        dialog.setFileName("spooled_file" + fileExtension);
+        String suggestedFileName = replaceReplacementVariables(format, Preferences.getInstance().getSuggestedSpooledFileName());
+        dialog.setFileName(suggestedFileName + fileExtension);
         dialog.setOverwrite(true);
         String file = dialog.open();
 
         if (file != null) {
             storeSaveDirectory(file);
 
-            String source = ISPHERE_IFS_TMP_DIRECTORY + getTemporaryName(format);
+            String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
             String target = file;
 
             boolean doTransformSpooledFile = doTransformSpooledFile(format);

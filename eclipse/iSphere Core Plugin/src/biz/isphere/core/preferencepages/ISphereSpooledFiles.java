@@ -84,6 +84,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionPDFPageSize;
     private Button chkBoxAdjustFontSize;
     private boolean adjustFontSize;
+    private Combo comboSuggestedFileName;
 
     public ISphereSpooledFiles() {
         super();
@@ -95,17 +96,13 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     public Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);
-        final GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 1;
-        container.setLayout(gridLayout);
+        container.setLayout(new GridLayout(2, false));
 
         // Group: Default conversion
         Group groupDefaultFormat = new Group(container, SWT.NONE);
         groupDefaultFormat.setText(Messages.When_double_clicking_on_a_spooled_file_open_it_as);
-        GridLayout gridLayoutDefaultFormat = new GridLayout();
-        gridLayoutDefaultFormat.numColumns = 3;
-        groupDefaultFormat.setLayout(gridLayoutDefaultFormat);
-        groupDefaultFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        groupDefaultFormat.setLayout(new GridLayout(3, false));
+        groupDefaultFormat.setLayoutData(createGroupLayoutData());
 
         buttonDefaultFormatText = WidgetFactory.createRadioButton(groupDefaultFormat);
         buttonDefaultFormatText.setText(IPreferences.OUTPUT_FORMAT_TEXT);
@@ -140,7 +137,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         GridLayout gridLayoutConversionText = new GridLayout();
         gridLayoutConversionText.numColumns = 3;
         groupConversionText.setLayout(gridLayoutConversionText);
-        groupConversionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        groupConversionText.setLayoutData(createGroupLayoutData());
 
         buttonConversionTextDefault = WidgetFactory.createRadioButton(groupConversionText);
         buttonConversionTextDefault.setText(Messages.Default);
@@ -188,7 +185,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionTextLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionTextLibrary.setLayoutData(createGroupLayoutData());
         textConversionTextLibrary.setTextLimit(10);
 
         validatorConversionTextLibrary = Validator.getLibraryNameInstance();
@@ -203,7 +200,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionTextCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionTextCommand.setLayoutData(createGroupLayoutData());
         textConversionTextCommand.setTextLimit(256);
 
         // Group: HTML conversion
@@ -212,7 +209,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         GridLayout gridLayoutConversionHTML = new GridLayout();
         gridLayoutConversionHTML.numColumns = 3;
         groupConversionHTML.setLayout(gridLayoutConversionHTML);
-        groupConversionHTML.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        groupConversionHTML.setLayoutData(createGroupLayoutData());
 
         buttonConversionHTMLDefault = WidgetFactory.createRadioButton(groupConversionHTML);
         buttonConversionHTMLDefault.setText(Messages.Default);
@@ -260,7 +257,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionHTMLLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionHTMLLibrary.setLayoutData(createGroupLayoutData());
         textConversionHTMLLibrary.setTextLimit(10);
 
         validatorConversionHTMLLibrary = Validator.getLibraryNameInstance();
@@ -275,7 +272,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionHTMLCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionHTMLCommand.setLayoutData(createGroupLayoutData());
         textConversionHTMLCommand.setTextLimit(256);
 
         // Group: PDF conversion
@@ -284,7 +281,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         GridLayout gridLayoutConversionPDF = new GridLayout();
         gridLayoutConversionPDF.numColumns = 3;
         groupConversionPDF.setLayout(gridLayoutConversionPDF);
-        groupConversionPDF.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        groupConversionPDF.setLayoutData(createGroupLayoutData());
 
         buttonConversionPDFDefault = WidgetFactory.createRadioButton(groupConversionPDF);
         buttonConversionPDFDefault.setText(Messages.Default);
@@ -338,7 +335,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionPDFLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionPDFLibrary.setLayoutData(createGroupLayoutData());
         textConversionPDFLibrary.setTextLimit(10);
 
         validatorConversionPDFLibrary = Validator.getLibraryNameInstance();
@@ -353,7 +350,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 checkError();
             }
         });
-        textConversionPDFCommand.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        textConversionPDFCommand.setLayoutData(createGroupLayoutData());
         textConversionPDFCommand.setTextLimit(256);
 
         Label labelConversionPDFPageSize = new Label(groupConversionPDF, SWT.NONE);
@@ -366,7 +363,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 conversionPDFPageSize = comboConversionPDFPageSize.getText();
             }
         });
-        comboConversionPDFPageSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        comboConversionPDFPageSize.setLayoutData(createGroupLayoutData());
         comboConversionPDFPageSize.setItems(loadAvailablePageSizes());
 
         chkBoxAdjustFontSize = WidgetFactory.createCheckbox(groupConversionPDF);
@@ -377,7 +374,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 adjustFontSize = chkBoxAdjustFontSize.getSelection();
             }
         });
-        chkBoxAdjustFontSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+        chkBoxAdjustFontSize.setLayoutData(createLayoutData(3));
 
         // Group: Replacement variables
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
@@ -385,90 +382,27 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         GridLayout gridLayoutSubstitutionVariables = new GridLayout();
         gridLayoutSubstitutionVariables.numColumns = 3;
         groupSubstitutionVariables.setLayout(gridLayoutSubstitutionVariables);
-        groupSubstitutionVariables.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        groupSubstitutionVariables.setLayoutData(createGroupLayoutData());
 
-        Label labelSubstitutionVariable11 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable11.setText("&&SPLF");
+        createSpooledFileVariable(groupSubstitutionVariables, "&&SPLF", Messages.File);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&SPLFNBR", Messages.File_number);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBNAME", Messages.Job_name);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBUSR", Messages.Job_user);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBNBR", Messages.Job_number);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBSYS", Messages.Job_system);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&STMFDIR", Messages.Directory);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&STMF", Messages.Stream_file);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&CODPAG", Messages.Code_page);
+        createSpooledFileVariable(groupSubstitutionVariables, "&&FMT", Messages.Format);
 
-        Label labelSubstitutionVariable12 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable12.setText(":");
+        new Label(container, SWT.NONE).setText("Suggested file name:");
 
-        Label labelSubstitutionVariable13 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable13.setText(Messages.File);
-
-        Label labelSubstitutionVariable21 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable21.setText("&&SPLFNBR");
-
-        Label labelSubstitutionVariable22 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable22.setText(":");
-
-        Label labelSubstitutionVariable23 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable23.setText(Messages.File_number);
-
-        Label labelSubstitutionVariable31 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable31.setText("&&JOBNAME");
-
-        Label labelSubstitutionVariable32 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable32.setText(":");
-
-        Label labelSubstitutionVariable33 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable33.setText(Messages.Job_name);
-
-        Label labelSubstitutionVariable41 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable41.setText("&&JOBUSR");
-
-        Label labelSubstitutionVariable42 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable42.setText(":");
-
-        Label labelSubstitutionVariable43 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable43.setText(Messages.Job_user);
-
-        Label labelSubstitutionVariable51 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable51.setText("&&JOBNBR");
-
-        Label labelSubstitutionVariable52 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable52.setText(":");
-
-        Label labelSubstitutionVariable53 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable53.setText(Messages.Job_number);
-
-        Label labelSubstitutionVariable61 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable61.setText("&&STMFDIR");
-
-        Label labelSubstitutionVariable62 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable62.setText(":");
-
-        Label labelSubstitutionVariable63 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable63.setText(Messages.Directory);
-
-        Label labelSubstitutionVariable71 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable71.setText("&&STMF");
-
-        Label labelSubstitutionVariable72 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable72.setText(":");
-
-        Label labelSubstitutionVariable73 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable73.setText(Messages.Stream_file);
-
-        Label labelSubstitutionVariable81 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable81.setText("&&CODPAG");
-
-        Label labelSubstitutionVariable82 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable82.setText(":");
-
-        Label labelSubstitutionVariable83 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable83.setText(Messages.Code_page);
-
-        Label labelSubstitutionVariable91 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable91.setText("&&FMT");
-
-        Label labelSubstitutionVariable92 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable92.setText(":");
-
-        Label labelSubstitutionVariable93 = new Label(groupSubstitutionVariables, SWT.NONE);
-        labelSubstitutionVariable93.setText(Messages.Format);
+        comboSuggestedFileName = WidgetFactory.createCombo(container);
+        comboSuggestedFileName.setLayoutData(createLayoutData());
+        comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
 
         buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
+        buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
         buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
         buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -480,6 +414,25 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         setScreenToValues();
 
         return container;
+    }
+
+    private GridData createGroupLayoutData() {
+        return createLayoutData(2);
+    }
+
+    private GridData createLayoutData() {
+        return createLayoutData(1);
+    }
+
+    private GridData createLayoutData(int horizontalSpan) {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
+    }
+
+    private void createSpooledFileVariable(Group parent, String variable, String description) {
+
+        new Label(parent, SWT.NONE).setText(variable);
+        new Label(parent, SWT.NONE).setText(":"); //$NON-NLS-1$
+        new Label(parent, SWT.NONE).setText(description);
     }
 
     private String[] loadAvailablePageSizes() {
@@ -599,6 +552,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         Preferences.getInstance().setSpooledFilePageSize(conversionPDFPageSize);
         Preferences.getInstance().setSpooledFileAdjustFontSize(adjustFontSize);
+        Preferences.getInstance().setSpooledFilesSuggestedFileName(comboSuggestedFileName.getText());
     }
 
     protected void setScreenToValues() {
@@ -620,6 +574,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         conversionPDFPageSize = Preferences.getInstance().getSpooledFilePageSize();
         adjustFontSize = Preferences.getInstance().getSpooledFileAdjustFontSize();
+        comboSuggestedFileName.setText(Preferences.getInstance().getSpooledFilesSuggestedFileName());
 
         setScreenValues();
 
@@ -644,6 +599,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         conversionPDFPageSize = Preferences.getInstance().getDefaultSpooledFilePageSize();
         adjustFontSize = Preferences.getInstance().getDefaultSpooledFileAdjustFontSize();
+        comboSuggestedFileName.setText(Preferences.getInstance().getDefaultSpooledFilesSuggestedFileName());
 
         setScreenValues();
 
@@ -752,6 +708,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         }
 
         chkBoxAdjustFontSize.setSelection(adjustFontSize);
+        comboSuggestedFileName.setText(Preferences.getInstance().getSpooledFilesSuggestedFileName());
     }
 
     public void init(IWorkbench workbench) {
