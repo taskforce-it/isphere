@@ -83,11 +83,11 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
 
         final Label cA2 = new Label(compositeAdress, SWT.NONE);
         cA2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA2.setText("Im Eickel 77");
+        cA2.setText("Fallgatter 3");
 
         final Label cA3 = new Label(compositeAdress, SWT.NONE);
         cA3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA3.setText("45731 Waltrop");
+        cA3.setText("44369 Dortmund");
 
         final Label cA4 = new Label(compositeAdress, SWT.NONE);
         cA4.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
@@ -99,11 +99,11 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
 
         final Label cN1 = new Label(compositeNumbers, SWT.NONE);
         cN1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN1.setText(Messages.Telefon + ": +49 23 09-60 93 01");
+        cN1.setText(Messages.Telefon + ": +49 (0) 231/28219967");
 
         final Label cN2 = new Label(compositeNumbers, SWT.NONE);
         cN2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN2.setText(Messages.Telefax + ": +49 23 09-40 97 68");
+        cN2.setText(Messages.Telefax + ": +49 (0) 231/28861681");
 
         final Composite compositeInternet = new Composite(container, SWT.NONE);
         compositeInternet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
