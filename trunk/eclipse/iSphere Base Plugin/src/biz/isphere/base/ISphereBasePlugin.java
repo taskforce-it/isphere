@@ -28,7 +28,7 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
     // Contributor logos
     public static final String IMAGE_ISPHERE = "isphere.gif";
 
-    public static final String IMAGE_TASKFORCE = "TaskForce.bmp";
+    public static final String IMAGE_TASKFORCE = "TaskForce.png";
 
     public static final String IMAGE_TOOLS400 = "Tools400.bmp";
 
