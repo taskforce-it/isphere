@@ -39,7 +39,6 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
-import biz.isphere.core.swt.widgets.tableviewer.TableViewerTooltipSupport;
 import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
 public class CopyMemberDialog extends XDialog {
@@ -218,9 +217,6 @@ public class CopyMemberDialog extends XDialog {
 
         TableViewerKeyBoardSupporter supporter = new TableViewerKeyBoardSupporter(tableViewer, true);
         supporter.startSupport();
-
-        TableViewerTooltipSupport tooltipSupport = new TableViewerTooltipSupport(tableViewer);
-        tooltipSupport.startSupport();
 
         chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
         chkBoxReplace.setText(Messages.Replace_existing_members);
