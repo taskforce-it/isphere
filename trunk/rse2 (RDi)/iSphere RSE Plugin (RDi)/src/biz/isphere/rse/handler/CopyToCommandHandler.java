@@ -57,9 +57,11 @@ public class CopyToCommandHandler extends AbstractHandler implements IHandler {
             }
         }
 
-        CopyMemberDialog dialog = new CopyMemberDialog(getShell(event));
-        dialog.setContent(jobDescription);
-        dialog.open();
+        if (jobDescription.getItems().length > 0) {
+            CopyMemberDialog dialog = new CopyMemberDialog(getShell(event));
+            dialog.setContent(jobDescription);
+            dialog.open();
+        }
 
         return null;
     }

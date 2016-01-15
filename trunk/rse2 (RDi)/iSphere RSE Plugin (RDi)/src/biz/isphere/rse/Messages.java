@@ -25,6 +25,12 @@ public class Messages extends NLS {
     public static String iSphere_Data_Area_Monitor; // Only for WDSCi
 
     public static String iSphere_User_Space_Monitor; // Only for WDSCi
+    
+    public static String iSphere_Data_Queue_Monitor; // Only for WDSCi
+    
+    public static String iSphere_Compare_Message_File_Editor; // Only for WDSCi
+    
+    public static String iSphere_CopyMembersTo; // Only for WDSCi
 
     public static String Right;
 
