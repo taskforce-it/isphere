@@ -35,4 +35,18 @@
       </initializer>
    </extension>
 
+   <extension point="org.eclipse.ui.popupMenus"> 
+      <objectContribution 
+         id="biz.isphere.lpex.tasktags.deleteAllMarkers" 
+         objectClass="org.eclipse.ui.internal.views.markers.MarkerEntry"> 
+         <action
+            id="biz.isphere.lpex.tasktags.deleteAllMarkers" 
+            label="%Delete_all_LPEX_task_tags" 
+            class="biz.isphere.lpex.tasktags.action.DeleteAllMarker"
+            menubarPath="additions"
+            > 
+         </action> 
+      </objectContribution> 
+   </extension>
+
 </plugin>
