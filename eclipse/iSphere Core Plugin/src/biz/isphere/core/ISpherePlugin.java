@@ -112,6 +112,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_FILTERED_ITEMS = "filtered_items.png";
     public static final String IMAGE_COMPARE_MESSAGE_FILES = "compare_message_files.png";
     public static final String IMAGE_OPEN = "open.png";
+    public static final String IMAGE_COPY_MEMBERS_TO = "copy_members_to.png";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -262,6 +263,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_FILTERED_ITEMS, getImageDescriptor(IMAGE_FILTERED_ITEMS));
         reg.put(IMAGE_COMPARE_MESSAGE_FILES, getImageDescriptor(IMAGE_COMPARE_MESSAGE_FILES));
         reg.put(IMAGE_OPEN, getImageDescriptor(IMAGE_OPEN));
+        reg.put(IMAGE_COPY_MEMBERS_TO, getImageDescriptor(IMAGE_COPY_MEMBERS_TO));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
@@ -285,7 +287,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     }
 
     public static String getISphereLibrary() {
-    	String library = Preferences.getInstance().getISphereLibrary(); // CHECKED
+        String library = Preferences.getInstance().getISphereLibrary(); // CHECKED
         return library;
     }
 
