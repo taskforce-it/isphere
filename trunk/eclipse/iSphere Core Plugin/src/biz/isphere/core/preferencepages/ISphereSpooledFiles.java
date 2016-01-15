@@ -395,7 +395,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         createSpooledFileVariable(groupSubstitutionVariables, "&&CODPAG", Messages.Code_page);
         createSpooledFileVariable(groupSubstitutionVariables, "&&FMT", Messages.Format);
 
-        new Label(container, SWT.NONE).setText("Suggested file name:");
+        new Label(container, SWT.NONE).setText(Messages.Suggested_file_name);
 
         comboSuggestedFileName = WidgetFactory.createCombo(container);
         comboSuggestedFileName.setLayoutData(createLayoutData());

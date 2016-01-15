@@ -1150,6 +1150,8 @@ public class Messages extends NLS {
 
     public static String CopyMemberDialog_Info;
 
+    public static String Suggested_file_name;
+
     /*
      * Warning messages
      */
