@@ -181,6 +181,18 @@
 			class="biz.isphere.rse.actions.MessageFileSearchAction"
 			id="biz.isphere.rse.actions.MessageFileSearchAction">
 	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Copy Members To...
+      	  ==========================================
+      	-->
+	    
+		<dynamicPopupMenuExtension
+			name="Copy members to"
+			class="biz.isphere.rse.actions.CopyToAction"
+			id="biz.isphere.rse.actions.CopyToAction">
+	    </dynamicPopupMenuExtension>
 	</extension>  
       	
       	<!--
@@ -262,20 +274,6 @@
             menubarPath="group.reorganize"
       	  ==========================================
       	-->
-   
-   <extension
-         id="add.item"
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?endof=additions">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              label="%command_CopyMembersTo_Label"
-              mnemonic="S">
-        </command>
-      </menuContribution>
-   </extension>
    
    <extension point="org.eclipse.ui.commands">
       <command
