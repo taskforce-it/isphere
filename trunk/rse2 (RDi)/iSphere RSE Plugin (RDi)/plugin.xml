@@ -546,6 +546,7 @@
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
+              icon="icons/copy_members_to.png"
               label="%command_CopyMembersTo_Label">
         </command>
       </menuContribution>
