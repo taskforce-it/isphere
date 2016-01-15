@@ -38,6 +38,12 @@ public class WarningMessage extends MessageDialog {
         }
     }
 
+    public static void openInformation(Shell parent, String showWarningKey, String message) {
+        if (Preferences.getInstance().isShowWarningMessage(showWarningKey)) {
+            open(INFORMATION, parent, Messages.Informational, message, SWT.NONE, showWarningKey);
+        }
+    }
+
     public static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
         MessageDialog dialog = new WarningMessage(parent, title, null, message, kind, new String[] { IDialogConstants.OK_LABEL }, showWarningKey);
         return dialog.open() == 0;

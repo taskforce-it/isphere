@@ -24,12 +24,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
@@ -275,7 +273,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      * want to change the behavior of the <i>Find & Replace</i>, <i>Copy</i>,
      * <i>Cut</i> and <i>Paste</i> actions to match their specific needs.
      */
-    private void registerDelegateActions() {
+    public void registerDelegateActions() {
 
         final Action findReplaceAction = editorDelegate.getFindReplaceAction(this);
         if (findReplaceAction != null) {
@@ -288,37 +286,6 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
             };
             handlerService.activateHandler("org.eclipse.ui.edit.findReplace", handler); //$NON-NLS-1$
         }
-
-        IActionBars actionBars = getEditorSite().getActionBars();
-        if (editorDelegate.getCutAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), editorDelegate.getCutAction());
-        }
-
-        if (editorDelegate.getCopyAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), editorDelegate.getCopyAction());
-        }
-
-        if (editorDelegate.getPasteAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editorDelegate.getPasteAction());
-        }
-
-        if (editorDelegate.getUndoAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), editorDelegate.getUndoAction());
-        }
-
-        if (editorDelegate.getRedoAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), editorDelegate.getRedoAction());
-        }
-
-        if (editorDelegate.getDeleteAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), editorDelegate.getDeleteAction());
-        }
-
-        if (editorDelegate.getSelectAllAction() != null) {
-            actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), editorDelegate.getSelectAllAction());
-        }
-
-        editorDelegate.updateActionsStatus();
     }
 
     /**
@@ -331,10 +298,81 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         super.dispose();
     }
 
+    public void doGoTo() {
+        editorDelegate.doGoTo();
+    }
+
+    public boolean canGoTo() {
+        return editorDelegate.canGoTo();
+    }
+
+    public void doCut() {
+        editorDelegate.doCut();
+    }
+
+    public boolean canCut() {
+        return editorDelegate.canCut();
+    }
+
+    public void doCopy() {
+        editorDelegate.doCopy();
+    }
+
+    public boolean canCopy() {
+        return editorDelegate.canCopy();
+    }
+
+    public void doPaste() {
+        editorDelegate.doPaste();
+    }
+
+    public boolean canPaste() {
+        return editorDelegate.canPaste();
+    }
+
+    public void doDelete() {
+        editorDelegate.doDelete();
+    }
+
+    public boolean canDelete() {
+        return editorDelegate.canDelete();
+    }
+
+    public void doSelectAll() {
+        editorDelegate.doSelectAll();
+    }
+
+    public boolean canSelectAll() {
+        return editorDelegate.canSelectAll();
+    }
+
+    public void doRedo() {
+        editorDelegate.doRedo();
+    }
+
+    public boolean canRedo() {
+        return editorDelegate.canRedo();
+    }
+
+    public void doUndo() {
+        editorDelegate.doUndo();
+    }
+
+    public boolean canUndo() {
+        return editorDelegate.canUndo();
+    }
+
+    public void updateActionsStatusAndStatusLine() {
+
+        editorDelegate.updateActionStatus();
+        editorDelegate.updateStatusLine();
+    }
+
     /**
      * Returns whether a find operation can be performed.
      * 
      * @return whether a find operation can be performed
+     * @see IFindReplaceTarget
      */
     public boolean canPerformFind() {
         return editorDelegate.canPerformFind();
@@ -353,6 +391,9 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      *        search, <code>false</code> an insensitive search
      * @param aWholeWord - if <code>true</code> only occurrences are reported in
      *        which the findString stands as a word by itself
+     * @return the position of the specified string, or -1 if the string has not
+     *         been found
+     * @see IFindReplaceTarget
      */
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
         return editorDelegate.findAndSelect(aWidgetOffset, aFindString, aSearchForward, aCaseSensitive, aWholeWord);
@@ -363,6 +404,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      * in widget coordinates.
      * 
      * @return the currently selected character range in widget coordinates
+     * @see IFindReplaceTarget
      */
     public Point getSelection() {
         return editorDelegate.getSelection();
@@ -372,6 +414,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      * Returns the currently selected characters as a string.
      * 
      * @return the currently selected characters
+     * @see IFindReplaceTarget
      */
     public String getSelectionText() {
         return editorDelegate.getSelectionText();
@@ -381,6 +424,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      * Returns whether this target can be modified.
      * 
      * @return <code>true</code> if target can be modified
+     * @see IFindReplaceTarget
      */
     public boolean isEditable() {
         return editorDelegate.isEditable();
@@ -391,13 +435,9 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
      * This target must be editable. Otherwise nothing happens.
      * 
      * @param aText - the substitution text
+     * @see IFindReplaceTarget
      */
     public void replaceSelection(String aText) {
         editorDelegate.replaceSelection(aText);
-    }
-
-    public void updateActionsStatusAndStatusLine() {
-        editorDelegate.updateActionsStatus();
-        editorDelegate.updateStatusLine();
     }
 }

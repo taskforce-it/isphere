@@ -6,18 +6,24 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.preferences;
+package biz.isphere.core.dataspaceeditor.delegates;
 
-public interface Warning {
+import org.eclipse.ui.actions.ActionFactory;
 
-    /*
-     * Warning message keys
-     */
-    public static final String COMPARE_FILTERS_NOT_INSTALLED = "COMPARE_FILTERS_NOT_INSTALLED"; //$NON-NLS-1$
 
-    /*
-     * Informational message keys
-     */
-    public static final String DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
+public class PasteAction extends AbstractEditorAction {
 
+    public PasteAction() {
+        super(ActionFactory.PASTE.getId());
+    }
+
+    @Override
+    public void run() {
+        activeEditor.doPaste();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return activeEditor.canPaste();
+    }
 }

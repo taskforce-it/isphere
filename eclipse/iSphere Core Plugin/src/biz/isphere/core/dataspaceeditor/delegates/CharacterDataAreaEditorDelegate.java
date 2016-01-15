@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -30,7 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -166,58 +164,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     @Override
     public void setStatusMessage(String message) {
         statusMessage = message;
-    }
-
-    /**
-     * Updates the status of actions: enables/disables them depending on whether
-     * there is text selected and whether inserting or overwriting is active.
-     * Undo/redo actions are enabled/disabled as well.
-     */
-    @Override
-    public void updateActionsStatus() {
-
-        boolean textSelected = dataAreaText.isSelected();
-        boolean lengthModifiable = textSelected;
-
-        IAction action;
-        IActionBars bars = getEditorSite().getActionBars();
-
-        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
-        if (action != null) {
-            action.setEnabled(textSelected);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
-        if (action != null) {
-            action.setEnabled(false);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
-        if (action != null) {
-            action.setEnabled(false);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        bars.updateActionBars();
     }
 
     /**
@@ -969,7 +915,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 setEditorDirty();
             }
 
-            updateActionsStatus();
+//            updateActionsStatus();
             updateStatusLine();
             
             updateOffsetLabels(anEvent.topIndex);

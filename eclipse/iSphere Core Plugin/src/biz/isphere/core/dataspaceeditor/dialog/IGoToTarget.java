@@ -6,18 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.preferences;
+package biz.isphere.core.dataspaceeditor.dialog;
 
-public interface Warning {
+public interface IGoToTarget {
 
-    /*
-     * Warning message keys
-     */
-    public static final String COMPARE_FILTERS_NOT_INSTALLED = "COMPARE_FILTERS_NOT_INSTALLED"; //$NON-NLS-1$
+    public long getContentLength();
 
-    /*
-     * Informational message keys
-     */
-    public static final String DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
+    public void selectBlock(long start, long end);
+
+    public void showMark(long position);
 
 }

@@ -29,8 +29,10 @@ package biz.isphere.core.swt.widgets.hexeditor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -77,6 +79,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.core.dataspaceeditor.dialog.IGoToTarget;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyEvent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyListener;
@@ -95,7 +98,7 @@ import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
  * 
  * @author Jordi
  */
-public final class HexText extends Composite {
+public final class HexText extends Composite implements IGoToTarget {
 
     /**
      * Used to notify changes in state 'overwrite/insert' and 'canUndo/canRedo'.
@@ -120,7 +123,6 @@ public final class HexText extends Composite {
             this.isInsertMode = isInsertMode;
             this.isSelected = isSelected;
         }
-
     }
 
     /**
@@ -159,6 +161,10 @@ public final class HexText extends Composite {
 
     private int charsForFileSizeAddress = 0;
     private String charset;
+
+    private CharsetEncoder myCharsetEncoder;
+    private CharBuffer myCharBuffer;
+
     private boolean delayedInQueue = false;
     private Runnable delayedWaiting;
     boolean dragging = false;
@@ -182,6 +188,7 @@ public final class HexText extends Composite {
     int myLastFocusedTextArea = -1; // 1 or 2;
     private long myLastLocationPosition = -1L;
     private List<SelectionListener> myLongSelectionListeners;
+    private String myPreviousCharset;
     private long myPreviousFindEnd = -1;
     private boolean myPreviousFindCaseSensitive = false;
     private String myPreviousFindString;
@@ -302,6 +309,7 @@ public final class HexText extends Composite {
         }
 
         charset = name;
+        myCharsetEncoder = Charset.forName(charset).newEncoder().onMalformedInput(CodingErrorAction.REPLACE);
 
         composeByteToCharMap();
         redrawTextAreas(true);
@@ -1091,7 +1099,7 @@ public final class HexText extends Composite {
         try {
             if (myInserting) {
                 if (event.widget == charEdit) {
-                    myContent.insert((byte)aChar, getCaretPosition());
+                    myContent.insert(transcodeChar(aChar), getCaretPosition());
                 } else if (myUpANibble == 0) {
                     myContent.insert((byte)(hexToNibble[aChar - '0'] << 4), getCaretPosition());
                 } else {
@@ -1099,7 +1107,7 @@ public final class HexText extends Composite {
                 }
             } else {
                 if (event.widget == charEdit) {
-                    myContent.overwrite((byte)aChar, getCaretPosition());
+                    myContent.overwrite(transcodeChar(aChar), getCaretPosition());
                 } else {
                     myContent.overwrite(hexToNibble[aChar - '0'], myUpANibble * 4, 4, getCaretPosition());
                 }
@@ -1128,6 +1136,26 @@ public final class HexText extends Composite {
         };
         runnableAdd(delayed);
         notifyLongSelectionListeners();
+    }
+
+    private byte transcodeChar(char aChar) {
+
+        try {
+
+            if (myCharBuffer==null) {
+                myCharBuffer=CharBuffer.allocate(1);
+            }else {
+                myCharBuffer.clear();
+            }
+            myCharBuffer.append(aChar);
+            myCharBuffer.rewind();
+            ByteBuffer buffer = myCharsetEncoder.encode(myCharBuffer);
+
+            return buffer.get(0);
+
+        } catch (Throwable e) {
+            return (byte)aChar;
+        }
     }
 
     long doNavigateKeyPressed(boolean ctrlKey, int keyCode, long oldPos, boolean countNibbles) {
@@ -1286,8 +1314,10 @@ public final class HexText extends Composite {
      * @param searchForward look for matches after current position
      * @param caseSensitive match upper case with lower case characters
      * @return whether a match was found
+     * @throws CharacterCodingException
      */
-    public Match findAndSelect(int offset, String findString, boolean isHexString, boolean searchForward, boolean caseSensitive) {
+    public Match findAndSelect(int offset, String findString, boolean isHexString, boolean searchForward, boolean caseSensitive)
+        throws CharacterCodingException {
         if (findString == null) {
             throw new IllegalArgumentException("Parameter 'findString' must not be null.");
         }
@@ -1297,12 +1327,15 @@ public final class HexText extends Composite {
     }
 
     private Match findAndSelectInternal(int offset, String findString, boolean isHexString, boolean searchForward, boolean caseSensitive,
-        boolean updateGui) {
+        boolean updateGui) throws CharacterCodingException {
         if (findString == null) {
             throw new IllegalArgumentException("Parameter 'findString' must not be null.");
         }
 
-        initFinder(offset, findString, isHexString, searchForward, caseSensitive);
+        if (!initFinder(offset, findString, isHexString, searchForward, caseSensitive)) {
+            return null;
+        }
+
         MyFinderRunnable finderRunnable = new MyFinderRunnable();
         SWTUtility.blockUntilFinished(finderRunnable);
         Match match = finderRunnable.getMatch();
@@ -1357,6 +1390,10 @@ public final class HexText extends Composite {
         return myContent;
     }
 
+    public long getContentLength() {
+        return myContent.length();
+    }
+
     private void getHighlightRangesInScreen(long start, int length) {
         highlightRangesInScreen.clear();
         if (myLastLocationPosition >= start && myLastLocationPosition < start + length) {
@@ -1403,27 +1440,32 @@ public final class HexText extends Composite {
         return oldPos;
     }
 
-    private void initFinder(int offset, String findString, boolean isHexString, boolean searchForward, boolean caseSensitive) {
+    private boolean initFinder(int offset, String findString, boolean isHexString, boolean searchForward, boolean caseSensitive)
+        throws CharacterCodingException {
+
         if (!searchForward) {
             myCaretStickToStart = true;
         }
+
         if (myFinder == null || !findString.equals(myPreviousFindString) || isHexString != myPreviousFindStringWasHex
-            || caseSensitive != myPreviousFindCaseSensitive) {
+            || caseSensitive != myPreviousFindCaseSensitive || myPreviousCharset != charset) {
             myPreviousFindString = findString;
             myPreviousFindStringWasHex = isHexString;
             myPreviousFindCaseSensitive = caseSensitive;
+            myPreviousCharset = charset;
 
             if (isHexString) {
                 myFinder = new BinaryContentFinder(hexStringToByte(findString), myContent);
             } else {
-                myFinder = new BinaryContentFinder(findString, myContent);
-                myFinder.setCaseSensitive(caseSensitive);
+                myFinder = new BinaryContentFinder(findString, charset, myContent, caseSensitive);
             }
             myFinder.setNewStart(getCaretPosition());
         }
+
         if (myPreviousFindEnd != getCaretPosition()) {
             myFinder.setNewStart(getCaretPosition());
         }
+
         myFinder.setDirectionForward(searchForward);
 
         if (searchForward) {
@@ -1437,6 +1479,8 @@ public final class HexText extends Composite {
             }
             myFinder.setNewStart(offset + 1);
         }
+
+        return true;
     }
 
     /**

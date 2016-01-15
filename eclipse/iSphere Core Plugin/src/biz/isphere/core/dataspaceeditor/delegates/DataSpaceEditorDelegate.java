@@ -120,16 +120,6 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
     }
 
     /**
-     * Updates the status of actions: enables/disables them depending on whether
-     * there is text selected and whether inserting or overwriting is active.
-     * Undo/redo actions are enabled/disabled as well.
-     */
-    @Override
-    public void updateActionsStatus() {
-
-    }
-
-    /**
      * Updates the status line.
      */
     @Override
