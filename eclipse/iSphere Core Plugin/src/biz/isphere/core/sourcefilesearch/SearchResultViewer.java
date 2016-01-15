@@ -45,8 +45,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
-import biz.isphere.core.sourcemembercopy.CopyMemberDialog;
-import biz.isphere.core.sourcemembercopy.CopyMemberService;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 
 public class SearchResultViewer {
 
