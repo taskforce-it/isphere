@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 import biz.isphere.rse.Messages;
@@ -37,7 +38,7 @@ public class CopyToAction extends ISeriesSystemBaseAction implements ISystemDyna
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        // setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_USER_SPACE));
+        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_MEMBERS_TO));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
