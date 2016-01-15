@@ -131,6 +131,8 @@ public class Messages extends NLS {
 
     public static String Failed_to_execute_command_A;
 
+    public static String Cannot_copy_source_members_from_different_connections;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
