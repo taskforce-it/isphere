@@ -36,13 +36,26 @@ to specify the source types that are enabled for task tags.
 The following example demonstrates the use of task tags in a RPG source member. The RPG editor with a sample source
 if shown at the top followed by the Eclipse '<i>General -&gt; Tasks</i>' view. 
 <p>
-<img src="assets/rpg_source_with_tags.png" 
-     align="middle">
+<img src="assets/rpg_source_with_tags.png" align="middle">
 <br>
-<img src="assets/rpg_tasks.png" 
-     align="middle">
+<img src="assets/rpg_tasks.png" align="middle">
 <p>
 From the <i>Tasks</i> view you can easily open the associated source member by double-clicking on the task in question.
+<p>
+<h2>Removing Task Tags</h2>
+Usually there is no need for removing task tags by hand, because the tags are scanned from the source and
+disappear once they are deleted from the source member. But since the tags are persistent you may want to 
+remove them though, because for example meanwhile the source has been deleted on the host system.
+<p>
+For that you can select option <i>Delete LPEX task tags</i> from the context menu of the <i>Tasks</i> view:  
+<p>
+<img src="assets/LPEX_task_context_menu.png" align="middle">
+<p>
+That removes <b>all</b> tasks of the selected resource and <b>not</b> only the selected one. For example <b>all
+three</b> tasks of DEMO6 are removed when <i>Delete LPEX task tags</i> is selected for the item with the 
+<font color="red"><b>red</b></font> rectangle.  
+<p>
+<img src="assets/delete_all_LPEX_tasks_example.png" align="middle">
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
