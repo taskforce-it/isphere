@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -25,7 +24,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 
 import biz.isphere.base.internal.StringHelper;
@@ -112,58 +110,6 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         statusMessage = message;
 
         updateStatusLine();
-    }
-
-    /**
-     * Updates the status of actions: enables/disables them depending on whether
-     * there is text selected and whether inserting or overwriting is active.
-     * Undo/redo actions are enabled/disabled as well.
-     */
-    @Override
-    public void updateActionsStatus() {
-
-        boolean textSelected = dataAreaText.getSelectionText().length() > 0;
-        boolean lengthModifiable = textSelected;
-
-        IAction action;
-        IActionBars bars = getEditorSite().getActionBars();
-
-        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
-        if (action != null) {
-            action.setEnabled(textSelected);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
-        if (action != null) {
-            action.setEnabled(false);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
-        if (action != null) {
-            action.setEnabled(false);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        bars.updateActionBars();
     }
 
     /**

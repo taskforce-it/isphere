@@ -112,8 +112,8 @@ final class BinaryContentActionHistory {
 
     private long actionExclusiveEnd() {
         long result = 0L;
-        if (myCurrentActionRanges != null && myCurrentActionRanges.size() > 0) {
-            Range highest = myCurrentActionRanges.get(myCurrentActionRanges.size() - 1);
+        if (haveCurrentActionRanges()) {
+            Range highest = getCurrentActionRange(myCurrentActionRanges.size() - 1);
             result = highest.exclusiveEnd();
         }
         long newRangeExclusiveEnd = newRangePosition + newRangeLength;
@@ -126,8 +126,8 @@ final class BinaryContentActionHistory {
 
     private long actionPosition() {
         long result = -1L;
-        if (myCurrentActionRanges != null && myCurrentActionRanges.size() > 0) {
-            Range lowest = myCurrentActionRanges.get(0);
+        if (haveCurrentActionRanges()) {
+            Range lowest = getCurrentActionRange(0);
             result = lowest.position;
         }
         if (result < 0 || newRangePosition >= 0 && newRangePosition < result) result = newRangePosition;
@@ -196,9 +196,9 @@ final class BinaryContentActionHistory {
     public void addRangeToCurrentAction(Range range) {
         if (actionPosition() <= range.position) {
             // they're == when ending an overwrite action
-            myCurrentActionRanges.add(range);
+            addCurrentActionRangeAtLastPosition(range);
         } else {
-            myCurrentActionRanges.add(0, range);
+            addCurrentActionRangeAtFirstPosition(range);
         }
         myLastActionRange = range;
     }
@@ -210,26 +210,8 @@ final class BinaryContentActionHistory {
      * @param range the range being inserted
      */
     public void addInserted(Range range) {
-        myCurrentActionRanges.add(range);
+        addCurrentActionRangeAtLastPosition(range);
         endAction();
-    }
-
-    /**
-     * Tells whether a redo is possible
-     * 
-     * @return true if something can be redone
-     */
-    public boolean canRedo() {
-        return myActionsIndex < myActions.size() && myCurrentActionRanges == null;
-    }
-
-    /**
-     * Tells whether an undo is possible
-     * 
-     * @return true if something can be undone
-     */
-    public boolean canUndo() {
-        return myCurrentActionRanges != null || myActionsIndex > 0;
     }
 
     /**
@@ -245,12 +227,12 @@ final class BinaryContentActionHistory {
         }
         Entry entry = new Entry(myCurrentActionType, myCurrentActionRanges);
         myActions.subList(myActionsIndex, myActions.size()).clear();
-        myActions.add(entry);
-        myActionsIndex = myActions.size();
+        addAction(entry);
+        setActionsIndex(myActions.size());
 
         isBackspace = false;
         myCurrentActionType = null;
-        myCurrentActionRanges = null;
+        clearCurrentActionRanges();
         myLastActionRange = null;
         newRangePosition = -1L;
         newRangeLength = -1L;
@@ -385,8 +367,8 @@ final class BinaryContentActionHistory {
         if (!canRedo()) {
             return null;
         }
-        
-        return myActions.get(myActionsIndex++);
+
+        return myActions.get(incrementActionsIndex());
     }
 
     /**
@@ -413,9 +395,9 @@ final class BinaryContentActionHistory {
         }
 
         endAction();
-        --myActionsIndex;
+        decrementActionsIndex();
 
-        return myActions.get(myActionsIndex);
+        return getCurrentAction();
     }
 
     private void updateNewRange(long position) {
@@ -430,6 +412,76 @@ final class BinaryContentActionHistory {
         }
     }
 
+    /**
+     * Tells whether a redo is possible
+     * 
+     * @return true if something can be redone
+     */
+    public boolean canRedo() {
+        return myCurrentActionRanges == null && myActionsIndex < myActions.size();
+    }
+
+    /**
+     * Tells whether an undo is possible
+     * 
+     * @return true if something can be undone
+     */
+    public boolean canUndo() {
+        return myCurrentActionRanges != null || myActionsIndex > 0;
+    }
+
+    /*
+     * Actions, that affect the canUndo/canRedo states.
+     */
+    private void clearCurrentActionRanges() {
+        myCurrentActionRanges = null;
+    }
+
+    private void addCurrentActionRangeAtLastPosition(Range range) {
+        myCurrentActionRanges.add(range);
+    }
+
+    private void addCurrentActionRangeAtFirstPosition(Range range) {
+        myCurrentActionRanges.add(0, range);
+    }
+
+    private boolean addAction(Entry entry) {
+        return myActions.add(entry);
+    }
+
+    private void setActionsIndex(int index) {
+        myActionsIndex = index;
+    }
+
+    private int incrementActionsIndex() {
+        return myActionsIndex++;
+    }
+
+    private void decrementActionsIndex() {
+        myActionsIndex--;
+    }
+
+    /*
+     * Procedures that query values of items, that affect the undo/redo states.
+     */
+    private boolean haveCurrentActionRanges() {
+        return myCurrentActionRanges != null && myCurrentActionRanges.size() > 0;
+    }
+
+    private Range getCurrentActionRange(int index) {
+        return myCurrentActionRanges.get(index);
+    }
+
+    private Entry getCurrentAction() {
+        return myActions.get(myActionsIndex);
+    }
+
+    /**
+     * Answers a string containing a concise, human-readable description of the
+     * receiver.
+     * 
+     * @return Printable representation of the available actions
+     */
     @Override
     public String toString() {
         return myActions.toString();

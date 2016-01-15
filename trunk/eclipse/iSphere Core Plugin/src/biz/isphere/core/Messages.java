@@ -15,7 +15,7 @@ public class Messages extends NLS {
     private static final String BUNDLE_NAME = "biz.isphere.core.messages"; //$NON-NLS-1$
 
     public static final String EMPTY = ""; //$NON-NLS-1$
-    
+
     public static String Activation;
 
     public static String Activation_colon;
@@ -1115,28 +1115,50 @@ public class Messages extends NLS {
     public static String Validation_ended_with_errors_Request_canceled;
 
     public static String Copy_Members_headline;
-    
+
     public static String To_file_colon;
-    
+
     public static String To_library_colon;
 
     public static String To_member_colhdg;
 
     public static String Can_not_copy_member_twice_to_same_target_member;
-    
+
     public static String Replace_existing_members;
 
     public static String C_O_P_I_E_D;
 
     public static String Validating_dots;
-    
+
     public static String Copying_dots;
-    
+
+    public static String Go_to_location_headline;
+
+    public static String Hex_label;
+
+    public static String Decimal_label;
+
+    public static String Location_is_out_of_range_message;
+
+    public static String Go_to_location_label;
+
+    public static String Show_location_label;
+
+    public static String Enter_location_number_between_A_and_B;
+
+    public static String GoTo_Location_dots;
+
     /*
      * Warning messages
      */
 
     public static String Compare_Filters_not_installed_message;
+
+    /*
+     * Informational messages
+     */
+
+    public static String Data_Space_Hex_Editor_search_and_replace_information;
 
     static {
         // initialize resource bundle

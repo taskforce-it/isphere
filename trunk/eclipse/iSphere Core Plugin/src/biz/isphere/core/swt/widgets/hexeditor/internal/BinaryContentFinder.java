@@ -26,6 +26,11 @@ package biz.isphere.core.swt.widgets.hexeditor.internal;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,11 +92,15 @@ public final class BinaryContentFinder {
     private long currentPosition = 0L; // absolute value, start of forward
     // finds,
     // end(exclusive) of backward finds
-    private byte[] myByteFindSequence;
+    private byte[] myByteFindSequenceOriginalOrLowerCase;
+    private byte[] myByteFindSequenceAllUpperCase;
     private boolean myCaseSensitive = true;
     private BinaryContent myContent;
     private boolean myDirectionForward = true;
-    private CharSequence myLiteral;
+    private String myLiteral;
+    private String myLiteralEncodedOriginalOrLowerCase;
+    private String myLiteralEncodedAllUpperCase;
+    private CharsetEncoder myCharsetEncoder;
     private int myLiteralByteLength = -1;
     private Pattern myPattern;
     private boolean stopSearching;
@@ -102,9 +111,16 @@ public final class BinaryContentFinder {
      * 
      * @param literal the char sequence to find
      * @param aContent provider to be traversed
+     * @throws CharacterCodingException
      */
-    public BinaryContentFinder(CharSequence literal, BinaryContent aContent) {
+    public BinaryContentFinder(String literal, String charset, BinaryContent aContent, boolean beSensitive) throws CharacterCodingException {
+
+        myCharsetEncoder = Charset.forName(charset).newEncoder().onMalformedInput(CodingErrorAction.REPLACE)
+            .onUnmappableCharacter(CodingErrorAction.REPLACE).replaceWith(new byte[] { (byte)0xE1 });
+
+        setCaseSensitive(beSensitive);
         myLiteral = literal;
+
         initSearchUnicodeAscii();
         myContent = aContent;
         bufferPosition = 0L;
@@ -118,6 +134,7 @@ public final class BinaryContentFinder {
      * @param aContent provider to be traversed
      */
     public BinaryContentFinder(byte[] sequence, BinaryContent aContent) {
+
         initSearchHex(sequence);
         myContent = aContent;
         bufferPosition = 0L;
@@ -138,10 +155,12 @@ public final class BinaryContentFinder {
     }
 
     private int findHexAsciiMatchInPart() {
-        if (myByteFindSequence == null) return -1;
+        if (myByteFindSequenceOriginalOrLowerCase == null) {
+            return -1;
+        }
 
         int start = 0;
-        int inclusiveEnd = byteBuffer.limit() - myByteFindSequence.length;
+        int inclusiveEnd = byteBuffer.limit() - myByteFindSequenceOriginalOrLowerCase.length;
         if (!myDirectionForward) {
             start = inclusiveEnd;
             inclusiveEnd = 0;
@@ -149,12 +168,18 @@ public final class BinaryContentFinder {
 
         for (int i = start; myDirectionForward && i <= inclusiveEnd || !myDirectionForward && i >= inclusiveEnd; i += myDirectionForward ? 1 : -1) {
             boolean matchesSoFar = true;
-            for (int j = 0; j < myByteFindSequence.length && matchesSoFar; ++j) {
+            for (int j = 0; j < myByteFindSequenceOriginalOrLowerCase.length && matchesSoFar; ++j) {
                 byte existing = byteBuffer.get(i + j);
-                byte matcher = myByteFindSequence[j];
+                byte matcher = myByteFindSequenceOriginalOrLowerCase[j];
                 if (existing != matcher) {
-                    if (myCaseSensitive || existing < 'A' || existing > 'z' || matcher < 'A' || matcher > 'z' || existing - matcher != 32
-                        && matcher - existing != 32) matchesSoFar = false;
+                    if (myCaseSensitive) {
+                        matchesSoFar = false;
+                    } else {
+                        matcher = myByteFindSequenceAllUpperCase[j];
+                        if (existing != matcher) {
+                            matchesSoFar = false;
+                        }
+                    }
                 }
             }
             if (matchesSoFar) {
@@ -166,7 +191,9 @@ public final class BinaryContentFinder {
     }
 
     private int findUnicodeMatchInPart() {
-        if (myPattern == null) return -1;
+        if (myPattern == null) {
+            return -1;
+        }
 
         int result = Integer.MAX_VALUE;
         if (!myDirectionForward) {
@@ -230,24 +257,32 @@ public final class BinaryContentFinder {
             }
 
             long resultStartPosition = bufferPosition + currentPartFound;
-            int resultLength = currentPartFoundIsUnicode ? myLiteralByteLength : myByteFindSequence.length;
+
+            int resultLength;
+            if (currentPartFoundIsUnicode) {
+                resultLength = myLiteralByteLength;
+            } else {
+                resultLength = myByteFindSequenceOriginalOrLowerCase.length;
+            }
+
             setNewStart(resultStartPosition + (myDirectionForward ? 1 : resultLength - 1));
 
             return new Match(true, resultStartPosition, resultLength, null);
+
         } catch (IOException ex) {
             return new Match(false, 0, 0, ex);
         }
     }
 
     private void initSearchHex(byte[] sequence) {
-        myByteFindSequence = sequence;
+        myByteFindSequenceOriginalOrLowerCase = sequence;
 
         if (sequence.length > MAX_SEQUENCE_SIZE) {
-            myByteFindSequence = new byte[MAX_SEQUENCE_SIZE];
-            System.arraycopy(sequence, 0, myByteFindSequence, 0, MAX_SEQUENCE_SIZE);
+            myByteFindSequenceOriginalOrLowerCase = new byte[MAX_SEQUENCE_SIZE];
+            System.arraycopy(sequence, 0, myByteFindSequenceOriginalOrLowerCase, 0, MAX_SEQUENCE_SIZE);
         }
 
-        myLiteralByteLength = myByteFindSequence.length;
+        myLiteralByteLength = myByteFindSequenceOriginalOrLowerCase.length;
     }
 
     /**
@@ -260,48 +295,90 @@ public final class BinaryContentFinder {
         return bufferPosition;
     }
 
-    private void initSearchUnicodeAscii() {
+    private void initSearchUnicodeAscii() throws CharacterCodingException {
+
+        if (myCaseSensitive) {
+            myLiteralEncodedOriginalOrLowerCase = new String(myCharsetEncoder.encode(CharBuffer.wrap(myLiteral.toCharArray())).array());
+            myLiteralEncodedAllUpperCase = myLiteralEncodedOriginalOrLowerCase;
+        } else {
+            myLiteralEncodedOriginalOrLowerCase = new String(myCharsetEncoder.encode(CharBuffer.wrap(myLiteral.toLowerCase().toCharArray())).array());
+            myLiteralEncodedAllUpperCase = new String(myCharsetEncoder.encode(CharBuffer.wrap(myLiteral.toUpperCase().toCharArray())).array());
+        }
+
         // everything-quoted regular expression
         StringBuilder regex = new StringBuilder("\\Q");
 
         // 16 bit Unicode chars
-        if (myLiteral.length() * 2 > MAX_SEQUENCE_SIZE) {
-            myLiteral = myLiteral.subSequence(0, MAX_SEQUENCE_SIZE / 2);
+        if (myLiteralEncodedOriginalOrLowerCase.length() * 2 > MAX_SEQUENCE_SIZE) {
+            myLiteralEncodedOriginalOrLowerCase = myLiteralEncodedOriginalOrLowerCase.substring(0, MAX_SEQUENCE_SIZE / 2);
         }
-        myLiteralByteLength = myLiteral.length() * 2;
+        myLiteralByteLength = myLiteralEncodedOriginalOrLowerCase.length() * 2;
 
         boolean isAsciiCompatible = true;
-        byte[] tmpBytes = new byte[myLiteral.length()];
+        byte[] tmpBytesOriginalOrLowerCase = new byte[myLiteralEncodedOriginalOrLowerCase.length()];
+        byte[] tmpBytesAllUpperCase = new byte[tmpBytesOriginalOrLowerCase.length];
         char previous = '\0';
-        for (int i = 0; i < myLiteral.length(); ++i) {
-            char aChar = myLiteral.charAt(i);
+        for (int i = 0; i < myLiteralEncodedOriginalOrLowerCase.length(); ++i) {
+
+            char aChar = myLiteralEncodedOriginalOrLowerCase.charAt(i);
             regex.append(aChar);
 
-            if (previous == '\\' && aChar == 'E') regex.append("\\\\E\\Q"); //$NON-NLS-1$
+            if (previous == '\\' && aChar == 'E') {
+                regex.append("\\\\E\\Q"); //$NON-NLS-1$
+            }
 
             previous = aChar;
 
-            tmpBytes[i] = (byte)aChar;
-            if (aChar > 255) isAsciiCompatible = false;
+            // if (myLiteral instanceof String) {
+            tmpBytesOriginalOrLowerCase[i] = myLiteralEncodedOriginalOrLowerCase.substring(i, i + 1).getBytes()[0];
+            tmpBytesAllUpperCase[i] = myLiteralEncodedAllUpperCase.substring(i, i + 1).getBytes()[0];
+            // } else {
+            // tmpBytes[i] = (byte)aChar;
+            // tmpBytesLowercase[i] = (byte)aChar;
+            // if (tmpBytes[i] >= 'A' && tmpBytes[i] <= 'Z') {
+            // tmpBytesLowercase[i] = (byte)(tmpBytesLowercase[i] + 32);
+            // }
+
+            if (myLiteral.charAt(i) > 255) {
+//                isAsciiCompatible = false;
+            }
+            // }
         }
         regex.append("\\E");
 
         int ignoreCaseFlags = 0;
-        if (!myCaseSensitive) ignoreCaseFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+        if (!myCaseSensitive) {
+            ignoreCaseFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+        }
+
         myPattern = Pattern.compile(regex.toString(), ignoreCaseFlags);
 
-        if (isAsciiCompatible) myByteFindSequence = tmpBytes;
+        if (isAsciiCompatible) {
+            myByteFindSequenceOriginalOrLowerCase = tmpBytesOriginalOrLowerCase;
+            myByteFindSequenceAllUpperCase = tmpBytesAllUpperCase;
+        }
     }
 
     private ByteBuffer nextPart() throws IOException {
+
         long newPos = bufferPosition + byteBuffer.limit() - myLiteralByteLength + 1L;
-        if (!myDirectionForward) newPos = bufferPosition - MAP_SIZE + myLiteralByteLength - 1L;
-        if (newPos < 0L) newPos = 0L;
+        if (!myDirectionForward) {
+            newPos = bufferPosition - MAP_SIZE + myLiteralByteLength - 1L;
+        }
+
+        if (newPos < 0L) {
+            newPos = 0L;
+        }
 
         int size = (int)Math.min(MAP_SIZE, getContentLength() - newPos);
-        if (!myDirectionForward) size = (int)(bufferPosition + myLiteralByteLength - 1L - newPos);
+        if (!myDirectionForward) {
+            size = (int)(bufferPosition + myLiteralByteLength - 1L - newPos);
+        }
 
-        if (size < myLiteralByteLength) return null;
+        if (size < myLiteralByteLength) {
+            return null;
+        }
+
         bufferPosition = newPos;
         populatePart(size);
 
@@ -309,15 +386,20 @@ public final class BinaryContentFinder {
     }
 
     private void populatePart() throws IOException {
+
         int size = MAP_SIZE;
         if (!myDirectionForward) {
             size = (int)Math.min(MAP_SIZE, currentPosition);
         }
+
         populatePart(size);
     }
 
     private void populatePart(int size) throws IOException {
-        if (myContent == null) return;
+
+        if (myContent == null) {
+            return;
+        }
 
         byteBuffer = null;
         // multiple FileChannel.read(byteBuffer) leak memory, so don't reuse
@@ -337,12 +419,18 @@ public final class BinaryContentFinder {
      * ignore case)
      * 
      * @param beSensitive set to true will not match 'a' with 'A'
+     * @throws CharacterCodingException
      */
-    public void setCaseSensitive(boolean beSensitive) {
-        if (myCaseSensitive == beSensitive) return;
+    private void setCaseSensitive(boolean beSensitive) throws CharacterCodingException {
+
+        if (myCaseSensitive == beSensitive) {
+            return;
+        }
 
         myCaseSensitive = beSensitive;
-        if (myLiteral != null) initSearchUnicodeAscii();
+        if (myLiteralEncodedOriginalOrLowerCase != null) {
+            initSearchUnicodeAscii();
+        }
     }
 
     /**
@@ -361,14 +449,20 @@ public final class BinaryContentFinder {
      * @param startPoint next match search will start from this point
      */
     public void setNewStart(long startPoint) {
-        if (startPoint < 0L || startPoint > getContentLength()) return;
+
+        if (startPoint < 0L || startPoint > getContentLength()) {
+            return;
+        }
 
         currentPosition = startPoint;
         bufferPosition = startPoint;
         if (!myDirectionForward) {
             bufferPosition = startPoint - MAP_SIZE;
         }
-        if (bufferPosition < 0L) bufferPosition = 0L;
+
+        if (bufferPosition < 0L) {
+            bufferPosition = 0L;
+        }
     }
 
     /**

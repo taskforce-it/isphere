@@ -19,6 +19,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.part.EditorPart;
 
@@ -46,7 +47,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     protected IStatusLineManager getStatusLineManager() {
         return getEditorSite().getActionBars().getStatusLineManager();
     }
-    
+
     protected StatusLine getStatusLine() {
         return dataAreaEditor.getStatusLine();
     }
@@ -95,9 +96,18 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      */
     private Clipboard getClipboard() {
         if (clipboard == null) {
-            clipboard = new Clipboard(dataAreaEditor.getSite().getShell().getDisplay());
+            clipboard = new Clipboard(getShell().getDisplay());
         }
         return clipboard;
+    }
+
+    /**
+     * Returns the shell of this editor.
+     * 
+     * @return shell of the editor
+     */
+    protected Shell getShell() {
+        return dataAreaEditor.getSite().getShell();
     }
 
     /**
@@ -245,6 +255,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      * Returns whether a find operation can be performed.
      * 
      * @return whether a find operation can be performed
+     * @see IFindReplaceTarget
      */
     public boolean canPerformFind() {
         return false;
@@ -263,6 +274,9 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      *        search, <code>false</code> an insensitive search
      * @param aWholeWord - if <code>true</code> only occurrences are reported in
      *        which the findString stands as a word by itself
+     * @return the position of the specified string, or -1 if the string has not
+     *         been found
+     * @see IFindReplaceTarget
      */
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
         return -1; // not found
@@ -273,6 +287,7 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      * in widget coordinates.
      * 
      * @return the currently selected character range in widget coordinates
+     * @see IFindReplaceTarget
      */
     public Point getSelection() {
         return new Point(0, 0);
@@ -282,18 +297,10 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      * Returns the currently selected characters as a string.
      * 
      * @return the currently selected characters
+     * @see IFindReplaceTarget
      */
     public String getSelectionText() {
         return "";
-    }
-
-    /**
-     * Returns whether this target can be modified.
-     * 
-     * @return <code>true</code> if target can be modified
-     */
-    public boolean isEditable() {
-        return false;
     }
 
     /**
@@ -301,15 +308,116 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
      * This target must be editable. Otherwise nothing happens.
      * 
      * @param aText - the substitution text
+     * @see IFindReplaceTarget
      */
     public void replaceSelection(String aText) {
         return;
     }
 
     /**
+     * Returns whether this target can be modified.
+     * 
+     * @return <code>true</code> if target can be modified
+     * @see IFindReplaceTarget
+     */
+    public boolean isEditable() {
+        return false;
+    }
+
+    /**
+     * Returns whether override mode is enabled.
+     * 
+     * @return <code>true</code> if override mode is enabled
+     */
+    public boolean isOverrideMode() {
+        return false;
+    }
+
+    /**
      * Called, when the content of the editor (data area) has to be saved.
      */
     public abstract void doSave(IProgressMonitor aMonitor);
+
+    /**
+     * Displays a "Go to" dialog to let the user enter the position the cursor
+     * is moved to.
+     */
+    public void doGoTo() {
+    };
+
+    public boolean canGoTo() {
+        return false;
+    }
+
+    /**
+     * Cuts the selected text and copies it to the clipboard.
+     */
+    public void doCut() {
+    }
+
+    public boolean canCut() {
+        return false;
+    }
+
+    /**
+     * Copies the selected text to the clipboard.
+     */
+    public void doCopy() {
+    }
+
+    public boolean canCopy() {
+        return false;
+    }
+
+    /**
+     * Pasts text from the clipboard into the editor.
+     */
+    public void doPaste() {
+    }
+
+    public boolean canPaste() {
+        return false;
+    }
+
+    /**
+     * Deletes the selected text.
+     */
+    public void doDelete() {
+    }
+
+    public boolean canDelete() {
+        return false;
+    }
+
+    /**
+     * Selects all text.
+     */
+    public void doSelectAll() {
+    }
+
+    public boolean canSelectAll() {
+        return false;
+    }
+
+    /**
+     * Redoes the last reverted action.
+     */
+    public void doRedo() {
+    }
+
+    public boolean canRedo() {
+        return false;
+    }
+
+    /**
+     * Un-does the last action.
+     */
+    public void doUndo() {
+    }
+
+    public boolean canUndo() {
+        return false;
+    }
 
     /**
      * Called, when the of the editor is created. This method has to create a
@@ -326,7 +434,8 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
 
     public abstract void setStatusMessage(String message);
 
-    public abstract void updateActionsStatus();
+    public void updateActionStatus() {
+    };
 
     public abstract void updateStatusLine();
 

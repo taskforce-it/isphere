@@ -74,7 +74,6 @@ public final class BinaryContent {
             this.position = position;
             this.length = length;
         }
-
     }
 
     public static final class RangeSelection {
@@ -471,6 +470,7 @@ public final class BinaryContent {
     }
 
     private int fillWithPartOfRange(ByteBuffer dst, Range sourceRange, long overlapBytes, int maxCopyLength) throws IOException {
+        
         int dstInitialPosition = dst.position();
         if (sourceRange.data instanceof ByteBuffer) {
             ByteBuffer src = (ByteBuffer)sourceRange.data;
@@ -490,19 +490,23 @@ public final class BinaryContent {
                 dst.limit(dst.position() + length);
             }
             src.getChannel().read(dst, start);
-            if (limit > 0) dst.limit(limit);
+            if (limit > 0) {
+                dst.limit(limit);
+            }
         }
 
         return dst.position() - dstInitialPosition;
     }
 
     private void fillWithRange(ByteBuffer dst, Range sourceRange, long overlapBytes, long position, List<Long> rangesModified) throws IOException {
+
         long positionSoFar = position;
         if (position < myChangesPosition) {
             int added = fillWithPartOfRange(dst, sourceRange, overlapBytes, (int)Math.min(myChangesPosition - position, Integer.MAX_VALUE));
             positionSoFar += added;
             overlapBytes += added;
         }
+
         int changesAdded = 0;
         long changesPosition = positionSoFar;
         if (myChanges != null && positionSoFar >= myChangesPosition && positionSoFar < myChangesPosition + myChanges.size()
@@ -569,7 +573,11 @@ public final class BinaryContent {
      * @throws IOException
      */
     public int get(ByteBuffer dst, List<Long> rangesModified, long position) throws IOException {
-        if (rangesModified != null) rangesModified.clear();
+
+        if (rangesModified != null) {
+            rangesModified.clear();
+        }
+
         long positionShift = 0;
         int dstInitialRemaining = dst.remaining();
         if (myChanges != null && myChangesInserted && position > myChangesPosition) {
@@ -583,8 +591,11 @@ public final class BinaryContent {
         while (tailTree.hasNext() && (partialRange = tailTree.next()).position < exclusiveEnd) {
             fillWithRange(dst, partialRange, positionSoFar - partialRange.position, positionSoFar + positionShift, rangesModified);
             positionSoFar = partialRange.exclusiveEnd();
-            if (myChanges != null && myChangesInserted && positionSoFar + positionShift > myChangesPosition) positionShift = myChanges.size();
+            if (myChanges != null && myChangesInserted && positionSoFar + positionShift > myChangesPosition) {
+                positionShift = myChanges.size();
+            }
         }
+
         if (dst.remaining() > 0 && myChanges != null && positionSoFar + positionShift < myChangesPosition + myChanges.size()) {
             int size = fillWithChanges(dst, positionSoFar + positionShift);
             if (rangesModified != null) {
@@ -1100,7 +1111,7 @@ public final class BinaryContent {
             result = overwriteRanges(ranges.subList(size - 1, size));
         }
 
-        notifyModifyListeners(result[0], result[1]-result[0]);
+        notifyModifyListeners(result[0], result[1] - result[0]);
 
         return result;
     }
@@ -1189,20 +1200,20 @@ public final class BinaryContent {
             // 0 to size - 1: overwritten ranges, last one: overwriter range
             result = overwriteRanges(ranges.subList(0, ranges.size() - 1));
         }
-        
-        notifyModifyListeners(result[0], result[1]-result[0]);
+
+        notifyModifyListeners(result[0], result[1] - result[0]);
 
         return result;
     }
 
     private Range updateChanges(long position, boolean insert) throws IOException {
-        
+
         Range result = null;
-        
+
         if (myChanges != null) {
             long lowerLimit = myChangesPosition;
             long upperLimit = myChangesPosition + myChanges.size();
-            if (!insert && position >= lowerLimit && position < upperLimit){
+            if (!insert && position >= lowerLimit && position < upperLimit) {
                 return result; // reuse without expanding
             }
 
@@ -1225,12 +1236,12 @@ public final class BinaryContent {
             commitChanges();
 
         }
-        
+
         myChanges = new ArrayList<Integer>();
         myChanges.add(new Integer(getFromRanges(position)));
         myChangesInserted = insert;
         myChangesPosition = position;
-        
+
         if (!insert) {
             result = getRangeAt(position);
         }

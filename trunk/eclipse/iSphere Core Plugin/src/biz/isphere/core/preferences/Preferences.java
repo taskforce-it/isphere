@@ -598,7 +598,9 @@ public final class Preferences {
      */
 
     public void initializeDefaultPreferences() {
+        
         preferenceStore.setDefault(getShowWarningKey(Warning.COMPARE_FILTERS_NOT_INSTALLED), true);
+        preferenceStore.setDefault(getShowWarningKey(Warning.DATA_SPACE_FIND_REPLACE_INFORMATION), true);
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());

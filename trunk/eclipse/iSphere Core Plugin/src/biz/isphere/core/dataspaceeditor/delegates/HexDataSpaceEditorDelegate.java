@@ -19,7 +19,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -43,18 +45,22 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
+import biz.isphere.core.dataspaceeditor.dialog.GoToDialog;
 import biz.isphere.core.internal.FontHelper;
+import biz.isphere.core.preferences.Warning;
+import biz.isphere.core.preferences.WarningMessage;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
 
 /**
- * Editor delegate that edits a *LGL data area.
+ * Editor delegate that edits a data space.
  * <p>
  * The delegate implements all the specific stuff that is needed to edit a data
  * area of type *LGL.
@@ -63,13 +69,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
     private HexText dataAreaText;
 
-    private Action cutAction;
-    private Action copyAction;
-    private Action pasteAction;
-    private Action undoAction;
-    private Action redoAction;
-    private Action deleteAction;
-    private Action selectAllAction;
     private Action findReplaceAction;
 
     private String statusMessage;
@@ -201,7 +200,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
 
         dataAreaText.addStateChangeListener(new HexText.StateChangeListener() {
             public void changed(HexText.StateChangeEvent event) {
-                updateActionsStatus();
                 updateStatusLine();
             }
         });
@@ -209,8 +207,8 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         dataAreaText.addLongSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                updateActionsStatus();
                 updateStatusLine();
+                updateUndoRedoActionStatus();
             }
         });
     }
@@ -252,61 +250,27 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         return System.getProperty("file.encoding", "utf-8");
     }
 
+    private void updateUndoRedoActionStatus() {
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        IAction action;
+
+        action = actionBars.getGlobalActionHandler(ActionFactory.UNDO.getId());
+        action.setEnabled(action.isEnabled());
+
+        action = actionBars.getGlobalActionHandler(ActionFactory.REDO.getId());
+        action.setEnabled(action.isEnabled());
+
+        actionBars.updateActionBars();
+    }
+
     @Override
     public void setStatusMessage(String message) {
         statusMessage = message;
     }
 
-    /**
-     * Updates the status of actions: enables/disables them depending on whether
-     * there is text selected and whether inserting or overwriting is active.
-     * Undo/redo actions are enabled/disabled as well.
-     */
-    @Override
-    public void updateActionsStatus() {
-
-        boolean textSelected = dataAreaText != null && dataAreaText.isSelected();
-        boolean lengthModifiable = textSelected && !dataAreaText.isOverwriteMode();
-
-        IAction action;
-        IActionBars bars = getEditorSite().getActionBars();
-
-        action = bars.getGlobalActionHandler(ActionFactory.CUT.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.COPY.getId());
-        if (action != null) {
-            action.setEnabled(textSelected);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.PASTE.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.UNDO.getId());
-        if (action != null) {
-            action.setEnabled(dataAreaText != null && dataAreaText.canUndo());
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.REDO.getId());
-        if (action != null) {
-            action.setEnabled(dataAreaText != null && dataAreaText.canRedo());
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.DELETE.getId());
-        if (action != null) {
-            action.setEnabled(lengthModifiable);
-        }
-
-        action = bars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
-        if (action != null) {
-            action.setEnabled(true);
-        }
-
-        bars.updateActionBars();
+    public void updateActionStatus() {
+        updateUndoRedoActionStatus();
     }
 
     @Override
@@ -359,11 +323,107 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     }
 
     @Override
+    public boolean canGoTo() {
+        return true;
+    }
+
+    @Override
+    public void doGoTo() {
+        GoToDialog dialog = new GoToDialog(getShell(), dataAreaText);
+        dialog.open();
+    }
+
+    @Override
+    public boolean canCut() {
+        return isHasSelectedTextAndIsModifiable();
+    }
+
+    @Override
+    public void doCut() {
+        dataAreaText.cut();
+    }
+
+    @Override
+    public boolean canCopy() {
+        return hasSelectedText();
+    }
+
+    @Override
+    public void doCopy() {
+        dataAreaText.copy();
+    }
+
+    @Override
+    public boolean canPaste() {
+        return true;
+    }
+
+    @Override
+    public void doPaste() {
+        dataAreaText.paste();
+    }
+
+    @Override
+    public boolean canDelete() {
+        return isHasSelectedTextAndIsModifiable();
+    }
+
+    @Override
+    public void doDelete() {
+        dataAreaText.deleteSelected();
+    }
+
+    @Override
+    public boolean canSelectAll() {
+        return true;
+    }
+
+    @Override
+    public void doSelectAll() {
+        dataAreaText.selectAll();
+    }
+
+    @Override
+    public boolean canRedo() {
+        return dataAreaText.canRedo();
+    }
+
+    @Override
+    public void doRedo() {
+        dataAreaText.redo();
+    }
+
+    @Override
+    public boolean canUndo() {
+        return dataAreaText.canUndo();
+    }
+
+    @Override
+    public void doUndo() {
+        dataAreaText.undo();
+    }
+
+    @Override
     public void setInitialFocus() {
         if (dataAreaText == null) {
             return;
         }
         dataAreaText.setFocus();
+    }
+
+    private boolean isHasSelectedTextAndIsModifiable() {
+        return hasSelectedText() && !isOverwriteMode();
+    }
+
+    private boolean hasSelectedText() {
+        if (getSelection().y <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isOverwriteMode() {
+        return dataAreaText.isOverwriteMode();
     }
 
     /**
@@ -373,83 +433,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
      */
     private Font getEditorFont() {
         return FontHelper.getFixedSizeFont();
-    }
-
-    /**
-     * Returns the CutAction that overrides the original action of the editor
-     * widget.
-     * 
-     * @param anEditorPart - the editor part, that contains this editor delegate
-     * @return CutAction to override the original behavior
-     */
-    @Override
-    public Action getCutAction() {
-        if (cutAction == null) {
-            cutAction = new EditorAction(dataAreaText, ActionFactory.CUT.getId());
-        }
-        return cutAction;
-    }
-
-    /**
-     * Returns the CopyAction that overrides the original action of the editor
-     * widget.
-     * 
-     * @param anEditorPart - the editor part, that contains this editor delegate
-     * @return CopyAction to override the original behavior
-     */
-    @Override
-    public Action getCopyAction() {
-        if (copyAction == null) {
-            copyAction = new EditorAction(dataAreaText, ActionFactory.COPY.getId());
-        }
-        return copyAction;
-    }
-
-    /**
-     * Returns the PasteAction that overrides the original action of the editor
-     * widget.
-     * 
-     * @param anEditorPart - the editor part, that contains this editor delegate
-     * @return PasteAction to override the original behavior
-     */
-    @Override
-    public Action getPasteAction() {
-        if (pasteAction == null) {
-            pasteAction = new EditorAction(dataAreaText, ActionFactory.PASTE.getId());
-        }
-        return pasteAction;
-    }
-
-    @Override
-    public Action getUndoAction() {
-        if (undoAction == null) {
-            undoAction = new EditorAction(dataAreaText, ActionFactory.UNDO.getId());
-        }
-        return undoAction;
-    }
-
-    @Override
-    public Action getRedoAction() {
-        if (redoAction == null) {
-            redoAction = new EditorAction(dataAreaText, ActionFactory.REDO.getId());
-        }
-        return redoAction;
-    }
-
-    @Override
-    public Action getDeleteAction() {
-        if (deleteAction == null) {
-            deleteAction = new EditorAction(dataAreaText, ActionFactory.DELETE.getId());
-        }
-        return deleteAction;
-    }
-
-    @Override
-    public Action getSelectAllAction() {
-        if (selectAllAction == null) {
-            selectAllAction = new EditorAction(dataAreaText, ActionFactory.SELECT_ALL.getId());
-        }
-        return selectAllAction;
     }
 
     /**
@@ -463,7 +446,22 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     public Action getFindReplaceAction(EditorPart anEditorPart) {
         if (findReplaceAction == null) {
             findReplaceAction = new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedTextEditorMessages"), null,
-                anEditorPart);
+                anEditorPart) {
+                
+                public void run() {
+                    displayInformationalMessage();
+                    super.run();
+                }
+                
+                public void runWithEvent(Event event) {
+                    displayInformationalMessage();
+                    super.runWithEvent(event);
+                };
+
+                private void displayInformationalMessage() {
+                    WarningMessage.openInformation(getShell(), Warning.DATA_SPACE_FIND_REPLACE_INFORMATION, Messages.Data_Space_Hex_Editor_search_and_replace_information);
+                };
+            };
         }
         return findReplaceAction;
     }
@@ -491,14 +489,65 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
      *        search, <code>false</code> an insensitive search
      * @param aWholeWord - if <code>true</code> only occurrences are reported in
      *        which the findString stands as a word by itself
+     * @return the position of the specified string, or -1 if the string has not
+     *         been found
+     * @see IFindReplaceTarget
      */
     @Override
     public int findAndSelect(int aWidgetOffset, String aFindString, boolean aSearchForward, boolean aCaseSensitive, boolean aWholeWord) {
-        BinaryContentFinder.Match match = dataAreaText.findAndSelect(aWidgetOffset, aFindString, false, aSearchForward, aCaseSensitive);
-        if (!match.isFound()) {
+
+        String tempFindString;
+        boolean isHexString = isHexString(aFindString);
+        if (isHexString) {
+            tempFindString = getHexString(aFindString);
+        } else {
+            tempFindString = aFindString;
+        }
+
+        BinaryContentFinder.Match match;
+        try {
+
+            match = dataAreaText.findAndSelect(aWidgetOffset, tempFindString, isHexString, aSearchForward, aCaseSensitive);
+            if (!match.isFound()) {
+                return -1;
+            }
+
+            return (int)match.getStartPosition();
+
+        } catch (Throwable e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return -1;
         }
-        return (int)match.getStartPosition();
+    }
+
+    private boolean isHexString(String aFindString) {
+
+        if (getHexString(aFindString) == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getHexString(String text) {
+
+        if (text == null || text.length() == 0) {
+            return null;
+        }
+
+        if (text.startsWith("x'") && text.endsWith("'") && (text.length() - 3) % 2 == 0) {
+            return text.substring(2, 2 + text.length() - 3);
+        }
+
+        if (text.startsWith("x") && (text.length() - 1) % 2 == 0) {
+            return text.substring(1);
+        }
+
+        if (text.startsWith("0x") && (text.length() - 2) % 2 == 0) {
+            return text.substring(2);
+        }
+
+        return null;
     }
 
     /**
@@ -509,6 +558,11 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
      */
     @Override
     public Point getSelection() {
+
+        if (dataAreaText == null) {
+            return new Point(-1, -1);
+        }
+
         Point selection = dataAreaText.getSelection();
         return new Point(selection.x, selection.y - selection.x);
     }
@@ -531,6 +585,16 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
     @Override
     public boolean isEditable() {
         return dataAreaText.isEditable();
+    }
+
+    /**
+     * Returns whether override mode is enabled.
+     * 
+     * @return <code>true</code> if override mode is enabled
+     */
+    @Override
+    public boolean isOverrideMode() {
+        return dataAreaText.isOverwriteMode();
     }
 
     /**
@@ -561,45 +625,6 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         private void changeFont(FontData aFontData) {
             Font font = SWTResourceManager.getFont(aFontData.getName(), aFontData.getHeight(), aFontData.getStyle());
             dataAreaText.setFont(font);
-        }
-    }
-
-    private class EditorAction extends Action {
-        private HexText myControl;
-        private String myId;
-
-        public EditorAction(HexText control, String id) {
-            if (control == null) {
-                throw new IllegalArgumentException("Parameter 'control' must not be null.");
-            }
-            if (id == null) {
-                throw new IllegalArgumentException("Parameter 'id' must not be null."); //$NON-NLS-1$
-            }
-            this.myControl = control;
-            this.myId = id;
-        }
-
-        @Override
-        public void run() {
-            if (myControl == null) {
-                return;
-            }
-
-            if (myId.equals(ActionFactory.UNDO.getId())) {
-                myControl.undo();
-            } else if (myId.equals(ActionFactory.REDO.getId())) {
-                myControl.redo();
-            } else if (myId.equals(ActionFactory.CUT.getId())) {
-                myControl.cut();
-            } else if (myId.equals(ActionFactory.COPY.getId())) {
-                myControl.copy();
-            } else if (myId.equals(ActionFactory.PASTE.getId())) {
-                myControl.paste();
-            } else if (myId.equals(ActionFactory.DELETE.getId())) {
-                myControl.deleteSelected();
-            } else if (myId.equals(ActionFactory.SELECT_ALL.getId())) {
-                myControl.selectAll();
-            }
         }
     }
 }

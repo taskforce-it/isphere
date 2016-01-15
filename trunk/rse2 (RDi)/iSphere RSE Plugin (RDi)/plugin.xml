@@ -32,7 +32,6 @@
             name=""
             icon="icons/data_area.gif"
             class="biz.isphere.rse.dataareaeditor.DataAreaEditor"
-            contributorClass="biz.isphere.rse.dataareaeditor.DataAreaEditorActionBarContributor"
             id="biz.isphere.rse.dataareaeditor.DataAreaEditor"/>
       <editor
             name=""
@@ -831,6 +830,12 @@
         commandId="biz.isphere.core.command.MessageFileSearchPage.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
+   
+      <key 
+        sequence="Ctrl+L"
+        commandId="biz.isphere.core.dataspaceeditor.GoToHandler"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
             
    </extension>
    
@@ -890,8 +895,15 @@
             name="%command_Open_iSphere_Help">
       </command>
       
+      <command
+      		defaultHandler="biz.isphere.core.dataspaceeditor.GoToHandler"
+            id="biz.isphere.core.dataspaceeditor.GoToHandler"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_DataSpaceEditor_GoTo">
+      </command>
+      
    </extension>
-
+  
       	<!--
       	  ==========================================
       	    iSphere i Project Decorator
