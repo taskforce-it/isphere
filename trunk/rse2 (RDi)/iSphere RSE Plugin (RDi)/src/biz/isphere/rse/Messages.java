@@ -123,6 +123,8 @@ public class Messages extends NLS {
     public static String Connection_A_not_found;
 
     public static String Failed_to_execute_command_A;
+
+    public static String Cannot_copy_source_members_from_different_connections;
     
     static {
         // initialize resource bundle

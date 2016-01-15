@@ -1,4 +1,10 @@
 
+Changelog: iSphere 2.8.0 beta 12
+--------------------------------
+ • Added option "Copy Member(s) to" to the context menu of IBM i
+   source members.
+
+
 Changelog: iSphere 2.8.0 beta 11
 --------------------------------
  • Fixed search and replace of user space hex editor.

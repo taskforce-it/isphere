@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.sourcemembercopy;
+package biz.isphere.core.sourcemembercopy.rse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import java.util.TreeSet;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 
 /**
  * This class copies a given list of members to another library, file or member
