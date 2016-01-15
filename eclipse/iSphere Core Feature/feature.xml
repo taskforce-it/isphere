@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.core"
       label="iSphere Core (required)"
-      version="2.8.0.b009"
+      version="2.8.0.b012"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
