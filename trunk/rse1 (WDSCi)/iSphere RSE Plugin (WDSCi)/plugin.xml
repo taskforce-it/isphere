@@ -258,6 +258,53 @@
       	
       	<!--
       	  ==========================================
+      	    RSE Source Member
+            menubarPath="group.reorganize"
+      	  ==========================================
+      	-->
+   
+   <extension
+         id="add.item"
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?endof=additions">
+        <command
+              commandId="biz.isphere.core.command.SourceMember.copyTo"
+              id="biz.isphere.rse.handler.CopyToCommandHandler"
+              label="%command_CopyMembersTo_Label"
+              mnemonic="S">
+        </command>
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="biz.isphere.category.Commands"             
+            id="biz.isphere.core.command.SourceMember.copyTo"
+            name="%command_CopyMembersTo_Name">
+      </command>
+	</extension>	 
+	
+    <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="biz.isphere.rse.handler.CopyToCommandHandler"
+            id="biz.isphere.rse.handler.CopyToCommandHandler"
+            commandId="biz.isphere.core.command.SourceMember.copyTo">
+        <activeWhen>
+          <with variable="selection">
+            <count value="*" />
+            <iterate operator="and">
+              <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+            </iterate>
+          </with>
+        </activeWhen>
+      </handler>
+	</extension>	 
+
+	     	
+      	<!--
+      	  ==========================================
       	    Others
       	  ==========================================
       	-->
