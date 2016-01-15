@@ -1148,6 +1148,8 @@ public class Messages extends NLS {
 
     public static String GoTo_Location_dots;
 
+    public static String CopyMemberDialog_Info;
+
     /*
      * Warning messages
      */

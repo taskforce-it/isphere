@@ -45,6 +45,8 @@ import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
 public class CopyMemberDialog extends XDialog {
 
+    private static final String SINGLE_QUOTE = "'";
+
     private CopyMemberService jobDescription;
 
     private Text textToFile;
@@ -195,15 +197,19 @@ public class CopyMemberDialog extends XDialog {
     protected Control createDialogArea(Composite parent) {
 
         mainArea = new Composite(parent, SWT.NONE);
-        mainArea.setLayout(new GridLayout(2, false));
+        mainArea.setLayout(new GridLayout(3, false));
         mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         textToFile = createNameField(mainArea, Messages.To_file_colon);
+        Label textInfo = new Label(mainArea, SWT.NONE);
+        textInfo.setAlignment(SWT.RIGHT);
+        textInfo.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 1, 2));
+        textInfo.setText(Messages.bind(Messages.CopyMemberDialog_Info, SINGLE_QUOTE + Messages.To_member_colhdg + SINGLE_QUOTE));
         textToLibrary = createNameField(mainArea, Messages.To_library_colon);
 
         tableViewer = new TableViewer(mainArea, SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         Table table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
@@ -222,7 +228,7 @@ public class CopyMemberDialog extends XDialog {
 
         chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
         chkBoxReplace.setText(Messages.Replace_existing_members);
-        chkBoxReplace.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 2, 1));
+        chkBoxReplace.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
         createStatusLine(mainArea);
 
@@ -435,10 +441,10 @@ public class CopyMemberDialog extends XDialog {
         }
 
         public String getTooltipText(Object element, int columnIndex) {
-            
+
             CopyMemberItem member = (CopyMemberItem)element;
-            
-            switch(columnIndex) {
+
+            switch (columnIndex) {
             case COLUMN_ERROR_MESSAGE:
                 return getErrorMessage(member);
             default:
