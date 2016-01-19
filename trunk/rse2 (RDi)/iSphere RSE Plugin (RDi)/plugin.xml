@@ -542,7 +542,7 @@
          id="add.item"
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?endof=additions">
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
