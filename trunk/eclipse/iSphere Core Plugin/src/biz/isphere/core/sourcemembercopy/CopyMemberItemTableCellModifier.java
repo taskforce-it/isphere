@@ -15,8 +15,14 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+
+import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
+import biz.isphere.core.internal.ColorHelper;
 
 /**
  * This class implements an ICellModifier An ICellModifier is called when the
@@ -51,7 +57,41 @@ public class CopyMemberItemTableCellModifier implements ICellModifier {
         CellEditor[] editors = new CellEditor[COLUMN_NAMES.length];
         for (int i = 0; i < editors.length; i++) {
             if (hasEditor(COLUMN_NAMES[i])) {
-                editors[i] = new TextCellEditor(table);
+                editors[i] = new TextCellEditor(table) {
+                    private Text text;
+                    private Color backgroundColor;
+
+                    protected org.eclipse.swt.widgets.Control createControl(org.eclipse.swt.widgets.Composite parent) {
+                        Control control = super.createControl(parent);
+                        text = getTextControl(control);
+                        if (text != null) {
+                            text.addVerifyListener(new UpperCaseOnlyVerifier());
+                        }
+                        return control;
+                    };
+
+                    public void setFocus() {
+                        super.setFocus();
+                        if (isActivated()) {
+                            Color color = ColorHelper.getBackgroundColorOfSelectedControls();
+                            text.setBackground(color);
+                        }
+                    };
+
+                    protected void focusLost() {
+                        super.focusLost();
+                        if (text != null) {
+                            text.setBackground(backgroundColor);
+                        }
+                    };
+                    
+                    private Text getTextControl(Control control) {
+                        if (control instanceof Text) {
+                            return (Text)control;
+                        }
+                        return null;
+                    }
+                };
             } else {
                 editors[i] = null;
             }
@@ -104,7 +144,7 @@ public class CopyMemberItemTableCellModifier implements ICellModifier {
         if (COLUMN_TO_MEMBER.equals(columnName)) {
             copyMemberItem.setToMember((String)value);
         } else {
-//            throw new IllegalArgumentException("Illegal argument 'columnName': " + columnName); //$NON-NLS-1$
+            //            throw new IllegalArgumentException("Illegal argument 'columnName': " + columnName); //$NON-NLS-1$
         }
     }
 
