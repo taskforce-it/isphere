@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate="12/17/2015">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/19/2016">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1330,7 +1330,7 @@ Installing #MSG_GER  type CLP - in progress.
 <mbr
 mbrname =  "#MSG_GER  "
 mbrtype =  "CLP       "
-mbrtext =  "MSG: PRZ0001 - PRZ0025                            "
+mbrtext =  "MSG: PRZ0001 - PRZ0027                            "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -1956,6 +1956,27 @@ eöffnet werden.'                                                      +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0027                    */
+     /* Wenn die Option '*EVENTF' angegeben ist, müssen auch die Pa */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0027) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0027) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Wenn die Option ''*EVENTF'' angegeben ist, müssen auch die Parameter -
+LIB() und OBJ() angegeben werden.'                                    +
+                ) +
+                SEV(40) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -1966,7 +1987,7 @@ Installing #MSG_ENG  type CLP - in progress.
 <mbr
 mbrname =  "#MSG_ENG  "
 mbrtype =  "CLP       "
-mbrtext =  "MSG: PRZ0001 - PRZ0025                            "
+mbrtext =  "MSG: PRZ0001 - PRZ0027                            "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -2590,6 +2611,27 @@ r &3.'                                                                +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0027                    */
+     /* When option '*EVENTF' is specified, parameters LIB() and OB */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0027) MSGF(&LI/STRPREPRCE)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0027) +
+                MSGF(&LI/STRPREPRCE) +
+                MSG(+
+'When option ''*EVENTF'' is specified, parameters LIB() and OBJ() must-
+ be specified, too.'                                                  +
+                ) +
+                SEV(40) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -2657,7 +2699,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8.4 - 23.07.2015 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.8.5 - 19.01.2016 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -3368,6 +3410,30 @@ srccssid=  "00273">
      D PRZ0026         DS
       *   Keine Ersatzvariablen definiert!
      D PRZ0026_LEN     S              8B 0 INZ(0512)
+      *
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0027  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0027   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Wenn die Option  *EVENTF  angegeben ist, müss"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      *---------------------------------------------------------------
+      * Datenstruktur für Message-ID : PRZ0027
+      *
+      * Wenn die Option '*EVENTF' angegeben ist, müssen auch die Pa
+      *
+     D PRZ0027         DS
+      *   Keine Ersatzvariablen definiert!
+     D PRZ0027_SIZE    S              8B 0 INZ(0000)
       *
 ]]>  </copysrc>
 </mbr>
@@ -6959,22 +7025,22 @@ srccssid=  "00273">
             for i = 1 to i_option.numE;
                select;
                when (i_option.option(i) = cEVENTF_YES);
-                  select;
-                  when (not f_startsWith('*': i_lib));
+               // select;
+               // when (not f_startsWith('*': i_lib));
                      g_option.isEventf = cTrue;
-                     g_eventf.mbr = i_srcMbr;
+                     g_eventf.mbr = i_obj;
                      g_eventf.lib = i_lib;
-                  when (not f_startsWith('*': i_srcLib));
-                     g_option.isEventf = cTrue;
-                     g_eventf.mbr = i_srcMbr;
-                     g_eventf.lib = i_srcLib;
-                  when (not f_startsWith('*': i_useSrcLib));
-                     g_option.isEventf = cTrue;
-                     g_eventf.mbr = i_srcMbr;
-                     g_eventf.lib = i_useSrcLib;
-                  other;
-                     g_option.isEventf = cFalse;
-                  endsl;
+               // when (not f_startsWith('*': i_srcLib));
+               //    g_option.isEventf = cTrue;
+               //    g_eventf.mbr = i_srcMbr;
+               //    g_eventf.lib = i_srcLib;
+               // when (not f_startsWith('*': i_useSrcLib));
+               //    g_option.isEventf = cTrue;
+               //    g_eventf.mbr = i_srcMbr;
+               //    g_eventf.lib = i_useSrcLib;
+               // other;
+               //    g_option.isEventf = cFalse;
+               // endsl;
                when (i_option.option(i) = cEVENTF_NO);
                   g_option.isEventf = cFalse;
                endsl;
@@ -9120,7 +9186,7 @@ srccssid=  "00273">
       *     _T_Unsigned  2 or 4             0
       * =============================================================
      P NUM_Descr_T...
-     P                 b                          export
+     P                 b
      D                 pi            10i 0
      D  i_type                        3i 0 const
      D  i_length                      3i 0 const
@@ -9512,6 +9578,13 @@ srccssid=  "00273">
  /* ------------------------- */
  /* Prüfen der Abhängigkeiten */
  /* ------------------------- */
+
+ /* ... Ausgeben Event File       */
+ /*     ... Option = *EVENTF      */
+             DEP        CTL(&OPTION *EQ '*EVENTF') +
+                          PARM((&LIB *NE '*NONE')  +
+                               (&OBJ *NE '*NONE')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0027)
 
  /* ... Ändern Objektbeschreibung */
  /*     ... Objekttyp             */
@@ -9914,11 +9987,18 @@ srccssid=  "00273">
  PMTCTL1:    PMTCTL     CTL(CHGOBJD) COND((*EQ '*YES'))
 
  /* ------------------------- */
- /* Prüfen der Abhängigkeiten */
+ /* Check dependencies        */
  /* ------------------------- */
 
- /* ... Ändern Objektbeschreibung */
- /*     ... Objekttyp             */
+ /* ... Create Event File         */
+ /*     ... Option = *EVENTF      */
+             DEP        CTL(&OPTION *EQ '*EVENTF') +
+                          PARM((&LIB *NE '*NONE')  +
+                               (&OBJ *NE '*NONE')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0027)
+
+ /* ... Change object description */
+ /*     ... Object type           */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJTYPE          +
                               *EQ '*PGM'))      +
@@ -9931,21 +10011,21 @@ srccssid=  "00273">
                         NBRTRUE(*ALL)            +
                         MSGID(PRZ0020)
 
- /*     ... Objekt-Quellendatei   */
+ /*     ... Object-Source file    */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCFILE       +
                               *EQ '*SAME'))     +
                         NBRTRUE(*ALL)           +
                         MSGID(PRZ0016)
 
- /*     ... Objekt-Quellenbibliothek */
+ /*     ... Object-Source library    */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCLIB        +
                               *EQ '*SAME'))     +
                         NBRTRUE(*ALL)           +
                         MSGID(PRZ0017)
 
- /*     ... Objekt-Quellenteildatei  */
+ /*     ... Object-Source member     */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCMBR        +
                               *EQ '*SAME'))     +
@@ -10016,4 +10096,4 @@ DLTMOD MODULE(&tolib/STRPREPRC4)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application STRPREPRC successfully installed.
 ]]>  </sendmsg>
-</upload> 
+</upload>
