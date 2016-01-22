@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSObject;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.systems.as400.debug.launchconfig.AS400DebugResources;
 import com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate;
 
@@ -40,7 +39,7 @@ public class SetSEPAsync extends AbstractAsyncHandler {
 
         try {
 
-            IQSYSObject[] objects = IBMiConnection.getConnection("ghentw.gfd.de").listObjects(library, program, new String[] { type }, null);
+            IQSYSObject[] objects = getConnection().listObjects(library, program, new String[] { type }, null);
             if (objects != null && objects.length > 0) {
                 IAction action = new SetSEPAction();
                 IStructuredSelection selection = new StructuredSelection(objects);
