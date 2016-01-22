@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.tn5250j.base,
  biz.isphere.base,
  biz.isphere.core,
- biz.isphere.rse
+ biz.isphere.rse,
+ com.ibm.etools.iseries.debug
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
 Export-Package: biz.isphere.tn5250j.rse,
