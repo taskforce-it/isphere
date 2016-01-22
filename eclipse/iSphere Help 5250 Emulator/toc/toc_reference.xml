@@ -9,6 +9,7 @@
     <topic label="PDM Options" >
         <topic label="Start Eclipse Editor" href="html/5250emulator/pdm/start_eclipse_editor.html" />
         <topic label="Start iSphere Compare/Merge Editor" href="html/5250emulator/pdm/start_isphere_compare_merge_editor.html" /> 
+        <topic label="Set Debugger Service Entry Point" href="html/5250emulator/pdm/set_debugger_sep.html" /> 
     </topic>
     <topic label="Known Problems" href="html/5250emulator/problems/problems.html" />
   </topic>
