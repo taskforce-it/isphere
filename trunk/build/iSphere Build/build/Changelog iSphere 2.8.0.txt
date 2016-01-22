@@ -3,6 +3,8 @@ Changelog: iSphere 2.8.0 beta 12
 --------------------------------
  • Added option "Copy Member(s) to" to the context menu of IBM i
    source members.
+ • Added handler to set a service entry point (SEP) from an 
+   iSphere 5250 session.
 
 
 Changelog: iSphere 2.8.0 beta 11
