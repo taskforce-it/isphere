@@ -1131,7 +1131,7 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
             + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
