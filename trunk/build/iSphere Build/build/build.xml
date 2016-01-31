@@ -548,10 +548,12 @@
 				</copy>
 			</then>
 			<else>
+				<!--
 				<echo>Copying "Not yet available.txt" ...</echo>
 				<copy todir="${build.upload.dir.files}">
 					<fileset dir="${build.template.dir.files}" />
 				</copy>
+				-->
 			</else>
 		</if>
 
