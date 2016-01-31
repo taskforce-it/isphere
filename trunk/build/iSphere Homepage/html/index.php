@@ -164,7 +164,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: <?php echo $current_version; ?> - Copyright: 2015, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: 15.07.2015 - 20:50:31</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: <?php echo $current_version; ?> - Copyright: 2016, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
         </table>
         <br>
     </body>
