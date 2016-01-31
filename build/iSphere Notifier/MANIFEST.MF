@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bundle-Version: 2.7.0.r
+Bundle-Version: 2.8.0.r
 X-Bundle-Update-Library: true
 X-Bundle-Info: New Release!
-X-Beta-Version: 2.8.0.b012
-X-Beta-Update-Library: false
-X-Beta-Info: Feature complete. ALL: iSphere 5250 Emulator; New option "Display informational messages at startup" for the Message Subsystem; New option "Copy members" from search result view; Connection specific iSphere library; User space hex editor; Message monitor filter options. -- RDi 9.5: Preserve source dates when saving member from compare/merge editor. (Update with Help > Install New Software.)
+X-Beta-Version: 2.8.0.r
+X-Beta-Update-Library: true
+X-Beta-Info: New Release!
