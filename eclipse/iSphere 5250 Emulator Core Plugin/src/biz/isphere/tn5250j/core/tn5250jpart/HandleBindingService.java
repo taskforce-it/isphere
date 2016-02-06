@@ -73,7 +73,6 @@ public final class HandleBindingService {
 
         BindingService bindingService = (BindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
         bindingService.setKeyFilterEnabled(isKeyFilterEnabled);
-        System.out.println("Eclipse key filter enabled: " + isKeyFilterEnabled);
 
         for (int idx = 0; idx < tn5250jParts.size(); idx++) {
             tn5250jParts.get(idx).setBindingService(!isKeyFilterEnabled);
