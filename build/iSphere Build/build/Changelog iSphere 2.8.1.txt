@@ -1,0 +1,7 @@
+
+Changelog: iSphere 2.8.1
+------------------------
+ • Changed the TN5250J view to restore the previous state of the 
+   key filter on part activation.
+ • Added option to filter messages by message ID in the iSphere
+   message file editor.
