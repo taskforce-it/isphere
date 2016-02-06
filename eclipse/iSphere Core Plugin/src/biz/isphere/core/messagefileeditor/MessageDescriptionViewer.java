@@ -68,6 +68,8 @@ public class MessageDescriptionViewer {
     private String messageFile;
     private String mode;
     private Text textFilter;
+    private Text textMsgIdFilter;
+    private String filterMessageId = "";
     private String filterMessage = "";
     private TableViewer _tableViewer;
     private Table _table;
@@ -139,29 +141,48 @@ public class MessageDescriptionViewer {
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-            if (filterMessage.equals("")) {
+            if ("".equals(filterMessage) && "".equals(filterMessageId)) {
                 return true;
             }
+
+            boolean isMsgIdFound = false;
+            boolean isTextFound = false;
 
             MessageDescription messageDescription = (MessageDescription)element;
             boolean ignoreCase = buttonNo.getSelection();
 
-            if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 1) {
-                // Compare first level text
-                if (textContains(messageDescription.getMessage(), ignoreCase)) {
-                    return true;
+            if (filterMessageId.length() > 0) {
+                if (idContains(messageDescription.getMessageId(), true)) {
+                    isMsgIdFound = true;
                 }
+            } else {
+                isMsgIdFound = true;
             }
 
-            if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 2) {
-                // Compare second level text
-                if (textContains(messageDescription.getHelpText(), ignoreCase)) {
-                    return true;
+            if (filterMessage.length() > 0) {
+                if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 1) {
+                    // Compare first level text
+                    if (textContains(messageDescription.getMessage(), ignoreCase)) {
+                        isTextFound = true;
+                    }
                 }
+
+                if (includeText.getSelectionIndex() == 0 || includeText.getSelectionIndex() == 2) {
+                    // Compare second level text
+                    if (textContains(messageDescription.getHelpText(), ignoreCase)) {
+                        isTextFound = true;
+                    }
+                }
+            } else {
+                isTextFound = true;
             }
 
-            return false;
+            return isMsgIdFound && isTextFound;
 
+        }
+
+        private boolean idContains(String message, boolean ignoreCase) {
+            return message.toUpperCase().contains(filterMessageId.toUpperCase());
         }
 
         private boolean textContains(String message, boolean ignoreCase) {
@@ -206,11 +227,30 @@ public class MessageDescriptionViewer {
 
         Composite compositeHeader = new Composite(container, SWT.NONE);
         compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        GridLayout gridLayoutCompositeHeader = new GridLayout(7, false);
+        GridLayout gridLayoutCompositeHeader = new GridLayout(9, false);
         compositeHeader.setLayout(gridLayoutCompositeHeader);
 
+        Label labelMsgIdFilter = new Label(compositeHeader, SWT.NONE);
+        labelMsgIdFilter.setText(Messages.Message_Id_colon);
+
+        textMsgIdFilter = WidgetFactory.createUpperCaseText(compositeHeader);
+        textMsgIdFilter.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                String text = textMsgIdFilter.getText();
+                if (!text.equals(filterMessage)) {
+                    filterMessageId = text;
+                    _tableViewer.refresh();
+                }
+            }
+        });
+        textMsgIdFilter.setText("");
+        textMsgIdFilter.setTextLimit(7);
+        textMsgIdFilter.setEditable(true);
+        textMsgIdFilter.setLayoutData(new GridData(Size.getSize(50), SWT.DEFAULT));
+
         Label labelFilter = new Label(compositeHeader, SWT.NONE);
-        labelFilter.setText(Messages.Filter_colon);
+        labelFilter.setText(Messages.Text_colon);
 
         textFilter = WidgetFactory.createText(compositeHeader);
         textFilter.addKeyListener(new KeyAdapter() {
@@ -219,7 +259,7 @@ public class MessageDescriptionViewer {
                 String text = textFilter.getText();
                 if (!text.equals(filterMessage)) {
                     filterMessage = text;
-                    _tableViewer.addFilter(_filterTableViewer);
+                    _tableViewer.refresh();
                 }
             }
         });
@@ -238,7 +278,7 @@ public class MessageDescriptionViewer {
         includeText.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                _tableViewer.addFilter(_filterTableViewer);
+                _tableViewer.refresh();
             }
         });
 
@@ -255,7 +295,7 @@ public class MessageDescriptionViewer {
         buttonNo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                _tableViewer.addFilter(_filterTableViewer);
+                _tableViewer.refresh();
             }
         });
         buttonNo.setText(Messages.No);
@@ -265,7 +305,7 @@ public class MessageDescriptionViewer {
         buttonYes.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                _tableViewer.addFilter(_filterTableViewer);
+                _tableViewer.refresh();
             }
         });
         buttonYes.setText(Messages.Yes);
