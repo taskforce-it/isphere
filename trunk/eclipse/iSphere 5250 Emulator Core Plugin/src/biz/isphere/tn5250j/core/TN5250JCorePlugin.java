@@ -17,6 +17,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.tn5250j.core.tn5250jpart.HandleBindingService;
+
 public class TN5250JCorePlugin extends AbstractUIPlugin {
 
     private static TN5250JCorePlugin plugin;
@@ -58,6 +60,8 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
+
+        HandleBindingService.dispose();
     }
 
     public static TN5250JCorePlugin getDefault() {

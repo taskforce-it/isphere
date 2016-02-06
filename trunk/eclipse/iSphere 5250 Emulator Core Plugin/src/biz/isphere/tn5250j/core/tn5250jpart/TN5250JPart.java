@@ -49,13 +49,13 @@ public class TN5250JPart {
 
         public void partActivated(IWorkbenchPartReference partReference) {
             if (partReference.getPart(true) == tn5250jPart) {
-                HandleBindingService.setBindingService(false);
+                HandleBindingService.getInstance().restoreKeyFilterEnablement();
             }
         }
 
         public void partDeactivated(IWorkbenchPartReference partReference) {
             if (partReference.getPart(true) == tn5250jPart) {
-                HandleBindingService.setBindingService(true);
+                HandleBindingService.getInstance().enableEclipseKeyFilter();
             }
         }
 
@@ -148,7 +148,7 @@ public class TN5250JPart {
 
         workbenchPart.getSite().getPage().addPartListener(partListener2);
 
-        HandleBindingService.addTN5250JPart(tn5250jPart);
+        HandleBindingService.getInstance().addTN5250JPart(tn5250jPart);
 
         createActions();
         initializeToolBar();
@@ -166,7 +166,7 @@ public class TN5250JPart {
         actionBindingServiceOn = new Action("") {
             @Override
             public void run() {
-                HandleBindingService.setBindingService(true);
+                HandleBindingService.getInstance().setKeyFilterEnabled(true);
             }
         };
         actionBindingServiceOn.setToolTipText(Messages.Binding_service_on);
@@ -175,7 +175,7 @@ public class TN5250JPart {
         actionBindingServiceOff = new Action("") {
             @Override
             public void run() {
-                HandleBindingService.setBindingService(false);
+                HandleBindingService.getInstance().setKeyFilterEnabled(false);
             }
         };
         actionBindingServiceOff.setToolTipText(Messages.Binding_service_off);
@@ -243,7 +243,7 @@ public class TN5250JPart {
             tn5250JPanel.getSession5250().disconnect();
         }
         workbenchPart.getSite().getPage().removePartListener(partListener2);
-        HandleBindingService.removeTN5250JPart(tn5250jPart);
+        HandleBindingService.getInstance().removeTN5250JPart(tn5250jPart);
     }
 
     public CTabFolder getTabFolderSessions() {

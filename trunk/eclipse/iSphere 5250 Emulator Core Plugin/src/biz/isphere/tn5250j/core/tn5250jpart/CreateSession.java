@@ -25,9 +25,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.keys.IBindingService;
 
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.session.Session;
@@ -141,12 +138,7 @@ public class CreateSession {
                     }
                 } else if ((keyEvent.stateMask & SWT.CTRL) != 0 && keyEvent.keyCode == SWT.F12) {
                     keyEvent.doit = false;
-                    BindingService bindingService = (BindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
-                    if (!bindingService.isKeyFilterEnabled()) {
-                        HandleBindingService.setBindingService(true);
-                    } else {
-                        HandleBindingService.setBindingService(false);
-                    }
+                    HandleBindingService.getInstance().toggleKeyFilterEnablement();
                 }
             }
         });
