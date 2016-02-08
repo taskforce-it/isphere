@@ -66,7 +66,12 @@ public class CommunicationsListener implements ICommunicationsListener {
 
             QueuedMessageFilter filter = new QueuedMessageFilter(monitoringAttributes.getFilterString());
             AS400 as400 = new AS400(IBMiConnection.getConnection(queuedMessageSubSystem.getHost()).getAS400ToolboxObject());
-            monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(), filter, new MessageHandler(queuedMessageSubSystem),
+
+            if (monitoredMessageQueue != null) {
+                monitoredMessageQueue.stopMonitoring();
+            }
+
+            monitoredMessageQueue = new MonitoredMessageQueue(as400, filter.getPath(as400), filter, new MessageHandler(queuedMessageSubSystem),
                 monitoringAttributes);
 
             monitoredMessageQueue.startMonitoring();
