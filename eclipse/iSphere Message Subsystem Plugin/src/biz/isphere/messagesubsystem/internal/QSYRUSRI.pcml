@@ -1,0 +1,66 @@
+<pcml version="1.0">
+
+  <struct name="USRI0300">
+    <data name="bytesReturned"       type="int"    length="4"        usage="output"/>
+    <data name="bytesAvailable"      type="int"    length="4"        usage="output"/>
+    <data name="usrPrf"              type="char"   length="10"       usage="output"/>
+    <data name="prvSignonTime"       type="char"   length="13"       usage="output"/>
+    <data name="reserved_1"          type="char"   length="1"        usage="output"/>
+    <data name="signonAttempts"      type="int"    length="4"        usage="output"/>
+    <data name="status"              type="char"   length="10"       usage="output"/>
+    <data name="pwdChgDate"          type="char"   length="8"        usage="output"/>
+    <data name="noPwdInd"            type="char"   length="1"        usage="output"/>
+    <data name="reserved_2"          type="char"   length="1"        usage="output"/>
+    <data name="pwdExpirationLvl"    type="int"    length="4"        usage="output"/>
+    <data name="datePwdExpires"      type="char"   length="8"        usage="output"/>
+    <data name="daysUntilPwdExpires" type="int"    length="4"        usage="output"/>
+    <data name="pwdExp"              type="char"   length="1"        usage="output"/>
+    <data name="usrCls"              type="char"   length="10"       usage="output"/>
+    <data name="spcAuth"             type="char"   length="15"       usage="output"/>
+    <data name="grpPrf"              type="char"   length="10"       usage="output"/>
+    <data name="owner"               type="char"   length="10"       usage="output"/>
+    <data name="grpAut"              type="char"   length="10"       usage="output"/>
+    <data name="astLvl"              type="char"   length="10"       usage="output"/>
+    <data name="curLib"              type="char"   length="10"       usage="output"/>
+    <data name="inlMnu"              type="char"   length="10"       usage="output"/>
+    <data name="inlMnuLib"           type="char"   length="10"       usage="output"/>
+    <data name="inlPgm"              type="char"   length="10"       usage="output"/>
+    <data name="inlPgmLib"           type="char"   length="10"       usage="output"/>
+    <data name="lmtCpb"              type="char"   length="10"       usage="output"/>
+
+    <data name="text"                type="char"   length="50"       usage="output"/>
+    <data name="dspSgnInf"           type="char"   length="10"       usage="output"/>
+    <data name="lmtDevSsn"           type="char"   length="10"       usage="output"/>
+    <data name="kbdBuf"              type="char"   length="10"       usage="output"/>
+    <data name="reserved_3"          type="char"   length="2"        usage="output"/>
+
+    <data name="maxStg"              type="int"    length="4"        usage="output"/>
+    <data name="stgUsed"             type="int"    length="4"        usage="output"/>
+    <data name="ptyLmt"              type="char"   length="1"        usage="output"/>
+    <data name="jobD"                type="char"   length="10"       usage="output"/>
+    <data name="jobDLib"             type="char"   length="10"       usage="output"/>
+
+    <data name="acgCde"              type="char"   length="15"       usage="output"/>
+    <data name="msgQ"                type="char"   length="10"       usage="output"/>
+    <data name="msgQLib"             type="char"   length="10"       usage="output"/>
+    <data name="dlvry"               type="char"   length="10"       usage="output"/>
+    <data name="reserved_4"          type="char"   length="2"        usage="output"/>
+    <data name="sev"                 type="int"    length="4"        usage="output"/>
+    <data name="outQ"                type="char"   length="10"       usage="output"/>
+    <data name="outQLib"             type="char"   length="10"       usage="output"/>
+    <data name="prtDev"              type="char"   length="10"       usage="output"/>
+    <data name="spcEnv"              type="char"   length="10"       usage="output"/>
+    <data name="atnPgm"              type="char"   length="10"       usage="output"/>
+    <data name="atnPgmLib"           type="char"   length="10"       usage="output"/>
+    <data name="langId"              type="char"   length="10"       usage="output"/>
+  </struct>
+
+  <program name="QSYRUSRI" path="/QSYS.lib/QSYRUSRI.pgm">
+    <data name="receiver"          type="struct" struct="USRI0300" usage="output"/>
+    <data name="receiverLength"    type="int"    length="4"        usage="input"/>
+    <data name="format"            type="char"   length="8"        usage="input" init="USRI0300"/>
+    <data name="userProfile"       type="char"   length="10"       usage="input" init="*CURRENT"/>
+    <data name="errorCode"         type="int"    length="4"        usage="inputoutput" init="0"/>
+  </program>
+
+</pcml>
