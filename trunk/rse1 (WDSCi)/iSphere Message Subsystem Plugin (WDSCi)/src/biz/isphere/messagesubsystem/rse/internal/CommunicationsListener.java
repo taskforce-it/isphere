@@ -16,7 +16,6 @@ import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.MessageQueue;
 import com.ibm.etools.systems.subsystems.CommunicationsEvent;
 import com.ibm.etools.systems.subsystems.ICommunicationsListener;
 
