@@ -106,8 +106,6 @@ public class Messages extends NLS {
 
     public static String Loading_remote_objects;
 
-    public static String Failed_to_get_connection_colon;
-    
     public static String Library_A_not_found;
     
     public static String File_A_in_library_B_not_found;
