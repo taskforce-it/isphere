@@ -102,7 +102,6 @@ public abstract class AbstractDataSpaceEditorActionBarContributor extends Editor
 
     private AbstractEditorAction addAction(AbstractEditorAction action) {
         actions.add(action);
-        System.out.println("#actions: " + actions.size() + " ("  + action.getClass().getSimpleName() + ")");
         return action;
     }
 
