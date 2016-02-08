@@ -43,7 +43,7 @@ import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
-import biz.isphere.core.internal.AbstractObjectLockManager;
+import biz.isphere.core.internal.ObjectLockManager;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.RemoteObject;
@@ -58,13 +58,13 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     private AbstractWrappedDataSpace wrappedDataArea;
     private AbstractDataSpaceEditorDelegate editorDelegate;
     private DataSpaceEditorRepository repository;
-    private AbstractObjectLockManager objectLockManager;
+    private ObjectLockManager objectLockManager;
     private ObjectLock objectLock;
     private StatusLine statusLine;
 
     public AbstractDataSpaceEditor() {
         isDirty = false;
-        objectLockManager = getObjectLockManager(0);
+        objectLockManager = new ObjectLockManager(0);
     }
 
     public void setStatusLine(StatusLine statusLine) {
@@ -79,8 +79,6 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         IStatusLineManager manager = getEditorSite().getActionBars().getStatusLineManager();
         return manager;
     }
-
-    protected abstract AbstractObjectLockManager getObjectLockManager(int lockWaitTime);
 
     @Override
     public void createPartControl(Composite aParent) {
