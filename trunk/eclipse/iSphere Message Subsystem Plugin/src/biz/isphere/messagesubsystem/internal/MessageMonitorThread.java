@@ -69,7 +69,7 @@ public class MessageMonitorThread extends Thread {
          * having restarted RDi.
          */
         Calendar startTime = Calendar.getInstance();
-        startTime.add(Calendar.SECOND, WAIT_SECS + 1);
+        startTime.add(Calendar.SECOND, WAIT_SECS + 10);
         long startTimeout = startTime.getTimeInMillis();
 
         while (monitoring && monitoringAttributes.isMonitoringEnabled()) {

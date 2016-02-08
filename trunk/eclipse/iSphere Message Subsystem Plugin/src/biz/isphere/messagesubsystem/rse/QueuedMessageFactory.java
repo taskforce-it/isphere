@@ -25,7 +25,7 @@ public class QueuedMessageFactory {
     }
 
     public QueuedMessage[] getQueuedMessages(QueuedMessageFilter filter) throws Exception {
-        FilteredMessageQueue messageQueue = new FilteredMessageQueue(as400, filter.getPath(), filter);
+        FilteredMessageQueue messageQueue = new FilteredMessageQueue(as400, filter.getPath(as400), filter);
         return messageQueue.getFilteredMessages();
     }
 

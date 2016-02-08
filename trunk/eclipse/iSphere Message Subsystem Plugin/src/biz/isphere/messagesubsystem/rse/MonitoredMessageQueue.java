@@ -17,15 +17,12 @@ import java.util.Enumeration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.FilteredMessageQueue;
 import biz.isphere.messagesubsystem.internal.MessageMonitorThread;
-import biz.isphere.messagesubsystem.internal.QSYRUSRI;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
-import com.ibm.as400.data.PcmlException;
 
 public class MonitoredMessageQueue extends FilteredMessageQueue {
 
@@ -101,23 +98,7 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     private MessageMonitorThread createMonitoringThread() {
 
-        if ("*CURRENT".equals(getPath())) { //$NON-NLS-1$
-            try {
-                setPath(resolveMessageQueuePath());
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Failed to resolve message queue name *CURRENT ***", null); //$NON-NLS-1$
-            }
-        }
-
         MessageMonitorThread monitorThread = new MessageMonitorThread(this, monitoringAttributes, messageHandler);
         return monitorThread;
-    }
-
-    private String resolveMessageQueuePath() throws PcmlException {
-
-        QSYRUSRI qsysusri = new QSYRUSRI();
-        qsysusri.retrieveUserProfile(getSystem(), getSystem().getUserId());
-
-        return qsysusri.getMessageQueuePath();
     }
 }

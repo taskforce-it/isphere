@@ -13,12 +13,18 @@ package biz.isphere.messagesubsystem.rse;
 
 import java.util.Date;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.messagesubsystem.internal.QSYRUSRI;
+
+import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
+import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.data.PcmlException;
 
 public class QueuedMessageFilter {
 
     public static final String MSGQ_CURRENT = "*CURRENT"; //$NON-NLS-1$
-    
+
     private String description;
     private String messageQueue;
     private String library;
@@ -146,13 +152,39 @@ public class QueuedMessageFilter {
     }
 
     public String getPath() {
-        if (messageQueue.equals(MessageQueue.CURRENT))
-            return MessageQueue.CURRENT;
+        return getPath(null);
+    }
+
+    public String getPath(AS400 system) {
+        String resolvedMessageQueue = getMessageQueue(system);
+        if (resolvedMessageQueue.equals(MessageQueue.CURRENT))
+            return resolvedMessageQueue;
         else {
-            if (library.equals("QSYS"))return "/QSYS.LIB/" + messageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (library.equals("QSYS"))return "/QSYS.LIB/" + resolvedMessageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             else
-                return "/QSYS.LIB/" + library.trim() + ".LIB/" + messageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                return "/QSYS.LIB/" + library.trim() + ".LIB/" + resolvedMessageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
+    }
+
+    private String getMessageQueue(AS400 system) {
+        if (MessageQueue.CURRENT.equals(messageQueue) && system != null) {
+            try {
+                resolveMessageQueuePath(system);
+            } catch (Throwable e) {
+                ISpherePlugin.logError("*** Failed to resolve message queue name *CURRENT ***", null); //$NON-NLS-1$
+            }
+        }
+        return messageQueue;
+    }
+
+    private void resolveMessageQueuePath(AS400 system) throws PcmlException {
+
+        QSYRUSRI qsysusri = new QSYRUSRI();
+        qsysusri.retrieveUserProfile(system, system.getUserId());
+
+        QSYSObjectPathName pathName = new QSYSObjectPathName(qsysusri.getMessageQueuePath());
+        messageQueue = pathName.getObjectName();
+        library = pathName.getLibraryName();
     }
 
     public String getFilterString() {
@@ -223,13 +255,13 @@ public class QueuedMessageFilter {
     }
 
     public static String getDefaultFilterString() {
-        
+
         QueuedMessageFilter filter = new QueuedMessageFilter();
         filter.setMessageQueue(MSGQ_CURRENT); //$NON-NLS-1$
-        
+
         return filter.getFilterString();
     }
-    
+
     public void setFilterString(String filterString) {
 
         int index;
