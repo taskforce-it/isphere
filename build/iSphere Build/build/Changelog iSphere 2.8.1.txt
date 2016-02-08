@@ -5,3 +5,5 @@ Changelog: iSphere 2.8.1
    key filter on part activation.
  • Added option to filter messages by message ID in the iSphere
    message file editor.
+ • Internal refactorings.
+ • Fixed problem when restarting the message monitor.
