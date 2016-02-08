@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+
 public class ObjectLock {
 
     /**

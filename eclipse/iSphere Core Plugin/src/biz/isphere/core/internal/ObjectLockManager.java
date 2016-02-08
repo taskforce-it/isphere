@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
 
 /**
  * The Object Lock Manager is used to manage the object locks needed in a
@@ -23,17 +29,17 @@ import biz.isphere.core.ISpherePlugin;
  * application context ends, it must call {@link #dispose()} to remove all
  * object locks.
  */
-public abstract class AbstractObjectLockManager {
+public class ObjectLockManager {
 
     private List<ObjectLock> objectLocks;
     private String[] lastErrorMessages;
     private int lockWaitTime;
 
-    public AbstractObjectLockManager() {
+    public ObjectLockManager() {
         this(-1); // use default lock wait of IBM i
     }
 
-    public AbstractObjectLockManager(int waitSeconds) {
+    public ObjectLockManager(int waitSeconds) {
         lockWaitTime = waitSeconds;
         objectLocks = new ArrayList<ObjectLock>();
         lastErrorMessages = new String[] {};
@@ -161,8 +167,66 @@ public abstract class AbstractObjectLockManager {
         }
     }
 
-    protected abstract String[] allocateObject(ObjectLock objectLock, int lockWaitTime);
+    // protected abstract String[] allocateObject(ObjectLock objectLock, int
+    // lockWaitTime);
 
-    protected abstract String[] deallocateObject(ObjectLock objectLock);
+    // protected abstract String[] deallocateObject(ObjectLock objectLock);
+
+    protected String[] allocateObject(ObjectLock objectLock, int lockWaitTime) {
+
+        return executeCommand(objectLock.getConnectionName(), objectLock.getAllocateCommand(lockWaitTime));
+    }
+
+    protected String[] deallocateObject(ObjectLock objectLock) {
+
+        return executeCommand(objectLock.getConnectionName(), objectLock.getDeallocateCommand());
+    }
+
+    public static String executeCommand(AS400 as400, String command) throws Exception {
+
+        CommandCall commandCall = new CommandCall(as400);
+        commandCall.run(command);
+        AS400Message[] messageList = commandCall.getMessageList();
+        if (messageList.length > 0) {
+            for (int idx = 0; idx < messageList.length; idx++) {
+                if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                    return messageList[idx].getID();
+                }
+            }
+        }
+        return "";
+    }
+
+    private String[] executeCommand(String connectionName, String command) {
+
+        AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (as400 == null) {
+            return new String[] { Messages.Failed_to_get_connection_colon + " " + connectionName }; //$NON-NLS-1$
+        }
+
+        AS400Message[] cmdMessages = null;
+
+        try {
+
+            CommandCall commandCall = new CommandCall(as400);
+            if (!commandCall.run(command)) {
+                cmdMessages = commandCall.getMessageList();
+            } else {
+                cmdMessages = new AS400Message[0];
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError(e.getMessage(), e);
+            return new String[] { e.getLocalizedMessage() };
+        }
+
+        String[] errorMessages = new String[cmdMessages.length];
+        for (int i = 0; i < cmdMessages.length; i++) {
+            AS400Message cmdMessage = cmdMessages[i];
+            errorMessages[i] = cmdMessage.getID() + ": " + cmdMessage.getText(); //$NON-NLS-1$
+        }
+
+        return errorMessages;
+    }
 
 }

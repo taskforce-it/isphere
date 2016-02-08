@@ -1152,6 +1152,8 @@ public class Messages extends NLS {
 
     public static String Suggested_file_name;
 
+    public static String Failed_to_get_connection_colon;
+
     /*
      * Warning messages
      */
