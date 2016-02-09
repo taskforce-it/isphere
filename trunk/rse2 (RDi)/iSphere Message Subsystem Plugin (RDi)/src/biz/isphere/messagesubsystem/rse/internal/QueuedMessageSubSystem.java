@@ -29,11 +29,13 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
+import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFactory;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -44,6 +46,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
     private CommunicationsListener communicationsListener;
     private MonitoringAttributes monitoringAttributes;
+    private MonitoredMessageQueue monitoredMessageQueue;
+    private boolean isStarting;
 
     public QueuedMessageSubSystem(IHost host, IConnectorService connectorService) {
         super(host, connectorService);
@@ -63,8 +67,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
         try {
 
-            AS400 as400 = getToolboxAS400Object();
-            QueuedMessageFactory factory = new QueuedMessageFactory(as400);
+            QueuedMessageFactory factory = new QueuedMessageFactory(getToolboxAS400Object());
             QueuedMessage[] queuedMessages = factory.getQueuedMessages(queuedMessageFilter);
             queuedMessageResources = new QueuedMessageResource[queuedMessages.length];
 
@@ -147,9 +150,74 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     public void restartMessageMonitoring() {
 
         if (monitoringAttributes.isMonitoringEnabled()) {
-            communicationsListener.startMonitoring();
+            startMonitoring();
         } else {
-            communicationsListener.stopMonitoring();
+            stopMonitoring();
+        }
+    }
+
+    public boolean isMonitored(MessageQueue messageQueue) {
+
+        if (messageQueue == null || monitoredMessageQueue == null) {
+            return false;
+        }
+
+        if (messageQueue.getPath().equals(monitoredMessageQueue.getPath())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void removedFromMonitoredMessageQueue(QueuedMessage queuedMessage) {
+
+        if (!isMonitored(queuedMessage.getQueue())) {
+            return;
+        }
+
+        monitoredMessageQueue.remove(queuedMessage);
+    }
+
+    public void messageMonitorStopped() {
+        monitoredMessageQueue = null;
+    }
+
+    /*
+     * Start/Stop message monitor thread
+     */
+
+    public void startMonitoring() {
+
+        if (!monitoringAttributes.isMonitoringEnabled()) {
+            return;
+        }
+
+        if (isStarting) {
+            return;
+        }
+
+        try {
+
+            isStarting = true;
+
+            // End current message monitor
+            if (monitoredMessageQueue != null) {
+                monitoredMessageQueue.stopMonitoring();
+            }
+
+            // Start new message monitor
+            monitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
+            monitoredMessageQueue.startMonitoring();
+
+        } finally {
+            isStarting = false;
+        }
+    }
+
+    public void stopMonitoring() {
+
+        if (monitoredMessageQueue != null) {
+            monitoredMessageQueue.stopMonitoring();
         }
     }
 

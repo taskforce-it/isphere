@@ -30,20 +30,19 @@ import com.ibm.as400.access.QueuedMessage;
  */
 public class MessageHandler implements IMessageHandler {
 
-    private IQueuedMessageSubsystem queuedMessageSubSystem;
+    private MonitoringAttributes monitoringAttributes;
     private boolean createOKToAllButton;
     private boolean isOKToAll;
 
     /**
      * Produces a MessageHandler object.
      * 
-     * @param queuedMessageSubSystem - Queued message subsystem the handler is
-     *        associated to
+     * @param monitoringAttributes - Monitoring attributes.
      */
-    public MessageHandler(IQueuedMessageSubsystem queuedMessageSubSystem) {
+    public MessageHandler(MonitoringAttributes monitoringAttributes) {
         super();
 
-        this.queuedMessageSubSystem = queuedMessageSubSystem;
+        this.monitoringAttributes = monitoringAttributes;
         this.createOKToAllButton = false;
         this.isOKToAll = false;
     }
@@ -65,7 +64,6 @@ public class MessageHandler implements IMessageHandler {
             createOKToAllButton = true;
         }
 
-        MonitoringAttributes monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
         List<ReceivedMessage> dialogMessages = new ArrayList<ReceivedMessage>();
 
         for (ReceivedMessage receivedMessage : messages) {
@@ -87,7 +85,7 @@ public class MessageHandler implements IMessageHandler {
      * Handles a message that has been received by the message monitor thread.
      */
     public void handleMessage(ReceivedMessage message) {
-        handleMessage(new MonitoringAttributes(queuedMessageSubSystem), message);
+        handleMessage(monitoringAttributes, message);
     }
 
     /**

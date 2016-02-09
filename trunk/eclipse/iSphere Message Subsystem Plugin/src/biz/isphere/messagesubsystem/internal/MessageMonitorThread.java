@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,20 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.internal.ObjectLock;
+import biz.isphere.core.internal.ObjectLockManager;
+import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.rse.IMessageHandler;
+import biz.isphere.messagesubsystem.rse.MessageHandler;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 import com.ibm.as400.access.MessageQueue;
+import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.QueuedMessage;
 
 public class MessageMonitorThread extends Thread {
@@ -36,18 +43,22 @@ public class MessageMonitorThread extends Thread {
     private boolean monitoring;
     private boolean collectMessagesAtStartUp;
     private List<ReceivedMessage> receivedMessages;
-    private String errorMessage;
+    private ObjectLockManager objectLockManager;
 
     private final static String END_MONITORING = "*END_MONITORING"; //$NON-NLS-1$
     private static final String REMOVE_ALL = "*REMOVE_ALL"; //$NON-NLS-1$
-    private final static int WAIT_SECS = 5;
+    private final static int READ_TIMEOUT_SECS = 5;
+    private final static int OBJECT_LOCK_WAIT_SECS = 5;
 
-    public MessageMonitorThread(MonitoredMessageQueue messageQueue, MonitoringAttributes monitoringAttributes, IMessageHandler messageHandler) {
+    public MessageMonitorThread(MonitoredMessageQueue messageQueue) {
         super("iSphere Message Monitor");
 
         this.messageQueue = messageQueue;
-        this.monitoringAttributes = monitoringAttributes;
-        this.messageHandler = messageHandler;
+
+        this.monitoringAttributes = messageQueue.getMonitoringAttributes();
+        this.messageHandler = new MessageHandler(monitoringAttributes);
+
+        this.objectLockManager = new ObjectLockManager(OBJECT_LOCK_WAIT_SECS);
     }
 
     @Override
@@ -69,53 +80,71 @@ public class MessageMonitorThread extends Thread {
          * having restarted RDi.
          */
         Calendar startTime = Calendar.getInstance();
-        startTime.add(Calendar.SECOND, WAIT_SECS + 10);
+        startTime.add(Calendar.SECOND, READ_TIMEOUT_SECS);
         long startTimeout = startTime.getTimeInMillis();
 
-        while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
-            try {
-                QueuedMessage message;
-                if (collectMessagesAtStartUp) {
-                    message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
-                } else {
-                    message = messageQueue.receive(null, WAIT_SECS, MessageQueue.OLD, MessageQueue.ANY);
-                }
+        QSYSObjectPathName path = new QSYSObjectPathName(messageQueue.getPath());
+        RemoteObject remoteMessageQueue = new RemoteObject(messageQueue.getSystem(), path.getObjectName(), path.getLibraryName(), "*MSGQ", "");
 
-                if (monitoring) {
-                    if (message != null) {
-                        handleMessage(message, collectMessagesAtStartUp);
-                    } else {
-                        if (receivedMessages != null) {
-                            handleBufferedMessages(receivedMessages);
-                            receivedMessages = null;
-                        }
-                        collectMessagesAtStartUp = false;
+        ObjectLock objectLock = null;
+
+        try {
+
+            objectLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
+            if (objectLock == null) {
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run() {
+                        MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error,
+                            objectLockManager.getErrorMessage());
                     }
-                }
-            } catch (Exception e) {
-                if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
-                    monitoringAttributes.setMonitoring(false);
-                    monitoring = false;
-                    if (e.getMessage() == null)
-                        errorMessage = e.toString();
-                    else
-                        errorMessage = e.getMessage();
-                    Display.getDefault().syncExec(new Runnable() {
-                        public void run() {
-                            MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error, errorMessage);
+                });
+                monitoringAttributes.setMonitoring(false);
+            }
+
+            while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
+                try {
+                    QueuedMessage message;
+                    if (collectMessagesAtStartUp) {
+                        message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
+                    } else {
+                        message = messageQueue.receive(null, READ_TIMEOUT_SECS, MessageQueue.OLD, MessageQueue.ANY);
+                    }
+
+                    if (monitoring) {
+                        if (message != null) {
+                            handleMessage(message, collectMessagesAtStartUp);
+                        } else {
+                            if (receivedMessages != null) {
+                                handleBufferedMessages(receivedMessages);
+                                receivedMessages = null;
+                            }
+                            collectMessagesAtStartUp = false;
                         }
-                    });
-                } else {
-                    try {
-                        // wait a second, then try again
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
+                    }
+
+                    removeMessagesPendingToBeRemoved();
+
+                } catch (Throwable e) {
+                    if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
+                        monitoringAttributes.setMonitoring(false);
+                        monitoring = false;
+                        MessageDialogAsync.displayError(Messages.Message_Queue_Monitoring_Error, ExceptionHelper.getLocalizedMessage(e));
+                    } else {
+                        try {
+                            // wait a second, then try again
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {
+                        }
                     }
                 }
             }
-        }
 
-        messageQueue.messageMonitorStopped();
+        } finally {
+            messageQueue.messageMonitorStopped();
+            if (objectLock != null) {
+                objectLockManager.removeObjectLock(objectLock);
+            }
+        }
     }
 
     public void stopMonitoring() {
@@ -125,6 +154,32 @@ public class MessageMonitorThread extends Thread {
         }
 
         monitoring = false;
+    }
+
+    private void removeMessagesPendingToBeRemoved() {
+
+        try {
+
+            boolean isError = false;
+
+            QueuedMessage[] messageToRemove = messageQueue.getMessagesPendingToBeRemoved();
+            for (QueuedMessage queuedMessage : messageToRemove) {
+                try {
+                    queuedMessage.getQueue().remove(queuedMessage.getKey());
+                } catch (Throwable e) {
+                    isError = true;
+                } finally {
+                    messageQueue.confirmRemovedMessage(queuedMessage);
+                }
+            }
+
+            if (isError) {
+                MessageDialogAsync.displayError(Display.getDefault().getActiveShell(), "One or more messages could not be removed.");
+            }
+
+        } catch (Throwable e) {
+            MessageDialogAsync.displayError("One or message could not be removed.");
+        }
     }
 
     private void handleMessage(QueuedMessage message, boolean isStartUp) throws Exception {

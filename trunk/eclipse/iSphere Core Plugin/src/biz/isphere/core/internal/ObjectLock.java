@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.core.internal;
 
+import com.ibm.as400.access.AS400;
 
 public class ObjectLock {
 
@@ -59,13 +60,17 @@ public class ObjectLock {
     private String lock;
     private String[] errorMessages;
 
+    public ObjectLock(String connectionName, String library, String name, String type, String lock) {
+        this(new RemoteObject(connectionName, name, library, type, null), lock);
+    }
+
     public ObjectLock(RemoteObject remoteObject, String lock) {
         this.remoteObject = remoteObject;
         this.lock = lock;
     }
 
-    public String getConnectionName() {
-        return remoteObject.getConnectionName();
+    public AS400 getSystem() {
+        return remoteObject.getSystem();
     }
 
     public String getAllocateCommand(int lockWaitTime) {

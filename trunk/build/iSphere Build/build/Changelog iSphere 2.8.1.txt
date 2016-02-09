@@ -6,4 +6,16 @@ Changelog: iSphere 2.8.1
  • Added option to filter messages by message ID in the iSphere
    message file editor.
  • Internal refactorings.
- • Fixed problem when restarting the message monitor.
+ • Fixed problem when restarting a message monitor that is already
+   active.
+ • Fixed problem, that a monitored message queue was not locked 
+   while handling received messages.
+ • Fixed problem that messages of a monitored message queue
+   could not be deleted by hand.
+
+ 
+New NLS messages:
+-----------------
+
+iSphere Core Plugin:
+Cannot_allocate_object_B_A_C

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,9 +43,9 @@ import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
-import biz.isphere.core.internal.ObjectLockManager;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectLock;
+import biz.isphere.core.internal.ObjectLockManager;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objecteditor.AbstractObjectEditorInput;
 
@@ -210,16 +210,16 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     }
 
     private String getObjectLockMessage(String secondLeveltext) {
-        String[] messages = objectLockManager.getErrorMessages();
-        if (messages.length == 0) {
+        String message = objectLockManager.getErrorMessage();
+        if (message == null) {
             return ""; //$NON-NLS-1$
         }
 
         if (secondLeveltext == null) {
-            return messages[0];
+            return message;
         }
 
-        return messages[0] + "\n\n" + secondLeveltext;
+        return message + "\n\n" + secondLeveltext;
     }
 
     /**

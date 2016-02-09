@@ -26,8 +26,8 @@ public class FilteredMessageQueue extends MessageQueue {
 
     private QueuedMessageFilter messageFilter;
 
-    public FilteredMessageQueue(AS400 system, String path, QueuedMessageFilter filter) {
-        super(system, path);
+    public FilteredMessageQueue(AS400 system, QueuedMessageFilter filter) {
+        super(system, filter.getPath(system));
 
         this.messageFilter = filter;
     }
