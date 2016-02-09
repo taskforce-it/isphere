@@ -5,17 +5,23 @@
       version="2.8.0.r"
       provider-name="iSphere Project Team">
 
-   <description>
+   <description url="https://sourceforge.net/projects/isphere/">
       TN5250J for WDSCi 7.0
    </description>
 
-   <copyright>
+   <copyright url="https://sourceforge.net/projects/isphere/">
       (c) Copyright iSphere Project Team 2008, 2012. All rights reserved.
    </copyright>
 
    <license>
       License agreement.
    </license>
+
+   <url>
+      <discovery label="iSphere Project Home" url="https://sourceforge.net/projects/isphere/"/>
+      <discovery label="Tools/400" url="http://www.tools400.de"/>
+      <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
+   </url>
 
    <plugin
          id="biz.isphere.tn5250j.rse"
