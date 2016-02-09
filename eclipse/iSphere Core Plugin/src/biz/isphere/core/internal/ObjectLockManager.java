@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,12 @@
 package biz.isphere.core.internal;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -32,7 +33,7 @@ import com.ibm.as400.access.CommandCall;
 public class ObjectLockManager {
 
     private List<ObjectLock> objectLocks;
-    private String[] lastErrorMessages;
+    private List<String> lastErrorMessages;
     private int lockWaitTime;
 
     public ObjectLockManager() {
@@ -42,7 +43,7 @@ public class ObjectLockManager {
     public ObjectLockManager(int waitSeconds) {
         lockWaitTime = waitSeconds;
         objectLocks = new ArrayList<ObjectLock>();
-        lastErrorMessages = new String[] {};
+        lastErrorMessages = new LinkedList<String>();
     }
 
     /**
@@ -120,9 +121,18 @@ public class ObjectLockManager {
         return addObjectLock(remoteObject, ObjectLock.SHRRD);
     }
 
+    public String getErrorMessage() {
+
+        if (lastErrorMessages.size() > 0) {
+            return lastErrorMessages.get(lastErrorMessages.size() - 1);
+        }
+
+        return null; //$NON-NLS-N$
+    }
+
     public String[] getErrorMessages() {
 
-        return lastErrorMessages;
+        return lastErrorMessages.toArray(new String[lastErrorMessages.size()]);
     }
 
     /**
@@ -132,8 +142,8 @@ public class ObjectLockManager {
      */
     public void removeObjectLock(ObjectLock objectLock) {
 
-        String[] messages = deallocateObject(objectLock);
-        if (messages.length == 0) {
+        lastErrorMessages = deallocateObject(objectLock);
+        if (lastErrorMessages.size() == 0) {
             objectLocks.remove(objectLock);
         }
     }
@@ -142,9 +152,12 @@ public class ObjectLockManager {
 
         ObjectLock objectLock = new ObjectLock(remoteObject, lockType);
         lastErrorMessages = allocateObject(objectLock, lockWaitTime);
-        if (lastErrorMessages.length == 0) {
+        if (lastErrorMessages.size() == 0) {
             objectLocks.add(objectLock);
             return objectLock;
+        } else {
+            lastErrorMessages.add(Messages.bind(Messages.Cannot_allocate_object_B_A_C,
+                new String[] { remoteObject.getName(), remoteObject.getLibrary(), remoteObject.getObjectType() }));
         }
 
         return null;
@@ -157,7 +170,7 @@ public class ObjectLockManager {
         List<ObjectLock> removedObjectLocks = new ArrayList<ObjectLock>();
 
         for (ObjectLock objectLock : objectLocks) {
-            if (deallocateObject(objectLock).length == 0) {
+            if (deallocateObject(objectLock).size() == 0) {
                 removedObjectLocks.add(objectLock);
             }
         }
@@ -167,48 +180,30 @@ public class ObjectLockManager {
         }
     }
 
-    // protected abstract String[] allocateObject(ObjectLock objectLock, int
-    // lockWaitTime);
+    protected List<String> allocateObject(ObjectLock objectLock, int lockWaitTime) {
 
-    // protected abstract String[] deallocateObject(ObjectLock objectLock);
-
-    protected String[] allocateObject(ObjectLock objectLock, int lockWaitTime) {
-
-        return executeCommand(objectLock.getConnectionName(), objectLock.getAllocateCommand(lockWaitTime));
+        return executeCommand(objectLock.getSystem(), objectLock.getAllocateCommand(lockWaitTime));
     }
 
-    protected String[] deallocateObject(ObjectLock objectLock) {
+    protected List<String> deallocateObject(ObjectLock objectLock) {
 
-        return executeCommand(objectLock.getConnectionName(), objectLock.getDeallocateCommand());
+        return executeCommand(objectLock.getSystem(), objectLock.getDeallocateCommand());
     }
 
-    public static String executeCommand(AS400 as400, String command) throws Exception {
+    private List<String> executeCommand(AS400 system, String command) {
 
-        CommandCall commandCall = new CommandCall(as400);
-        commandCall.run(command);
-        AS400Message[] messageList = commandCall.getMessageList();
-        if (messageList.length > 0) {
-            for (int idx = 0; idx < messageList.length; idx++) {
-                if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                    return messageList[idx].getID();
-                }
-            }
-        }
-        return "";
-    }
-
-    private String[] executeCommand(String connectionName, String command) {
-
-        AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
-        if (as400 == null) {
-            return new String[] { Messages.Failed_to_get_connection_colon + " " + connectionName }; //$NON-NLS-1$
+        // AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (system == null) {
+            List<String> errors = new LinkedList<String>();
+            errors.add(Messages.bind(Messages.Failed_to_get_connection_A_colon, "null")); //$NON-NLS-1$
+            return errors;
         }
 
         AS400Message[] cmdMessages = null;
 
         try {
 
-            CommandCall commandCall = new CommandCall(as400);
+            CommandCall commandCall = new CommandCall(system);
             if (!commandCall.run(command)) {
                 cmdMessages = commandCall.getMessageList();
             } else {
@@ -216,17 +211,18 @@ public class ObjectLockManager {
             }
 
         } catch (Throwable e) {
-            ISpherePlugin.logError(e.getMessage(), e);
-            return new String[] { e.getLocalizedMessage() };
+            ISpherePlugin.logError("*** Could execute command '" + command + "' on system '" + system.getSystemName() + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            List<String> errors = new LinkedList<String>();
+            errors.add(ExceptionHelper.getLocalizedMessage(e));
+            return errors;
         }
 
-        String[] errorMessages = new String[cmdMessages.length];
+        List<String> errors = new LinkedList<String>();
         for (int i = 0; i < cmdMessages.length; i++) {
             AS400Message cmdMessage = cmdMessages[i];
-            errorMessages[i] = cmdMessage.getID() + ": " + cmdMessage.getText(); //$NON-NLS-1$
+            errors.add(cmdMessage.getID() + ": " + cmdMessage.getText()); //$NON-NLS-1$
         }
 
-        return errorMessages;
+        return errors;
     }
-
 }

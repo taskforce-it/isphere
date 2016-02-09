@@ -11,8 +11,7 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -28,42 +27,23 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     private static final long serialVersionUID = 2988890902520435974L;
 
-    private IMessageHandler messageHandler;
+    private IQueuedMessageSubsystem messageSubsystem;
     private MonitoringAttributes monitoringAttributes;
 
-    private boolean monitoring;
     private MessageMonitorThread monitoringThread;
+    private LinkedList<QueuedMessage> messagesToRemove;
 
-    public MonitoredMessageQueue(AS400 system, String path, QueuedMessageFilter filter, IMessageHandler messageHandler,
-        MonitoringAttributes monitoringAttributes) {
-        super(system, path, filter);
+    public MonitoredMessageQueue(IQueuedMessageSubsystem messageSubsystem, AS400 system, MonitoringAttributes monitoringAttributes) {
+        super(system, new QueuedMessageFilter(monitoringAttributes.getFilterString()));
 
-        this.messageHandler = messageHandler;
+        this.messageSubsystem = messageSubsystem;
         this.monitoringAttributes = monitoringAttributes;
-    }
-
-    public QueuedMessage[] getFilteredMessages() throws Exception {
-
-        ArrayList<QueuedMessage> messages = new ArrayList<QueuedMessage>();
-
-        Enumeration<?> enumx = getMessages();
-        while (enumx.hasMoreElements()) {
-            QueuedMessage message = (QueuedMessage)enumx.nextElement();
-            if (isIncluded(message)) {
-                messages.add(message);
-            }
-        }
-
-        QueuedMessage[] messageArray = new QueuedMessage[messages.size()];
-        messages.toArray(messageArray);
-
-        return messageArray;
+        this.messagesToRemove = new LinkedList<QueuedMessage>();
     }
 
     public void startMonitoring() {
 
         if (monitoringThread == null) {
-            monitoring = true;
             monitoringThread = createMonitoringThread();
             monitoringThread.setDaemon(true);
             monitoringThread.start();
@@ -90,15 +70,27 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     public void messageMonitorStopped() {
         monitoringThread = null;
+        messageSubsystem.messageMonitorStopped();
     }
 
-    public boolean isMonitoring() {
-        return monitoring;
+    public MonitoringAttributes getMonitoringAttributes() {
+        return monitoringAttributes;
+    }
+
+    public synchronized void remove(QueuedMessage queuedMessage) {
+        messagesToRemove.add(queuedMessage);
+    }
+
+    public synchronized QueuedMessage[] getMessagesPendingToBeRemoved() {
+        return messagesToRemove.toArray(new QueuedMessage[messagesToRemove.size()]);
+    }
+
+    public synchronized void confirmRemovedMessage(QueuedMessage queuedMessage) {
+        messagesToRemove.remove(queuedMessage);
     }
 
     private MessageMonitorThread createMonitoringThread() {
 
-        MessageMonitorThread monitorThread = new MessageMonitorThread(this, monitoringAttributes, messageHandler);
-        return monitorThread;
+        return new MessageMonitorThread(this);
     }
 }

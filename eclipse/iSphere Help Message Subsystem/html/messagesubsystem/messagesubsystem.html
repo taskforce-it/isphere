@@ -100,7 +100,20 @@
 		message queue</i> is unchecked. It can take up to 5 seconds until the
 		lock has been removed.
 	<h2>Remove Messages</h2>
-	<p>Actually messages cannot be removed from a monitored message queue, because
+	<p>
+	   Messages can only be removed with option <i>Delete</i> of the context menu of
+	   a message of a monitored message queue. It cannot be removed from an IBM i 
+	   command line, because the Java <i>MessageQueue</i> class holds an *EXCL lock
+	   on monitored message queues. That is the same thing, what an interactive IBM i
+	   job does.
+	   <br>
+	   Because of the nature removing messages works, it may take some seconds 
+	   until a message is really removed, although it disappears immediately
+	   after having executed the <i>Delete</i> option.
+	<p>
+	<h2>Remove Messages from an IBM i Command Line</h2>
+	<p>   
+	   Actually messages cannot be removed from a monitored message queue, because
 	   the Java message queue class puts an *EXCL lock on the message queue when 
 	   it waits for incoming messages. But you can get around that limitation by
 	   sending a <i>*REMOVE_ALL</i> message to the message queue to make the message
