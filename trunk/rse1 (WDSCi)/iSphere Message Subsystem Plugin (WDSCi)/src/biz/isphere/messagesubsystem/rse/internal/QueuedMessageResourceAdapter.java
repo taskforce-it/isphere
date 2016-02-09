@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import biz.isphere.messagesubsystem.rse.IQueuedMessageResource;
+import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
 import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.QueuedMessageResourceAdapterDelegate;
 
@@ -41,7 +42,7 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
 
     @Override
     public ImageDescriptor getImageDescriptor(Object object) {
-        QueuedMessageResource queuedMessageResource = (QueuedMessageResource)object;
+        IQueuedMessageResource queuedMessageResource = (IQueuedMessageResource)object;
         if (queuedMessageResource.getQueuedMessage().getType() == QueuedMessage.INQUIRY) {
             return ISphereMessageSubsystemRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereMessageSubsystemRSEPlugin.IMAGE_INQUIRY);
         } else {
@@ -94,8 +95,9 @@ public class QueuedMessageResourceAdapter extends AbstractSystemViewAdapter impl
 
         QueuedMessageResource queuedMessageResource = (QueuedMessageResource)element;
         QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
+        IQueuedMessageSubsystem messageSubSystem = (QueuedMessageSubSystem)queuedMessageResource.getSubSystem();
 
-        return delegate.doDelete(shell, queuedMessage);
+        return delegate.doDelete(shell, messageSubSystem, queuedMessage);
     }
 
     @Override
