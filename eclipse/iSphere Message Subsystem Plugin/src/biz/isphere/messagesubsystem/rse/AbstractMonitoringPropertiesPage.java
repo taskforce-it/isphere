@@ -348,12 +348,6 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     }
 
     @Override
-    public boolean isValid() {
-
-        return super.isValid();
-    }
-
-    @Override
     public boolean performOk() {
 
         if (queuedMessageSubSystem.hasPendingRequest()) {
