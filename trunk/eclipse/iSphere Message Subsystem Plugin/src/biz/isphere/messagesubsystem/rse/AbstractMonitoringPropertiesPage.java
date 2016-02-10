@@ -11,6 +11,9 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -62,7 +65,8 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     private Text smtpPasswordText;
     private Button testButton;
 
-    QueuedMessageFilterStringEditPaneDelegate delegate;
+    private QueuedMessageFilterStringEditPaneDelegate delegate;
+    private Set<Object> controlsInError;
 
     public AbstractMonitoringPropertiesPage() {
         super();
@@ -74,6 +78,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         queuedMessageSubSystem = (IQueuedMessageSubsystem)getElement();
         monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
         delegate = new QueuedMessageFilterStringEditPaneDelegate();
+        controlsInError = new HashSet<Object>();
 
         CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER);
         addMonitorTab(tabFolder);
@@ -191,11 +196,11 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
                 Object source = e.getSource();
                 if (source instanceof Text) {
                     Text text = (Text)source;
-                    validateStringInput(text.getText());
+                    validateStringInput(source, text.getText());
                 }
                 if (source instanceof Combo) {
                     Combo combo = (Combo)source;
-                    validateStringInput(combo.getText());
+                    validateStringInput(source, combo.getText());
                 }
             }
         };
@@ -203,10 +208,19 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
         delegate.addModifyListener(keyListener);
     }
 
-    private void validateStringInput(String text) {
+    private void validateStringInput(Object control, String text) {
 
         if (StringHelper.isNullOrEmpty(text)) {
             setErrorMessage("Missing value.");
+            controlsInError.add(control);
+        } else {
+            controlsInError.remove(control);
+        }
+
+        if (controlsInError.size() == 0) {
+            setValid(true);
+            setErrorMessage(null);
+        } else {
             setValid(false);
         }
     }

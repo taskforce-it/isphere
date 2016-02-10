@@ -13,6 +13,7 @@
 package biz.isphere.messagesubsystem.rse;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,11 +25,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.ibm.as400.access.MessageQueue;
-
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
+
+import com.ibm.as400.access.MessageQueue;
 
 public class QueuedMessageFilterStringEditPaneDelegate {
 
@@ -65,9 +66,17 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         messageQueueText.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-             if (MessageQueue.CURRENT.equals(messageQueueText.getText())) {
-                 libraryText.setText("*");
-             }
+                setLibraryText();
+            }
+        });
+        messageQueueText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                setLibraryText();
+                if (QueuedMessageFilter.MSGQ_CURRENT.equals(messageQueueText.getText())) {
+                    libraryText.setEnabled(false);
+                } else {
+                    libraryText.setEnabled(true);
+                }
             }
         });
 
@@ -211,11 +220,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
             if (filter.getMessageQueue() != null) {
 
                 messageQueueText.setText(filter.getMessageQueue());
-                if (filter.getLibrary() != null) {
-                    libraryText.setText(filter.getLibrary());
-                } else {
-                    libraryText.setText(QUSRSYS);
-                }
+                setLibraryText(filter.getLibrary());
 
                 if (filter.getUser() != null) {
                     userText.setText(filter.getUser());
@@ -270,8 +275,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     }
 
     public void resetFields() {
+
         messageQueueText.select(0);
-        libraryText.setText(QUSRSYS);
+        setLibraryText();
+
         userText.setText(ASTERISK);
         idText.setText(ASTERISK);
         severityText.setText(ASTERISK);
@@ -338,4 +345,29 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         return filter.getFilterString();
     }
 
+    private void setLibraryText() {
+        setLibraryText(QUSRSYS);
+    }
+
+    private void setLibraryText(String defaultValue) {
+
+        String newLibrary = null;
+
+        if (MessageQueue.CURRENT.equals(messageQueueText.getText())) {
+            newLibrary = ASTERISK;
+        } else {
+            if (ASTERISK.equals(libraryText.getText())) {
+                newLibrary = QUSRSYS;
+            } else {
+                if (libraryText.getText().trim().length() == 0) {
+                    newLibrary = defaultValue;
+                }
+            }
+        }
+
+        if (newLibrary != null && !newLibrary.equals(libraryText.getText())) {
+            libraryText.setText(newLibrary);
+            System.out.println("Library changed to: " + libraryText.getText());
+        }
+    }
 }
