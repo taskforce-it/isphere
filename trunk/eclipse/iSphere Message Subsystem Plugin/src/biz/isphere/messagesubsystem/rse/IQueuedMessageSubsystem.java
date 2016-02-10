@@ -22,9 +22,13 @@ public interface IQueuedMessageSubsystem {
 
     public void setVendorAttribute(String key, String value);
 
+    public boolean hasPendingRequest();
+    
     public void restartMessageMonitoring();
+    
+    public void messageMonitorStarted(MonitoredMessageQueue messageQueue);
 
-    public void messageMonitorStopped();
+    public void messageMonitorStopped(MonitoredMessageQueue messageQueue);
 
     public boolean isMonitored(MessageQueue messageQueue);
 

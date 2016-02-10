@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class StringHelper {
 
@@ -199,7 +201,7 @@ public final class StringHelper {
 
         StringBuffer stringWithQuotes = new StringBuffer("");
         stringWithQuotes.append("'");
-        
+
         for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
             String character = stringToBeQuoted.substring(idx, idx + 1);
             stringWithQuotes.append(character);
@@ -208,7 +210,7 @@ public final class StringHelper {
             }
         }
         stringWithQuotes.append("'");
-        
+
         return stringWithQuotes.toString();
     }
 
@@ -221,7 +223,8 @@ public final class StringHelper {
      * @param removeNewLines if <code>true</code>, any newlines in the original
      *        string are ignored
      * @return the whole string with embedded newlines
-     * @see http://www.tutego.de/blog/javainsel/2009/05/texte-umbrechen-word-wrap/
+     * @see http
+     *      ://www.tutego.de/blog/javainsel/2009/05/texte-umbrechen-word-wrap/
      */
     public static String wrapAndIndentString(String original, String indent, int width) {
         BreakIterator breakIterator = BreakIterator.getWordInstance();
@@ -321,5 +324,41 @@ public final class StringHelper {
         }
 
         return lines;
+    }
+
+    /**
+     * Compares a given string with the specified wildcard pattern. Supported
+     * wildcard characters are:
+     * 
+     * <pre>
+     * * - replaces a group of characters
+     * ? - replaces a single character
+     * </pre>
+     * 
+     * @param pattern - Pattern 'text' is compared to.
+     * @param text - Text that is compared to the specified pattern.
+     * @return <code>true</code>, when the text matches the pattern, else
+     *         <code>false</code>.
+     */
+    public static boolean matchesGeneric(String pattern, String text) {
+
+        if (text == null) {
+            return false;
+        }
+
+        if ("*".equals(pattern)) {
+            return true;
+        }
+
+        // Escape dots (.)
+        pattern = pattern.replaceAll("\\.", "\\\\.");
+
+        // Replace asterisks (*) and question marks (?)
+        pattern = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", ".") + "$";
+
+        Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regexPattern.matcher(text);
+
+        return matcher.find();
     }
 }

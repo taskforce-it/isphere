@@ -39,16 +39,17 @@ public class MessageMonitorThread extends Thread {
     private MonitoredMessageQueue messageQueue;
     private MonitoringAttributes monitoringAttributes;
     private IMessageHandler messageHandler;
+    private ObjectLockManager objectLockManager;
 
     private boolean monitoring;
     private boolean collectMessagesAtStartUp;
+
     private List<ReceivedMessage> receivedMessages;
-    private ObjectLockManager objectLockManager;
 
     private final static String END_MONITORING = "*END_MONITORING"; //$NON-NLS-1$
     private static final String REMOVE_ALL = "*REMOVE_ALL"; //$NON-NLS-1$
     private final static int READ_TIMEOUT_SECS = 5;
-    private final static int OBJECT_LOCK_WAIT_SECS = 5;
+    private final static int OBJECT_LOCK_WAIT_SECS = READ_TIMEOUT_SECS + 10;
 
     public MessageMonitorThread(MonitoredMessageQueue messageQueue) {
         super("iSphere Message Monitor");
@@ -59,10 +60,14 @@ public class MessageMonitorThread extends Thread {
         this.messageHandler = new MessageHandler(monitoringAttributes);
 
         this.objectLockManager = new ObjectLockManager(OBJECT_LOCK_WAIT_SECS);
+
+        monitoring = true;
     }
 
     @Override
     public void run() {
+
+        debugPrint("*** Thread started running: " + messageQueue.hashCode() + " ***");
 
         // Workaround trying to catch the first message.
         // Sometimes the first one is lost.
@@ -71,8 +76,9 @@ public class MessageMonitorThread extends Thread {
         } catch (InterruptedException e2) {
         }
 
-        monitoring = true;
         collectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
+
+        debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + collectMessagesAtStartUp);
 
         /*
          * Use a timeout for locking the message queue when starting the message
@@ -86,12 +92,29 @@ public class MessageMonitorThread extends Thread {
         QSYSObjectPathName path = new QSYSObjectPathName(messageQueue.getPath());
         RemoteObject remoteMessageQueue = new RemoteObject(messageQueue.getSystem(), path.getObjectName(), path.getLibraryName(), "*MSGQ", "");
 
-        ObjectLock objectLock = null;
+        ObjectLock exclusiveLock = null;
+        ObjectLock sharedReadLock = null;
 
         try {
 
-            objectLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
-            if (objectLock == null) {
+            // First try to get an exclusive lock.
+            debugPrint("Thread " + messageQueue.hashCode() + ": Trying to get an *EXCL lock ...");
+            exclusiveLock = objectLockManager.setExclusiveLock(remoteMessageQueue);
+            if (exclusiveLock != null) {
+                debugPrint("Thread " + messageQueue.hashCode() + ": Got *EXCL lock: " + exclusiveLock.hashCode());
+                // Then add a shared for read lock to allow other job to display
+                // messages and remove the exclusive lock
+                debugPrint("Thread " + messageQueue.hashCode() + ": Adding *SHHRD lock ...");
+                sharedReadLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
+                if (sharedReadLock != null) {
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Got *SHRRD lock: " + sharedReadLock.hashCode());
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Removing *EXCL lock: " + exclusiveLock.hashCode());
+                    objectLockManager.removeObjectLock(exclusiveLock);
+                    exclusiveLock = null;
+                }
+            }
+
+            if (sharedReadLock == null) {
                 Display.getDefault().syncExec(new Runnable() {
                     public void run() {
                         MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error,
@@ -101,14 +124,26 @@ public class MessageMonitorThread extends Thread {
                 monitoringAttributes.setMonitoring(false);
             }
 
+            messageQueue.messageMonitorStarted(messageQueue);
+
+            if (sharedReadLock == null) {
+                debugPrint("Thread " + messageQueue.hashCode() + ": Could not allocate message queue");
+            }
+
             while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
                 try {
                     QueuedMessage message;
                     if (collectMessagesAtStartUp) {
+                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (COLLECT) with object lock: "
+                            + sharedReadLock.hashCode());
                         message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
                     } else {
+                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (DEFAULT) with object lock: "
+                            + sharedReadLock.hashCode());
                         message = messageQueue.receive(null, READ_TIMEOUT_SECS, MessageQueue.OLD, MessageQueue.ANY);
                     }
+
+                    removeMessagesPendingToBeRemoved();
 
                     if (monitoring) {
                         if (message != null) {
@@ -121,8 +156,6 @@ public class MessageMonitorThread extends Thread {
                             collectMessagesAtStartUp = false;
                         }
                     }
-
-                    removeMessagesPendingToBeRemoved();
 
                 } catch (Throwable e) {
                     if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
@@ -140,16 +173,27 @@ public class MessageMonitorThread extends Thread {
             }
 
         } finally {
-            messageQueue.messageMonitorStopped();
-            if (objectLock != null) {
-                objectLockManager.removeObjectLock(objectLock);
+            if (sharedReadLock != null) {
+                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *SHRRD lock: " + sharedReadLock.hashCode());
+                objectLockManager.removeObjectLock(sharedReadLock);
             }
+            if (exclusiveLock != null) {
+                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *EXCL lock: " + exclusiveLock.hashCode());
+                objectLockManager.removeObjectLock(exclusiveLock);
+            }
+            debugPrint("Thread " + messageQueue.hashCode() + ": About to leave thread.");
+            messageQueue.messageMonitorStopped(messageQueue);
         }
+
+        return;
     }
 
     public void stopMonitoring() {
 
+        debugPrint("Thread " + messageQueue.hashCode() + ": Received request to stop monitoring");
+
         if (!monitoring) {
+            debugPrint("Thread " + messageQueue.hashCode() + ": ... but I am not monitoring???");
             return;
         }
 
@@ -174,11 +218,11 @@ public class MessageMonitorThread extends Thread {
             }
 
             if (isError) {
-                MessageDialogAsync.displayError(Display.getDefault().getActiveShell(), "One or more messages could not be removed.");
+                MessageDialogAsync.displayError(Display.getDefault().getActiveShell(), Messages.One_or_more_messages_could_not_be_removed);
             }
 
         } catch (Throwable e) {
-            MessageDialogAsync.displayError("One or message could not be removed.");
+            MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
@@ -208,5 +252,9 @@ public class MessageMonitorThread extends Thread {
 
     private void handleBufferedMessages(List<ReceivedMessage> messages) throws Exception {
         messageHandler.handleMessages(messages);
+    }
+
+    private void debugPrint(String message) {
+        // System.out.println(message);
     }
 }

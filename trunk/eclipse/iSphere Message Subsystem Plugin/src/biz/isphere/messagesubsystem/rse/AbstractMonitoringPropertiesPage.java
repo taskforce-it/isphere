@@ -179,7 +179,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         Composite propsGroup = new Composite(tabFolder, SWT.NONE);
         tabItem.setControl(propsGroup);
-        propsGroup.setLayout(new GridLayout(2, false));
+        propsGroup.setLayout(new GridLayout(3, false));
 
         delegate.createContents(propsGroup);
 
@@ -348,7 +348,18 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     }
 
     @Override
+    public boolean isValid() {
+
+        return super.isValid();
+    }
+
+    @Override
     public boolean performOk() {
+
+        if (queuedMessageSubSystem.hasPendingRequest()) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Previous_request_is_still_pending);
+            return false;
+        }
 
         saveSettings();
 
