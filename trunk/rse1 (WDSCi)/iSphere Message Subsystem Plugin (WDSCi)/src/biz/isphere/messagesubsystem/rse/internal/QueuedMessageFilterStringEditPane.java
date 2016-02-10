@@ -39,7 +39,7 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
     @Override
     public Control createContents(Composite parent) {
 
-        int nbrColumns = 2;
+        int nbrColumns = 3;
         Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
         delegate.createContents(composite_prompts);

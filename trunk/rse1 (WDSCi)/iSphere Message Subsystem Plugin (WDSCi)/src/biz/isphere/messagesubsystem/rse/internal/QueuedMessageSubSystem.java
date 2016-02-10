@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
@@ -48,10 +49,13 @@ import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
 
 public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, IQueuedMessageSubsystem {
 
+    private Object syncObject = new Object();
+
     private CommunicationsListener communicationsListener;
     private MonitoringAttributes monitoringAttributes;
-    private MonitoredMessageQueue monitoredMessageQueue;
     private boolean isStarting;
+    private MonitoredMessageQueue pendingMonitoredMessageQueue;
+    private MonitoredMessageQueue currentMonitoredMessageQueue;
 
     public QueuedMessageSubSystem() {
         super();
@@ -77,50 +81,10 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
                 queuedMessageResources[i].setQueuedMessage(queuedMessages[i]);
             }
         } catch (Exception e) {
-            SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
-            msg.makeSubstitution(e.getMessage());
-            SystemMessageObject msgObj = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
-            return new Object[] { msgObj };
+            return new Object[] { createErrorMessage(e) };
         }
 
         return queuedMessageResources;
-    }
-
-    @Override
-    protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws InvocationTargetException,
-        InterruptedException {
-
-        return internalResolveFilterString(monitor, filterString);
-    }
-
-    public CmdSubSystem getCmdSubSystem() {
-
-        SystemConnection sc = getSystemConnection();
-        SystemRegistry registry = SystemPlugin.getTheSystemRegistry();
-        SubSystem[] subsystems = registry.getSubSystems(sc);
-        SubSystem subsystem;
-
-        for (int ssIndx = 0; ssIndx < subsystems.length; ssIndx++) {
-            subsystem = subsystems[ssIndx];
-            if (subsystem instanceof CmdSubSystemImpl) {
-                return (CmdSubSystemImpl)subsystem;
-            }
-        }
-
-        return null;
-    }
-
-    public IISeriesSubSystemCommandExecutionProperties getCommandExecutionProperties() {
-        return getObjectSubSystem();
-    }
-
-    public FileSubSystem getObjectSubSystem() {
-        return ISeriesConnection.getConnection(getSystemConnection()).getISeriesFileSubSystem();
-    }
-
-    public AS400 getToolboxAS400Object() {
-        ISeriesSystemToolbox system = (ISeriesSystemToolbox)getSystem();
-        return system.getAS400Object();
     }
 
     public void setShell(Shell shell) {
@@ -148,12 +112,16 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
 
     public boolean isMonitored(MessageQueue messageQueue) {
 
-        if (messageQueue == null || monitoredMessageQueue == null) {
+        if (messageQueue == null) {
+            ISpherePlugin.logError("Null value passed to QueuedMessageSubSystem.isMonitored()", null);
             return false;
         }
 
-        if (messageQueue.getPath().equals(monitoredMessageQueue.getPath())) {
-            return true;
+        synchronized (syncObject) {
+            MonitoredMessageQueue monitoredMessageQueue = getMonitoredMessageQueue();
+            if (monitoredMessageQueue != null && monitoredMessageQueue.getPath().equals(messageQueue.getPath())) {
+                return true;
+            }
         }
 
         return false;
@@ -161,20 +129,76 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
 
     public void removedFromMonitoredMessageQueue(QueuedMessage queuedMessage) {
 
-        if (!isMonitored(queuedMessage.getQueue())) {
-            return;
+        synchronized (syncObject) {
+            MonitoredMessageQueue monitoredMessageQueue = getMonitoredMessageQueue();
+            if (monitoredMessageQueue != null) {
+                monitoredMessageQueue.remove(queuedMessage);
+            }
+        }
+    }
+    
+    public void messageMonitorStarted(MonitoredMessageQueue messageQueue) {
+
+        synchronized (syncObject) {
+            if (messageQueue != pendingMonitoredMessageQueue) {
+                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                return;
+            }
+
+            currentMonitoredMessageQueue = messageQueue;
+            pendingMonitoredMessageQueue = null;
         }
 
-        monitoredMessageQueue.remove(queuedMessage);
+        debugPrint("==> Subsystem: Thread " + messageQueue.hashCode() + " started.");
+    }
+    
+    public void messageMonitorStopped(MonitoredMessageQueue messageQueue) {
+
+        synchronized (syncObject) {
+            if (messageQueue != currentMonitoredMessageQueue) {
+                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                return;
+            }
+
+            // currentMonitoredMessageQueue = pendingMonitoredMessageQueue;
+            // pendingMonitoredMessageQueue = null;
+            currentMonitoredMessageQueue = null;
+        }
+
+        debugPrint("<== Subsystem: Thread " + messageQueue.hashCode() + " stopped.");
     }
 
-    public void messageMonitorStopped() {
-        monitoredMessageQueue = null;
+    private MonitoredMessageQueue getMonitoredMessageQueue() {
+
+        if (pendingMonitoredMessageQueue != null) {
+            return pendingMonitoredMessageQueue;
+        }
+
+        if (currentMonitoredMessageQueue != null) {
+            return currentMonitoredMessageQueue;
+        }
+
+        return null;
+    }
+
+    private void debugPrint(String message) {
+        //        System.out.println(message);
     }
 
     /*
      * Start/Stop message monitor thread
      */
+
+    public boolean hasPendingRequest() {
+
+        if (pendingMonitoredMessageQueue != null) {
+            debugPrint("Subsystem: have pending requests.");
+            return true;
+        }
+
+        debugPrint("Subsystem: OK - no pending requests.");
+        return false;
+    }
 
     public void startMonitoring() {
 
@@ -190,14 +214,19 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
 
             isStarting = true;
 
-            // End current message monitor
-            if (monitoredMessageQueue != null) {
-                monitoredMessageQueue.stopMonitoring();
-            }
+            synchronized (syncObject) {
 
-            // Start new message monitor
-            monitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
-            monitoredMessageQueue.startMonitoring();
+                // Start new message monitor
+                debugPrint("Subsystem: Starting message monitor thread ...");
+                pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
+                pendingMonitoredMessageQueue.startMonitoring();
+
+                // End running message monitor
+                if (currentMonitoredMessageQueue != null) {
+                    debugPrint("Subsystem: Stopping previous message monitor thread ...");
+                    currentMonitoredMessageQueue.stopMonitoring();
+                }
+            }
 
         } finally {
             isStarting = false;
@@ -206,14 +235,72 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
 
     public void stopMonitoring() {
 
-        if (monitoredMessageQueue != null) {
-            monitoredMessageQueue.stopMonitoring();
+        synchronized (syncObject) {
+
+            if (currentMonitoredMessageQueue == null) {
+                return;
+            }
+
+            // if (pendingMonitoredMessageQueue != null) {
+            // debugPrint("Subsystem: Stopping pending queue: " +
+            // pendingMonitoredMessageQueue.hashCode());
+            // pendingMonitoredMessageQueue.stopMonitoring();
+            // } else {
+            debugPrint("Subsystem: Stopping current queue: " + currentMonitoredMessageQueue.hashCode());
+            currentMonitoredMessageQueue.stopMonitoring();
+            // }
         }
     }
 
     /*
      * Start of RDi/WDSCi specific methods.
      */
+    
+    @Override
+    protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws InvocationTargetException,
+        InterruptedException {
+
+        return internalResolveFilterString(monitor, filterString);
+    }
+
+    public IISeriesSubSystemCommandExecutionProperties getCommandExecutionProperties() {
+        return getObjectSubSystem();
+    }
+
+    public CmdSubSystem getCmdSubSystem() {
+
+        SystemConnection sc = getSystemConnection();
+        SystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+        SubSystem[] subsystems = registry.getSubSystems(sc);
+        SubSystem subsystem;
+
+        for (int ssIndx = 0; ssIndx < subsystems.length; ssIndx++) {
+            subsystem = subsystems[ssIndx];
+            if (subsystem instanceof CmdSubSystemImpl) {
+                return (CmdSubSystemImpl)subsystem;
+            }
+        }
+
+        return null;
+    }
+
+    public FileSubSystem getObjectSubSystem() {
+        return ISeriesConnection.getConnection(getSystemConnection()).getISeriesFileSubSystem();
+    }
+
+    private SystemMessageObject createErrorMessage(Throwable e) {
+        
+        SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
+        msg.makeSubstitution(e.getMessage());
+        SystemMessageObject msgObj = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
+        
+        return msgObj;
+    }
+
+    public AS400 getToolboxAS400Object() {
+        ISeriesSystemToolbox system = (ISeriesSystemToolbox)getSystem();
+        return system.getAS400Object();
+    }
 
     @Override
     public ISystem getSystem() {
