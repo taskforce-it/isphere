@@ -44,10 +44,13 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSystem, IQueuedMessageSubsystem {
 
+    private Object syncObject = new Object();
+
     private CommunicationsListener communicationsListener;
     private MonitoringAttributes monitoringAttributes;
-    private MonitoredMessageQueue monitoredMessageQueue;
     private boolean isStarting;
+    private MonitoredMessageQueue pendingMonitoredMessageQueue;
+    private MonitoredMessageQueue currentMonitoredMessageQueue;
 
     public QueuedMessageSubSystem(IHost host, IConnectorService connectorService) {
         super(host, connectorService);
@@ -76,61 +79,10 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
                 queuedMessageResources[i].setQueuedMessage(queuedMessages[i]);
             }
         } catch (Exception e) {
-            SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
-            msg.makeSubstitution(e.getMessage());
-            SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
-            return new Object[] { msgObj };
+            return new Object[] { createErrorMessage(e) };
         }
 
         return queuedMessageResources;
-    }
-
-    @Override
-    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
-        InterruptedException {
-
-        return internalResolveFilterString(filterString, monitor);
-    }
-
-    public QSYSCommandSubSystem getCmdSubSystem() {
-
-        IHost iHost = getHost();
-        ISubSystem[] iSubSystems = iHost.getSubSystems();
-        for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
-            SubSystem subsystem = (SubSystem)iSubSystems[ssIndx];
-            if ((subsystem instanceof QSYSCommandSubSystem)) {
-                return (QSYSCommandSubSystem)subsystem;
-            }
-        }
-        return null;
-    }
-
-    public QSYSObjectSubSystem getCommandExecutionProperties() {
-        return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
-    }
-
-    public ISubSystem getObjectSubSystem() {
-
-        IHost iHost = getHost();
-        ISubSystem[] iSubSystems = iHost.getSubSystems();
-        for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
-            ISubSystem iSubSystem = iSubSystems[ssIndx];
-            if ((iSubSystem instanceof QSYSObjectSubSystem)) {
-                return iSubSystem;
-            }
-        }
-
-        return null;
-    }
-
-    private AS400 getToolboxAS400Object() {
-
-        try {
-            return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
-        } catch (SystemMessageException e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
-            return null;
-        }
     }
 
     public void setShell(Shell shell) {
@@ -158,12 +110,16 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
     public boolean isMonitored(MessageQueue messageQueue) {
 
-        if (messageQueue == null || monitoredMessageQueue == null) {
+        if (messageQueue == null) {
+            ISpherePlugin.logError("Null value passed to QueuedMessageSubSystem.isMonitored()", null);
             return false;
         }
 
-        if (messageQueue.getPath().equals(monitoredMessageQueue.getPath())) {
-            return true;
+        synchronized (syncObject) {
+            MonitoredMessageQueue monitoredMessageQueue = getMonitoredMessageQueue();
+            if (monitoredMessageQueue != null && monitoredMessageQueue.getPath().equals(messageQueue.getPath())) {
+                return true;
+            }
         }
 
         return false;
@@ -171,20 +127,76 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
     public void removedFromMonitoredMessageQueue(QueuedMessage queuedMessage) {
 
-        if (!isMonitored(queuedMessage.getQueue())) {
-            return;
+        synchronized (syncObject) {
+            MonitoredMessageQueue monitoredMessageQueue = getMonitoredMessageQueue();
+            if (monitoredMessageQueue != null) {
+                monitoredMessageQueue.remove(queuedMessage);
+            }
         }
-
-        monitoredMessageQueue.remove(queuedMessage);
     }
 
-    public void messageMonitorStopped() {
-        monitoredMessageQueue = null;
+    public void messageMonitorStarted(MonitoredMessageQueue messageQueue) {
+
+        synchronized (syncObject) {
+            if (messageQueue != pendingMonitoredMessageQueue) {
+                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                return;
+            }
+
+            currentMonitoredMessageQueue = messageQueue;
+            pendingMonitoredMessageQueue = null;
+        }
+
+        debugPrint("==> Subsystem: Thread " + messageQueue.hashCode() + " started.");
+    }
+
+    public void messageMonitorStopped(MonitoredMessageQueue messageQueue) {
+
+        synchronized (syncObject) {
+            if (messageQueue != currentMonitoredMessageQueue) {
+                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                return;
+            }
+
+            // currentMonitoredMessageQueue = pendingMonitoredMessageQueue;
+            // pendingMonitoredMessageQueue = null;
+            currentMonitoredMessageQueue = null;
+        }
+
+        debugPrint("<== Subsystem: Thread " + messageQueue.hashCode() + " stopped.");
+    }
+
+    private MonitoredMessageQueue getMonitoredMessageQueue() {
+
+        if (pendingMonitoredMessageQueue != null) {
+            return pendingMonitoredMessageQueue;
+        }
+
+        if (currentMonitoredMessageQueue != null) {
+            return currentMonitoredMessageQueue;
+        }
+
+        return null;
+    }
+
+    private void debugPrint(String message) {
+        //        System.out.println(message);
     }
 
     /*
      * Start/Stop message monitor thread
      */
+
+    public boolean hasPendingRequest() {
+
+        if (pendingMonitoredMessageQueue != null) {
+            debugPrint("Subsystem: have pending requests.");
+            return true;
+        }
+
+        debugPrint("Subsystem: OK - no pending requests.");
+        return false;
+    }
 
     public void startMonitoring() {
 
@@ -200,14 +212,19 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
             isStarting = true;
 
-            // End current message monitor
-            if (monitoredMessageQueue != null) {
-                monitoredMessageQueue.stopMonitoring();
-            }
+            synchronized (syncObject) {
+                
+                // Start new message monitor
+                debugPrint("Subsystem: Starting message monitor thread ...");
+                pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
+                pendingMonitoredMessageQueue.startMonitoring();
 
-            // Start new message monitor
-            monitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
-            monitoredMessageQueue.startMonitoring();
+                // End running message monitor
+                if (currentMonitoredMessageQueue != null) {
+                    debugPrint("Subsystem: Stopping previous message monitor thread ...");
+                    currentMonitoredMessageQueue.stopMonitoring();
+                }
+            }
 
         } finally {
             isStarting = false;
@@ -216,14 +233,83 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
     public void stopMonitoring() {
 
-        if (monitoredMessageQueue != null) {
-            monitoredMessageQueue.stopMonitoring();
+        synchronized (syncObject) {
+
+            if (currentMonitoredMessageQueue == null) {
+                return;
+            }
+
+            // if (pendingMonitoredMessageQueue != null) {
+            // debugPrint("Subsystem: Stopping pending queue: " +
+            // pendingMonitoredMessageQueue.hashCode());
+            // pendingMonitoredMessageQueue.stopMonitoring();
+            // } else {
+            debugPrint("Subsystem: Stopping current queue: " + currentMonitoredMessageQueue.hashCode());
+            currentMonitoredMessageQueue.stopMonitoring();
+            // }
         }
     }
 
     /*
      * Start of RDi/WDSCi specific methods.
      */
+
+    @Override
+    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+
+        return internalResolveFilterString(filterString, monitor);
+    }
+
+    public QSYSObjectSubSystem getCommandExecutionProperties() {
+        return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
+    }
+
+    public QSYSCommandSubSystem getCmdSubSystem() {
+
+        IHost iHost = getHost();
+        ISubSystem[] iSubSystems = iHost.getSubSystems();
+        for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
+            SubSystem subsystem = (SubSystem)iSubSystems[ssIndx];
+            if ((subsystem instanceof QSYSCommandSubSystem)) {
+                return (QSYSCommandSubSystem)subsystem;
+            }
+        }
+        return null;
+    }
+
+    public ISubSystem getObjectSubSystem() {
+
+        IHost iHost = getHost();
+        ISubSystem[] iSubSystems = iHost.getSubSystems();
+        for (int ssIndx = 0; ssIndx < iSubSystems.length; ssIndx++) {
+            ISubSystem iSubSystem = iSubSystems[ssIndx];
+            if ((iSubSystem instanceof QSYSObjectSubSystem)) {
+                return iSubSystem;
+            }
+        }
+
+        return null;
+    }
+
+    private SystemMessageObject createErrorMessage(Throwable e) {
+        
+        SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
+        msg.makeSubstitution(e.getMessage());
+        SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
+        
+        return msgObj;
+    }
+
+    private AS400 getToolboxAS400Object() {
+
+        try {
+            return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
+        } catch (SystemMessageException e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
 
     public String getVendorAttribute(String key) {
 

@@ -1,6 +1,7 @@
 
 Changelog: iSphere 2.8.1
 ------------------------
+ • Changed message filter to use wildcards for string compare.
  • Changed the TN5250J view to restore the previous state of the 
    key filter on part activation.
  • Added option to filter messages by message ID in the iSphere
@@ -19,3 +20,7 @@ New NLS messages:
 
 iSphere Core Plugin:
 Cannot_allocate_object_B_A_C
+
+iSphere Message Subsystem Plugin:
+Previous_request_is_still_pending=Previous request is still pending.
+One_or_more_messages_could_not_be_removed=One or more messages could not be removed.

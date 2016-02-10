@@ -43,11 +43,9 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     public void startMonitoring() {
 
-        if (monitoringThread == null) {
-            monitoringThread = createMonitoringThread();
-            monitoringThread.setDaemon(true);
-            monitoringThread.start();
-        }
+        monitoringThread = createMonitoringThread();
+        monitoringThread.setDaemon(true);
+        monitoringThread.start();
     }
 
     public void stopMonitoring() {
@@ -68,9 +66,13 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
         }
     }
 
-    public void messageMonitorStopped() {
+    public void messageMonitorStarted(MonitoredMessageQueue messageQueue) {
+        messageSubsystem.messageMonitorStarted(messageQueue);
+    }
+
+    public void messageMonitorStopped(MonitoredMessageQueue messageQueue) {
         monitoringThread = null;
-        messageSubsystem.messageMonitorStopped();
+        messageSubsystem.messageMonitorStopped(messageQueue);
     }
 
     public MonitoringAttributes getMonitoringAttributes() {

@@ -14,6 +14,8 @@ package biz.isphere.messagesubsystem.rse;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -21,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import com.ibm.as400.access.MessageQueue;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
@@ -54,9 +58,18 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         messageQueueText = WidgetFactory.createUpperCaseCombo(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         messageQueueText.setLayoutData(gd);
         messageQueueText.setTextLimit(10);
         messageQueueText.add(QueuedMessageFilter.MSGQ_CURRENT);
+        messageQueueText.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+             if (MessageQueue.CURRENT.equals(messageQueueText.getText())) {
+                 libraryText.setText("*");
+             }
+            }
+        });
 
         Label libraryLabel = new Label(composite_prompts, SWT.NONE);
         libraryLabel.setText(Messages.Library_colon);
@@ -64,11 +77,13 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         libraryText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         libraryText.setLayoutData(gd);
         libraryText.setTextLimit(10);
 
-        Label fromLabel = new Label(composite_prompts, SWT.NONE);
-        fromLabel.setText(Messages.From_user_colon);
+        // From user: *generic*
+        Label userLabel = new Label(composite_prompts, SWT.NONE);
+        userLabel.setText(Messages.From_user_colon);
 
         userText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
@@ -76,6 +91,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         userText.setLayoutData(gd);
         userText.setTextLimit(10);
 
+        Label textUserGeneric = new Label(composite_prompts, SWT.NONE);
+        textUserGeneric.setText("*gen?ric*");
+
+        // Message Id: *generic*
         Label idLabel = new Label(composite_prompts, SWT.NONE);
         idLabel.setText(Messages.Message_ID_colon);
 
@@ -85,15 +104,21 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         idText.setLayoutData(gd);
         idText.setTextLimit(7);
 
+        Label textIdGeneric = new Label(composite_prompts, SWT.NONE);
+        textIdGeneric.setText("*gen?ric*");
+
+        // Message severity: numeric value
         Label severityLabel = new Label(composite_prompts, SWT.NONE);
         severityLabel.setText(Messages.Severity_threshold_colon);
 
         severityText = WidgetFactory.createText(composite_prompts);
         gd = new GridData();
-        gd.widthHint = 50;
+        gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         severityText.setLayoutData(gd);
         severityText.setTextLimit(2);
 
+        // From job: *generic*
         Label fromJobLabel = new Label(composite_prompts, SWT.NONE);
         fromJobLabel.setText(Messages.From_job_colon);
 
@@ -103,6 +128,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobText.setLayoutData(gd);
         fromJobText.setTextLimit(10);
 
+        Label textFromJobGeneric = new Label(composite_prompts, SWT.NONE);
+        textFromJobGeneric.setText("*gen?ric*");
+
+        // From job number: *generic*
         Label fromJobNumberLabel = new Label(composite_prompts, SWT.NONE);
         fromJobNumberLabel.setText(Messages.From_job_number_colon);
 
@@ -112,6 +141,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobNumberText.setLayoutData(gd);
         fromJobNumberText.setTextLimit(6);
 
+        Label textFromJobNumberGeneric = new Label(composite_prompts, SWT.NONE);
+        textFromJobNumberGeneric.setText("*gen?ric*");
+
+        // From program: *generic*
         Label fromProgramLabel = new Label(composite_prompts, SWT.NONE);
         fromProgramLabel.setText(Messages.From_program_colon);
 
@@ -121,6 +154,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromProgramText.setLayoutData(gd);
         fromProgramText.setTextLimit(10);
 
+        Label textFromProgramGeneric = new Label(composite_prompts, SWT.NONE);
+        textFromProgramGeneric.setText("*gen?ric*");
+
+        // Message text: *generic*
         Label textLabel = new Label(composite_prompts, SWT.NONE);
         textLabel.setText(Messages.Message_text_contains_colon);
 
@@ -130,11 +167,16 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         textText.setLayoutData(gd);
         textText.setTextLimit(255);
 
+        Label textTextGeneric = new Label(composite_prompts, SWT.NONE);
+        textTextGeneric.setText("*gen?ric*");
+
+        // Message type: combo box
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
         typeLabel.setText(Messages.Message_type_colon);
 
         messageTypeCombo = WidgetFactory.createReadOnlyCombo(composite_prompts);
         messageTypeCombo.setItems(QueuedMessageHelper.getMessageTypeItems());
+        messageTypeCombo.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, 2, 1));
 
         return composite_prompts;
     }

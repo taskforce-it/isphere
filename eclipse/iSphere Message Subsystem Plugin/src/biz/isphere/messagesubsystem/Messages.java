@@ -18,6 +18,8 @@ public class Messages extends NLS {
 
     public static final String EMPTY = ""; //$NON-NLS-1$
 
+    public static String E_R_R_O_R;
+    
     public static String Message_ID_colon;
 
     public static String From_job_colon;
@@ -171,6 +173,10 @@ public class Messages extends NLS {
     public static String Collect_informational_messages_on_startup_tooltip;
     
     public static String Queued_Messages_title;
+
+    public static String Previous_request_is_still_pending;
+
+    public static String One_or_more_messages_could_not_be_removed;
     
     static {
         // initialize resource bundle
