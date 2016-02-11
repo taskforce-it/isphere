@@ -327,8 +327,8 @@ public final class StringHelper {
     }
 
     /**
-     * Compares a given string with the specified wildcard pattern. Supported
-     * wildcard characters are:
+     * Compares a given string case insensitive with the specified wildcard
+     * pattern. Supported wildcard characters are:
      * 
      * <pre>
      * * - replaces a group of characters
@@ -340,7 +340,7 @@ public final class StringHelper {
      * @return <code>true</code>, when the text matches the pattern, else
      *         <code>false</code>.
      */
-    public static boolean matchesGeneric(String pattern, String text) {
+    public static boolean matchesGeneric(String text, String pattern) {
 
         if (text == null) {
             return false;
@@ -350,10 +350,22 @@ public final class StringHelper {
             return true;
         }
 
-        // Escape dots (.)
+        // Escape dots (.) and backslashes (\)
+        pattern = pattern.replaceAll("\\\\", "\\\\\\\\");
         pattern = pattern.replaceAll("\\.", "\\\\.");
 
-        // Replace asterisks (*) and question marks (?)
+        /**
+         * Replace asterisks (*) and question marks (?)<br>
+         * Other options:<br>
+         * <ul style="list-style-type:square;">
+         * <li>(?i) makes the regex case insensitive.</li>
+         * <li>(?s) for "single line mode" makes the dot match all characters,
+         * including line breaks.</li>
+         * <li>(?m) for "multi-line mode" makes the caret and dollar match at
+         * the start and end of each line in the subject string.</li>
+         * </ul>
+         */
+
         pattern = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", ".") + "$";
 
         Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
