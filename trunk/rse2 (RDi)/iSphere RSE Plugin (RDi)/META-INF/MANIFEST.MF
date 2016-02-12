@@ -33,6 +33,7 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
+ biz.isphere.rse.clcommands,
  biz.isphere.rse.compareeditor,
  biz.isphere.rse.internal,
  biz.isphere.rse.spooledfiles
