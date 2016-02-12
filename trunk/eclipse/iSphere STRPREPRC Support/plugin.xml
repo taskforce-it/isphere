@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="com.ibm.lpex.preload">
+      <preload
+            class="biz.isphere.strpreprc.Preload"
+            id="biz.isphere.strpreprc.Preload">
+      </preload>
+   </extension>
+
+   <extension
+         id="biz.isphere.strpreprc.listener.LPEXDocumentSetupParticipant"
+         name="LPEXDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="biz.isphere.strpreprc.listener.LPEXDocumentSetupParticipant"
+            extensions="*"/>
+   </extension>
+
+</plugin>
