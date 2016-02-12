@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/swt-debug.jar" sourcepath="C:/workspaces/rdp_080/workspace/iSphere JUnit (RDi)/lib/src/swt-src.zip"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator Core Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere STRPREPRC Plugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
