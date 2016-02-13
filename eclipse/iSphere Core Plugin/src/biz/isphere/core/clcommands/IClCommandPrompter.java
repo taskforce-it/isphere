@@ -12,7 +12,24 @@ import org.eclipse.swt.widgets.Shell;
 
 public interface IClCommandPrompter {
 
+    /*
+     * Return values of showDialog()
+     */
+    public static final int OK = 0;
+    public static final int CANCEL = 1;
+    public static final int ERROR = 2;
+    public static final int PTF_REQUIRED = 3;
+
+    /*
+     * Prompt modes for setMode()
+     */
+    public static final int EDIT_MODE = 0;
+    public static final int EXECUTE_MODE = 1;
+    public static final int NON_EXECUTE_MODE = 2;
+
     public void setCommandString(String commandString);
+
+    public String getCommandString();
 
     public void setMode(int mode);
 
@@ -20,4 +37,7 @@ public interface IClCommandPrompter {
 
     public void setParent(Shell shell);
 
+    public int showDialog();
+
+    public String testSyntax();
 }

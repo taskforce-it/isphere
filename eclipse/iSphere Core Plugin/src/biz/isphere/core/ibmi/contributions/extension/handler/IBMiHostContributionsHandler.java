@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IEditorPart;
 
+import biz.isphere.core.clcommands.IClCommandPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 
 import com.ibm.as400.access.AS400;
@@ -115,6 +117,39 @@ public class IBMiHostContributionsHandler {
         return factory.getSystem(connectionName);
     }
 
+    public static AS400 getSystem(IEditorPart editor) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getSystem(editor);
+    }
+
+    public static String getConnectionName(IEditorPart editor) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getConnectionName(editor);
+    }
+
+    public static String[] getConnectionNames() {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getConnectionNames();
+    }
+
     public static Connection getJdbcConnection(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -124,6 +159,23 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.getJdbcConnection(connectionName);
+    }
+
+    /**
+     * Returns an ICLPrompter for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return ICLPrompter
+     */
+    public static IClCommandPrompter getCLPrompter(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getCLPrompter(connectionName);
     }
 
     /**

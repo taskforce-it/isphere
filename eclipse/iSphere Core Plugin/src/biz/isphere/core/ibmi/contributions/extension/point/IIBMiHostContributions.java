@@ -11,11 +11,15 @@ package biz.isphere.core.ibmi.contributions.extension.point;
 import java.sql.Connection;
 import java.util.List;
 
+import org.eclipse.ui.IEditorPart;
+
+import biz.isphere.core.clcommands.IClCommandPrompter;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 
 public interface IIBMiHostContributions {
-    
+
     /**
      * Executes a given command for a given connection.
      * 
@@ -31,7 +35,8 @@ public interface IIBMiHostContributions {
      * 
      * @param connectionName - connection that is checked for a given library
      * @param libraryName - library that is tested
-     * @return <code>true</code>, when the library exists, else <code>false</code>.
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
      */
     public boolean checkLibrary(String connectionName, String libraryName);
 
@@ -52,7 +57,8 @@ public interface IIBMiHostContributions {
      * @param libraryName - library that should contain the file
      * @param fileName - file that should contain the member
      * @param memberName - name of the member that is tested
-     * @return <code>true</code>, when the library exists, else <code>false</code>.
+     * @return <code>true</code>, when the library exists, else
+     *         <code>false</code>.
      */
     public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName);
 
@@ -92,6 +98,29 @@ public interface IIBMiHostContributions {
     public AS400 getSystem(String profile, String connectionName);
 
     /**
+     * Returns an AS400 object for a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return AS400 object that is associated to editor
+     */
+    public AS400 getSystem(IEditorPart editor);
+
+    /**
+     * Returns the connection name of a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return name of the connection the file has been loaded from
+     */
+    public String getConnectionName(IEditorPart editor);
+
+    /**
+     * returns a list of configured connections.
+     * 
+     * @return names of configured connections
+     */
+    public String[] getConnectionNames();
+
+    /**
      * Returns a JDBC connection for a given connection name.
      * 
      * @param connectionName - connection name to identify the connection
@@ -108,4 +137,11 @@ public interface IIBMiHostContributions {
      */
     public Connection getJdbcConnection(String profile, String connectionName);
 
+    /**
+     * Returns an ICLPrompter for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return ICLPrompter
+     */
+    public IClCommandPrompter getCLPrompter(String connectionName);
 }
