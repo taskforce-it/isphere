@@ -9,14 +9,23 @@
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.clcommands.IClCommandPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.clcommands.ClCommandPrompter;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
@@ -26,7 +35,12 @@ import com.ibm.etools.iseries.comm.interfaces.IISeriesFile;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesMember;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesLibrary;
+import com.ibm.etools.iseries.core.util.clprompter.CLPrompter;
+import com.ibm.etools.systems.core.SystemIFileProperties;
+import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
+import com.ibm.etools.systems.model.SystemRegistry;
+import com.ibm.etools.systems.subsystems.SubSystem;
 
 /**
  * This class connects to the
@@ -70,7 +84,7 @@ public class XRDiContributions implements IIBMiHostContributions {
                         }
                     }
                 }
-                
+
                 if (escapeMessage == null) {
                     escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
                 }
@@ -116,7 +130,8 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @param connectionName - connection that is checked for a given library
      * @param libraryName - library that should contain the file
      * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else <code>false</code>.
+     * @return <code>true</code>, when the file exists, else
+     *         <code>false</code>.
      */
     public boolean checkFile(String connectionName, String libraryName, String fileName) {
 
@@ -164,8 +179,16 @@ public class XRDiContributions implements IIBMiHostContributions {
         return true;
     }
 
+    /**
+     * Returns the name of the iSphere library that is associated to a given
+     * connection.
+     * 
+     * @param connectionName - name of the connection the name of the iSphere
+     *        library is returned for
+     * @return name of the iSphere library
+     */
     public String getISphereLibrary(String connectionName) {
-        
+
         ConnectionProperties connectionProperties = ConnectionManager.getInstance().getConnectionProperties(connectionName);
         if (connectionProperties != null && connectionProperties.useISphereLibraryName()) {
             return connectionProperties.getISphereLibraryName();
@@ -229,6 +252,64 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Returns an AS400 object for a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return AS400 object that is associated to editor
+     */
+    public AS400 getSystem(IEditorPart editor) {
+        return getSystem(getConnectionName(editor));
+    }
+
+    /**
+     * Returns the connection name of a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return name of the connection the file has been loaded from
+     */
+    public String getConnectionName(IEditorPart editor) {
+
+        IEditorInput editorInput = editor.getEditorInput();
+        if (editorInput instanceof FileEditorInput) {
+            IFile file = ((FileEditorInput)editorInput).getFile();
+            SystemIFileProperties properties = new SystemIFileProperties(file);
+            String subsystemStr = properties.getRemoteFileSubSystem();
+            if (subsystemStr != null) {
+                SystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+                if (registry != null) {
+                    SubSystem subsystem = SystemPlugin.getTheSystemRegistry().getSubSystem(subsystemStr);
+                    if (subsystem != null) {
+                        String connectionName = subsystem.getSystemConnectionName();
+                        return connectionName;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a list of configured connections.
+     * 
+     * @return names of configured connections
+     */
+    public String[] getConnectionNames() {
+
+        List<String> connectionNamesList = new ArrayList<String>();
+
+        ISeriesConnection[] connections = ISeriesConnection.getConnections();
+        for (ISeriesConnection connection : connections) {
+            connectionNamesList.add(connection.getConnectionName());
+        }
+
+        String[] connectionNames = connectionNamesList.toArray(new String[connectionNamesList.size()]);
+        Arrays.sort(connectionNames);
+
+        return connectionNames;
+    }
+
+    /**
      * Returns a JDBC connection for a given connection name.
      * 
      * @param connectionName - Name of the connection, the JDBC connection is
@@ -277,5 +358,30 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return ISeriesConnection.getConnection(profile, connectionName);
+    }
+
+    /**
+     * Returns an ICLPrompter for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return ICLPrompter
+     */
+    public IClCommandPrompter getCLPrompter(String connectionName) {
+
+        ISeriesConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        CLPrompter prompter;
+        try {
+            prompter = new CLPrompter();
+            prompter.setConnection(connection);
+            return new ClCommandPrompter(prompter);
+        } catch (SystemMessageException e) {
+            ISpherePlugin.logError("*** Could not create CLPrompter for connection '" + connectionName + "'", e);
+        }
+
+        return null;
     }
 }
