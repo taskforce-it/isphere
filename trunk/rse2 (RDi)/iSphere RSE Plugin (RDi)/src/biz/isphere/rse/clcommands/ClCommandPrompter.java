@@ -19,8 +19,8 @@ public class ClCommandPrompter implements IClCommandPrompter {
 
     private CLPrompter prompter;
 
-    public ClCommandPrompter() throws Exception {
-        this.prompter = new CLPrompter();
+    public ClCommandPrompter(CLPrompter prompter) {
+        this.prompter = prompter;
     }
 
     public void setCommandString(String commandString) {
@@ -37,6 +37,18 @@ public class ClCommandPrompter implements IClCommandPrompter {
 
     public void setParent(Shell parent) {
         prompter.setParent(parent);
+    }
+
+    public int showDialog() {
+        return prompter.showDialog();
+    }
+
+    public String getCommandString() {
+        return prompter.getCommandString();
+    }
+
+    public String testSyntax() {
+        return prompter.testSyntax().getLevelOneText();
     }
 
 }

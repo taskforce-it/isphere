@@ -9,25 +9,39 @@
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.clcommands.IClCommandPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.clcommands.ClCommandPrompter;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.systems.editor.IRemoteResourceProperties;
+import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
 /**
  * This class connects to the
@@ -72,7 +86,7 @@ public class XRDiContributions implements IIBMiHostContributions {
                         }
                     }
                 }
-                
+
                 if (escapeMessage == null) {
                     escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
                 }
@@ -239,6 +253,64 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Returns an AS400 object for a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return AS400 object that is associated to editor
+     */
+    public AS400 getSystem(IEditorPart editor) {
+        return getSystem(getConnectionName(editor));
+    }
+
+    /**
+     * Returns the connection name of a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return name of the connection the file has been loaded from
+     */
+    public String getConnectionName(IEditorPart editor) {
+
+        IEditorInput editorInput = editor.getEditorInput();
+        if (editorInput instanceof IFileEditorInput) {
+            IFile file = ((IFileEditorInput)editorInput).getFile();
+            IRemoteResourceProperties properties = RemoteResourcePropertiesFactoryManager.getInstance().getRemoteResourceProperties(file);
+            String subsystemStr = properties.getRemoteFileSubSystem();
+            if (subsystemStr != null) {
+                ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+                if (registry != null) {
+                    ISubSystem subsystem = registry.getSubSystem(subsystemStr);
+                    if (subsystem != null) {
+                        String connectionName = subsystem.getHost().getAliasName();
+                        return connectionName;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a list of configured connections.
+     * 
+     * @return names of configured connections
+     */
+    public String[] getConnectionNames() {
+
+        List<String> connectionNamesList = new ArrayList<String>();
+
+        IBMiConnection[] connections = IBMiConnection.getConnections();
+        for (IBMiConnection connection : connections) {
+            connectionNamesList.add(connection.getConnectionName());
+        }
+
+        String[] connectionNames = connectionNamesList.toArray(new String[connectionNamesList.size()]);
+        Arrays.sort(connectionNames);
+
+        return connectionNames;
+    }
+
+    /**
      * Returns a JDBC connection for a given connection name.
      * 
      * @param connectionName - Name of the connection, the JDBC connection is
@@ -287,5 +359,30 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return IBMiConnection.getConnection(profile, connectionName);
+    }
+
+    /**
+     * Returns an ICLPrompter for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @return ICLPrompter
+     */
+    public IClCommandPrompter getCLPrompter(String connectionName) {
+
+        IBMiConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        CLPrompter prompter;
+        try {
+            prompter = new CLPrompter();
+            prompter.setConnection(connection);
+            return new ClCommandPrompter(prompter);
+        } catch (SystemMessageException e) {
+            ISpherePlugin.logError("*** Could not create CLPrompter for connection '" + connectionName + "'", e);
+        }
+
+        return null;
     }
 }
