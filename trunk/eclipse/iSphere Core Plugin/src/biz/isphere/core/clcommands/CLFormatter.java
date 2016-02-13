@@ -10,6 +10,7 @@ package biz.isphere.core.clcommands;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.BidiStringType;
 import com.ibm.as400.data.ProgramCallDocument;
 
 /**
@@ -56,16 +57,16 @@ public class CLFormatter {
 
             ProgramCallDocument pcml = new ProgramCallDocument(system, "biz.isphere.core.clcommands.QCAPCMD", this.getClass().getClassLoader());
 
-            pcml.setStringValue("QCAPCMD.srcCmdStr", clCommand);
+            pcml.setStringValue("QCAPCMD.srcCmdStr", clCommand, BidiStringType.DEFAULT);
             pcml.setIntValue("QCAPCMD.srcCmdStrLen", clCommand.length());
             pcml.setIntValue("QCAPCMD.lenPrvChgCmdStr", 120);
 
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.typeOfCmdPrc", "4"); // CL-Syntax
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.DBCSDataHandling", "0"); // Ignore
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.prompterAction", "0"); // Never
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.cmdStrSyntax", "0"); // System
+            pcml.setStringValue("QCAPCMD.optCtrlBlock.typeOfCmdPrc", "4", BidiStringType.DEFAULT); // CL-Syntax
+            pcml.setStringValue("QCAPCMD.optCtrlBlock.DBCSDataHandling", "0", BidiStringType.DEFAULT); // Ignore
+            pcml.setStringValue("QCAPCMD.optCtrlBlock.prompterAction", "0", BidiStringType.DEFAULT); // Never
+            pcml.setStringValue("QCAPCMD.optCtrlBlock.cmdStrSyntax", "0", BidiStringType.DEFAULT); // System
             pcml.setValue("QCAPCMD.optCtrlBlock.msgRetrieveKey", new byte[] { 0x00, 0x00, 0x00, 0x00 });
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.CCSIDOfCmdString", "0"); // Job
+            pcml.setStringValue("QCAPCMD.optCtrlBlock.CCSIDOfCmdString", "0", BidiStringType.DEFAULT); // Job
             pcml.setValue("QCAPCMD.optCtrlBlock.reserved", new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00 });
 
             if (!pcml.callProgram("QCAPCMD")) {
@@ -77,7 +78,7 @@ public class CLFormatter {
                 return null;
             }
 
-            String formatted = pcml.getStringValue("QCAPCMD.chgCmdString");
+            String formatted = pcml.getStringValue("QCAPCMD.chgCmdString", BidiStringType.DEFAULT);
 
             return formatted;
 

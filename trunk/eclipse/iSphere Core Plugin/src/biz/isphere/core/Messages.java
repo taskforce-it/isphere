@@ -1155,7 +1155,7 @@ public class Messages extends NLS {
     public static String Failed_to_get_connection_A_colon;
 
     public static String Cannot_allocate_object_B_A_C;
-    
+
     /*
      * Warning messages
      */

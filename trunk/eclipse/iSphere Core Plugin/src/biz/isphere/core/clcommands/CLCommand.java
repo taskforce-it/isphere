@@ -32,7 +32,7 @@ public class CLCommand {
             return;
         }
 
-        if (contains(parameter.getKeyword())) {
+        if (hasParameter(parameter.getKeyword())) {
             replace(parameter);
         } else {
             parameters.add(parameter);
@@ -47,7 +47,7 @@ public class CLCommand {
         return parameters.toArray(new CLParameter[parameters.size()]);
     }
 
-    private boolean contains(String keyword) {
+    public boolean hasParameter(String keyword) {
         for (CLParameter tempParameter : parameters) {
             if (keyword.equals(tempParameter.getKeyword())) {
                 return true;
