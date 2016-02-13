@@ -20,12 +20,12 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.clcommands.IClCommandPrompter;
+import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
-import biz.isphere.rse.clcommands.ClCommandPrompter;
+import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
@@ -366,7 +366,7 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @param connectionName - connection name to identify the connection
      * @return ICLPrompter
      */
-    public IClCommandPrompter getCLPrompter(String connectionName) {
+    public ICLPrompter getCLPrompter(String connectionName) {
 
         ISeriesConnection connection = getConnection(null, connectionName);
         if (connection == null) {
@@ -377,7 +377,7 @@ public class XRDiContributions implements IIBMiHostContributions {
         try {
             prompter = new CLPrompter();
             prompter.setConnection(connection);
-            return new ClCommandPrompter(prompter);
+            return new ICLPrompterImpl(prompter);
         } catch (SystemMessageException e) {
             ISpherePlugin.logError("*** Could not create CLPrompter for connection '" + connectionName + "'", e);
         }
