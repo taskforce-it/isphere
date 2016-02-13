@@ -10,16 +10,16 @@ package biz.isphere.rse.clcommands;
 
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.clcommands.IClCommandPrompter;
+import biz.isphere.core.clcommands.ICLPrompter;
 
 import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
-public class ClCommandPrompter implements IClCommandPrompter {
+public class ICLPrompterImpl implements ICLPrompter {
 
     private CLPrompter prompter;
 
-    public ClCommandPrompter(CLPrompter prompter) {
+    public ICLPrompterImpl(CLPrompter prompter) {
         this.prompter = prompter;
     }
 
