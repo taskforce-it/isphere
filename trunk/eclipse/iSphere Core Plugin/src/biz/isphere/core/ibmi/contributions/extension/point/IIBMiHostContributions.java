@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.eclipse.ui.IEditorPart;
 
-import biz.isphere.core.clcommands.IClCommandPrompter;
+import biz.isphere.core.clcommands.ICLPrompter;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -143,5 +143,5 @@ public interface IIBMiHostContributions {
      * @param connectionName - connection name to identify the connection
      * @return ICLPrompter
      */
-    public IClCommandPrompter getCLPrompter(String connectionName);
+    public ICLPrompter getCLPrompter(String connectionName);
 }

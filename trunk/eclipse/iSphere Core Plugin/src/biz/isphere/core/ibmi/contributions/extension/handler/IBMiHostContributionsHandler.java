@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
 
-import biz.isphere.core.clcommands.IClCommandPrompter;
+import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 
 import com.ibm.as400.access.AS400;
@@ -167,7 +167,7 @@ public class IBMiHostContributionsHandler {
      * @param connectionName - connection name to identify the connection
      * @return ICLPrompter
      */
-    public static IClCommandPrompter getCLPrompter(String connectionName) {
+    public static ICLPrompter getCLPrompter(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
