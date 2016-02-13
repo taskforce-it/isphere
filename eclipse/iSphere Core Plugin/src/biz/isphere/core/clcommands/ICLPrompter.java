@@ -10,7 +10,7 @@ package biz.isphere.core.clcommands;
 
 import org.eclipse.swt.widgets.Shell;
 
-public interface IClCommandPrompter {
+public interface ICLPrompter {
 
     /*
      * Return values of showDialog()
