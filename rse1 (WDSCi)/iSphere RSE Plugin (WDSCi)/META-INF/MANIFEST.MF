@@ -8,6 +8,7 @@ Bundle-Vendor: iSphere Project Owners
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
+ org.eclipse.ui.ide,
  org.eclipse.compare,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
