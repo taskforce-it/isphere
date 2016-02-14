@@ -26,6 +26,10 @@ public class CLCommand {
         this.parameters = new LinkedList<CLParameter>();
     }
 
+    public void setParameters(List<CLParameter> parameters) {
+        this.parameters = parameters;
+    }
+
     public void setParameter(CLParameter parameter) {
 
         if (parameter == null || parameter.getKeyword() == null) {
@@ -62,5 +66,17 @@ public class CLCommand {
                 tempParameter.setValue(parameter.getValue());
             }
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder(command);
+        for (CLParameter clParameter : parameters) {
+            buffer.append(" ");
+            buffer.append(clParameter.toString());
+        }
+
+        return buffer.toString();
     }
 }
