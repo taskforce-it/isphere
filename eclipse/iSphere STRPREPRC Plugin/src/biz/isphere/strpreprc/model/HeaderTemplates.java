@@ -8,12 +8,17 @@
 
 package biz.isphere.strpreprc.model;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -90,7 +95,7 @@ public final class HeaderTemplates {
 
         templates = new Properties();
 
-        // loadExternalTemplates(preferences.getTemplateDirectory());
+        loadExternalTemplates(preferences.getTemplateDirectory());
 
         int dftIndent = preferences.getDefaultIndention();
 
@@ -103,6 +108,70 @@ public final class HeaderTemplates {
         generateTemplates(PNLGRP, ".*", "", 0);
 
         return templates;
+    }
+
+    private void loadExternalTemplates(String templateDirectory) {
+
+        File directory = new File(templateDirectory);
+        if (!directory.exists()) {
+            return;
+        }
+
+        if (!directory.isDirectory()) {
+            return;
+        }
+
+        String[] files = directory.list(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                if (!name.endsWith(TEMPLATE_FILE_EXTENSION)) {
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        for (String templateFileName : files) {
+            loadTemplate(templateFileName);
+        }
+    }
+
+    private void loadTemplate(String templateFileName) {
+
+        List<String> textLines = new LinkedList<String>();
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(templateFileName));
+            String line;
+            while ((line = br.readLine()) != null) {
+                textLines.add(line);
+            }
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Could not read file: '" + templateFileName + "' ***", e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+        String memberType = retrieveMemberType(templateFileName);
+        templates.put(memberType, textLines);
+    }
+
+    private String retrieveMemberType(String templateFileName) {
+
+        File template = new File(templateFileName);
+        String fileName = template.getName();
+        
+        int i = fileName.lastIndexOf(".");
+        if (i == 0) {
+            return fileName;
+        }
+
+        return fileName.substring(0, i).toLowerCase();
     }
 
     private void generateTemplates(String memberType, String leftCommentChar, String rightCommentChar, int indent) {
