@@ -13,7 +13,6 @@ package biz.isphere.messagesubsystem.internal;
 
 import java.text.DateFormat;
 
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
