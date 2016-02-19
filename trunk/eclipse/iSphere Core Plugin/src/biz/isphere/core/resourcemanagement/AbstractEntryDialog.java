@@ -11,7 +11,6 @@ package biz.isphere.core.resourcemanagement;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -50,7 +49,6 @@ public abstract class AbstractEntryDialog extends XDialog {
     private Composite compositeWorkspace;
     private Composite compositeRepository;
     private Text textRepository;
-    private StatusLineManager statusLineManager;
     private Button okButton;
 
     public AbstractEntryDialog(Shell parentShell) {
@@ -159,11 +157,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             }
         });
 
-        statusLineManager = new StatusLineManager();
-        statusLineManager.createControl(container, SWT.NONE);
-        Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        statusLine.setLayoutData(gridDataStatusLine);
+        createStatusLine(container);
 
         check();
 
@@ -264,14 +258,6 @@ public abstract class AbstractEntryDialog extends XDialog {
         }
 
         return extensions.toString();
-    }
-
-    private void setErrorMessage(String errorMessage) {
-        if (errorMessage != null) {
-            statusLineManager.setErrorMessage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_ERROR), errorMessage);
-        } else {
-            statusLineManager.setErrorMessage(null, null);
-        }
     }
 
     protected void okPressed() {

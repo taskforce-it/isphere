@@ -234,6 +234,35 @@ public class APIFormat {
     }
 
     /**
+     * Sets the value of a given byte field.
+     * 
+     * @param name - field name
+     * @param value - byte value
+     */
+    protected void setByteValue(String name, byte[] value) throws CharConversionException, UnsupportedEncodingException {
+
+        APICharFieldDescription field = getCharFieldDescription(name);
+        int offset = getAbsoluteFieldOffset(field);
+        int length = field.getLength();
+
+        if (value.length > length) {
+            throw new IllegalArgumentException("Invalid length of byte array parameter 'value'");
+        }
+
+        for (byte b : value) {
+            bytes[offset] = b;
+            offset++;
+            length--;
+        }
+
+        while (length > 0) {
+            bytes[offset] = 0x00;
+            offset++;
+            length--;
+        }
+    }
+
+    /**
      * Returns the text starting at a given offset and length.
      * 
      * @param offset - offset to start from

@@ -9,6 +9,9 @@
 package biz.isphere.strpreprc.lpex.action;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.lpex.core.LpexAction;
@@ -22,5 +25,18 @@ public abstract class AbstractHeaderAction implements LpexAction {
 
     protected Shell getShell() {
         return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+    }
+
+    protected IEditorPart getActiveEditor() {
+
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (window != null) {
+            IWorkbenchPage activePage = window.getActivePage();
+            if (activePage != null) {
+                return activePage.getActiveEditor();
+            }
+        }
+
+        return null;
     }
 }

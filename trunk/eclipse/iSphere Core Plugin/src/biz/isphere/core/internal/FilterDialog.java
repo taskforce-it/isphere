@@ -29,7 +29,6 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 public class FilterDialog extends XDialog {
 
     private Text textFilter;
-    private StatusLineManager statusLineManager;
     private String filter = null;
 
     public FilterDialog(Shell parentShell) {
@@ -53,21 +52,9 @@ public class FilterDialog extends XDialog {
         textFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textFilter.setText("");
 
-        statusLineManager = new StatusLineManager();
-        statusLineManager.createControl(container, SWT.NONE);
-        Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        statusLine.setLayoutData(gridDataStatusLine);
-
+        createStatusLine(container);
+        
         return container;
-    }
-
-    private void setErrorMessage(String errorMessage) {
-        if (errorMessage != null) {
-            statusLineManager.setErrorMessage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_ERROR), errorMessage);
-        } else {
-            statusLineManager.setErrorMessage(null, null);
-        }
     }
 
     @Override

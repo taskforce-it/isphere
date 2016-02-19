@@ -10,13 +10,21 @@ package biz.isphere.strpreprc.lpex.action;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
-import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.strpreprc.model.StrPrePrcCommand;
-import biz.isphere.strpreprc.model.StrPrePrcHeader;
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.clcommands.CLFormatter;
+import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.strpreprc.Messages;
+import biz.isphere.strpreprc.gui.EditHeaderDialog;
+import biz.isphere.strpreprc.model.StrPrePrcParser;
 
-import com.ibm.etools.systems.editor.SystemTextEditor;
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.ui.util.CommandPrompter;
 import com.ibm.lpex.core.LpexView;
 
 public class EditHeaderAction extends AbstractHeaderAction {
@@ -27,78 +35,125 @@ public class EditHeaderAction extends AbstractHeaderAction {
 
         try {
 
-            StrPrePrcHeader header = new StrPrePrcHeader();
+            boolean displayDialog = false;
 
-            SystemTextEditor editor = (SystemTextEditor)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-            IEditorInput editorInput = editor.getEditorInput();
+            IEditorPart editor = getActiveEditor();
+            if (editor == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Could_not_get_the_active_editor);
+                return;
+            }
 
+            String memberType = getMemberType(editor);
+
+            /*
+             * Load STRPREPRC header either from the view or from a default
+             * template.
+             */
+            StrPrePrcParser header = new StrPrePrcParser(memberType);
             if (!header.loadFromLpexView(view)) {
-                MessageDialog.openError(getShell(), "E R R O R", "No STRPREPRC header found.");
+                header.loadDefaultTemplate();
+                displayDialog = true;
+            }
+
+            String connectionName = getConnectionName(editor);
+            if (StringHelper.isNullOrEmpty(connectionName)) {
+                displayDialog = true;
+            }
+
+            /*
+             * Prompt for a connection name or when using a header template.
+             */
+            int action;
+            if (displayDialog) {
+                EditHeaderDialog dialog = new EditHeaderDialog(getShell());
+                dialog.setMemberType(memberType);
+                dialog.setConnectionName(connectionName);
+                dialog.setCommand(header.getFullCommand());
+                action = dialog.open();
+                if (action == XDialog.CANCEL) {
+                    return;
+                }
+
+                if (header.getCommand() == null || !header.getCommand().equals(dialog.getCommand())) {
+                    header.setFullCommand(dialog.getCommand() + " " + dialog.getParameters());
+                } else {
+                    header.updateFullCommand(dialog.getCommand() + " " + dialog.getParameters());
+                }
+                connectionName = dialog.getConnectionName();
+            } else {
+                action = EditHeaderDialog.PROMPT;
+            }
+
+            /*
+             * Get IBM i system for creating the CLFormatter.
+             */
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            if (system == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Could_not_get_AS400_object_for_connection_A, connectionName));
                 return;
             }
 
-            StrPrePrcCommand createCommand = header.getCreateCommand();
-            if (createCommand == null) {
-                MessageDialog.openError(getShell(), "E R R O R", "No CREATE command found.");
-                return;
+            /*
+             * Let the user edit the command with the CL command prompter.
+             */
+            String fullCommandString;
+            if (action == EditHeaderDialog.PROMPT) {
+                fullCommandString = performPromptCommand(connectionName, header.getFullCommand());
+                if (fullCommandString == null) {
+                    return;
+                }
+            } else {
+                fullCommandString = header.getFullCommand();
             }
 
-            // MessageDialog.openInformation(getShell(), "STRPREPRC",
-            // "Editieren STRPREPRC header.");
-
-            // StrPrePrcHeaderDialog dialog = new
-            // StrPrePrcHeaderDialog(getShell());
-            // dialog.setInput(header);
-            // if (dialog.open() == Dialog.OK) {
-            // header.updateLpexView(view);
-            // }
+            /*
+             * Update the STRPREPRC header with the changed command.
+             */
+            header.updateFullCommand(fullCommandString);
+            header.updateLpexView(view, new CLFormatter(system));
 
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    private boolean performPromptCommand(String createCommand) {
+    private String getMemberType(IEditorPart editor) {
 
-        if (createCommand == null) {
-            MessageDialog.openError(getShell(), "E R R O R", "Command not specified.");
-            return false;
+        IEditorInput editorInput = getActiveEditor().getEditorInput();
+        if (editorInput instanceof FileEditorInput) {
+            FileEditorInput fileEditorInput = (FileEditorInput)editorInput;
+            return fileEditorInput.getFile().getFileExtension();
         }
 
-        // IClCommandPrompter prompter;
+        return null;
+    }
 
-        try {
-
-            // CLFormatter formatter = new
-            // CLFormatter(connection.getAS400ToolboxObject());
-            // String formattedCommand = formatter.format(createCommand);
-            // if (formattedCommand == null) {
-            // return false;
-            // }
-            //
-            // prompter = new ClCommandPromper();
-            // prompter.setCommandString(formattedCommand);
-            // prompter.setMode(CLPrompter.EDIT_MODE);
-            // prompter.setConnection(connection);
-            // prompter.setParent(Display.getCurrent().getActiveShell());
-            //
-            // if (prompter.showDialog() != CommandPrompter.OK) {
-            // return false;
-            // }
-            //
-            // header.update(prompter.getCommandString());
-            //
-            // updatePreview(null);
-
-            return true;
-
-        } catch (Throwable e) {
-            MessageDialog.openError(getShell(), "E R R O R", ExceptionHelper.getLocalizedMessage(e));
-            return false;
+    private String getConnectionName(IEditorPart editor) {
+        String connectionName = IBMiHostContributionsHandler.getConnectionName(editor);
+        if (connectionName == null) {
+            return null;
         }
+        return connectionName;
+    }
+
+    private String performPromptCommand(String connectionName, String createCommand) {
+
+        ICLPrompter prompter = IBMiHostContributionsHandler.getCLPrompter(connectionName);
+
+        prompter.setCommandString(createCommand);
+        prompter.setMode(ICLPrompter.EDIT_MODE);
+        prompter.setConnection(connectionName);
+        prompter.setParent(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+
+        if (prompter.showDialog() == CommandPrompter.OK) {
+            return prompter.getCommandString();
+        }
+
+        return null;
     }
 
     public static String getLPEXMenuAction() {
-        return "\"Edit header\" " + EditHeaderAction.ID;
+        return "\"" + Messages.Menu_Edit_header + "\" " + EditHeaderAction.ID;
     }
 }

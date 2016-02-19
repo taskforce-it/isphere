@@ -11,6 +11,8 @@ package biz.isphere.core.clcommands;
 import java.util.LinkedList;
 import java.util.List;
 
+import biz.isphere.base.internal.StringHelper;
+
 /**
  * This class represents a CL command.
  * 
@@ -43,12 +45,39 @@ public class CLCommand {
         }
     }
 
+    public CLParameter removeParameter(String keyword) {
+
+        if (StringHelper.isNullOrEmpty(keyword)) {
+            return null;
+        }
+
+        for (CLParameter parameter : parameters) {
+            if (keyword.equals(parameter.getKeyword())) {
+                parameters.remove(parameter);
+                return parameter;
+            }
+        }
+
+        return null;
+    }
+
     public String getCommand() {
         return command;
     }
 
     public CLParameter[] getParameters() {
         return parameters.toArray(new CLParameter[parameters.size()]);
+    }
+
+    public String getParametersString() {
+
+        StringBuilder buffer = new StringBuilder();
+        for (CLParameter parameter : parameters) {
+            buffer.append(" "); //$NON-NLS-1$
+            buffer.append(parameter.toString());
+        }
+
+        return buffer.toString();
     }
 
     public boolean hasParameter(String keyword) {

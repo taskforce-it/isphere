@@ -152,7 +152,7 @@ public class CLParser {
     private ScanMode retrieveCommand(String clCommand) {
 
         int endPos = clCommand.indexOf(SPACE);
-        if (endPos == 0) {
+        if (endPos < 0) {
             endPos = clCommand.length();
         }
 

@@ -50,7 +50,6 @@ public class QueuedMessageListDialog extends XDialog {
     private ReceivedMessage[] queuedMessages;
 
     private TableViewer tableViewer;
-    private StatusLineManager statusLineManager;
 
     private static final int COLUMN_DATE = 0;
     private static final int COLUMN_TIME = 1;
@@ -119,22 +118,6 @@ public class QueuedMessageListDialog extends XDialog {
         column.setText(label);
 
         return column;
-    }
-
-    private void createStatusLine(Composite parent) {
-        statusLineManager = new StatusLineManager();
-        statusLineManager.createControl(parent, SWT.NONE);
-        Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-        statusLine.setLayoutData(gridDataStatusLine);
-    }
-
-    private void setStatusMessage(String message) {
-        if (message != null) {
-            statusLineManager.setMessage(null, message);
-        } else {
-            statusLineManager.setMessage(null, null);
-        }
     }
 
     private void loadScreenValues() {

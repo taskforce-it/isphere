@@ -31,6 +31,9 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
     public static final String IMAGE_TASKFORCE = "TaskForce.png";
 
     public static final String IMAGE_TOOLS400 = "Tools400.bmp";
+    
+    // Other iamges
+    public static final String IMAGE_ERROR = "error.gif";
 
     // The shared instance
     private static ISphereBasePlugin plugin;
@@ -104,6 +107,7 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_TASKFORCE, getImageDescriptor(IMAGE_TASKFORCE));
         reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
         reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
+        reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
     }
 
     private ImageDescriptor getImageDescriptor(String name) {

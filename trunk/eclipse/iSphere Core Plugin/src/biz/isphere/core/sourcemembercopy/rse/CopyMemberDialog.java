@@ -8,7 +8,6 @@
 
 package biz.isphere.core.sourcemembercopy.rse;
 
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -53,7 +52,6 @@ public class CopyMemberDialog extends XDialog {
     private Text textToLibrary;
     private TableViewer tableViewer;
     private Button chkBoxReplace;
-    private StatusLineManager statusLineManager;
 
     private Validator nameValidator;
 
@@ -243,30 +241,6 @@ public class CopyMemberDialog extends XDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setText(Messages.Copy);
-    }
-
-    private void createStatusLine(Composite parent) {
-        statusLineManager = new StatusLineManager();
-        statusLineManager.createControl(parent, SWT.NONE);
-        Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-        statusLine.setLayoutData(gridDataStatusLine);
-    }
-
-    private void setErrorMessage(String errorMessage) {
-        if (errorMessage != null) {
-            statusLineManager.setErrorMessage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_ERROR), errorMessage);
-        } else {
-            statusLineManager.setErrorMessage(null, null);
-        }
-    }
-
-    private void setStatusMessage(String message) {
-        if (message != null) {
-            statusLineManager.setMessage(null, message);
-        } else {
-            statusLineManager.setMessage(null, null);
-        }
     }
 
     private void loadScreenValues() {

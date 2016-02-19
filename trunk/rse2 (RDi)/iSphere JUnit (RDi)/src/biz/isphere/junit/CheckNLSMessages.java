@@ -27,8 +27,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
-import sun.java2d.pipe.LoopPipe;
-
 /**
  * <b>JUnit 4 Test Case</b>
  * <p>
@@ -66,6 +64,7 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.rse.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.messagesubsystem.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.messagesubsystem.rse.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.strpreprc.Messages.class, "messages");
 
         System.out.println("** Finished testing NLS messages **");
     }
@@ -108,10 +107,10 @@ public class CheckNLSMessages {
 
         for (Field field : fields) {
 
-            if (Modifier.isFinal(field.getModifiers())){
+            if (Modifier.isFinal(field.getModifiers())) {
                 continue;
             }
-            
+
             // Prepare
             String nlsMessageConstant = field.getName();
             String messageText = properties.getProperty(nlsMessageConstant);

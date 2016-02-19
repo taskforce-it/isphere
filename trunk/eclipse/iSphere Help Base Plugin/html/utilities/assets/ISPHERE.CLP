@@ -15,9 +15,9 @@
      /*   >>PRE-COMPILER<<                                                    */
      /*     >>CRTCMD<<    CRTCLPGM   PGM(QTEMP/&OB) +                         */
      /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
-     /*       >>COMPILE<<                                                     */
+     /*       >>IMPORTANT<<                                                   */
      /*         >>PARM<<  TEXT('Creates: iSphere Version Data Area');         */
-     /*       >>END-COMPILE<<                                                 */
+     /*       >>END-IMPORTANT<<                                               */
      /*       >>EXECUTE<<                                                     */
      /*       >>CMD<<     CALL PGM(QTEMP/&OB) PARM(&LI &OB);                  */
      /*   >>END-PRE-COMPILER<<                                                */

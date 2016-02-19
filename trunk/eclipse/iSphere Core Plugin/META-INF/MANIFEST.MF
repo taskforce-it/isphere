@@ -26,6 +26,7 @@ Bundle-ClassPath: .,
  lib/xstream/xstream-1.4.7.jar
 Export-Package: biz.isphere.core,
  biz.isphere.core.annotations,
+ biz.isphere.core.api.qcapcmd,
  biz.isphere.core.bindingdirectoryeditor,
  biz.isphere.core.ccsid,
  biz.isphere.core.clcommands,
