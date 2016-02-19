@@ -44,6 +44,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     private Text textTemplateFolder;
     private Button buttonSelectTemplateFolder;
     private Button buttonExportTemplates;
+    private Button buttonReloadTemplates;
 
     public ISphereStrPrePrc() {
         super();
@@ -194,6 +195,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         });
 
         buttonExportTemplates = WidgetFactory.createPushButton(groupTemplates, "Export"); //$NON-NLS-1$
+        buttonExportTemplates.setLayoutData(createButtonLayoutData(3));
         buttonExportTemplates.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -206,12 +208,25 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
-        buttonExportTemplates.setToolTipText("Saves all templates to the specified templates directory. Existing templates are preserved."); // TODO:
+        buttonExportTemplates.setToolTipText("Saves all example templates to the specified templates directory. Existing templates are preserved."); // TODO:
+
+        buttonReloadTemplates = WidgetFactory.createPushButton(groupTemplates, "Clear Cache"); //$NON-NLS-1$
+        buttonReloadTemplates.setLayoutData(createButtonLayoutData(3));
+        buttonReloadTemplates.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                performClearTemplateCache(true);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+        buttonReloadTemplates.setToolTipText("Clears the template cache to enforce reloading the templates from the specified directory."); // TODO:
     }
 
     @Override
     protected void performApply() {
-        reloadTemplates();
+        performClearTemplateCache(false);
         setStoreToValues();
         super.performApply();
     }
@@ -224,7 +239,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
     @Override
     public boolean performOk() {
-        reloadTemplates();
+        performClearTemplateCache(false);
         setStoreToValues();
         return super.performOk();
     }
@@ -270,7 +285,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         setControlsEnablement();
     }
 
-    private void reloadTemplates() {
+    private void performClearTemplateCache(boolean enforce) {
 
         Preferences preferences = Preferences.getInstance();
 
@@ -280,11 +295,11 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             isDirty = true;
         }
 
-        if (!textTemplateFolder.getText().equalsIgnoreCase(preferences.getTemplateDirectory())) {
+        if (textTemplateFolder.getText().equalsIgnoreCase(preferences.getTemplateDirectory())) {
             isDirty = true;
         }
 
-        if (isDirty) {
+        if (enforce || isDirty) {
             HeaderTemplates.getInstance().clearTemplatesCache();
         }
     }
@@ -378,8 +393,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         if (isValid() && textTemplateFolder.isEnabled()) {
             buttonExportTemplates.setEnabled(true);
+            buttonReloadTemplates.setEnabled(true);
         } else {
             buttonExportTemplates.setEnabled(false);
+            buttonReloadTemplates.setEnabled(false);
         }
     }
 
@@ -405,6 +422,12 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
     private GridData createTextLayoutData(int horizontalSpan) {
         return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
+    }
+
+    private GridData createButtonLayoutData(int horizontalSpan) {
+        GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, horizontalSpan, 1);
+        gd.widthHint = 120;
+        return gd;
     }
 
 }
