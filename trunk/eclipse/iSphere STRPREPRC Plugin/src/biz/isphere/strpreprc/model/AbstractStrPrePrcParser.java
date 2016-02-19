@@ -488,6 +488,9 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
 
         String trimmed = line.trim();
         int end = trimmed.indexOf(" ");
+        if (end < 0) {
+            return "";
+        }
 
         return trimmed.substring(0, end);
     }
@@ -498,6 +501,10 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         String trimmed = StringHelper.trimR(line);
 
         int start = trimmed.lastIndexOf(" ");
+        if (start < 0) {
+            return "";
+        }
+        
         int end = trimmed.length();
 
         if (start < startPos) {
