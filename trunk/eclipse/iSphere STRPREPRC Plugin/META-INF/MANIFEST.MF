@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base,
  biz.isphere.core
 Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
 Bundle-Vendor: iSphere Project Team
 Import-Package: com.ibm.lpex.alef
 Bundle-ClassPath: .

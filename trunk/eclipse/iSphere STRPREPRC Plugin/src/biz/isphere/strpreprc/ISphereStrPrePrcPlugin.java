@@ -32,9 +32,6 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
-
-        // PreferencesInitializer initializer = new PreferencesInitializer();
-        // initializer.initializeDefaultPreferences();
     }
 
     /*
