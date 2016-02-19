@@ -8,9 +8,13 @@
 
 package biz.isphere.core.clcommands;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.api.qcapcmd.CPOP0100;
+import biz.isphere.core.api.qcapcmd.QCAPCMD;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.BidiStringType;
+import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 
 /**
@@ -23,9 +27,12 @@ import com.ibm.as400.data.ProgramCallDocument;
 public class CLFormatter {
 
     private AS400 system;
+    private AS400Message[] errorMessages;
 
     /**
      * Produces a new CLFormatter object.
+     * 
+     * @param IBM i system with the iSphere library
      */
     public CLFormatter(AS400 system) {
         this.system = system;
@@ -55,38 +62,37 @@ public class CLFormatter {
 
         try {
 
-            ProgramCallDocument pcml = new ProgramCallDocument(system, "biz.isphere.core.clcommands.QCAPCMD", this.getClass().getClassLoader());
-
-            pcml.setStringValue("QCAPCMD.srcCmdStr", clCommand, BidiStringType.DEFAULT);
-            pcml.setIntValue("QCAPCMD.srcCmdStrLen", clCommand.length());
-            pcml.setIntValue("QCAPCMD.lenPrvChgCmdStr", 120);
-
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.typeOfCmdPrc", "4", BidiStringType.DEFAULT); // CL-Syntax
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.DBCSDataHandling", "0", BidiStringType.DEFAULT); // Ignore
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.prompterAction", "0", BidiStringType.DEFAULT); // Never
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.cmdStrSyntax", "0", BidiStringType.DEFAULT); // System
-            pcml.setValue("QCAPCMD.optCtrlBlock.msgRetrieveKey", new byte[] { 0x00, 0x00, 0x00, 0x00 });
-            pcml.setStringValue("QCAPCMD.optCtrlBlock.CCSIDOfCmdString", "0", BidiStringType.DEFAULT); // Job
-            pcml.setValue("QCAPCMD.optCtrlBlock.reserved", new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00 });
-
-            if (!pcml.callProgram("QCAPCMD")) {
-                AS400Message[] msgs = pcml.getMessageList("QCAPCMD");
-                for (int i = 0; i < msgs.length; i++) {
-                    // TODO: store error messages
-                    System.out.println(msgs[i].getText());
-                }
-                return null;
+            QCAPCMD qcapcmd = new QCAPCMD(system);
+            if (!qcapcmd.execute(clCommand, CPOP0100.checkCLStatement(system))) {
+                errorMessages = qcapcmd.getMessageList();
+            } else {
+                errorMessages = new AS400Message[0];
             }
 
-            String formatted = pcml.getStringValue("QCAPCMD.chgCmdString", BidiStringType.DEFAULT);
+            String formatted = qcapcmd.getChangedCommand();
 
             return formatted;
 
         } catch (Throwable e) {
-            // TODO: handle error
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Failed to format CL command: '" + clCommand + "' ***", e);
             return null;
         }
 
+    }
+
+    public AS400Message[] getErrorMEssages() {
+        return errorMessages;
+    }
+
+    private int getLengthAvailableForChangedCommandString(ProgramCallDocument pcml, String clCommand) {
+
+        int maxValue;
+        try {
+            maxValue = pcml.getIntValue("QCAPCMD.lenAvlChgCmdStr");
+        } catch (PcmlException e) {
+            maxValue = 32702;
+        }
+
+        return Math.min(clCommand.length() * 4, maxValue);
     }
 }

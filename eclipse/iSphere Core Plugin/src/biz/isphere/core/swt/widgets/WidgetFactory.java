@@ -31,6 +31,8 @@ import biz.isphere.core.swt.widgets.hexeditor.HexText;
  */
 public final class WidgetFactory {
 
+    private static final int NAME_FIELD_WIDTH_HINT = 90;
+
     /**
      * The instance of this Singleton class.
      */
@@ -67,6 +69,40 @@ public final class WidgetFactory {
         separator.setLayoutData(gridData);
 
         return separator;
+    }
+
+    /**
+     * Produces a 'name' text field. The field is upper-case only and limited to
+     * 10 characters.
+     * 
+     * @param parent - parent composite
+     * @return text field
+     */
+    public static Text createNameText(Composite parent) {
+
+        return createNameText(parent, true);
+    }
+
+    /**
+     * Produces a 'name' text field. The field is upper-case only and limited to
+     * 10 characters.
+     * 
+     * @param parent - parent composite
+     * @param widthHint - set default text width
+     * @return text field
+     */
+    public static Text createNameText(Composite parent, boolean widthHint) {
+
+        Text text = createUpperCaseText(parent);
+        text.setTextLimit(10);
+
+        if (widthHint) {
+            GridData gd = new GridData();
+            gd.widthHint = NAME_FIELD_WIDTH_HINT;
+            text.setLayoutData(gd);
+        }
+
+        return text;
     }
 
     /**
@@ -469,12 +505,12 @@ public final class WidgetFactory {
     }
 
     public static HexText createHexText(Composite parent) {
-        
-        HexText hexText = new HexText(parent, SWT.NONE); 
-        
+
+        HexText hexText = new HexText(parent, SWT.NONE);
+
         return hexText;
     }
-    
+
     /*
      * Private worker procedures, doing the actual work.
      */

@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/19/2016">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 2/19/2016">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2699,7 +2699,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.8.5 - 19.01.2016 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.9 - 19.02.2016 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -4120,6 +4120,8 @@ srccssid=  "00273">
 .*                                                                     *
 .*  18.06.2015  Th.Raddatz    Renamed parameter EVENTF to OPTION.      *
 .*                                                                     *
+.*  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*                                                                     *
@@ -4178,6 +4180,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER8'.
 :IMHELP name='STRPREPRC/USER9'.
 :IMHELP name='STRPREPRC/TAGSREQ'.
+:IMHELP name='STRPREPRC/EXICMDEXC'.
 :EHELP.
 
 .*****************************************************************
@@ -4217,24 +4220,28 @@ Der Anweisungsblock für den Pre-Prozessor kann wie folgt aussehen:
 0004.00                               SRCFILE(&SL/&SF) +
 0005.00                               SRCMBR(&SM);
 0006.00
-0007.00        >>COMPILE<<
+0007.00        >>IMPORTANT<<
 0008.00            >>PARM<<         TRUNCNBR(*NO);
-0009.00        >>END-COMPILE<<
+0009.00        >>END-IMPORTANT<<
 0010.00
-0011.00        >>LINK<<
-0012.00            >>PARM<<         ACTGRP(*CALLER);
-0013.00        >>END-LINK<<
+0011.00        >>COMPILE<<
+0012.00            >>PARM<<         TRUNCNBR(*NO);
+0013.00        >>END-COMPILE<<
 0014.00
-0015.00        >>CMD<<              OVRDBF +
-0016.00                               FILE(SRCFILE) +
-0017.00                               FROMFILE(QRPGLESRC) +
-0018.00                               MBR(*FIRST) +
-0019.00                               OVRSCOPE(*JOB);
-0020.00        >>EXECUTE<<
-0021.00        >>CMD<<              DLTOVR +
-0022.00                               FILE(SRCFILE) +
-0023.00                               LVL(*JOB);
-0024.00    >>END-PRE-COMPILER<<
+0015.00        >>LINK<<
+0016.00            >>PARM<<         ACTGRP(*CALLER);
+0017.00        >>END-LINK<<
+0018.00
+0019.00        >>CMD<<              OVRDBF +
+0020.00                               FILE(SRCFILE) +
+0021.00                               FROMFILE(QRPGLESRC) +
+0022.00                               MBR(*FIRST) +
+0023.00                               OVRSCOPE(*JOB);
+0024.00        >>EXECUTE<<
+0025.00        >>CMD<<              DLTOVR +
+0026.00                               FILE(SRCFILE) +
+0027.00                               LVL(*JOB);
+0028.00    >>END-PRE-COMPILER<<
 :ELINES.
 :P.
 :HP1.Verwendung von Variablen im Pre-Compiler-Abschnitt::EHP1.
@@ -4262,13 +4269,27 @@ ein.
 Quellendatei. Alle sonstigen Marken des Pre-Compilers müssen sich zwischen
 diesen beiden Marken befinden.
 
+:PT.>>IMPORTANT<<
+:PD.Diese Marke leitet den Abschnitt für die Compiler-Schlüsselworte ein.
+
+:PT.>>END-IMPORTANT<<
+:PD.Diese Marke beendet den Abschnitt für die
+Compiler-Schlüsselworte. Zwischen diesen beiden Marken werden die
+Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben. Von
+der Verabeitung her betrachtet gibt es keinen Unterschied zwischen
+den Abschnitten IMPORTANT, COMPILE und LINK. Die Abschnitte können daher
+frei nach Gefühl verwendet werden.
+
 :PT.>>COMPILE<<
 :PD.Diese Marke leitet den Abschnitt für die Compiler-Schlüsselworte ein.
 
 :PT.>>END-COMPILE<<
 :PD.Diese Marke beendet den Abschnitt für die
 Compiler-Schlüsselworte. Zwischen diesen beiden Marken werden die
-Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben.
+Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben. Von
+der Verabeitung her betrachtet gibt es keinen Unterschied zwischen
+den Abschnitten IMPORTANT, COMPILE und LINK. Die Abschnitte können daher
+frei nach Gefühl verwendet werden.
 
 :PT.>>LINK<<
 :PD.Diese Marke leitet den Abschnitt für die Linker-Schlüsselworte ein.
@@ -4276,7 +4297,10 @@ Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben.
 :PT.>>END-LINK<<
 :PD.Diese Marke beendet den Abschnitt für die
 Linker Schlüsselworte. Zwischen diesen beiden Marken werden die
-Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben.
+Befehlsschlüsselwörter über :HP3.>>PARM<<:EHP3. Marken angegeben. Von
+der Verabeitung her betrachtet gibt es keinen Unterschied zwischen
+den Abschnitten IMPORTANT, COMPILE und LINK. Die Abschnitte können daher
+frei nach Gefühl verwendet werden.
 
 :PT.>>PARM<<
 :PD.Diese Marke definiert ein Schlüsselwort für den
@@ -5095,6 +5119,31 @@ geschickt.
 
 :EHELP.
 
+.********************************************
+.*  Keyword:  EXICMDEXC
+.********************************************
+:HELP NAME='STRPREPRC/EXICMDEXC'.
+Ausgangspgm. Befehlsausführung (EXICMDEXC) - Hilfe
+:XH3.Ausgangspgm. Befehlsausführung (EXICMDEXC)
+:P.
+Gibt den Namen und die Bibliothek eines Exitprogramms an, welches
+vor der Ausführung des Befehgl der >>EXECUTE<< Marke aufgerufen wird, um
+den Befehl vor der Ausführung noch nach Bedarf änderung zu können.
+:P.
+:HP2.Dieser Exit wird zum Beispiel von CMOne verwendet.:EHP2.
+:IMHELP name='COM/REQPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+:PARML.
+:PT.:PV.Programm:EPV.
+:PD.
+Name des Exitprogramms.
+:PT.:PV.Bibliothek:EPV.
+:PD.
+Name der Bibliothek, welche das Exitprogramm enthält.
+:EPARML.
+:EHELP.
+
 .*****************************************************************
 .*  Common help text that is imbedded into one or more places.
 .*****************************************************************
@@ -5208,6 +5257,8 @@ srccssid=  "00273">
 .*                                                                     *
 .*  18.06.2015  Th.Raddatz    Renamed parameter EVENTF to OPTION.      *
 .*                                                                     *
+.*  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*                                                                     *
@@ -5266,6 +5317,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER8'.
 :IMHELP name='STRPREPRC/USER9'.
 :IMHELP name='STRPREPRC/TAGSREQ'.
+:IMHELP name='STRPREPRC/EXICMDEXC'.
 :EHELP.
 
 .*****************************************************************
@@ -5302,24 +5354,28 @@ This is an example of a pre-compiler section in a source member:
 0004.00                               SRCFILE(&SL/&SF) +
 0005.00                               SRCMBR(&SM);
 0006.00
-0007.00        >>COMPILE<<
+0007.00        >>IMPORTANT<<
 0008.00            >>PARM<<         TRUNCNBR(*NO);
-0009.00        >>END-COMPILE<<
+0009.00        >>END-IMPORTANT<<
 0010.00
-0011.00        >>LINK<<
-0012.00            >>PARM<<         ACTGRP(*CALLER);
-0013.00        >>END-LINK<<
+0011.00        >>COMPILE<<
+0012.00            >>PARM<<         TRUNCNBR(*NO);
+0013.00        >>END-COMPILE<<
 0014.00
-0015.00        >>CMD<<              OVRDBF +
-0016.00                               FILE(SRCFILE) +
-0017.00                               FROMFILE(QRPGLESRC) +
-0018.00                               MBR(*FIRST) +
-0019.00                               OVRSCOPE(*JOB);
-0020.00        >>EXECUTE<<
-0021.00        >>CMD<<              DLTOVR +
-0022.00                               FILE(SRCFILE) +
-0023.00                               LVL(*JOB);
-0024.00    >>END-PRE-COMPILER<<
+0015.00        >>LINK<<
+0016.00            >>PARM<<         ACTGRP(*CALLER);
+0017.00        >>END-LINK<<
+0018.00
+0019.00        >>CMD<<              OVRDBF +
+0020.00                               FILE(SRCFILE) +
+0021.00                               FROMFILE(QRPGLESRC) +
+0022.00                               MBR(*FIRST) +
+0023.00                               OVRSCOPE(*JOB);
+0024.00        >>EXECUTE<<
+0025.00        >>CMD<<              DLTOVR +
+0026.00                               FILE(SRCFILE) +
+0027.00                               LVL(*JOB);
+0028.00    >>END-PRE-COMPILER<<
 :ELINES.
 :P.
 :HP1.How to use replacement variables::EHP1.
@@ -5359,12 +5415,22 @@ to STRPREPRC from outside. The >>CRTCMD<< tag should be used once
 in a source member. Also it should be placed prior to the compile
 and link sub-sections.
 
+:PT.>>IMPORTANT<<
+:PD.This tag is used to mark the 'important' sub-section. The 'important'
+sub-section is used to override compile parameters of the creation
+command that has been passed to STRPREPRC. STRPREPRC has no idea
+neither of link parameters nor of compile or important parameters. So you
+also can specify 'important' parameters in the other sub-sections.
+
+:PT.>>END-IMPORTANT<<
+:PD.This tag is used to mark the end of the compile sub-section.
+
 :PT.>>COMPILE<<
 :PD.This tag is used to mark the compile sub-section. The compile
 sub-section is used to override compile parameters of the creation
 command that has been passed to STRPREPRC. STRPREPRC has no idea
-neither of link parameters nor of compile parameters. So you also can specify
-compile parameters in the link sub-section. But does that make sense?
+neither of link parameters nor of compile parameters. So you
+also can specify compile parameters in the other sub-sections.
 
 :PT.>>END-COMPILE<<
 :PD.This tag is used to mark the end of the compile sub-section.
@@ -5373,8 +5439,8 @@ compile parameters in the link sub-section. But does that make sense?
 :PD.This tag is used to mark the link sub-section. The link
 sub-section is used to override link parameters of the creation
 command that has been passed to STRPREPRC. STRPREPRC has no idea
-neither of link parameters nor of compile parameters. So you also can specify
-link parameters in the compile sub-section. But does that make sense?
+neither of link parameters nor of compile parameters. So you
+also can specify link parameters in the other sub-sections.
 
 :PT.>>END-LINK<<
 :PD.This tag is used to mark the end of the link sub-section.
@@ -5999,6 +6065,29 @@ the source member does not contain pre-pcompiler tags.
 
 :EHELP.
 
+.********************************************
+.*  Keyword:  EXICMDEXC
+.********************************************
+:HELP NAME='STRPREPRC/EXICMDEXC'.
+Exit Program Command Execution (EXICMDEXC) - Help
+:XH3.Exit Program Command Execution (EXICMDEXC)
+:P.
+Specifies the qualified name of an exit programm. The exit program is
+called before the object creation command is executed at the >>EXECUTE<< tag, in
+oder to modify the command according to special needs.
+:P.
+:HP2.For example, this exit point is used by CMOne.:EHP2.
+:IMHELP name='COM/REQPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+:PARML.
+:PT.:PV.source-file-name:EPV.
+:PD.Specify the name of the source file that contains the
+pre-compiler tags.
+:EPARML.
+
+:EHELP.
+
 .*****************************************************************
 .*  Common help text that is imbedded into one or more places.
 .*****************************************************************
@@ -6565,6 +6654,8 @@ srccssid=  "00273">
       *                            pass 'f_executeCommand' case sensitive   *
       *                            to p_getMsgInf();                        *
       *                                                                     *
+      *  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -6575,10 +6666,8 @@ srccssid=  "00273">
       *     >>PARM<< DBGVIEW(*LIST);                                        *
       *     >>PARM<< OPTION(&U3);                                           *
       *   >>END-COMPILE<<                                                   *
-      *   >>CMD<<    SNDMSG MSG('Starting to object creation ...') +        *
-      *                TOUSR(RADDATZ);                                      *
       *   >>EXECUTE<<                                                       *
-      *   >>CMD<<    SNDMSG MSG('Finished object creation.') +              *
+      *   >>CMD<<    SNDMSG MSG('Successfully created: &OB') +              *
       *                TOUSR(RADDATZ);                                      *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
@@ -6628,6 +6717,7 @@ srccssid=  "00273">
      D srcLib_t        s             10a   based(pDummy)
      D srcMbr_t        s             10a   based(pDummy)
      D cmd_t           s           2048a   based(pDummy)
+     D cmdLong_t       s          32702a   based(pDummy)
      D bool_t          s               n   based(pDummy)
      D mode_t          s             30a   based(pDummy)
      D module_t        s             10a   based(pDummy)
@@ -6667,6 +6757,10 @@ srccssid=  "00273">
      D cTAG_ENDCOMPILE...
      D                 c                   '>>END-COMPILE<<'
       *
+     D cTAG_IMPORTANT  c                   '>>IMPORTANT<<'
+     D cTAG_ENDIMPORTANT...
+     D                 c                   '>>END-IMPORTANT<<'
+      *
      D cTAG_WIDTH      c                   '>>WIDTH<<'
      D cTAG_CRTCMD     c                   '>>CRTCMD<<'
      D cTAG_PARM       c                   '>>PARM<<'
@@ -6685,6 +6779,11 @@ srccssid=  "00273">
      D cMODE_COMPILE   c                   '>>COMPILE<<'
      D cMODE_ENDCOMPILE...
      D                 c                   '>>END-COMPILE<<'
+      *
+     D cMODE_IMPORTANT...
+     D                 c                   '>>IMPORTANT<<'
+     D cMODE_ENDIMPORTANT...
+     D                 c                   '>>END-IMPORTANT<<'
       *
      D cMODE_WIDTH     c                   '>>WIDTH<<'
      D cMODE_CRTCMD    c                   '>>CRTCMD<<'
@@ -6780,15 +6879,15 @@ srccssid=  "00273">
      D  i_option                                  likeds(option_t)
       *
      D p_performExecute...
-     D                 pr
+     D                 PR
      D                                     extproc('p_performExecute')
-     D  i_cmd                              value  like(cmd_t)
-     D  i_cmdChgObjD                       value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
+     D  i_cmdChgObjD                       value  like(cmdLong_t)
       *
      D p_performCmd...
      D                 PR
      D                                     extproc('p_performCmd')
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
      D f_addData...
      D                 PR          2048a          varying
@@ -6805,9 +6904,9 @@ srccssid=  "00273">
      D  i_length                     10i 0 value
       *
      D f_replaceCmdKeyWord...
-     D                 PR                         like(cmd_t)
+     D                 PR                         like(cmdLong_t)
      D                                     extproc('f_replaceCmdKeyWord')
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
      D  i_keyData                  2048a   value  varying
       *
      D f_srcDtaLen...
@@ -6861,18 +6960,18 @@ srccssid=  "00273">
      D f_checkCommand...
      D                 PR                         like(bool_t)
      D                                     extproc('f_checkCommand')
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
      D f_executeCommand...
      D                 PR                         like(bool_t)
      D                                     extproc('f_executeCommand')
      D  i_monErr                           value  like(bool_t)
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
      D f_fmtCmd...
-     D                 PR                         like(cmd_t)
+     D                 PR                         like(cmdLong_t)
      D                                     extproc('f_fmtCmd')
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
      D p_endAbn...
      D                 PR
@@ -6888,7 +6987,7 @@ srccssid=  "00273">
      D                                     extproc('p_replaceVar')
      D  i_var                        10a   value
      D  i_value                     256a   value
-     D  io_string                 32767a
+     D  io_string                                 like(cmdLong_t)
       *
      D QMHRMVPM...
      D                 PR                         extpgm('QMHRMVPM')
@@ -6997,12 +7096,13 @@ srccssid=  "00273">
      D srcDtaLen       S                   like(int4_t) inz
      D continue        S                   like(continue_t) inz
      D keyData         S           2048a   varying inz
-     D cmdString       S          32767a   inz
+     D cmdString       S                   like(cmdLong_t) inz
      D execCmdImplizit...
      D                 S                   like(bool_t)  inz(cTrue)
      D foundPrePrcTags...
      D                 S                   like(bool_t)  inz(cFalse)
-     D cmdChgObjD      S                   like(cmd_t)
+     D cmdChgObjD      S                   like(cmdLong_t)
+     D cmd             S                   like(cmdLong_t)
       /free
 
          p_setAppMsgFile(i_msgFile: i_msgFileLib);
@@ -7100,7 +7200,7 @@ srccssid=  "00273">
          endif;
 
          // Formatieren Befehl
-         i_cmd = f_fmtCmd(i_cmd);
+         cmd = f_fmtCmd(%trim(i_cmd));
 
          // Initialisieren Modus
          mode = cMODE_SCAN;
@@ -7181,6 +7281,13 @@ srccssid=  "00273">
                iter;
             endif;
 
+            // Ende der Important Parameter
+            if (mode = cMODE_ENDIMPORTANT);
+               mode = f_popMode();
+               mode = f_popMode();
+               iter;
+            endif;
+
             // Breite der Quellenangaben >>WIDTH<<
             if (mode  = cMODE_WIDTH);
                srcDtaLen = f_getWidth(srcDta: srcDtaLen);
@@ -7195,12 +7302,12 @@ srccssid=  "00273">
                                    : srcDta
                                    : continue   );
 
-               // pr1fen auf Fortsetzungszeile
+               // prüfen auf Fortsetzungszeile
                if (continue <> cEND_OF_LINE);
                   iter;
                else;
-                  if (i_cmd = '');
-                     i_cmd = keyData;
+                  if (cmd = '');
+                     cmd = keyData;
                   endif;
                   exsr resetLine;
                   mode = f_popMode();
@@ -7210,7 +7317,7 @@ srccssid=  "00273">
 
             // Parm-Anweisung      >>PARM<<
             if (mode = cMODE_PARM);
-               if (i_cmd = '');
+               if (cmd = '');
                   clear PRZ0014;
                   p_sndMsg(f_newMsg('PRZ0014': PRZ0014: cTYPE_DIAG));
                   p_endAbn();
@@ -7226,7 +7333,7 @@ srccssid=  "00273">
                if (continue <> cEND_OF_LINE);
                   iter;
                else;
-                  i_cmd = f_replaceCmdKeyWord(i_cmd: keyData);
+                  cmd = f_replaceCmdKeyWord(cmd: keyData);
                   exsr resetLine;
                   mode = f_popMode();
                   iter;
@@ -7235,7 +7342,7 @@ srccssid=  "00273">
 
             // Execute-Anweisung   >>EXECUTE<<
             if (mode = cMODE_EXECUTE);
-               cmdString = i_cmd;
+               cmdString = cmd;
                exsr replaceVar;
                p_performExecute(cmdString: cmdChgObjD);
                mode = f_popMode();
@@ -7271,7 +7378,7 @@ srccssid=  "00273">
          // Ausführen >>EXECUTE<< implizit, weil
          // kein Pre-Prozessor Abschnitt gefunden werden konnte
          if (execCmdImplizit = cTrue);
-            cmdString = i_cmd;
+            cmdString = cmd;
             exsr replaceVar;
             p_performExecute(cmdString: cmdChgObjD);
          endif;
@@ -7446,8 +7553,8 @@ srccssid=  "00273">
      P p_performExecute...
      P                 b
      D                 pi
-     D  i_cmd                              value  like(cmd_t)
-     D  i_cmdChgObjD                       value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
+     D  i_cmdChgObjD                       value  like(cmdLong_t)
       *
       *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
       /COPY QSTRPREPRC,PRZ0026
@@ -7494,7 +7601,7 @@ srccssid=  "00273">
      P p_performCmd...
      P                 b
      D                 pi
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
       *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
       /COPY QSTRPREPRC,PRZ0026
@@ -7691,12 +7798,12 @@ srccssid=  "00273">
       * =============================================================
      P f_replaceCmdKeyWord...
      P                 b
-     D                 pi                         like(cmd_t)
-     D  i_cmd                              value  like(cmd_t)
+     D                 pi                         like(cmdLong_t)
+     D  i_cmd                              value  like(cmdLong_t)
      D  i_keyData                  2048a   value  varying
       *
       *  Funktionswert
-     D cmd             s                   like(cmd_t) inz
+     D cmd             s                   like(cmdLong_t) inz
       *
       *  Nachrichten
       *  ... Das Ende des Schlüsselwortes &1 konnte nicht gefunden werden.
@@ -7893,6 +8000,18 @@ srccssid=  "00273">
                leave;
             endif;
 
+            // Anfang Important
+            if (f_rtvTag(cTAG_IMPORTANT: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
+            // Ende Important
+            if (f_rtvTag(cTAG_ENDIMPORTANT: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
             // Breite der Quellenangaben
             if (f_rtvTag(cTAG_WIDTH: i_srcDta: o_tag));
                isTag = cTrue;
@@ -8001,6 +8120,14 @@ srccssid=  "00273">
             // Ende Compile
             when (i_tag = cTAG_ENDCOMPILE);
                mode = cMODE_ENDCOMPILE;
+
+            // Anfang Important
+            when (i_tag = cTAG_IMPORTANT);
+               mode = cMODE_IMPORTANT;
+
+            // Ende Important
+            when (i_tag = cTAG_ENDIMPORTANT);
+               mode = cMODE_ENDIMPORTANT;
 
             // Maximale Breite der Quellendaten
             when (i_tag = cTAG_WIDTH);
@@ -8130,7 +8257,7 @@ srccssid=  "00273">
      P f_checkCommand...
      P                 b
      D                 pi                         like(bool_t)
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
       *  Definitionen für QCAPCMD
      D optCtrl         ds                  likeds(cpop0100_t) inz
@@ -8174,7 +8301,7 @@ srccssid=  "00273">
      P                 b
      D                 pi                         like(bool_t)
      D  i_monErr                           value  like(bool_t)
-     D  i_cmd                              value  like(cmd_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
       *  Definitionen für f_getMsgInf
      D msgID           s                   like(msgID_t) inz
@@ -8183,13 +8310,13 @@ srccssid=  "00273">
      D msgLib          s                   like(msg_t.lib) inz
       *
       * Definitionen für Ausgangsprogramm
-     D exitPgmName     s             21A
+     D cmdLongFixLength...
+     D                 s           2048A
+     D exitPgmName     s             21A   varying
      D exitPgm         pr                  extpgm(exitPgmName)
-     D  cmd                                like(i_cmd)
+     D  cmd                                like(cmd_t)
       *
       *  Definitionen für QCAPCMD
-     D cmd             s                   like(i_cmd)
-     D cmdLen          s             10I 0 inz(%len(cmd))
      D optCtrl         ds                  likeds(cpop0100_t) inz
      D retCmd          s                   like(i_cmd) inz
      D retCmdLenAvl    s             10i 0 inz(%len(retCmd))
@@ -8203,11 +8330,11 @@ srccssid=  "00273">
 
          clear errCode;
 
-         cmd = i_cmd;
-
          if (g_pgmCmdExc <> '*NONE');
             exitPgmName = %trim(g_libPgmCmdExc) + '/' + %trim(g_pgmCmdExc);
-            exitPgm(cmd);
+            cmdLongFixLength = i_cmd;
+            exitPgm(cmdLongFixLength);
+            i_cmd = %trimR(cmdLongFixLength);
          endif;
 
          monitor;
@@ -8220,7 +8347,7 @@ srccssid=  "00273">
             optCtrl.res_01 = *ALLx'00';
 
             errCode = f_newApiErrCode(cFalse);
-            QCAPCMD(cmd: cmdLen: optCtrl: %size(optCtrl): 'CPOP0100'
+            QCAPCMD(i_cmd: %len(i_cmd): optCtrl: %size(optCtrl): 'CPOP0100'
                     : retCmd: retCmdLenAvl: retCmdLenRtn: errCode);
             return cTrue;
          on-error;
@@ -8333,8 +8460,8 @@ srccssid=  "00273">
       * =============================================================
      P f_fmtCmd...
      P                 b
-     D                 pi                         like(cmd_t)
-     D  i_cmd                              value  like(cmd_t)
+     D                 pi                         like(cmdLong_t)
+     D  i_cmd                              value  like(cmdLong_t)
       *
       *  Nachrichten
       *  ... Befehlszeichenfolge ist zu lang.
@@ -8344,7 +8471,6 @@ srccssid=  "00273">
       *
       *  Definitionen für QCAPCMD
      D cmd             s                   like(i_cmd)
-     D cmdLen          s             10i 0 inz(%len(cmd))
      D optCtrl         ds                  likeds(cpop0100_t) inz
      D retCmd          s                   like(i_cmd) inz
      D retCmdLenAvl    s             10i 0 inz(%len(retCmd))
@@ -8367,7 +8493,7 @@ srccssid=  "00273">
 
             errCode = f_newApiErrCode(cTrue);
 
-            QCAPCMD(cmd: cmdLen: optCtrl: %size(optCtrl): 'CPOP0100'
+            QCAPCMD(cmd: %len(cmd): optCtrl: %size(optCtrl): 'CPOP0100'
                     : retCmd: retCmdLenAvl: retCmdLenRtn: errCode);
 
          // Prüfen API-Fehler ...
@@ -8502,7 +8628,7 @@ srccssid=  "00273">
      D                 pi
      D  i_var                        10a   value
      D  i_value                     256a   value
-     D  io_string                 32767a
+     D  io_string                                 like(cmdLong_t)
       *
      D x               s                   like(int4_t)
       /free
@@ -8562,6 +8688,8 @@ srccssid=  "00273">
       *  ----------  ------------  ---------------------------------------  *
       *  18.05.2015  Th.Raddatz    Converted to /free.                      *
       *                                                                     *
+      *  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *                                                                     *
@@ -8620,7 +8748,7 @@ srccssid=  "00273">
       * -------------------------------------------------------------
       *  Globale Variablen
       * -------------------------------------------------------------
-     D ctrlEntry       S             60A   dim(12) ctdata perrcd(1)
+     D ctrlEntry       S             60A   dim(15) ctdata perrcd(1)
      D msgIDs          S             83A   dim(25) ctdata perrcd(1)
       *
       * -------------------------------------------------------------
@@ -8693,11 +8821,14 @@ srccssid=  "00273">
 *SCAN                         >>PRE-COMPILER<<
 >>COMPILE<<                   >>END-COMPILE<<
 >>COMPILE<<                   >>PARM<<
+>>IMPORTANT<<                 >>END-IMPORTANT<<
+>>IMPORTANT<<                 >>PARM<<
 >>LINK<<                      >>END-LINK<<
 >>LINK<<                      >>PARM<<
 >>PRE-COMPILER<<              *EXIT
 >>PRE-COMPILER<<              >>CMD<<
 >>PRE-COMPILER<<              >>COMPILE<<
+>>PRE-COMPILER<<              >>IMPORTANT<<
 >>PRE-COMPILER<<              >>CRTCMD<<
 >>PRE-COMPILER<<              >>EXECUTE<<
 >>PRE-COMPILER<<              >>LINK<<

@@ -11,8 +11,8 @@ package biz.isphere.strpreprc.lpex.action;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
-import biz.isphere.strpreprc.model.StrPrePrcHeader;
+import biz.isphere.strpreprc.Messages;
+import biz.isphere.strpreprc.model.StrPrePrcParser;
 
 import com.ibm.lpex.core.LpexView;
 
@@ -22,12 +22,12 @@ import com.ibm.lpex.core.LpexView;
 public class RemoveHeaderAction extends AbstractHeaderAction {
 
     public static final String ID = "SprPrePrc.RemoveHeader";
-    
+
     public void doAction(LpexView view) {
 
         try {
 
-            StrPrePrcHeader header = new StrPrePrcHeader();
+            StrPrePrcParser header = new StrPrePrcParser(null);
             if (!header.loadFromLpexView(view)) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "STRPREPRC header not found or incomplete.");
                 return;
@@ -43,6 +43,6 @@ public class RemoveHeaderAction extends AbstractHeaderAction {
     }
 
     public static String getLPEXMenuAction() {
-        return "\"Remove header\" " + RemoveHeaderAction.ID;
+        return "\"" + Messages.Menu_Remove_header + "\" " + RemoveHeaderAction.ID;
     }
 }

@@ -8,6 +8,7 @@
 
 package biz.isphere.base.jface.dialogs;
 
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceResources;
@@ -15,8 +16,14 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.ISphereBasePlugin;
 import biz.isphere.base.internal.DialogSettingsManager;
 
 /**
@@ -47,6 +54,7 @@ public class XDialog extends Dialog {
     public static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 
     private DialogSettingsManager dialogSettingsManager = null;
+    private StatusLineManager statusLineManager = null;
 
     /**
      * {@inheritDoc}
@@ -64,6 +72,40 @@ public class XDialog extends Dialog {
         super(parentShell);
         initializeDialogSettingsManager();
         setStyleResizable();
+    }
+
+    protected void createStatusLine(Control parent) {
+        if (parent instanceof Composite) {
+            Composite composite = (Composite)parent;
+            statusLineManager = new StatusLineManager();
+            statusLineManager.createControl(composite, SWT.NONE);
+            Control statusLine = statusLineManager.getControl();
+            Layout layout = composite.getLayout();
+            if (layout instanceof GridLayout) {
+                GridLayout gridLayout = (GridLayout)layout;
+                statusLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, gridLayout.numColumns, 1));
+            }
+        }
+    }
+
+    protected void setErrorMessage(String errorMessage) {
+        if (statusLineManager != null) {
+            if (errorMessage != null) {
+                statusLineManager.setErrorMessage(ISphereBasePlugin.getDefault().getImageRegistry().get(ISphereBasePlugin.IMAGE_ERROR), errorMessage);
+            } else {
+                statusLineManager.setErrorMessage(null, null);
+            }
+        }
+    }
+
+    protected void setStatusMessage(String message) {
+        if (statusLineManager != null) {
+            if (message != null) {
+                statusLineManager.setMessage(null, message);
+            } else {
+                statusLineManager.setMessage(null, null);
+            }
+        }
     }
 
     /**
@@ -235,10 +277,10 @@ public class XDialog extends Dialog {
      * @return dialog settings manager
      */
     protected DialogSettingsManager getDialogSettingsManager() {
-        
+
         return dialogSettingsManager;
     }
-    
+
     /**
      * Retrieves the screen value that was last displayed on the dialog.
      * 

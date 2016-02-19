@@ -159,14 +159,6 @@ public class GoToDialog extends XDialog {
         createButton(parent, CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
     }
 
-    private void createStatusLine(Composite parent) {
-        statusLineManager = new StatusLineManager();
-        statusLineManager.createControl(parent, SWT.NONE);
-        Control statusLine = statusLineManager.getControl();
-        final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-        statusLine.setLayoutData(gridDataStatusLine);
-    }
-
     public void setEditor(IGoToTarget editor) {
         this.gotoTarget = editor;
     }
@@ -256,14 +248,6 @@ public class GoToDialog extends XDialog {
             text = "0" + text; //$NON-NLS-1$
         }
         return HEX_PREFIX + text;
-    }
-
-    private void setErrorMessage(String errorMessage) {
-        if (errorMessage != null) {
-            statusLineManager.setErrorMessage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_ERROR), errorMessage);
-        } else {
-            statusLineManager.setErrorMessage(null, null);
-        }
     }
 
     @Override

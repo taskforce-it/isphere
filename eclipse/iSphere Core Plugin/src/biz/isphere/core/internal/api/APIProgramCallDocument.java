@@ -100,6 +100,22 @@ public abstract class APIProgramCallDocument {
         return errorMessages;
     }
 
+    public String getErrorMessage() {
+
+        AS400Message[] messages = getMessageList();
+        if (messages == null || messages.length == 0) {
+            return ""; //$NON-NLS-1$
+        }
+
+        // for (AS400Message message : messages) {
+        // if (message.getType() == AS400Message.ESCAPE) {
+        //                return message.getID() + ": " +  message.getText(); //$NON-NLS-1$
+        // }
+        // }
+        
+        return messages[0].getID() + ": " +  messages[0].getText();
+    }
+
     /**
      * Produces the path to an IBM i object.
      * 
@@ -114,8 +130,7 @@ public abstract class APIProgramCallDocument {
         }
         if (library.equals("QSYS")) {
             return "/QSYS.LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-        else {
+        } else {
             return "/QSYS.LIB/" + library + ".LIB/" + object + "." + type; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
@@ -142,7 +157,7 @@ public abstract class APIProgramCallDocument {
     protected ProgramParameter produceIntegerParameter(int aValue) {
         byte[] bytes = new byte[4];
         getIntConverter().toBytes(new Integer(aValue), bytes);
-        return new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, bytes);
+        return new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, bytes, bytes.length);
     }
 
     /**

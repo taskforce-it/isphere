@@ -42,9 +42,9 @@ import com.ibm.as400.access.QSYSObjectPathName;
  * <pre>
  * Run Configuration -> Arguments -> VM arguments:
  * 
- *  -Disphere.junit.as400=ghentw.gfd.de
- *  -Disphere.junit.username=WEBUSER
- *  -Disphere.junit.password=WEBUSER
+ *  -Disphere.junit.as400=ostname
+ *  -Disphere.junit.username=user
+ *  -Disphere.junit.password=password
  * </pre>
  */
 public class TestWrappedDataArea {

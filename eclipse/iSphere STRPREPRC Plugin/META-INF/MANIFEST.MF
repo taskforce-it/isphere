@@ -4,17 +4,17 @@ Bundle-Name: iSphere STRPREPRC Plugin
 Bundle-SymbolicName: biz.isphere.strpreprc;singleton:=true
 Bundle-Version: 2.8.1.b002
 Bundle-Activator: biz.isphere.strpreprc.ISphereStrPrePrcPlugin
+Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
  org.eclipse.core.runtime,
- org.eclipse.rse.files.ui,
- org.eclipse.rse.subsystems.files.core,
- org.eclipse.ui.workbench.texteditor,
+ org.eclipse.core.resources,
  com.ibm.lpex,
- com.ibm.etools.iseries.rse.ui,
  com.ibm.etools.systems.editor,
+ com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
- biz.isphere.core,
- biz.isphere.rse
+ biz.isphere.core
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: iSphere Project Team
 Import-Package: com.ibm.lpex.alef
+Bundle-ClassPath: .
