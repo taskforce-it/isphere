@@ -43,6 +43,8 @@ public final class HeaderTemplates {
     private static final String CLP = "clp";
     private static final String CLLE = "clle";
     private static final String PNLGRP = "pnlgrp";
+    private static final String DSPF = "dspf";
+    private static final String PRTF = "prtf";
 
     private Properties defaultCreationCommands;
     private Properties defaultImportantParameters;
@@ -74,7 +76,9 @@ public final class HeaderTemplates {
         defaultCreationCommands.put(C, "CRTCMOD MODULE(" + OBJECT_VARIABLES + ") OUTPUT(*PRINT)" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(CLP, "CRTCLPGM " + preferences.getDefaultKeywords());
         defaultCreationCommands.put(CLLE, "CRTCLMOD MODULE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
-        defaultCreationCommands.put(PNLGRP, "PNLGRP PNLGRP(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(PNLGRP, "CRTPNLGRP PNLGRP(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(DSPF, "CRTDSPF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(PRTF, "CRTPRTF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
 
         defaultImportantParameters = new Properties();
         defaultImportantParameters.put(DEFAULT, new String[] { "TEXT('Hello World')" });
@@ -85,6 +89,9 @@ public final class HeaderTemplates {
         defaultImportantParameters.put(CLP, new String[] { "PGM(" + OBJECT_VARIABLES + ")", "OPTION(*LISTDBG)" });
         defaultImportantParameters.put(CLLE, new String[] { "DBGVIEW(*LIST)", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(PNLGRP, new String[] { "OPTION(*EVENTF)" });
+        defaultImportantParameters.put(DSPF, new String[] { "FILE(" + OBJECT_VARIABLES + ") OPTION(*EVENTF)" });
+        defaultImportantParameters.put(PRTF, new String[] { "FILE(" + OBJECT_VARIABLES + ")", "PAGESIZE(66 132)", "LPI(6)", "CPI(10)", "OVRFLW(60)",
+            "OPTION(*EVENTF)" });
     }
 
     private Properties loadTemplates() {
@@ -106,6 +113,8 @@ public final class HeaderTemplates {
         generateTemplates(CLP, "/*", "*/", dftIndent);
         generateTemplates(CLLE, "/*", "*/", dftIndent);
         generateTemplates(PNLGRP, ".*", "", 0);
+        generateTemplates(DSPF, "/*", "*/", dftIndent);
+        generateTemplates(PRTF, "/*", "*/", dftIndent);
 
         return templates;
     }
@@ -131,17 +140,17 @@ public final class HeaderTemplates {
         });
 
         for (String templateFileName : files) {
-            loadTemplate(templateFileName);
+            loadTemplate(templateDirectory, templateFileName);
         }
     }
 
-    private void loadTemplate(String templateFileName) {
+    private void loadTemplate(String templateDirectory, String templateFileName) {
 
         List<String> textLines = new LinkedList<String>();
 
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(templateFileName));
+            br = new BufferedReader(new FileReader(templateDirectory + File.separator + templateFileName));
             String line;
             while ((line = br.readLine()) != null) {
                 textLines.add(line);
@@ -165,7 +174,7 @@ public final class HeaderTemplates {
 
         File template = new File(templateFileName);
         String fileName = template.getName();
-        
+
         int i = fileName.lastIndexOf(".");
         if (i == 0) {
             return fileName;
@@ -175,7 +184,7 @@ public final class HeaderTemplates {
     }
 
     private void generateTemplates(String memberType, String leftCommentChar, String rightCommentChar, int indent) {
-        if (!templates.contains(memberType)) {
+        if (!templates.containsKey(memberType)) {
             String creationCommand = getCreationCommand(memberType);
             String[] importantParameters = getImportantParameters(memberType);
             templates.put(memberType, createTemplate(memberType, creationCommand, importantParameters, leftCommentChar, rightCommentChar, indent));
