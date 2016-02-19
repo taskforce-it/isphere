@@ -4,7 +4,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.strpreprc.model.HeaderTemplates;
-import biz.isphere.strpreprc.preferences.PreferencesInitializer;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -33,10 +32,9 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        plugin = this;
 
-        PreferencesInitializer initializer = new PreferencesInitializer();
-        initializer.initializeDefaultPreferences();
+        // PreferencesInitializer initializer = new PreferencesInitializer();
+        // initializer.initializeDefaultPreferences();
     }
 
     /*
