@@ -11,7 +11,6 @@ package biz.isphere.strpreprc.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.strpreprc.ISphereStrPrePrcPlugin;
 
 /**
@@ -79,7 +78,7 @@ public final class Preferences {
     public synchronized static Preferences getInstance() {
         if (instance == null) {
             instance = new Preferences();
-            instance.preferenceStore = ISpherePlugin.getDefault().getPreferenceStore();
+            instance.preferenceStore = ISphereStrPrePrcPlugin.getDefault().getPreferenceStore();
         }
         return instance;
     }
