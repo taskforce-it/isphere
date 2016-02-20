@@ -199,18 +199,27 @@ public class HelpBuilder {
         for (Toc tocItem : tocs) {
             String pluginTocPath = tocItem.getPluginTocPath();
             if (linkToTocPath.equals(pluginTocPath)) {
-                Topic[] topics = tocItem.getTopics();
-                if (topics != null) {
-                    for (Topic topic : topics) {
-                        Anchor anchor = topic.getAnchor();
-                        if (anchor != null && linkToReference.equals(anchor.getId())) {
-                            return topic;
-                        }
+                return findAnchor(linkToReference, tocItem.getTopics());
+            }
+        }
+
+        return null;
+    }
+
+    private Topic findAnchor(String linkToReference, Topic[] topics) {
+        if (topics != null) {
+            for (Topic topic : topics) {
+                Anchor anchor = topic.getAnchor();
+                if (anchor != null && linkToReference.equals(anchor.getId())) {
+                    return topic;
+                } else {
+                    Topic matchingTopic = findAnchor(linkToReference, topic.getTopics());
+                    if (matchingTopic != null) {
+                        return matchingTopic;
                     }
                 }
             }
         }
-
         return null;
     }
 
