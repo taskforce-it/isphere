@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Usage of STRPREPRC</title>
+</head>
+
+<body>
+<h1>Usage of STRPREPRC</h1>
+<p>
+The main purpose of the STRPREPRC utility is to store the creation command along with object 
+specific creation parameters in the source code. When it is used in combination with a Software 
+Change Management System (CMS), it is also possible to pass the basic creation command to
+the utility by the CMS and override object specific creation parameters. 
+<p>
+Furthermore STRPREPRC can store the source file, library and member in the object description
+of a given object. That is very useful in case you use STRPREPRC to create non-source objects
+such as data areas or job queues or whatever else.
+<p>
+Last but not least it can create write the job log messages to an EVFEVENT file member for 
+object creation commands that do not have an <i>*EVENTF</i> option. That is really cool, for 
+example, when you use the utility to create service programs or programs.
+<p>
+<h2>Parameters</h2>
+<p>
+All parameters of the utility are described in the help text of the command. So please prompt 
+the command and press F1 to get information about a specific parameter.
+<p>
+The most important parameters are: 
+<p>
+<ul>
+<li>Source file, Library and member</li>
+<li>Creation command, when used in combination with a CMS</li>
+<li>Create Event File</li>
+<li>Change object description for non-source objects</li>
+</ul>
+<p>
+Less important parameters are: 
+<p>
+<ul>
+<li>Pre-Comp. tags required</li>
+<li>Exit Program Command Execution</li>
+</ul>
+<p>
+All other parameters are just variables that you can use the way you want.
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

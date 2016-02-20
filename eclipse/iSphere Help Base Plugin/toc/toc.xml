@@ -24,7 +24,21 @@
       <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
    </topic>
    <topic label="Utilities" >
-      <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc.html" />
+      <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc/strpreprc.html" >
+         <topic label="Usage" href="html/utilities/strpreprc/usage.html" />
+         <topic label="Header" href="html/utilities/strpreprc/header.html" />
+         <topic label="Example Headers">
+            <topic label="Create RPG Module" href="html/utilities/strpreprc/example_crtrpgmod.html" />
+            <topic label="Create Program" href="html/utilities/strpreprc/example_crtpgm.html" />
+            <topic label="Create Service Program" href="html/utilities/strpreprc/example_crtsrvpgm.html" />
+            <topic label="Create Data Area" href="html/utilities/strpreprc/example_crtdtaara.html" />
+            <topic label="Create SQL Table" href="html/utilities/strpreprc/example_runsqlstm.html" />
+         </topic> 
+         <topic label="Plug-in">
+            <anchor id="strpreprc_plugin" />
+         </topic>
+         <topic label="History" href="html/utilities/strpreprc/history.html" />
+      </topic>
    </topic>
    <topic label="Links" href="html/links/links.html" />
 </toc>
