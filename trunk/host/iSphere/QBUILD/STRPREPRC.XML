@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 2/19/2016">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 2/20/2016">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2699,7 +2699,7 @@ srclib  =  "selected  "
 srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
-     H COPYRIGHT('V1.9 - 19.02.2016 - mailto: thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.9 - 20.02.2016 - mailto: thomas.raddatz@tools400.de')
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -9933,7 +9933,7 @@ srccssid=  "00273">
                           LEN(10)                          +
                           MIN(0)                           +
                           DFT(*NONE)                       +
-                          SPCVAL((*NONE))                  +
+                          SPCVAL((*NONE) (*DFT))           +
                           PMTCTL(*PMTRQS)                  +
                           PROMPT('Value for source library (&SL)')
 
@@ -9957,7 +9957,7 @@ srccssid=  "00273">
                           LEN(10)                          +
                           MIN(0)                           +
                           DFT(*NONE)                       +
-                          SPCVAL((*NONE) (*DFT))           +
+                          SPCVAL((*NONE))                  +
                           PMTCTL(*PMTRQS)                  +
                           PROMPT('Value for test library   (&TL)')
 
