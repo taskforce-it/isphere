@@ -110,10 +110,13 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
             if (isBaseKeyword(clParameter)) {
                 setBaseParameter(clParameter);
             } else {
-                if (priorizeImportantSection()) {
+                String defaultSection = Preferences.getInstance().getDefaultSection();
+                if (Preferences.IMPORTANT.equals(defaultSection)) {
                     setImportantParameter(clParameter);
-                } else {
+                } else if (Preferences.COMPILE.equals(defaultSection)) {
                     setCompileParameter(clParameter);
+                } else {
+                    setLinkParameter(clParameter);
                 }
             }
         }
@@ -209,7 +212,7 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         String[] headerLines = produceHeader(formatter);
 
         int cursorLine;
-        if (firstLine == 0) {
+        if (firstLine <= 0) {
             cursorLine = IntHelper.tryParseInt(view.query("element"), 0) - 1;
         } else {
             cursorLine = 0;
@@ -284,10 +287,13 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
             if (isBaseKeyword(clParameter)) {
                 setBaseParameter(clParameter);
             } else {
-                if (priorizeImportantSection()) {
+                String defaultSection = Preferences.getInstance().getDefaultSection();
+                if (Preferences.IMPORTANT.equals(defaultSection)) {
                     setImportantParameter(clParameter);
-                } else {
+                } else if (Preferences.COMPILE.equals(defaultSection)) {
                     setCompileParameter(clParameter);
+                } else {
+                    setLinkParameter(clParameter);
                 }
             }
         }
@@ -302,10 +308,6 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
                 removeParameter(keyword);
             }
         }
-    }
-
-    private boolean priorizeImportantSection() {
-        return Preferences.getInstance().priorizeImportantSection();
     }
 
     private boolean hasParameter(String keyword) {

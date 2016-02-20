@@ -33,7 +33,9 @@ public class Messages extends NLS {
     public static String The_specified_directory_does_not_exist;
 
     public static String Could_not_save_A_files_to_directory_B;
-    
+
+    public static String Create_STRPREPRC_Header;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

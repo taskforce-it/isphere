@@ -8,8 +8,11 @@
 
 package biz.isphere.strpreprc.preferences;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.strpreprc.ISphereStrPrePrcPlugin;
 
@@ -64,7 +67,17 @@ public final class Preferences {
 
     private static final String USE_PARAMETER_SECTIONS = TEMPLATES + "USE_SECTIONS_AT_ALL"; //$NON-NLS-1$
 
-    private static final String PRIORIZE_IMPORTANT_SECTION = TEMPLATES + "PRIORIZE_IMPORTANT_SECTION"; //$NON-NLS-1$
+    private static final String DEFAULT_SECTION = TEMPLATES + "DEFAULT_SECTION"; //$NON-NLS-1$
+
+    public static final String IMPORTANT = "IMPORTANT";
+    public static final String COMPILE = "COMPILE";
+    public static final String LINK = "LINK";
+
+    /*
+     * Name of the default template directory
+     */
+
+    private static final String TEMPLATE_DIRECTORY_NAME = "templates";
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -140,8 +153,8 @@ public final class Preferences {
         return preferenceStore.getBoolean(USE_PARAMETER_SECTIONS);
     }
 
-    public boolean priorizeImportantSection() {
-        return preferenceStore.getBoolean(PRIORIZE_IMPORTANT_SECTION);
+    public String getDefaultSection() {
+        return preferenceStore.getString(DEFAULT_SECTION);
     }
 
     /*
@@ -188,8 +201,8 @@ public final class Preferences {
         preferenceStore.setValue(USE_PARAMETER_SECTIONS, useIt);
     }
 
-    public void setPriorizeImportantSection(boolean useIt) {
-        preferenceStore.setValue(PRIORIZE_IMPORTANT_SECTION, useIt);
+    public void setDefaultSection(String section) {
+        preferenceStore.setValue(DEFAULT_SECTION, section);
     }
 
     /*
@@ -208,7 +221,7 @@ public final class Preferences {
         preferenceStore.setDefault(TEMPLATE_DIRECTORY, getInitialTemplateDirectory());
         preferenceStore.setDefault(USE_TEMPLATE_DIRECTORY, getInitialUseTemplateDirectory());
         preferenceStore.setDefault(USE_PARAMETER_SECTIONS, getInitialUseParameterSections());
-        preferenceStore.setDefault(PRIORIZE_IMPORTANT_SECTION, getInitialPriorizeImportantSection());
+        preferenceStore.setDefault(DEFAULT_SECTION, getInitialDefaultSection());
     }
 
     /*
@@ -244,19 +257,29 @@ public final class Preferences {
     }
 
     public String getInitialTemplateDirectory() {
-        return "";
+
+        String path = ISphereStrPrePrcPlugin.getDefault().getStateLocation().toFile().getAbsolutePath();
+        path = path + File.separator + TEMPLATE_DIRECTORY_NAME + File.separator;
+
+        FileHelper.ensureDirectory(path);
+
+        return path;
     }
 
     public boolean getInitialUseTemplateDirectory() {
-        return false;
+        return true;
     }
 
     public boolean getInitialUseParameterSections() {
         return true;
     }
 
-    public boolean getInitialPriorizeImportantSection() {
-        return true;
+    public String getInitialDefaultSection() {
+        return IMPORTANT;
+    }
+
+    public String[] getSections() {
+        return new String[] { IMPORTANT, COMPILE, LINK };
     }
 
     /*
