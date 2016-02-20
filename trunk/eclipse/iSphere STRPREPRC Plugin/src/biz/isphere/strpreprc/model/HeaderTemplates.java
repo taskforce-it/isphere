@@ -37,7 +37,9 @@ public final class HeaderTemplates {
     private static final String OBJECT_VARIABLES = "&LI/&OB";
 
     private static final String DEFAULT = "*dft";
+    private static final String SQLRPG = "sqlrpg";
     private static final String SQLRPGLE = "sqlrpgle";
+    private static final String RPG = "rpg";
     private static final String RPGLE = "rpgle";
     private static final String C = "c";
     private static final String CLP = "clp";
@@ -45,6 +47,10 @@ public final class HeaderTemplates {
     private static final String PNLGRP = "pnlgrp";
     private static final String DSPF = "dspf";
     private static final String PRTF = "prtf";
+    private static final String CMD = "cmd";
+    private static final String LF = "lf";
+    private static final String PF = "pf";
+    private static final String SQLSTMT = "sqlstmt";
 
     private Properties defaultCreationCommands;
     private Properties defaultImportantParameters;
@@ -71,7 +77,9 @@ public final class HeaderTemplates {
 
         defaultCreationCommands = new Properties();
         defaultCreationCommands.put(DEFAULT, "...");
+        defaultCreationCommands.put(SQLRPG, "CRTSQLRPG MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(SQLRPGLE, "CRTSQLRPGI MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(RPG, "CRTRPGPGM PGM(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(RPGLE, "CRTRPGMOD MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(C, "CRTCMOD MODULE(" + OBJECT_VARIABLES + ") OUTPUT(*PRINT)" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(CLP, "CRTCLPGM " + preferences.getDefaultKeywords());
@@ -79,19 +87,30 @@ public final class HeaderTemplates {
         defaultCreationCommands.put(PNLGRP, "CRTPNLGRP PNLGRP(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
         defaultCreationCommands.put(DSPF, "CRTDSPF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
         defaultCreationCommands.put(PRTF, "CRTPRTF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(CMD, "CRTCMD CMD(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(LF, "CRTLF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(PF, "CRTPF FILE(" + OBJECT_VARIABLES + ") " + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(SQLSTMT, "RUNSQLSTM " + preferences.getDefaultKeywords());
 
         defaultImportantParameters = new Properties();
         defaultImportantParameters.put(DEFAULT, new String[] { "TEXT('Hello World')" });
+        defaultImportantParameters.put(SQLRPG, new String[] { "OBJ(" + OBJECT_VARIABLES + ")", "OBJTYPE(*MODULE)", "RPGPPOPT(*LVL2)",
+            "CLOSQLCSR(*ENDACTGRP)", "DATFMT(*ISO)", "TIMFMT(*ISO)", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(SQLRPGLE, new String[] { "OBJ(" + OBJECT_VARIABLES + ")", "OBJTYPE(*MODULE)", "RPGPPOPT(*LVL2)",
             "CLOSQLCSR(*ENDACTGRP)", "DATFMT(*ISO)", "TIMFMT(*ISO)", "OPTION(*EVENTF)" });
+        defaultImportantParameters.put(RPG, new String[] { "OPTION(*LSTDBG)", "IGNDECERR(*NO)" });
         defaultImportantParameters.put(RPGLE, new String[] { "TRUNCNBR(*NO)", "DBGVIEW(*LIST)", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(C, new String[] { "SYSIFCOPT(*NOIFSIO)", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(CLP, new String[] { "PGM(" + OBJECT_VARIABLES + ")", "OPTION(*LISTDBG)" });
         defaultImportantParameters.put(CLLE, new String[] { "DBGVIEW(*LIST)", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(PNLGRP, new String[] { "OPTION(*EVENTF)" });
-        defaultImportantParameters.put(DSPF, new String[] { "FILE(" + OBJECT_VARIABLES + ") OPTION(*EVENTF)" });
+        defaultImportantParameters.put(DSPF, new String[] { "FILE(" + OBJECT_VARIABLES + ")", "OPTION(*EVENTF)" });
         defaultImportantParameters.put(PRTF, new String[] { "FILE(" + OBJECT_VARIABLES + ")", "PAGESIZE(66 132)", "LPI(6)", "CPI(10)", "OVRFLW(60)",
             "OPTION(*EVENTF)" });
+        defaultImportantParameters.put(CMD, new String[] { "CMD(" + OBJECT_VARIABLES + ")" });
+        defaultImportantParameters.put(LF, new String[] { "FILE(" + OBJECT_VARIABLES + ")", "OPTION(*EVENTF)" });
+        defaultImportantParameters.put(PF, new String[] { "CMD(" + OBJECT_VARIABLES + ")", "OPTION(*EVENTF)" });
+        defaultImportantParameters.put(SQLSTMT, new String[] { "COMMIT(*NONE)", "NAMING(*SQL)", "DATFMT(*ISO)", "TIMFMT(*ISO)", "DFTRDBCOL(&LI)" });
     }
 
     private Properties loadTemplates() {
@@ -107,7 +126,9 @@ public final class HeaderTemplates {
         int dftIndent = preferences.getDefaultIndention();
 
         generateTemplates(DEFAULT, "/*", "*/", dftIndent);
+        generateTemplates(SQLRPG, "*", "", dftIndent);
         generateTemplates(SQLRPGLE, "*", "", dftIndent);
+        generateTemplates(RPG, "*", "", dftIndent);
         generateTemplates(RPGLE, "*", "", dftIndent);
         generateTemplates(C, "/*", "*/", dftIndent);
         generateTemplates(CLP, "/*", "*/", dftIndent);
@@ -115,6 +136,10 @@ public final class HeaderTemplates {
         generateTemplates(PNLGRP, ".*", "", 0);
         generateTemplates(DSPF, "/*", "*/", dftIndent);
         generateTemplates(PRTF, "/*", "*/", dftIndent);
+        generateTemplates(CMD, "/*", "*/", dftIndent);
+        generateTemplates(LF, "/*", "*/", dftIndent);
+        generateTemplates(PF, "/*", "*/", dftIndent);
+        generateTemplates(SQLSTMT, "--", "", 0);
 
         return templates;
     }
@@ -255,18 +280,6 @@ public final class HeaderTemplates {
      * part of the base object creation command.
      * 
      * @param keyword - keyword that is checked
-     * @return <code>true</true> for a keyword of the base create command, else <code>false</code>
-     */
-    private boolean isBaseKeyword(String keyword) {
-
-        return isBaseKeyword(keyword, null);
-    }
-
-    /**
-     * Checks, whether a given keyword belongs to the list of keywords that are
-     * part of the base object creation command.
-     * 
-     * @param keyword - keyword that is checked
      * @param memberType - IBM i source member type
      * @return <code>true</true> for a keyword of the base create command, else <code>false</code>
      */
@@ -319,6 +332,7 @@ public final class HeaderTemplates {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> lookupTemplate(String key) {
         return (List<String>)loadTemplates().get(key);
     }
@@ -332,7 +346,7 @@ public final class HeaderTemplates {
             writer.write(templateToString(template));
             return true;
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Could not save template to file '" + file.getAbsolutePath() + "' ***", e);
+            ISpherePlugin.logError("*** Could not save template to file '" + file.getAbsolutePath() + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
         } finally {
             try {
                 if (writer != null) {
@@ -377,14 +391,18 @@ public final class HeaderTemplates {
         produceTag(buffer, StrPrePrc.CREATE_COMMAND, "*DUMMY*", leftCommentChar, rightCommentChar, indent);
 
         if (importantParameters != null && importantParameters.length > 0) {
-            if (preferences.priorizeImportantSection()) {
+            if (Preferences.IMPORTANT.equals(preferences.getDefaultSection())) {
                 produceTag(buffer, StrPrePrc.IMPORTANT_START, "", leftCommentChar, rightCommentChar, indent);
                 produceTag(buffer, StrPrePrc.PARAMETER, importantParameters, leftCommentChar, rightCommentChar, indent);
                 produceTag(buffer, StrPrePrc.IMPORTANT_END, "", leftCommentChar, rightCommentChar, indent);
-            } else {
+            } else if (Preferences.COMPILE.equals(preferences.getDefaultSection())) {
                 produceTag(buffer, StrPrePrc.COMPILE_START, "", leftCommentChar, rightCommentChar, indent);
                 produceTag(buffer, StrPrePrc.PARAMETER, importantParameters, leftCommentChar, rightCommentChar, indent);
                 produceTag(buffer, StrPrePrc.COMPILE_END, "", leftCommentChar, rightCommentChar, indent);
+            } else {
+                produceTag(buffer, StrPrePrc.LINK_START, "", leftCommentChar, rightCommentChar, indent);
+                produceTag(buffer, StrPrePrc.PARAMETER, importantParameters, leftCommentChar, rightCommentChar, indent);
+                produceTag(buffer, StrPrePrc.LINK_END, "", leftCommentChar, rightCommentChar, indent);
             }
         }
 

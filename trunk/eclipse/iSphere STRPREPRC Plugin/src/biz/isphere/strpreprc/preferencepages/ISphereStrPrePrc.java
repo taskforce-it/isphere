@@ -20,6 +20,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -39,7 +40,7 @@ import biz.isphere.strpreprc.preferences.Preferences;
 public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPreferencePage {
 
     private Button checkboxUseParameterSections;
-    private Button checkboxPriorizeImportantSection;
+    private Combo comboDefaultSection;
     private Button checkboxUseTemplateFolder;
     private Text textTemplateFolder;
     private Button buttonSelectTemplateFolder;
@@ -78,10 +79,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Label labelUseParameterSections = new Label(main, SWT.NONE);
         labelUseParameterSections.setLayoutData(createLabelLayoutData());
         labelUseParameterSections.setText("Use parameter sections:"); // TODO:
-        labelUseParameterSections.setToolTipText("Specifies whether to use 'important', 'compile' and 'link' parameter sections."); // TODO:
+        labelUseParameterSections.setToolTipText("Specifies whether or not to use the 'IMPORTANT', 'COMPILE' and 'LINK' parameter section."); // TODO:
 
         checkboxUseParameterSections = WidgetFactory.createCheckbox(main);
-        checkboxUseParameterSections.setToolTipText("Specifies whether to use 'important', 'compile' and 'link' parameter sections."); // TODO:
+        checkboxUseParameterSections.setToolTipText("Specifies whether or not to use the 'IMPORTANT', 'COMPILE' and 'LINK' parameter section."); // TODO:
         checkboxUseParameterSections.setLayoutData(createTextLayoutData());
         checkboxUseParameterSections.addSelectionListener(new SelectionListener() {
 
@@ -96,18 +97,19 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             }
         });
 
-        Label labelPriorizeImportantSection = new Label(main, SWT.NONE);
-        labelPriorizeImportantSection.setLayoutData(createLabelLayoutData());
-        labelPriorizeImportantSection.setText("Priorize important section:"); // TODO:
-        labelPriorizeImportantSection.setToolTipText("Specifies whether to priorize the 'important' over the 'compile' section."); // TODO:
+        Label labelDefaultSection = new Label(main, SWT.NONE);
+        labelDefaultSection.setLayoutData(createLabelLayoutData());
+        labelDefaultSection.setText("Default section:"); // TODO:
+        labelDefaultSection.setToolTipText("Specifies the section to use for non-standard parameters."); // TODO:
 
-        checkboxPriorizeImportantSection = WidgetFactory.createCheckbox(main);
-        checkboxPriorizeImportantSection.setToolTipText("Specifies whether to priorize the 'important' over the 'compile' section."); // TODO:
-        checkboxPriorizeImportantSection.setLayoutData(createTextLayoutData());
-        checkboxPriorizeImportantSection.addSelectionListener(new SelectionListener() {
+        comboDefaultSection = WidgetFactory.createReadOnlyCombo(main);
+        comboDefaultSection.setToolTipText("Specifies the section to use for non-standard parameters."); // TODO:
+        comboDefaultSection.setLayoutData(createTextLayoutData());
+        comboDefaultSection.setItems(Preferences.getInstance().getSections());
+        comboDefaultSection.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
-                if (validatePriorizeImportantSection()) {
+                if (validateUseImportantSection()) {
                     validateAll();
                 }
                 setControlsEnablement();
@@ -126,10 +128,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         labelUseTemplateFolder.setLayoutData(createLabelLayoutData());
         labelUseTemplateFolder.setText("Use template directory:"); // TODO:
                                                                    // NLS
-        labelUseTemplateFolder.setToolTipText("Specifies whether to use the templates stored in the template directory."); // TODO:
+        labelUseTemplateFolder.setToolTipText("Specifies whether or not to use the templates stored in the specified templates directory."); // TODO:
 
         checkboxUseTemplateFolder = WidgetFactory.createCheckbox(groupTemplates);
-        checkboxUseTemplateFolder.setToolTipText("Specifies whether to use the templates stored in the template directory."); // TODO:
+        checkboxUseTemplateFolder.setToolTipText("Specifies whether or not to use the templates stored in the specified templates directory."); // TODO:
         checkboxUseTemplateFolder.setLayoutData(createTextLayoutData(2));
         checkboxUseTemplateFolder.addSelectionListener(new SelectionListener() {
 
@@ -147,10 +149,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Label labelTemplatesDirectory = new Label(groupTemplates, SWT.NONE);
         labelTemplatesDirectory.setLayoutData(createLabelLayoutData());
         labelTemplatesDirectory.setText("Templates directory:"); // TODO:
-        labelTemplatesDirectory.setToolTipText("Directory that contains the STRPREPRC template files."); // TODO:
+        labelTemplatesDirectory.setToolTipText("Directory where the STRPREPRC header templates are loaded from."); // TODO:
 
         textTemplateFolder = WidgetFactory.createText(groupTemplates);
-        textTemplateFolder.setToolTipText("Directory that contains the STRPREPRC template files."); // TODO:
+        textTemplateFolder.setToolTipText("Directory where the STRPREPRC header templates are loaded from."); // TODO:
         GridData sourceFileSearchSaveDirectoryLayoutData = createTextLayoutData();
         sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
         textTemplateFolder.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
@@ -208,7 +210,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
-        buttonExportTemplates.setToolTipText("Saves all example templates to the specified templates directory. Existing templates are preserved."); // TODO:
+        buttonExportTemplates.setToolTipText("Exports the embedded default templates to the templates directory. Existing templates are preserved."); // TODO:
 
         buttonReloadTemplates = WidgetFactory.createPushButton(groupTemplates, "Clear Cache"); //$NON-NLS-1$
         buttonReloadTemplates.setLayoutData(createButtonLayoutData(3));
@@ -221,7 +223,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
-        buttonReloadTemplates.setToolTipText("Clears the template cache to enforce reloading the templates from the specified directory."); // TODO:
+        buttonReloadTemplates.setToolTipText("Clears the template cache to enforce reloading the templates from the templates directory."); // TODO:
     }
 
     @Override
@@ -249,7 +251,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Preferences preferences = Preferences.getInstance();
 
         preferences.setUseParameterSections(checkboxUseParameterSections.getSelection());
-        preferences.setPriorizeImportantSection(checkboxPriorizeImportantSection.getSelection());
+        preferences.setDefaultSection(comboDefaultSection.getText());
 
         preferences.setTemplateDirectory(textTemplateFolder.getText());
         preferences.setUseTemplateDirectory(checkboxUseTemplateFolder.getSelection());
@@ -262,7 +264,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Preferences preferences = Preferences.getInstance();
 
         checkboxUseParameterSections.setSelection(preferences.useParameterSections());
-        checkboxPriorizeImportantSection.setSelection(preferences.priorizeImportantSection());
+        comboDefaultSection.setText(preferences.getDefaultSection());
 
         textTemplateFolder.setText(preferences.getTemplateDirectory());
         checkboxUseTemplateFolder.setSelection(preferences.useTemplateDirectory());
@@ -275,8 +277,8 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         Preferences preferences = Preferences.getInstance();
 
-        checkboxUseParameterSections.setSelection(preferences.getInitialPriorizeImportantSection());
-        checkboxPriorizeImportantSection.setSelection(preferences.getInitialPriorizeImportantSection());
+        checkboxUseParameterSections.setSelection(preferences.getInitialUseParameterSections());
+        comboDefaultSection.setText(preferences.getInitialDefaultSection());
 
         textTemplateFolder.setText(preferences.getInitialTemplateDirectory());
         checkboxUseTemplateFolder.setSelection(preferences.getInitialUseTemplateDirectory());
@@ -309,7 +311,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         return true;
     }
 
-    private boolean validatePriorizeImportantSection() {
+    private boolean validateUseImportantSection() {
 
         return true;
     }
@@ -360,7 +362,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             return false;
         }
 
-        if (!validatePriorizeImportantSection()) {
+        if (!validateUseImportantSection()) {
             return false;
         }
 
@@ -378,9 +380,9 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     private void setControlsEnablement() {
 
         if (checkboxUseParameterSections.getSelection()) {
-            checkboxPriorizeImportantSection.setEnabled(true);
+            comboDefaultSection.setEnabled(true);
         } else {
-            checkboxPriorizeImportantSection.setEnabled(false);
+            comboDefaultSection.setEnabled(false);
         }
 
         if (checkboxUseTemplateFolder.getSelection()) {

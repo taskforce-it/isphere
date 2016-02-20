@@ -51,6 +51,12 @@ public class EditHeaderDialog extends XDialog {
     }
 
     @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Create_STRPREPRC_Header);
+    }
+
+    @Override
     protected Control createDialogArea(Composite parent) {
 
         mainArea = new Composite(parent, SWT.NONE);
@@ -70,9 +76,10 @@ public class EditHeaderDialog extends XDialog {
 
         Label labelParameters = new Label(mainArea, SWT.NONE);
         labelParameters.setText("Parameters:");
+        labelParameters.setLayoutData(new GridData(SWT.DEFAULT, SWT.BEGINNING, false, false));
 
-        textParameters = WidgetFactory.createText(mainArea);
-        textParameters.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+        textParameters = WidgetFactory.createMultilineText(mainArea, true, true);
+        textParameters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         createStatusLine(mainArea);
 
