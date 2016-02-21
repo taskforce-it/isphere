@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
 
-
 public class WarningMessage extends MessageDialog {
 
     private Button doNotShowAgain;
@@ -44,8 +43,21 @@ public class WarningMessage extends MessageDialog {
         }
     }
 
-    public static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
-        MessageDialog dialog = new WarningMessage(parent, title, null, message, kind, new String[] { IDialogConstants.OK_LABEL }, showWarningKey);
+    public static boolean openConfirm(Shell parent, String showWarningKey, String message) {
+        if (Preferences.getInstance().isShowWarningMessage(showWarningKey)) {
+            return open(CONFIRM, parent, Messages.Confirmation, message, SWT.NONE, showWarningKey, new String[] { IDialogConstants.OK_LABEL,
+                IDialogConstants.CANCEL_LABEL });
+        } else {
+            return true;
+        }
+    }
+
+    private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
+        return open(kind, parent, title, message, style, showWarningKey, new String[] { IDialogConstants.OK_LABEL });
+    }
+
+    private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey, String[] buttons) {
+        MessageDialog dialog = new WarningMessage(parent, title, null, message, kind, buttons, showWarningKey);
         return dialog.open() == 0;
     }
 
@@ -56,7 +68,7 @@ public class WarningMessage extends MessageDialog {
         }
         return super.close();
     }
-    
+
     @Override
     protected Control createCustomArea(Composite parent) {
         Composite customArea = new Composite(parent, SWT.NONE);
