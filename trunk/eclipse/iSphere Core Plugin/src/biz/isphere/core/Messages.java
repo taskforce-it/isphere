@@ -324,6 +324,8 @@ public class Messages extends NLS {
 
     public static String Inquiry;
 
+    public static String Confirmation;
+
     public static String Job_name;
 
     public static String Job_number;

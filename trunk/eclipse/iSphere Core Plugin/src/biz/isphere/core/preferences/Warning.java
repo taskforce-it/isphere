@@ -20,4 +20,9 @@ public interface Warning {
      */
     public static final String DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
 
+    /*
+     * Informational message keys
+     */
+    public static final String REMOVE_STRPREPRC_HEADER = "REMOVE_STRPREPRC_HEADER"; //$NON-NLS-1$
+
 }
