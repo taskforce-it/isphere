@@ -73,7 +73,9 @@ public class CLCommand {
 
         StringBuilder buffer = new StringBuilder();
         for (CLParameter parameter : parameters) {
-            buffer.append(" "); //$NON-NLS-1$
+            if (buffer.length() > 0) {
+                buffer.append(" "); //$NON-NLS-1$
+            }
             buffer.append(parameter.toString());
         }
 

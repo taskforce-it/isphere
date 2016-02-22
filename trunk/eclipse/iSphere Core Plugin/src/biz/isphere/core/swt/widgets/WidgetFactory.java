@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -504,11 +504,29 @@ public final class WidgetFactory {
         return radioButton;
     }
 
+    /**
+     * Produces a hex editor composed of two synchronized displays: an
+     * hexadecimal and a basic ASCII char display.
+     * 
+     * @param parent - parent composite
+     * @return hex editor
+     */
     public static HexText createHexText(Composite parent) {
 
         HexText hexText = new HexText(parent, SWT.NONE);
 
         return hexText;
+    }
+
+    /**
+     * Produces a text field with a border and content assistance. If the text
+     * does not fit into the field, a vertical scroll bar is displayed.
+     * 
+     * @param parent - parent composite
+     * @return text field with content assistance
+     */
+    public static ContentAssistText createContentAssistText(Composite parent) {
+        return WidgetFactory.getInstance().produceContentAssistText(parent, SWT.NONE, false);
     }
 
     /*
@@ -531,6 +549,17 @@ public final class WidgetFactory {
         Listener scrollBarListener = new AutoScrollbarsListener();
         text.addListener(SWT.Resize, scrollBarListener);
         text.addListener(SWT.Modify, scrollBarListener);
+
+        if (autoSelect) {
+            text.addFocusListener(new SelectAllFocusListener());
+        }
+
+        return text;
+    }
+
+    private ContentAssistText produceContentAssistText(Composite parent, int style, boolean autoSelect) {
+
+        ContentAssistText text = new ContentAssistText(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | style);
 
         if (autoSelect) {
             text.addFocusListener(new SelectAllFocusListener());
