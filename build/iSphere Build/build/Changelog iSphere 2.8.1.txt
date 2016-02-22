@@ -1,5 +1,5 @@
 
-Changelog: iSphere 2.8.1
+Changelog: iSphere 2.8.4
 ------------------------
  • Changed message filter to use wildcards for string compare.
  • Changed the TN5250J view to restore the previous state of the 
@@ -16,6 +16,11 @@ Changelog: iSphere 2.8.1
  • Updated the STRPREPRC utility to 1.9. (added 'IMPORTANT' tags,
    which might be more descriptive that COMPILE and LINK.)
  • Added STRPREPRC help plug-in.
+ 
+   +==============================================================+
+   |  You need to upodate the iSphere library, if you want        |
+   |  to use the new 'IMPORTANT' tag of the STRPREPRC utility.    |
+   +==============================================================+
 
  
 New NLS messages:
