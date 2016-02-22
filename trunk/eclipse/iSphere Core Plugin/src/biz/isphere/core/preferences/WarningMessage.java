@@ -45,7 +45,7 @@ public class WarningMessage extends MessageDialog {
 
     public static boolean openConfirm(Shell parent, String showWarningKey, String message) {
         if (Preferences.getInstance().isShowWarningMessage(showWarningKey)) {
-            return open(CONFIRM, parent, Messages.Confirmation, message, SWT.NONE, showWarningKey, new String[] { IDialogConstants.OK_LABEL,
+            return open(QUESTION, parent, Messages.Confirmation, message, SWT.NONE, showWarningKey, new String[] { IDialogConstants.OK_LABEL,
                 IDialogConstants.CANCEL_LABEL });
         } else {
             return true;
