@@ -90,7 +90,7 @@ import biz.isphere.core.swt.widgets.hexeditor.internal.DisplayedContent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
 
 /**
- * A binary file editor, composed of two synchronized displays: an hexadecimal
+ * A hex editor, composed of two synchronized displays: an hexadecimal
  * and a basic ASCII char display. The file size has no effect on the memory
  * footprint of the editor. It has binary, ASCII and unicode find functionality.
  * Use addStateChangeListener(Listener) to listen to changes of the
