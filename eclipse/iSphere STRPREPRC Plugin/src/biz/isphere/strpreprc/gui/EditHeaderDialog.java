@@ -2,10 +2,17 @@ package biz.isphere.strpreprc.gui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -20,6 +27,7 @@ import biz.isphere.core.api.qcapcmd.QCAPCMD;
 import biz.isphere.core.clcommands.CLCommand;
 import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
@@ -44,7 +52,7 @@ public class EditHeaderDialog extends XDialog {
     private Composite mainArea;
     private Combo comboConnections;
     private Text textCommand;
-    private Text textParameters;
+    private ContentAssistText textParameters;
 
     public EditHeaderDialog(Shell parentShell) {
         super(parentShell);
@@ -78,8 +86,42 @@ public class EditHeaderDialog extends XDialog {
         labelParameters.setText("Parameters:");
         labelParameters.setLayoutData(new GridData(SWT.DEFAULT, SWT.BEGINNING, false, false));
 
-        textParameters = WidgetFactory.createMultilineText(mainArea, true, true);
+        textParameters = new ContentAssistText(mainArea);
         textParameters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        textParameters.setAutoCompletionChar('&');
+        textParameters.setContentAssistProposals(StrPrePrcParser.getReplacementVariables());
+        textParameters.setContentAssistProposalsLabels(StrPrePrcParser.getReplacementVariablesHeaders());
+
+        Button insertVariable = WidgetFactory.createPushButton(mainArea, "InsertVariable");
+        insertVariable.setLayoutData(new GridData(SWT.END, SWT.DEFAULT, false, false, 2, 1));
+        insertVariable.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                textParameters.getTextWidget().setFocus();
+                textParameters.setSelectedRange(1, 0);
+                textParameters.setSelectedRange(0, 0);
+                textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+            }
+        });
+        textParameters.getTextWidget().addKeyListener(new KeyAdapter() {
+
+            public void keyReleased(KeyEvent e) {
+                if (!e.doit) {
+                    return;
+                }
+                if (e.stateMask == 262144) {
+                    switch (e.character) {
+                    case ' ':
+                        textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+                        break;
+
+                    case '\032':
+                        textParameters.doOperation(ITextOperationTarget.UNDO);
+                    }
+
+                }
+            }
+        });
 
         createStatusLine(mainArea);
 
@@ -265,7 +307,8 @@ public class EditHeaderDialog extends XDialog {
 
         connectionName = comboConnections.getText();
         commandString = textCommand.getText();
-        parameters = textParameters.getText();
+        parameters = textParameters.getDocument().get();
+        // parameters = textParameters.getText();
 
         if (!StringHelper.isNullOrEmpty(connectionName)) {
             getDialogBoundsSettings().put(CONNECTION_NAME, connectionName);

@@ -36,6 +36,50 @@ public class Messages extends NLS {
 
     public static String Create_STRPREPRC_Header;
 
+    public static String RPLVAR_LI;
+
+    public static String RPLVAR_OB;
+
+    public static String RPLVAR_TY;
+
+    public static String RPLVAR_SL;
+
+    public static String RPLVAR_SF;
+
+    public static String RPLVAR_SM;
+
+    public static String RPLVAR_TL;
+
+    public static String RPLVAR_TO;
+
+    public static String RPLVAR_TR;
+
+    public static String RPLVAR_FL;
+
+    public static String RPLVAR_FF;
+
+    public static String RPLVAR_FM;
+
+    public static String RPLVAR_U0;
+
+    public static String RPLVAR_U1;
+
+    public static String RPLVAR_U2;
+
+    public static String RPLVAR_U3;
+
+    public static String RPLVAR_U4;
+
+    public static String RPLVAR_U5;
+
+    public static String RPLVAR_U6;
+
+    public static String RPLVAR_U7;
+
+    public static String RPLVAR_U8;
+
+    public static String RPLVAR_U9;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
