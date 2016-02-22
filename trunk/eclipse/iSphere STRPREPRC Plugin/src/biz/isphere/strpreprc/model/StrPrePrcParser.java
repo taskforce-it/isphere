@@ -23,6 +23,7 @@ import biz.isphere.core.clcommands.CLCommand;
 import biz.isphere.core.clcommands.CLFormatter;
 import biz.isphere.core.clcommands.CLParameter;
 import biz.isphere.core.clcommands.CLParser;
+import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.preferences.Preferences;
 
 import com.ibm.lpex.core.LpexDocumentLocation;
@@ -32,8 +33,13 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
 
     private CLParser clParser;
 
-    private static final Set<String> REPLACEMENT_VARIABLES = new HashSet<String>(Arrays.asList(new String[] { "&LI", "&OB", "&TY", "&SL", "&SF",
-        "&SM", "&TL", "&TO", "&TR", "&FL", "&FF", "&FM", "&U0", "&U1", "&U2", "&U3", "&U4", "&U5", "&U6", "&U7", "&U8", "&U9" }));
+    private static final Set<String> REPLACEMENT_VARIABLES_VALUES = new HashSet<String>(Arrays.asList(new String[] { "&LI", "&OB", "&TY", "&SL",
+        "&SF", "&SM", "&TL", "&TO", "&TR", "&FL", "&FF", "&FM", "&U0", "&U1", "&U2", "&U3", "&U4", "&U5", "&U6", "&U7", "&U8", "&U9" }));
+
+    private static final Set<String> REPLACEMENT_VARIABLES_HEADERS = new HashSet<String>(Arrays.asList(new String[] { Messages.RPLVAR_LI,
+        Messages.RPLVAR_OB, Messages.RPLVAR_TY, Messages.RPLVAR_SL, Messages.RPLVAR_SF, Messages.RPLVAR_SM, Messages.RPLVAR_TL, Messages.RPLVAR_TO,
+        Messages.RPLVAR_TR, Messages.RPLVAR_FL, Messages.RPLVAR_FF, Messages.RPLVAR_FM, Messages.RPLVAR_U0, Messages.RPLVAR_U1, Messages.RPLVAR_U2,
+        Messages.RPLVAR_U3, Messages.RPLVAR_U4, Messages.RPLVAR_U5, Messages.RPLVAR_U6, Messages.RPLVAR_U7, Messages.RPLVAR_U8, Messages.RPLVAR_U9 }));
 
     private String memberType;
 
@@ -72,7 +78,15 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
     }
 
     public static boolean isVariable(String variable) {
-        return REPLACEMENT_VARIABLES.contains(variable);
+        return REPLACEMENT_VARIABLES_VALUES.contains(variable);
+    }
+
+    public static String[] getReplacementVariables() {
+        return REPLACEMENT_VARIABLES_VALUES.toArray(new String[REPLACEMENT_VARIABLES_VALUES.size()]);
+    }
+
+    public static String[] getReplacementVariablesHeaders() {
+        return REPLACEMENT_VARIABLES_HEADERS.toArray(new String[REPLACEMENT_VARIABLES_VALUES.size()]);
     }
 
     public String getCommand() {

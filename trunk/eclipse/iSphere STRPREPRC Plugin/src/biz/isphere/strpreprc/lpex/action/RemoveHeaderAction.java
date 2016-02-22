@@ -11,6 +11,8 @@ package biz.isphere.strpreprc.lpex.action;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.preferences.Warning;
+import biz.isphere.core.preferences.WarningMessage;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
 
@@ -33,7 +35,7 @@ public class RemoveHeaderAction extends AbstractHeaderAction {
                 return;
             }
 
-            if (MessageDialog.openConfirm(getShell(), "Confirmation", "Remove SPRPREPRC header from source member?")) {
+            if (WarningMessage.openConfirm(getShell(), Warning.REMOVE_STRPREPRC_HEADER, "Remove SPRPREPRC header from source member?")) {
                 header.removeFromLpexView(view);
             }
 
