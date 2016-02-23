@@ -8,21 +8,21 @@
 
 package biz.isphere.core.preferences;
 
-public interface Warning {
+public interface DoNotAskMeAgain {
 
     /*
      * Warning message keys
      */
-    public static final String COMPARE_FILTERS_NOT_INSTALLED = "COMPARE_FILTERS_NOT_INSTALLED"; //$NON-NLS-1$
+    public static final String WARNING_COMPARE_FILTERS_NOT_INSTALLED = "COMPARE_FILTERS_NOT_INSTALLED"; //$NON-NLS-1$
+    public static final String WARNING_REMOVE_STRPREPRC_SECTIONS = "REMOVE_STRPREPRC_SECTIONS"; //$NON-NLS-1$
 
     /*
      * Informational message keys
      */
-    public static final String DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
+    public static final String INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
 
     /*
-     * Informational message keys
+     * Confirmation message keys
      */
-    public static final String REMOVE_STRPREPRC_HEADER = "REMOVE_STRPREPRC_HEADER"; //$NON-NLS-1$
-
+    public static final String CONFIRM_REMOVE_STRPREPRC_HEADER = "REMOVE_STRPREPRC_HEADER"; //$NON-NLS-1$
 }

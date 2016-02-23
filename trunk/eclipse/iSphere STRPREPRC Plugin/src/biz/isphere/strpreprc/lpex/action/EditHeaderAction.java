@@ -19,9 +19,12 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.clcommands.CLFormatter;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.gui.EditHeaderDialog;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
+import biz.isphere.strpreprc.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.ui.util.CommandPrompter;
@@ -53,11 +56,20 @@ public class EditHeaderAction extends AbstractHeaderAction {
             if (!header.loadFromLpexView(view)) {
                 header.loadDefaultTemplate();
                 displayDialog = true;
+            } else {
+                if (header.hasSections() && !Preferences.getInstance().useParameterSections()) {
+                    DoNotAskMeAgainDialog.openWarning(getShell(), DoNotAskMeAgain.WARNING_REMOVE_STRPREPRC_SECTIONS,
+                        Messages.Sections_IMPORTANT_COMPILE_and_LINK_are_removed_when_updating_the_STRPREPRC_header_Change_preferences);
+                }
             }
 
             String connectionName = getConnectionName(editor);
             if (StringHelper.isNullOrEmpty(connectionName)) {
                 displayDialog = true;
+            }
+
+            if (!Preferences.getInstance().skipEditDialog()) {
+                displayDialog = true; 
             }
 
             /*
@@ -75,9 +87,9 @@ public class EditHeaderAction extends AbstractHeaderAction {
                 }
 
                 if (header.getCommand() == null || !header.getCommand().equals(dialog.getCommand())) {
-                    header.setFullCommand(dialog.getCommand() + " " + dialog.getParameters());
+                    header.setFullCommand(dialog.getCommand() + " " + dialog.getParameters()); //$NON-NLS-1$
                 } else {
-                    header.updateFullCommand(dialog.getCommand() + " " + dialog.getParameters());
+                    header.updateFullCommand(dialog.getCommand() + " " + dialog.getParameters()); //$NON-NLS-1$
                 }
                 connectionName = dialog.getConnectionName();
             } else {
@@ -154,6 +166,6 @@ public class EditHeaderAction extends AbstractHeaderAction {
     }
 
     public static String getLPEXMenuAction() {
-        return "\"" + Messages.Menu_Edit_header + "\" " + EditHeaderAction.ID;
+        return "\"" + Messages.Menu_Edit_header + "\" " + EditHeaderAction.ID; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -44,6 +45,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     private Button checkboxUseTemplateFolder;
     private Text textTemplateFolder;
     private Button buttonSelectTemplateFolder;
+    private Button checkboxSkipEditDialog;
     private Button buttonExportTemplates;
     private Button buttonReloadTemplates;
 
@@ -59,80 +61,73 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     @Override
     public Control createContents(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NONE);
-        final GridLayout gridLayout = new GridLayout();
-        container.setLayout(gridLayout);
-
-        createSectionTemplateDirectory(container);
-
-        setScreenToValues();
-
-        return container;
-    }
-
-    private void createSectionTemplateDirectory(Composite parent) {
-
         Composite main = new Composite(parent, SWT.NONE);
         main.setLayout(new GridLayout(2, false));
         main.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        Label labelUseParameterSections = new Label(main, SWT.NONE);
+        createSectionCommon(main);
+        createSectionNewHeader(main);
+        createSectionEditHeader(main);
+        createSectionExport(main);
+
+        setScreenToValues();
+
+        return main;
+    }
+
+    private void createSectionCommon(Composite parent) {
+
+        Label labelUseParameterSections = new Label(parent, SWT.NONE);
         labelUseParameterSections.setLayoutData(createLabelLayoutData());
-        labelUseParameterSections.setText("Use parameter sections:"); // TODO:
-        labelUseParameterSections.setToolTipText("Specifies whether or not to use the 'IMPORTANT', 'COMPILE' and 'LINK' parameter section."); // TODO:
+        labelUseParameterSections.setText(Messages.Use_parameter_sections_colon);
+        labelUseParameterSections.setToolTipText(Messages.Tooltip_Use_parameter_sections);
 
-        checkboxUseParameterSections = WidgetFactory.createCheckbox(main);
-        checkboxUseParameterSections.setToolTipText("Specifies whether or not to use the 'IMPORTANT', 'COMPILE' and 'LINK' parameter section."); // TODO:
-        checkboxUseParameterSections.setLayoutData(createTextLayoutData());
-        checkboxUseParameterSections.addSelectionListener(new SelectionListener() {
-
+        checkboxUseParameterSections = WidgetFactory.createCheckbox(parent);
+        checkboxUseParameterSections.setToolTipText(Messages.Tooltip_Use_parameter_sections);
+        checkboxUseParameterSections.setLayoutData(createLayoutData(1));
+        checkboxUseParameterSections.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 if (validateUseParameterSections()) {
                     validateAll();
                 }
                 setControlsEnablement();
             }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
         });
+    }
 
-        Label labelDefaultSection = new Label(main, SWT.NONE);
+    private void createSectionNewHeader(Composite parent) {
+
+        Group groupAddHeader = new Group(parent, SWT.NONE);
+        groupAddHeader.setLayout(new GridLayout(3, false));
+        groupAddHeader.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupAddHeader.setText(Messages.Add_header);
+
+        Label labelDefaultSection = new Label(groupAddHeader, SWT.NONE);
         labelDefaultSection.setLayoutData(createLabelLayoutData());
-        labelDefaultSection.setText("Default section:"); // TODO:
-        labelDefaultSection.setToolTipText("Specifies the section to use for non-standard parameters."); // TODO:
+        labelDefaultSection.setText(Messages.Default_section_colon);
+        labelDefaultSection.setToolTipText(Messages.Tooltip_Default_section); 
 
-        comboDefaultSection = WidgetFactory.createReadOnlyCombo(main);
-        comboDefaultSection.setToolTipText("Specifies the section to use for non-standard parameters."); // TODO:
-        comboDefaultSection.setLayoutData(createTextLayoutData());
+        comboDefaultSection = WidgetFactory.createReadOnlyCombo(groupAddHeader);
+        comboDefaultSection.setToolTipText(Messages.Tooltip_Default_section); 
+        comboDefaultSection.setLayoutData(createFillLayoutData(2));
         comboDefaultSection.setItems(Preferences.getInstance().getSections());
-        comboDefaultSection.addSelectionListener(new SelectionListener() {
-
+        comboDefaultSection.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 if (validateUseImportantSection()) {
                     validateAll();
                 }
                 setControlsEnablement();
             }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
         });
 
-        Group groupTemplates = new Group(main, SWT.NONE);
-        groupTemplates.setLayout(new GridLayout(3, false));
-        groupTemplates.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-        groupTemplates.setText("Templates"); // TODO: NLS
-
-        Label labelUseTemplateFolder = new Label(groupTemplates, SWT.NONE);
+        Label labelUseTemplateFolder = new Label(groupAddHeader, SWT.NONE);
         labelUseTemplateFolder.setLayoutData(createLabelLayoutData());
-        labelUseTemplateFolder.setText("Use template directory:"); // TODO:
-                                                                   // NLS
-        labelUseTemplateFolder.setToolTipText("Specifies whether or not to use the templates stored in the specified templates directory."); // TODO:
+        labelUseTemplateFolder.setText(Messages.Use_template_directory_colon); 
+        labelUseTemplateFolder.setToolTipText(Messages.Tooltip_Use_template_directory_colon);
 
-        checkboxUseTemplateFolder = WidgetFactory.createCheckbox(groupTemplates);
-        checkboxUseTemplateFolder.setToolTipText("Specifies whether or not to use the templates stored in the specified templates directory."); // TODO:
-        checkboxUseTemplateFolder.setLayoutData(createTextLayoutData(2));
+        checkboxUseTemplateFolder = WidgetFactory.createCheckbox(groupAddHeader);
+        checkboxUseTemplateFolder.setToolTipText(Messages.Tooltip_Use_template_directory_colon); 
+        checkboxUseTemplateFolder.setLayoutData(createLayoutData(2));
         checkboxUseTemplateFolder.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -146,14 +141,14 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             }
         });
 
-        Label labelTemplatesDirectory = new Label(groupTemplates, SWT.NONE);
+        Label labelTemplatesDirectory = new Label(groupAddHeader, SWT.NONE);
         labelTemplatesDirectory.setLayoutData(createLabelLayoutData());
-        labelTemplatesDirectory.setText("Templates directory:"); // TODO:
-        labelTemplatesDirectory.setToolTipText("Directory where the STRPREPRC header templates are loaded from."); // TODO:
+        labelTemplatesDirectory.setText(Messages.Templates_directory_colon); 
+        labelTemplatesDirectory.setToolTipText(Messages.Tooltip_Templates_directory_colon); 
 
-        textTemplateFolder = WidgetFactory.createText(groupTemplates);
-        textTemplateFolder.setToolTipText("Directory where the STRPREPRC header templates are loaded from."); // TODO:
-        GridData sourceFileSearchSaveDirectoryLayoutData = createTextLayoutData();
+        textTemplateFolder = WidgetFactory.createText(groupAddHeader);
+        textTemplateFolder.setToolTipText(Messages.Tooltip_Templates_directory_colon); 
+        GridData sourceFileSearchSaveDirectoryLayoutData = createFillLayoutData(1);
         sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
         textTemplateFolder.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
         textTemplateFolder.addModifyListener(new ModifyListener() {
@@ -165,8 +160,8 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             }
         });
 
-        buttonSelectTemplateFolder = WidgetFactory.createPushButton(groupTemplates, Messages.Browse + "..."); //$NON-NLS-1$
-        buttonSelectTemplateFolder.addSelectionListener(new SelectionListener() {
+        buttonSelectTemplateFolder = WidgetFactory.createPushButton(groupAddHeader, Messages.Browse + "..."); //$NON-NLS-1$
+        buttonSelectTemplateFolder.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
 
@@ -176,9 +171,6 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
                 if (directory != null) {
                     textTemplateFolder.setText(directory);
                 }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
             }
 
             private String getFilterPath() {
@@ -196,34 +188,55 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
             }
         });
 
-        buttonExportTemplates = WidgetFactory.createPushButton(groupTemplates, "Export"); //$NON-NLS-1$
-        buttonExportTemplates.setLayoutData(createButtonLayoutData(3));
-        buttonExportTemplates.addSelectionListener(new SelectionListener() {
+    }
 
+    private void createSectionEditHeader(Composite parent) {
+
+        Group groupEditHeader = new Group(parent, SWT.NONE);
+        groupEditHeader.setLayout(new GridLayout(3, false));
+        groupEditHeader.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupEditHeader.setText(Messages.Edit_header); 
+
+        Label labelSkipEditDialog = new Label(groupEditHeader, SWT.NONE);
+        labelSkipEditDialog.setLayoutData(createLabelLayoutData());
+        labelSkipEditDialog.setText(Messages.Skip_edit_dialog_colon); 
+        labelSkipEditDialog.setToolTipText(Messages.Tooltip_Skip_edit_dialog_colon); 
+
+        checkboxSkipEditDialog = WidgetFactory.createCheckbox(groupEditHeader);
+        checkboxSkipEditDialog.setToolTipText(Messages.Tooltip_Skip_edit_dialog_colon);
+        checkboxSkipEditDialog.setLayoutData(createLayoutData(1));
+        checkboxSkipEditDialog.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                if (validateSkipEditDialog()) {
+                    validateAll();
+                }
+                setControlsEnablement();
+            }
+        });
+    }
+
+    private void createSectionExport(Composite parent) {
+
+        buttonExportTemplates = WidgetFactory.createPushButton(parent, Messages.Export); 
+        buttonExportTemplates.setLayoutData(createButtonLayoutData(2));
+        buttonExportTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 String errorMessage = HeaderTemplates.getInstance().save(textTemplateFolder.getText());
                 if (!StringHelper.isNullOrEmpty(errorMessage)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
                 }
             }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
         });
-        buttonExportTemplates.setToolTipText("Exports the embedded default templates to the templates directory. Existing templates are preserved."); // TODO:
+        buttonExportTemplates.setToolTipText(Messages.Tooltip_Export);
 
-        buttonReloadTemplates = WidgetFactory.createPushButton(groupTemplates, "Clear Cache"); //$NON-NLS-1$
-        buttonReloadTemplates.setLayoutData(createButtonLayoutData(3));
-        buttonReloadTemplates.addSelectionListener(new SelectionListener() {
-
+        buttonReloadTemplates = WidgetFactory.createPushButton(parent, Messages.Clear_Cache); 
+        buttonReloadTemplates.setLayoutData(createButtonLayoutData(2));
+        buttonReloadTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 performClearTemplateCache(true);
             }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
         });
-        buttonReloadTemplates.setToolTipText("Clears the template cache to enforce reloading the templates from the templates directory."); // TODO:
+        buttonReloadTemplates.setToolTipText(Messages.Tooltip_Clear_Cache);
     }
 
     @Override
@@ -255,6 +268,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         preferences.setTemplateDirectory(textTemplateFolder.getText());
         preferences.setUseTemplateDirectory(checkboxUseTemplateFolder.getSelection());
+        preferences.setSkipEditDialog(checkboxSkipEditDialog.getSelection());
     }
 
     protected void setScreenToValues() {
@@ -268,6 +282,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         textTemplateFolder.setText(preferences.getTemplateDirectory());
         checkboxUseTemplateFolder.setSelection(preferences.useTemplateDirectory());
+        checkboxSkipEditDialog.setSelection(preferences.skipEditDialog());
 
         validateAll();
         setControlsEnablement();
@@ -282,6 +297,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         textTemplateFolder.setText(preferences.getInitialTemplateDirectory());
         checkboxUseTemplateFolder.setSelection(preferences.getInitialUseTemplateDirectory());
+        checkboxSkipEditDialog.setSelection(preferences.getInitialSkipEditDialog());
 
         validateAll();
         setControlsEnablement();
@@ -356,6 +372,11 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         return clearError();
     }
 
+    private boolean validateSkipEditDialog() {
+
+        return true;
+    }
+
     private boolean validateAll() {
 
         if (!validateUseParameterSections()) {
@@ -371,6 +392,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         }
 
         if (!validateTemplateDirectory()) {
+            return false;
+        }
+        
+        if (!validateSkipEditDialog()) {
             return false;
         }
 
@@ -415,21 +440,20 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     }
 
     private GridData createLabelLayoutData() {
-        return new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-    }
-
-    private GridData createTextLayoutData() {
-        return createTextLayoutData(1);
-    }
-
-    private GridData createTextLayoutData(int horizontalSpan) {
-        return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
+        return createLayoutData(1);
     }
 
     private GridData createButtonLayoutData(int horizontalSpan) {
-        GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, horizontalSpan, 1);
+        GridData gd = createLayoutData(horizontalSpan);
         gd.widthHint = 120;
         return gd;
     }
 
+    private GridData createLayoutData(int horizontalSpan) {
+        return new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1);
+    }
+
+    private GridData createFillLayoutData(int horizontalSpan) {
+        return new GridData(SWT.FILL, SWT.BEGINNING, true, false, horizontalSpan, 1);
+    }
 }

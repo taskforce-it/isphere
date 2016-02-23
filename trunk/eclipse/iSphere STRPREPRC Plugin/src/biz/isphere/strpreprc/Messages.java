@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2016 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.strpreprc;
 
 import org.eclipse.osgi.util.NLS;
@@ -35,7 +43,53 @@ public class Messages extends NLS {
     public static String Could_not_save_A_files_to_directory_B;
 
     public static String Create_STRPREPRC_Header;
+    
+    public static String Sections_IMPORTANT_COMPILE_and_LINK_are_removed_when_updating_the_STRPREPRC_header_Change_preferences;
 
+    public static String STRPREPRC_header_not_found_or_incomplete;
+    
+    public static String Remove_SPRPREPRC_header_from_source_member;
+    
+    public static String Missing_connection_name;
+    
+    public static String Could_not_create_AS400_object;
+    
+    public static String Missing_object_creation_command;
+    
+    public static String Invalid_replacement_variable_A_found_at_position_B_command_C;
+    
+    public static String Use_parameter_sections_colon;
+    
+    public static String Tooltip_Use_parameter_sections;
+    
+    public static String Add_header;
+    
+    public static String Default_section_colon;
+    
+    public static String Tooltip_Default_section;
+    
+    public static String Use_template_directory_colon;
+    
+    public static String Tooltip_Use_template_directory_colon;
+    
+    public static String Templates_directory_colon;
+    
+    public static String Tooltip_Templates_directory_colon;
+    
+    public static String Edit_header;
+    
+    public static String Skip_edit_dialog_colon;
+    
+    public static String Tooltip_Skip_edit_dialog_colon;
+    
+    public static String Export;
+    
+    public static String Tooltip_Export;
+    
+    public static String Clear_Cache;
+    
+    public static String Tooltip_Clear_Cache;
+    
     public static String RPLVAR_LI;
 
     public static String RPLVAR_OB;

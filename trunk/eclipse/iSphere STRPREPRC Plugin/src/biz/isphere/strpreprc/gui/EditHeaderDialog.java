@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2016 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.strpreprc.gui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -170,29 +178,32 @@ public class EditHeaderDialog extends XDialog {
 
         String connectionName = comboConnections.getText();
         if (StringHelper.isNullOrEmpty(connectionName)) {
-            setErrorMessage("Missing connection name."); // TODO: NLS
+            setErrorMessage(Messages.Missing_connection_name);
             return false;
         }
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
         if (system == null) {
-            setErrorMessage("Could not get IBM i system."); // TODO: NLS
+            setErrorMessage(Messages.Could_not_create_AS400_object);
             return false;
         }
 
         String command = textCommand.getText();
         if (StringHelper.isNullOrEmpty(command)) {
-            setErrorMessage("Missing creation command."); // TODO: NLS
+            setErrorMessage(Messages.Missing_object_creation_command);
             return false;
         }
 
-        String fullCommand = (command + " " + textParameters.getText()).trim();
+        String fullCommand = (command + " " + textParameters.getText()).trim(); //$NON-NLS-1$
         int offset;
         if ((offset = validateReplacementVariables(fullCommand)) >= 0) {
             int position = offset + 1;
             String variable = retrieveReplacementVariable(offset, fullCommand);
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Invalid replacement variable " + variable.replace("&", "&&")
-                + " found at position " + position + ".\n\n" + fullCommand.replaceAll("&", "&&"));
+            MessageDialog.openError(
+                getShell(),
+                Messages.E_R_R_O_R,
+                Messages.bind(Messages.Invalid_replacement_variable_A_found_at_position_B_command_C, new String[] {
+                    variable.replace("&", "&&"), Integer.toString(position), fullCommand.replaceAll("&", "&&") })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             return false;
         }
 
@@ -217,12 +228,12 @@ public class EditHeaderDialog extends XDialog {
         int offset = 0;
         while (offset < fullCommand.length()) {
             String currentChar = fullCommand.substring(offset, offset + 1);
-            if (!isComment && "'".equals(currentChar)) {
+            if (!isComment && "'".equals(currentChar)) { //$NON-NLS-1$
                 isComment = true;
-            } else if (isComment && "'".equals(currentChar)) {
+            } else if (isComment && "'".equals(currentChar)) { //$NON-NLS-1$
                 isComment = false;
             }
-            if (!isComment && "&".equals(currentChar)) {
+            if (!isComment && "&".equals(currentChar)) { //$NON-NLS-1$
                 if (!StrPrePrcParser.isVariable(retrieveReplacementVariable(offset, fullCommand))) {
                     return offset;
                 }
@@ -237,7 +248,7 @@ public class EditHeaderDialog extends XDialog {
 
         int startOffset = offset;
         while (offset < fullCommand.length()) {
-            if (!fullCommand.substring(offset, offset + 1).matches("[&a-zA-Z0-9]")) {
+            if (!fullCommand.substring(offset, offset + 1).matches("[&a-zA-Z0-9]")) { //$NON-NLS-1$
                 return fullCommand.substring(startOffset, offset);
             }
             offset++;
@@ -307,8 +318,7 @@ public class EditHeaderDialog extends XDialog {
 
         connectionName = comboConnections.getText();
         commandString = textCommand.getText();
-        parameters = textParameters.getDocument().get();
-        // parameters = textParameters.getText();
+        parameters = textParameters.getText();
 
         if (!StringHelper.isNullOrEmpty(connectionName)) {
             getDialogBoundsSettings().put(CONNECTION_NAME, connectionName);

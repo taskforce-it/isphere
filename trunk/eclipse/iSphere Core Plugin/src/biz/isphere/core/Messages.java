@@ -1158,6 +1158,10 @@ public class Messages extends NLS {
 
     public static String Cannot_allocate_object_B_A_C;
 
+    public static String Reset_warning_messages;
+
+    public static String Tooltip_Reset_warning_messages;
+    
     /*
      * Warning messages
      */

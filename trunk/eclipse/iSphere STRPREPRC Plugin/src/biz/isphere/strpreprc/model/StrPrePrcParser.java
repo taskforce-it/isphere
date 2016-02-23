@@ -246,6 +246,15 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         view.doCommand("locate element " + Math.max(firstLine, 1));
     }
 
+    public boolean hasSections() {
+        
+        if (importantParameters.size() > 0 || compileParameters.size() > 0 || linkParameters.size() > 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     private void produceParameterSequence(String fullCommand, CLFormatter formatter) {
 
         parameterSequence.clear();
@@ -448,7 +457,11 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         String fullCommandString = formatter.format(getFullCommand());
 
         // Afterwards the extra parameters have to be removed again.
-        return keepBaseParametersOnly(fullCommandString);
+        if (useSections()) {
+            return keepBaseParametersOnly(fullCommandString);
+        } else {
+            return fullCommandString;
+        }
     }
 
     private LinkedList<String> getMergedParameters() {

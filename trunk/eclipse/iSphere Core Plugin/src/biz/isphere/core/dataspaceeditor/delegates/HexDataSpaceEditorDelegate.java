@@ -52,8 +52,8 @@ import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
 import biz.isphere.core.dataspaceeditor.dialog.GoToDialog;
 import biz.isphere.core.internal.FontHelper;
-import biz.isphere.core.preferences.Warning;
-import biz.isphere.core.preferences.WarningMessage;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
@@ -459,7 +459,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
                 };
 
                 private void displayInformationalMessage() {
-                    WarningMessage.openInformation(getShell(), Warning.DATA_SPACE_FIND_REPLACE_INFORMATION, Messages.Data_Space_Hex_Editor_search_and_replace_information);
+                    DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, Messages.Data_Space_Hex_Editor_search_and_replace_information);
                 };
             };
         }
