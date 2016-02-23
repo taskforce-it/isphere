@@ -20,12 +20,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
 
-public class WarningMessage extends MessageDialog {
+public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAgain {
 
     private Button doNotShowAgain;
     private String showWarningKey;
 
-    public WarningMessage(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType,
+    public DoNotAskMeAgainDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType,
         String[] dialogButtonLabels, String showWarningKey) {
         super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, 0);
         this.showWarningKey = showWarningKey;
@@ -51,13 +51,21 @@ public class WarningMessage extends MessageDialog {
             return true;
         }
     }
+    
+    public static void resetAllMessages() {
+        Preferences preferences = Preferences.getInstance();
+        preferences.setShowWarningMessage(WARNING_COMPARE_FILTERS_NOT_INSTALLED, true);
+        preferences.setShowWarningMessage(WARNING_REMOVE_STRPREPRC_SECTIONS, true);
+        preferences.setShowWarningMessage(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, true);
+        preferences.setShowWarningMessage(CONFIRM_REMOVE_STRPREPRC_HEADER, true);
+    }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
         return open(kind, parent, title, message, style, showWarningKey, new String[] { IDialogConstants.OK_LABEL });
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey, String[] buttons) {
-        MessageDialog dialog = new WarningMessage(parent, title, null, message, kind, buttons, showWarningKey);
+        MessageDialog dialog = new DoNotAskMeAgainDialog(parent, title, null, message, kind, buttons, showWarningKey);
         return dialog.open() == 0;
     }
 

@@ -37,8 +37,8 @@ import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
-import biz.isphere.core.preferences.Warning;
-import biz.isphere.core.preferences.WarningMessage;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
@@ -622,7 +622,8 @@ public abstract class CompareDialog extends XDialog {
                 UIJob job = new UIJob("") {
                     @Override
                     public IStatus runInUIThread(IProgressMonitor monitor) {
-                        WarningMessage.openWarning(getShell(), Warning.COMPARE_FILTERS_NOT_INSTALLED, Messages.Compare_Filters_not_installed_message);
+                        DoNotAskMeAgainDialog.openWarning(getShell(), DoNotAskMeAgain.WARNING_COMPARE_FILTERS_NOT_INSTALLED,
+                            Messages.Compare_Filters_not_installed_message);
                         return Status.OK_STATUS;
                     }
                 };

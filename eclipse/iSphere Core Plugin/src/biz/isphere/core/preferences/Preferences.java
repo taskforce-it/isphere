@@ -598,9 +598,11 @@ public final class Preferences {
      */
 
     public void initializeDefaultPreferences() {
-        
-        preferenceStore.setDefault(getShowWarningKey(Warning.COMPARE_FILTERS_NOT_INSTALLED), true);
-        preferenceStore.setDefault(getShowWarningKey(Warning.DATA_SPACE_FIND_REPLACE_INFORMATION), true);
+
+        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.WARNING_COMPARE_FILTERS_NOT_INSTALLED), true);
+        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION), true);
+        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.WARNING_REMOVE_STRPREPRC_SECTIONS), true);
+        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.CONFIRM_REMOVE_STRPREPRC_HEADER), true);
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
@@ -1131,8 +1133,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

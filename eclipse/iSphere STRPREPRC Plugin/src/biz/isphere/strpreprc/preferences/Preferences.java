@@ -69,6 +69,8 @@ public final class Preferences {
 
     private static final String DEFAULT_SECTION = TEMPLATES + "DEFAULT_SECTION"; //$NON-NLS-1$
 
+    private static final String SKIP_EDIT_DIALOG = TEMPLATES + "SKIP_EDIT_DIALOG"; //$NON-NLS-1$
+
     public static final String IMPORTANT = "IMPORTANT";
     public static final String COMPILE = "COMPILE";
     public static final String LINK = "LINK";
@@ -157,6 +159,10 @@ public final class Preferences {
         return preferenceStore.getString(DEFAULT_SECTION);
     }
 
+    public boolean skipEditDialog() {
+        return preferenceStore.getBoolean(SKIP_EDIT_DIALOG);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -205,6 +211,10 @@ public final class Preferences {
         preferenceStore.setValue(DEFAULT_SECTION, section);
     }
 
+    public void setSkipEditDialog(boolean skip) {
+        preferenceStore.setValue(SKIP_EDIT_DIALOG, skip);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -222,6 +232,7 @@ public final class Preferences {
         preferenceStore.setDefault(USE_TEMPLATE_DIRECTORY, getInitialUseTemplateDirectory());
         preferenceStore.setDefault(USE_PARAMETER_SECTIONS, getInitialUseParameterSections());
         preferenceStore.setDefault(DEFAULT_SECTION, getInitialDefaultSection());
+        preferenceStore.setDefault(SKIP_EDIT_DIALOG, getInitialSkipEditDialog());
     }
 
     /*
@@ -280,6 +291,10 @@ public final class Preferences {
 
     public String[] getSections() {
         return new String[] { IMPORTANT, COMPILE, LINK };
+    }
+
+    public boolean getInitialSkipEditDialog() {
+        return false;
     }
 
     /*
