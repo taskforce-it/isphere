@@ -1,6 +1,12 @@
 
-Changelog: iSphere 2.8.4
-------------------------
+Changelog: iSphere 2.8.1.b005
+-----------------------------
+ • Bugfix STRPREPRC plug-in.
+ • Additional option STRPREPRC plug-in.
+ • NLS Strings.
+
+Changelog: iSphere 2.8.1.b004
+-----------------------------
  • Changed message filter to use wildcards for string compare.
  • Changed the TN5250J view to restore the previous state of the 
    key filter on part activation.
@@ -18,7 +24,7 @@ Changelog: iSphere 2.8.4
  • Added STRPREPRC help plug-in.
  
    +==============================================================+
-   |  You need to upodate the iSphere library, if you want        |
+   |  You need to update the iSphere library, if you want         |
    |  to use the new 'IMPORTANT' tag of the STRPREPRC utility.    |
    +==============================================================+
 
@@ -34,16 +40,4 @@ Previous_request_is_still_pending=Previous request is still pending.
 One_or_more_messages_could_not_be_removed=One or more messages could not be removed.
 
 iSphere STRPREPRC Plugin:
-Command_A_is_invalid_or_could_not_be_found_The_original_error_message_is_B=Command {0} is invalid or could not be found. The original error message is:\n\n{1}
-Could_not_get_the_active_editor=Could not get the active editor.
-Could_not_get_AS400_object_for_connection_A=Could not get AS400 object for connection '{0}'.
-Menu_Edit_header=New/Edit
-Menu_Add_pre_compile_command=Add pre-compile command
-Menu_Add_post_compile_command=Add post-compile command
-Menu_Remove_header=Remove
-Button_Prompt=&Prompt
-Browse=Durchsuchen
-Directory_must_not_be_empty
-The_specified_directory_does_not_exist
-Could_not_save_A_files_to_directory_B
-Create_STRPREPRC_Header
+all
