@@ -13,10 +13,13 @@ import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.CLFormatter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.strpreprc.Messages;
+import biz.isphere.strpreprc.gui.EditHeaderDialog;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
+import biz.isphere.strpreprc.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.lpex.core.LpexView;
@@ -29,22 +32,62 @@ public class EditCommandAction extends AbstractHeaderAction {
 
         try {
 
+            boolean displayDialog = false;
+
             IEditorPart editor = getActiveEditor();
             if (editor == null) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Could_not_get_the_active_editor);
                 return;
             }
 
+            /*
+             * Load pre-/post-command from the view.
+             */
             StrPrePrcParser header = new StrPrePrcParser(null);
             if (!header.loadFromLpexView(view)) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.STRPREPRC_header_not_found_or_incomplete);
                 return;
             }
 
+            int cursorLine = IntHelper.tryParseInt(view.query("element"), 0);
+            if (cursorLine <= 0) {
+                return;
+            }
+
+            String prePostCommand = header.getCommandAtLine(cursorLine);
+            if (prePostCommand == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Pre_or_post_command_not_found_at_line_A, new Integer(cursorLine)));
+                return;
+            }
+
             String connectionName = getConnectionName(editor);
             if (StringHelper.isNullOrEmpty(connectionName)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Missing_connection_name);
-                return;
+                displayDialog = true;
+            }
+
+            if (!Preferences.getInstance().skipEditDialog()) {
+                displayDialog = true;
+            }
+
+            /*
+             * Prompt for a connection name or when using a header template.
+             */
+            int action;
+            if (displayDialog) {
+                EditHeaderDialog dialog = new EditHeaderDialog(getShell());
+                dialog.setMemberType(null);
+                dialog.setConnectionName(connectionName);
+                dialog.setCommand(prePostCommand);
+                action = dialog.open();
+                if (action == EditHeaderDialog.CANCEL) {
+                    return;
+                }
+
+                prePostCommand = dialog.getCommand() + " " + dialog.getParameters();
+                connectionName = dialog.getConnectionName();
+            } else {
+                action = EditHeaderDialog.PROMPT;
             }
 
             /*
@@ -57,24 +100,25 @@ public class EditCommandAction extends AbstractHeaderAction {
                 return;
             }
 
-            int cursorLine = IntHelper.tryParseInt(view.query("element"), 0);
-            if (cursorLine <= 0) {
-                return;
+            /*
+             * Let the user edit the command with the CL command prompter.
+             */
+            if (action == EditHeaderDialog.PROMPT) {
+                prePostCommand = performPromptCommand(connectionName, prePostCommand);
+                if (prePostCommand == null) {
+                    return;
+                }
             }
-
-            String commandString = header.getCommandAtLine(cursorLine);
-
-            System.out.println("Pre/Post command: " + commandString + ", line#: " + cursorLine);
 
             /*
              * Update the STRPREPRC header with the changed command.
              */
-            if (header.changeCommandAtLine(cursorLine, commandString + " MSGTYPE(*ALL)")) {
+            if (header.changeCommandAtLine(cursorLine, prePostCommand)) {
                 header.updateLpexView(view, new CLFormatter(system));
             }
 
         } catch (Throwable e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Unexpected error when attempting to edit a pre-/post-compile command ***", e); //$NON-NLS-1$
         }
     }
 

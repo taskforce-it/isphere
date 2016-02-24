@@ -11,13 +11,11 @@ package biz.isphere.strpreprc.lpex.action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.CLFormatter;
-import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -27,7 +25,6 @@ import biz.isphere.strpreprc.model.StrPrePrcParser;
 import biz.isphere.strpreprc.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.ui.util.CommandPrompter;
 import com.ibm.lpex.core.LpexView;
 
 public class EditHeaderAction extends AbstractHeaderAction {
@@ -82,7 +79,7 @@ public class EditHeaderAction extends AbstractHeaderAction {
                 dialog.setConnectionName(connectionName);
                 dialog.setCommand(header.getFullCommand());
                 action = dialog.open();
-                if (action == XDialog.CANCEL) {
+                if (action == EditHeaderDialog.CANCEL) {
                     return;
                 }
 
@@ -126,7 +123,7 @@ public class EditHeaderAction extends AbstractHeaderAction {
             header.updateLpexView(view, new CLFormatter(system));
 
         } catch (Throwable e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Unexpected error when attempting to edit a SPRPREPRC header ***", e); //$NON-NLS-1$
         }
     }
 
@@ -136,22 +133,6 @@ public class EditHeaderAction extends AbstractHeaderAction {
         if (editorInput instanceof FileEditorInput) {
             FileEditorInput fileEditorInput = (FileEditorInput)editorInput;
             return fileEditorInput.getFile().getFileExtension();
-        }
-
-        return null;
-    }
-
-    private String performPromptCommand(String connectionName, String createCommand) {
-
-        ICLPrompter prompter = IBMiHostContributionsHandler.getCLPrompter(connectionName);
-
-        prompter.setCommandString(createCommand);
-        prompter.setMode(ICLPrompter.EDIT_MODE);
-        prompter.setConnection(connectionName);
-        prompter.setParent(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-
-        if (prompter.showDialog() == CommandPrompter.OK) {
-            return prompter.getCommandString();
         }
 
         return null;

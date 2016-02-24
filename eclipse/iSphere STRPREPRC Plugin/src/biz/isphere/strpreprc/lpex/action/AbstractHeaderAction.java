@@ -14,8 +14,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
+import com.ibm.as400.ui.util.CommandPrompter;
 import com.ibm.lpex.core.LpexAction;
 import com.ibm.lpex.core.LpexView;
 
@@ -48,5 +50,21 @@ public abstract class AbstractHeaderAction implements LpexAction {
             return null;
         }
         return connectionName;
+    }
+
+    protected String performPromptCommand(String connectionName, String createCommand) {
+
+        ICLPrompter prompter = IBMiHostContributionsHandler.getCLPrompter(connectionName);
+
+        prompter.setCommandString(createCommand);
+        prompter.setMode(ICLPrompter.EDIT_MODE);
+        prompter.setConnection(connectionName);
+        prompter.setParent(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+
+        if (prompter.showDialog() == CommandPrompter.OK) {
+            return prompter.getCommandString();
+        }
+
+        return null;
     }
 }
