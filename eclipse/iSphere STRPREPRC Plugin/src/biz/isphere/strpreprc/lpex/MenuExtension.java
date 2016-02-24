@@ -11,6 +11,7 @@ package biz.isphere.strpreprc.lpex;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.strpreprc.lpex.action.EditCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditHeaderAction;
 import biz.isphere.strpreprc.lpex.action.RemoveHeaderAction;
 
@@ -49,6 +50,7 @@ public class MenuExtension {
         ArrayList<String> actions = new ArrayList<String>();
 
         actions.add(EditHeaderAction.ID + " " + EditHeaderAction.class.getName());
+        actions.add(EditCommandAction.ID + " " + EditCommandAction.class.getName());
         actions.add(RemoveHeaderAction.ID + " " + RemoveHeaderAction.class.getName());
 
         StringBuilder newUserActions = new StringBuilder();
@@ -103,6 +105,7 @@ public class MenuExtension {
         ArrayList<String> menuActions = new ArrayList<String>();
 
         menuActions.add(EditHeaderAction.getLPEXMenuAction());
+        menuActions.add(EditCommandAction.getLPEXMenuAction());
         menuActions.add(RemoveHeaderAction.getLPEXMenuAction());
 
         popupMenu = removeSubMenu("STRPREPRC", popupMenu);

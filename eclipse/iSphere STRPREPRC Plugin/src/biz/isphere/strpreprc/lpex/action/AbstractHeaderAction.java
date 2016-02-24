@@ -14,6 +14,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+
 import com.ibm.lpex.core.LpexAction;
 import com.ibm.lpex.core.LpexView;
 
@@ -38,5 +40,13 @@ public abstract class AbstractHeaderAction implements LpexAction {
         }
 
         return null;
+    }
+
+    protected String getConnectionName(IEditorPart editor) {
+        String connectionName = IBMiHostContributionsHandler.getConnectionName(editor);
+        if (connectionName == null) {
+            return null;
+        }
+        return connectionName;
     }
 }
