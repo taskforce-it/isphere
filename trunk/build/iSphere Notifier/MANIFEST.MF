@@ -1,7 +1,9 @@
 Manifest-Version: 1.0
 Bundle-Version: 2.8.0.r
 X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
 X-Bundle-Info: New Release!
 X-Beta-Version: 2.8.1.b005
 X-Beta-Update-Library: false
-X-Beta-Info: New iSphere STRPREPRC plug-in for a better integration of the SPRPREPRC utility in RDi and WDSCi. Minor enhancements and bug fixes.
+X-Beta-Update-Library-Info: for new version 1.9 of the STRPREPRC utility.
+X-Beta-Info: New iSphere STRPREPRC plug-in for a better integration of the SPRPREPRC utility in RDi and WDSCi.\n\nMinor enhancements and bug fixes.

@@ -1,4 +1,8 @@
 
+Changelog: iSphere 2.8.1.b006
+-----------------------------
+ • Fixed iSphere notifier to follow HTTP redirects.
+
 Changelog: iSphere 2.8.1.b005
 -----------------------------
  • Bugfix STRPREPRC plug-in.
@@ -34,6 +38,7 @@ New NLS messages:
 
 iSphere Core Plugin:
 Cannot_allocate_object_B_A_C
+Updating_the_iSphere_library_is_optional_for_the_following_features_colon
 
 iSphere Message Subsystem Plugin:
 Previous_request_is_still_pending=Previous request is still pending.
