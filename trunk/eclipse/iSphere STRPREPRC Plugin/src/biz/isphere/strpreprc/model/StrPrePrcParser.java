@@ -26,6 +26,7 @@ import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.preferences.Preferences;
 
+import com.ibm.as400.access.NLS;
 import com.ibm.lpex.core.LpexDocumentLocation;
 import com.ibm.lpex.core.LpexView;
 
@@ -52,8 +53,8 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
     private LinkedList<String> importantParameters;
     private LinkedList<String> compileParameters;
     private LinkedList<String> linkParameters;
-    private LinkedList<String> preCommands;
-    private LinkedList<String> postCommands;
+    private LinkedList<Command> preCommands;
+    private LinkedList<Command> postCommands;
     private LinkedList<String> parameterSequence;
 
     private boolean createTemplates;
@@ -68,8 +69,8 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         this.importantParameters = new LinkedList<String>();
         this.compileParameters = new LinkedList<String>();
         this.linkParameters = new LinkedList<String>();
-        this.preCommands = new LinkedList<String>();
-        this.postCommands = new LinkedList<String>();
+        this.preCommands = new LinkedList<Command>();
+        this.postCommands = new LinkedList<Command>();
         this.parameterSequence = new LinkedList<String>();
 
         this.createTemplates = false;
@@ -134,6 +135,28 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
                 }
             }
         }
+    }
+
+    public String getCommandAtLine(int sequenceNumber) {
+
+        Command command = findCommandAtLine(sequenceNumber);
+        if (command == null) {
+            return null;
+        }
+
+        return command.getCommand();
+    }
+
+    public boolean changeCommandAtLine(int sequenceNumber, String commandString) {
+
+        Command command = findCommandAtLine(sequenceNumber);
+        if (command == null) {
+            return false;
+        }
+
+        command.setCommand(commandString);
+        
+        return true;
     }
 
     public void updateFullCommand(String commandString) {
@@ -247,14 +270,38 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
     }
 
     public boolean hasSections() {
-        
+
         if (importantParameters.size() > 0 || compileParameters.size() > 0 || linkParameters.size() > 0) {
             return true;
         }
-        
+
         return false;
     }
-    
+
+    private Command findCommandAtLine(int sequenceNumber) {
+
+        Command command = findCommandAtLine(sequenceNumber, preCommands);
+        if (command == null) {
+            command = findCommandAtLine(sequenceNumber, postCommands);
+            if (command == null) {
+                return null;
+            }
+        }
+
+        return command;
+    }
+
+    private Command findCommandAtLine(int sequenceNumber, LinkedList<Command> commands) {
+
+        for (Command command : commands) {
+            if (command.getFirstLine() <= sequenceNumber && sequenceNumber <= command.getLastLine()) {
+                return command;
+            }
+        }
+
+        return null;
+    }
+
     private void produceParameterSequence(String fullCommand, CLFormatter formatter) {
 
         parameterSequence.clear();
@@ -410,19 +457,19 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
     }
 
     @Override
-    protected void storePreCommand(String commandString) {
+    protected void storePreCommand(String commandString, int fromLine, int toLine) {
         if (commandString == null) {
             return;
         }
-        preCommands.add(commandString);
+        preCommands.add(new Command(commandString, fromLine, toLine));
     }
 
     @Override
-    protected void storePostCommand(String commandString) {
+    protected void storePostCommand(String commandString, int fromLine, int toLine) {
         if (commandString == null) {
             return;
         }
-        postCommands.add(commandString);
+        postCommands.add(new Command(commandString, fromLine, toLine));
     }
 
     @Override
@@ -528,15 +575,19 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         return getPreOrPostCommands(postCommands, formatter);
     }
 
-    private String[] getPreOrPostCommands(LinkedList<String> commands, CLFormatter formatter) {
+    private String[] getPreOrPostCommands(LinkedList<Command> commands, CLFormatter formatter) {
 
         if (formatter == null) {
             return commands.toArray(new String[postCommands.size()]);
         }
 
         LinkedList<String> formattedCommands = new LinkedList<String>();
-        for (String command : commands) {
-            formattedCommands.add(formatter.format(command));
+        for (Command command : commands) {
+            String formattedCommand = formatter.format(command.getCommand());
+            if (formattedCommand == null) {
+                formattedCommand = command.getCommand() + " /* SYNTAX ERROR? */"; //$NON-NLS-1$
+            }
+            formattedCommands.add(formattedCommand);
         }
 
         return formattedCommands.toArray(new String[formattedCommands.size()]);
@@ -606,5 +657,46 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         }
 
         return Preferences.getInstance().useParameterSections();
+    }
+
+    private class Command {
+
+        private int firstLine;
+        private int lastLine;
+        private String commandString;
+
+        public Command(String commandString, int firstLine, int lastLine) {
+            this.firstLine = firstLine;
+            this.lastLine = lastLine;
+            this.commandString = commandString;
+        }
+
+        public int getFirstLine() {
+            return firstLine;
+        }
+
+        public int getLastLine() {
+            return lastLine;
+        }
+
+        public String getCommand() {
+            return commandString;
+        }
+
+        public void setCommand(String commandString) {
+            this.commandString = commandString;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder buffer = new StringBuilder();
+            buffer.append("(");
+            buffer.append(firstLine);
+            buffer.append("-");
+            buffer.append(lastLine);
+            buffer.append(") ");
+            buffer.append(commandString);
+            return buffer.toString();
+        }
     }
 }

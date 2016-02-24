@@ -29,6 +29,8 @@ public class Messages extends NLS {
     public static String Menu_Add_pre_compile_command;
 
     public static String Menu_Add_post_compile_command;
+    
+    public static String Menu_Edit_Pre_Post_Command;
 
     public static String Menu_Remove_header;
 

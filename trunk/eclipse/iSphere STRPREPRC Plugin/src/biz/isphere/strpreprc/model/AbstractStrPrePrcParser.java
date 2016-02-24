@@ -67,7 +67,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
                     rightCommentPosition = 0;
                 }
                 indent = getIndention(line, leftCommentChars);
-                storeFirstLine(lineCounter);
+                storeFirstLine(getLineCounter());
             }
 
             if (mode == Mode.SCAN_HEADER) {
@@ -105,12 +105,13 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
                 } else if (EXECUTE.equals(tag)) {
                     doPostCommands = true;
                 } else if (COMMAND.equals(tag)) {
+                    int start = getLineCounter();
                     String commandString = retrieveTagValue(tag, line, width, textIterator);
                     if (commandString != null) {
                         if (doPostCommands) {
-                            storePreCommand(commandString);
+                            storePostCommand(commandString, start, getLineCounter());
                         } else {
-                            storePostCommand(commandString);
+                            storePreCommand(commandString, start, getLineCounter());
                         }
                     }
                 }
@@ -119,7 +120,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
             if (PRE_COMPILER_END.equals(tag)) {
                 popTagMode(); // PRE_COMPILER_START
                 mode = Mode.STOP;
-                storeLastLine(lineCounter);
+                storeLastLine(getLineCounter());
             }
         }
 
@@ -431,7 +432,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         while (continuationChar != null) {
             line = readLine(textIterator, maxLength);
             if (line == null) {
-                throw new RuntimeException("Premature end of file after line " + lineCounter + ".");
+                throw new RuntimeException("Premature end of file after line " + getLineCounter() + ".");
             }
 
             line = line.substring(start);
@@ -462,7 +463,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
             start++;
         }
 
-        throw new RuntimeException("The end-of-line character could not be found in line " + lineCounter + ".");
+        throw new RuntimeException("The end-of-line character could not be found in line " + getLineCounter() + ".");
     }
 
     private String retrieveTag(String line) {
@@ -572,6 +573,10 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         return line;
     }
 
+    private int getLineCounter() {
+        return lineCounter;
+    }
+    
     private String getIndention(String line, String leftCommentChars) {
 
         int end = line.indexOf(leftCommentChars);
@@ -616,7 +621,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
 
         String transition = getTagMode() + mode;
         if (!modeTransitions.contains(transition)) {
-            throw new RuntimeException("Wrong mode sequence in line " + lineCounter + ".");
+            throw new RuntimeException("Wrong mode sequence in line " + getLineCounter() + ".");
         }
     }
 
@@ -642,9 +647,9 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
 
     abstract protected void storeLinkParameter(String parameterString);
 
-    abstract protected void storePreCommand(String commandString);
+    abstract protected void storePreCommand(String commandString, int fromLine, int toLine);
 
-    abstract protected void storePostCommand(String commandString);
+    abstract protected void storePostCommand(String commandString, int fromLine, int toLine);
 
     abstract protected int getWidth();
 

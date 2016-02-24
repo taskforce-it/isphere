@@ -387,7 +387,7 @@ public class EditHeaderDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return new Point(910, 600);
+        return new Point(530, 360);
     }
 
     /**

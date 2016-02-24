@@ -69,7 +69,7 @@ public class EditHeaderAction extends AbstractHeaderAction {
             }
 
             if (!Preferences.getInstance().skipEditDialog()) {
-                displayDialog = true; 
+                displayDialog = true;
             }
 
             /*
@@ -139,14 +139,6 @@ public class EditHeaderAction extends AbstractHeaderAction {
         }
 
         return null;
-    }
-
-    private String getConnectionName(IEditorPart editor) {
-        String connectionName = IBMiHostContributionsHandler.getConnectionName(editor);
-        if (connectionName == null) {
-            return null;
-        }
-        return connectionName;
     }
 
     private String performPromptCommand(String connectionName, String createCommand) {
