@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
@@ -44,6 +45,7 @@ public class SearchForUpdates extends Job {
     private boolean newVersionAvailable;
     private String newVersionInfo;
     private boolean newRequiresUpdateLibrary;
+    private String updateLibraryInfo;
     private Version currentVersion;
     private Version availableVersion;
 
@@ -80,20 +82,16 @@ public class SearchForUpdates extends Job {
                     url = new URL(Preferences.getInstance().getURLForUpdates());
                 }
 
-                URLConnection connection = url.openConnection();
-                if (connection instanceof HttpURLConnection) {
-                    ((HttpURLConnection)connection).setRequestMethod("GET");
-                }
-
-                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
-
+                URLConnection connection = followRedirects(url);
                 Manifest manifest = readManifest(connection.getInputStream());
                 availableVersion = getVersion(manifest, "Bundle-Version");
 
+                currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
                 if (availableVersion != null && availableVersion.compareTo(currentVersion) > 0) {
                     newVersionAvailable = true;
                     newVersionInfo = getString(manifest, "X-Bundle-Info", true);
                     newRequiresUpdateLibrary = getBoolean(manifest, "X-Bundle-Update-Library", false);
+                    updateLibraryInfo = getString(manifest, "X-Bundle-Update-Library-Info", true);
                 }
 
                 if (!newVersionAvailable && searchForBetaVersion) {
@@ -103,6 +101,7 @@ public class SearchForUpdates extends Job {
                         newVersionAvailable = true;
                         newVersionInfo = getString(manifest, "X-Beta-Info", true);
                         newRequiresUpdateLibrary = getBoolean(manifest, "X-Beta-Update-Library", false);
+                        updateLibraryInfo = getString(manifest, "X-Beta-Update-Library-Info", true);
                     }
                 }
 
@@ -117,7 +116,7 @@ public class SearchForUpdates extends Job {
                             @Override
                             public IStatus runInUIThread(IProgressMonitor monitor) {
                                 Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                                MessageDialog.openError(parent, "iSphere", Messages.Failed_to_connect_to_iSphere_update_server);
+                                MessageDialog.openError(parent, Messages.E_R_R_O_R, Messages.Failed_to_connect_to_iSphere_update_server);
                                 return Status.OK_STATUS;
                             }
                         }.schedule();
@@ -142,8 +141,8 @@ public class SearchForUpdates extends Job {
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                             UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
-                                availableVersion, newRequiresUpdateLibrary, newVersionInfo), MessageDialog.INFORMATION, new String[] { Messages.OK },
-                                0, availableVersion.toString());
+                                availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo), MessageDialog.INFORMATION,
+                                new String[] { Messages.OK }, 0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -157,7 +156,8 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo));
+                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo,
+                                updateLibraryInfo));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -172,7 +172,26 @@ public class SearchForUpdates extends Job {
         return Status.OK_STATUS;
     }
 
-    private String getNewVersionText(Version currentVersion, Version availableVersion, boolean requiresUpdateLibrary, String newVersionInfo) {
+    private URLConnection followRedirects(URL url) throws Exception {
+
+        URLConnection connection = url.openConnection();
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection httpConnection = (HttpURLConnection)connection;
+            httpConnection.setRequestMethod("GET");
+            int respCode;
+            while ((respCode = httpConnection.getResponseCode()) == HttpURLConnection.HTTP_MOVED_TEMP
+                || respCode == HttpURLConnection.HTTP_MOVED_PERM || respCode == HttpURLConnection.HTTP_SEE_OTHER) {
+                String newUrl = httpConnection.getHeaderField("Location"); //$NON-NLS-1$
+                url = new URL(newUrl);
+                return followRedirects(url);
+            }
+        }
+
+        return connection;
+    }
+
+    private String getNewVersionText(Version currentVersion, Version availableVersion, boolean requiresUpdateLibrary, String newVersionInfo,
+        String updateLibraryInfo) {
 
         StringBuilder text = new StringBuilder();
         if (availableVersion.isBeta()) {
@@ -193,7 +212,13 @@ public class SearchForUpdates extends Job {
         if (requiresUpdateLibrary) {
             text.append("\n");
             text.append("\n");
-            text.append(Messages.This_version_requires_updating_the_iSphere_library);
+            if (isOptionalUpdate(updateLibraryInfo)) {
+                text.append(Messages.Updating_the_iSphere_library_is_optional_colon);
+                text.append("\n");
+                text.append(updateLibraryInfo);
+            } else {
+                text.append(Messages.This_version_requires_updating_the_iSphere_library);
+            }
         }
 
         if (newVersionInfo != null) {
@@ -203,6 +228,22 @@ public class SearchForUpdates extends Job {
         }
 
         return text.toString();
+    }
+
+    /**
+     * The update information for an optional library update must be longer or
+     * equal to 5 characters.
+     * 
+     * @param updateLibraryInfo
+     * @return <code>true</code> for an optional update, else <code>false</code>
+     */
+    private boolean isOptionalUpdate(String updateLibraryInfo) {
+
+        if (StringHelper.isNullOrEmpty(updateLibraryInfo) || updateLibraryInfo.length() <= 5) {
+            return false;
+        }
+
+        return true;
     }
 
     private Version getVersion(Manifest manifest, String version) {
@@ -237,6 +278,18 @@ public class SearchForUpdates extends Job {
 
         value = value.replaceAll(";", ", "); //$NON-NLS-1$
 
+        if (value.indexOf("\\n") >= 0) {
+            StringBuilder buffer = new StringBuilder();
+            String[] line = value.split("\\\\n");
+            for (int i = 0; i < line.length; i++) {
+                buffer.append(line[i]);
+                if (i < line.length - 1) {
+                    buffer.append("\n");
+                }
+            }
+            value = buffer.toString();
+        }
+
         return value;
     }
 
@@ -264,10 +317,8 @@ public class SearchForUpdates extends Job {
 
         Manifest manifest;
         try {
-
             manifest = new Manifest(manifestStream);
             return manifest;
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

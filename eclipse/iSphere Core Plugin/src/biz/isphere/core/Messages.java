@@ -1019,6 +1019,8 @@ public class Messages extends NLS {
     public static String Relationship_for_valid_replies_colon;
 
     public static String This_version_requires_updating_the_iSphere_library;
+    
+    public static String Updating_the_iSphere_library_is_optional_colon;
 
     public static String Working;
 
