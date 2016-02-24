@@ -11,6 +11,8 @@ package biz.isphere.strpreprc.lpex;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.strpreprc.lpex.action.AddPostCompileCommandAction;
+import biz.isphere.strpreprc.lpex.action.AddPreCompileCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditHeaderAction;
 import biz.isphere.strpreprc.lpex.action.RemoveHeaderAction;
@@ -27,6 +29,7 @@ import com.ibm.lpex.core.LpexView;
  */
 public class MenuExtension {
 
+    private static final String MENU_NAME = "STRPREPRC";
     private static final String BEGIN_SUB_MENU = "beginSubmenu"; //$NON-NLS-1$
     private static final String END_SUB_MENU = "endSubmenu"; //$NON-NLS-1$
     private static final String SEPARATOR = "separator"; //$NON-NLS-1$
@@ -50,8 +53,10 @@ public class MenuExtension {
         ArrayList<String> actions = new ArrayList<String>();
 
         actions.add(EditHeaderAction.ID + " " + EditHeaderAction.class.getName());
-        actions.add(EditCommandAction.ID + " " + EditCommandAction.class.getName());
         actions.add(RemoveHeaderAction.ID + " " + RemoveHeaderAction.class.getName());
+        actions.add(AddPreCompileCommandAction.ID + " " + AddPreCompileCommandAction.class.getName());
+        actions.add(AddPostCompileCommandAction.ID + " " + AddPostCompileCommandAction.class.getName());
+        actions.add(EditCommandAction.ID + " " + EditCommandAction.class.getName());
 
         StringBuilder newUserActions = new StringBuilder();
 
@@ -82,8 +87,9 @@ public class MenuExtension {
             newKeyActions.append(keyActions);
         }
 
-//        appendKeyAction(newKeyActions, "c-1" + SPACE + EditHeaderAction.ID);
-//        appendKeyAction(newKeyActions, "c-2" + SPACE + RemoveHeaderAction.ID);
+        // appendKeyAction(newKeyActions, "c-1" + SPACE + EditHeaderAction.ID);
+        // appendKeyAction(newKeyActions, "c-2" + SPACE +
+        // RemoveHeaderAction.ID);
 
         return newKeyActions.toString();
     }
@@ -105,11 +111,14 @@ public class MenuExtension {
         ArrayList<String> menuActions = new ArrayList<String>();
 
         menuActions.add(EditHeaderAction.getLPEXMenuAction());
-        menuActions.add(EditCommandAction.getLPEXMenuAction());
         menuActions.add(RemoveHeaderAction.getLPEXMenuAction());
+        menuActions.add(null);
+        menuActions.add(AddPreCompileCommandAction.getLPEXMenuAction());
+        menuActions.add(AddPostCompileCommandAction.getLPEXMenuAction());
+        menuActions.add(EditCommandAction.getLPEXMenuAction());
 
-        popupMenu = removeSubMenu("STRPREPRC", popupMenu);
-        String newMenu = createSubMenu("STRPREPRC", menuActions);
+        popupMenu = removeSubMenu(MENU_NAME, popupMenu);
+        String newMenu = createSubMenu(MENU_NAME, menuActions);
 
         if (popupMenu != null && popupMenu.contains(newMenu)) {
             return popupMenu;
@@ -150,7 +159,11 @@ public class MenuExtension {
         newMenu.append(startMenu);
         newMenu.append(SPACE);
         for (String action : menuActions) {
-            newMenu.append(action + SPACE);
+            if (action == null) {
+                newMenu.append(createMenuItem(SEPARATOR));
+            } else {
+                newMenu.append(createMenuItem(action));
+            }
         }
 
         newMenu.append(createEndMenuTag());
@@ -162,7 +175,11 @@ public class MenuExtension {
         return BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
     }
 
+    private String createMenuItem(String action) {
+        return action + SPACE;
+    }
+
     private String createEndMenuTag() {
-        return END_SUB_MENU + SPACE + SEPARATOR + SPACE;
+        return END_SUB_MENU + SPACE + createMenuItem(SEPARATOR);
     }
 }
