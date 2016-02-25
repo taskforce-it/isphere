@@ -27,6 +27,10 @@ import biz.isphere.strpreprc.preferences.Preferences;
 import com.ibm.as400.access.AS400;
 import com.ibm.lpex.core.LpexView;
 
+/**
+ * This action adds or changes the creation command of an existing (change) or
+ * non-existing (add) STRPREPRC header.
+ */
 public class EditHeaderAction extends AbstractHeaderAction {
 
     public static final String ID = "SprPrePrc.EditHeader";
@@ -74,7 +78,7 @@ public class EditHeaderAction extends AbstractHeaderAction {
              */
             int action;
             if (displayDialog) {
-                EditHeaderDialog dialog = new EditHeaderDialog(getShell());
+                EditHeaderDialog dialog = new EditHeaderDialog(getShell(), Messages.Menu_Edit_header, EditHeaderDialog.HEADER);
                 dialog.setMemberType(memberType);
                 dialog.setConnectionName(connectionName);
                 dialog.setCommand(header.getFullCommand());
