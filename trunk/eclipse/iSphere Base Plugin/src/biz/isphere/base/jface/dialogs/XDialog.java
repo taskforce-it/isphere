@@ -74,6 +74,16 @@ public class XDialog extends Dialog {
         setStyleResizable();
     }
 
+    @Override
+    protected Control createContents(Composite parent) {
+        Control control= super.createContents(parent);
+        setFocus();
+        return control;
+    }
+
+    public void setFocus() {
+    }
+
     protected void createStatusLine(Control parent) {
         if (parent instanceof Composite) {
             Composite composite = (Composite)parent;
