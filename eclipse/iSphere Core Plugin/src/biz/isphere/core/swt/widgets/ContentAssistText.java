@@ -68,6 +68,10 @@ public class ContentAssistText extends SourceViewer {
         getControl().addFocusListener(listener);
     }
 
+    public void setFocus() {
+        getControl().setFocus();
+    }
+    
     @Override
     protected void createControl(Composite parent, int styles) {
         super.createControl(parent, styles);
