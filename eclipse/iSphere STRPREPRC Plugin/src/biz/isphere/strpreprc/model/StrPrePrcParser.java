@@ -26,7 +26,6 @@ import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.preferences.Preferences;
 
-import com.ibm.as400.access.NLS;
 import com.ibm.lpex.core.LpexDocumentLocation;
 import com.ibm.lpex.core.LpexView;
 
@@ -155,19 +154,19 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         }
 
         command.setCommand(commandString);
-        
+
         return true;
     }
 
     public void addPreCompileCommand(String commandString) {
-        
+
         Command command = new Command(commandString, 0, 0);
 
         preCommands.add(command);
     }
 
     public void addPostCompileCommand(String commandString) {
-        
+
         Command command = new Command(commandString, 0, 0);
 
         postCommands.add(command);
