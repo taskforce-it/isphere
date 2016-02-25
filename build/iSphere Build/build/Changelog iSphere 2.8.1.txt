@@ -1,7 +1,9 @@
 
-Changelog: iSphere 2.8.1.b006
------------------------------
+Changelog: iSphere 2.8.1.b006 (release candidate)
+-------------------------------------------------
  • Fixed iSphere notifier to follow HTTP redirects.
+ • Added missing actions for adding and changing re- and
+   post-compile commands.
 
 Changelog: iSphere 2.8.1.b005
 -----------------------------
