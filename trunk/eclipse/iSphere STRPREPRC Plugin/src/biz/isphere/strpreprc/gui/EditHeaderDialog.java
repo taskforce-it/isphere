@@ -45,12 +45,18 @@ import com.ibm.as400.access.AS400;
 
 public class EditHeaderDialog extends XDialog {
 
+    public final static int HEADER = 1;
+    public final static int PRE_POST_COMMAND = 2;
+
     public final static int PROMPT = 901;
 
     private final static String CONNECTION_NAME = "CONNECTION_NAME";
     private final static String COMMAND = "COMMAND";
     private final static String PARAMETERS = "PARAMETERS";
     private final static String MEMBER_TYPE = "MEMBER_TYPE";
+
+    private String title;
+    private int mode;
 
     private String memberType;
     private String connectionName;
@@ -62,14 +68,17 @@ public class EditHeaderDialog extends XDialog {
     private Text textCommand;
     private ContentAssistText textParameters;
 
-    public EditHeaderDialog(Shell parentShell) {
+    public EditHeaderDialog(Shell parentShell, String title, int mode) {
         super(parentShell);
+
+        this.title = title;
+        this.mode = mode;
     }
 
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.Create_STRPREPRC_Header);
+        newShell.setText(title);
     }
 
     @Override
@@ -138,6 +147,17 @@ public class EditHeaderDialog extends XDialog {
         setControlEnablement();
 
         return mainArea;
+    }
+
+    @Override
+    public void setFocus() {
+        if (comboConnections.getText() == null || comboConnections.getText().trim().length() == 0) {
+            textCommand.setFocus();
+        } else if (textCommand.getText() == null || textCommand.getText().trim().length() == 0) {
+            textCommand.setFocus();
+        } else {
+            textParameters.setFocus();
+        }
     }
 
     @Override
@@ -354,7 +374,11 @@ public class EditHeaderDialog extends XDialog {
             this.parameters = clCommand.getParametersString().toString();
         } else {
             this.commandString = null;
-            this.parameters = Preferences.getInstance().getDefaultKeywords();
+            if (mode == HEADER) {
+                this.parameters = Preferences.getInstance().getDefaultKeywords();
+            } else {
+                this.parameters = "";
+            }
         }
     }
 

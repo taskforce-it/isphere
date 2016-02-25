@@ -8,27 +8,24 @@
 
 package biz.isphere.strpreprc.lpex.action;
 
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.strpreprc.Messages;
-
-import com.ibm.lpex.core.LpexView;
+import biz.isphere.strpreprc.gui.EditHeaderDialog;
+import biz.isphere.strpreprc.model.StrPrePrcParser;
 
 /**
- * This action removes the STRPREPRC header from a source member.
+ * This action adds a pre-compile command to an existing STRPREPRC header.
  */
-public class AddPreCompileCommandAction extends AbstractHeaderAction {
+public class AddPreCompileCommandAction extends AbstractAddPreCompileCommandAction {
 
     public static final String ID = "SprPrePrc.AddPreCompileCommand";
 
-    public void doAction(LpexView view) {
+    protected EditHeaderDialog createEditDialog() {
+        return new EditHeaderDialog(getShell(), Messages.Menu_Add_pre_compile_command, EditHeaderDialog.PRE_POST_COMMAND);
+    }
 
-        try {
-
-            System.out.println("Adding pre-compile command ...");
-
-        } catch (Throwable e) {
-            ISpherePlugin.logError("*** Unexpected error when attempting to add a pre-compile command ***", e); //$NON-NLS-1$
-        }
+    @Override
+    protected void addCompileCommand(StrPrePrcParser header, String commandString) {
+        header.addPreCompileCommand(commandString);
     }
 
     public static String getLPEXMenuAction() {

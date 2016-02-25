@@ -11,32 +11,24 @@ package biz.isphere.strpreprc.lpex.action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
 
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.CLFormatter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.gui.EditHeaderDialog;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
-import biz.isphere.strpreprc.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.lpex.core.LpexView;
 
 /**
- * This action changes a selected pre- or post-compile command of an existing
- * STRPREPRC header.
+ * This action adds a pre-compile command to an existing STRPREPRC header.
  */
-public class EditCommandAction extends AbstractHeaderAction {
-
-    public static final String ID = "SprPrePrc.EditCommand";
+public abstract class AbstractAddPreCompileCommandAction extends AbstractHeaderAction {
 
     public void doAction(LpexView view) {
 
         try {
-
-            boolean displayDialog = false;
 
             IEditorPart editor = getActiveEditor();
             if (editor == null) {
@@ -45,7 +37,7 @@ public class EditCommandAction extends AbstractHeaderAction {
             }
 
             /*
-             * Load pre-/post-command from the view.
+             * Load STRPREPRC header from the view.
              */
             StrPrePrcParser header = new StrPrePrcParser(null);
             if (!header.loadFromLpexView(view)) {
@@ -53,46 +45,23 @@ public class EditCommandAction extends AbstractHeaderAction {
                 return;
             }
 
-            int cursorLine = IntHelper.tryParseInt(view.query("element"), 0);
-            if (cursorLine <= 0) {
-                return;
-            }
-
-            String prePostCommand = header.getCommandAtLine(cursorLine);
-            if (prePostCommand == null) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                    Messages.bind(Messages.Pre_or_post_command_not_found_at_line_A, new Integer(cursorLine)));
-                return;
-            }
-
-            String connectionName = getConnectionName(editor);
-            if (StringHelper.isNullOrEmpty(connectionName)) {
-                displayDialog = true;
-            }
-
-            if (!Preferences.getInstance().skipEditDialog()) {
-                displayDialog = true;
-            }
-
             /*
-             * Prompt for a connection name or when using a header template.
+             * Prompt for a connection name pre-/post-compile command.
              */
-            int action;
-            if (displayDialog) {
-                EditHeaderDialog dialog = new EditHeaderDialog(getShell(), Messages.Menu_Edit_Pre_Post_Command, EditHeaderDialog.PRE_POST_COMMAND);
-                dialog.setMemberType(null);
-                dialog.setConnectionName(connectionName);
-                dialog.setCommand(prePostCommand);
-                action = dialog.open();
-                if (action == EditHeaderDialog.CANCEL) {
-                    return;
-                }
+            String connectionName = getConnectionName(editor);
+            String prePostCommand = null;
 
-                prePostCommand = dialog.getCommand() + " " + dialog.getParameters();
-                connectionName = dialog.getConnectionName();
-            } else {
-                action = EditHeaderDialog.PROMPT;
+            EditHeaderDialog dialog = createEditDialog();
+            dialog.setMemberType(null);
+            dialog.setConnectionName(connectionName);
+            dialog.setCommand(prePostCommand);
+            int action = dialog.open();
+            if (action == EditHeaderDialog.CANCEL) {
+                return;
             }
+
+            prePostCommand = dialog.getCommand() + " " + dialog.getParameters();
+            connectionName = dialog.getConnectionName();
 
             /*
              * Get IBM i system for creating the CLFormatter.
@@ -117,16 +86,15 @@ public class EditCommandAction extends AbstractHeaderAction {
             /*
              * Update the STRPREPRC header with the changed command.
              */
-            if (header.changeCommandAtLine(cursorLine, prePostCommand)) {
-                header.updateLpexView(view, new CLFormatter(system));
-            }
+            addCompileCommand(header, prePostCommand);
+            header.updateLpexView(view, new CLFormatter(system));
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Unexpected error when attempting to edit a pre-/post-compile command ***", e); //$NON-NLS-1$
+            ISpherePlugin.logError("*** Unexpected error when attempting to add a pre-compile command ***", e); //$NON-NLS-1$
         }
     }
 
-    public static String getLPEXMenuAction() {
-        return "\"" + Messages.Menu_Edit_Pre_Post_Command + "\" " + EditCommandAction.ID; //$NON-NLS-1$ //$NON-NLS-2$
-    }
+    protected abstract void addCompileCommand(StrPrePrcParser header, String commandString);
+
+    protected abstract EditHeaderDialog createEditDialog();
 }

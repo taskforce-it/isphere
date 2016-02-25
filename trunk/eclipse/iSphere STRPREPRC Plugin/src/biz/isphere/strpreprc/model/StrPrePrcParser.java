@@ -159,6 +159,20 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         return true;
     }
 
+    public void addPreCompileCommand(String commandString) {
+        
+        Command command = new Command(commandString, 0, 0);
+
+        preCommands.add(command);
+    }
+
+    public void addPostCompileCommand(String commandString) {
+        
+        Command command = new Command(commandString, 0, 0);
+
+        postCommands.add(command);
+    }
+
     public void updateFullCommand(String commandString) {
 
         CLCommand clCommand = clParser.parseCommand(commandString);
