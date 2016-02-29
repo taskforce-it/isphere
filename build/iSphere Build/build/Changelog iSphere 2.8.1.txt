@@ -1,4 +1,11 @@
 
+Changelog: iSphere 2.8.1.b007 (release candidate)
+-------------------------------------------------
+ • Fixed problem that parameters where not properly removed
+   from the STRPREPRC header.
+ • Removed MODULE keyword from example temaples CRTSQLRPG and
+   CRTSQLRPGI.
+
 Changelog: iSphere 2.8.1.b006 (release candidate)
 -------------------------------------------------
  • Fixed iSphere notifier to follow HTTP redirects.
