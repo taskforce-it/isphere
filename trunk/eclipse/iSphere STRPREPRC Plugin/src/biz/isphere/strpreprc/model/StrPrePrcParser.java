@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -380,21 +379,27 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
                 }
             }
         }
+
+        return;
     }
 
     private void removeDeletedParameters(CLParameter[] clParameters) {
 
-        Iterator<String> keywordsIterator = parameters.keySet().iterator();
-        while (keywordsIterator.hasNext()) {
-            String keyword = keywordsIterator.next();
-            if (!hasParameter(keyword)) {
-                removeParameter(keyword);
-            }
-        }
-    }
 
-    private boolean hasParameter(String keyword) {
-        return parameters.containsKey(keyword);
+        Set<String> newKeywords = new HashSet<String>();
+        for (CLParameter clParameter : clParameters) {
+            newKeywords.add(clParameter.getKeyword());
+        }
+        
+        Set<String> currentKeywords = new HashSet<String>();
+        for (CLParameter clParameter : parameters.values()) {
+            currentKeywords.add(clParameter.getKeyword());
+        }
+        
+        currentKeywords.removeAll(newKeywords);
+        for (String keyword : currentKeywords) {
+            removeParameter(keyword);
+        }
     }
 
     @Override

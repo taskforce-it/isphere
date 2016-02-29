@@ -77,8 +77,8 @@ public final class HeaderTemplates {
 
         defaultCreationCommands = new Properties();
         defaultCreationCommands.put(DEFAULT, "...");
-        defaultCreationCommands.put(SQLRPG, "CRTSQLRPG MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
-        defaultCreationCommands.put(SQLRPGLE, "CRTSQLRPGI MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(SQLRPG, "CRTSQLRPG" + preferences.getDefaultKeywords());
+        defaultCreationCommands.put(SQLRPGLE, "CRTSQLRPGI" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(RPG, "CRTRPGPGM PGM(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(RPGLE, "CRTRPGMOD MODULE(" + OBJECT_VARIABLES + ")" + preferences.getDefaultKeywords());
         defaultCreationCommands.put(C, "CRTCMOD MODULE(" + OBJECT_VARIABLES + ") OUTPUT(*PRINT)" + preferences.getDefaultKeywords());
