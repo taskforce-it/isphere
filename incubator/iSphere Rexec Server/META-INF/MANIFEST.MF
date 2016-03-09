@@ -4,8 +4,11 @@ Bundle-Name: iSphere Rexec Server
 Bundle-SymbolicName: biz.isphere.rexec;singleton:=true
 Bundle-Version: 2.8.1.b007
 Bundle-Activator: biz.isphere.rexec.iSphereRexecPlugin
+Bundle-Localization: plugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ biz.isphere.core,
+ biz.isphere.base;bundle-version="2.8.1"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

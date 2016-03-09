@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 import biz.isphere.rexec.Messages;
+import biz.isphere.rexec.preferences.Preferences;
 
 /**
  * This class handles the requests that have been received by the Rexec server.
@@ -30,8 +31,6 @@ public class RexecRequestHandler extends Thread {
     private final Socket client;
 
     private Socket auxSocket;
-
-    private final int clientReadTimeout = 1000;
 
     private final boolean waitForAdditionalData = false;
 
@@ -61,6 +60,7 @@ public class RexecRequestHandler extends Thread {
             String remoteAddr = null;
             int remotePort = -1;
 
+            int clientReadTimeout = Preferences.getInstance().getSocketReadTimeout();
             client.setSoTimeout(clientReadTimeout);
 
             InputStream inputStream = client.getInputStream();

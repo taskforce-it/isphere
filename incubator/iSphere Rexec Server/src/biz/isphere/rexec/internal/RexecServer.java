@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import biz.isphere.rexec.preferences.Preferences;
+
 /**
  * This class implements a simple Rexec server, listening on port 512 for
  * incoming requests. Use RUNRMTCMD to send requests from an IBM i.
@@ -23,45 +25,48 @@ import java.net.Socket;
  *   RMTLOCNAME('10.115.11.228' *IP)
  * </pre>
  */
-public class RexecServer {
+public class RexecServer extends Thread {
 
-    private boolean isEnabled = false;
+    private int listenerPort;
 
-    private final int listenerPort = 512;
+    private ServerSocket serverSocket;
 
-    public static void main(String[] args) {
-
-        RexecServer server = new RexecServer();
-        server.run();
-    }
+    // public static void main(String[] args) {
+    //
+    // RexecServer server = new RexecServer();
+    // server.run();
+    // }
 
     /**
      * Constructs a new RexecServer object.
      */
     public RexecServer() {
-        isEnabled = true;
+        super();
+
+        listenerPort = Preferences.getInstance().getListenerPort();
+        setName("Rexec-Server: " + listenerPort);
     }
 
     /**
      * Starts the Rexec server.
      */
-    private void run() {
+    public void run() {
 
-        if (!isEnabled) {
-            return;
-        }
-
-        ServerSocket server = null;
+        serverSocket = null;
         try {
-            server = new ServerSocket(listenerPort);
-            while (isEnabled) {
-                waitForIncomingConnections(server);
+            serverSocket = new ServerSocket(listenerPort);
+            while (serverSocket != null) {
+                waitForIncomingConnections();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // ignore exception on close
         } finally {
-            closeSocket(server);
+            closeSocket();
         }
+    }
+
+    public void shutdown() {
+        closeSocket();
     }
 
     /**
@@ -70,14 +75,13 @@ public class RexecServer {
      * 
      * @throws IOException
      */
-    private void waitForIncomingConnections(ServerSocket server) throws IOException {
+    private void waitForIncomingConnections() throws IOException {
 
-        Socket client = server.accept();
+        Socket client = serverSocket.accept();
         if (client != null) {
             RexecRequestHandler handler = new RexecRequestHandler(client);
             handler.start();
         }
-
     }
 
     /**
@@ -85,10 +89,11 @@ public class RexecServer {
      * 
      * @param socket - socket that is closed
      */
-    private void closeSocket(ServerSocket socket) {
-        if (socket != null) {
+    private void closeSocket() {
+        if (serverSocket != null) {
             try {
-                socket.close();
+                serverSocket.close();
+                serverSocket = null;
             } catch (IOException e) {
                 // ignore exceptions on close
             }
