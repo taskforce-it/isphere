@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Rexec Server
+Bundle-SymbolicName: biz.isphere.rexec;singleton:=true
+Bundle-Version: 2.8.1.b007
+Bundle-Activator: biz.isphere.rexec.iSphereRexecPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
