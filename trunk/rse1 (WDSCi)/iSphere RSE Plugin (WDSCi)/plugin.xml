@@ -37,13 +37,14 @@
       <editor
             name=""
             icon="icons/user_space.gif"
-            contributorClass="biz.isphere.rse.userspaceeditor.UserSpaceEditorActionBarContributor"
             class="biz.isphere.rse.userspaceeditor.UserSpaceEditor"
+            contributorClass="biz.isphere.rse.userspaceeditor.UserSpaceEditorActionBarContributor"
             id="biz.isphere.rse.userspaceeditor.UserSpaceEditor"/>
       <editor
             name=""
             icon="icons/compare_message_files.png"
             class="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"
+            contributorClass="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
             id="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"/>
 	</extension>
     
