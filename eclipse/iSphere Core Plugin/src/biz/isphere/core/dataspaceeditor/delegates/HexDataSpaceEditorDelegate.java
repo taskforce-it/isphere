@@ -208,7 +208,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 updateStatusLine();
-                updateUndoRedoActionStatus();
+                updateActionStatus();
             }
         });
     }
@@ -250,27 +250,32 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         return System.getProperty("file.encoding", "utf-8");
     }
 
-    private void updateUndoRedoActionStatus() {
-
-        IActionBars actionBars = getEditorSite().getActionBars();
-        IAction action;
-
-        action = actionBars.getGlobalActionHandler(ActionFactory.UNDO.getId());
-        action.setEnabled(action.isEnabled());
-
-        action = actionBars.getGlobalActionHandler(ActionFactory.REDO.getId());
-        action.setEnabled(action.isEnabled());
-
-        actionBars.updateActionBars();
-    }
-
     @Override
     public void setStatusMessage(String message) {
         statusMessage = message;
     }
 
     public void updateActionStatus() {
-        updateUndoRedoActionStatus();
+
+        updateActionStatus(ActionFactory.CUT.getId());
+        updateActionStatus(ActionFactory.COPY.getId());
+        updateActionStatus(ActionFactory.PASTE.getId());
+        updateActionStatus(ActionFactory.DELETE.getId());
+        updateActionStatus(ActionFactory.UNDO.getId());
+        updateActionStatus(ActionFactory.REDO.getId());
+        updateActionStatus(ActionFactory.SELECT_ALL.getId());
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        actionBars.updateActionBars();
+    }
+
+    public void updateActionStatus(String actionID) {
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        IAction action = actionBars.getGlobalActionHandler(actionID);
+        if (action != null) {
+            action.setEnabled(action.isEnabled());
+        }
     }
 
     @Override
@@ -447,19 +452,20 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         if (findReplaceAction == null) {
             findReplaceAction = new FindReplaceAction(ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedTextEditorMessages"), null,
                 anEditorPart) {
-                
+
                 public void run() {
                     displayInformationalMessage();
                     super.run();
                 }
-                
+
                 public void runWithEvent(Event event) {
                     displayInformationalMessage();
                     super.runWithEvent(event);
                 };
 
                 private void displayInformationalMessage() {
-                    DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, Messages.Data_Space_Hex_Editor_search_and_replace_information);
+                    DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION,
+                        Messages.Data_Space_Hex_Editor_search_and_replace_information);
                 };
             };
         }

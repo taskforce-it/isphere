@@ -27,6 +27,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
+import biz.isphere.core.dataspaceeditor.StatusLine;
 import biz.isphere.core.dataspaceeditordesigner.listener.DataModifiedEvent;
 import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
@@ -116,7 +117,7 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
 
     @Override
     public void setStatusMessage(String message) {
-        
+
     }
 
     /**
@@ -125,6 +126,15 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
     @Override
     public void updateStatusLine() {
 
+        StatusLine statusLine = getStatusLine();
+        if (statusLine == null) {
+            return;
+        }
+
+        statusLine.setShowMode(false);
+        statusLine.setShowPosition(false);
+        statusLine.setShowValue(false);
+        statusLine.setShowMessage(false);
     }
 
     /**

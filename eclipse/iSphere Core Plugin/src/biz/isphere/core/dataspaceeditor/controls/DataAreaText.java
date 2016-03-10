@@ -17,6 +17,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -24,9 +25,11 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.events.StatusChangedEvent;
@@ -47,6 +50,7 @@ public class DataAreaText {
     private static final String EOL_CHAR = "¤";
 
     private Text textControl;
+    private TextControlMouseMoveListener mouseMoveListener;
 
     int maxLength;
     int lineLength;
@@ -71,6 +75,9 @@ public class DataAreaText {
         textControl.addMouseListener(new TextControlMouseListener());
         textControl.addPaintListener(new TextControlPaintListener());
         textControl.addFocusListener(new TextControlFocusListener());
+        textControl.setMenu(new Menu(textControl.getShell(), SWT.POP_UP));
+
+        mouseMoveListener = new TextControlMouseMoveListener(textControl);
     }
 
     public void addStatusChangedListener(StatusChangedListener listener) {
@@ -228,6 +235,60 @@ public class DataAreaText {
         return rows;
     }
 
+    /*
+     * Clipboard methods
+     */
+
+    public void copy() {
+
+        if (getSelectedLength(getSelection()) == 0) {
+            return;
+        }
+
+        ClipboardHelper.setText(getSelectionText());
+    }
+
+    public void cut() {
+
+        if (getSelectedLength(getSelection()) == 0) {
+            return;
+        }
+
+        copy();
+        Point selection = getSelection();
+        deleteSelection(selection.x, selection.y);
+    }
+
+    public void paste() {
+
+        String text = ClipboardHelper.getText();
+        if (!hasEnoughSpace(getText(), getSelectedLength(getSelection()), text.length())) {
+            return;
+        }
+
+        Point selection = getSelection();
+        performReplaceTextRange(selection.x, selection.y - selection.x, text);
+    }
+
+    public void delete() {
+
+        Point selection = getSelection();
+        if (selection.x == selection.y) {
+            deleteSelection(selection.x, selection.x + 1);
+        } else {
+            deleteSelection(selection.x, selection.y);
+        }
+    }
+
+    public void selectAll() {
+        int length = textControl.getText().length();
+        textControl.setSelection(0, length - 1);
+    }
+
+    /*
+     * Private methods
+     */
+
     private String replaceCRLF(String aText) {
         String[] lines = textToArray(aText);
         if (lines.length == 1) {
@@ -340,12 +401,18 @@ public class DataAreaText {
         }
     }
 
+    /**
+     * Insert a character typed on the keyboard.
+     */
     private void performInsert(char character) {
         Point selection = getSelection();
         int length = selection.y - selection.x;
         performReplaceTextRange(selection.x, length, Character.toString(character));
     }
 
+    /**
+     * Overwrites the selected text with the character typed on the keyboard.
+     */
     private void performOverwrite(char character) {
         Point selection = getSelection();
         int length = selection.y - selection.x;
@@ -356,14 +423,17 @@ public class DataAreaText {
     }
 
     private void performReplaceTextRange(int aStart, int aLength, String aNewText) {
-        
+
         String text = getText();
-        if (text.length() - aLength + aNewText.length() > maxLength) {
-            return;
+
+        if (isInsertMode) {
+            if (!hasEnoughSpace(text, aLength, aNewText.length())) {
+                fireStatusChangedEvent(Messages.Not_enough_space_to_insert_text);
+                return;
+            }
         }
 
-        if (isInsertMode && !hasEnoughSpace(text, aLength, aNewText.length())) {
-            fireStatusChangedEvent(Messages.Not_enough_space_to_insert_text);
+        if (aStart >= text.length()) {
             return;
         }
 
@@ -398,7 +468,9 @@ public class DataAreaText {
         if (aText.length() == 0) {
             return text;
         }
-        text = text.substring(0, aStart) + aText + text.substring(aStart);
+        String textLeft = text.substring(0, aStart);
+        String textRight = text.substring(aStart, text.length() - aText.length());
+        text = textLeft + aText + textRight;
         return text;
     }
 
@@ -542,10 +614,47 @@ public class DataAreaText {
      * Inner class that listens for mouse events in order to update the status
      * bar.
      */
+    private class TextControlMouseMoveListener implements MouseMoveListener {
+
+        private Text control;
+        private int lastSelectionCount;
+
+        public TextControlMouseMoveListener(Text control) {
+            this.control = control;
+        }
+
+        public void start() {
+            lastSelectionCount = textControl.getSelectionCount();
+            control.addMouseMoveListener(this);
+        }
+
+        public void stop() {
+            control.removeMouseMoveListener(this);
+        }
+
+        public void mouseMove(MouseEvent paramMouseEvent) {
+            if (lastSelectionCount != textControl.getSelectionCount()) {
+                fireStatusChangedEvent();
+                lastSelectionCount = textControl.getSelectionCount();
+            }
+        }
+    }
+
+    /**
+     * Inner class that listens for mouse events in order to update the status
+     * bar.
+     */
     private class TextControlMouseListener extends MouseAdapter {
         @Override
         public void mouseDown(MouseEvent anEvent) {
+            mouseMoveListener.start();
             fireStatusChangedEvent();
+        }
+
+        @Override
+        public void mouseUp(MouseEvent anEvent) {
+            fireStatusChangedEvent();
+            mouseMoveListener.stop();
         }
     }
 
