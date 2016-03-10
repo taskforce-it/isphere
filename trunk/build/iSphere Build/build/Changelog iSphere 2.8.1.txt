@@ -1,4 +1,11 @@
 
+Changelog: iSphere 2.8.1.b008 (release candidate)
+-------------------------------------------------
+ • Updated the STRPREPRC utility to 1.9.1. (added message
+   PRZ0028, no creation command found)
+ • Various bug fixes with copy&paste for the data space
+   editors.
+
 Changelog: iSphere 2.8.1.b007 (release candidate)
 -------------------------------------------------
  • Fixed problem that parameters where not properly removed
