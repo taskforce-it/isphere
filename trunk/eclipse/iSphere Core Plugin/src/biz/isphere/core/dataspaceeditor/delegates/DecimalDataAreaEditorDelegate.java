@@ -11,26 +11,31 @@ package biz.isphere.core.dataspaceeditor.delegates;
 import java.math.BigDecimal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
-import biz.isphere.core.dataspaceeditor.controls.DataAreaText;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -44,12 +49,9 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
 
     private Text dataAreaText;
     private Validator validator;
+    private TextControlMouseMoveListener mouseMoveListener;
 
     private String statusMessage;
-
-    private Action cutAction;
-    private Action copyAction;
-    private Action pasteAction;
 
     public DecimalDataAreaEditorDelegate(AbstractDataSpaceEditor aDataAreaEditor) {
         super(aDataAreaEditor);
@@ -83,6 +85,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         GridData dataAreaTextLayoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         dataAreaTextLayoutData.widthHint = 160;
         dataAreaText.setLayoutData(dataAreaTextLayoutData);
+        dataAreaText.setMenu(new Menu(dataAreaText.getShell(), SWT.POP_UP));
 
         Composite verticalSpacer = new Composite(aParent, SWT.NONE);
         GridData verticalSpacerLayoutData = new GridData();
@@ -103,6 +106,11 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
 
         // Add 'dirty' listener
         dataAreaText.addModifyListener(new TextControlModifyListener());
+
+        // Add 'status line/action' listener
+        dataAreaText.addMouseListener(new TextControlMouseListener());
+
+        mouseMoveListener = new TextControlMouseMoveListener(dataAreaText);
     }
 
     @Override
@@ -110,6 +118,29 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         statusMessage = message;
 
         updateStatusLine();
+    }
+
+    public void updateActionStatus() {
+
+        updateActionStatus(ActionFactory.CUT.getId());
+        updateActionStatus(ActionFactory.COPY.getId());
+        updateActionStatus(ActionFactory.PASTE.getId());
+        updateActionStatus(ActionFactory.DELETE.getId());
+        updateActionStatus(ActionFactory.UNDO.getId());
+        updateActionStatus(ActionFactory.REDO.getId());
+        updateActionStatus(ActionFactory.SELECT_ALL.getId());
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        actionBars.updateActionBars();
+    }
+
+    public void updateActionStatus(String actionID) {
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        IAction action = actionBars.getGlobalActionHandler(actionID);
+        if (action != null) {
+            action.setEnabled(action.isEnabled());
+        }
     }
 
     /**
@@ -180,10 +211,13 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
     }
 
     private String delete(String aText, int aStart, int anEnd) {
+
         if (aStart == anEnd) {
             return aText;
         }
-        aText = aText.substring(0, aStart) + aText.substring(anEnd) + StringHelper.getFixLength(" ", anEnd - aStart);
+
+        aText = aText.substring(0, aStart) + aText.substring(anEnd);
+
         return aText;
     }
 
@@ -200,119 +234,76 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         dataAreaText.setFocus();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Action getCutAction() {
-        if (cutAction == null) {
-            cutAction = new CutAction();
-        }
-        return cutAction;
+    public boolean canCut() {
+        return hasSelection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Action getCopyAction() {
-        if (copyAction == null) {
-            copyAction = new CopyAction();
-        }
-        return copyAction;
+    public void doCut() {
+        dataAreaText.cut();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    public boolean canCopy() {
+        return hasSelection();
+    }
+
+    public void doCopy() {
+        dataAreaText.copy();
+    }
+
+    public boolean canPaste() {
+        return ClipboardHelper.hasTextContents();
+    }
+
+    public void doPaste() {
+        dataAreaText.paste();
+    }
+
     @Override
-    public Action getPasteAction() {
-        if (pasteAction == null) {
-            pasteAction = new PasteAction();
+    public boolean canDelete() {
+
+        if (hasSelection()) {
+            return true;
+        } else if (dataAreaText.getSelection().y < dataAreaText.getText().length()) {
+            return true;
         }
-        return pasteAction;
+
+        return false;
     }
 
-    /**
-     * Class, that overrides the original "paste" action of the SWT Text widget.
-     * <ul>
-     * <li>Text of multiple lines<br>
-     * Lines are expanded to the current line length of the editor. If one line
-     * exceeds the line length of the editor, all new line characters are
-     * removed.</li>
-     * <li>Single line text<br>
-     * The text is inserted as it is.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#replaceTextRange(Point, String)
-     */
-    private class PasteAction extends Action {
-        @Override
-        public void run() {
-            String text = getClipboardText();
-            if (StringHelper.isNullOrEmpty(text)) {
-                return;
-            }
-            replaceSelection(text);
+    @Override
+    public void doDelete() {
+
+        String text = dataAreaText.getText();
+
+        Point selection = dataAreaText.getSelection();
+        if (hasSelection()) {
+            text = delete(text, selection.x, selection.y);
+        } else {
+            text = delete(text, selection.x, selection.x + 1);
         }
 
-        @Override
-        public String getId() {
-            return ActionFactory.PASTE.getId();
-        }
-    };
+        dataAreaText.setText(text);
 
-    /**
-     * Class, that overrides the original "copy" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>Text is returned with no linefeeds, of course.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#getSelectionText(Point, String)
-     */
-    private class CopyAction extends Action {
-        @Override
-        public void run() {
-            String text = getSelectionText();
-            if (StringHelper.isNullOrEmpty(text)) {
-                return;
-            }
-            setClipboardText(text);
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.COPY.getId();
-        }
+        dataAreaText.setSelection(selection.x);
     }
 
-    /**
-     * Class, that overrides the original "cut" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>Text is returned with no linefeeds, of course.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#getSelectionText(Point, String)
-     */
-    private class CutAction extends Action {
-        @Override
-        public void run() {
-            String text = getSelectionText();
-            if (StringHelper.isNullOrEmpty(text)) {
-                return;
-            }
-            setClipboardText(text);
-            replaceSelection("");
-        }
+    @Override
+    public boolean canSelectAll() {
+        return true;
+    }
 
-        @Override
-        public String getId() {
-            return ActionFactory.CUT.getId();
+    @Override
+    public void doSelectAll() {
+        dataAreaText.selectAll();
+    }
+
+    private boolean hasSelection() {
+        if (dataAreaText.getSelectionCount() > 0) {
+            return true;
         }
+        return false;
     }
 
     /**
@@ -370,6 +361,7 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
                 // getStatusBar().setMessage("");
                 statusMessage = null;
             }
+            updateActionStatus();
             updateStatusLine();
         }
 
@@ -378,4 +370,54 @@ public class DecimalDataAreaEditorDelegate extends AbstractDataSpaceEditorDelega
         }
     }
 
+    /**
+     * Inner class that listens for mouse events in order to update the status
+     * bar.
+     */
+    private class TextControlMouseListener extends MouseAdapter {
+        @Override
+        public void mouseDown(MouseEvent anEvent) {
+            mouseMoveListener.start();
+            updateActionStatus();
+            updateStatusLine();
+        }
+
+        @Override
+        public void mouseUp(MouseEvent anEvent) {
+            updateActionStatus();
+            updateStatusLine();
+            mouseMoveListener.stop();
+        }
+    }
+
+    /**
+     * Inner class that listens for mouse events in order to update the status
+     * bar.
+     */
+    private class TextControlMouseMoveListener implements MouseMoveListener {
+
+        private Text control;
+        private int lastSelectionCount;
+
+        public TextControlMouseMoveListener(Text control) {
+            this.control = control;
+        }
+
+        public void start() {
+            lastSelectionCount = dataAreaText.getSelectionCount();
+            control.addMouseMoveListener(this);
+        }
+
+        public void stop() {
+            control.removeMouseMoveListener(this);
+        }
+
+        public void mouseMove(MouseEvent paramMouseEvent) {
+            if (lastSelectionCount != dataAreaText.getSelectionCount()) {
+                updateActionStatus();
+                updateStatusLine();
+                lastSelectionCount = dataAreaText.getSelectionCount();
+            }
+        }
+    }
 }

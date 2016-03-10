@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -29,11 +30,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -67,13 +70,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
 
     private String statusMessage;
 
-    private Action cutAction;
-    private Action copyAction;
-    private Action pasteAction;
-    private Action undoAction;
-    private Action redoAction;
-    private Action deleteAction;
-    private Action selectAllAction;
     private Action findReplaceAction;
 
     private Composite parent;
@@ -166,6 +162,29 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         statusMessage = message;
     }
 
+    public void updateActionStatus() {
+
+        updateActionStatus(ActionFactory.CUT.getId());
+        updateActionStatus(ActionFactory.COPY.getId());
+        updateActionStatus(ActionFactory.PASTE.getId());
+        updateActionStatus(ActionFactory.DELETE.getId());
+        updateActionStatus(ActionFactory.UNDO.getId());
+        updateActionStatus(ActionFactory.REDO.getId());
+        updateActionStatus(ActionFactory.SELECT_ALL.getId());
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        actionBars.updateActionBars();
+    }
+
+    public void updateActionStatus(String actionID) {
+
+        IActionBars actionBars = getEditorSite().getActionBars();
+        IAction action = actionBars.getGlobalActionHandler(actionID);
+        if (action != null) {
+            action.setEnabled(action.isEnabled());
+        }
+    }
+
     /**
      * Updates the status line.
      */
@@ -230,81 +249,50 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         dataAreaText.setFocus();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Action getCutAction() {
-        if (cutAction == null) {
-            cutAction = new CutAction();
-        }
-        return cutAction;
+    public boolean canCut() {
+        return hasSelection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Action getCopyAction() {
-        if (copyAction == null) {
-            copyAction = new CopyAction();
-        }
-        return copyAction;
+    public void doCut() {
+        dataAreaText.cut();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Action getPasteAction() {
-        if (pasteAction == null) {
-            pasteAction = new PasteAction();
-        }
-        return pasteAction;
+    public boolean canCopy() {
+        return hasSelection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Action getUndoAction() {
-        if (undoAction == null) {
-            undoAction = new UndoAction();
-        }
-        return undoAction;
+    public void doCopy() {
+        dataAreaText.copy();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Action getRedoAction() {
-        if (redoAction == null) {
-            redoAction = new RedoAction();
-        }
-        return redoAction;
+    public boolean canPaste() {
+        return ClipboardHelper.hasTextContents();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Action getDeleteAction() {
-        if (deleteAction == null) {
-            deleteAction = new DeleteAction();
-        }
-        return deleteAction; // deleteAction;
+    public void doPaste() {
+        dataAreaText.paste();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Action getSelectAllAction() {
-        if (selectAllAction == null) {
-            selectAllAction = new SelectAllAction();
-        }
-        return null; // selectAllAction;
+    public boolean canDelete() {
+        return true;
+    }
+
+    @Override
+    public void doDelete() {
+        dataAreaText.delete();
+    }
+
+    @Override
+    public boolean canSelectAll() {
+        return true;
+    }
+
+    @Override
+    public void doSelectAll() {
+        dataAreaText.selectAll();
     }
 
     /**
@@ -432,6 +420,13 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
         Pattern pattern = Pattern.compile("[^a-zA-Z_0-9]");
         Matcher matcher = pattern.matcher(aChar);
         return matcher.find();
+    }
+
+    private boolean hasSelection() {
+        if (getSelection().y > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -707,172 +702,6 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
     }
 
     /**
-     * Class, that overrides the original "paste" action of the SWT Text widget.
-     * <ul>
-     * <li>Text of multiple lines<br>
-     * Lines are expanded to the current line length of the editor. If one line
-     * exceeds the line length of the editor, all new line characters are
-     * removed.</li>
-     * <li>Single line text<br>
-     * The text is inserted as it is.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#replaceTextRange(Point, String)
-     */
-    private class PasteAction extends Action {
-        @Override
-        public void run() {
-            if (dataAreaText.hasFocus()) {
-                String text = getClipboardText();
-                if (StringHelper.isNullOrEmpty(text)) {
-                    return;
-                }
-                replaceSelection(text);
-            }
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.PASTE.getId();
-        }
-    };
-
-    /**
-     * Class, that overrides the original "copy" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>Text is returned with no linefeeds, of course.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#getSelectionText(Point, String)
-     */
-    private class CopyAction extends Action {
-        @Override
-        public void run() {
-            if (dataAreaText.hasFocus()) {
-                String text = getSelectionText();
-                if (StringHelper.isNullOrEmpty(text)) {
-                    return;
-                }
-                setClipboardText(text);
-            }
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.COPY.getId();
-        }
-    }
-
-    /**
-     * Class, that overrides the original "cut" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>Text is returned with no linefeeds, of course.</li>
-     * </ul>
-     * 
-     * @see DataAreaText#getSelectionText(Point, String)
-     */
-    private class CutAction extends Action {
-        @Override
-        public void run() {
-            if (dataAreaText.hasFocus()) {
-                String text = getSelectionText();
-                if (StringHelper.isNullOrEmpty(text)) {
-                    return;
-                }
-                setClipboardText(text);
-                replaceSelection("");
-            }
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.CUT.getId();
-        }
-    }
-
-    /**
-     * Class, that overrides the original "undo" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>no action</li>
-     * </ul>
-     */
-    private class UndoAction extends Action {
-        @Override
-        public void run() {
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.UNDO.getId();
-        }
-    }
-
-    /**
-     * Class, that overrides the original "redo" action of the SWT Text widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>no action</li>
-     * </ul>
-     */
-    private class RedoAction extends Action {
-        @Override
-        public void run() {
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.REDO.getId();
-        }
-    }
-
-    /**
-     * Class, that overrides the original "delete" action of the SWT Text
-     * widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>no action</li>
-     * </ul>
-     */
-    private class DeleteAction extends Action {
-        @Override
-        public void run() {
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.DELETE.getId();
-        }
-    }
-
-    /**
-     * Class, that overrides the original "select all" action of the SWT Text
-     * widget.
-     * <p>
-     * Intended behavior:
-     * <ul>
-     * <li>no action</li>
-     * </ul>
-     */
-    private class SelectAllAction extends Action {
-        @Override
-        public void run() {
-        }
-
-        @Override
-        public String getId() {
-            return ActionFactory.SELECT_ALL.getId();
-        }
-    }
-
-    /**
      * Class, used to resize the editor area (<i>see: dataAreaText</i>) when the
      * editor part is resized.
      */
@@ -915,9 +744,9 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
                 setEditorDirty();
             }
 
-//            updateActionsStatus();
+            updateActionStatus();
             updateStatusLine();
-            
+
             updateOffsetLabels(anEvent.topIndex);
         }
 
