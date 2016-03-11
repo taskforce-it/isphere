@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/10/2016">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/11/2016">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -7192,8 +7192,8 @@ srccssid=  "00273">
      D                 S                   like(bool_t)  inz(cFalse)                                
      D cmdChgObjD      S                   like(cmdLong_t)                                          
      D cmd             S                   like(cmdLong_t)                                          
-     D delayedErrorMsg...                                                                           
-     D                 DS                  likeds(msg_t) inz                                        
+     D isCmdMissingError...                                                                         
+     D                 S               n   inz(cFalse)                                              
       /free                                                                                         
                                                                                                     
          p_setAppMsgFile(i_msgFile: i_msgFileLib);                                                  
@@ -7468,14 +7468,10 @@ srccssid=  "00273">
                                                                                                     
          // Ausführen >>EXECUTE<< implizit, weil                                                    
          // kein Pre-Prozessor Abschnitt gefunden werden konnte                                     
-         clear delayedErrorMsg;                                                                     
+         isCmdMissingError = cFalse;                                                                
          if (execCmdImplizit = cTrue);                                                              
             if (cmd = '');                                                                          
-               clear PRZ0028;                                                                       
-               PRZ00281 = f1.file;                                                                  
-               PRZ00282 = f1.lib;                                                                   
-               PRZ00283 = f1.mbr;                                                                   
-               delayedErrorMsg = f_newMsg('PRZ0028': PRZ0028: cTYPE_ESCAPE);                        
+               isCmdMissingError = cTrue;                                                           
             else;                                                                                   
                cmdString = cmd;                                                                     
                exsr replaceVar;                                                                     
@@ -7499,8 +7495,12 @@ srccssid=  "00273">
             p_sndMsg(f_newMsg('PRZ0024': PRZ0024: cTYPE_ESCAPE));                                   
          endif;                                                                                     
                                                                                                     
-         if (delayedErrorMsg.ID <> '');                                                             
-            p_sndMsg(delayedErrorMsg);                                                              
+         if (isCmdMissingError);                                                                    
+            clear PRZ0028;                                                                          
+            PRZ00281 = f1.file;                                                                     
+            PRZ00282 = f1.lib;                                                                      
+            PRZ00283 = f1.mbr;                                                                      
+            p_sndMsg(f_newMsg('PRZ0028': PRZ0028: cTYPE_ESCAPE));                                   
          endif;                                                                                     
                                                                                                     
          return;                                                                                    
