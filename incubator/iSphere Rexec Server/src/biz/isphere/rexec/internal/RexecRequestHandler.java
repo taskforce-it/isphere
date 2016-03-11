@@ -40,8 +40,11 @@ public class RexecRequestHandler extends Thread {
      * @param client - client socket
      */
     public RexecRequestHandler(Socket client) {
+        super();
+
         this.client = client;
         this.auxSocket = null;
+        setName("Rexec-Handler: " + client.getInetAddress().getHostAddress());
     }
 
     /**
