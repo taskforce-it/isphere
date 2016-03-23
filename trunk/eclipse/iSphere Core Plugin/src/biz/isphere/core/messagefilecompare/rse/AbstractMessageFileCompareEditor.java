@@ -174,10 +174,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnSelectLeftMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
+                String libraryName = null;
+                String messageFileName = null;
                 if (getEditorInput().getLeftMessageFile() != null) {
                     connectionName = getEditorInput().getLeftMessageFile().getConnectionName();
+                    libraryName=getEditorInput().getLeftMessageFile().getLibrary();
+                    messageFileName=getEditorInput().getLeftMessageFile().getName();
                 }
-                RemoteObject messageFile = performSelectRemoteObject(connectionName);
+                RemoteObject messageFile = performSelectRemoteObject(connectionName, libraryName, messageFileName);
                 if (messageFile != null) {
                     selectionChanged = true;
                     isLeftMessageFileValid = false;
@@ -203,10 +207,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnSelectRightMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
+                String libraryName = null;
+                String messageFileName = null;
                 if (getEditorInput().getRightMessageFile() != null) {
                     connectionName = getEditorInput().getRightMessageFile().getConnectionName();
+                    libraryName=getEditorInput().getRightMessageFile().getLibrary();
+                    messageFileName=getEditorInput().getRightMessageFile().getName();
                 }
-                RemoteObject messageFile = performSelectRemoteObject(connectionName);
+                RemoteObject messageFile = performSelectRemoteObject(connectionName, libraryName, messageFileName);
                 if (messageFile != null) {
                     selectionChanged = true;
                     isRightMessageFileValid = false;
@@ -1006,7 +1014,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         super.dispose();
     }
 
-    protected abstract RemoteObject performSelectRemoteObject(String connectionName);
+    protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName);
 
     protected abstract LabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
 
