@@ -24,7 +24,6 @@ public class Preload implements LpexPreload {
 
     public void preload() {
 
-        System.out.println("*** Initialising Lpex editor ... ***");
         MenuExtension menuExtension = new MenuExtension();
         menuExtension.initializeLpexEditor();
 
