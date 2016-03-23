@@ -25,10 +25,12 @@ public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
     }
 
     @Override
-    protected RemoteObject performSelectRemoteObject(String connectionName) {
+    protected RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String messageFileName) {
 
         ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
         RSESelectObjectDialog dialog = RSESelectObjectDialog.createSelectMessageFileDialog(getShell(), connection);
+        dialog.setLibraryName(libraryName);
+        dialog.setMessageFileName(messageFileName);
         if (dialog.open() == RSESelectObjectDialog.CANCEL) {
             return null;
         }

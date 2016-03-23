@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
@@ -42,6 +43,8 @@ public class RSESelectObjectDialog extends XDialog {
 
     private ISeriesConnection connection;
     private String objectType;
+    private String libraryName;
+    private String objectName;
 
     private ISeriesConnectionCombo connectionCombo;
     private ISeriesObjectPrompt objectPrompt;
@@ -57,6 +60,26 @@ public class RSESelectObjectDialog extends XDialog {
 
         this.connection = connection;
         this.objectType = objectType;
+        this.libraryName = "";
+        this.objectName = "";
+    }
+
+    public void setLibraryName(String libraryName) {
+
+        if (libraryName == null) {
+            this.libraryName = "";
+        } else {
+            this.libraryName = libraryName;
+        }
+    }
+
+    public void setMessageFileName(String objectName) {
+
+        if (objectName == null) {
+            this.objectName = "";
+        } else {
+            this.objectName = objectName;
+        }
     }
 
     @Override
@@ -181,14 +204,22 @@ public class RSESelectObjectDialog extends XDialog {
             connectionCombo.getCombo().setText(connectionName);
         }
 
-        String libraryName = getDialogBoundsSettings().get(LIBRARY_NAME);
-        if (libraryName != null) {
+        if (!StringHelper.isNullOrEmpty(libraryName)) {
             objectPrompt.getLibraryCombo().setText(libraryName);
+        } else {
+            String libraryName = getDialogBoundsSettings().get(LIBRARY_NAME);
+            if (libraryName != null) {
+                objectPrompt.getLibraryCombo().setText(libraryName);
+            }
         }
 
-        String fileName = getDialogBoundsSettings().get(FILE_NAME);
-        if (fileName != null) {
-            objectPrompt.getObjectCombo().setText(fileName);
+        if (!StringHelper.isNullOrEmpty(objectName)) {
+            objectPrompt.getObjectCombo().setText(objectName);
+        } else {
+            String fileName = getDialogBoundsSettings().get(FILE_NAME);
+            if (fileName != null) {
+                objectPrompt.getObjectCombo().setText(fileName);
+            }
         }
     }
 
