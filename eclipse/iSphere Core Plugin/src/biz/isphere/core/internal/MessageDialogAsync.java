@@ -27,7 +27,7 @@ public class MessageDialogAsync {
     public static void displayError(final String title, final String message) {
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.E_R_R_O_R, message);
+                MessageDialog.openError(Display.getDefault().getActiveShell(), title, message);
             }
         });
     }
