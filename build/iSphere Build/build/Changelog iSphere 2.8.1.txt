@@ -1,4 +1,9 @@
 
+Changelog: iSphere 2.8.1.b009 (release candidate)
+-------------------------------------------------
+ • Changed the compare message file editor to suggest the current 
+   message file and library, when prompting for a new file.
+
 Changelog: iSphere 2.8.1.b008 (release candidate)
 -------------------------------------------------
  • Updated the STRPREPRC utility to 1.9.1. (added message
