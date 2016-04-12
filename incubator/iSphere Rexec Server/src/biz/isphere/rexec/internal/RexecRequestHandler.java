@@ -8,6 +8,8 @@
 
 package biz.isphere.rexec.internal;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +27,8 @@ public class RexecRequestHandler extends Thread {
     private static final int BUFFER_SIZE = 4096;
 
     private static final byte NULL_CHAR = 0;
+    private static final byte ERROR_CHAR = 1;
+    private static final String EOF = "\n";
 
     private State state;
 
@@ -33,6 +37,7 @@ public class RexecRequestHandler extends Thread {
     private Socket auxSocket;
 
     private final boolean waitForAdditionalData = false;
+    private boolean captureCommandOutput = true;
 
     /**
      * Constructs a new Rexec request handler.
@@ -65,9 +70,11 @@ public class RexecRequestHandler extends Thread {
 
             int clientReadTimeout = Preferences.getInstance().getSocketReadTimeout();
             client.setSoTimeout(clientReadTimeout);
+            client.setSoLinger(true, 5);
 
             InputStream inputStream = client.getInputStream();
             OutputStream outputStream = client.getOutputStream();
+            OutputStream errorStream = outputStream;
 
             state = State.CLIENT_PORT;
 
@@ -81,6 +88,8 @@ public class RexecRequestHandler extends Thread {
                         remotePort = Integer.parseInt(portNumber);
                         if (remoteAddr != null && remotePort > 0) {
                             auxSocket = new Socket(remoteAddr, remotePort);
+                            auxSocket.setSoLinger(true, 5);
+                            errorStream = auxSocket.getOutputStream();
                         }
                     }
                     state = State.USER;
@@ -113,13 +122,25 @@ public class RexecRequestHandler extends Thread {
 
             String message = validateUser(user, password);
             if (message != null) {
-                failure(outputStream, message);
+                failure(outputStream, errorStream, message);
             } else {
+                File cmdLog = null;
                 try {
-                    Runtime.getRuntime().exec(command);
+                    Process process;
+                    if (captureCommandOutput) {
+                        cmdLog = File.createTempFile("RexecRequestHandler_", "");
+                        process = Runtime.getRuntime().exec(command + " > " + cmdLog);
+                    } else {
+                        process = Runtime.getRuntime().exec(command);
+                    }
                     success(outputStream);
+
                 } catch (Throwable e) {
-                    failure(outputStream, e.getLocalizedMessage());
+                    failure(outputStream, errorStream, e.getLocalizedMessage());
+                } finally {
+                    if (cmdLog != null) {
+                        cmdLog.delete();
+                    }
                 }
             }
 
@@ -136,10 +157,11 @@ public class RexecRequestHandler extends Thread {
      * @param localizedMessage
      * @throws IOException
      */
-    private void failure(OutputStream outputStream, String message) throws IOException {
-        outputStream.write(0);
-        outputStream.write(message.getBytes());
-        outputStream.flush();
+    private void failure(OutputStream outputStream, OutputStream errorStream, String message) throws IOException {
+        outputStream.write(ERROR_CHAR);
+        errorStream.write(message.getBytes());
+        errorStream.write(EOF.getBytes());
+        errorStream.flush();
     }
 
     /**
@@ -147,8 +169,58 @@ public class RexecRequestHandler extends Thread {
      * @throws IOException
      */
     private void success(OutputStream outputStream) throws IOException {
-        outputStream.write(0);
+        outputStream.write(NULL_CHAR);
         outputStream.flush();
+    }
+
+    private void returnLogData(OutputStream outputStream, File cmdLog) {
+
+        if (cmdLog == null) {
+            return;
+        }
+
+        FileInputStream inStream = null;
+
+        try {
+
+            waitForFile(cmdLog);
+
+            byte[] buffer = new byte[4096];
+            int count = 0;
+            boolean hasData = false;
+            inStream = new FileInputStream(cmdLog);
+            while ((count = inStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, count);
+                hasData = true;
+            }
+
+            if (hasData) {
+                outputStream.write(EOF.getBytes());
+            }
+
+        } catch (Throwable e) {
+            // ignore any errors
+        } finally {
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                } catch (IOException e1) {
+                    // ignore errors on close
+                }
+            }
+        }
+    }
+
+    private void waitForFile(File cmdLog) {
+        int timeOut = 1000;
+        while ((timeOut > 0) && (timeOut > 0 && (!cmdLog.exists() || cmdLog.length() == 0))) {
+            try {
+                Thread.sleep(100);
+                timeOut = timeOut - 100;
+            } catch (InterruptedException e) {
+                timeOut = 0;
+            }
+        }
     }
 
     /**
