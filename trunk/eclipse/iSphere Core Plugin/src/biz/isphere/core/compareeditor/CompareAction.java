@@ -82,24 +82,38 @@ public class CompareAction {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.Member_not_found_colon_LEFT);
                     return;
-                } else if (!leftMember.exists()) {
-                    displayMemberNotFoundMessage(leftMember);
-                    return;
+                } else {
+                    // Retrieve name parts before exist(), because the file name
+                    // is lost if the member does not exist.
+                    String library = leftMember.getLibrary();
+                    String file = leftMember.getSourceFile();
+                    String member = leftMember.getMember();
+                    if (!leftMember.exists()) {
+                        displayMemberNotFoundMessage(library, file, member);
+                        return;
+                    }
                 }
 
                 if (rightMember == null) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.Member_not_found_colon_RIGHT);
                     return;
-                } else if (!rightMember.exists()) {
-                    displayMemberNotFoundMessage(rightMember);
-                    return;
+                } else {
+                    // Retrieve name parts before exist(), because the file name
+                    // is lost if the member does not exist.
+                    String library = rightMember.getLibrary();
+                    String file = rightMember.getSourceFile();
+                    String member = rightMember.getMember();
+                    if (!rightMember.exists()) {
+                        displayMemberNotFoundMessage(library, file, member);
+                        return;
+                    }
                 }
 
                 IEditorPart editor = findMemberInEditor(leftMember);
                 if (editor != null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                        Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, Messages.bind(
+                        Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                     return;
                 }
 
@@ -182,9 +196,9 @@ public class CompareAction {
 
             }
 
-            private void displayMemberNotFoundMessage(Member leftMember) {
+            private void displayMemberNotFoundMessage(String library, String file, String member) {
                 String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
-                    leftMember.getMember(), leftMember.getSourceFile(), leftMember.getMember() });
+                    library, file, member });
                 MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, message);
             }
         });
