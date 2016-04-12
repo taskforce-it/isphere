@@ -78,15 +78,21 @@ public class CompareAction {
                     return;
                 }
 
-                if (leftMember == null || !leftMember.exists()) {
+                if (leftMember == null) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.Member_not_found_colon_LEFT);
                     return;
+                } else if (!leftMember.exists()) {
+                    displayMemberNotFoundMessage(leftMember);
+                    return;
                 }
 
-                if (rightMember == null || !rightMember.exists()) {
+                if (rightMember == null) {
                     MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
                         Messages.Member_not_found_colon_RIGHT);
+                    return;
+                } else if (!rightMember.exists()) {
+                    displayMemberNotFoundMessage(rightMember);
                     return;
                 }
 
@@ -174,6 +180,12 @@ public class CompareAction {
                     (cleanupListener.get(index)).cleanup();
                 }
 
+            }
+
+            private void displayMemberNotFoundMessage(Member leftMember) {
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                    leftMember.getMember(), leftMember.getSourceFile(), leftMember.getMember() });
+                MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, message);
             }
         });
     }
