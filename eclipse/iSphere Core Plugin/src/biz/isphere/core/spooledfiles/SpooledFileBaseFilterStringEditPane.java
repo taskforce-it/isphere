@@ -26,12 +26,13 @@ public class SpooledFileBaseFilterStringEditPane {
     private Text outqLibText;
     private Text userDataText;
     private Text formTypeText;
+    private Text nameText;
 
     public void createContents(Composite composite_prompts, ModifyListener keyListener, String inputFilterString) {
 
         Label userLabel = new Label(composite_prompts, SWT.NONE);
         userLabel.setText(Messages.User + ":");
-        userText = WidgetFactory.createText(composite_prompts);
+        userText = WidgetFactory.createUpperCaseText(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
         userText.setLayoutData(gd);
@@ -39,7 +40,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label outqLabel = new Label(composite_prompts, SWT.NONE);
         outqLabel.setText(Messages.Output_queue + ":");
-        outqText = WidgetFactory.createText(composite_prompts);
+        outqText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         outqText.setLayoutData(gd);
@@ -47,15 +48,23 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label outqLibLabel = new Label(composite_prompts, SWT.NONE);
         outqLibLabel.setText(Messages.___Library + ":");
-        outqLibText = WidgetFactory.createText(composite_prompts);
+        outqLibText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         outqLibText.setLayoutData(gd);
         outqLibText.setTextLimit(10);
 
+        Label nameLabel = new Label(composite_prompts, SWT.NONE);
+        nameLabel.setText(Messages.Spooled_file_name + ":");
+        nameText = WidgetFactory.createUpperCaseText(composite_prompts);
+        gd = new GridData();
+        gd.widthHint = 75;
+        nameText.setLayoutData(gd);
+        nameText.setTextLimit(10);
+
         Label dtaLabel = new Label(composite_prompts, SWT.NONE);
         dtaLabel.setText(Messages.User_data + ":");
-        userDataText = WidgetFactory.createText(composite_prompts);
+        userDataText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         userDataText.setLayoutData(gd);
@@ -63,7 +72,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
         typeLabel.setText(Messages.Form_type + ":");
-        formTypeText = WidgetFactory.createText(composite_prompts);
+        formTypeText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
         formTypeText.setLayoutData(gd);
@@ -77,6 +86,7 @@ public class SpooledFileBaseFilterStringEditPane {
         outqLibText.addModifyListener(keyListener);
         userDataText.addModifyListener(keyListener);
         formTypeText.addModifyListener(keyListener);
+        nameText.addModifyListener(keyListener);
 
     }
 
@@ -87,26 +97,42 @@ public class SpooledFileBaseFilterStringEditPane {
     public void doInitializeFields(String inputFilterString) {
         if (inputFilterString != null) {
             SpooledFileFilter filter = new SpooledFileFilter(inputFilterString);
-            if (filter.getUser() != null)
+
+            if (filter.getUser() != null) {
                 userText.setText(filter.getUser());
-            else
+            } else {
                 userText.setText("*");
-            if (filter.getOutputQueue() != null)
+            }
+
+            if (filter.getOutputQueue() != null) {
                 outqText.setText(filter.getOutputQueue());
-            else
+            } else {
                 outqText.setText("*");
-            if (filter.getOutputQueueLibrary() != null)
+            }
+
+            if (filter.getOutputQueueLibrary() != null) {
                 outqLibText.setText(filter.getOutputQueueLibrary());
-            else
+            } else {
                 outqLibText.setText("*");
-            if (filter.getUserData() != null)
+            }
+
+            if (filter.getUserData() != null) {
                 userDataText.setText(filter.getUserData());
-            else
+            } else {
                 userDataText.setText("*");
-            if (filter.getFormType() != null)
+            }
+
+            if (filter.getFormType() != null) {
                 formTypeText.setText(filter.getFormType());
-            else
+            } else {
                 formTypeText.setText("*");
+            }
+
+            if (filter.getName() != null) {
+                nameText.setText(filter.getName());
+            } else {
+                nameText.setText("*");
+            }
         }
     }
 
@@ -116,6 +142,7 @@ public class SpooledFileBaseFilterStringEditPane {
         outqLibText.setText("*");
         userDataText.setText("*");
         formTypeText.setText("*");
+        nameText.setText("*");
     }
 
     public boolean areFieldsComplete() {
@@ -123,18 +150,40 @@ public class SpooledFileBaseFilterStringEditPane {
     }
 
     public String getFilterString() {
+
         SpooledFileFilter filter = new SpooledFileFilter();
-        if ((userText.getText() != null) && (userText.getText().length() > 0) && (!userText.getText().equals("*")))
+
+        if (isValidFilterValue(userText.getText())) {
             filter.setUser(userText.getText().toUpperCase());
-        if ((outqText.getText() != null) && (outqText.getText().length() > 0) && (!outqText.getText().equals("*")))
+        }
+
+        if (isValidFilterValue(outqText.getText())) {
             filter.setOutputQueue(outqText.getText().toUpperCase());
-        if ((outqLibText.getText() != null) && (outqLibText.getText().length() > 0) && (!outqLibText.getText().equals("*")))
+        }
+
+        if (isValidFilterValue(outqLibText.getText())) {
             filter.setOutputQueueLibrary(outqLibText.getText().toUpperCase());
-        if ((userDataText.getText() != null) && (userDataText.getText().length() > 0) && (!userDataText.getText().equals("*")))
+        }
+
+        if (isValidFilterValue(userDataText.getText())) {
             filter.setUserData(userDataText.getText().toUpperCase());
-        if ((formTypeText.getText() != null) && (formTypeText.getText().length() > 0) && (!formTypeText.getText().equals("*")))
+        }
+
+        if (isValidFilterValue(formTypeText.getText())) {
             filter.setFormType(formTypeText.getText().toUpperCase());
+        }
+
+        if (isValidFilterValue(nameText.getText())) {
+            filter.setName(nameText.getText().toUpperCase());
+        }
+
         return filter.getFilterString();
     }
 
+    private boolean isValidFilterValue(String text) {
+        if ((text != null) && (text.length() > 0) && (!text.equals("*"))) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -11,6 +11,7 @@ package biz.isphere.core.spooledfiles;
 public class SpooledFileFilter {
 
     private String user;
+    private String name;
     private String outputQueue;
     private String outputQueueLibrary;
     private String userData;
@@ -31,6 +32,14 @@ public class SpooledFileFilter {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOutputQueue() {
@@ -66,51 +75,82 @@ public class SpooledFileFilter {
     }
 
     public String getFilterString() {
+
         StringBuffer filterString = new StringBuffer();
-        if (user == null)
+
+        if (user == null) {
             filterString.append("*/");
-        else
+        } else {
             filterString.append(user + "/");
-        if (outputQueue == null)
+        }
+
+        if (outputQueue == null) {
             filterString.append("*/");
-        else
+        } else {
             filterString.append(outputQueue + "/");
-        if (outputQueueLibrary == null)
+        }
+
+        if (outputQueueLibrary == null) {
             filterString.append("*/");
-        else
+        } else {
             filterString.append(outputQueueLibrary + "/");
-        if (userData == null)
+        }
+
+        if (userData == null) {
             filterString.append("*/");
-        else
+        } else {
             filterString.append(userData + "/");
-        if (formType == null)
+        }
+
+        if (formType == null) {
             filterString.append("*/");
-        else
+        } else {
             filterString.append(formType + "/");
+        }
+
+        if (name == null) {
+            filterString.append("*/");
+        } else {
+            filterString.append(name + "/");
+        }
+
         return filterString.toString();
     }
 
     private void setFilters(String filterString) {
+
         int index;
-        index = filterString.indexOf("/");
-        String temp = filterString.substring(0, index);
-        if (!temp.equals("*")) setUser(temp);
-        String parseText = filterString.substring(index + 1);
-        index = parseText.indexOf("/");
-        temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setOutputQueue(temp);
-        parseText = parseText.substring(index + 1);
-        index = parseText.indexOf("/");
-        temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setOutputQueueLibrary(temp);
-        parseText = parseText.substring(index + 1);
-        index = parseText.indexOf("/");
-        temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setUserData(temp);
-        parseText = parseText.substring(index + 1);
-        index = parseText.indexOf("/");
-        temp = parseText.substring(0, index);
-        if (!temp.equals("*")) setFormType(temp);
+        String[] values = filterString.split("/");
+
+        index = 0; // User
+        if (values.length > index && !values[index].equals("*")) {
+            setUser(values[index]);
+        }
+
+        index++; // Output Queue
+        if (values.length > index && !values[index].equals("*")) {
+            setOutputQueue(values[index]);
+        }
+
+        index++; // Output Queue Library
+        if (values.length > index && !values[index].equals("*")) {
+            setOutputQueueLibrary(values[index]);
+        }
+        
+        index++; // User Data
+        if (values.length > index && !values[index].equals("*")) {
+            setUserData(values[index]);
+        }
+
+        index++; // Form Type
+        if (values.length > index && !values[index].equals("*")) {
+            setFormType(values[index]);
+        }
+
+        index++; // Name
+        if (values.length > index && !values[index].equals("*")) {
+            setName(values[index]);
+        }
     }
 
 }

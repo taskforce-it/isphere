@@ -39,6 +39,7 @@
              EXPORT     SYMBOL('SPLF_SETOUTPUTQUEUE')
              EXPORT     SYMBOL('SPLF_SETUSERDATA')
              EXPORT     SYMBOL('SPLF_SETDATETIME')
+             EXPORT     SYMBOL('SPLF_SETNAME')
              EXPORT     SYMBOL('SPLF_BUILD')
              EXPORT     SYMBOL('SPLF_CLEAR')
 
