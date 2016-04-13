@@ -1019,7 +1019,7 @@ public class Messages extends NLS {
     public static String Relationship_for_valid_replies_colon;
 
     public static String This_version_requires_updating_the_iSphere_library;
-    
+
     public static String Updating_the_iSphere_library_is_optional_colon;
 
     public static String Working;
@@ -1165,7 +1165,9 @@ public class Messages extends NLS {
     public static String Tooltip_Reset_warning_messages;
 
     public static String Spooled_file_name;
-    
+
+    public static String ASTERISK_generic_ASTERISK;
+
     /*
      * Warning messages
      */
