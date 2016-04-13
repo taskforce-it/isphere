@@ -10,9 +10,13 @@ package biz.isphere.core.messagefileeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -38,6 +42,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -48,6 +53,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
@@ -61,6 +67,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import com.ibm.as400.access.AS400;
 
 public class MessageDescriptionViewer {
+
+    private static final int TABLE_REFRESH_DELAY_TIME = 500;
+    private long lastSchedule;
 
     private AS400 as400;
     private String connectionName;
@@ -81,6 +90,8 @@ public class MessageDescriptionViewer {
     private Combo includeText;
     private Object[] messageDescriptions;
     private IWorkbenchPartSite site;
+
+    private RefreshJob refreshJob = new RefreshJob();
 
     private class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object element, int columnIndex) {
@@ -238,9 +249,19 @@ public class MessageDescriptionViewer {
             @Override
             public void keyReleased(KeyEvent keyEvent) {
                 String text = textMsgIdFilter.getText();
-                if (!text.equals(filterMessage)) {
+                if (!text.equals(filterMessageId)) {
                     filterMessageId = text;
-                    _tableViewer.refresh();
+                    // _tableViewer.refresh();
+                    long currentSchedule = Calendar.getInstance().getTimeInMillis();
+                    refreshJob.cancel();
+                    refreshJob.setFocusControl(textMsgIdFilter);
+                    if (keyEvent.character == SWT.CR) {
+                       refreshJob.schedule();
+                    } else {
+                        refreshJob.schedule(TABLE_REFRESH_DELAY_TIME);
+                    }
+                    System.out.println("Delay: " + (lastSchedule - currentSchedule) + " / Size: " + _tableViewer.getTable().getItems().length);
+                    lastSchedule = currentSchedule;
                 }
             }
         });
@@ -259,7 +280,17 @@ public class MessageDescriptionViewer {
                 String text = textFilter.getText();
                 if (!text.equals(filterMessage)) {
                     filterMessage = text;
-                    _tableViewer.refresh();
+                    // _tableViewer.refresh();
+                    long currentSchedule = Calendar.getInstance().getTimeInMillis();
+                    refreshJob.cancel();
+                    refreshJob.setFocusControl(textFilter);
+                    if (keyEvent.character == SWT.CR) {
+                        refreshJob.schedule();
+                     } else {
+                         refreshJob.schedule(TABLE_REFRESH_DELAY_TIME);
+                     }
+                    System.out.println("Delay: " + (lastSchedule - currentSchedule));
+                    lastSchedule = currentSchedule;
                 }
             }
         });
@@ -739,4 +770,36 @@ public class MessageDescriptionViewer {
         selectedItems = new Object[0];
     }
 
+    private class RefreshJob extends WorkbenchJob {
+        
+        private Control focusControl;
+        
+        public RefreshJob() {
+            super("Refresh Job");
+            setSystem(true); // set to false to show progress to user
+        }
+        
+        public void setFocusControl(Control control) {
+            focusControl = control;
+        }
+
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            monitor.beginTask("Refreshing", IProgressMonitor.UNKNOWN);
+            textFilter.setEnabled(false);
+            textMsgIdFilter.setEnabled(false);
+            textFilter.update();
+            textMsgIdFilter.update();
+            System.out.println("Refreshing ...");
+            _tableViewer.refresh();
+            textFilter.setEnabled(true);
+            textMsgIdFilter.setEnabled(true);
+            
+            if (focusControl != null) {
+                focusControl.setFocus();
+            }
+            
+            monitor.done();
+            return Status.OK_STATUS;
+        };
+    }
 }
