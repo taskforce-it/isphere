@@ -41,6 +41,10 @@
      d                               10D   DatFmt(*ISO) Const                   --> End date
      d                                8T   TimFmt(*ISO) Const                   --> End time
 
+     dSPLF_setName...
+     d                 PR
+     d                               10A   Const                                --> SplF Name
+
      dSPLF_build...
      d                 PR            10S 0                                      <-- Handle
 

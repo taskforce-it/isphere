@@ -77,6 +77,10 @@ public class SpooledFileFactory {
                             new SPLF_setFormType().run(as400, filter.getFormType());
                         }
 
+                        if (filter.getName() != null) {
+                            new SPLF_setName().run(as400, filter.getName());
+                        }
+
                         int handle = new SPLF_build().run(as400);
 
                         if (handle > 0) {

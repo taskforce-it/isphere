@@ -21,7 +21,7 @@
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL) DBGVIEW(*LIST)');                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -90,6 +90,8 @@
      dGIStrTime        S              8T   TimFmt(*ISO)                         Start time
      dGIEndDate        S             10D   DatFmt(*ISO)                         End date
      dGIEndTime        S              8T   TimFmt(*ISO)                         End time
+     dGISlcName        S              1A                                        Selec. by SplF name
+     dGIName           S             10A                                        SplF Name
 
       //*==========================================================================================*
       //* Prepare                                                                                  *
@@ -133,6 +135,10 @@
        GIStrTime = *LoVal;
        GIEndDate = *LoVal;
        GIEndTime = *LoVal;
+
+       // Selection by spooled file name
+       GISlcName = *Blank;
+       GIName = *Blanks;
 
        // Leave procedure
        Return;
@@ -322,6 +328,34 @@
        //*------------------------------------------------------------------------------------------
 
      pSPLF_setDateTime...
+     p                 E
+
+      //*==========================================================================================*
+      //* Set Name                                                                                 *
+      //*==========================================================================================*
+
+     pSPLF_setName...
+     p                 B                   Export
+     dSPLF_setName...
+     d                 PI
+     d LPName                        10A   Const                                --> SplF Name
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       // Selection by name
+       GISlcName = 'X';
+       GIName = LPName;
+
+       // Leave procedure
+       Return;
+
+      /End-Free
+
+       //*------------------------------------------------------------------------------------------
+
+     pSPLF_setName...
      p                 E
 
       //*==========================================================================================*
@@ -667,3 +701,4 @@
 
      pSPLF_clear...
      p                 E
+
