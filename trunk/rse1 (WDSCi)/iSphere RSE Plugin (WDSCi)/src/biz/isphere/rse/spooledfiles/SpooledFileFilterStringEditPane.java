@@ -35,7 +35,7 @@ public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane 
     @Override
     public Control createContents(Composite parent) {
 
-        int nbrColumns = 2;
+        int nbrColumns = 3;
         Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
         ((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
 
