@@ -35,6 +35,7 @@ public class SpooledFileBaseFilterStringEditPane {
         userText = WidgetFactory.createUpperCaseText(composite_prompts);
         GridData gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         userText.setLayoutData(gd);
         userText.setTextLimit(10);
 
@@ -43,6 +44,7 @@ public class SpooledFileBaseFilterStringEditPane {
         outqText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         outqText.setLayoutData(gd);
         outqText.setTextLimit(10);
 
@@ -51,6 +53,7 @@ public class SpooledFileBaseFilterStringEditPane {
         outqLibText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         outqLibText.setLayoutData(gd);
         outqLibText.setTextLimit(10);
 
@@ -59,14 +62,18 @@ public class SpooledFileBaseFilterStringEditPane {
         nameText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 1;
         nameText.setLayoutData(gd);
         nameText.setTextLimit(10);
+        Label nameGenericLabel = new Label(composite_prompts, SWT.NONE);
+        nameGenericLabel.setText("*GENERIC*");
 
         Label dtaLabel = new Label(composite_prompts, SWT.NONE);
         dtaLabel.setText(Messages.User_data + ":");
         userDataText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         userDataText.setLayoutData(gd);
         userDataText.setTextLimit(10);
 
@@ -75,6 +82,7 @@ public class SpooledFileBaseFilterStringEditPane {
         formTypeText = WidgetFactory.createUpperCaseText(composite_prompts);
         gd = new GridData();
         gd.widthHint = 75;
+        gd.horizontalSpan = 2;
         formTypeText.setLayoutData(gd);
         formTypeText.setTextLimit(10);
 
