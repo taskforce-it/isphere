@@ -45,6 +45,7 @@ class Sample implements ActionListener {
         jpanel.setLayout(new BorderLayout());
         host.setText("localhost");
         host.setText("DEV530.RZKH.DE");
+        host.setText("ghentw.gfd.de");
         host.setMinimumSize(new Dimension(50, 25));
         host.setEditable(true);
         jpanel.add(host, "Center");

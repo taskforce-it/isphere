@@ -35,6 +35,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
     private Button checkboxServerEnabled;
     private Text textServerListenerPort;
     private Text textSocketReadTimeout;
+    private Button checkboxCaptureOutput;
 
     public ISphereRexec() {
         super();
@@ -125,6 +126,23 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
             }
         });
 
+        Label labelCaptureOutput = new Label(groupAddHeader, SWT.NONE);
+        labelCaptureOutput.setLayoutData(createLabelLayoutData());
+        labelCaptureOutput.setText("Capture output");
+        labelCaptureOutput.setToolTipText("Specifies whether or not the command output is redirected to a text file and send back to the client.");
+
+        checkboxCaptureOutput= WidgetFactory.createCheckbox(groupAddHeader);
+        checkboxCaptureOutput.setToolTipText("Specifies whether or not the command output is redirected to a text file and send back to the client.");
+        checkboxCaptureOutput.setLayoutData(createLayoutData(1));
+        checkboxCaptureOutput.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                if (validateCaptureOutput()) {
+                    validateAll();
+                }
+                setControlsEnablement();
+            }
+        });
+
     }
 
     @Override
@@ -152,6 +170,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         preferences.setServerEnabled(checkboxServerEnabled.getSelection());
         preferences.setListenerPort(IntHelper.tryParseInt(textServerListenerPort.getText(), preferences.getInitialListenerPort()));
         preferences.setSocketReadTimeout(IntHelper.tryParseInt(textSocketReadTimeout.getText(), preferences.getInitialSocketReadTimeout()));
+        preferences.setCaptureOutput(checkboxCaptureOutput.getSelection());
     }
 
     protected void setScreenToValues() {
@@ -163,6 +182,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         checkboxServerEnabled.setSelection(preferences.isServerEnabled());
         textServerListenerPort.setText(Integer.toString(preferences.getListenerPort()));
         textSocketReadTimeout.setText(Integer.toString(preferences.getSocketReadTimeout()));
+        checkboxCaptureOutput.setSelection(preferences.isCaptureOutput());
 
         validateAll();
         setControlsEnablement();
@@ -175,6 +195,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         checkboxServerEnabled.setSelection(preferences.getInitialServerEnabled());
         textServerListenerPort.setText(Integer.toString(preferences.getInitialListenerPort()));
         textSocketReadTimeout.setText(Integer.toString(preferences.getInitialSocketReadTimeout()));
+        checkboxCaptureOutput.setSelection(preferences.getInitialCaptureOutput());
 
         validateAll();
         setControlsEnablement();
@@ -195,6 +216,11 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         return true;
     }
 
+    private boolean validateCaptureOutput() {
+
+        return true;
+    }
+
     private boolean validateAll() {
 
         if (!validateServerEnabled()) {
@@ -209,6 +235,10 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
             return false;
         }
 
+        if (!validateCaptureOutput()) {
+            return false;
+        }
+
         return clearError();
     }
 
@@ -217,9 +247,11 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         if (checkboxServerEnabled.getSelection()) {
             textServerListenerPort.setEnabled(true);
             textSocketReadTimeout.setEnabled(true);
+            checkboxCaptureOutput.setEnabled(true);
         } else {
             textServerListenerPort.setEnabled(false);
             textSocketReadTimeout.setEnabled(false);
+            checkboxCaptureOutput.setEnabled(false);
         }
     }
 

@@ -212,6 +212,13 @@ public class RExecClient extends SocketClient {
             throw new IOException(buffer.toString());
         } else if (ch < 0) {
             throw new IOException("Server closed connection.");
+        } else {
+            StringBuilder buffer = new StringBuilder();
+
+            while ((ch = _input_.read()) != -1 /*&& ch != '\n'*/) {
+                buffer.append((char)ch);
+            }
+            System.out.println(buffer.toString());
         }
     }
 
@@ -272,10 +279,12 @@ public class RExecClient extends SocketClient {
 
             RExecClient client = new RExecClient();
             client.connect("localhost");
+//            client.connect("ghentw.gfd.de");
             // client.rexec("foo", "baa", "cmd /C dir", true);
             // client.rexec("foo", "baa",
             // "cmd /C c:/Program Files (x86)/Notepad++/notepad++.exe", true);
-            client.rexec("foo", "baa", "cmd /C \"c:/Program Files (x86)/Notepad++/notepad++.exe\"", true);
+//            client.rexec("RADDATZ", "JUST4YOU", "DSPMSG MSGQ(GFD_NEUSS/RADDATZ) OUTPUT(*PRINT)", true);
+            client.rexec("foo", "baa", "cmd /C dir", true);
 
         } catch (IOException e) {
             e.printStackTrace();

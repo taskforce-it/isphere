@@ -16,6 +16,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rexec.Messages;
 import biz.isphere.rexec.preferences.Preferences;
 
@@ -37,7 +40,6 @@ public class RexecRequestHandler extends Thread {
     private Socket auxSocket;
 
     private final boolean waitForAdditionalData = false;
-    private boolean captureCommandOutput = true;
 
     /**
      * Constructs a new Rexec request handler.
@@ -127,15 +129,18 @@ public class RexecRequestHandler extends Thread {
                 File cmdLog = null;
                 try {
                     Process process;
-                    if (captureCommandOutput) {
-                        cmdLog = File.createTempFile("RexecRequestHandler_", "");
+                    if (Preferences.getInstance().isCaptureOutput()) {
+                        cmdLog = File.createTempFile("iSphere_RExec_", ".cmdlog");
                         process = Runtime.getRuntime().exec(command + " > " + cmdLog);
                     } else {
+                        cmdLog = null;
                         process = Runtime.getRuntime().exec(command);
                     }
-                    success(outputStream);
+                    success(outputStream, cmdLog);
 
                 } catch (Throwable e) {
+                    ISpherePlugin.logError("*** Remote Command Error ***: " + command, e);
+                    MessageDialogAsync.displayError("RExec Error", command + "\n" + ExceptionHelper.getLocalizedMessage(e));
                     failure(outputStream, errorStream, e.getLocalizedMessage());
                 } finally {
                     if (cmdLog != null) {
@@ -168,8 +173,9 @@ public class RexecRequestHandler extends Thread {
      * @param outputStream
      * @throws IOException
      */
-    private void success(OutputStream outputStream) throws IOException {
+    private void success(OutputStream outputStream, File cmdLog) throws IOException {
         outputStream.write(NULL_CHAR);
+        returnLogData(outputStream, cmdLog);
         outputStream.flush();
     }
 

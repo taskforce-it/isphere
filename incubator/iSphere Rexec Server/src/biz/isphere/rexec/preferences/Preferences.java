@@ -47,6 +47,8 @@ public final class Preferences {
 
     private static final String SERVER_SOCKET_READ_TIMEOUT = REXEC_SERVER + "SERVER_SOCKET_READ_TIMEOUT"; //$NON-NLS-1$
 
+    private static final String CAPTURE_OUTPUT = REXEC_SERVER + "CAPTURE_OUTPUT"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -93,6 +95,10 @@ public final class Preferences {
         return preferenceStore.getInt(SERVER_SOCKET_READ_TIMEOUT);
     }
 
+    public boolean isCaptureOutput() {
+        return preferenceStore.getBoolean(CAPTURE_OUTPUT);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -109,6 +115,10 @@ public final class Preferences {
         preferenceStore.setValue(SERVER_SOCKET_READ_TIMEOUT, timeout);
     }
 
+    public void setCaptureOutput(boolean enabled) {
+        preferenceStore.setValue(CAPTURE_OUTPUT, enabled);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -118,6 +128,7 @@ public final class Preferences {
         preferenceStore.setDefault(SERVER_ENABLED, getInitialServerEnabled());
         preferenceStore.setDefault(SERVER_LISTENER_PORT, getInitialListenerPort());
         preferenceStore.setDefault(SERVER_SOCKET_READ_TIMEOUT, getInitialSocketReadTimeout());
+        preferenceStore.setDefault(CAPTURE_OUTPUT, getInitialCaptureOutput());
     }
 
     /*
@@ -134,5 +145,9 @@ public final class Preferences {
 
     public int getInitialSocketReadTimeout() {
         return 500;
+    }
+
+    public boolean getInitialCaptureOutput() {
+        return true;
     }
 }
