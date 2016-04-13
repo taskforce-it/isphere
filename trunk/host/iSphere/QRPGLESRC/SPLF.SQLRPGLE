@@ -21,7 +21,7 @@
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL) DBGVIEW(*LIST)');                          *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -91,7 +91,13 @@
      dGIEndDate        S             10D   DatFmt(*ISO)                         End date
      dGIEndTime        S              8T   TimFmt(*ISO)                         End time
      dGISlcName        S              1A                                        Selec. by SplF name
-     dGIName           S             10A                                        SplF Name
+     dGIName           S             10A   Varying                              SplF Name
+     dGICmpName        S              1A                                        Comp. type SplF name
+
+     d EXACT_MATCH     c                   '-'
+     d TRAILING_MATCH  c                   '1'
+     d LEADING_MATCH   c                   '2'
+     d GENERIC_MATCH   c                   '3'
 
       //*==========================================================================================*
       //* Prepare                                                                                  *
@@ -139,6 +145,7 @@
        // Selection by spooled file name
        GISlcName = *Blank;
        GIName = *Blanks;
+       GICmpName = *Blank;
 
        // Leave procedure
        Return;
@@ -331,7 +338,7 @@
      p                 E
 
       //*==========================================================================================*
-      //* Set Name                                                                                 *
+      //* Set Name   (*generic*)                                                                   *
       //*==========================================================================================*
 
      pSPLF_setName...
@@ -346,7 +353,25 @@
 
        // Selection by name
        GISlcName = 'X';
-       GIName = LPName;
+       GIName = %Trim(LPName);
+
+       Select;
+       When %Len(GIName) >= 3 And
+            %SubSt(GIName: 1:1) = '*' And
+            %SubSt(GIName: %Len(GIName):1) = '*';
+         GICmpName = GENERIC_MATCH;
+         GIName = %SubSt(GIName: 2: %Len(GIName) - 2);
+       When %Len(GIName) >= 2 And
+            %SubSt(GIName: %Len(GIName): 1) = '*';
+         GICmpName = LEADING_MATCH;
+         GIName = %SubSt(GIName: 1: %Len(GIName) - 1);
+       When %Len(GIName) >= 2 And
+            %SubSt(GIName: 1: 1) = '*';
+         GICmpName = TRAILING_MATCH;
+         GIName = %SubSt(GIName: 2);
+       Other;
+         GICmpName = EXACT_MATCH;
+       EndSl;
 
        // Leave procedure
        Return;
@@ -388,6 +413,8 @@
      dLICrtDate        S             10D   DatFmt(*ISO)                         Creation date
      dLICrtTime        S              8T   TimFmt(*ISO)                         Creation time
      dLISts            S             10A                                        Status
+
+     dLIOffs           S             10I 0
 
       //*------------------------------------------------------------------------------------------*
 
@@ -557,6 +584,29 @@
                LIUsrSpc +                    // Addr. user space
                GHDROffLstSct +               // Offset to list area
                ((LICNT - 1) * GHDRSizeEtry); // Offset to record
+
+               // Spooled file name
+               If GISlcName = 'X' And GIName <> '*';
+                 Select;
+                 When GICmpName = EXACT_MATCH;
+                   If GIName <> SPLFSplF;
+                     Iter;
+                   EndIf;
+                 When GICmpName = LEADING_MATCH;
+                   If GIName <> %SubSt(SPLFSplF: 1: %Len(GIName));
+                     Iter;
+                   EndIf;
+                 When GICmpName = TRAILING_MATCH;
+                   LIOffs = %Len(%TrimR(SPLFSplF)) - %Len(GIName);
+                   If LIOffs < 0 Or GIName <> %SubSt(SPLFSplF: 1 + LIOffs);
+                     Iter;
+                   EndIf;
+                 When GICmpName = GENERIC_MATCH;
+                   If %Scan(GIName: SPLFSplF) = 0;
+                     Iter;
+                   EndIf;
+                 EndSl;
+               EndIf;
 
                // Convert creation date
                LICrtDate = %Date(SPLFCrtDate : *CYMD0);
