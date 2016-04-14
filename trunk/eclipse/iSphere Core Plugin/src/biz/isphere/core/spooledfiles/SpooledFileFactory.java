@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 
 import com.ibm.as400.access.AS400;
 
@@ -156,6 +158,11 @@ public class SpooledFileFactory {
 
                             new SPLF_clear().run(as400, handle);
 
+                        } else {
+                            String message = new SPLF_getErrorMessage().run(as400);
+                            if (!StringHelper.isNullOrEmpty(message)) {
+                                MessageDialogAsync.displayError(message);
+                            }
                         }
 
                     } finally {

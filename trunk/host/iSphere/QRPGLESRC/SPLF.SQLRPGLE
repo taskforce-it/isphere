@@ -41,6 +41,10 @@
 
      d/Copy QCPYSRC,NBRRNG
 
+      // Procedure prototypes for modul 'RTVMSGD'
+
+     d/Copy QCPYSRC,RTVMSGD
+
       // Procedure prototype for procedure 'QUSCRTUS'
 
      d/Copy QCPYSRC,QUSCRTUS
@@ -94,6 +98,8 @@
      dGIName           S             10A   Varying                              SplF Name
      dGICmpName        S              1A                                        Comp. type SplF name
 
+     dGIErrorMsg       S            256A   Varying
+
      d EXACT_MATCH     c                   '-'
      d TRAILING_MATCH  c                   '1'
      d LEADING_MATCH   c                   '2'
@@ -146,6 +152,9 @@
        GISlcName = *Blank;
        GIName = *Blanks;
        GICmpName = *Blank;
+
+       // API Error Message
+       GIErrorMsg = '';
 
        // Leave procedure
        Return;
@@ -420,11 +429,8 @@
 
       /Free
 
-       // Set handle
-       LIHDL =
-       NBRRNG_getNumber(
-        'HANDLE' // --> Number range
-       );
+       // Initialize handle
+       LIHDL = -1;
 
        // Create user space
        Reset ERRC0100;
@@ -574,6 +580,12 @@
 
            If ERRCExcId = *Blanks;
 
+             // Set handle
+             LIHDL =
+             NBRRNG_getNumber(
+              'HANDLE' // --> Number range
+             );
+
              // Set pointer of generic header
              GHDR0300Ptr = LIUsrSpc;
 
@@ -697,6 +709,8 @@
 
              EndFor;
 
+           Else;
+             GIErrorMsg = rtvMsgText(ERRCExcId: 'QCPFMSG': '*LIBL': ERRCExcDta);
            EndIf;
 
          EndIf;
@@ -719,6 +733,29 @@
        //*------------------------------------------------------------------------------------------
 
      pSPLF_build...
+     p                 E
+
+      //*==========================================================================================*
+      //* Set Name   (*generic*)                                                                   *
+      //*==========================================================================================*
+
+     pSPLF_getErrorMessage...
+     p                 B                   Export
+     dSPLF_getErrorMessage...
+     d                 PI           256A
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       // Leave procedure
+       Return GIErrorMsg;
+
+      /End-Free
+
+       //*------------------------------------------------------------------------------------------
+
+     pSPLF_getErrorMessage...
      p                 E
 
       //*==========================================================================================*

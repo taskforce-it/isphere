@@ -48,6 +48,9 @@
      dSPLF_build...
      d                 PR            10S 0                                      <-- Handle
 
+     dSPLF_getErrorMessage...
+     d                 PR           256A
+
      dSPLF_clear...
      d                 PR
      d                               10S 0 Const                                --> Handle

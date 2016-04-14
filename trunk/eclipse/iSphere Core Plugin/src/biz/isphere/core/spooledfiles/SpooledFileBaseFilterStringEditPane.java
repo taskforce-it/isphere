@@ -33,37 +33,25 @@ public class SpooledFileBaseFilterStringEditPane {
         Label userLabel = new Label(composite_prompts, SWT.NONE);
         userLabel.setText(Messages.User + ":");
         userText = WidgetFactory.createUpperCaseText(composite_prompts);
-        GridData gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 2;
-        userText.setLayoutData(gd);
+        userText.setLayoutData(createLayoutData(2));
         userText.setTextLimit(10);
 
         Label outqLabel = new Label(composite_prompts, SWT.NONE);
         outqLabel.setText(Messages.Output_queue + ":");
         outqText = WidgetFactory.createUpperCaseText(composite_prompts);
-        gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 2;
-        outqText.setLayoutData(gd);
+        outqText.setLayoutData(createLayoutData(2));
         outqText.setTextLimit(10);
 
         Label outqLibLabel = new Label(composite_prompts, SWT.NONE);
         outqLibLabel.setText(Messages.___Library + ":");
         outqLibText = WidgetFactory.createUpperCaseText(composite_prompts);
-        gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 2;
-        outqLibText.setLayoutData(gd);
+        outqLibText.setLayoutData(createLayoutData(2));
         outqLibText.setTextLimit(10);
 
         Label nameLabel = new Label(composite_prompts, SWT.NONE);
         nameLabel.setText(Messages.Spooled_file_name + ":");
         nameText = WidgetFactory.createUpperCaseText(composite_prompts);
-        gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 1;
-        nameText.setLayoutData(gd);
+        nameText.setLayoutData(createLayoutData(1));
         nameText.setTextLimit(10);
         Label nameGenericLabel = new Label(composite_prompts, SWT.NONE);
         nameGenericLabel.setText("*GENERIC*");
@@ -71,19 +59,13 @@ public class SpooledFileBaseFilterStringEditPane {
         Label dtaLabel = new Label(composite_prompts, SWT.NONE);
         dtaLabel.setText(Messages.User_data + ":");
         userDataText = WidgetFactory.createUpperCaseText(composite_prompts);
-        gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 2;
-        userDataText.setLayoutData(gd);
+        userDataText.setLayoutData(createLayoutData(2));
         userDataText.setTextLimit(10);
 
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
         typeLabel.setText(Messages.Form_type + ":");
         formTypeText = WidgetFactory.createUpperCaseText(composite_prompts);
-        gd = new GridData();
-        gd.widthHint = 75;
-        gd.horizontalSpan = 2;
-        formTypeText.setLayoutData(gd);
+        formTypeText.setLayoutData(createLayoutData(2));
         formTypeText.setTextLimit(10);
 
         resetFields();
@@ -96,6 +78,13 @@ public class SpooledFileBaseFilterStringEditPane {
         formTypeText.addModifyListener(keyListener);
         nameText.addModifyListener(keyListener);
 
+    }
+
+    private GridData createLayoutData(int numColumns) {
+        GridData gd = new GridData();
+        gd.widthHint = 75;
+        gd.horizontalSpan = numColumns;
+        return gd;
     }
 
     public Control getInitialFocusControl() {
