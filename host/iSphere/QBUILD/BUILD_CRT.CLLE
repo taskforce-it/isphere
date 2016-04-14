@@ -529,6 +529,9 @@
              STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003010') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003011') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create programs: iSphere Retrieve Message API   */

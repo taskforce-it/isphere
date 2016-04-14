@@ -1,6 +1,6 @@
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
+     /* Copyright (c) 2012-2016 iSphere Project Owners                        */
      /* All rights reserved. This program and the accompanying materials      */
      /* are made available under the terms of the Common Public License v1.0  */
      /* which accompanies this distribution, and is available at              */
@@ -8,7 +8,7 @@
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /*                                                                       */
-     /* Spooled Files                                                         */
+     /* Number Range                                                          */
      /*                                                                       */
      /*-----------------------------------------------------------------------*/
      /* STRPREPRC Compile Options:                                            */
@@ -17,12 +17,10 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
      /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
-     /*         >>PARM<<  BNDSRVPGM(*LIBL/NBRRNG *LIBL/RTVMSGD);              */
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-     /*         >>PARM<<  TGTRLS(&TR);                                        */
-     /*         >>PARM<<  MODULE(&LI/SPLF);                                   */
+     /*         >>PARM<<  MODULE(&LI/RTVMSGD);                                */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
-     /*         >>PARM<<  TEXT('Spooled Files');                              */
+     /*         >>PARM<<  TEXT('Retrieve Message Description');               */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -32,17 +30,8 @@
              STRPGMEXP
 
      /* Export */
-             EXPORT     SYMBOL('SPLF_PREPARE')
-             EXPORT     SYMBOL('SPLF_SETJOB')
-             EXPORT     SYMBOL('SPLF_SETUSER')
-             EXPORT     SYMBOL('SPLF_SETFORMTYPE')
-             EXPORT     SYMBOL('SPLF_SETOUTPUTQUEUE')
-             EXPORT     SYMBOL('SPLF_SETUSERDATA')
-             EXPORT     SYMBOL('SPLF_SETDATETIME')
-             EXPORT     SYMBOL('SPLF_SETNAME')
-             EXPORT     SYMBOL('SPLF_BUILD')
-             EXPORT     SYMBOL('SPLF_GETERRORMESSAGE')
-             EXPORT     SYMBOL('SPLF_CLEAR')
+             EXPORT     SYMBOL('RTVMSGD_rtvMsgHelp')
+             EXPORT     SYMBOL('RTVMSGD_rtvMsgText')
 
      /* End Export */
              ENDPGMEXP
