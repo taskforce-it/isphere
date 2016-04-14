@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -27,6 +28,9 @@ public class SpooledFileBaseFilterStringEditPane {
     private Text userDataText;
     private Text formTypeText;
     private Text nameText;
+
+    public SpooledFileBaseFilterStringEditPane() {
+    }
 
     public void createContents(Composite composite_prompts, ModifyListener keyListener, String inputFilterString) {
 
@@ -143,7 +147,39 @@ public class SpooledFileBaseFilterStringEditPane {
     }
 
     public boolean areFieldsComplete() {
-        return true;
+        return false;
+    }
+
+    public String validateInput() {
+
+        String error;
+
+        error = validateSpooledFileName();
+        if (error != null) {
+            return error;
+        }
+
+        return null;
+    }
+
+    private String validateSpooledFileName() {
+
+        String spooledFileName = nameText.getText();
+        if (spooledFileName.equals("*")) {
+            return null;
+        }
+
+        if (spooledFileName.startsWith("*") && spooledFileName.endsWith("*")) {
+            if (spooledFileName.length() < 3) {
+                return Messages.bind(Messages.The_value_in_field_A_is_not_valid, Messages.Spooled_file_name);
+            }
+            spooledFileName = spooledFileName.substring(1, spooledFileName.length() - 1);
+            if (StringHelper.isNullOrEmpty(spooledFileName.trim())) {
+                return Messages.bind(Messages.The_value_in_field_A_is_not_valid, Messages.Spooled_file_name);
+            }
+        }
+
+        return null;
     }
 
     public String getFilterString() {
