@@ -1168,6 +1168,8 @@ public class Messages extends NLS {
 
     public static String ASTERISK_generic_ASTERISK;
 
+    public static String The_value_in_field_A_is_not_valid;
+    
     /*
      * Warning messages
      */

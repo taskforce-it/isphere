@@ -77,4 +77,21 @@ public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane 
         return null;
     }
 
+    @Override
+    protected SystemMessage validateStringInput() {
+
+        SystemMessage systemMessage = super.validateStringInput();
+        if (systemMessage != null) {
+            return systemMessage;
+        }
+
+        String errorText = base.validateInput();
+        if (errorText == null) {
+            return null;
+        }
+
+        fireChangeEvent(new SystemMessage("", "", "", SystemMessage.ERROR, errorText, null));
+        return systemMessage;
+    }
+
 }
