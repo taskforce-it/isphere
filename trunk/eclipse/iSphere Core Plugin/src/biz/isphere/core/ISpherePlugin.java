@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
 
-    private static final String MIN_SERVER_VERSION = "2.8.2"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "2.9.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;
