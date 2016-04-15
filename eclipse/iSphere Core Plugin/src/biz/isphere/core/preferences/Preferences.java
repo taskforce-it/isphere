@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,6 +174,12 @@ public final class Preferences {
 
     private static final String APPEARANCE_TIME_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
 
+    private static final String APPEARANCE_AUTO_REFRESH = APPEARANCE + "AUTO_REFRESH."; //$NON-NLS-1$
+
+    private static final String APPEARANCE_AUTO_REFRESH_DELAY = APPEARANCE_AUTO_REFRESH + "DELAY"; //$NON-NLS-1$
+
+    private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
+    
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -429,6 +435,14 @@ public final class Preferences {
         return preferenceStore.getString(APPEARANCE_TIME_FORMAT);
     }
 
+    public int getAutoRefreshDelay() {
+        return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_DELAY);
+    }
+
+    public int getAutoRefreshThreshold() {
+        return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_THRESHOLD);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -593,6 +607,14 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_TIME_FORMAT, dateFormatLabel);
     }
 
+    public void setAutoRefreshDelay(int delayMillis) {
+        preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_DELAY, delayMillis);
+    }
+
+    public void setAutoRefreshThreshold(int threshold) {
+        preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_THRESHOLD, threshold);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -651,6 +673,9 @@ public final class Preferences {
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
+
+        preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
+        preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
     }
 
     /*
@@ -993,6 +1018,14 @@ public final class Preferences {
 
     public String getDefaultTimeFormatLabel() {
         return APPEARANCE_TIME_FORMAT_LOCALE;
+    }
+
+    public int getDefaultAutoRefreshDelay() {
+        return 400;
+    }
+
+    public int getDefaultAutoRefreshThreshold() {
+        return 5000;
     }
 
     /**

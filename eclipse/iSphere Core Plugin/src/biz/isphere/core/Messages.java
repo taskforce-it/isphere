@@ -1169,6 +1169,16 @@ public class Messages extends NLS {
     public static String ASTERISK_generic_ASTERISK;
 
     public static String The_value_in_field_A_is_not_valid;
+
+    public static String Auto_refresh_delay;
+    
+    public static String Delay_ms;
+    
+    public static String Tooltip_Delay_ms;
+    
+    public static String Threshold_items;
+    
+    public static String Tooltip_Threshold_items;
     
     /*
      * Warning messages

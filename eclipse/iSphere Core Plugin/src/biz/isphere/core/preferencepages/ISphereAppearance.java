@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -31,6 +33,8 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
     private Combo textDateFormat;
     private Combo textTimeFormat;
+    private Text textAutoRefreshDelay;
+    private Text textAutoRefreshThreshold;
     private Button chkboxResetWarnings;
     private Label labelResetWarnings;
 
@@ -63,31 +67,59 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         main.setLayout(new GridLayout(2, false));
         main.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        Group group = new Group(main, SWT.NONE);
-        group.setLayout(new GridLayout(3, false));
-        group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
-        group.setText(Messages.DateAndTimeFormats);
+        // Date and Time Formats
+        Group groupDateAndTimeFormats = new Group(main, SWT.NONE);
+        groupDateAndTimeFormats.setLayout(new GridLayout(3, false));
+        groupDateAndTimeFormats.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupDateAndTimeFormats.setText(Messages.DateAndTimeFormats);
 
-        Label labelDateFormat = new Label(group, SWT.NONE);
+        Label labelDateFormat = new Label(groupDateAndTimeFormats, SWT.NONE);
         labelDateFormat.setLayoutData(createLabelLayoutData());
         labelDateFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_date_values);
         labelDateFormat.setText(Messages.Date_long_colon);
 
-        textDateFormat = WidgetFactory.createReadOnlyCombo(group);
+        textDateFormat = WidgetFactory.createReadOnlyCombo(groupDateAndTimeFormats);
         textDateFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_date_values);
         textDateFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textDateFormat.setItems(Preferences.getInstance().getDateFormatLabels());
 
-        Label labelTimeFormat = new Label(group, SWT.NONE);
+        Label labelTimeFormat = new Label(groupDateAndTimeFormats, SWT.NONE);
         labelTimeFormat.setLayoutData(createLabelLayoutData());
         labelTimeFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_time_values);
         labelTimeFormat.setText(Messages.Time_long_colon);
 
-        textTimeFormat = WidgetFactory.createReadOnlyCombo(group);
+        textTimeFormat = WidgetFactory.createReadOnlyCombo(groupDateAndTimeFormats);
         textTimeFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_time_values);
         textTimeFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textTimeFormat.setItems(Preferences.getInstance().getTimeFormatLabels());
 
+        // Auto refresh delay
+        Group groupAutoRefreshDelay = new Group(main, SWT.NONE);
+        groupAutoRefreshDelay.setLayout(new GridLayout(3, false));
+        groupAutoRefreshDelay.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupAutoRefreshDelay.setText(Messages.Auto_refresh_delay);
+
+        Label labelAutoRefreshDelay = new Label(groupAutoRefreshDelay, SWT.NONE);
+        labelAutoRefreshDelay.setLayoutData(createLabelLayoutData());
+        labelAutoRefreshDelay.setToolTipText(Messages.Tooltip_Delay_ms);
+        labelAutoRefreshDelay.setText(Messages.Delay_ms);
+
+        textAutoRefreshDelay = WidgetFactory.createIntegerText(groupAutoRefreshDelay);
+        textAutoRefreshDelay.setTextLimit(4);
+        textAutoRefreshDelay.setToolTipText(Messages.Tooltip_Delay_ms);
+        textAutoRefreshDelay.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        Label labelAutoRefreshThreshold = new Label(groupAutoRefreshDelay, SWT.NONE);
+        labelAutoRefreshThreshold.setLayoutData(createLabelLayoutData());
+        labelAutoRefreshThreshold.setToolTipText(Messages.Tooltip_Threshold_items);
+        labelAutoRefreshThreshold.setText(Messages.Threshold_items);
+
+        textAutoRefreshThreshold = WidgetFactory.createIntegerText(groupAutoRefreshDelay);
+        textAutoRefreshThreshold.setTextLimit(5);
+        textAutoRefreshThreshold.setToolTipText(Messages.Tooltip_Threshold_items);
+        textAutoRefreshThreshold.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        // Reset warnings
         chkboxResetWarnings = WidgetFactory.createCheckbox(main);
         chkboxResetWarnings.setToolTipText(Messages.bind(Messages.Tooltip_Reset_warning_messages, Messages.Do_not_show_this_message_again));
 
@@ -121,6 +153,8 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         preferences.setDateFormatLabel(textDateFormat.getText());
         preferences.setTimeFormatLabel(textTimeFormat.getText());
+        preferences.setAutoRefreshDelay(IntHelper.tryParseInt(textAutoRefreshDelay.getText(), preferences.getDefaultAutoRefreshDelay()));
+        preferences.setAutoRefreshThreshold(IntHelper.tryParseInt(textAutoRefreshThreshold.getText(), preferences.getDefaultAutoRefreshThreshold()));
 
         if (chkboxResetWarnings.getSelection()) {
             DoNotAskMeAgainDialog.resetAllMessages();
@@ -138,6 +172,8 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         textDateFormat.setText(preferences.getDateFormatLabel());
         textTimeFormat.setText(preferences.getTimeFormatLabel());
+        textAutoRefreshDelay.setText(Integer.toString(preferences.getAutoRefreshDelay()));
+        textAutoRefreshThreshold.setText(Integer.toString(preferences.getAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);
 
         checkAllValues();
@@ -150,6 +186,8 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         textDateFormat.setText(preferences.getDefaultDateFormatLabel());
         textTimeFormat.setText(preferences.getDefaultTimeFormatLabel());
+        textAutoRefreshDelay.setText(Integer.toString(preferences.getDefaultAutoRefreshDelay()));
+        textAutoRefreshThreshold.setText(Integer.toString(preferences.getDefaultAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);
 
         checkAllValues();
