@@ -111,52 +111,72 @@
 		</tr>
 	</table>
 	<p>
-		<br> <a id="by_hand"></a>
+	<a id="by_hand"></a>
 	<h2>Doing it By Hand</h2>
+	<p>
+	There are two options for uploading the library by hand: FTP and IFS<br>
+	For both options you start with retrieving the save file from the plug-in jar file.
+	<p>
+	<h3>1. Retrieving the save file from the plug-in</h3>
 	<ul>
-		<li>Download the iSphere update site zip file from <a
-			href="https://sourceforge.net/projects/isphere/" target=_blank>SourceForge</a>.
-		</li>
-		<li>Unzip the content of the zip file into a directory of your
-			choice of your hard disk.</li>
-		<li>Navigate into directory <i>/plugins</i>.
-			<p>
-				<img src="./assets/iSphere_unzipped.png" />
-			<p></li>
-		<li>Rename biz.isphere.core_x.x.x.<i>jar</i> to
-			biz.isphere.core_x.x.x.<i>zip</i>. It is the largest .jar file in the
-			directory. Right click &gt; Rename or F2.
-		</li>
-		<li>Unzip biz.isphere.core_x.x.x.zip
-			<p>
-				<img src="./assets/iSphere_core_unzipped.png" />
-			<p>
-		</li>
-		<li>Navigate into directory <i>biz.isphere.core_x.x.x/Server</i>
-			<p>
-				<img src="./assets/iSphere_Server.png" />
-			<p></li>
-		<li>Copy file <i>ISPHERE</i> into a directory of your choice of
-			your hard disk. This is the save file you will need to transfer to
-			IBM i. It's easier to copy it to a directory with a short path rather
-			than typing a long path into the FTP command window below.
-		</li>
-		<li>Switch to a 5250 session.</li>
-		<li>Create an empty save file in QGPL:
-			<p>
-			<div class="code">CRTSAVF FILE(QGPL/ISPHERE) TEXT('iSphere')</div>
-	</p>
+	<li>Download the iSphere update site zip file from <a
+		href="https://sourceforge.net/projects/isphere/" target=_blank>SourceForge</a>.
 	</li>
+	<li>Unzip the content of the zip file into a directory of your
+		choice of your hard disk.</li>
+	<li>Navigate into directory <i>/plugins</i>.
+		<p><img src="./assets/iSphere_unzipped.png" /><p>
+	</li>
+	<li>Rename biz.isphere.core_x.x.x.<i>jar</i> to
+		biz.isphere.core_x.x.x.<i>zip</i>. It is the largest .jar file in the
+		directory. Right click &gt; Rename or F2.
+	</li>
+	<li>Unzip biz.isphere.core_x.x.x.zip
+		<p><img src="./assets/iSphere_core_unzipped.png" /><p>
+	</li>
+	<li>Navigate into directory <i>biz.isphere.core_x.x.x/Server</i>
+		<p><img src="./assets/iSphere_Server.png" /><p>
+	</li>
+	<li>Copy file <i>ISPHERE</i> into a directory of your choice of
+		your hard disk. This is the save file you will need to transfer to
+		IBM i. It's easier to copy it to a directory with a short path rather
+		than typing a long path into the FTP command window below.
+	</li>
+	<li>Switch to a 5250 session.</li>
+	<li>Create an empty save file in QGPL:
+		<p><div class="code">CRTSAVF FILE(QGPL/ISPHERE) TEXT('iSphere')</div><p>
+	</li>
+	</ul>
+	<p>
+	Now decide whether you want to upload the save file with FTP or via the IFS. Choose 
+	option 2.a for FTP and option 2.5 for IFS. 
+	<p>
+	<h3>2.a Uploading save file with FTP</h3>
+	<ul>
 	<li>Back at the PC, open a command window, start an FTP session
 		and transfer the local <i>ISPHERE</i> file into the <i>ISPHERE</i>
 		save file on your host using <u><b>binary</b></u> mode. The following
 		example uses <i>NAMEFMT 0</i> (OS/400 File Naming Convention), but of 
 		course you can also use <i>NAMEFMT 1</i> (OS/400 Integrated File System 
 		Naming Format).
-		<p>
-			<img src="./assets/ftp_upload.png" />
-		<p>
+		<p><img src="./assets/ftp_upload.png" /><p>
 	</li>
+	</ul>
+	<p>
+	<h3>2.b Uploading save file via IFS</h3>
+	<ul>
+	<li>Back at the PC, copy save file <i>ISPHERE.SAVF</i> to a folder on your IBM i.
+		<p><img src="./assets/ifs_upload.png" /><p>
+	</li>
+	<li>Switch to a 5250 session.</li>
+	<li>Copy the save file from the IFS into the save file previously created:
+		<p><div class="code">CPYFRMSTMF FROMSTMF('/home/Temp/isphere.savf')<br>
+		                     TOMBR('/qsys.lib/qgpl.lib/isphere.file') MBROPT(*REPLACE)</div><p>
+	</li>
+	</ul>
+	<p>
+	<h3>3. Restoring library ISPHERE</h3>
+	<ul>
 	<li>On the 5250 session, restore library ISPHERE from the save
 		file <i>QGPL/ISPHERE</i>:
 		<p>
