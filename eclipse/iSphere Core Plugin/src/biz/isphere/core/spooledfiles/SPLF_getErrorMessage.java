@@ -37,7 +37,7 @@ public class SPLF_getErrorMessage {
 
             } else {
 
-                message = pcml.getStringValue("SPLF_getErrorMessage.message");
+                message = pcml.getStringValue("SPLF_getErrorMessage.message", 0);
                 
             }
 
