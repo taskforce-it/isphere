@@ -19,6 +19,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.spooledfiles.SpooledFileFilter;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
@@ -51,7 +52,9 @@ public class SpooledFileSubSystemFactory extends SubSystemConfiguration {
     protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr) {
         ISystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
-        strings.add("*CURRENT/*/*/*/*/");
+        SpooledFileFilter splfFilter = new SpooledFileFilter();
+        splfFilter.setUser("*CURRENT");
+        strings.add(splfFilter.getFilterString());
         try {
             ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
             filter.setType("spooled file");
