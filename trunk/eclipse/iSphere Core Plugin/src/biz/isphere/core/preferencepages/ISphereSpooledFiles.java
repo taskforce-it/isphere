@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -42,9 +45,6 @@ import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
-
-    private Button buttonLoadAsynchronously;
-    private boolean isLoadAsynchronously;
 
     private Button buttonDefaultFormatText;
     private Button buttonDefaultFormatHTML;
@@ -85,6 +85,11 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private Button chkBoxAdjustFontSize;
     private boolean adjustFontSize;
     private Combo comboSuggestedFileName;
+    private String suggestedFileName;
+    private Button buttonLoadAsynchronously;
+    private boolean isLoadAsynchronously;
+    private Text textMaxNumSpooledFiles;
+    private int maxNumSpooledFiles;
 
     public ISphereSpooledFiles() {
         super();
@@ -400,6 +405,11 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         comboSuggestedFileName = WidgetFactory.createCombo(container);
         comboSuggestedFileName.setLayoutData(createLayoutData());
         comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
+        comboSuggestedFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                suggestedFileName = comboSuggestedFileName.getText();
+            }
+        });
 
         buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
         buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
@@ -410,6 +420,17 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
             }
         });
+
+        new Label(container, SWT.NONE).setText(Messages.Maximum_number_of_spooled_files_to_load);
+        textMaxNumSpooledFiles = WidgetFactory.createIntegerText(container);
+        textMaxNumSpooledFiles.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                checkError();
+            }
+        });
+        textMaxNumSpooledFiles.setLayoutData(createLayoutData());
+        textMaxNumSpooledFiles.setTextLimit(6);
 
         setScreenToValues();
 
@@ -509,6 +530,13 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         }
 
+        maxNumSpooledFiles = IntHelper.tryParseInt(textMaxNumSpooledFiles.getText(), -1);
+        if (maxNumSpooledFiles <= -1) {
+            setErrorMessage(Messages.The_value_in_field_max_Num_SplF_is_not_valid);
+            setValid(false);
+            return;
+        }
+
         setErrorMessage(null);
         setValid(true);
         return;
@@ -552,7 +580,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         Preferences.getInstance().setSpooledFilePageSize(conversionPDFPageSize);
         Preferences.getInstance().setSpooledFileAdjustFontSize(adjustFontSize);
-        Preferences.getInstance().setSpooledFilesSuggestedFileName(comboSuggestedFileName.getText());
+        Preferences.getInstance().setSpooledFilesSuggestedFileName(suggestedFileName);
+        Preferences.getInstance().setSpooledFileMaxFilesToLoad(maxNumSpooledFiles);
     }
 
     protected void setScreenToValues() {
@@ -574,7 +603,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         conversionPDFPageSize = Preferences.getInstance().getSpooledFilePageSize();
         adjustFontSize = Preferences.getInstance().getSpooledFileAdjustFontSize();
-        comboSuggestedFileName.setText(Preferences.getInstance().getSpooledFilesSuggestedFileName());
+        suggestedFileName = Preferences.getInstance().getSpooledFilesSuggestedFileName();
+        maxNumSpooledFiles = Preferences.getInstance().getSpooledFilesMaxFilesToLoad();
 
         setScreenValues();
 
@@ -599,7 +629,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         conversionPDFPageSize = Preferences.getInstance().getDefaultSpooledFilePageSize();
         adjustFontSize = Preferences.getInstance().getDefaultSpooledFileAdjustFontSize();
-        comboSuggestedFileName.setText(Preferences.getInstance().getDefaultSpooledFilesSuggestedFileName());
+        suggestedFileName = Preferences.getInstance().getDefaultSpooledFilesSuggestedFileName();
+        maxNumSpooledFiles = Preferences.getInstance().getDefaultSpooledFileMaxFilesToLoad();
 
         setScreenValues();
 
@@ -708,7 +739,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         }
 
         chkBoxAdjustFontSize.setSelection(adjustFontSize);
-        comboSuggestedFileName.setText(Preferences.getInstance().getSpooledFilesSuggestedFileName());
+        comboSuggestedFileName.setText(suggestedFileName);
+        textMaxNumSpooledFiles.setText(Integer.toString(maxNumSpooledFiles));
     }
 
     public void init(IWorkbench workbench) {

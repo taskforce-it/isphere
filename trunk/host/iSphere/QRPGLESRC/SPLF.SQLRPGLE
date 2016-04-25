@@ -21,7 +21,7 @@
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');                          *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -98,6 +98,7 @@
      dGIName           S             10A   Varying                              SplF Name
      dGICmpName        S              1A                                        Comp. type SplF name
 
+     dGIMaxNumSplF     S             10I 0 Inz(-1)
      dGIErrorMsg       S            256A   Varying
 
      d EXACT_MATCH     c                   '-'
@@ -153,6 +154,9 @@
        GIName = *Blanks;
        GICmpName = *Blank;
 
+       // Return all spooled files
+       GIMaxNumSplF = -1;
+
        // API Error Message
        GIErrorMsg = '';
 
@@ -164,6 +168,29 @@
        //*------------------------------------------------------------------------------------------
 
      pSPLF_prepare...
+     p                 E
+
+      //*==========================================================================================*
+      //* Set maximum number of spooled files to return.
+      //*==========================================================================================*
+
+     pSPLF_setMaxNumSplF...
+     p                 B                   Export
+     dSPLF_setMaxNumSplF...
+     d                 PI
+     d LPMaxNumSplF                  10I 0 Const                                --> Max Nbr of SplFs
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       GIMaxNumSplF = LPMaxNumSplF;
+
+      /End-Free
+
+       //*------------------------------------------------------------------------------------------
+
+     pSPLF_setMaxNumSplF...
      p                 E
 
       //*==========================================================================================*
@@ -706,6 +733,11 @@
                       :SPLFCopies,
                       :SPLFFormType
                      );
+
+               //  Exit on maximum number of spooled files reached
+               If (GIMaxNumSplF > 0 And LICNT > GIMaxNumSplF);
+                 Leave;
+               EndIf;
 
              EndFor;
 

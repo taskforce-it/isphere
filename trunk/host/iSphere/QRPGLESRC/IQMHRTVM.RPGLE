@@ -21,8 +21,8 @@
       //*       >>COMPILE<<                                                                        *
       //*         >>PARM<<  DFTACTGRP(*NO);                                                        *
       //*         >>PARM<<  ACTGRP(ISPHERE);                                                       *
-      //*         >>PARM<<  DBGVIEW(*LIST);                                                        *
-      //*         >>PARM<<  OPTIMIZE(*NONE);                                                       *
+      //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
+      //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
       //*       >>END-COMPILE<<                                                                    *

@@ -41,6 +41,92 @@
 		create spooled file filters.
 	<p>
 		<img src="assets/create_filter.png" align="middle">
+	<p>
+	The available filter options are:
+	<table>
+		<tr>
+			<td valign="top" nowrap>User</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the name of the user profile that created the spooled file.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Output queue</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the name of the output queue that contains the spooled file.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Library</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the name of the library that contains the output queue.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Spooled file name</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the the name of the spooled file. The name can be generic.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>User data</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the user data of the spooled file.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Form type</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the form type of the spooled file.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Start date</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the starting date of the spooled file. Only spooled files with 
+			                 a starting date and time equal or later the specified date and time are 
+			                 displayed. Special values are:
+				<table>
+					<tr><td>*</td><td>:</td><td>Not set (ignored)</td></tr>
+					<tr><td>*EXACTLY</td><td>:</td><td>Spooled files created at the specified date and time or later</td></tr>
+					<tr><td>*TODAY</td><td>:</td><td>Spooled files create today</td></tr>
+					<tr><td>*YESTERDAY</td><td>:</td><td>Spooled files create yesterday or later</td></tr>
+					<tr><td>*LASTWEEK</td><td>:</td><td>Spooled files create seven days before or later</td></tr>
+					<tr><td>*LASTMONTH</td><td>:</td><td>Spooled files create a month ago or later</td></tr>
+				</table>                 
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Start time</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the starting time of the spooled file. Only spooled files with 
+			                 a starting date and time equal or later the specified date and time are 
+			                 displayed. Special values are:
+				<table>
+					<tr><td>*</td><td>:</td><td>Not set (ignored)</td></tr>
+					<tr><td>*EXACTLY</td><td>:</td><td>Spooled files created at the specified date and time or later</td></tr>
+				</table>                 
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>End date</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the closing date of the spooled file. Only spooled files with 
+			                 an closing date and time equal or before the specified date and time are 
+			                 displayed.
+				<table>
+					<tr><td>*</td><td>:</td><td>Not set (ignored)</td></tr>
+					<tr><td>*EXACTLY</td><td>:</td><td>Spooled files closed at the specified date and time or before</td></tr>
+				</table>                 
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>End time</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the closing time of the spooled file. Only spooled files with 
+			                 an closing date and time equal or before the specified date and time are 
+			                 displayed.
+				<table>
+					<tr><td>*</td><td>:</td><td>Not set (ignored)</td></tr>
+					<tr><td>*EXACTLY</td><td>:</td><td>Spooled files closed at the specified date and time or before</td></tr>
+				</table>                 
+            </td>
+		</tr>
+	</table>
 	<p>Use the context menu (right click) of a spooled file to perform
 		actions on it:
 	<p>

@@ -14,6 +14,11 @@
      d  name                         10a
      d  lib                          10a
 
+     d qJob_t          ds                  qualified based(pTemplate)
+     d  name                         10a
+     d  user                         10a
+     d  nbr                          10a
+
      d errCode_t       ds                  qualified based(pTemplate)
      d  bytPrv                       10i 0
      d  bytAvl                       10i 0

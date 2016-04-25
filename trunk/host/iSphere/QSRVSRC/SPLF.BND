@@ -33,6 +33,7 @@
 
      /* Export */
              EXPORT     SYMBOL('SPLF_PREPARE')
+             EXPORT     SYMBOL('SPLF_SETMAXNUMSPLF')
              EXPORT     SYMBOL('SPLF_SETJOB')
              EXPORT     SYMBOL('SPLF_SETUSER')
              EXPORT     SYMBOL('SPLF_SETFORMTYPE')

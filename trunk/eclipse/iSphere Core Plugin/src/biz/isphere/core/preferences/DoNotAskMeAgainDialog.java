@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         preferences.setShowWarningMessage(WARNING_REMOVE_STRPREPRC_SECTIONS, true);
         preferences.setShowWarningMessage(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, true);
         preferences.setShowWarningMessage(CONFIRM_REMOVE_STRPREPRC_HEADER, true);
+        preferences.setShowWarningMessage(TOO_MANY_SPOOLED_FILES_WARNING, true);
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
