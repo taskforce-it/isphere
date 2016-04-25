@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.spooledfiles.SpooledFileFilter;
 
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
@@ -51,7 +52,9 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
     protected SystemFilterPool createDefaultFilterPool(SystemFilterPoolManager mgr) {
         SystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
-        strings.add("*CURRENT/*/*/*/*/");
+        SpooledFileFilter splfFilter = new SpooledFileFilter();
+        splfFilter.setUser("*CURRENT");
+        strings.add(splfFilter.getFilterString());
         try {
             SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_spooled_files, strings);
             filter.setType(TYPE);
