@@ -102,6 +102,8 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_DEFAULT_FORMAT = DOMAIN + "SPOOLED_FILES.DEFAULT_FORMAT"; //$NON-NLS-1$
 
+    private static final String SPOOLED_FILES_MAX_FILES_TO_LOAD = DOMAIN + "MAX_FILES_TO_LOAD"; //$NON-NLS-1$
+
     private static final String SOURCEFILESEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
@@ -268,6 +270,10 @@ public final class Preferences {
 
     public String getSpooledFileConversionDefaultFormat() {
         return preferenceStore.getString(SPOOLED_FILES_DEFAULT_FORMAT);
+    }
+
+    public int getSpooledFilesMaxFilesToLoad() {
+        return preferenceStore.getInt(SPOOLED_FILES_MAX_FILES_TO_LOAD);
     }
 
     public String getSpooledFileConversionText() {
@@ -499,6 +505,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_DEFAULT_FORMAT, aFormat);
     }
 
+    public void setSpooledFileMaxFilesToLoad(int count) {
+        preferenceStore.setValue(SPOOLED_FILES_MAX_FILES_TO_LOAD, count);
+    }
+
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
@@ -625,6 +635,7 @@ public final class Preferences {
         preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION), true);
         preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.WARNING_REMOVE_STRPREPRC_SECTIONS), true);
         preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.CONFIRM_REMOVE_STRPREPRC_HEADER), true);
+        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.TOO_MANY_SPOOLED_FILES_WARNING), true);
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
@@ -638,6 +649,8 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, getDefaultLoadSpooledFilesAsynchronously());
         preferenceStore.setDefault(SPOOLED_FILES_SUGGESTED_FILE_NAME, getDefaultSpooledFilesSuggestedFileName());
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
+
+        preferenceStore.setDefault(SPOOLED_FILES_MAX_FILES_TO_LOAD, getDefaultSpooledFileMaxFilesToLoad());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, getDefaultSpooledFileConversionTextCommand());
@@ -761,6 +774,15 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileConversionDefaultFormat() {
         return IPreferences.OUTPUT_FORMAT_TEXT;
+    }
+
+    /**
+     * Returns the default value for maximum number of spooled files to load.
+     * 
+     * @return default maximum number of spooled files to load
+     */
+    public int getDefaultSpooledFileMaxFilesToLoad() {
+        return 5000;
     }
 
     /**

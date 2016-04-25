@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
@@ -529,6 +530,26 @@ public final class WidgetFactory {
         return WidgetFactory.getInstance().produceContentAssistText(parent, SWT.NONE, false);
     }
 
+    /**
+     * Produce a date selector field.
+     * 
+     * @param parent - parent composite
+     * @return DateTime field configured as a date selector
+     */
+    public static DateTime createDateSelector(Composite parent) {
+        return WidgetFactory.getInstance().produceDateTimeSelector(parent, SWT.DATE | SWT.MEDIUM | SWT.DROP_DOWN);
+    }
+
+    /**
+     * Produce a time selector field.
+     * 
+     * @param parent - parent composite
+     * @return DateTime field configured as a time selector
+     */
+    public static DateTime createTimeSelector(Composite parent) {
+        return WidgetFactory.getInstance().produceDateTimeSelector(parent, SWT.TIME | SWT.MEDIUM);
+    }
+    
     /*
      * Private worker procedures, doing the actual work.
      */
@@ -608,6 +629,13 @@ public final class WidgetFactory {
         Button radioButton = new Button(parent, SWT.RADIO);
 
         return radioButton;
+    }
+
+    private DateTime produceDateTimeSelector(Composite parent, int style) {
+
+        DateTime dateTime = new DateTime (parent, style);
+
+        return dateTime;
     }
 
     /**

@@ -1,0 +1,10 @@
+
+Changelog: iSphere 2.9.0.b001
+-----------------------------
+ • Added filter option "spooled file name" to the iSphere spooled file 
+   subsystem.
+ • Added filter options "starting date/time" and "ending date/time" to 
+   the iSphere spooled file subsystem.
+ • Added options group "auto-refresh delay" to the iSphere "Appearance" 
+   preferences page. By default that delays auto-refresh when filtering 
+   large message files.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 
@@ -57,6 +62,9 @@ public class SpooledFileFactory {
 
                         new SPLF_prepare().run(as400);
 
+                        final int maxNumSpooledFilesToLoad = Preferences.getInstance().getSpooledFilesMaxFilesToLoad();
+                        new SPLF_setMaxNumSplF().run(as400, maxNumSpooledFilesToLoad);
+
                         if (filter.getUser() != null) {
                             new SPLF_setUser().run(as400, filter.getUser());
                         }
@@ -81,6 +89,14 @@ public class SpooledFileFactory {
 
                         if (filter.getName() != null) {
                             new SPLF_setName().run(as400, filter.getName());
+                        }
+
+                        if (filter.getStartingDate() != null || filter.getEndingDate() != null) {
+                            int startDate = filter.getStartingDateIntValue();
+                            int startTime = filter.getStartingTimeIntValue();
+                            int endDate = filter.getEndingDateIntValue();
+                            int endTime = filter.getEndingTimeIntValue();
+                            new SPLF_setDateTime().run(as400, startDate, startTime, endDate, endTime);
                         }
 
                         int handle = new SPLF_build().run(as400);
@@ -108,6 +124,31 @@ public class SpooledFileFactory {
                                 resultSet = preparedStatementSelect.executeQuery();
 
                                 while (resultSet.next()) {
+
+                                    if (maxNumSpooledFilesToLoad > 0 && arrayListSpooledFiles.size() >= maxNumSpooledFilesToLoad) {
+
+                                        Display.getDefault().syncExec(new Runnable() {
+                                            public void run() {
+                                                DoNotAskMeAgainDialog.openInformation(Display.getDefault().getActiveShell(),
+                                                    DoNotAskMeAgain.TOO_MANY_SPOOLED_FILES_WARNING, Messages.bind(
+                                                        Messages.Number_of_spooled_files_exceeds_maximum_number_of_spooled_files_to_load_A,
+                                                        maxNumSpooledFilesToLoad));
+                                            }
+                                        });
+
+                                        // Display.getDefault().syncExec(new
+                                        // Runnable() {
+                                        // public void run() {
+                                        // MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                        // title, message);
+                                        // }
+                                        // });
+
+                                        // MessageDialogAsync.displayError(Messages.bind(
+                                        // Messages.Number_of_spooled_files_exceeds_maximum_number_of_spooled_files_to_load_A,
+                                        // maxNumSpooledFilesToLoad));
+                                        break;
+                                    }
 
                                     SpooledFile _spooledFile = new SpooledFile();
                                     _spooledFile.setAS400(as400);

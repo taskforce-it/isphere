@@ -1,0 +1,5 @@
+<pcml version="4.0">
+   <program name="SPLF_setMaxNumSplF" path="/QSYS.LIB/%LIBL%.LIB/W003012.PGM">
+      <data name="count" type="int" length="4" usage="input" />
+   </program>
+</pcml>

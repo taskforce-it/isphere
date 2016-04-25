@@ -1171,14 +1171,34 @@ public class Messages extends NLS {
     public static String The_value_in_field_A_is_not_valid;
 
     public static String Auto_refresh_delay;
-    
+
     public static String Delay_ms;
-    
+
     public static String Tooltip_Delay_ms;
-    
+
     public static String Threshold_items;
-    
+
     public static String Tooltip_Threshold_items;
+
+    public static String Maximum_number_of_spooled_files_to_load;
+
+    public static String Tooltip_Maximum_number_of_sppoled_files_to_load;
+
+    public static String Number_of_spooled_files_exceeds_maximum_number_of_spooled_files_to_load_A;
+
+    public static String Valid_of_field_a_is_invalid;
+
+    public static String End_date_and_time_must_be_greater_than_from_date_and_time;
+    
+    public static String From_date;
+
+    public static String From_time;
+    
+    public static String To_date;
+
+    public static String To_time;
+
+    public static String The_value_in_field_max_Num_SplF_is_not_valid;
     
     /*
      * Warning messages

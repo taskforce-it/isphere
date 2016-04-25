@@ -11,6 +11,10 @@
      dSPLF_prepare...
      d                 PR
 
+     dSPLF_setMaxNumSplF...
+     d                 PR
+     d LPMaxSplF                     10I 0 Const                                --> Max Nbr of SplFs
+
      dSPLF_setJob...
      d                 PR
      d                               10A   Const                                --> Job name
