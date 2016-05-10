@@ -8,3 +8,8 @@ Changelog: iSphere 2.9.0.b001
  • Added options group "auto-refresh delay" to the iSphere "Appearance" 
    preferences page. By default that delays auto-refresh when filtering 
    large message files.
+ • Refactored spooled files preferences page. 
+ • Fixed class "SpooledFile" to use the time formatter specified in the
+   preferences.
+ • Added "iSphere Common Libraries" plug-in.
+
