@@ -148,7 +148,7 @@ public class SpooledFile {
         toolboxSpooledFile = null;
 
         dateFormatter = Preferences.getInstance().getDateFormatter();
-        timeFormatter = new SimpleDateFormat("HH:mm:ss");
+        timeFormatter = Preferences.getInstance().getTimeFormatter();
     }
 
     public AS400 getAS400() {
