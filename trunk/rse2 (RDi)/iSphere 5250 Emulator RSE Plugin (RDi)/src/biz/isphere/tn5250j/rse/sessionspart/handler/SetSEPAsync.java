@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,23 +23,23 @@ import com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate;
 public class SetSEPAsync extends AbstractAsyncHandler {
 
     private String library;
-    private String program;
+    private String object;
     private String type;
 
-    public SetSEPAsync(Shell shell, SessionsInfo sessionsInfo, String library, String sourceFile, String member) {
+    public SetSEPAsync(Shell shell, SessionsInfo sessionsInfo, String library, String object, String objType) {
 
         super(shell, sessionsInfo);
 
         this.library = library;
-        this.program = sourceFile;
-        this.type = member;
+        this.object = object;
+        this.type = objType;
     }
 
     public void runInternally() {
 
         try {
 
-            IQSYSObject[] objects = getConnection().listObjects(library, program, new String[] { type }, null);
+            IQSYSObject[] objects = getConnection().listObjects(library, object, new String[] { type }, null);
             if (objects != null && objects.length > 0) {
                 IAction action = new SetSEPAction();
                 IStructuredSelection selection = new StructuredSelection(objects);
