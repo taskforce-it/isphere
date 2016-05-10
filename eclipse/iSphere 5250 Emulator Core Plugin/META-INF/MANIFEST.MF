@@ -10,14 +10,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
  biz.isphere.tn5250j.base,
- org.eclipse.albireo.core
+ org.eclipse.albireo.core,
+ biz.isphere.common.libraries
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
- lib/commons-codec-1.1.jar,
  lib/icu4j_3_4_5.jar,
- lib/commons-lang-2.1.jar,
- lib/jasypt-1.5.jar,
- lib/jt400Small.jar
+ lib/jasypt-1.5.jar
 Export-Package: biz.isphere.tn5250j.core,
  biz.isphere.tn5250j.core.designereditor,
  biz.isphere.tn5250j.core.designerpart,

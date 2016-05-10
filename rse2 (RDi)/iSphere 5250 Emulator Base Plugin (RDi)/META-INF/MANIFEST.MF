@@ -7,15 +7,14 @@ Bundle-Activator: org.tn5250j.TN5250JPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui
+ org.eclipse.ui,
+ biz.isphere.common.libraries
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
- lib/activation.jar,
  lib/itext.jar,
  lib/jt400.jar,
  lib/jython.jar,
  lib/jythonlib.jar,
- lib/mailapi.jar,
  lib/smtp.jar,
  lib/log4j.jar,
  resources/
