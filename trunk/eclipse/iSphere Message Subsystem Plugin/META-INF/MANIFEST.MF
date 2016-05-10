@@ -11,10 +11,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.equinox.security,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
- biz.isphere.core
-Bundle-ClassPath: .,
- lib/mail.jar,
- lib/activation.jar
+ biz.isphere.core,
+ biz.isphere.common.libraries
+Bundle-ClassPath: .
 Export-Package: biz.isphere.messagesubsystem.rse
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
