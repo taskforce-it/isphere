@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
@@ -23,6 +22,9 @@ import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
+import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
+import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
+import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
 
 /**
@@ -38,6 +40,8 @@ public final class WidgetFactory {
      * The instance of this Singleton class.
      */
     private static WidgetFactory instance;
+
+    private WidgetFactoryContributionsHandler widgetFactoryContributionsHandler;
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -536,8 +540,8 @@ public final class WidgetFactory {
      * @param parent - parent composite
      * @return DateTime field configured as a date selector
      */
-    public static DateTime createDateSelector(Composite parent) {
-        return WidgetFactory.getInstance().produceDateTimeSelector(parent, SWT.DATE | SWT.MEDIUM | SWT.DROP_DOWN);
+    public static IDateEdit createDateEdit(Composite parent) {
+        return WidgetFactory.getInstance().produceDateEdit(parent);
     }
 
     /**
@@ -546,10 +550,10 @@ public final class WidgetFactory {
      * @param parent - parent composite
      * @return DateTime field configured as a time selector
      */
-    public static DateTime createTimeSelector(Composite parent) {
-        return WidgetFactory.getInstance().produceDateTimeSelector(parent, SWT.TIME | SWT.MEDIUM);
+    public static ITimeEdit createTimeEdit(Composite parent) {
+        return WidgetFactory.getInstance().produceTimeEdit(parent);
     }
-    
+
     /*
      * Private worker procedures, doing the actual work.
      */
@@ -631,11 +635,25 @@ public final class WidgetFactory {
         return radioButton;
     }
 
-    private DateTime produceDateTimeSelector(Composite parent, int style) {
+    private IDateEdit produceDateEdit(Composite parent) {
 
-        DateTime dateTime = new DateTime (parent, style);
+        IDateEdit dateEdit = getWidgetFactoryContributionsHandler().getDateEdit(parent, SWT.BORDER);
 
-        return dateTime;
+        return dateEdit;
+    }
+
+    private ITimeEdit produceTimeEdit(Composite parent) {
+
+        ITimeEdit timeEdit = getWidgetFactoryContributionsHandler().getTimeEdit(parent, SWT.BORDER);
+
+        return timeEdit;
+    }
+
+    private WidgetFactoryContributionsHandler getWidgetFactoryContributionsHandler() {
+        if (widgetFactoryContributionsHandler == null) {
+            widgetFactoryContributionsHandler = new WidgetFactoryContributionsHandler();
+        }
+        return widgetFactoryContributionsHandler;
     }
 
     /**

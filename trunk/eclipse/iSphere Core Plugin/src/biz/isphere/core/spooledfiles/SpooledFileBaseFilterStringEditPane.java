@@ -14,12 +14,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -27,6 +25,8 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
+import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 
 public class SpooledFileBaseFilterStringEditPane {
 
@@ -37,13 +37,13 @@ public class SpooledFileBaseFilterStringEditPane {
     private Text formTypeText;
     private Text nameText;
     private Combo startingDateCombo;
-    private DateTime startingDateDateTime;
+    private IDateEdit startingDateDateTime;
     private Combo startingTimeCombo;
-    private DateTime startingTimeDateTime;
+    private ITimeEdit startingTimeDateTime;
     private Combo endingDateCombo;
-    private DateTime endingDateDateTime;
+    private IDateEdit endingDateDateTime;
     private Combo endingTimeCombo;
-    private DateTime endingTimeDateTime;
+    private ITimeEdit endingTimeDateTime;
 
     public SpooledFileBaseFilterStringEditPane() {
     }
@@ -96,7 +96,7 @@ public class SpooledFileBaseFilterStringEditPane {
             }
         });
 
-        startingDateDateTime = WidgetFactory.createDateSelector(composite_prompts);
+        startingDateDateTime = WidgetFactory.createDateEdit(composite_prompts);
         startingDateDateTime.setLayoutData(createLayoutData(1));
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.From_time + ":");
@@ -111,7 +111,7 @@ public class SpooledFileBaseFilterStringEditPane {
             }
         });
 
-        startingTimeDateTime = WidgetFactory.createTimeSelector(composite_prompts);
+        startingTimeDateTime = WidgetFactory.createTimeEdit(composite_prompts);
         startingTimeDateTime.setLayoutData(createLayoutData(1));
 
         // To date and time
@@ -128,7 +128,7 @@ public class SpooledFileBaseFilterStringEditPane {
             }
         });
 
-        endingDateDateTime = WidgetFactory.createDateSelector(composite_prompts);
+        endingDateDateTime = WidgetFactory.createDateEdit(composite_prompts);
         endingDateDateTime.setLayoutData(createLayoutData(1));
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.To_time + ":");
@@ -143,18 +143,11 @@ public class SpooledFileBaseFilterStringEditPane {
             }
         });
 
-        endingTimeDateTime = WidgetFactory.createTimeSelector(composite_prompts);
+        endingTimeDateTime = WidgetFactory.createTimeEdit(composite_prompts);
         endingTimeDateTime.setLayoutData(createLayoutData(1));
 
         resetFields();
         doInitializeFields(inputFilterString);
-
-        SelectionListener wrappedModifyListener = new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                modifyListener.modifyText(null);
-            }
-        };
 
         userText.addModifyListener(modifyListener);
         outqText.addModifyListener(modifyListener);
@@ -163,13 +156,13 @@ public class SpooledFileBaseFilterStringEditPane {
         formTypeText.addModifyListener(modifyListener);
         nameText.addModifyListener(modifyListener);
         startingDateCombo.addModifyListener(modifyListener);
-        startingDateDateTime.addSelectionListener(wrappedModifyListener);
+        startingDateDateTime.addModifyListener(modifyListener);
         startingTimeCombo.addModifyListener(modifyListener);
-        startingTimeDateTime.addSelectionListener(wrappedModifyListener);
+        startingTimeDateTime.addModifyListener(modifyListener);
         endingDateCombo.addModifyListener(modifyListener);
-        endingDateDateTime.addSelectionListener(wrappedModifyListener);
+        endingDateDateTime.addModifyListener(modifyListener);
         endingTimeCombo.addModifyListener(modifyListener);
-        endingTimeDateTime.addSelectionListener(wrappedModifyListener);
+        endingTimeDateTime.addModifyListener(modifyListener);
     }
 
     private void setControlEnablement() {
@@ -356,7 +349,7 @@ public class SpooledFileBaseFilterStringEditPane {
         setControlEnablement();
     }
 
-    private void setDateControlValue(Combo combo, DateTime control, String value) {
+    private void setDateControlValue(Combo combo, IDateEdit control, String value) {
 
         if (value != null) {
             if (!value.startsWith("*")) {
@@ -370,7 +363,7 @@ public class SpooledFileBaseFilterStringEditPane {
         }
     }
 
-    private void setTimeControlValue(Combo combo, DateTime control, String value) {
+    private void setTimeControlValue(Combo combo, ITimeEdit control, String value) {
 
         if (value != null) {
             if (!value.startsWith("*")) {
@@ -384,7 +377,7 @@ public class SpooledFileBaseFilterStringEditPane {
         }
     }
 
-    private void setDate(DateTime dateTime, String dateValue) {
+    private void setDate(IDateEdit dateTime, String dateValue) {
 
         int year;
         int month;
@@ -404,7 +397,7 @@ public class SpooledFileBaseFilterStringEditPane {
         }
     }
 
-    private void setTime(DateTime dateTime, String timeValue) {
+    private void setTime(ITimeEdit dateTime, String timeValue) {
 
         int hours = IntHelper.tryParseInt(timeValue.substring(0, 2));
         int minutes = IntHelper.tryParseInt(timeValue.substring(2, 4));
@@ -577,7 +570,7 @@ public class SpooledFileBaseFilterStringEditPane {
         return filter.getFilterString();
     }
 
-    private String getDate(DateTime dateTime) {
+    private String getDate(IDateEdit dateTime) {
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(StringHelper.getFixLengthLeading(Integer.toString(dateTime.getYear()), 4).replaceAll(" ", "0"));
@@ -587,7 +580,7 @@ public class SpooledFileBaseFilterStringEditPane {
         return buffer.toString();
     }
 
-    private String getTime(DateTime dateTime) {
+    private String getTime(ITimeEdit dateTime) {
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(StringHelper.getFixLengthLeading(Integer.toString(dateTime.getHours()), 2).replaceAll(" ", "0"));

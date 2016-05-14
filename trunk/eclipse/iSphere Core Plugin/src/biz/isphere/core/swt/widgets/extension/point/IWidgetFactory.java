@@ -8,6 +8,7 @@
 
 package biz.isphere.core.swt.widgets.extension.point;
 
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 public interface IWidgetFactory {
@@ -35,4 +36,29 @@ public interface IWidgetFactory {
      */
     public IFileDialog getDialog(Shell aParent);
 
+    /**
+     * Produces a new date edit control. If the underlaying Eclipse has a
+     * DateTime class, the date edit is a DateTime object, else a simple
+     * DateEdit object is returned.
+     * 
+     * @param aParent - parent composite
+     * @param style - style bits. Supported styles are: SWT.BORDER
+     * @return the date edit control
+     * @see org.eclipse.swt.widgets.DateTime
+     * @see biz.isphere.core.swt.widgets.datetime.DateEdit
+     */
+    public IDateEdit getDateEdit(Composite aParent, int style);
+
+    /**
+     * Produces a new time edit control. If the underlaying Eclipse has a
+     * DateTime class, the time edit is a DateTime object, else a simple
+     * TimeEdit object is returned.
+     * 
+     * @param aParent - parent composite
+     * @param style - style bits. Supported styles are: SWT.BORDER
+     * @return the time edit control
+     * @see org.eclipse.swt.widgets.DateTime
+     * @see biz.isphere.core.swt.widgets.datetime.TimeEdit
+     */
+    public ITimeEdit getTimeEdit(Composite aParent, int style);
 }

@@ -9,13 +9,13 @@
 package biz.isphere.core.preferences;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.time.FastDateFormat;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import biz.isphere.base.internal.FileHelper;
@@ -181,7 +181,7 @@ public final class Preferences {
     private static final String APPEARANCE_AUTO_REFRESH_DELAY = APPEARANCE_AUTO_REFRESH + "DELAY"; //$NON-NLS-1$
 
     private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
-    
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -1078,7 +1078,7 @@ public final class Preferences {
         return lengths2;
     }
 
-    public DateFormat getDateFormatter() {
+    public SimpleDateFormat getDateFormatter() {
 
         String pattern = getDateFormatsMap().get(getDateFormatLabel());
         if (pattern == null) {
@@ -1086,7 +1086,7 @@ public final class Preferences {
         }
 
         if (pattern == null) {
-            return DateFormat.getDateInstance(DateFormat.SHORT);
+            return new SimpleDateFormat(FastDateFormat.getDateInstance(FastDateFormat.SHORT).getPattern());
         }
 
         return new SimpleDateFormat(pattern);
@@ -1117,7 +1117,7 @@ public final class Preferences {
         return dateFormats;
     }
 
-    public DateFormat getTimeFormatter() {
+    public SimpleDateFormat getTimeFormatter() {
 
         String pattern = getTimeFormatsMap().get(getTimeFormatLabel());
         if (pattern == null) {
@@ -1125,7 +1125,7 @@ public final class Preferences {
         }
 
         if (pattern == null) {
-            return DateFormat.getTimeInstance(DateFormat.SHORT);
+            return new SimpleDateFormat(FastDateFormat.getTimeInstance(FastDateFormat.SHORT).getPattern());
         }
 
         return new SimpleDateFormat(pattern);

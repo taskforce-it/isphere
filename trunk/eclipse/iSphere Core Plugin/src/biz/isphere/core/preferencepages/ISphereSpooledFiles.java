@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -99,6 +101,67 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     @Override
     public Control createContents(Composite parent) {
+
+        TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+
+        TabItem tabGeneral = new TabItem(tabFolder, SWT.NONE);
+        tabGeneral.setText("General");
+        tabGeneral.setControl(createTabGeneral(tabFolder));
+
+        TabItem tabOpenSave = new TabItem(tabFolder, SWT.NONE);
+        tabOpenSave.setText("Conversion");
+        tabOpenSave.setControl(createTabConversion(tabFolder));
+
+        setScreenToValues();
+
+        return tabFolder;
+    }
+
+    private Composite createTabGeneral(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout(2, false));
+
+        Label labelSuggestedFileName = new Label(container, SWT.NONE);
+        labelSuggestedFileName.setText(Messages.Suggested_file_name);
+
+        comboSuggestedFileName = WidgetFactory.createCombo(container);
+        comboSuggestedFileName.setLayoutData(createLayoutData());
+        comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
+        comboSuggestedFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                suggestedFileName = comboSuggestedFileName.getText();
+            }
+        });
+
+        new Label(container, SWT.NONE).setText(Messages.Maximum_number_of_spooled_files_to_load_colon);
+
+        textMaxNumSpooledFiles = WidgetFactory.createIntegerText(container);
+        textMaxNumSpooledFiles.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                checkError();
+            }
+        });
+        textMaxNumSpooledFiles.setLayoutData(createLayoutData());
+        textMaxNumSpooledFiles.setTextLimit(6);
+
+        buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
+        buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
+        buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
+        buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
+            }
+        });
+
+        createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_file_name);
+
+        return container;
+    }
+
+    private Composite createTabConversion(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
@@ -381,9 +444,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
         chkBoxAdjustFontSize.setLayoutData(createLayoutData(3));
 
+        createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_conversion_commands);
+
+        return container;
+    }
+
+    private void createGroupSubstitutionVariables(Composite container, String headline) {
+
         // Group: Replacement variables
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
-        groupSubstitutionVariables.setText(Messages.Substitution_variables_for_conversion_commands);
+        groupSubstitutionVariables.setText(headline);
         GridLayout gridLayoutSubstitutionVariables = new GridLayout();
         gridLayoutSubstitutionVariables.numColumns = 3;
         groupSubstitutionVariables.setLayout(gridLayoutSubstitutionVariables);
@@ -399,42 +469,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         createSpooledFileVariable(groupSubstitutionVariables, "&&STMF", Messages.Stream_file);
         createSpooledFileVariable(groupSubstitutionVariables, "&&CODPAG", Messages.Code_page);
         createSpooledFileVariable(groupSubstitutionVariables, "&&FMT", Messages.Format);
-
-        new Label(container, SWT.NONE).setText(Messages.Suggested_file_name);
-
-        comboSuggestedFileName = WidgetFactory.createCombo(container);
-        comboSuggestedFileName.setLayoutData(createLayoutData());
-        comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
-        comboSuggestedFileName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                suggestedFileName = comboSuggestedFileName.getText();
-            }
-        });
-
-        buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
-        buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
-        buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
-        buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
-            }
-        });
-
-        new Label(container, SWT.NONE).setText(Messages.Maximum_number_of_spooled_files_to_load);
-        textMaxNumSpooledFiles = WidgetFactory.createIntegerText(container);
-        textMaxNumSpooledFiles.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                checkError();
-            }
-        });
-        textMaxNumSpooledFiles.setLayoutData(createLayoutData());
-        textMaxNumSpooledFiles.setTextLimit(6);
-
-        setScreenToValues();
-
-        return container;
     }
 
     private GridData createGroupLayoutData() {
