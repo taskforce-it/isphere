@@ -1180,7 +1180,7 @@ public class Messages extends NLS {
 
     public static String Tooltip_Threshold_items;
 
-    public static String Maximum_number_of_spooled_files_to_load;
+    public static String Maximum_number_of_spooled_files_to_load_colon;
 
     public static String Tooltip_Maximum_number_of_sppoled_files_to_load;
 
@@ -1199,6 +1199,8 @@ public class Messages extends NLS {
     public static String To_time;
 
     public static String The_value_in_field_max_Num_SplF_is_not_valid;
+    
+    public static String Substitution_variables_for_file_name;
     
     /*
      * Warning messages

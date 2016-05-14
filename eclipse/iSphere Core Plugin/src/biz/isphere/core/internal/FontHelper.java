@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 
 import biz.isphere.core.ISpherePlugin;
 
@@ -49,4 +50,20 @@ public final class FontHelper {
         return charHeight;
     }
 
+    /**
+     * Returns the extent of the String <code>text</code> using the font
+     * <code>font</code>. Tab expansion and carriage return processing are
+     * performed.
+     * 
+     * @param text the text string
+     * @param font the font
+     * @return the text's extent
+     * @see GC#textExtent(String)
+     */
+    public static Point getTextExtent(Drawable aDrawable, String text, Font font) {
+        GC gc = new GC(aDrawable);
+        Point textExtent = gc.textExtent(text);
+        gc.dispose();
+        return textExtent;
+    }
 }

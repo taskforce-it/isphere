@@ -12,10 +12,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.swt.widgets.datetime.DateEdit;
+import biz.isphere.core.swt.widgets.datetime.TimeEdit;
 import biz.isphere.core.swt.widgets.extension.DefaultFileDialog;
+import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
+import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.extension.point.IWidgetFactory;
 
 public class WidgetFactoryContributionsHandler {
@@ -56,6 +62,69 @@ public class WidgetFactoryContributionsHandler {
         IFileDialog dialog = null;
 
         return dialog;
+    }
+
+    /**
+     * Produces a new date edit control. If the underlaying Eclipse has a
+     * DateTime class, the date edit is a DateTime object, else a simple
+     * DateEdit object is returned.
+     * 
+     * @param aParent - parent composite
+     * @param style - style bits. Supported styles are: SWT.BORDER
+     * @return the date edit control
+     * @see org.eclipse.swt.widgets.DateTime
+     * @see biz.isphere.core.swt.widgets.datetime.DateEdit
+     */
+    public IDateEdit getDateEdit(Composite aParent, int style) {
+        checkStyle(style, SWT.BORDER);
+
+        IWidgetFactory factory = getWidgetFactory();
+
+        if (factory == null) {
+            return new DateEdit(aParent, style);
+        }
+
+        IDateEdit dateEdit = factory.getDateEdit(aParent, style);
+        if (dateEdit == null) {
+            dateEdit = new DateEdit(aParent, style);
+        }
+
+        return dateEdit;
+    }
+
+    /**
+     * Produces a new time edit control. If the underlaying Eclipse has a
+     * DateTime class, the time edit is a DateTime object, else a simple
+     * TimeEdit object is returned.
+     * 
+     * @param aParent - parent composite
+     * @param style - style bits. Supported styles are: SWT.BORDER
+     * @return the time edit control
+     * @see org.eclipse.swt.widgets.DateTime
+     * @see biz.isphere.core.swt.widgets.datetime.TimeEdit
+     */
+    public ITimeEdit getTimeEdit(Composite aParent, int style) {
+        checkStyle(style, SWT.BORDER);
+
+        IWidgetFactory factory = getWidgetFactory();
+
+        if (factory == null) {
+            return new TimeEdit(aParent, style);
+        }
+
+        ITimeEdit timeEdit = factory.getTimeEdit(aParent, style);
+        if (timeEdit == null) {
+            timeEdit = new TimeEdit(aParent, style);
+        }
+
+        return timeEdit;
+    }
+
+    private void checkStyle(int style, int mask) {
+
+        if ((style | mask) != mask) {
+            throw new RuntimeException("Unsupported style bit set.");
+        }
     }
 
     /**
