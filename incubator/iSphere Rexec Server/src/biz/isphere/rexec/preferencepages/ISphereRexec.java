@@ -8,6 +8,9 @@
 
 package biz.isphere.rexec.preferencepages;
 
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -26,16 +29,23 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.rexec.preferences.Preferences;
 
 public class ISphereRexec extends PreferencePage implements IWorkbenchPreferencePage {
 
+    private final static String REMOTE_USER = "biz.isphere.rexec.remote.user"; //$NON-NLS-1$ 
+    private final static String REMOTE_PASSWORD = "biz.isphere.rexec.remote.password"; //$NON-NLS-1$ 
+
     private Button checkboxServerEnabled;
     private Text textServerListenerPort;
     private Text textSocketReadTimeout;
     private Button checkboxCaptureOutput;
+
+    private Text textRmtUser;
+    private Text textRmtPassword;
 
     public ISphereRexec() {
         super();
@@ -55,6 +65,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
 
         createSectionCommon(main);
         createSectionServerSettings(main);
+        createSectionSecuritySettings(main);
 
         setScreenToValues();
 
@@ -131,7 +142,7 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         labelCaptureOutput.setText("Capture output");
         labelCaptureOutput.setToolTipText("Specifies whether or not the command output is redirected to a text file and send back to the client.");
 
-        checkboxCaptureOutput= WidgetFactory.createCheckbox(groupAddHeader);
+        checkboxCaptureOutput = WidgetFactory.createCheckbox(groupAddHeader);
         checkboxCaptureOutput.setToolTipText("Specifies whether or not the command output is redirected to a text file and send back to the client.");
         checkboxCaptureOutput.setLayoutData(createLayoutData(1));
         checkboxCaptureOutput.addSelectionListener(new SelectionAdapter() {
@@ -143,6 +154,48 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
             }
         });
 
+    }
+
+    private void createSectionSecuritySettings(Composite parent) {
+
+        Group groupAddHeader = new Group(parent, SWT.NONE);
+        groupAddHeader.setLayout(new GridLayout(2, false));
+        groupAddHeader.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupAddHeader.setText("Security settings");
+
+        Label labelRmtUser = new Label(groupAddHeader, SWT.NONE);
+        labelRmtUser.setLayoutData(createLabelLayoutData());
+        labelRmtUser.setText("Remote user:");
+        labelRmtUser.setToolTipText("Specifies the name of the user profile that is allowed to send remote commands.");
+
+        textRmtUser = WidgetFactory.createNameText(groupAddHeader);
+        textRmtUser.setToolTipText("Specifies the name of the user profile that is allowed to send remote commands.");
+        textRmtUser.setLayoutData(createFillLayoutData(1));
+        textRmtUser.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                if (validateListenerPortNumber()) {
+                    validateAll();
+                }
+                setControlsEnablement();
+            }
+        });
+
+        Label labelRmtPassword = new Label(groupAddHeader, SWT.NONE);
+        labelRmtPassword.setLayoutData(createLabelLayoutData());
+        labelRmtPassword.setText("Remote password:");
+        labelRmtPassword.setToolTipText("Specifies the password that is used to validate the specified remote user.");
+
+        textRmtPassword = WidgetFactory.createPassword(groupAddHeader);
+        textRmtPassword.setToolTipText("Specifies the password that is used to validate the specified remote user.");
+        textRmtPassword.setLayoutData(createFillLayoutData(1));
+        textRmtPassword.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                if (validateListenerPortNumber()) {
+                    validateAll();
+                }
+                setControlsEnablement();
+            }
+        });
     }
 
     @Override
@@ -171,6 +224,9 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         preferences.setListenerPort(IntHelper.tryParseInt(textServerListenerPort.getText(), preferences.getInitialListenerPort()));
         preferences.setSocketReadTimeout(IntHelper.tryParseInt(textSocketReadTimeout.getText(), preferences.getInitialSocketReadTimeout()));
         preferences.setCaptureOutput(checkboxCaptureOutput.getSelection());
+
+        setSecureValue(REMOTE_USER, textRmtUser.getText());
+        setSecureValue(REMOTE_PASSWORD, textRmtPassword.getText());
     }
 
     protected void setScreenToValues() {
@@ -184,6 +240,9 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         textSocketReadTimeout.setText(Integer.toString(preferences.getSocketReadTimeout()));
         checkboxCaptureOutput.setSelection(preferences.isCaptureOutput());
 
+        textRmtUser.setText(getSecureValue(REMOTE_USER, ""));
+        textRmtPassword.setText(getSecureValue(REMOTE_PASSWORD, ""));
+
         validateAll();
         setControlsEnablement();
     }
@@ -196,6 +255,9 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
         textServerListenerPort.setText(Integer.toString(preferences.getInitialListenerPort()));
         textSocketReadTimeout.setText(Integer.toString(preferences.getInitialSocketReadTimeout()));
         checkboxCaptureOutput.setSelection(preferences.getInitialCaptureOutput());
+
+        textRmtUser.setText(""); //$NON-NLS-1$
+        textRmtPassword.setText(""); //$NON-NLS-1$
 
         validateAll();
         setControlsEnablement();
@@ -283,5 +345,36 @@ public class ISphereRexec extends PreferencePage implements IWorkbenchPreference
 
     private GridData createFillLayoutData(int horizontalSpan) {
         return new GridData(SWT.FILL, SWT.BEGINNING, true, false, horizontalSpan, 1);
+    }
+
+    private String getSecureValue(String key, String def) {
+
+        ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
+        String valueString = null;
+
+        try {
+            valueString = securePreferences.get(key, def);
+        } catch (StorageException e) {
+        }
+
+        return valueString;
+    }
+
+    public void setSecureValue(String key, String value) {
+
+        String valueString;
+        if (StringHelper.isNullOrEmpty(value)) {
+            valueString = ""; //$NON-NLS-1$
+        } else {
+            valueString = value;
+        }
+
+        ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
+
+        try {
+            securePreferences.put(key, valueString, true);
+        } catch (StorageException e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
     }
 }

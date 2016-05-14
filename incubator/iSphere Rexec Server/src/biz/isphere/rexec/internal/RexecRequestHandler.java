@@ -18,6 +18,9 @@ import java.net.SocketTimeoutException;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.clcommands.CLCommand;
+import biz.isphere.core.clcommands.CLParameter;
+import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rexec.Messages;
 import biz.isphere.rexec.preferences.Preferences;
@@ -27,6 +30,7 @@ import biz.isphere.rexec.preferences.Preferences;
  */
 public class RexecRequestHandler extends Thread {
 
+    private static final String ISPHERE_COMMAND_PREFIX = "*CL:";
     private static final int BUFFER_SIZE = 4096;
 
     private static final byte NULL_CHAR = 0;
@@ -128,13 +132,24 @@ public class RexecRequestHandler extends Thread {
             } else {
                 File cmdLog = null;
                 try {
-                    Process process;
-                    if (Preferences.getInstance().isCaptureOutput()) {
-                        cmdLog = File.createTempFile("iSphere_RExec_", ".cmdlog");
-                        process = Runtime.getRuntime().exec(command + " > " + cmdLog);
+                    if (isISphereRemoteCommand(command)) {
+                        CLCommand clCommand = parseISphereRemoteCommand(command);
+                        if (clCommand == null) {
+                            failure(outputStream, errorStream, "Could not parse CL command: " + command);
+                        } else {
+                            if (!handleSETSEP(clCommand)) {
+                                failure(outputStream, errorStream, "Could not handle CL command: " + command);
+                            }
+                        }
                     } else {
-                        cmdLog = null;
-                        process = Runtime.getRuntime().exec(command);
+                        Process process;
+                        if (Preferences.getInstance().isCaptureOutput()) {
+                            cmdLog = File.createTempFile("iSphere_RExec_", ".cmdlog");
+                            process = Runtime.getRuntime().exec(command + " > " + cmdLog);
+                        } else {
+                            cmdLog = null;
+                            process = Runtime.getRuntime().exec(command);
+                        }
                     }
                     success(outputStream, cmdLog);
 
@@ -155,6 +170,55 @@ public class RexecRequestHandler extends Thread {
             closeSocket(auxSocket);
             closeSocket(client);
         }
+    }
+
+    private boolean handleSETSEP(CLCommand clCommand) {
+
+        String object = null;
+        String library = null;
+        String objectType = null;
+        String module = null;
+        String procedure = null;
+
+        CLParameter[] clParameters = clCommand.getParameters();
+        for (CLParameter clParameter : clParameters) {
+            System.out.print(clParameter.getKeyword() + ": ");
+            if ("OBJ".equals(clParameter.getKeyword())) {
+                object = clParameter.getValue();
+                int i = object.indexOf("/");
+                if (i >= 1) {
+                    library = object.substring(0, i);
+                }
+                if (i >= 0 && i < object.length() - 1) {
+                    object = object.substring(i + 1);
+                }
+            } else if ("OBJTYPE".equals(clParameter.getKeyword())) {
+                objectType = clParameter.getValue();
+            } else if ("MODULE".equals(clParameter.getKeyword())) {
+                module = clParameter.getValue();
+            } else if ("PROC".equals(clParameter.getKeyword())) {
+                procedure = clParameter.getValue();
+            }
+        }
+
+        // TODO: set service entry point
+        
+        return false;
+    }
+
+    private boolean isISphereRemoteCommand(String command) {
+
+        if (command.startsWith(ISPHERE_COMMAND_PREFIX)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private CLCommand parseISphereRemoteCommand(String command) {
+        CLParser parser = new CLParser();
+        CLCommand clCommand = parser.parseCommand(command.substring(ISPHERE_COMMAND_PREFIX.length()));
+        return clCommand;
     }
 
     /**

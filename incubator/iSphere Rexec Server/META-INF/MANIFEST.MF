@@ -8,8 +8,9 @@ Bundle-Localization: plugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.equinox.security,
  biz.isphere.core,
- biz.isphere.base;bundle-version="2.8.1"
+ biz.isphere.base
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-ClassPath: lib/commons-net-3.4.jar,
