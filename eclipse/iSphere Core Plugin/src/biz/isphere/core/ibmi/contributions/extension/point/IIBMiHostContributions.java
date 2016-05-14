@@ -144,4 +144,23 @@ public interface IIBMiHostContributions {
      * @return ICLPrompter
      */
     public ICLPrompter getCLPrompter(String connectionName);
+
+    /**
+     * Copies a given source member.
+     * 
+     * @param fromConnectionName - Name of the from connection.
+     * @param fromLibraryName - Name of the from library that contains the
+     *        source file.
+     * @param fromFileName - Name of the from source file.
+     * @param fromMemberName - Name of the from member.
+     * @param toConnectionName - Name of the target connection.
+     * @param toLibraryName - Name of the target library that contains the
+     *        target source file.
+     * @param toFileName - Name of the target source file.
+     * @param toMemberName - Name of the target source member.
+     * @return error message
+     * @throws Exception
+     */
+    public String copySourceMember(String fromConnectionName, String fromLibraryName, String fromFileName, String fromMemberName,
+        String toConnectionName, String toLibraryName, String toFileName, String toMemberName);
 }

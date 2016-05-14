@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -48,6 +49,7 @@ public class CopyMemberDialog extends XDialog {
 
     private CopyMemberService jobDescription;
 
+    private Combo comboToConnection;
     private Text textToFile;
     private Text textToLibrary;
     private TableViewer tableViewer;
@@ -137,6 +139,7 @@ public class CopyMemberDialog extends XDialog {
                     return;
                 }
 
+                jobDescription.setToConnection(connectionName);
                 jobDescription.setToLibrary(libraryName);
                 jobDescription.setToFile(fileName);
 
@@ -198,11 +201,24 @@ public class CopyMemberDialog extends XDialog {
         mainArea.setLayout(new GridLayout(3, false));
         mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        textToFile = createNameField(mainArea, Messages.To_file_colon);
+        Label labelToConnection = new Label(mainArea, SWT.NONE);
+        labelToConnection.setText("To connection:");
+
+        String[] connections = IBMiHostContributionsHandler.getConnectionNames();
+        if (connections != null) {
+            comboToConnection = WidgetFactory.createReadOnlyCombo(mainArea);
+            comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+            comboToConnection.setItems(connections);
+        } else {
+            comboToConnection = null;
+        }
+
         Label textInfo = new Label(mainArea, SWT.NONE);
         textInfo.setAlignment(SWT.RIGHT);
-        textInfo.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 1, 2));
+        textInfo.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 1, 3));
         textInfo.setText(Messages.bind(Messages.CopyMemberDialog_Info, SINGLE_QUOTE + Messages.To_member_colhdg + SINGLE_QUOTE));
+
+        textToFile = createNameField(mainArea, Messages.To_file_colon);
         textToLibrary = createNameField(mainArea, Messages.To_library_colon);
 
         tableViewer = new TableViewer(mainArea, SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -244,6 +260,10 @@ public class CopyMemberDialog extends XDialog {
     }
 
     private void loadScreenValues() {
+
+        if (comboToConnection != null) {
+            comboToConnection.setText(jobDescription.getToConnectionName());
+        }
 
         if (jobDescription.getFromLibraryNamesCount() == 1) {
             textToLibrary.setText(jobDescription.getFromLibraryNames()[0]);
@@ -292,7 +312,12 @@ public class CopyMemberDialog extends XDialog {
     }
 
     private String getToConnectionName() {
-        return jobDescription.getToConnectionName();
+
+        if (comboToConnection == null) {
+            return jobDescription.getToConnectionName();
+        }
+
+        return comboToConnection.getText();
     }
 
     private void setControlEnablement() {
