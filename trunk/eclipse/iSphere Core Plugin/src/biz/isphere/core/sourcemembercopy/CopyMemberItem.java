@@ -226,7 +226,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         String message;
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
 
-        message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand(), rtnMessages);
+        if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
+            message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand(), rtnMessages);
+        } else {
+            message = IBMiHostContributionsHandler.copySourceMember(fromConnectionName, fromLibrary, fromFile, fromMember, toConnectionName,
+                toLibrary, toFile, toMember);
+        }
 
         if (message != null) {
             setErrorMessage(buildMMessageString(rtnMessages));

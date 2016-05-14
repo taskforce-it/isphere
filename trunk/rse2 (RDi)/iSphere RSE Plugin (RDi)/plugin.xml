@@ -231,6 +231,26 @@
       	
       	<!--
       	  ==========================================
+      	    Source Member Copy To Contributions
+      	  ==========================================
+      	-->
+      	<!--
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
+            id="biz.isphere.core.menu.member2">
+	         <action
+                class="biz.isphere.rse.actions.CompareEditorAction"
+                enablesFor="1+"
+                id="biz.isphere.rse.actions.CompareEditorAction"
+                label="Copy Foo To..."
+                icon="icons/copy_members_to.png"
+                menubarPath="group.adapters">
+	         </action>
+      	</objectContribution>
+      	-->
+      	
+      	<!--
+      	  ==========================================
       	    Data Area Monitor Contributions
       	  ==========================================
       	-->
@@ -535,15 +555,34 @@
       	<!--
       	  ==========================================
       	    RSE Source Member
-            menubarPath="group.reorganize"
+            menubarPath="group.adapters"
       	  ==========================================
       	-->
    
    <extension
-         id="add.item"
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
+        <command
+              commandId="biz.isphere.core.command.SourceMember.copyTo"
+              id="biz.isphere.rse.handler.CopyToCommandHandler"
+              icon="icons/copy_members_to.png"
+              label="%command_CopyMembersTo_Label">
+        </command>
+      </menuContribution>
+   </extension>
+	      	
+      	<!--
+      	  ==========================================
+      	    PDM Table View
+            menubarPath="group.adapters"
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"

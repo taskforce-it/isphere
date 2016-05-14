@@ -8,6 +8,8 @@
 
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,11 +37,13 @@ import biz.isphere.rse.connection.ConnectionManager;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 import com.ibm.etools.systems.editor.IRemoteResourceProperties;
 import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
@@ -384,5 +388,135 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return null;
+    }
+
+    public String copySourceMember(String fromConnectionName, String fromLibraryName, String fromFileName, String fromMemberName,
+        String toConnectionName, String toLibraryName, String toFileName, String toMemberName) {
+
+        if (!checkFile(fromConnectionName, fromLibraryName, fromFileName)) {
+            return "From file not found.";
+        }
+
+        try {
+
+            IBMiConnection connection = getConnection(null, fromConnectionName);
+            IQSYSMember member = connection.getMember(fromLibraryName, fromFileName, fromMemberName, null);
+
+            String message = ensureMember(toConnectionName, toLibraryName, toFileName, toMemberName, member.getDescription(), member.getType());
+            if (message != null) {
+                return message;
+            }
+
+            IFile localMember = downloadMember(fromConnectionName, fromLibraryName, fromFileName, fromMemberName);
+            if (localMember == null) {
+                return "Could not download member.";
+            }
+
+            uploadMember(toConnectionName, toLibraryName, toFileName, toMemberName, localMember);
+
+        } catch (Exception e) {
+            return e.getLocalizedMessage();
+        }
+
+        return null;
+    }
+
+    private String ensureMember(String connectionName, String libraryName, String fileName, String memberName, String description, String sourceType)
+        throws Exception {
+
+        if (!checkFile(connectionName, libraryName, fileName)) {
+            return "File not found.";
+        }
+
+        if (!checkMember(connectionName, libraryName, fileName, memberName)) {
+            String command = "ADDPFM FILE(" + libraryName + "/" + fileName + ") MBR(" + memberName + ") TEXT('" + description + "') SRCTYPE("
+                + sourceType + ")";
+            String message = executeCommand(connectionName, command, null);
+            if (message != null) {
+                return "Could not create member.";
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Download a given source member from an IBM i.
+     * 
+     * @param connectionName - Name of the connection.
+     * @param libraryName - Name of the library that contains the source file.
+     * @param fileName - Name of the source file that contains the source
+     *        member.
+     * @param memberName - Name of the source member that is downloaded to the
+     *        PC.
+     * @return downloaded file resource
+     * @throws Exception
+     */
+    private IFile downloadMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception {
+
+        IBMiConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        IQSYSMember member = connection.getMember(libraryName, fileName, memberName, null);
+        if (member == null) {
+            return null;
+        }
+
+        if (!(member instanceof QSYSRemoteSourceMember)) {
+            return null;
+        }
+
+        QSYSRemoteSourceMember sourceMember = (QSYSRemoteSourceMember)member;
+
+        QSYSEditableRemoteSourceFileMember editableMember = new QSYSEditableRemoteSourceFileMember(sourceMember);
+        if (!editableMember.download(null, true)) {
+            return null;
+        }
+
+        return editableMember.getLocalResource();
+    }
+
+    private void uploadMember(String connectionName, String libraryName, String fileName, String memberName, IFile localResource) throws Exception {
+
+        IBMiConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return;
+        }
+
+        IQSYSMember member = connection.getMember(libraryName, fileName, memberName, null);
+        if (member == null) {
+            return;
+        }
+
+        if (!(member instanceof QSYSRemoteSourceMember)) {
+            return;
+        }
+
+        QSYSRemoteSourceMember sourceMember = (QSYSRemoteSourceMember)member;
+        QSYSEditableRemoteSourceFileMember editableMember = new QSYSEditableRemoteSourceFileMember(sourceMember);
+        if (!editableMember.download(null, true)) {
+            return;
+        }
+
+        BufferedReader br = null;
+
+        try {
+
+            br = new BufferedReader(new InputStreamReader(localResource.getContents()));
+            List<String> lines = new ArrayList<String>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+
+            editableMember.setContents(lines.toArray(new String[lines.size()]), true, null);
+
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
     }
 }

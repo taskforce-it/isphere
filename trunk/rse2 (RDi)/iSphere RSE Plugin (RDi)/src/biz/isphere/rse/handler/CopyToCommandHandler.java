@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -33,13 +33,13 @@ public class CopyToCommandHandler extends AbstractHandler implements IHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         ISelection selection = HandlerUtil.getCurrentSelection(event);
-        if (!(selection instanceof TreeSelection)) {
+        if (!(selection instanceof StructuredSelection)) {
             return null;
         }
 
         CopyMemberService jobDescription = null;
 
-        TreeSelection selectedMembers = (TreeSelection)selection;
+        StructuredSelection selectedMembers = (StructuredSelection)selection;
         for (Iterator<?> iterator = selectedMembers.iterator(); iterator.hasNext();) {
             Object item = iterator.next();
             if (item instanceof QSYSRemoteSourceMember) {

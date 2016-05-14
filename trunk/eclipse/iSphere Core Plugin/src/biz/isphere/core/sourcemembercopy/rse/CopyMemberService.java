@@ -85,6 +85,19 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return members.toArray(new CopyMemberItem[members.size()]);
     }
 
+    public void setToConnection(String connectionName) {
+
+        startProcess();
+
+        try {
+
+            this.toConnectionName = connectionName;
+
+        } finally {
+            endProcess();
+        }
+    }
+
     public void setToLibrary(String libraryName) {
 
         startProcess();
@@ -177,7 +190,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
                 String from = member.getFromQSYSName();
                 String to = member.getToQSYSName();
 
-                if (from.equals(to)) {
+                if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
                     member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
                     isError = true;
                 } else if (targetMembers.contains(to)) {

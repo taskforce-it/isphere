@@ -178,6 +178,19 @@ public class IBMiHostContributionsHandler {
         return factory.getCLPrompter(connectionName);
     }
 
+    public static String copySourceMember(String fromConnectionName, String fromLibraryName, String fromFileName, String fromMemberName,
+        String toConnectionName, String toLibraryName, String toFileName, String toMemberName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.copySourceMember(fromConnectionName, fromLibraryName, fromFileName, fromMemberName, toConnectionName, toLibraryName,
+            toFileName, toMemberName);
+    }
+
     /**
      * Returns the RDi contributions if there is a registered extension for
      * that.
