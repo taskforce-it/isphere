@@ -231,26 +231,6 @@
       	
       	<!--
       	  ==========================================
-      	    Source Member Copy To Contributions
-      	  ==========================================
-      	-->
-      	<!--
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
-            id="biz.isphere.core.menu.member2">
-	         <action
-                class="biz.isphere.rse.actions.CompareEditorAction"
-                enablesFor="1+"
-                id="biz.isphere.rse.actions.CompareEditorAction"
-                label="Copy Foo To..."
-                icon="icons/copy_members_to.png"
-                menubarPath="group.adapters">
-	         </action>
-      	</objectContribution>
-      	-->
-      	
-      	<!--
-      	  ==========================================
       	    Data Area Monitor Contributions
       	  ==========================================
       	-->
@@ -562,12 +542,12 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?endof=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
+              label="command_CopyMembersTo_Label (RSE)">
         </command>
       </menuContribution>
    </extension>
@@ -582,12 +562,12 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
+            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?endof=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
+              label="command_CopyMembersTo_Label (PDM)">
         </command>
       </menuContribution>
    </extension>
