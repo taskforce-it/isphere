@@ -17,6 +17,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
 import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
+import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -229,8 +230,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
             message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand(), rtnMessages);
         } else {
-            message = IBMiHostContributionsHandler.copySourceMember(fromConnectionName, fromLibrary, fromFile, fromMember, toConnectionName,
+            
+            ICopySourceMemberService service = IBMiHostContributionsHandler.getCopySourceMemberService();
+            service.copySourceMember(fromConnectionName, fromLibrary, fromFile, fromMember, toConnectionName,
                 toLibrary, toFile, toMember);
+            
+            message = null;
         }
 
         if (message != null) {

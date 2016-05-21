@@ -19,6 +19,7 @@ import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
+import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -178,8 +179,7 @@ public class IBMiHostContributionsHandler {
         return factory.getCLPrompter(connectionName);
     }
 
-    public static String copySourceMember(String fromConnectionName, String fromLibraryName, String fromFileName, String fromMemberName,
-        String toConnectionName, String toLibraryName, String toFileName, String toMemberName) {
+    public static ICopySourceMemberService getCopySourceMemberService() {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -187,8 +187,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.copySourceMember(fromConnectionName, fromLibraryName, fromFileName, fromMemberName, toConnectionName, toLibraryName,
-            toFileName, toMemberName);
+        return factory.getCopySourceMemberService();
     }
 
     /**
