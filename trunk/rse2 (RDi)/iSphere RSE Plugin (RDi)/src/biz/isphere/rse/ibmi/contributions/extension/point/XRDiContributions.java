@@ -27,12 +27,12 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
+import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.connection.ConnectionManager;
-import biz.isphere.rse.sourcemembercopy.CopySourceMemberService;
+import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -388,8 +388,18 @@ public class XRDiContributions implements IIBMiHostContributions {
         return null;
     }
 
-    public ICopySourceMemberService getCopySourceMemberService() {
+    public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception {
 
-        return new CopySourceMemberService();
+        IBMiConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        IQSYSMember member = connection.getMember(libraryName, fileName, memberName, null);
+        if (member == null) {
+            return null;
+        }
+
+        return new RSEMember(member);
     }
 }

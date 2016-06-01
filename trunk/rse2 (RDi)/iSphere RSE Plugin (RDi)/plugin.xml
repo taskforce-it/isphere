@@ -542,12 +542,12 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?endof=group.adapters">
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
-              label="command_CopyMembersTo_Label (RSE)">
+              label="%command_CopyMembersTo_Label">
         </command>
       </menuContribution>
    </extension>
@@ -562,12 +562,12 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?endof=group.adapters">
+            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
         <command
               commandId="biz.isphere.core.command.SourceMember.copyTo"
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
-              label="command_CopyMembersTo_Label (PDM)">
+              label="%command_CopyMembersTo_Label">
         </command>
       </menuContribution>
    </extension>
