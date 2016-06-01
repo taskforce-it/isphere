@@ -132,7 +132,7 @@ public class Messages extends NLS {
 
     public static String Member_is_already_open_in_an_editor;
 
-    public static String Member_2_file_1_in_library_0_not_found;
+    public static String Member_2_of_file_1_in_library_0_not_found;
 
     public static String Message;
 
@@ -1201,6 +1201,8 @@ public class Messages extends NLS {
     public static String The_value_in_field_max_Num_SplF_is_not_valid;
     
     public static String Substitution_variables_for_file_name;
+    
+    public static String Could_not_download_member_2_of_file_1_of_library_0;
     
     /*
      * Warning messages

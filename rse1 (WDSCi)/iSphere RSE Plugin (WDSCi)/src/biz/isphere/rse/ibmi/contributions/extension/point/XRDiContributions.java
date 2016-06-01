@@ -23,10 +23,12 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
+import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.connection.ConnectionManager;
+import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -35,6 +37,7 @@ import com.ibm.etools.iseries.comm.interfaces.IISeriesFile;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesMember;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesLibrary;
+import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.util.clprompter.CLPrompter;
 import com.ibm.etools.systems.core.SystemIFileProperties;
 import com.ibm.etools.systems.core.SystemPlugin;
@@ -77,7 +80,7 @@ public class XRDiContributions implements IIBMiHostContributions {
                 if (messageList.length > 0) {
                     for (int idx = 0; idx < messageList.length; idx++) {
                         if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                            escapeMessage = messageList[idx].getHelp();
+                            escapeMessage = messageList[idx].getText();
                         }
                         if (rtnMessages != null) {
                             rtnMessages.add(messageList[idx]);
@@ -383,5 +386,20 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return null;
+    }
+
+    public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception {
+
+        ISeriesConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        ISeriesMember member = connection.getISeriesMember(null, libraryName, fileName, memberName);
+        if (member == null) {
+            return null;
+        }
+
+        return new RSEMember(member);
     }
 }

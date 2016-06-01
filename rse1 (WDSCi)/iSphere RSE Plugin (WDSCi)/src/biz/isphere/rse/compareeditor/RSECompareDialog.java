@@ -228,7 +228,7 @@ public class RSECompareDialog extends CompareDialog {
                 rightMemberPrompt.getMemberCombo().setFocus();
                 return;
             } else if (!_rightMember.exists()) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
                     rightLibrary, rightFile, rightMember });
                 MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
                 rightMemberPrompt.getMemberCombo().setFocus();
@@ -246,7 +246,7 @@ public class RSECompareDialog extends CompareDialog {
                     ancestorMemberPrompt.getMemberCombo().setFocus();
                     return;
                 } else if (!_ancestorMember.exists()) {
-                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
                         ancestorLibrary, ancestorFile, ancestorMember });
                     MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
                     ancestorMemberPrompt.getMemberCombo().setFocus();

@@ -23,11 +23,19 @@ public abstract class Member {
 
     public abstract boolean exists();
 
-    public abstract void download(IProgressMonitor monitor) throws Exception;
+    public abstract boolean download(IProgressMonitor monitor) throws Exception;
 
     public abstract void upload(IProgressMonitor monitor) throws Exception;
 
     public abstract IFile getLocalResource();
+
+    public abstract String[] getContents() throws Exception;
+
+    public abstract void setContents(String[] contents) throws Exception;
+
+    public abstract String getDescription();
+
+    public abstract String getSourceType();
 
     public abstract String getLabel();
 

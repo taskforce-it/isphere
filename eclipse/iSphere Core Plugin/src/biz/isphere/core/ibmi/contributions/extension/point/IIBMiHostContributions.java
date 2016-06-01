@@ -14,7 +14,7 @@ import java.util.List;
 import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.core.clcommands.ICLPrompter;
-import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
+import biz.isphere.core.internal.Member;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -147,7 +147,14 @@ public interface IIBMiHostContributions {
     public ICLPrompter getCLPrompter(String connectionName);
 
     /**
-     * Returns a service for copying source members.
+     * Returns a source member from an IBM i.
+     * 
+     * @param connectionName - Connection used to locate the member.
+     * @param libraryName - Name of the library that contains the source file.
+     * @param fileName - Name of the source file that contains the member.
+     * @param memberName - Name of the member.
+     * @return Member
+     * @throws Exception
      */
-    public ICopySourceMemberService getCopySourceMemberService();
+    public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception;
 }
