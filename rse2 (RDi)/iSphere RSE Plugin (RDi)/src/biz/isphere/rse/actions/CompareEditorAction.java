@@ -84,11 +84,8 @@ public class CompareEditorAction implements IObjectActionDelegate {
                             RSEMember rseRightMember = getRightRSEMember(dialog.getRightConnection(), dialog.getRightLibrary(),
                                 dialog.getRightFile(), rseSelectedMember.getMember());
                             if (!rseRightMember.exists()) {
-                                String message = biz.isphere.core.Messages
-                                    .bind(
-                                        biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found,
-                                        new Object[] { dialog.getRightLibrary(), dialog.getRightFile(),
-                                            rseSelectedMember.getMember() });
+                                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
+                                    new Object[] { dialog.getRightLibrary(), dialog.getRightFile(), rseSelectedMember.getMember() });
                                 MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 
                             } else {
