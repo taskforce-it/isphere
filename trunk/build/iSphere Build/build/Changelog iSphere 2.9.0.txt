@@ -1,4 +1,14 @@
 
+Changelog: iSphere 2.9.0.b003
+-----------------------------
+ • Enabled "Copy Members to..." to copy members between different
+   connections (systems). 
+
+Changelog: iSphere 2.9.0.b002
+-----------------------------
+ • Disabled auto-selection for message id and text filter controls of 
+   message editor.
+
 Changelog: iSphere 2.9.0.b001
 -----------------------------
  • Added filter option "spooled file name" to the iSphere spooled file 
