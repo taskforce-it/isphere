@@ -81,13 +81,13 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.dataspaceeditor.dialog.IGoToTarget;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyEvent;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyListener;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentClipboard;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder.Match;
 import biz.isphere.core.swt.widgets.hexeditor.internal.DisplayedContent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyEvent;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyListener;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder.Match;
 
 /**
  * A hex editor, composed of two synchronized displays: an hexadecimal

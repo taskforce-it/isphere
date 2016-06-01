@@ -13,9 +13,9 @@
 package biz.isphere.core.swt.widgets.datetime;
 
 import java.text.AttributedCharacterIterator;
-import java.text.DateFormat.Field;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.text.DateFormat.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
