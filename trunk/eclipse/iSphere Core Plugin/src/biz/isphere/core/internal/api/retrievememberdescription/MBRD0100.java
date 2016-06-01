@@ -2,9 +2,9 @@ package biz.isphere.core.internal.api.retrievememberdescription;
 
 import java.io.UnsupportedEncodingException;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.internal.api.APIFormat;
+
+import com.ibm.as400.access.AS400;
 
 public class MBRD0100 extends APIFormat {
 
