@@ -346,7 +346,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append(memberName);
         command.append(")"); //$NON-NLS-1$
         command.append(" TEXT('*** iSphere Copying Member ***')"); //$NON-NLS-1$
-        command.append(" SRCTYPE('')"); //$NON-NLS-1$
+        command.append(" SRCTYPE('*NONE')"); //$NON-NLS-1$
 
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
         String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
