@@ -216,4 +216,18 @@ public class RSEMember extends Member {
         this.archiveTime = archiveTime;
     }
 
+    @Override
+    public String toString() {
+
+        if (_member == null) {
+            return super.toString();
+        }
+
+        if (getConnection() != null) {
+            return getConnection() + ":" + _member.toString();
+        } else {
+            return _member.toString();
+        }
+    }
+
 }
