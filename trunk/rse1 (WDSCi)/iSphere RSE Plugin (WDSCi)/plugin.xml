@@ -472,6 +472,36 @@
          </action> 
      </viewContribution> 
    </extension>    
+	      	
+      	<!--
+      	  ==========================================
+      	    PDM Table View
+            menubarPath="group.adapters"
+      	  ==========================================
+      	-->
+   
+   <extension point="org.eclipse.ui.viewActions"> 
+      <viewContribution 
+         id="biz.isphere.objecttableview.actions" 
+         targetID="com.ibm.etools.iseries.core.LibTableView"> 
+         <menu
+            id="biz.isphere.objecttableview.menu" 
+            label="*** iSphere ***"> 
+            <separator name="group1"/> 
+         </menu> 
+         <action
+            id="biz.isphere.rse.actions.RSEManagementAction" 
+            label="%iSphere_RSE_Filter_Management" 
+            menubarPath="biz.isphere.objecttableview.menu/group1" 
+            toolbarPath="Normal/additions"
+            style="push"
+            state="true" 
+            icon="icons/iSphere_RSE_Management.gif" 
+            tooltip="%iSphere_RSE_Filter_Management" 
+            class="biz.isphere.rse.actions.RSEManagementAction"> 
+         </action> 
+     </viewContribution> 
+   </extension>    
 
       	<!--
       	  ==========================================

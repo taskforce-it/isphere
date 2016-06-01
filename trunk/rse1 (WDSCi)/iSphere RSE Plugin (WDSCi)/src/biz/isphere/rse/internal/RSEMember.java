@@ -11,6 +11,11 @@
 
 package biz.isphere.rse.internal;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -81,8 +86,8 @@ public class RSEMember extends Member {
     }
 
     @Override
-    public void download(IProgressMonitor monitor) throws Exception {
-        _editableMember.download(monitor);
+    public boolean download(IProgressMonitor monitor) throws Exception {
+        return _editableMember.download(monitor);
     }
 
     @Override
@@ -95,6 +100,32 @@ public class RSEMember extends Member {
         return _editableMember.getLocalResource();
     }
 
+    @Override
+    public void setContents(String[] contents) throws Exception {
+        _editableMember.setContents(null, contents, false);
+    }
+    
+    @Override
+    public String[] getContents() throws Exception {
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents()));
+        List<String> contents = new ArrayList<String>();
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            contents.add(line.substring(12)); // strip seq. number and date
+        }
+
+        return contents.toArray(new String[contents.size()]);
+    }
+
+    public String getDescription() {
+        return _editableMember.getMember().getDescription();
+    }
+
+    public String getSourceType() {
+        return _editableMember.getMember().getSourceType();
+    }
+    
     @Override
     public void openStream() throws Exception {
         _editableMember.openStream();

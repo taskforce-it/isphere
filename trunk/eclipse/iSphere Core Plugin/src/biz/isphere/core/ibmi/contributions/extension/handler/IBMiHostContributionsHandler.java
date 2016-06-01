@@ -19,14 +19,14 @@ import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
-import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
+import biz.isphere.core.internal.Member;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 
 public class IBMiHostContributionsHandler {
 
-    private static final String EXTENSION_ID = "biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions";
+    private static final String EXTENSION_ID = "biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions"; //$NON-NLS-1$
 
     public static boolean hasContribution() {
 
@@ -179,7 +179,7 @@ public class IBMiHostContributionsHandler {
         return factory.getCLPrompter(connectionName);
     }
 
-    public static ICopySourceMemberService getCopySourceMemberService() {
+    public static Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -187,7 +187,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.getCopySourceMemberService();
+        return factory.getMember(connectionName, libraryName, fileName, memberName);
     }
 
     /**

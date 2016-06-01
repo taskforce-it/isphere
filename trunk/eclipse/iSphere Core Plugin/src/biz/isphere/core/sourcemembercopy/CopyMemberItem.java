@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import biz.isphere.base.internal.IBMiHelper;
+import org.eclipse.core.resources.IFile;
+
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
-import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
-import biz.isphere.core.sourcemembercopy.rse.ICopySourceMemberService;
+import biz.isphere.core.internal.Member;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 
 public class CopyMemberItem implements Comparable<CopyMemberItem> {
@@ -118,11 +118,11 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(library);
-        buffer.append("/");
+        buffer.append("/"); //$NON-NLS-1$
         buffer.append(file);
-        buffer.append("(");
+        buffer.append("("); //$NON-NLS-1$
         buffer.append(member);
-        buffer.append(")");
+        buffer.append(")"); //$NON-NLS-1$
 
         return buffer.toString();
     }
@@ -189,61 +189,30 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(fromLibrary);
-        buffer.append("/");
-        buffer.append(fromFile);
-        buffer.append("(");
-        buffer.append(fromMember);
-        buffer.append(") -> ");
-        buffer.append(toLibrary);
-        buffer.append("/");
-        buffer.append(toFile);
-        buffer.append("(");
-        buffer.append(toMember);
-        buffer.append(")");
+        buffer.append(fromLibrary); //$NON-NLS-1$
+        buffer.append("/"); //$NON-NLS-1$
+        buffer.append(fromFile); //$NON-NLS-1$
+        buffer.append("("); //$NON-NLS-1$
+        buffer.append(fromMember); //$NON-NLS-1$
+        buffer.append(") -> "); //$NON-NLS-1$
+        buffer.append(toLibrary); //$NON-NLS-1$
+        buffer.append("/"); //$NON-NLS-1$
+        buffer.append(toFile); //$NON-NLS-1$
+        buffer.append("("); //$NON-NLS-1$
+        buffer.append(toMember); //$NON-NLS-1$
+        buffer.append(")"); //$NON-NLS-1$
         return buffer.toString();
     }
 
     public boolean performCopyOperation(String fromConnectionName, String toConnectionName) {
 
-        String fromText = null;
-
-        try {
-            AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
-
-            QUSRMBRD qusrmbrd = new QUSRMBRD(fromSystem);
-            qusrmbrd.setFile(getFromFile(), getFromLibrary(), getFromMember());
-            MBRD0100 mbrd0100 = new MBRD0100(fromSystem);
-            if (qusrmbrd.execute(mbrd0100)) {
-                fromText = mbrd0100.getMeberDescription();
-            } else {
-                fromText = Messages.EMPTY;
-            }
-
-        } catch (Throwable e) {
-            setErrorMessage(e.getLocalizedMessage());
-        }
-
         String message;
-        List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
 
         if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-            message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getCopyFileCommand(), rtnMessages);
+            message = performLocalCopy(fromConnectionName);
         } else {
-            
-            ICopySourceMemberService service = IBMiHostContributionsHandler.getCopySourceMemberService();
-            service.copySourceMember(fromConnectionName, fromLibrary, fromFile, fromMember, toConnectionName,
-                toLibrary, toFile, toMember);
-            
-            message = null;
+            message = performCopyBetweenConnections(fromConnectionName, toConnectionName);
         }
-
-        if (message != null) {
-            setErrorMessage(buildMMessageString(rtnMessages));
-            return false;
-        }
-
-        message = IBMiHostContributionsHandler.executeCommand(toConnectionName, getChangeMemberTextCommand(fromText));
 
         if (message != null) {
             setErrorMessage(message);
@@ -253,6 +222,170 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         setCopyStatus(true);
 
         return true;
+    }
+
+    private String performLocalCopy(String connectionName) {
+
+        try {
+
+            Member fromSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getFromLibrary(), getFromFile(), getFromMember());
+            if (fromSourceMember == null) {
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
+                    getFromMember() });
+            }
+
+            if (!IBMiHostContributionsHandler.checkMember(connectionName, getToLibrary(), getToFile(), getToMember())) {
+                String message = addSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
+                if (message != null) {
+                    return message;
+                }
+            }
+
+            StringBuilder command = new StringBuilder();
+
+            command.append("CPYF"); //$NON-NLS-1$
+            command.append(" FROMFILE("); //$NON-NLS-1$
+            command.append(getFromLibrary());
+            command.append("/"); //$NON-NLS-1$
+            command.append(getFromFile());
+            command.append(")"); //$NON-NLS-1$
+            command.append(" TOFILE("); //$NON-NLS-1$
+            command.append(getToLibrary());
+            command.append("/"); //$NON-NLS-1$
+            command.append(getToFile());
+            command.append(")"); //$NON-NLS-1$
+            command.append(" FROMMBR("); //$NON-NLS-1$
+            command.append(getFromMember());
+            command.append(")"); //$NON-NLS-1$
+            command.append(" TOMBR("); //$NON-NLS-1$
+            command.append(getToMember());
+            command.append(")"); //$NON-NLS-1$
+            command.append(" MBROPT(*REPLACE)"); //$NON-NLS-1$
+            command.append(" CRTFILE(*NO)"); //$NON-NLS-1$
+
+            List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
+            String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+            if (message != null) {
+                return buildMMessageString(rtnMessages);
+            }
+
+            Member toSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getToLibrary(), getToFile(), getToMember());
+            if (fromSourceMember == null) {
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getToLibrary(), getToFile(), getToMember() });
+            }
+
+            message = setToMemberAttributes(fromSourceMember, toSourceMember);
+            if (message != null) {
+                return message;
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Unexpected error when copying member ***", e);
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+
+        return null;
+    }
+
+    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName) {
+
+        try {
+
+            Member fromSourceMember = IBMiHostContributionsHandler.getMember(fromConnectionName, getFromLibrary(), getFromFile(), getFromMember());
+            if (fromSourceMember == null) {
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
+                    getFromMember() });
+            }
+
+            fromSourceMember.download(null);
+
+            IFile downloadedLocalResource = fromSourceMember.getLocalResource();
+            if (downloadedLocalResource == null) {
+                return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0, new Object[] { getFromLibrary(), getFromFile(),
+                    getFromMember() });
+            }
+
+            if (!IBMiHostContributionsHandler.checkMember(toConnectionName, getToLibrary(), getToFile(), getToMember())) {
+                String message = addSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+                if (message != null) {
+                    return message;
+                }
+            }
+
+            Member toSourceMember = IBMiHostContributionsHandler.getMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+            if (toSourceMember == null) {
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getToLibrary(), getToFile(), getToMember() });
+            }
+
+            toSourceMember.setContents(fromSourceMember.getContents());
+            toSourceMember.upload(null);
+
+            String message = setToMemberAttributes(fromSourceMember, toSourceMember);
+            if (message != null) {
+                return message;
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Unexpected error when copying member ***", e);
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+
+        return null;
+    }
+
+    private String addSourceMember(String connectionName, String libraryName, String fileName, String memberName) {
+
+        StringBuilder command = new StringBuilder();
+        command.append("ADDPFM"); //$NON-NLS-1$
+        command.append(" FILE("); //$NON-NLS-1$
+        command.append(libraryName);
+        command.append("/"); //$NON-NLS-1$
+        command.append(fileName);
+        command.append(")"); //$NON-NLS-1$
+        command.append(" MBR("); //$NON-NLS-1$
+        command.append(memberName);
+        command.append(")"); //$NON-NLS-1$
+        command.append(" TEXT('*** iSphere Copying Member ***')"); //$NON-NLS-1$
+        command.append(" SRCTYPE('')"); //$NON-NLS-1$
+
+        List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
+        String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        if (message != null) {
+            return buildMMessageString(rtnMessages);
+        }
+
+        return null;
+    }
+
+    private String setToMemberAttributes(Member fromSourceMember, Member toSourceMember) {
+
+        String description = fromSourceMember.getDescription();
+        String sourceType = fromSourceMember.getSourceType();
+
+        StringBuilder command = new StringBuilder();
+        command.append("CHGPFM"); //$NON-NLS-1$
+        command.append(" FILE("); //$NON-NLS-1$
+        command.append(getToLibrary());
+        command.append("/"); //$NON-NLS-1$
+        command.append(getToFile());
+        command.append(") "); //$NON-NLS-1$
+        command.append("MBR("); //$NON-NLS-1$
+        command.append(getToMember());
+        command.append(") "); //$NON-NLS-1$
+        command.append("TEXT('"); //$NON-NLS-1$
+        command.append(description);
+        command.append("')"); //$NON-NLS-1$
+        command.append(" SRCTYPE("); //$NON-NLS-1$
+        command.append(sourceType);
+        command.append(")"); //$NON-NLS-1$
+
+        List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
+        String message = IBMiHostContributionsHandler.executeCommand(toSourceMember.getConnection(), command.toString(), rtnMessages);
+        if (message != null) {
+            return buildMMessageString(rtnMessages);
+        }
+
+        return null;
     }
 
     private String buildMMessageString(List<AS400Message> rtnMessages) {
@@ -268,58 +401,6 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         }
 
         return message.toString();
-    }
-
-    private String getChangeMemberTextCommand(String text) {
-
-        // CHGPFM FILE(LIB/FILE) MBR(MBR) TEXT(TEXT)
-
-        StringBuilder command = new StringBuilder();
-
-        command.append("CHGPFM");
-        command.append(" FILE(");
-        command.append(getToLibrary());
-        command.append("/");
-        command.append(getToFile());
-        command.append(")");
-        command.append(" MBR(");
-        command.append(getToMember());
-        command.append(")");
-        command.append(" TEXT(");
-        command.append(IBMiHelper.quote(text));
-        command.append(")");
-
-        return command.toString();
-    }
-
-    private String getCopyFileCommand() {
-
-        // CPYF FROMFILE(FROMLIB/FROMFILE) TOFILE(TOLIB/TOFILE) FROMMBR(FROMMBR)
-        // TOMBR(TOMBR) MBROPT(*REPLACE) CRTFILE(*NO)
-
-        StringBuilder command = new StringBuilder();
-
-        command.append("CPYF");
-        command.append(" FROMFILE(");
-        command.append(getFromLibrary());
-        command.append("/");
-        command.append(getFromFile());
-        command.append(")");
-        command.append(" TOFILE(");
-        command.append(getToLibrary());
-        command.append("/");
-        command.append(getToFile());
-        command.append(")");
-        command.append(" FROMMBR(");
-        command.append(getFromMember());
-        command.append(")");
-        command.append(" TOMBR(");
-        command.append(getToMember());
-        command.append(")");
-        command.append(" MBROPT(*REPLACE)");
-        command.append(" CRTFILE(*NO)");
-
-        return command.toString();
     }
 
     public void addModifiedListener(ModifiedListener listener) {

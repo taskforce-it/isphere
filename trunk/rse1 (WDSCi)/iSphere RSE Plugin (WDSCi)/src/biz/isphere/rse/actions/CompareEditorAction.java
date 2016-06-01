@@ -90,7 +90,7 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
                             RSEMember rseRightMember = getRightRSEMember(dialog.getRightConnection(), dialog.getRightLibrary(),
                                 dialog.getRightFile(), rseSelectedMember.getMember());
                             if (!rseRightMember.exists()) {
-                                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found,
+                                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
                                     new Object[] { dialog.getRightLibrary(), dialog.getRightFile(), rseSelectedMember.getMember() });
                                 MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 

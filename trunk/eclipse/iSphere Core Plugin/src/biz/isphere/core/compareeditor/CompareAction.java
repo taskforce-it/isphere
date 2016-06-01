@@ -197,7 +197,7 @@ public class CompareAction {
             }
 
             private void displayMemberNotFoundMessage(String library, String file, String member) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_file_1_in_library_0_not_found, new Object[] {
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
                     library, file, member });
                 MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, message);
             }
