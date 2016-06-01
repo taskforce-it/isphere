@@ -786,6 +786,11 @@ public class MessageDescriptionViewer {
 
             if (focusControl != null) {
                 focusControl.setFocus();
+                if (focusControl instanceof Text) {
+                    Text text = (Text)focusControl;
+                    int length = text.getText().length();
+                    text.setSelection(length, length);
+                }
             }
 
             monitor.done();
