@@ -231,7 +231,7 @@ public class CopyMemberDialog extends XDialog {
         addTableColumn(tableViewer, Messages.File);
         addTableColumn(tableViewer, Messages.Member);
         addTableColumn(tableViewer, Messages.To_member_colhdg);
-        addTableColumn(tableViewer, Messages.EMPTY, 400);
+        addTableColumn(tableViewer, "Result", 400);
 
         tableViewer.setCellModifier(new CopyMemberItemTableCellModifier(tableViewer));
         tableViewer.setContentProvider(new ContentProviderMemberItems());

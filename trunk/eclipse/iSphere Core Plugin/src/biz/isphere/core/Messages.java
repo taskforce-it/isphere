@@ -1204,6 +1204,8 @@ public class Messages extends NLS {
     
     public static String Could_not_download_member_2_of_file_1_of_library_0;
     
+    public static String Result;
+    
     /*
      * Warning messages
      */
