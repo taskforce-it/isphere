@@ -270,7 +270,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
 
             Member toSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getToLibrary(), getToFile(), getToMember());
-            if (fromSourceMember == null) {
+            if (toSourceMember == null) {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getToLibrary(), getToFile(), getToMember() });
             }
 
