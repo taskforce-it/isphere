@@ -18,13 +18,20 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 
 import biz.isphere.core.internal.Member;
+import biz.isphere.rse.Messages;
 
+import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 import com.ibm.etools.iseries.core.ISeriesTempFileListener;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember;
+import com.ibm.etools.iseries.core.resources.ISeriesMemberTransfer;
+import com.ibm.etools.systems.core.SystemPlugin;
+import com.ibm.etools.systems.core.messages.SystemMessage;
 
 public class RSEMember extends Member {
 
@@ -91,8 +98,40 @@ public class RSEMember extends Member {
     }
 
     @Override
-    public void upload(IProgressMonitor monitor) throws Exception {
-        _editableMember.upload(monitor);
+    public String upload(IProgressMonitor monitor) throws Exception {
+
+        _editableMember.connect();
+        if (!_editableMember.isConnected()) {
+            return Messages.bind(Messages.Failed_to_connect_to_system_A, _editableMember.getISeriesConnection().getConnectionName());
+        }
+        _editableMember.closeStream();
+
+        String localPath = _editableMember.getDownloadPath();
+
+        ISeriesMemberTransfer.acquireLock(localPath);
+
+        try {
+
+            ISeriesHostObjectLock lock = _editableMember.queryLocks();
+            if (lock != null) {
+                return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
+                    getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
+            }
+            if (monitor != null) {
+                SystemMessage msg = SystemPlugin.getPluginMessage("RSEG1281");
+                msg.makeSubstitution(_editableMember.getMember().getAbsoluteName());
+                monitor.beginTask(msg.getLevelOneText(), -1);
+            }
+            boolean insertSequenceNumbersIfRequired = true;
+
+            ISeriesMemberTransfer memberTransfer = new ISeriesMemberTransfer(_editableMember.getMember(), localPath);
+            memberTransfer.upload(insertSequenceNumbersIfRequired);
+
+        } finally {
+            ISeriesMemberTransfer.releaseLock(localPath);
+        }
+
+        return null;
     }
 
     @Override
@@ -104,10 +143,10 @@ public class RSEMember extends Member {
     public void setContents(String[] contents) throws Exception {
         _editableMember.setContents(null, contents, false);
     }
-    
+
     @Override
     public String[] getContents() throws Exception {
-        
+
         BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents()));
         List<String> contents = new ArrayList<String>();
         String line = null;
@@ -125,7 +164,7 @@ public class RSEMember extends Member {
     public String getSourceType() {
         return _editableMember.getMember().getSourceType();
     }
-    
+
     @Override
     public void openStream() throws Exception {
         _editableMember.openStream();
