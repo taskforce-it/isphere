@@ -130,6 +130,10 @@ public class Messages extends NLS {
 
     public static String Cannot_copy_source_members_from_different_connections;
     
+    public static String Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D;
+
+    public static String Failed_to_connect_to_system_A;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

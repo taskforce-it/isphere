@@ -15,19 +15,20 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 
 import biz.isphere.core.internal.Member;
+import biz.isphere.rse.Messages;
 
+import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 import com.ibm.etools.iseries.rse.ui.IBMiRSEPlugin;
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.rse.ui.resources.QSYSTempFileListener;
-import com.ibm.etools.iseries.rse.ui.resources.TemporaryQSYSMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.subsystems.qsys.QSYSResources;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.resources.IQSYSTemporaryStorage;
+import com.ibm.etools.iseries.subsystems.qsys.resources.QSYSRemoteMemberTransfer;
 
 public class RSEMember extends Member {
 
@@ -94,22 +95,42 @@ public class RSEMember extends Member {
     }
 
     @Override
-    public void upload(IProgressMonitor monitor) throws Exception {
-        // _editableMember.upload(monitor);
-        IQSYSTemporaryStorage storage = new TemporaryQSYSMember(_editableMember);
-        try {
-            if (storage.create()) {
-                if (storage.uploadToISeries(monitor)) {
-                    if (storage.copyToMember(_editableMember.getMember().getName())) {
-                    }
-                }
-                storage.delete();
-            }
-        } catch (SystemMessageException sme) {
-            IBMiRSEPlugin.logError("Error uploading member", sme);
-            DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(sme.getSystemMessage());
-            Display.getDefault().syncExec(msgAction);
+    public String upload(IProgressMonitor monitor) throws Exception {
+
+        _editableMember.connect();
+        if (!_editableMember.isConnected()) {
+            return Messages.bind(Messages.Failed_to_connect_to_system_A, _editableMember.getISeriesConnection().getConnectionName());
         }
+        _editableMember.closeStream();
+
+        String localPath = _editableMember.getDownloadPath();
+
+        QSYSRemoteMemberTransfer.acquireLock(localPath);
+
+        try {
+
+            ISeriesHostObjectLock lock = _editableMember.queryLocks();
+            if (lock != null) {
+                return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
+                    getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
+            }
+            if (monitor != null) {
+                monitor.beginTask(NLS.bind(QSYSResources.MSG_UPLOAD_PROGRESS, _editableMember.getMember().getAbsoluteName()), -1);
+            }
+            boolean insertSequenceNumbersIfRequired = true;
+
+            IPreferenceStore prefStore = IBMiRSEPlugin.getDefault().getPreferenceStore();
+            int startSeqNum = prefStore.getInt("com.ibm.etools.systems.editor.reseq.start");
+            int incrSeqNum = prefStore.getInt("com.ibm.etools.systems.editor.reseq.incr");
+
+            QSYSRemoteMemberTransfer memberTransfer = new QSYSRemoteMemberTransfer(_editableMember.getMember(), localPath);
+            memberTransfer.upload(insertSequenceNumbersIfRequired, startSeqNum, incrSeqNum);
+
+        } finally {
+            QSYSRemoteMemberTransfer.releaseLock(localPath);
+        }
+
+        return null;
     }
 
     @Override
@@ -121,10 +142,10 @@ public class RSEMember extends Member {
     public void setContents(String[] contents) throws Exception {
         _editableMember.setContents(contents, false, null);
     }
-    
+
     @Override
     public String[] getContents() throws Exception {
-        
+
         BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents()));
         List<String> contents = new ArrayList<String>();
         String line = null;
