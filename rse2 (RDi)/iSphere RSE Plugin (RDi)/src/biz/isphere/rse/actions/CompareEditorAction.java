@@ -20,10 +20,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
 
@@ -104,11 +106,7 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
         } catch (Exception e) {
             ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
-            if (e.getLocalizedMessage() == null) {
-                MessageDialog.openError(shell, biz.isphere.core.Messages.Unexpected_Error, e.getClass().getName() + " - " + getClass().getName());
-            } else {
-                MessageDialog.openError(shell, biz.isphere.core.Messages.Unexpected_Error, e.getLocalizedMessage());
-            }
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 

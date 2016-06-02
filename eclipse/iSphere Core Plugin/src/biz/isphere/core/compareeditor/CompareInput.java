@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IFileEditorInput;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
@@ -118,24 +119,12 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
         } catch (Exception e) {
             ISpherePlugin.logError(Messages.Unexpected_Error, e);
-            String message;
-            if (e.getLocalizedMessage() == null) {
-                message = e.getClass().getName() + " - " + getClass().getName(); //$NON-NLS-1$
-            } else {
-                message = e.getLocalizedMessage();
-            }
+            String message = ExceptionHelper.getLocalizedMessage(e);
             throw new RuntimeException(message, e);
         } finally {
             monitor.done();
         }
     }
-
-    // public boolean isSaveNeeded() {
-    // if (super.isSaveNeeded()) {
-    // isSaveNeeded = true;
-    // }
-    // return isSaveNeeded;
-    // }
 
     public void cleanup() {
         if (threeWay && fAncestor != null) {
