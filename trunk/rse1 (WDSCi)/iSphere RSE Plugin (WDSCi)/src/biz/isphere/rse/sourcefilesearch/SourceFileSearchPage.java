@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
@@ -456,13 +457,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
-            String message;
-            if (e.getLocalizedMessage() == null) {
-                message = e.getClass().getName() + " - " + getClass().getName();
-            } else {
-                message = e.getLocalizedMessage();
-            }
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
 
         return true;
