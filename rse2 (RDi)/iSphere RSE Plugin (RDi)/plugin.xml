@@ -548,6 +548,14 @@
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
               label="%command_CopyMembersTo_Label">
+	      <visibleWhen>
+	        <with variable="selection">
+	          <count value="*" />
+	          <iterate operator="and">
+	            <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+	          </iterate>
+	        </with>
+	      </visibleWhen>
         </command>
       </menuContribution>
    </extension>
@@ -568,6 +576,14 @@
               id="biz.isphere.rse.handler.CopyToCommandHandler"
               icon="icons/copy_members_to.png"
               label="%command_CopyMembersTo_Label">
+	      <visibleWhen>
+	        <with variable="selection">
+	          <count value="*" />
+	          <iterate operator="and">
+	            <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+	          </iterate>
+	        </with>
+	      </visibleWhen>
         </command>
       </menuContribution>
    </extension>
