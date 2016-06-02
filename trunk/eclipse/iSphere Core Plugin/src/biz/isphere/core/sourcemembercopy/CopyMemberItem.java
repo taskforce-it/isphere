@@ -228,6 +228,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         try {
 
+            String message = null;
+
             Member fromSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getFromLibrary(), getFromFile(), getFromMember());
             if (fromSourceMember == null) {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
@@ -235,12 +237,15 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
 
             if (!IBMiHostContributionsHandler.checkMember(connectionName, getToLibrary(), getToFile(), getToMember())) {
-                String message = addSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
-                if (message != null) {
-                    return message;
-                }
+                message = addSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
+            } else {
+                message = prepareSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
+            }
+            if (message != null) {
+                return message;
             }
 
+            List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
             StringBuilder command = new StringBuilder();
 
             command.append("CPYF"); //$NON-NLS-1$
@@ -263,8 +268,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             command.append(" MBROPT(*REPLACE)"); //$NON-NLS-1$
             command.append(" CRTFILE(*NO)"); //$NON-NLS-1$
 
-            List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
-            String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+            message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
             if (message != null) {
                 return buildMMessageString(rtnMessages);
             }
@@ -291,6 +295,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         try {
 
+            String message = null;
+
             Member fromSourceMember = IBMiHostContributionsHandler.getMember(fromConnectionName, getFromLibrary(), getFromFile(), getFromMember());
             if (fromSourceMember == null) {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
@@ -306,10 +312,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
 
             if (!IBMiHostContributionsHandler.checkMember(toConnectionName, getToLibrary(), getToFile(), getToMember())) {
-                String message = addSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
-                if (message != null) {
-                    return message;
-                }
+                message = addSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+            } else {
+                message = prepareSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+            }
+            if (message != null) {
+                return message;
             }
 
             Member toSourceMember = IBMiHostContributionsHandler.getMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
@@ -318,9 +326,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
 
             toSourceMember.setContents(fromSourceMember.getContents());
-            toSourceMember.upload(null);
+            message = toSourceMember.upload(null);
+            if (message != null) {
+                return message;
+            }
 
-            String message = setToMemberAttributes(fromSourceMember, toSourceMember);
+            message = setToMemberAttributes(fromSourceMember, toSourceMember);
             if (message != null) {
                 return message;
             }
@@ -350,6 +361,53 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
         String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        if (message != null) {
+            return buildMMessageString(rtnMessages);
+        }
+
+        return null;
+    }
+
+    private String prepareSourceMember(String connectionName, String libraryName, String fileName, String memberName) {
+
+        String message = null;
+        List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
+        StringBuilder command = new StringBuilder();
+
+        rtnMessages.clear();
+        command.delete(0, command.length());
+
+        command.append("CHGPFM"); //$NON-NLS-1$
+        command.append(" FILE("); //$NON-NLS-1$
+        command.append(libraryName);
+        command.append("/"); //$NON-NLS-1$
+        command.append(fileName);
+        command.append(")"); //$NON-NLS-1$
+        command.append(" MBR("); //$NON-NLS-1$
+        command.append(memberName);
+        command.append(")"); //$NON-NLS-1$
+        command.append(" TEXT('*** iSphere Copying Member ***')"); //$NON-NLS-1$
+        command.append(" SRCTYPE('*NONE')"); //$NON-NLS-1$
+
+        message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        if (message != null) {
+            return buildMMessageString(rtnMessages);
+        }
+
+        rtnMessages.clear();
+        command.delete(0, command.length());
+
+        command.append("CLRPFM"); //$NON-NLS-1$
+        command.append(" FILE("); //$NON-NLS-1$
+        command.append(libraryName);
+        command.append("/"); //$NON-NLS-1$
+        command.append(fileName);
+        command.append(")"); //$NON-NLS-1$
+        command.append(" MBR("); //$NON-NLS-1$
+        command.append(memberName);
+        command.append(")"); //$NON-NLS-1$
+
+        message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
         if (message != null) {
             return buildMMessageString(rtnMessages);
         }

@@ -25,7 +25,7 @@ public abstract class Member {
 
     public abstract boolean download(IProgressMonitor monitor) throws Exception;
 
-    public abstract void upload(IProgressMonitor monitor) throws Exception;
+    public abstract String upload(IProgressMonitor monitor) throws Exception;
 
     public abstract IFile getLocalResource();
 
