@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -35,6 +36,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.BrowserEditor;
 import biz.isphere.core.internal.BrowserEditorInput;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -646,22 +648,32 @@ public class SpooledFile {
     }
 
     private void openSpooledFileInEditor(String format, IFile file) throws PartInitException {
+
+        Image image = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SPOOLED_FILE);
+
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
 
             IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
             org.eclipse.ui.ide.IDE.openEditor(page, file);
 
+            // BrowserEditorInput editorInput = new
+            // BrowserEditorInput(getTemporaryName(format),
+            // getTemporaryName(format), getToolTip(format), image,
+            // file.getLocation().toOSString());
+            // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput,
+            // BrowserEditor.ID);
+
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
-            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
-                + getTemporaryName(format), null, file.getLocation().toOSString());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
+                file.getLocation().toOSString());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
 
-            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), "iSphereSpooledFiles/"
-                + getTemporaryName(format), null, file.getLocation().toOSString());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, "biz.isphere.core.internal.BrowserEditor");
+            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
+                file.getLocation().toOSString());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
         }
     }
 
@@ -875,6 +887,11 @@ public class SpooledFile {
 
     public String getAbsoluteName() {
         return "Spooled_File/" + getAbsoluteNameInternal("/");
+    }
+
+    public String getToolTip(String format) {
+
+        return "iSphereSpooledFiles/" + getTemporaryName(format); //$NON-NLS-1$
     }
 
     public String getTemporaryName(String format) {
