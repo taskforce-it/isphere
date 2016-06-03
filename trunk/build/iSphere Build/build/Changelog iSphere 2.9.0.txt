@@ -3,6 +3,8 @@ Changelog: iSphere 2.9.0.b003
 -----------------------------
  • Enabled "Copy Members to..." to copy members between different
    connections (systems). 
+ • Now spooled files that are opened as "Text" are displayed in
+   a browser as the other types (html and pdf) are.
 
 Changelog: iSphere 2.9.0.b002
 -----------------------------

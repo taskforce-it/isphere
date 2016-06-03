@@ -653,15 +653,13 @@ public class SpooledFile {
 
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
 
-            IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            org.eclipse.ui.ide.IDE.openEditor(page, file);
+            // IWorkbenchPage page =
+            // ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            // org.eclipse.ui.ide.IDE.openEditor(page, file);
 
-            // BrowserEditorInput editorInput = new
-            // BrowserEditorInput(getTemporaryName(format),
-            // getTemporaryName(format), getToolTip(format), image,
-            // file.getLocation().toOSString());
-            // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput,
-            // BrowserEditor.ID);
+            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
+                file.getLocation().toOSString());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
