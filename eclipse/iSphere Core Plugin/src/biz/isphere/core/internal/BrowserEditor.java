@@ -23,6 +23,8 @@ import org.eclipse.ui.part.EditorPart;
 
 public class BrowserEditor extends EditorPart {
 
+    public static final String ID = "biz.isphere.core.internal.BrowserEditor"; //$NON-NLS-1$
+
     private BrowserEditor editor;
     private BrowserEditorInput input;
     private Browser browser;
@@ -77,5 +79,5 @@ public class BrowserEditor extends EditorPart {
     public boolean isSaveAsAllowed() {
         return false;
     }
-
+    
 }
