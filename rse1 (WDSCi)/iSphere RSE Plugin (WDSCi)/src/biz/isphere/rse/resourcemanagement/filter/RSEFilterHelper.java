@@ -13,6 +13,10 @@ import java.util.Vector;
 
 import org.eclipse.emf.common.util.EList;
 
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
+import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+
 import com.ibm.etools.iseries.core.IISeriesFilterTypes;
 import com.ibm.etools.iseries.core.ISeriesSubSystemHelpers;
 import com.ibm.etools.systems.filters.SystemFilter;
@@ -20,10 +24,6 @@ import com.ibm.etools.systems.filters.SystemFilterPool;
 import com.ibm.etools.systems.filters.SystemFilterPoolManager;
 import com.ibm.etools.systems.model.SystemProfile;
 import com.ibm.etools.systems.model.impl.SystemProfileManagerImpl;
-
-import biz.isphere.core.resourcemanagement.filter.RSEFilter;
-import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
-import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 
 public class RSEFilterHelper {
     
