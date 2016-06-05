@@ -1,6 +1,8 @@
 
 Changelog: iSphere 2.9.0.b003
 -----------------------------
+ • Added option "Copy Members to" to source file objects and member 
+   filters.
  • Enabled "Copy Members to..." to copy members between different
    connections (systems). 
  • Now spooled files that are opened as "Text" are displayed in
