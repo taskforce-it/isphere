@@ -49,4 +49,6 @@
   <topic label="Spooled File Subsystem" href="html/spooledfilesubsystem/spooledfilesubsystem.html" >
     <topic label="Preferences" href="html/spooledfilesubsystem/preferences/preferences.html" />
   </topic>
+  <topic label="Copy Members"  href="html/copymembers/copymembers.html"> 
+  </topic>
 </toc> 

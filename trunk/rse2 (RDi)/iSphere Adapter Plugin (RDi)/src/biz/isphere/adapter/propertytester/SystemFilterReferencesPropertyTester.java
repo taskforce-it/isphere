@@ -17,6 +17,8 @@ public class SystemFilterReferencesPropertyTester extends PropertyTester {
 
     public static final String PROPERTY_SUBSYSTEM = "subsystem";
 
+    public static final String PROPERTY_TYPE = "type";
+
     public boolean test(Object aReceiver, String aProperty, Object[] anArgs, Object anExpectedValue) {
 
         if (!(aReceiver instanceof SystemFilterReference)) {
@@ -27,13 +29,15 @@ public class SystemFilterReferencesPropertyTester extends PropertyTester {
 
         if (anExpectedValue instanceof String) {
             String expectedValue = (String)anExpectedValue;
+            String actualValue = null;
             if (PROPERTY_SUBSYSTEM.equals(aProperty)) {
-                // TODO: remove me, needed only for debugging
-                // System.out.println("Property-Tester (subtsystem): " +
-                // filter.getSubSystem().getClass().getName() + "=" +
-                // expectedValue);
-                return expectedValue.equalsIgnoreCase(filter.getSubSystem().getClass().getName());
+                actualValue = filter.getSubSystem().getClass().getName();
             }
+            if (PROPERTY_TYPE.equals(aProperty)) {
+                actualValue = filter.getReferencedFilter().getType();
+            }
+
+            return expectedValue.equalsIgnoreCase(actualValue);
         }
 
         return false;
