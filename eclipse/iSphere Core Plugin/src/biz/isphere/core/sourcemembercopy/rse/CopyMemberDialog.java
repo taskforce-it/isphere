@@ -54,6 +54,7 @@ public class CopyMemberDialog extends XDialog {
     private Text textToLibrary;
     private TableViewer tableViewer;
     private Button chkBoxReplace;
+    private Label labelNumElem;
 
     private Validator nameValidator;
 
@@ -239,6 +240,18 @@ public class CopyMemberDialog extends XDialog {
 
         TableViewerKeyBoardSupporter supporter = new TableViewerKeyBoardSupporter(tableViewer, true);
         supporter.startSupport();
+
+        labelNumElem = new Label(mainArea, SWT.NONE);
+        labelNumElem.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, ((GridLayout)mainArea.getLayout()).numColumns, 1));
+        int numItems;
+        if (jobDescription != null) {
+            numItems = jobDescription.getItems().length;
+        } else {
+            numItems = 0;
+        }
+        labelNumElem.setText(Messages.Items_colon + " " + numItems); //$NON-NLS-1$
+
+        new Label(mainArea, SWT.NONE).setVisible(false);
 
         chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
         chkBoxReplace.setText(Messages.Replace_existing_members);

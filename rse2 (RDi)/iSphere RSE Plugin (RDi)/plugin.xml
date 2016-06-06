@@ -69,7 +69,7 @@
             class="biz.isphere.adapter.propertytester.SystemFilterReferencesPropertyTester"
             id="biz.isphere.adapter.propertytester.SystemFilterReferencesPropertyTester"
             namespace="biz.isphere.adapter.propertytester.systemfilterreference"
-            properties="subsystem"
+            properties="subsystem,type"
             type="java.lang.Object">
 		</propertyTester>
 
@@ -534,13 +534,14 @@
 	      	
       	<!--
       	  ==========================================
-      	    RSE Source Member
-            menubarPath="group.adapters"
+      	    iSphere Copy Source Members (RSE)
       	  ==========================================
       	-->
    
    <extension
          point="org.eclipse.ui.menus">
+         
+      	<!-- Right-click: source member -->
       <menuContribution
             locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
         <command
@@ -558,12 +559,56 @@
 	      </visibleWhen>
         </command>
       </menuContribution>
+
+      	<!-- Right-click: source file -->
+      <menuContribution
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
+        <command
+              commandId="biz.isphere.core.command.SourceMember.copyTo"
+              id="biz.isphere.rse.handler.CopyToCommandHandler"
+              icon="icons/copy_members_to.png"
+              label="%command_CopyMembersTo_Label">
+	      <visibleWhen>
+	        <with variable="selection">
+	          <count value="*" />
+	          <iterate operator="and">
+	            <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+	          </iterate>
+	        </with>
+	      </visibleWhen>
+        </command>
+      </menuContribution>
+
+      	<!-- Right-click: system member filter -->
+      <menuContribution
+            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
+        <command
+              commandId="biz.isphere.core.command.SourceMember.copyTo"
+              id="biz.isphere.rse.handler.CopyToCommandHandler"
+              icon="icons/copy_members_to.png"
+              label="%command_CopyMembersTo_Label">
+	      <visibleWhen>
+	        <with variable="selection">
+	          <count value="*" />
+	          <iterate operator="and">
+	          <and>
+	            <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
+            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
+            		      value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem"/>
+            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.type" 
+            		      value="Member"/>
+	          </and>
+	          </iterate>
+	        </with>
+	      </visibleWhen>
+        </command>
+      </menuContribution>
+      
    </extension>
 	      	
       	<!--
       	  ==========================================
-      	    PDM Table View
-            menubarPath="group.adapters"
+      	    iSphere Copy Source Members (PDM Table View)
       	  ==========================================
       	-->
    
@@ -606,7 +651,11 @@
           <with variable="selection">
             <count value="*" />
             <iterate operator="and">
-              <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+              <or>
+                <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+                <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+                <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
+              </or>
             </iterate>
           </with>
         </activeWhen>
