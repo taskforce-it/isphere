@@ -8,6 +8,14 @@ Changelog: iSphere 2.9.0.b003
  • Now spooled files that are opened as "Text" are displayed in
    a browser as the other types (html and pdf) are.
 
+ ----------------------------------------------------------------------
+  We are sorry to let you know that we no longer have an option to 
+  create the iSphere library for V5R4. Beta version 2.9.0.b003 is the 
+  last V5R4 library. All newer versions will be compiled for V6R1. 
+  Please refer to the iSphere help to read how to install the library 
+  from an i Project.
+ ----------------------------------------------------------------------
+
 Changelog: iSphere 2.9.0.b002
 -----------------------------
  • Disabled auto-selection for message id and text filter controls of 
