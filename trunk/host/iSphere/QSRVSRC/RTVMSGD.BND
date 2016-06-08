@@ -20,6 +20,7 @@
      /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
      /*         >>PARM<<  MODULE(&LI/RTVMSGD);                                */
      /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
      /*         >>PARM<<  TEXT('Retrieve Message Description');               */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
