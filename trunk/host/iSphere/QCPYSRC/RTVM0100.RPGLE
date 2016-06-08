@@ -9,7 +9,7 @@
       //*------------------------------------------------------------------------------------------*
 
       // Data structure for format 'RTVM0100' for procedure 'QMHRTVM'
-     d RTVM0100_t      DS                  Qualified Template
+     d RTVM0100_t      DS                  Qualified based(pTemplate)
      d  ByteRtn                      10I 0                                      <-- Bytes returned
      d  ByteAvl                      10I 0                                      <-- Bytes available
      d  LenMsgRtn                    10I 0                                      <-- Length of messag
