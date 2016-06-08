@@ -398,6 +398,15 @@
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
              DLTMOD     MODULE(&PRDLIB/XFNDSTR)
 
+             /* Create service program: Retrieve Message Description */
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('RTVMSGD') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('RTVMSGD') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             DLTMOD     MODULE(&PRDLIB/RTVMSGD)
+
              /* Create service program: Spooled File */
              STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('SPLF') +
                           LIB(&PRDLIB) OBJ(*DFT) +
