@@ -266,7 +266,7 @@ public class SearchResultViewer {
 
                     menuCopySelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
                     menuCopySelectedMembers.setText("Copy members");
-                    menuCopySelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY));
+                    menuCopySelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_MEMBERS_TO));
                     menuCopySelectedMembers.addSelectionListener(new SelectionAdapter() {
                         @Override
                         public void widgetSelected(SelectionEvent e) {
