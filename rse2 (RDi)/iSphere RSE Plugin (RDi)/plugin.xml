@@ -614,6 +614,8 @@
    
    <extension
          point="org.eclipse.ui.menus">
+         
+      	<!-- Right-click: source member -->
       <menuContribution
             locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
         <command
@@ -625,12 +627,36 @@
 	        <with variable="selection">
 	          <count value="*" />
 	          <iterate operator="and">
+	            <or>          
 	            <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
+	            </or>
 	          </iterate>
 	        </with>
 	      </visibleWhen>
         </command>
       </menuContribution>
+         
+      	<!-- Right-click: source file -->
+      <menuContribution
+            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
+        <command
+              commandId="biz.isphere.core.command.SourceMember.copyTo"
+              id="biz.isphere.rse.handler.CopyToCommandHandler"
+              icon="icons/copy_members_to.png"
+              label="%command_CopyMembersTo_Label">
+	      <visibleWhen>
+	        <with variable="selection">
+	          <count value="*" />
+	          <iterate operator="and">
+	            <or>          
+	            <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+	            </or>
+	          </iterate>
+	        </with>
+	      </visibleWhen>
+        </command>
+      </menuContribution>
+      
    </extension>
    
    <extension point="org.eclipse.ui.commands">
