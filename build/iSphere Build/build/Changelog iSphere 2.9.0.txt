@@ -1,4 +1,13 @@
 
+Changelog: iSphere 2.9.0.b004
+-----------------------------
+ • Added option "Copy Members to" to source file items of the object
+   table view.   
+ • Updated icon of the "Copy Members to" menu option of the iSphere
+   "Source File Search" result view.
+ • Fixed broken image link in iSphere help.   
+ • Added iSphere support page.   
+
 Changelog: iSphere 2.9.0.b003
 -----------------------------
  • Added option "Copy Members to" to source file objects and member 
