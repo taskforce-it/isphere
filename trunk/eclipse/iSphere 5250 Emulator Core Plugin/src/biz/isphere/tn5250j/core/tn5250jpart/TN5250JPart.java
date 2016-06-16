@@ -103,11 +103,13 @@ public class TN5250JPart {
                 boolean signOn = false;
                 for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
                     TN5250JPanel tn5250jPanel = (TN5250JPanel)arrayListTabItemTN5250J.get(idx);
-                    if (!tn5250jPanel.getSession5250().getGUI().isOnSignOnScreen()) {
+                    if (tn5250jPanel.getSession5250().getGUI().isConnected() && !tn5250jPanel.getSession5250().getGUI().isOnSignOnScreen()) {
                         signOn = true;
                         break;
                     }
                 }
+
+                int dialogResult = 0;
 
                 if (signOn) {
 
@@ -124,14 +126,14 @@ public class TN5250JPart {
 
                     }
 
-                    final int dialogResult = dialog.open();
+                    dialogResult = dialog.open();
 
-                    if (dialogResult == 0) {
-                        RemoveSession.run(closedTab, tn5250jPart);
-                    } else {
-                        event.doit = false;
-                    }
+                }
 
+                if (dialogResult == 0) {
+                    RemoveSession.run(closedTab, tn5250jPart);
+                } else {
+                    event.doit = false;
                 }
 
             }
