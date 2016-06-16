@@ -10,11 +10,14 @@ package biz.isphere.tn5250j.core.tn5250jpart;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.UIPlugin;
 
+import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.session.Session;
 
 public class AddSession {
@@ -22,6 +25,13 @@ public class AddSession {
     public static void run(String sessionDirectory, String connection, String name, TN5250JInfo tn5250jInfo) {
 
         ITN5250JPart tn5250jPart = tn5250jInfo.getTN5250JPart();
+
+        if (!Session.exists(sessionDirectory, connection, name)) {
+            String message = Messages.bind(Messages.Session_configuration_file_A_not_found_in_directory_colon_B, new String[] { name,
+                sessionDirectory });
+            MessageDialog.openError(UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, message);
+            return;
+        }
 
         Session session = Session.load(sessionDirectory, connection, name);
         if (session != null) {

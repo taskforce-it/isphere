@@ -174,6 +174,21 @@ public class Session {
         this.menu = menu;
     }
 
+    public static boolean exists(String sessionDirectory, String connection, String name) {
+
+        File file = getSessionSettingsFile(sessionDirectory, name);
+
+        if (!file.exists()) {
+            return false;
+        }
+
+        if (!file.isFile()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static Session load(String sessionDirectory, String connection, String name) {
         return Session.load(sessionDirectory, connection, name, null);
     }
@@ -181,7 +196,7 @@ public class Session {
     public static Session load(String sessionDirectory, String connection, String name, Session session) {
         try {
             Properties properties = new Properties();
-            FileInputStream fis = new FileInputStream(sessionDirectory + File.separator + name);
+            FileInputStream fis = new FileInputStream(getSessionSettingsFile(sessionDirectory, name));
             properties.load(fis);
             fis.close();
             if (session == null) {
@@ -275,7 +290,7 @@ public class Session {
         properties.put("Library", library);
         properties.put("Menu", menu);
         try {
-            FileOutputStream fos = new FileOutputStream(sessionDirectory + File.separator + name);
+            FileOutputStream fos = new FileOutputStream(getSessionSettingsFile(sessionDirectory, name));
             properties.store(fos, name);
             fos.close();
             ok = true;
@@ -287,10 +302,14 @@ public class Session {
 
     public boolean delete() {
         boolean ok = false;
-        if (new File(sessionDirectory + File.separator + name).delete()) {
+        if (getSessionSettingsFile(sessionDirectory, name).delete()) {
             ok = true;
         }
         return ok;
     }
 
+    private static File getSessionSettingsFile(String sessionDirectory, String name) {
+
+        return new File(sessionDirectory + File.separator + name);
+    }
 }
