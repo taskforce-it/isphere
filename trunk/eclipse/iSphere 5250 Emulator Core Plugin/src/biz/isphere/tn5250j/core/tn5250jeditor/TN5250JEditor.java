@@ -17,6 +17,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
+import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
 
@@ -61,6 +62,10 @@ public abstract class TN5250JEditor extends EditorPart implements ITN5250JPart, 
 
     public void removeTN5250JPanel(TN5250JPanel tn5250jPanel) {
         tn5250jPart.removeTN5250JPanel(tn5250jPanel);
+    }
+
+    public int findSessionTab(String connection, String sessionName, TN5250JInfo tn5250jInfo) {
+        return -1;
     }
 
     public boolean isMultiSession() {

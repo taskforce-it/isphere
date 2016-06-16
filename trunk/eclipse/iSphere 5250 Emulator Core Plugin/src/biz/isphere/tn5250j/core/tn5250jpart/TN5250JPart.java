@@ -9,6 +9,7 @@
 package biz.isphere.tn5250j.core.tn5250jpart;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -103,7 +104,7 @@ public class TN5250JPart {
                 boolean signOn = false;
                 for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
                     TN5250JPanel tn5250jPanel = (TN5250JPanel)arrayListTabItemTN5250J.get(idx);
-                    if (tn5250jPanel.getSession5250().getGUI().isConnected() && !tn5250jPanel.getSession5250().getGUI().isOnSignOnScreen()) {
+                    if (tn5250jPanel.getSession5250().isSignedOn()) {
                         signOn = true;
                         break;
                     }
@@ -156,10 +157,11 @@ public class TN5250JPart {
         initializeToolBar();
         initializeMenu();
 
-        if (multiSession) {
-            actionAddSession.setEnabled(false);
-            actionRemoveSession.setEnabled(false);
-        }
+        // TODO: remove the following statements
+        // if (multiSession) {
+        // actionAddSession.setEnabled(false);
+        // actionRemoveSession.setEnabled(false);
+        // }
 
     }
 
@@ -201,20 +203,18 @@ public class TN5250JPart {
                     CTabItem tabItemSession = tabFolderSessions.getSelection();
                     int sessionToDelete = ((Integer)tabItemSession.getData("LastFocus")).intValue();
                     ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
-                    ArrayList<Composite> arrayListCompositeSession = (ArrayList)tabItemSession.getData("CompositeSession");
-                    int numberOfSessions = arrayListCompositeSession.size();
-                    if (numberOfSessions > 1) {
-                        TN5250JPanel tn5250jPanel = arrayListTabItemTN5250J.get(sessionToDelete);
-                        if (!tn5250jPanel.getSession5250().getGUI().isOnSignOnScreen()) {
-                            MessageDialog dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                                Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
-                                    IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
-                            final int dialogResult = dialog.open();
-                            if (dialogResult == 1) {
-                                return;
-                            }
+                    TN5250JPanel tn5250jPanel = arrayListTabItemTN5250J.get(sessionToDelete);
+
+                    if (tn5250jPanel.getSession5250().isSignedOn()) {
+                        MessageDialog dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
+                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
+                                IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                        final int dialogResult = dialog.open();
+                        if (dialogResult == 1) {
+                            return;
                         }
                     }
+
                     RemoveMultiSession.run(tn5250jPart);
                 }
             };
@@ -233,6 +233,7 @@ public class TN5250JPart {
             toolbarManager.add(actionRemoveSession);
         }
 
+        HandleBindingService.getInstance().setKeyFilterEnabled(false);
     }
 
     private void initializeMenu() {
@@ -252,12 +253,40 @@ public class TN5250JPart {
         return tabFolderSessions;
     }
 
+    public TN5250JInfo[] getSessionInfos() {
+
+        List<TN5250JInfo> sessionInfos = new ArrayList<TN5250JInfo>();
+        for (int i = 0; i < arrayListTN5250JPanel.size(); i++) {
+            TN5250JPanel sessionPanel = arrayListTN5250JPanel.get(i);
+            sessionInfos.add(sessionPanel.getTN5250JInfo());
+        }
+
+        return sessionInfos.toArray(new TN5250JInfo[sessionInfos.size()]);
+    }
+
     public void addTN5250JPanel(TN5250JPanel tn5250jPanel) {
         arrayListTN5250JPanel.add(tn5250jPanel);
     }
 
     public void removeTN5250JPanel(TN5250JPanel tn5250jPanel) {
         arrayListTN5250JPanel.remove(tn5250jPanel);
+    }
+
+    public int findSessionTab(String connection, String name, TN5250JInfo tn5250jInfo) {
+
+        int tabItemNumber = -1;
+        CTabItem[] tabItems = tn5250jPart.getTabFolderSessions().getItems();
+        for (int idx = 0; idx < tabItems.length; idx++) {
+            String tabItemConnection = (String)tabItems[idx].getData("Connection");
+            String tabItemName = (String)tabItems[idx].getData("Name");
+            TN5250JInfo tabItemTN5250JInfo = (TN5250JInfo)tabItems[idx].getData("TN5250JInfo");
+            if (connection.equals(tabItemConnection) && name.equals(tabItemName) && tn5250jInfo.isTN5250JEqual(tabItemTN5250JInfo)) {
+                tabItemNumber = idx;
+                break;
+            }
+        }
+
+        return tabItemNumber;
     }
 
     public void setAddSession(boolean value) {
@@ -278,7 +307,7 @@ public class TN5250JPart {
         boolean signOn = false;
         for (int idx = 0; idx < arrayListTN5250JPanel.size(); idx++) {
             TN5250JPanel tn5250jPanel = (arrayListTN5250JPanel.get(idx));
-            if (!tn5250jPanel.getSession5250().getGUI().isOnSignOnScreen()) {
+            if (tn5250jPanel.getSession5250().isSignedOn()) {
                 signOn = true;
                 break;
             }
@@ -313,4 +342,5 @@ public class TN5250JPart {
         }
 
     }
+
 }

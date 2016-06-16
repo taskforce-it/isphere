@@ -160,6 +160,9 @@ public class CreateSession {
     }
 
     private void processFocusGained(java.awt.event.FocusEvent event) {
+        if (tn5250jPart.getTabFolderSessions().isDisposed()){
+            return;
+        }
         new ProcessSessionFocus(tn5250jPart.getTabFolderSessions().getDisplay(), tn5250jPart.getTabFolderSessions(), "*GAINED", event).start();
     }
 

@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.UIPlugin;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.session.Session;
@@ -29,7 +29,7 @@ public class AddSession {
         if (!Session.exists(sessionDirectory, connection, name)) {
             String message = Messages.bind(Messages.Session_configuration_file_A_not_found_in_directory_colon_B, new String[] { name,
                 sessionDirectory });
-            MessageDialog.openError(UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, message);
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, message);
             return;
         }
 

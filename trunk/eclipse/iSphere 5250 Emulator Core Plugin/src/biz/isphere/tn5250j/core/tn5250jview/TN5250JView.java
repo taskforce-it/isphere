@@ -15,6 +15,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
+import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
 
@@ -45,12 +46,20 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
         return tn5250jPart.getTabFolderSessions();
     }
 
+    protected TN5250JInfo[] getSessionInfos() {
+        return tn5250jPart.getSessionInfos();
+    }
+
     public void addTN5250JPanel(TN5250JPanel tn5250jPanel) {
         tn5250jPart.addTN5250JPanel(tn5250jPanel);
     }
 
     public void removeTN5250JPanel(TN5250JPanel tn5250jPanel) {
         tn5250jPart.removeTN5250JPanel(tn5250jPanel);
+    }
+
+    public int findSessionTab(String connection, String name, TN5250JInfo tn5250jInfo) {
+        return tn5250jPart.findSessionTab(connection, name, tn5250jInfo);
     }
 
     public boolean isMultiSession() {

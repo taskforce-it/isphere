@@ -11,7 +11,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  biz.isphere.tn5250j.base,
  org.eclipse.albireo.core,
- biz.isphere.common.libraries
+ biz.isphere.common.libraries,
+ biz.isphere.core,
+ biz.isphere.base
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/icu4j_3_4_5.jar,

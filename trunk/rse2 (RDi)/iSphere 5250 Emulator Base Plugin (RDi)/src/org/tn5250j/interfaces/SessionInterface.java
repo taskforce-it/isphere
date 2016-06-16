@@ -29,6 +29,8 @@ public interface SessionInterface {
 
     public abstract boolean isConnected();
 
+    public abstract boolean isSignedOn();
+
     public abstract String getSessionName();
 
     public abstract int getSessionType();

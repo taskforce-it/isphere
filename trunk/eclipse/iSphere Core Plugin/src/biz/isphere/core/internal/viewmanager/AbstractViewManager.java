@@ -263,6 +263,15 @@ public abstract class AbstractViewManager implements IViewManager {
             settings.put(getKey(view, VIEW_PIN_PROPERTY + key), value);
         }
     }
+    
+    public void clearViewStatus(IPinnableView view) {
+        
+        IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
+        settings = workbenchSettings.getSection(name);
+        if (settings != null) {
+            settings = workbenchSettings.addNewSection(name);
+        }
+    }
 
     /**
      * Returns the final key that is required to get a value from

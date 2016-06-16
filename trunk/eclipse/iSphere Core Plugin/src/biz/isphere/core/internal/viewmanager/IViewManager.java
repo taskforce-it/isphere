@@ -22,9 +22,12 @@ public interface IViewManager {
 
     public static final String DATA_SPACE_MONITOR_VIEWS = "DataSpaceMonitorViews";
     public static final String DATA_QUEUE_MONITOR_VIEWS = "DataQueueMonitorViews";
+    public static final String TN5250J_SESSION_VIEWS = "TN5250JSessionsViews";
 
     public void add(IPinnableView view);
 
+    public void clearViewStatus(IPinnableView view);
+    
     public void remove(IPinnableView view);
 
     public boolean isPinned(IPinnableView view);

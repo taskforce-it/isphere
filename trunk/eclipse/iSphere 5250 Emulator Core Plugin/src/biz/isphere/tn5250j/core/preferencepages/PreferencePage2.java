@@ -12,6 +12,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,6 +38,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     // private Button buttonEnhancedMode;
     private Button buttonView;
     private Button buttonEditor;
+    private Button buttonMultiSession;
     private String[] codePages = { "37", "37PT", "273", "280", "284", "285", "277-dk", "277-no", "278", "297", "424", "500-ch", "870-pl", "870-sk",
         "871", "875", "1025-r", "1026", "1112", "1141", "1140", "1147", "1148" };
 
@@ -108,10 +111,27 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 
         buttonView = new Button(groupArea, SWT.RADIO);
         buttonView.setText(Messages.View);
+        buttonView.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent arg0) {
+                setControlEnablement();
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
 
         buttonEditor = new Button(groupArea, SWT.RADIO);
         buttonEditor.setText(Messages.Editor);
+        buttonEditor.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent arg0) {
+                setControlEnablement();
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
 
+        buttonMultiSession = new Button(groupArea, SWT.CHECK);
+        buttonMultiSession.setText("Enable multiple sessions");
+        
         // Miscellaneous
 
         setScreenToValues();
@@ -158,7 +178,13 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         } else {
             store.setValue("BIZ.ISPHERE.TN5250J.AREA", "*EDITOR");
         }
-    }
+        
+        if (buttonMultiSession.getSelection()) {
+            store.setValue("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", true);
+        } else {
+            store.setValue("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", false);
+        }
+}
 
     protected void setStoreToDefaults() {
         store.setToDefault("BIZ.ISPHERE.TN5250J.PORT");
@@ -166,6 +192,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         store.setToDefault("BIZ.ISPHERE.TN5250J.SCREENSIZE");
         // store.setToDefault("BIZ.ISPHERE.TN5250J.ENHANCEDMODE");
         store.setToDefault("BIZ.ISPHERE.TN5250J.AREA");
+        store.setToDefault("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED");
     }
 
     protected void setScreenToValues() {
@@ -191,6 +218,23 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         } else {
             buttonView.setSelection(false);
             buttonEditor.setSelection(true);
+        }
+        
+        if (store.getBoolean("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED")) {
+            buttonMultiSession.setSelection(true);
+        } else {
+            buttonMultiSession.setSelection(false);
+        }
+        
+        setControlEnablement();
+    }
+    
+    private void setControlEnablement() {
+        
+        if (buttonView.getSelection()) {
+            buttonMultiSession.setEnabled(true);
+        } else {
+            buttonMultiSession.setEnabled(false);
         }
     }
 

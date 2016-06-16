@@ -36,6 +36,12 @@ public abstract class TN5250JInfo {
         return tn5250jPart;
     }
 
+    public abstract String getSession();
+    
+    public abstract String getRSEProfil();
+
     public abstract String getRSEConnection();
+
+    public abstract String getRSESessionDirectory();
 
 }
