@@ -96,6 +96,19 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
     }
 
+    public boolean isSignedOn() {
+        if (!isConnected()) {
+            return false;
+        }
+        
+        if (getGUI().isOnSignOnScreen()) {
+            return false;
+        }
+        
+        return true;
+
+    }
+
     public boolean isSendKeepAlive() {
         return heartBeat;
     }

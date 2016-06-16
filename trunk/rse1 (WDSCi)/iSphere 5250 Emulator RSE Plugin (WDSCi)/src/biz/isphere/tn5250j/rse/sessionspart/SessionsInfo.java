@@ -15,6 +15,7 @@ import biz.isphere.tn5250j.core.sessionspart.CoreSessionsInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
+import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
 
 public class SessionsInfo extends CoreSessionsInfo {
 
@@ -33,7 +34,7 @@ public class SessionsInfo extends CoreSessionsInfo {
 
     public void setRSEProfil(String rseProfil) {
         this.rseProfil = rseProfil;
-        setConnection(this.rseProfil + "-" + this.rseConnection);
+        setConnection(getQualifiedRSEConnectionName());
     }
 
     public String getRSEConnection() {
@@ -42,7 +43,12 @@ public class SessionsInfo extends CoreSessionsInfo {
 
     public void setRSEConnection(String rseConnection) {
         this.rseConnection = rseConnection;
-        setConnection(this.rseProfil + "-" + this.rseConnection);
+        setConnection(getQualifiedRSEConnectionName());
+    }
+
+    @Override
+    public String getRSESessionDirectory() {
+        return TN5250JRSEPlugin.getRSESessionDirectory(getQualifiedRSEConnectionName());
     }
 
     @Override
@@ -64,6 +70,10 @@ public class SessionsInfo extends CoreSessionsInfo {
     @Override
     public TN5250JPanel getTN5250JPanel(Session session, Shell shell) {
         return new SessionsPanel(this, session, shell);
+    }
+
+    public String getQualifiedRSEConnectionName() {
+        return this.rseProfil + "-" + this.rseConnection;
     }
 
 }

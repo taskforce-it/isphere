@@ -21,13 +21,15 @@ package org.tn5250j.interfaces;
  *
  */
 
-import org.tn5250j.event.*;
+import org.tn5250j.event.SessionListener;
 
 public interface SessionInterface {
 
     public abstract String getConfigurationResource();
 
     public abstract boolean isConnected();
+
+    public abstract boolean isSignedOn();
 
     public abstract String getSessionName();
 
