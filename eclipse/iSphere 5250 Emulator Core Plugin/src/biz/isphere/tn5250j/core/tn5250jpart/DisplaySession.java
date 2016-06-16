@@ -16,23 +16,15 @@ public class DisplaySession {
 
         ITN5250JPart tn5250jPart = tn5250jInfo.getTN5250JPart();
 
-        int tabItemNumber = -1;
-        CTabItem[] tabItems = tn5250jPart.getTabFolderSessions().getItems();
-        for (int idx = 0; idx < tabItems.length; idx++) {
-            String tabItemConnection = (String)tabItems[idx].getData("Connection");
-            String tabItemName = (String)tabItems[idx].getData("Name");
-            TN5250JInfo tabItemTN5250JInfo = (TN5250JInfo)tabItems[idx].getData("TN5250JInfo");
-            if (connection.equals(tabItemConnection) && name.equals(tabItemName) && tn5250jInfo.isTN5250JEqual(tabItemTN5250JInfo)) {
-                tabItemNumber = idx;
-                break;
-            }
-        }
+        int tabItemNumber = tn5250jPart.findSessionTab(connection, name, tn5250jInfo);
         if (tabItemNumber == -1) {
 
             AddSession.run(sessionDirectory, connection, name, tn5250jInfo);
 
         } else {
-            tn5250jPart.getTabFolderSessions().setSelection(tabItems[tabItemNumber]);
+            
+            CTabItem tabItem = tn5250jPart.getTabFolderSessions().getItem(tabItemNumber);
+            tn5250jPart.getTabFolderSessions().setSelection(tabItem);
 
             SetSessionFocus.run(tn5250jPart.getTabFolderSessions().getSelectionIndex(), -1, tn5250jPart);
 

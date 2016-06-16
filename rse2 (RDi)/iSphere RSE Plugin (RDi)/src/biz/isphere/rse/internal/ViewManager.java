@@ -18,7 +18,7 @@ public class ViewManager extends AbstractViewManager {
     public ViewManager(String name) {
         super(name);
 
-        if (!IViewManager.DATA_SPACE_MONITOR_VIEWS.equals(name) && !IViewManager.DATA_QUEUE_MONITOR_VIEWS.equals(name)) {
+        if (!IViewManager.DATA_SPACE_MONITOR_VIEWS.equals(name) && !IViewManager.DATA_QUEUE_MONITOR_VIEWS.equals(name) && !IViewManager.TN5250J_SESSION_VIEWS.equals(name)) {
             throw new RuntimeException("'name' does not match one of the constants of IViewManager"); //$NON-NLS-1$
         }
     }

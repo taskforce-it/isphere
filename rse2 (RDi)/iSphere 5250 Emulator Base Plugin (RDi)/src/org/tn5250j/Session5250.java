@@ -101,6 +101,20 @@ public class Session5250 implements SessionInterface {
 
     }
 
+    @Override
+    public boolean isSignedOn() {
+        if (!isConnected()) {
+            return false;
+        }
+        
+        if (getGUI().isOnSignOnScreen()) {
+            return false;
+        }
+        
+        return true;
+
+    }
+
     /**
      * @return true when SSL is used and socket is connected.
      * @see {@link tnvt#isSslSocket()}

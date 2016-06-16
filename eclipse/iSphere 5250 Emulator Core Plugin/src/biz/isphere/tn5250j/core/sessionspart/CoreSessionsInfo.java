@@ -22,7 +22,7 @@ public abstract class CoreSessionsInfo extends TN5250JInfo {
         session = "";
     }
 
-    public String getConnection() {
+    public String getQualifiedConnection() {
         return connection;
     }
 
@@ -46,7 +46,7 @@ public abstract class CoreSessionsInfo extends TN5250JInfo {
     @Override
     public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
         CoreSessionsInfo sessionsInfo = (CoreSessionsInfo)tn5250jInfo;
-        if (connection.equals(sessionsInfo.getConnection()) && session.equals(sessionsInfo.getSession())) {
+        if (connection.equals(sessionsInfo.getQualifiedConnection()) && session.equals(sessionsInfo.getSession())) {
             return true;
         } else {
             return false;

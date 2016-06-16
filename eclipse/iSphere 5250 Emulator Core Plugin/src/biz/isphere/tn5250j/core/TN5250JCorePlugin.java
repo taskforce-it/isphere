@@ -99,6 +99,7 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
         getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSACTIVE", "N");
         getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSHSIZE", "0");
         getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSVSIZE", "0");
+        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", true);
     }
 
     public static URL getInstallURL() {
