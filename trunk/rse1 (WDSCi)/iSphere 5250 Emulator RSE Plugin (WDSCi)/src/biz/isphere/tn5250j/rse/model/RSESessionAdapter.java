@@ -186,6 +186,12 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
                     SessionsView sessionsView = (SessionsView)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .showView(SessionsView.ID));
 
+                    // IViewManager viewManager =
+                    // ISphereRSEPlugin.getDefault().getViewManager(IViewManager.TN5250J_SESSION_VIEWS);
+                    // CoreSessionsView sessionsView =
+                    // (CoreSessionsView)viewManager.getView(SessionsView.ID,
+                    // "");
+
                     SessionsInfo sessionsInfo = new SessionsInfo(sessionsView);
                     sessionsInfo.setRSEProfil(rseSession.getRSEProfil());
                     sessionsInfo.setRSEConnection(rseSession.getRSEConnection());
