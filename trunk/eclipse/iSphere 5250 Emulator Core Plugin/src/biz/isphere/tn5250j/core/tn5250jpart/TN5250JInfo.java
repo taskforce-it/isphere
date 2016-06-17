@@ -20,28 +20,38 @@ public abstract class TN5250JInfo {
         this.tn5250jPart = tn5250jPart;
     }
 
-    public String getTN5250JDescription() {
-        return "";
-    }
-
     public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-        return true;
-    }
-
-    public TN5250JPanel getTN5250JPanel(Session session, Shell shell) {
-        return null;
+        if (getRSEProfil().equals(tn5250jInfo.getRSEProfil()) && getRSEConnection().equals(tn5250jInfo.getRSEConnection())
+            && getSession().equals(tn5250jInfo.getSession())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public ITN5250JPart getTN5250JPart() {
         return tn5250jPart;
     }
 
+    public String getQualifiedConnection() {
+        return getRSEProfil() + "-" + getRSEConnection();
+    }
+
     public abstract String getSession();
-    
+
+    public abstract String getTN5250JDescription();
+
+    public abstract TN5250JPanel getTN5250JPanel(Session session, Shell shell);
+
     public abstract String getRSEProfil();
 
     public abstract String getRSEConnection();
 
     public abstract String getRSESessionDirectory();
+
+    @Override
+    public String toString() {
+        return getRSEProfil() + "-" + getTN5250JDescription();
+    }
 
 }

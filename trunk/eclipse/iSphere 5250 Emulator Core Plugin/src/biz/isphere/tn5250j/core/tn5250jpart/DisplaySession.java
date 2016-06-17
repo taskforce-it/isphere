@@ -12,14 +12,14 @@ import org.eclipse.swt.custom.CTabItem;
 
 public class DisplaySession {
 
-    public static void run(String sessionDirectory, String connection, String name, TN5250JInfo tn5250jInfo) {
+    public static void run(TN5250JInfo tn5250jInfo) {
 
         ITN5250JPart tn5250jPart = tn5250jInfo.getTN5250JPart();
 
-        int tabItemNumber = tn5250jPart.findSessionTab(connection, name, tn5250jInfo);
+        int tabItemNumber = tn5250jPart.findSessionTab(tn5250jInfo);
         if (tabItemNumber == -1) {
 
-            AddSession.run(sessionDirectory, connection, name, tn5250jInfo);
+            AddSession.run(tn5250jInfo);
 
         } else {
             

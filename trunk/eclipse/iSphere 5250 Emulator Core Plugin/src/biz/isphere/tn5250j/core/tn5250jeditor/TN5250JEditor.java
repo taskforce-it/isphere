@@ -64,7 +64,7 @@ public abstract class TN5250JEditor extends EditorPart implements ITN5250JPart, 
         tn5250jPart.removeTN5250JPanel(tn5250jPanel);
     }
 
-    public int findSessionTab(String connection, String sessionName, TN5250JInfo tn5250jInfo) {
+    public int findSessionTab(TN5250JInfo tn5250jInfo) {
         return -1;
     }
 

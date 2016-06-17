@@ -15,7 +15,6 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
 public abstract class CoreDesignerInfo extends TN5250JInfo {
 
-    private String connection;
     private String session;
     private String library;
     private String sourceFile;
@@ -30,7 +29,6 @@ public abstract class CoreDesignerInfo extends TN5250JInfo {
 
     public CoreDesignerInfo(ITN5250JPart tn5250jPart) {
         super(tn5250jPart);
-        connection = "";
         session = "";
         library = "";
         sourceFile = "";
@@ -42,14 +40,6 @@ public abstract class CoreDesignerInfo extends TN5250JInfo {
         visibleObject = null;
         structuredViewer = null;
         objectToBeSelected = null;
-    }
-
-    public String getConnection() {
-        return connection;
-    }
-
-    public void setConnection(String connection) {
-        this.connection = connection;
     }
 
     public String getSession() {
@@ -142,18 +132,29 @@ public abstract class CoreDesignerInfo extends TN5250JInfo {
 
     @Override
     public String getTN5250JDescription() {
-        return connection + "-" + library + "/" + sourceFile + "(" + member + ")";
+        return getRSEConnection() + "-" + library + "/" + sourceFile + "(" + member + ")";
     }
 
     @Override
     public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-        CoreDesignerInfo designerInfo = (CoreDesignerInfo)tn5250jInfo;
-        if (connection.equals(designerInfo.getConnection()) && session.equals(designerInfo.getSession()) && library.equals(designerInfo.getLibrary())
-            && sourceFile.equals(designerInfo.getSourceFile()) && member.equals(designerInfo.getMember())) {
-            return true;
-        } else {
+
+        if (!super.isTN5250JEqual(tn5250jInfo)) {
             return false;
         }
-    }
 
+        CoreDesignerInfo designerInfo = (CoreDesignerInfo)tn5250jInfo;
+        if (!library.equals(designerInfo.getLibrary())) {
+            return false;
+        }
+
+        if (!sourceFile.equals(designerInfo.getSourceFile())) {
+            return false;
+        }
+
+        if (!member.equals(designerInfo.getMember())) {
+            return false;
+        }
+
+        return true;
+    }
 }

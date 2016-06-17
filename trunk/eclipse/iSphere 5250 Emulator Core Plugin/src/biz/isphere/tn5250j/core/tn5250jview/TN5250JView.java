@@ -58,8 +58,8 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
         tn5250jPart.removeTN5250JPanel(tn5250jPanel);
     }
 
-    public int findSessionTab(String connection, String name, TN5250JInfo tn5250jInfo) {
-        return tn5250jPart.findSessionTab(connection, name, tn5250jInfo);
+    public int findSessionTab(TN5250JInfo tn5250jInfo) {
+        return tn5250jPart.findSessionTab(tn5250jInfo);
     }
 
     public boolean isMultiSession() {

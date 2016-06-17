@@ -154,7 +154,7 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
                     designerInfo.setCurrentLibrary(stringCurrentLibrary);
                     designerInfo.setLibraryList(stringLibraryList);
 
-                    DisplaySession.run(sessionDirectory, connection, name, designerInfo);
+                    DisplaySession.run(designerInfo);
 
                 }
 

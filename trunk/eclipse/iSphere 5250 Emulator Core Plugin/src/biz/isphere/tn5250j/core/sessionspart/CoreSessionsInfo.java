@@ -13,21 +13,11 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
 public abstract class CoreSessionsInfo extends TN5250JInfo {
 
-    private String connection;
     private String session;
 
     public CoreSessionsInfo(ITN5250JPart tn5250jPart) {
         super(tn5250jPart);
-        connection = "";
         session = "";
-    }
-
-    public String getQualifiedConnection() {
-        return connection;
-    }
-
-    public void setConnection(String connection) {
-        this.connection = connection;
     }
 
     public String getSession() {
@@ -40,17 +30,11 @@ public abstract class CoreSessionsInfo extends TN5250JInfo {
 
     @Override
     public String getTN5250JDescription() {
-        return connection + "/" + session;
+        return getRSEConnection() + "/" + session;
     }
 
     @Override
     public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-        CoreSessionsInfo sessionsInfo = (CoreSessionsInfo)tn5250jInfo;
-        if (connection.equals(sessionsInfo.getQualifiedConnection()) && session.equals(sessionsInfo.getSession())) {
-            return true;
-        } else {
-            return false;
-        }
+        return super.isTN5250JEqual(tn5250jInfo);
     }
-
 }

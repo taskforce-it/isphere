@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.sessionspart.CoreSessionsInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
-import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
 
@@ -34,7 +33,6 @@ public class SessionsInfo extends CoreSessionsInfo {
 
     public void setRSEProfil(String rseProfil) {
         this.rseProfil = rseProfil;
-        setConnection(getQualifiedRSEConnectionName());
     }
 
     public String getRSEConnection() {
@@ -43,37 +41,16 @@ public class SessionsInfo extends CoreSessionsInfo {
 
     public void setRSEConnection(String rseConnection) {
         this.rseConnection = rseConnection;
-        setConnection(getQualifiedRSEConnectionName());
     }
 
     @Override
     public String getRSESessionDirectory() {
-        return TN5250JRSEPlugin.getRSESessionDirectory(getQualifiedRSEConnectionName());
-    }
-
-    @Override
-    public String getTN5250JDescription() {
-        return rseConnection + "/" + getSession();
-    }
-
-    @Override
-    public boolean isTN5250JEqual(TN5250JInfo tn5250jInfo) {
-        SessionsInfo sessionsInfo = (SessionsInfo)tn5250jInfo;
-        if (rseProfil.equals(sessionsInfo.getRSEProfil()) && rseConnection.equals(sessionsInfo.getRSEConnection())
-            && getSession().equals(sessionsInfo.getSession())) {
-            return true;
-        } else {
-            return false;
-        }
+        return TN5250JRSEPlugin.getRSESessionDirectory(getQualifiedConnection());
     }
 
     @Override
     public TN5250JPanel getTN5250JPanel(Session session, Shell shell) {
         return new SessionsPanel(this, session, shell);
-    }
-
-    public String getQualifiedRSEConnectionName() {
-        return this.rseProfil + "-" + this.rseConnection;
     }
 
 }
