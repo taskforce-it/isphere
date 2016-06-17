@@ -30,6 +30,7 @@ import biz.isphere.tn5250j.rse.actions.ChangeSessionAction;
 import biz.isphere.tn5250j.rse.actions.DeleteSessionAction;
 import biz.isphere.tn5250j.rse.actions.DisplaySessionAction;
 import biz.isphere.tn5250j.rse.designereditor.DesignerEditor;
+import biz.isphere.tn5250j.rse.designerview.DesignerView;
 import biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor;
 import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 import biz.isphere.tn5250j.rse.sessionsview.SessionsView;
@@ -181,13 +182,18 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
                 if (rseSession.getName().equals(ISession.DESIGNER)) {
 
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .showView("biz.isphere.tn5250j.rse.designerview.DesignerView");
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DesignerView.ID);
 
                 } else {
 
                     SessionsView sessionsView = (SessionsView)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .showView(SessionsView.ID));
+
+                    // IViewManager viewManager =
+                    // ISphereRSEPlugin.getDefault().getViewManager(IViewManager.TN5250J_SESSION_VIEWS);
+                    // CoreSessionsView sessionsView =
+                    // (CoreSessionsView)viewManager.getView(SessionsView.ID,
+                    // "");
 
                     SessionsInfo sessionsInfo = new SessionsInfo(sessionsView);
                     sessionsInfo.setRSEProfil(rseSession.getRSEProfil());

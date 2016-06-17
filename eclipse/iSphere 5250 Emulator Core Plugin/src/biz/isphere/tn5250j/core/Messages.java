@@ -98,6 +98,7 @@ public class Messages extends NLS {
     public static String iSphere_5250_Emulator_is_based_on_TN5250j_Emulator;
     public static String Session_configuration_file_A_not_found_in_directory_colon_B;
     public static String E_R_R_O_R;
+    public static String Enable_multiple_sessions;
 
     static {
         // initialize resource bundle

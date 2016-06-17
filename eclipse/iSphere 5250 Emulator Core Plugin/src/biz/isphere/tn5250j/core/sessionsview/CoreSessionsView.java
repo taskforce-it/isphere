@@ -241,7 +241,11 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
                 }
             }
 
-            CoreSessionsView.this.setPinned(true);
+            if (numSession > 0) {
+                CoreSessionsView.this.setPinned(true);
+            } else {
+                CoreSessionsView.this.setPinned(false);
+            }
 
             return Status.OK_STATUS;
         }
