@@ -39,6 +39,11 @@ public class SessionsView extends CoreSessionsView {
 
         SessionsView sessionsView = (SessionsView)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SessionsView.ID));
 
+        // IViewManager viewManager =
+        // ISphereRSEPlugin.getDefault().getViewManager(SessionsView.ID);
+        // CoreSessionsView sessionsView =
+        // (CoreSessionsView)viewManager.getView(SessionsView.ID, "");
+
         return sessionsView;
     }
 

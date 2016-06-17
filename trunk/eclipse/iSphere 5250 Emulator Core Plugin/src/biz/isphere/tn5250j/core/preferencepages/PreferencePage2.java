@@ -130,7 +130,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         });
 
         buttonMultiSession = new Button(groupArea, SWT.CHECK);
-        buttonMultiSession.setText("Enable multiple sessions");
+        buttonMultiSession.setText(Messages.Enable_multiple_sessions);
         
         // Miscellaneous
 
