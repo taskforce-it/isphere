@@ -26,6 +26,6 @@ public interface ITN5250JPart {
 
     public void setBindingService(boolean value);
     
-    public int findSessionTab(String connection, String sessionName, TN5250JInfo tn5250jInfo);
+    public int findSessionTab(TN5250JInfo tn5250jInfo);
 
 }

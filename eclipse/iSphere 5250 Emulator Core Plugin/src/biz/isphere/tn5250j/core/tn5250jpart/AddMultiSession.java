@@ -18,6 +18,11 @@ import org.eclipse.swt.widgets.Composite;
 import biz.isphere.tn5250j.core.session.Session;
 
 public class AddMultiSession {
+    
+    public static void run(ITN5250JPart tn5250jPart, int index) {
+        tn5250jPart.getTabFolderSessions().setSelection(index);
+        run(tn5250jPart);
+    }
 
     @SuppressWarnings("unchecked")
     public static void run(ITN5250JPart tn5250jPart) {

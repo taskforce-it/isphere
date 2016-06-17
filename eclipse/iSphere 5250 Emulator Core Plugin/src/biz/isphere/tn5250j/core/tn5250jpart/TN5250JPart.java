@@ -272,15 +272,13 @@ public class TN5250JPart {
         arrayListTN5250JPanel.remove(tn5250jPanel);
     }
 
-    public int findSessionTab(String connection, String name, TN5250JInfo tn5250jInfo) {
+    public int findSessionTab(TN5250JInfo tn5250jInfo) {
 
         int tabItemNumber = -1;
         CTabItem[] tabItems = tn5250jPart.getTabFolderSessions().getItems();
         for (int idx = 0; idx < tabItems.length; idx++) {
-            String tabItemConnection = (String)tabItems[idx].getData("Connection");
-            String tabItemName = (String)tabItems[idx].getData("Name");
             TN5250JInfo tabItemTN5250JInfo = (TN5250JInfo)tabItems[idx].getData("TN5250JInfo");
-            if (connection.equals(tabItemConnection) && name.equals(tabItemName) && tn5250jInfo.isTN5250JEqual(tabItemTN5250JInfo)) {
+            if (tn5250jInfo.isTN5250JEqual(tabItemTN5250JInfo)) {
                 tabItemNumber = idx;
                 break;
             }
