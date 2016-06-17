@@ -191,8 +191,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
                     sessionsInfo.setRSEConnection(rseSession.getRSEConnection());
                     sessionsInfo.setSession(rseSession.getName());
 
-                    DisplaySession.run(TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection()),
-                        rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection(), rseSession.getName(), sessionsInfo);
+                    DisplaySession.run(sessionsInfo);
 
                 }
 
@@ -218,8 +217,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
                     sessionsInfo.setRSEConnection(rseSession.getRSEConnection());
                     sessionsInfo.setSession(rseSession.getName());
 
-                    DisplaySession.run(TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection()),
-                        rseSession.getRSEProfil() + "-" + rseSession.getRSEConnection(), rseSession.getName(), sessionsInfo);
+                    DisplaySession.run(sessionsInfo);
 
                 }
 

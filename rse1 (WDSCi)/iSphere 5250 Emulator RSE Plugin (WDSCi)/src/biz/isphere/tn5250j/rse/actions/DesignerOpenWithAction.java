@@ -182,7 +182,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
                     designerInfo.setCurrentLibrary(stringCurrentLibrary);
                     designerInfo.setLibraryList(stringLibraryList);
 
-                    DisplaySession.run(sessionDirectory, connection, name, designerInfo);
+                    DisplaySession.run(designerInfo);
 
                 }
 
