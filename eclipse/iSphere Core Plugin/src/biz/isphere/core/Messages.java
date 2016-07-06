@@ -1205,6 +1205,28 @@ public class Messages extends NLS {
     public static String Could_not_download_member_2_of_file_1_of_library_0;
     
     public static String Result;
+ 
+    public static String Directory_colon;
+    
+    public static String Stream_file_colon;
+    
+    public static String Compare_Stream_Files;
+    
+    public static String Compare_stream_files;
+    
+    public static String Stream_file_not_found_colon_ANCESTOR;
+    
+    public static String Stream_file_not_found_colon_LEFT;
+    
+    public static String Stream_file_not_found_colon_RIGHT;
+    
+    public static String Stream_file_is_already_open_in_an_editor;
+    
+    public static String Stream_file_1_in_directory_0_not_found;
+    
+    public static String Downloading_stream_files;
+    
+    public static String Comparing_stream_files;
     
     /*
      * Warning messages
