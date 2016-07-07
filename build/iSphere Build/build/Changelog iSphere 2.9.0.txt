@@ -13,6 +13,9 @@ Changelog: iSphere 2.9.0.b004
    a tab of the sessions view.
  • Now displaying an error message, when a 5250 session configuration 
    file could not be found.
+ • Fixed "Widget is disposed", when updates are searched from the 
+   "Updates" preference page and the page has been closed while the 
+   "check for updates" job is running.
 
 Changelog: iSphere 2.9.0.b003
 -----------------------------
