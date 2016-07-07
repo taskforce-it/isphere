@@ -112,7 +112,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         buttonStartSearchForUpdates.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                
+
                 SearchForUpdates search;
                 try {
                     search = new SearchForUpdates(new URL(urlForUpdates), true, searchForBetaVersions);
@@ -128,12 +128,12 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
         setScreenToValues();
 
         display = ISphereUpdates.this.getShell().getDisplay();
-        
+
         return container;
     }
 
     private void checkError() {
-        
+
         if (validateUpdateURL()) {
             setErrorMessage(null);
             setValid(true);
@@ -141,7 +141,7 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
             setErrorMessage(Messages.The_value_in_field_URL_for_updates_is_not_valid);
             setValid(false);
         }
-        
+
         setButtonEnablement();
     }
 
@@ -165,11 +165,11 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
 
     @Override
     public boolean isValid() {
-        
+
         if (!validateUpdateURL()) {
             return false;
         }
-        
+
         return super.isValid();
     }
 
@@ -205,30 +205,37 @@ public class ISphereUpdates extends PreferencePage implements IWorkbenchPreferen
     private void setButtonEnablement() {
 
         if (validateUpdateURL() && !isSearchingForUpdates) {
-            buttonStartSearchForUpdates.setEnabled(true);
+            setControlEnablement(buttonStartSearchForUpdates, true);
         } else {
-            buttonStartSearchForUpdates.setEnabled(false);
+            setControlEnablement(buttonStartSearchForUpdates, false);
         }
 
-        if (buttonSearchForUpdates.getSelection()) {
-            buttonSearchForBetaVersions.setEnabled(true);
+        if (!buttonSearchForUpdates.isDisposed() && buttonSearchForUpdates.getSelection()) {
+            setControlEnablement(buttonSearchForBetaVersions, true);
         } else {
-            buttonSearchForBetaVersions.setEnabled(false);
+            setControlEnablement(buttonSearchForBetaVersions, false);
+        }
+    }
+
+    private void setControlEnablement(Control control, boolean enabled) {
+
+        if (!control.isDisposed()) {
+            control.setEnabled(enabled);
         }
     }
 
     protected boolean validateUpdateURL() {
-        
+
         if (StringHelper.isNullOrEmpty(urlForUpdates)) {
             return false;
         }
-        
+
         try {
             new URL(urlForUpdates);
         } catch (MalformedURLException e) {
             return false;
         }
-        
+
         return true;
     }
 
