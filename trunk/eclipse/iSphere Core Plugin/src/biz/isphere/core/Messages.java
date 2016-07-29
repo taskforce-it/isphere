@@ -1227,6 +1227,10 @@ public class Messages extends NLS {
     public static String Downloading_stream_files;
     
     public static String Comparing_stream_files;
+
+    public static String Add_library_and_file_name_to_source_members;
+
+    public static String Add_library_and_file_name_to_data_members;
     
     /*
      * Warning messages

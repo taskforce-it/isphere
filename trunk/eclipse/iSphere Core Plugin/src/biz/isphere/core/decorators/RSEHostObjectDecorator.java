@@ -12,6 +12,9 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
+import biz.isphere.core.preferences.Preferences;
+
+import com.ibm.etools.iseries.comm.interfaces.IISeriesHostMemberBrief;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief;
 
 /**
@@ -26,7 +29,7 @@ import com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief;
 public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
     public static final String ID = "biz.isphere.core.decorators.RSEHostObjectDecorator";
-    
+
     /**
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
      *      org.eclipse.jface.viewers.IDecoration)
@@ -39,11 +42,47 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
             return;
         }
 
+        String mask;
+        if (isExtendedSourceMemberDecorationEnabled(tResource) || isExtendedDataMemberDecorationEnabled(tResource)) {
+            mask = " - \"&T\" - (&L/&F)"; //$NON-NLS-1$
+        } else {
+            mask = " - \"&T\""; //$NON-NLS-1$
+        }
+
         try {
-            if (tResource.getDescription() != null) {
-                decoration.addSuffix(" - \"" + tResource.getDescription().trim() + "\"");
+
+            StringBuilder buffer = new StringBuilder(mask);
+
+            int i = 0;
+            int s = 0;
+            while ((i = buffer.indexOf("&", s)) >= 0 && i < buffer.length() - 1) {
+                String replacement = null;
+                String ch = buffer.substring(i + 1, i + 2).toUpperCase();
+                if ("&".equals(ch)) {
+                    replacement = "&";
+                } else if ("T".equals(ch)) {
+                    replacement = tResource.getDescription();
+                } else if ("L".equals(ch)) {
+                    replacement = tResource.getLibrary();
+                } else if ("F".equals(ch)) {
+                    replacement = tResource.getLibrary();
+                }
+                if (replacement != null) {
+                    buffer.replace(i, i + 2, replacement);
+                }
+                if (replacement != null && replacement.length() > 0) {
+                    s = i + replacement.length();
+                } else {
+                    s = i + 1;
+                }
             }
+
+            if (buffer.length() > 0) {
+                decoration.addSuffix(buffer.toString());
+            }
+
             return;
+
         } catch (Exception e) {
             // ignore all errors
         }
@@ -91,6 +130,44 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
             return (IISeriesHostObjectBrief)object;
         }
         return null;
+    }
+
+    private boolean isExtendedSourceMemberDecorationEnabled(IISeriesHostObjectBrief tResource) {
+
+        Preferences preferences = Preferences.getInstance();
+        if (tResource instanceof IISeriesHostMemberBrief && isSourceMember(tResource) && preferences.isSourceMemberDecorationExtension()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isExtendedDataMemberDecorationEnabled(IISeriesHostObjectBrief tResource) {
+
+        Preferences preferences = Preferences.getInstance();
+        if (tResource instanceof IISeriesHostMemberBrief && isDataMember(tResource) && preferences.isDataMemberDecorationExtension()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isSourceMember(IISeriesHostObjectBrief tResource) {
+
+        if ("SRC".equals(tResource.getSubType())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isDataMember(IISeriesHostObjectBrief tResource) {
+
+        if ("DTA".equals(tResource.getSubType())) {
+            return true;
+        }
+
+        return false;
     }
 
 }

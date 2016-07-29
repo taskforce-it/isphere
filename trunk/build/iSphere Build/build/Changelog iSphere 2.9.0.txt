@@ -16,6 +16,9 @@ Changelog: iSphere 2.9.0.b004
  • Fixed "Widget is disposed", when updates are searched from the 
    "Updates" preference page and the page has been closed while the 
    "check for updates" job is running.
+ • Changed object decorator to optionally display the library and file 
+   name of file members.
+
 
 Changelog: iSphere 2.9.0.b003
 -----------------------------
