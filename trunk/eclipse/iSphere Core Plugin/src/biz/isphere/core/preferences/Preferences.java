@@ -184,6 +184,8 @@ public final class Preferences {
 
     private static final String DECORATION = DOMAIN + "DECORATION."; //$NON-NLS-1$
 
+    private static final String DECORATION_OBJECT_EXTENSION = APPEARANCE + "OBJECT_EXTENSION"; //$NON-NLS-1$
+
     private static final String DECORATION_SOURCE_MEMBER_EXTENSION = APPEARANCE + "SOURCE_MEMBER_EXTENSION"; //$NON-NLS-1$
 
     private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
@@ -455,6 +457,10 @@ public final class Preferences {
         return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_THRESHOLD);
     }
 
+    public boolean isObjectDecorationExtension() {
+        return preferenceStore.getBoolean(DECORATION_OBJECT_EXTENSION);
+    }
+
     public boolean isSourceMemberDecorationExtension() {
         return preferenceStore.getBoolean(DECORATION_SOURCE_MEMBER_EXTENSION);
     }
@@ -639,6 +645,10 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_THRESHOLD, threshold);
     }
 
+    public void setObjectDecorationExtension(boolean enabled) {
+        preferenceStore.setValue(DECORATION_OBJECT_EXTENSION, enabled);
+    }
+
     public void setSourceMemberDecorationExtension(boolean enabled) {
         preferenceStore.setValue(DECORATION_SOURCE_MEMBER_EXTENSION, enabled);
     }
@@ -712,6 +722,7 @@ public final class Preferences {
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
         
+        preferenceStore.setDefault(DECORATION_OBJECT_EXTENSION, getDefaultObjectDecorationExtension());
         preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
         preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());
     }
@@ -1073,6 +1084,10 @@ public final class Preferences {
 
     public int getDefaultAutoRefreshThreshold() {
         return 5000;
+    }
+
+    public boolean getDefaultObjectDecorationExtension() {
+        return false;
     }
 
     public boolean getDefaultSourceMemberDecorationExtension() {
