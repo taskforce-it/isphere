@@ -1231,6 +1231,8 @@ public class Messages extends NLS {
     public static String Add_library_and_file_name_to_source_members;
 
     public static String Add_library_and_file_name_to_data_members;
+
+    public static String Add_library_name_to_objects;
     
     /*
      * Warning messages

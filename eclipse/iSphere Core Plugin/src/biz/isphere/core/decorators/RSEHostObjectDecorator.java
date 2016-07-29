@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 import biz.isphere.core.preferences.Preferences;
 
-import com.ibm.etools.iseries.comm.interfaces.IISeriesHostMemberBrief;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief;
 
 /**
@@ -42,9 +41,15 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
             return;
         }
 
+        System.out.println(tResource.getName() + ", type/sub type: " + tResource.getType() + "/" + tResource.getSubType());
+
         String mask;
-        if (isExtendedSourceMemberDecorationEnabled(tResource) || isExtendedDataMemberDecorationEnabled(tResource)) {
+        if (isLibrary(tResource)) {
+            mask = " - \"&T\""; //$NON-NLS-1$
+        } else if (isExtendedSourceMemberDecoration(tResource) || isExtendedDataMemberDecoration(tResource)) {
             mask = " - \"&T\" - (&L/&F)"; //$NON-NLS-1$
+        } else if (isExtendedObjectDecoration(tResource)) {
+            mask = " - \"&T\" - (&L)"; //$NON-NLS-1$
         } else {
             mask = " - \"&T\""; //$NON-NLS-1$
         }
@@ -132,20 +137,39 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
         return null;
     }
 
-    private boolean isExtendedSourceMemberDecorationEnabled(IISeriesHostObjectBrief tResource) {
+    private boolean isExtendedObjectDecoration(IISeriesHostObjectBrief tResource) {
 
         Preferences preferences = Preferences.getInstance();
-        if (tResource instanceof IISeriesHostMemberBrief && isSourceMember(tResource) && preferences.isSourceMemberDecorationExtension()) {
+        if (!isLibrary(tResource) && preferences.isObjectDecorationExtension()) {
             return true;
         }
 
         return false;
     }
 
-    private boolean isExtendedDataMemberDecorationEnabled(IISeriesHostObjectBrief tResource) {
+    private boolean isExtendedSourceMemberDecoration(IISeriesHostObjectBrief tResource) {
 
         Preferences preferences = Preferences.getInstance();
-        if (tResource instanceof IISeriesHostMemberBrief && isDataMember(tResource) && preferences.isDataMemberDecorationExtension()) {
+        if (isSourceMember(tResource) && preferences.isSourceMemberDecorationExtension()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isExtendedDataMemberDecoration(IISeriesHostObjectBrief tResource) {
+
+        Preferences preferences = Preferences.getInstance();
+        if (isDataMember(tResource) && preferences.isDataMemberDecorationExtension()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isLibrary(IISeriesHostObjectBrief tResource) {
+
+        if ("*LIB".equals(tResource.getType())) {
             return true;
         }
 
@@ -154,7 +178,7 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
     private boolean isSourceMember(IISeriesHostObjectBrief tResource) {
 
-        if ("SRC".equals(tResource.getSubType())) {
+        if (tResource.getFile() != null && "SRC".equals(tResource.getSubType())) {
             return true;
         }
 
@@ -163,7 +187,7 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
     private boolean isDataMember(IISeriesHostObjectBrief tResource) {
 
-        if ("DTA".equals(tResource.getSubType())) {
+        if (tResource.getFile() != null && "DTA".equals(tResource.getSubType())) {
             return true;
         }
 

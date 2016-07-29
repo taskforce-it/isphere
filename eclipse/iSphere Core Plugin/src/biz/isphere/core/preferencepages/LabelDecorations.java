@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class LabelDecorations extends PreferencePage implements IWorkbenchPreferencePage {
 
+    private Button checkboxIsExtendedObjectDecoration;
     private Button checkboxIsExtendedSourceMemberDecoration;
     private Button checkboxIsExtendedDataMemberDecoration;
 
@@ -82,6 +83,9 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
         Composite extendedDecorationsPanel = new Composite(parent, SWT.NONE);
         extendedDecorationsPanel.setLayout(new GridLayout(1, false));
 
+        checkboxIsExtendedObjectDecoration = WidgetFactory.createCheckbox(extendedDecorationsPanel);
+        checkboxIsExtendedObjectDecoration.setText(Messages.Add_library_name_to_objects);
+
         checkboxIsExtendedSourceMemberDecoration = WidgetFactory.createCheckbox(extendedDecorationsPanel);
         checkboxIsExtendedSourceMemberDecoration.setText(Messages.Add_library_and_file_name_to_source_members);
 
@@ -113,6 +117,7 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
 
         Preferences preferences = Preferences.getInstance();
 
+        preferences.setObjectDecorationExtension(checkboxIsExtendedObjectDecoration.getSelection());
         preferences.setSourceMemberDecorationExtension(checkboxIsExtendedSourceMemberDecoration.getSelection());
         preferences.setDataMemberDecorationExtension(checkboxIsExtendedDataMemberDecoration.getSelection());
     }
@@ -121,6 +126,7 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
 
         Preferences preferences = Preferences.getInstance();
 
+        checkboxIsExtendedObjectDecoration.setSelection(preferences.isObjectDecorationExtension());
         checkboxIsExtendedSourceMemberDecoration.setSelection(preferences.isSourceMemberDecorationExtension());
         checkboxIsExtendedDataMemberDecoration.setSelection(preferences.isDataMemberDecorationExtension());
 
@@ -132,6 +138,7 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
 
         Preferences preferences = Preferences.getInstance();
 
+        checkboxIsExtendedObjectDecoration.setSelection(preferences.getDefaultObjectDecorationExtension());
         checkboxIsExtendedSourceMemberDecoration.setSelection(preferences.getDefaultSourceMemberDecorationExtension());
         checkboxIsExtendedDataMemberDecoration.setSelection(preferences.getDefaultDataMemberDecorationExtension());
 
