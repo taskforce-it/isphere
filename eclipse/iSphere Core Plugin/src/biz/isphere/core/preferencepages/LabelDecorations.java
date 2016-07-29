@@ -14,18 +14,26 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class LabelDecorations extends PreferencePage implements IWorkbenchPreferencePage {
+
+    private Button checkboxIsExtendedSourceMemberDecoration;
+    private Button checkboxIsExtendedDataMemberDecoration;
 
     public LabelDecorations() {
         super();
@@ -43,14 +51,14 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
         final GridLayout gridLayout = new GridLayout();
         container.setLayout(gridLayout);
 
-        createSectionSourceFileSearch(container);
+        createSectionLabelDecorations(container);
 
         setScreenToValues();
 
         return container;
     }
 
-    private void createSectionSourceFileSearch(Composite parent) {
+    private void createSectionLabelDecorations(Composite parent) {
 
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(3, false));
@@ -70,6 +78,15 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
                 PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
             }
         });
+
+        Composite extendedDecorationsPanel = new Composite(parent, SWT.NONE);
+        extendedDecorationsPanel.setLayout(new GridLayout(1, false));
+
+        checkboxIsExtendedSourceMemberDecoration = WidgetFactory.createCheckbox(extendedDecorationsPanel);
+        checkboxIsExtendedSourceMemberDecoration.setText(Messages.Add_library_and_file_name_to_source_members);
+
+        checkboxIsExtendedDataMemberDecoration = WidgetFactory.createCheckbox(extendedDecorationsPanel);
+        checkboxIsExtendedDataMemberDecoration.setText(Messages.Add_library_and_file_name_to_data_members);
     }
 
     @Override
@@ -88,20 +105,35 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
     public boolean performOk() {
 
         setStoreToValues();
+        applyChangesToRSETree();
         return super.performOk();
     }
 
     protected void setStoreToValues() {
 
+        Preferences preferences = Preferences.getInstance();
+
+        preferences.setSourceMemberDecorationExtension(checkboxIsExtendedSourceMemberDecoration.getSelection());
+        preferences.setDataMemberDecorationExtension(checkboxIsExtendedDataMemberDecoration.getSelection());
     }
 
     protected void setScreenToValues() {
+
+        Preferences preferences = Preferences.getInstance();
+
+        checkboxIsExtendedSourceMemberDecoration.setSelection(preferences.isSourceMemberDecorationExtension());
+        checkboxIsExtendedDataMemberDecoration.setSelection(preferences.isDataMemberDecorationExtension());
 
         checkAllValues();
         setControlsEnablement();
     }
 
     protected void setScreenToDefaultValues() {
+
+        Preferences preferences = Preferences.getInstance();
+
+        checkboxIsExtendedSourceMemberDecoration.setSelection(preferences.getDefaultSourceMemberDecorationExtension());
+        checkboxIsExtendedDataMemberDecoration.setSelection(preferences.getDefaultDataMemberDecorationExtension());
 
         checkAllValues();
         setControlsEnablement();
@@ -120,5 +152,22 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
         setErrorMessage(null);
         setValid(true);
         return true;
+    }
+
+    private void applyChangesToRSETree() {
+
+        IDecoratorManager manager = getDecoratorManager();
+        manager.update("biz.isphere.core.decorators.RSEHostObjectDecorator");
+
+    }
+
+    /**
+     * Get the DecoratorManager being used for this page.
+     * 
+     * @return the decorator manager
+     */
+    private IDecoratorManager getDecoratorManager() {
+        // return WorkbenchPlugin.getDefault().getDecoratorManager();
+        return PlatformUI.getWorkbench().getDecoratorManager();
     }
 }

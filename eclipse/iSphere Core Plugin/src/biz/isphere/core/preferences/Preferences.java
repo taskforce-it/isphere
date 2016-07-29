@@ -182,6 +182,12 @@ public final class Preferences {
 
     private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
 
+    private static final String DECORATION = DOMAIN + "DECORATION."; //$NON-NLS-1$
+
+    private static final String DECORATION_SOURCE_MEMBER_EXTENSION = APPEARANCE + "SOURCE_MEMBER_EXTENSION"; //$NON-NLS-1$
+
+    private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -449,6 +455,14 @@ public final class Preferences {
         return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_THRESHOLD);
     }
 
+    public boolean isSourceMemberDecorationExtension() {
+        return preferenceStore.getBoolean(DECORATION_SOURCE_MEMBER_EXTENSION);
+    }
+
+    public boolean isDataMemberDecorationExtension() {
+        return preferenceStore.getBoolean(DECORATION_DATA_MEMBER_EXTENSION);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -625,6 +639,14 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_THRESHOLD, threshold);
     }
 
+    public void setSourceMemberDecorationExtension(boolean enabled) {
+        preferenceStore.setValue(DECORATION_SOURCE_MEMBER_EXTENSION, enabled);
+    }
+
+    public void setDataMemberDecorationExtension(boolean enabled) {
+        preferenceStore.setValue(DECORATION_DATA_MEMBER_EXTENSION, enabled);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -689,6 +711,9 @@ public final class Preferences {
 
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
+        
+        preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
+        preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());
     }
 
     /*
@@ -1048,6 +1073,14 @@ public final class Preferences {
 
     public int getDefaultAutoRefreshThreshold() {
         return 5000;
+    }
+
+    public boolean getDefaultSourceMemberDecorationExtension() {
+        return false;
+    }
+
+    public boolean getDefaultDataMemberDecorationExtension() {
+        return false;
     }
 
     /**
