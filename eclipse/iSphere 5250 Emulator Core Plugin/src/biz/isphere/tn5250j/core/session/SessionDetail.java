@@ -11,7 +11,6 @@ package biz.isphere.tn5250j.core.session;
 import java.io.File;
 
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridData;
@@ -30,10 +29,11 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import biz.isphere.tn5250j.core.DialogActionTypes;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 
 public class SessionDetail {
 
-    private IPreferenceStore store;
+    private Preferences preferences;
     private Text textName;
     private Text textDevice;
     private Text textPort;
@@ -59,7 +59,7 @@ public class SessionDetail {
         this.sessionDirectory = sessionDirectory;
         this.actionType = actionType;
         this.session = session;
-        store = TN5250JCorePlugin.getDefault().getPreferenceStore();
+        preferences = Preferences.getInstance();
     }
 
     /**
@@ -143,7 +143,7 @@ public class SessionDetail {
         textPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textPort.setTextLimit(5);
         if (actionType == DialogActionTypes.CREATE) {
-            textPort.setText(store.getString("BIZ.ISPHERE.TN5250J.PORT"));
+            textPort.setText(Integer.toString(preferences.getSessionPortNumber()));
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textPort.setText(session.getPort());
         }
@@ -163,7 +163,7 @@ public class SessionDetail {
             comboCodePage.add(codePages[idx]);
         }
         if (actionType == DialogActionTypes.CREATE) {
-            comboCodePage.setText(store.getString("BIZ.ISPHERE.TN5250J.CODEPAGE"));
+            comboCodePage.setText(preferences.getSessionCodepage());
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             comboCodePage.setText(session.getCodePage());
         }
@@ -188,7 +188,7 @@ public class SessionDetail {
         buttonScreenSize27_132.setText("27*132");
 
         if (actionType == DialogActionTypes.CREATE) {
-            if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals(ISession.SIZE_132)) {
+            if (ISession.SIZE_132.equals(preferences.getSessionScreenSize())) {
                 buttonScreenSize27_132.setSelection(true);
             } else {
                 buttonScreenSize24_80.setSelection(true);
@@ -239,7 +239,7 @@ public class SessionDetail {
         buttonEditor.setText(Messages.Editor);
 
         if (actionType == DialogActionTypes.CREATE) {
-            if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals(ISession.AREA_VIEW)) {
+            if (ISession.AREA_VIEW.equals(preferences.getSessionArea())) {
                 buttonView.setSelection(true);
             } else {
                 buttonEditor.setSelection(true);

@@ -178,7 +178,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
         try {
 
-            if (area.equals(ISession.AREA_VIEW)) {
+            if (ISession.AREA_VIEW.equals(area)) {
 
                 if (rseSession.getName().equals(ISession.DESIGNER)) {
 
@@ -204,7 +204,7 @@ public class RSESessionAdapter extends AbstractSystemViewAdapter implements ISys
 
                 }
 
-            } else if (area.equals(ISession.AREA_EDITOR)) {
+            } else if (ISession.AREA_EDITOR.equals(area)) {
 
                 if (rseSession.getName().equals(ISession.DESIGNER)) {
 

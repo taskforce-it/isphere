@@ -15,9 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 
 public class Session {
 
@@ -215,7 +213,7 @@ public class Session {
     }
 
     public static void setSessionProperties(Properties properties, Session session) {
-        IPreferenceStore store = TN5250JCorePlugin.getDefault().getPreferenceStore();
+        Preferences preferences = Preferences.getInstance();
         if (properties.getProperty("Device") != null) {
             session.setDevice(properties.getProperty("Device"));
         }
@@ -240,7 +238,7 @@ public class Session {
         if (properties.getProperty("Area") != null) {
             session.setArea(properties.getProperty("Area"));
         } else {
-            session.setArea(store.getString("BIZ.ISPHERE.TN5250J.AREA"));
+            session.setArea(preferences.getSessionArea());
         }
         if (properties.getProperty("User") != null) {
             session.setUser(properties.getProperty("User"));

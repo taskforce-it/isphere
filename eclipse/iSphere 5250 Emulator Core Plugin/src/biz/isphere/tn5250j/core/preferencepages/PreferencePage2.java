@@ -8,7 +8,6 @@
 
 package biz.isphere.tn5250j.core.preferencepages;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -25,8 +24,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.core.session.ISession;
 
 /**
@@ -34,7 +35,7 @@ import biz.isphere.tn5250j.core.session.ISession;
  */
 public class PreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private IPreferenceStore store;
+    private Preferences preferences;
     private Text textPort;
     private CCombo comboCodePage;
     private Button buttonScreenSize24_80;
@@ -49,7 +50,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     public PreferencePage2() {
         super();
         setPreferenceStore(TN5250JCorePlugin.getDefault().getPreferenceStore());
-        store = getPreferenceStore();
+        preferences = Preferences.getInstance();
     }
 
     @Override
@@ -90,6 +91,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         final GridLayout gridLayoutScreenSize = new GridLayout();
         gridLayoutScreenSize.numColumns = 2;
         groupScreenSize.setLayout(gridLayoutScreenSize);
+        groupScreenSize.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         buttonScreenSize24_80 = new Button(groupScreenSize, SWT.RADIO);
         buttonScreenSize24_80.setText("24*80");
@@ -112,6 +114,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         final GridLayout gridLayoutArea = new GridLayout();
         gridLayoutArea.numColumns = 2;
         groupArea.setLayout(gridLayoutArea);
+        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         buttonView = new Button(groupArea, SWT.RADIO);
         buttonView.setText(Messages.View);
@@ -119,6 +122,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             public void widgetSelected(SelectionEvent arg0) {
                 setControlEnablement();
             }
+
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
@@ -129,13 +133,15 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             public void widgetSelected(SelectionEvent arg0) {
                 setControlEnablement();
             }
+
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
 
         buttonMultiSession = new Button(groupArea, SWT.CHECK);
         buttonMultiSession.setText(Messages.Enable_multiple_sessions);
-        
+        buttonMultiSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
         // Miscellaneous
 
         setScreenToValues();
@@ -152,8 +158,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 
     @Override
     protected void performDefaults() {
-        setStoreToDefaults();
-        setScreenToValues();
+        setScreenToDefaultValues();
         super.performDefaults();
     }
 
@@ -164,77 +169,83 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     }
 
     protected void setStoreToValues() {
-        store.setValue("BIZ.ISPHERE.TN5250J.PORT", textPort.getText());
-        store.setValue("BIZ.ISPHERE.TN5250J.CODEPAGE", comboCodePage.getText());
-        if (buttonScreenSize27_132.getSelection()) {
-            store.setValue("BIZ.ISPHERE.TN5250J.SCREENSIZE", ISession.SIZE_132);
-        } else {
-            store.setValue("BIZ.ISPHERE.TN5250J.SCREENSIZE", ISession.SIZE_80);
-        }
-        // if (buttonEnhancedMode.getSelection()) {
-        // store.setValue("BIZ.ISPHERE.TN5250J.ENHANCEDMODE", "Y");
-        // }
-        // else {
-        // store.setValue("BIZ.ISPHERE.TN5250J.ENHANCEDMODE", "");
-        // }
-        if (buttonView.getSelection()) {
-            store.setValue("BIZ.ISPHERE.TN5250J.AREA", ISession.AREA_VIEW);
-        } else {
-            store.setValue("BIZ.ISPHERE.TN5250J.AREA", ISession.AREA_EDITOR);
-        }
-        
-        if (buttonMultiSession.getSelection()) {
-            store.setValue("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", true);
-        } else {
-            store.setValue("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", false);
-        }
-}
 
-    protected void setStoreToDefaults() {
-        store.setToDefault("BIZ.ISPHERE.TN5250J.PORT");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.CODEPAGE");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.SCREENSIZE");
-        // store.setToDefault("BIZ.ISPHERE.TN5250J.ENHANCEDMODE");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.AREA");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED");
+        preferences.setSessionPortNumber(IntHelper.tryParseInt(textPort.getText(), preferences.getDefaultSessionPortNumber()));
+        preferences.setSessionCodepage(comboCodePage.getText());
+
+        if (buttonScreenSize27_132.getSelection()) {
+            preferences.setSessionScreenSize(ISession.SIZE_132);
+        } else {
+            preferences.setSessionScreenSize(ISession.SIZE_80);
+        }
+
+        if (buttonView.getSelection()) {
+            preferences.setSessionArea(ISession.AREA_VIEW);
+        } else {
+            preferences.setSessionArea(ISession.AREA_EDITOR);
+        }
+
+        if (buttonMultiSession.getSelection()) {
+            preferences.setIsMultiSessionEnabled(true);
+        } else {
+            preferences.setIsMultiSessionEnabled(false);
+        }
     }
 
-    protected void setScreenToValues() {
-        textPort.setText(store.getString("BIZ.ISPHERE.TN5250J.PORT"));
-        comboCodePage.setText(store.getString("BIZ.ISPHERE.TN5250J.CODEPAGE"));
-        if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals(ISession.SIZE_132)) {
-            buttonScreenSize24_80.setSelection(false);
+    protected void setScreenToDefaultValues() {
+
+        textPort.setText(Integer.toString(preferences.getDefaultSessionPortNumber()));
+        comboCodePage.setText(preferences.getDefaultSessionCodepage());
+        if (ISession.SIZE_132.equals(preferences.getDefaultSessionScreenSize())) {
             buttonScreenSize27_132.setSelection(true);
+            buttonScreenSize24_80.setSelection(false);
         } else {
-            buttonScreenSize24_80.setSelection(true);
             buttonScreenSize27_132.setSelection(false);
+            buttonScreenSize24_80.setSelection(true);
         }
-        // if (store.getString("BIZ.ISPHERE.TN5250J.ENHANCEDMODE").equals("Y"))
-        // {
-        // buttonEnhancedMode.setSelection(true);
-        // }
-        // else {
-        // buttonEnhancedMode.setSelection(false);
-        // }
-        if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals(ISession.AREA_VIEW)) {
+
+        if (ISession.AREA_VIEW.equals(preferences.getDefaultSessionArea())) {
+
             buttonView.setSelection(true);
             buttonEditor.setSelection(false);
         } else {
             buttonView.setSelection(false);
             buttonEditor.setSelection(true);
         }
-        
-        if (store.getBoolean("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED")) {
-            buttonMultiSession.setSelection(true);
-        } else {
-            buttonMultiSession.setSelection(false);
-        }
-        
+
+        buttonMultiSession.setSelection(preferences.getDefaultIsMultiSessionEnabled());
+
         setControlEnablement();
     }
-    
+
+    protected void setScreenToValues() {
+
+        textPort.setText(Integer.toString(preferences.getSessionPortNumber()));
+        comboCodePage.setText(preferences.getSessionCodepage());
+
+        if (ISession.SIZE_132.equals(preferences.getSessionScreenSize())) {
+            buttonScreenSize27_132.setSelection(true);
+            buttonScreenSize24_80.setSelection(false);
+        } else {
+            buttonScreenSize27_132.setSelection(false);
+            buttonScreenSize24_80.setSelection(true);
+        }
+
+        if (ISession.AREA_VIEW.equals(preferences.getSessionArea())) {
+            buttonView.setSelection(true);
+            buttonEditor.setSelection(false);
+        } else {
+            buttonView.setSelection(false);
+            buttonEditor.setSelection(true);
+        }
+
+        buttonMultiSession.setSelection(preferences.isMultiSessionEnabled());
+
+        setControlEnablement();
+    }
+
     private void setControlEnablement() {
-        
+
         if (buttonView.getSelection()) {
             buttonMultiSession.setEnabled(true);
         } else {

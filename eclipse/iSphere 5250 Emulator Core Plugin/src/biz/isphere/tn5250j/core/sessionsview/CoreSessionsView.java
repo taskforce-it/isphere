@@ -29,7 +29,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
-import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.core.tn5250jpart.AddMultiSession;
 import biz.isphere.tn5250j.core.tn5250jpart.AddSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
@@ -55,7 +55,7 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
 
     @Override
     public boolean isMultiSession() {
-        return TN5250JCorePlugin.getDefault().getPreferenceStore().getBoolean("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED");
+        return Preferences.getInstance().isMultiSessionEnabled();
     }
 
     public boolean isPinned() {
