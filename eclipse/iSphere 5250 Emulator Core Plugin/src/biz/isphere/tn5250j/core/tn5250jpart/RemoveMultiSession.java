@@ -32,7 +32,7 @@ public class RemoveMultiSession {
 
         int numberOfSessions = arrayListCompositeSession.size();
 
-        if (numberOfSessions > 1) {
+        if (numberOfSessions > 0) {
 
             Composite compositeControl = new Composite(tn5250jPart.getTabFolderSessions(), SWT.NONE);
             GridLayout gridLayoutControl = new GridLayout();
@@ -54,7 +54,7 @@ public class RemoveMultiSession {
 
             TN5250JPanel tn5250j = arrayListTabItemTN5250J.get(sessionToDelete);
             tn5250j.removeScreenListener();
-            tn5250j.getSession5250().disconnect();
+            tn5250j.shutdown();
             arrayListTabItemTN5250J.remove(sessionToDelete);
 
             tn5250jPart.removeTN5250JPanel(tn5250j);

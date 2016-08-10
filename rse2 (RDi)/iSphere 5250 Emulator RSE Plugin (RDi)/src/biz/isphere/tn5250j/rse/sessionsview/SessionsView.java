@@ -11,9 +11,6 @@ package biz.isphere.tn5250j.rse.sessionsview;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.tn5250j.core.sessionsview.CoreSessionsView;
@@ -32,19 +29,6 @@ public class SessionsView extends CoreSessionsView {
 
     protected IViewManager getViewManager() {
         return ISphereRSEPlugin.getDefault().getViewManager(IViewManager.TN5250J_SESSION_VIEWS);
-    }
-
-    @Override
-    protected CoreSessionsView showView() throws PartInitException {
-
-        SessionsView sessionsView = (SessionsView)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SessionsView.ID));
-
-        // IViewManager viewManager =
-        // ISphereRSEPlugin.getDefault().getViewManager(SessionsView.ID);
-        // CoreSessionsView sessionsView =
-        // (CoreSessionsView)viewManager.getView(SessionsView.ID, "");
-
-        return sessionsView;
     }
 
     @Override

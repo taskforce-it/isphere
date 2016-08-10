@@ -25,6 +25,14 @@ public class SetSessionFocus {
                 newMinorSession = ((Integer)tabItem.getData(SessionTabData.LAST_FOCUS)).intValue();
             }
             ArrayList arrayListTabItemTN5250J = (ArrayList)tabItem.getData(SessionTabData.TAB_ITEM_TN5250J);
+            if (arrayListTabItemTN5250J.size() == 0) {
+                if (tn5250jPart.isMultiSession()) {
+                    tn5250jPart.setAddSession(false);
+                    tn5250jPart.setRemoveSession(false);
+                }
+                return;
+            }
+
             final TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(newMinorSession);
             if (tn5250j != null) {
                 EventQueue.invokeLater(new Runnable() {
@@ -38,12 +46,12 @@ public class SetSessionFocus {
                         tn5250jPart.setAddSession(false);
                         tn5250jPart.setRemoveSession(false);
                     } else {
-                        if (arrayListTabItemTN5250J.size() == 4) {
+                        if (arrayListTabItemTN5250J.size() >= 4) {
                             tn5250jPart.setAddSession(false);
                         } else {
                             tn5250jPart.setAddSession(true);
                         }
-                        if (arrayListTabItemTN5250J.size() == 1) {
+                        if (arrayListTabItemTN5250J.size() <= 1) {
                             tn5250jPart.setRemoveSession(false);
                         } else {
                             tn5250jPart.setRemoveSession(true);
@@ -53,5 +61,4 @@ public class SetSessionFocus {
             }
         }
     }
-
 }

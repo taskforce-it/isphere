@@ -30,6 +30,10 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
 
         tn5250jPart.createPartControl(parent);
 
+        if (isMultiSession()) {
+            setAddSession(false);
+            setRemoveSession(false);
+        }
     }
 
     @Override
