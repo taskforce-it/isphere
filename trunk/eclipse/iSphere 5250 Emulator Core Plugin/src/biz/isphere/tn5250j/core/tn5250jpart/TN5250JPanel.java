@@ -103,6 +103,10 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
 
     }
 
+    public void shutdown() {
+        manager.closeSession(gui);
+    }
+
     private void loadSystemProperty(String param) {
         if (isSpecified(param)) System.getProperties().put(param, getParameter(param));
     }

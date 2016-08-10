@@ -20,7 +20,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.IntHelper;
@@ -34,6 +33,7 @@ import biz.isphere.tn5250j.core.tn5250jpart.AddMultiSession;
 import biz.isphere.tn5250j.core.tn5250jpart.AddSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
+import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
@@ -111,9 +111,33 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
         IMenuManager viewMenu = actionBars.getMenuManager();
     }
 
+    @Override
+    public void addTN5250JPanel(TN5250JPanel tn5250jPanel) {
+        super.addTN5250JPanel(tn5250jPanel);
+
+        if (getSessionInfos().length >= 1) {
+            // last tab is being closed
+            pinViewAction.setEnabled(true);
+        }
+    }
+
+    public void removeTN5250JPanel(TN5250JPanel tn5250jPanel) {
+        super.removeTN5250JPanel(tn5250jPanel);
+
+        if (getSessionInfos().length <= 0) {
+            // last tab is being closed
+            setPinned(false);
+            pinViewAction.setEnabled(false);
+        }
+    }
+
     private void refreshActionsEnablement() {
 
-        pinViewAction.setEnabled(true);
+        if (getTabFolderSessions().getItemCount() >= 1) {
+            pinViewAction.setEnabled(true);
+        } else {
+            pinViewAction.setEnabled(false);
+        }
     }
 
     protected void updatePinProperties() {
@@ -161,13 +185,13 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
          * RSECorePlugin is not loaded (Maybe, because the UI thread is
          * blocked?).
          */
-        RestoreViewJob job = new RestoreViewJob();
+        RestoreViewJob job = new RestoreViewJob(this);
         job.schedule();
     }
 
     protected abstract IViewManager getViewManager();
 
-    protected abstract CoreSessionsView showView() throws PartInitException;
+    // protected abstract CoreSessionsView showView() throws PartInitException;
 
     protected abstract Map<String, String> getPinProperties(Set<String> pinKeys);
 
@@ -190,15 +214,18 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
      */
     private class RestoreViewJob extends UIJob {
 
-        public RestoreViewJob() {
+        private CoreSessionsView sessionsView;
+
+        public RestoreViewJob(CoreSessionsView view) {
             super(Messages.Restoring_view);
+
+            this.sessionsView = view;
         }
 
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
-            IViewManager viewManager = getViewManager();
-            if (!viewManager.isInitialized(5000)) {
+            if (!getViewManager().isInitialized(5000)) {
                 ISpherePlugin.logError("Could not restore view. View manager did not initialize within 5 seconds.", null); //$NON-NLS-1$
                 return Status.OK_STATUS;
             }
@@ -223,7 +250,7 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
                     String rseConnection = pinProperties.get(CONNECTION_NAME + "_" + i);
                     String sessionName = pinProperties.get(SESSION_NAME + "_" + i);
 
-                    CoreSessionsView sessionsView = showView();
+                    // CoreSessionsView sessionsView = showView();
 
                     TN5250JInfo sessionsInfo = createSessionsInfo(sessionsView, rseProfil, rseConnection, sessionName);
 

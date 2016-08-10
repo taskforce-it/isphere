@@ -240,11 +240,13 @@ public class TN5250JPart {
     }
 
     public void dispose() {
+
         for (int idx = 0; idx < arrayListTN5250JPanel.size(); idx++) {
             TN5250JPanel tn5250JPanel = (arrayListTN5250JPanel.get(idx));
             tn5250JPanel.removeScreenListener();
-            tn5250JPanel.getSession5250().disconnect();
+            tn5250JPanel.shutdown();
         }
+
         workbenchPart.getSite().getPage().removePartListener(partListener2);
         HandleBindingService.getInstance().removeTN5250JPart(tn5250jPart);
     }

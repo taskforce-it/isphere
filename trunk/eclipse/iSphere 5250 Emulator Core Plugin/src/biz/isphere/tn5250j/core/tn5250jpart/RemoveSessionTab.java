@@ -19,17 +19,19 @@ import org.eclipse.swt.custom.CTabItem;
 public class RemoveSessionTab {
 
     public static void run(CTabItem closedTab, ITN5250JPart tn5250jPart) {
+
         ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData(SessionTabData.TAB_ITEM_TN5250J);
-        for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
-            TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(idx);
-            tn5250j.removeScreenListener();
-            tn5250j.getSession5250().disconnect();
-            tn5250jPart.removeTN5250JPanel(tn5250j);
-            closedTab.dispose();
+        int numberOfSession = arrayListTabItemTN5250J.size();
+
+        while (arrayListTabItemTN5250J.size() > 0 && numberOfSession > 0) {
+            tn5250jPart.getTabFolderSessions().setSelection(closedTab);
+            closedTab.setData(SessionTabData.LAST_FOCUS, 0);
+            RemoveMultiSession.run(tn5250jPart);
+            numberOfSession--;
         }
-        if (tn5250jPart.isMultiSession() && tn5250jPart.getTabFolderSessions().getItemCount() == 0) {
-            tn5250jPart.setAddSession(false);
-            tn5250jPart.setRemoveSession(false);
+
+        if (arrayListTabItemTN5250J.size() == 0) {
+            closedTab.dispose();
         }
 
     }

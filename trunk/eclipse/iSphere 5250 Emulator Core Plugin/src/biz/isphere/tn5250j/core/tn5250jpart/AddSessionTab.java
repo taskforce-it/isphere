@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
@@ -43,17 +42,9 @@ public class AddSessionTab {
 
         Session session = Session.load(sessionDirectory, qualifiedConnection, sessionName);
         if (session != null) {
-            Composite compositeControl = new Composite(tn5250jPart.getTabFolderSessions(), SWT.NONE);
-            GridLayout gridLayoutControl = new GridLayout();
-            gridLayoutControl.numColumns = 1;
-            compositeControl.setLayout(gridLayoutControl);
 
             ArrayList<Composite> arrayListCompositeSession = new ArrayList<Composite>();
             ArrayList<TN5250JPanel> arrayListTabItemTN5250J = new ArrayList<TN5250JPanel>();
-
-            CreateSessionPanel createSession = new CreateSessionPanel();
-            final TN5250JPanel tn5250j = createSession
-                .run(compositeControl, arrayListCompositeSession, arrayListTabItemTN5250J, session, tn5250jInfo);
 
             CTabItem tabItemSession = new CTabItem(tn5250jPart.getTabFolderSessions(), SWT.NONE);
             tabItemSession.setText(tn5250jInfo.getTN5250JDescription());
@@ -64,13 +55,10 @@ public class AddSessionTab {
             tabItemSession.setData(SessionTabData.TAB_ITEM_TN5250J, arrayListTabItemTN5250J);
             tabItemSession.setData(SessionTabData.SESSION, session);
             tabItemSession.setData(SessionTabData.LAST_FOCUS, new Integer(0));
-            tabItemSession.setControl(compositeControl);
 
             tn5250jPart.getTabFolderSessions().setSelection(tabItemSession);
 
-            SetSessionFocus.run(tn5250jPart.getTabFolderSessions().getSelectionIndex(), 0, tn5250jPart);
-
-            new ConnectSession(tn5250j).start();
+            AddMultiSession.run(tn5250jPart);
 
         }
 
