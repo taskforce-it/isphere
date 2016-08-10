@@ -25,5 +25,12 @@
             name="%Key_settings"
             id="biz.isphere.tn5250j.core.preferencepages.PreferencePage4"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.tn5250j.core.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

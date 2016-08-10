@@ -16,7 +16,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.eclipse.albireo.core.SwingControl;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyAdapter;
@@ -26,7 +25,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.core.session.Session;
 
 /**
@@ -61,17 +60,17 @@ public class CreateSessionPanel {
         sc.setContent(compositeSession);
 
         // Set the minimum size
-        IPreferenceStore store = TN5250JCorePlugin.getDefault().getPreferenceStore();
-        if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
+        Preferences preferences = Preferences.getInstance();
+        if (preferences.isMinimalSessionSizeEnabled()) {
             int hSize;
             try {
-                hSize = Integer.parseInt(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
+                hSize = preferences.getMinimalSessionHorizontalSize();
             } catch (NumberFormatException e1) {
                 hSize = 0;
             }
             int vSize;
             try {
-                vSize = Integer.parseInt(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
+                vSize = preferences.getMinimalSessionVerticalSize();
             } catch (NumberFormatException e1) {
                 vSize = 0;
             }
@@ -164,7 +163,7 @@ public class CreateSessionPanel {
     }
 
     private void processFocusGained(java.awt.event.FocusEvent event) {
-        if (tn5250jPart.getTabFolderSessions().isDisposed()){
+        if (tn5250jPart.getTabFolderSessions().isDisposed()) {
             return;
         }
         new ProcessSessionFocus(tn5250jPart.getTabFolderSessions().getDisplay(), tn5250jPart.getTabFolderSessions(), "*GAINED", event).start();

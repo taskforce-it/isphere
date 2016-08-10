@@ -8,7 +8,6 @@
 
 package biz.isphere.tn5250j.core.preferencepages;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -23,15 +22,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 
 /**
  * 5250 preferences page: Minimal session size
  */
 public class PreferencePage3 extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private IPreferenceStore store;
+    private Preferences preferences;
     private Button buttonMSActive;
     private Text textMSHorizontalSize;
     private Text textMSVerticalSize;
@@ -39,7 +40,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
     public PreferencePage3() {
         super();
         setPreferenceStore(TN5250JCorePlugin.getDefault().getPreferenceStore());
-        store = getPreferenceStore();
+        preferences = Preferences.getInstance();
     }
 
     @Override
@@ -117,8 +118,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
 
     @Override
     protected void performDefaults() {
-        setStoreToDefaults();
-        setScreenToValues();
+        setScreenToDefaultValues();
         super.performDefaults();
     }
 
@@ -129,29 +129,23 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
     }
 
     protected void setStoreToValues() {
-        if (buttonMSActive.getSelection()) {
-            store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "Y");
-        } else {
-            store.setValue("BIZ.ISPHERE.TN5250J.MSACTIVE", "");
-        }
-        store.setValue("BIZ.ISPHERE.TN5250J.MSHSIZE", textMSHorizontalSize.getText());
-        store.setValue("BIZ.ISPHERE.TN5250J.MSVSIZE", textMSVerticalSize.getText());
+        preferences.setIsMinimalSessionEnabled(buttonMSActive.getSelection());
+        preferences.setMinimalSessionHorizontalSize(IntHelper.tryParseInt(textMSHorizontalSize.getText(),
+            preferences.getDefaultMinimalSessionHorizontalSize()));
+        preferences.setMinimalSessionVerticalSize(IntHelper.tryParseInt(textMSVerticalSize.getText(),
+            preferences.getDefaultMinimalSessionVerticalSize()));
     }
 
-    protected void setStoreToDefaults() {
-        store.setToDefault("BIZ.ISPHERE.TN5250J.MSACTIVE");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.MSHSIZE");
-        store.setToDefault("BIZ.ISPHERE.TN5250J.MSVSIZE");
+    protected void setScreenToDefaultValues() {
+        buttonMSActive.setSelection(preferences.getDefaultIsMinimalSessionSizeEnabled());
+        textMSHorizontalSize.setText(Integer.toString(preferences.getDefaultMinimalSessionHorizontalSize()));
+        textMSVerticalSize.setText(Integer.toString(preferences.getDefaultMinimalSessionVerticalSize()));
     }
 
     protected void setScreenToValues() {
-        if (store.getString("BIZ.ISPHERE.TN5250J.MSACTIVE").equals("Y")) {
-            buttonMSActive.setSelection(true);
-        } else {
-            buttonMSActive.setSelection(false);
-        }
-        textMSHorizontalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSHSIZE"));
-        textMSVerticalSize.setText(store.getString("BIZ.ISPHERE.TN5250J.MSVSIZE"));
+        buttonMSActive.setSelection(preferences.isMinimalSessionSizeEnabled());
+        textMSHorizontalSize.setText(Integer.toString(preferences.getMinimalSessionHorizontalSize()));
+        textMSVerticalSize.setText(Integer.toString(preferences.getMinimalSessionVerticalSize()));
     }
 
     public void init(IWorkbench workbench) {

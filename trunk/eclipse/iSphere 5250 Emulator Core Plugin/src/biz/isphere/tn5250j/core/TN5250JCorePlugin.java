@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.tn5250jpart.HandleBindingService;
 
 public class TN5250JCorePlugin extends AbstractUIPlugin {
@@ -53,8 +52,6 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
         if (!directory2TN5250J.exists()) {
             directory2TN5250J.mkdir();
         }
-
-        initializePreferenceStoreDefaults();
     }
 
     @Override
@@ -88,19 +85,6 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_MINUS, getImageDescriptor(IMAGE_MINUS));
         reg.put(IMAGE_ON, getImageDescriptor(IMAGE_ON));
         reg.put(IMAGE_OFF, getImageDescriptor(IMAGE_OFF));
-    }
-
-    protected void initializePreferenceStoreDefaults() {
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.PORT", "23");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.CODEPAGE", "");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.SCREENSIZE", ISession.SIZE_132);
-        // getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.ENHANCEDMODE",
-        // "Y");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.AREA", ISession.AREA_VIEW);
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSACTIVE", "N");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSHSIZE", "0");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.MSVSIZE", "0");
-        getPreferenceStore().setDefault("BIZ.ISPHERE.TN5250J.AREA.MULTI_SESSIONS_ENABLED", true);
     }
 
     public static URL getInstallURL() {
