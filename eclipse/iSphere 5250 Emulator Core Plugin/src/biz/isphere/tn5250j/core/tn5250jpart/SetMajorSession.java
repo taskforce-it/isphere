@@ -11,6 +11,10 @@ package biz.isphere.tn5250j.core.tn5250jpart;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * This class serves the CTRL+UP and CTRL+DOWN key events to move forth and back
+ * between session tabs.
+ */
 public class SetMajorSession {
 
     private Display display;

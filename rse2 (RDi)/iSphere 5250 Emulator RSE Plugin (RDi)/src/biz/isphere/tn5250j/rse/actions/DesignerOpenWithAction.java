@@ -120,11 +120,11 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
 
                 ITN5250JPart tn5250jPart = null;
 
-                if (area.equals("*VIEW")) {
+                if (ISession.AREA_VIEW.equals(area)) {
 
                     tn5250jPart = (ITN5250JPart)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DesignerView.ID));
 
-                } else if (area.equals("*EDITOR")) {
+                } else if (ISession.AREA_EDITOR.equals(area)) {
 
                     TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.iSphere_5250_Designer, "TN5250J",
                         TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));

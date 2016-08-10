@@ -188,13 +188,13 @@ public class SessionDetail {
         buttonScreenSize27_132.setText("27*132");
 
         if (actionType == DialogActionTypes.CREATE) {
-            if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals("132")) {
+            if (store.getString("BIZ.ISPHERE.TN5250J.SCREENSIZE").equals(ISession.SIZE_132)) {
                 buttonScreenSize27_132.setSelection(true);
             } else {
                 buttonScreenSize24_80.setSelection(true);
             }
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
-            if (session.getScreenSize().equals("132")) {
+            if (ISession.SIZE_132.equals(session.getScreenSize())) {
                 buttonScreenSize27_132.setSelection(true);
             } else {
                 buttonScreenSize24_80.setSelection(true);
@@ -239,13 +239,13 @@ public class SessionDetail {
         buttonEditor.setText(Messages.Editor);
 
         if (actionType == DialogActionTypes.CREATE) {
-            if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals("*VIEW")) {
+            if (store.getString("BIZ.ISPHERE.TN5250J.AREA").equals(ISession.AREA_VIEW)) {
                 buttonView.setSelection(true);
             } else {
                 buttonEditor.setSelection(true);
             }
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
-            if (session.getArea().equals("*VIEW")) {
+            if (ISession.AREA_VIEW.equals(session.getArea())) {
                 buttonView.setSelection(true);
             } else {
                 buttonEditor.setSelection(true);
@@ -334,7 +334,7 @@ public class SessionDetail {
         labelLibrary.setText(Messages.Library_colon);
 
         textLibrary = new Combo(groupSignOnMask, SWT.BORDER);
-        textLibrary.setItems(new String[]{ISession.ISPHERE_PRODUCT_LIBRARY});
+        textLibrary.setItems(new String[] { ISession.ISPHERE_PRODUCT_LIBRARY });
         textLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textLibrary.setTextLimit(10);
         if (actionType == DialogActionTypes.CREATE) {
@@ -570,9 +570,9 @@ public class SessionDetail {
         session.setPort(textPort.getText());
         session.setCodePage(comboCodePage.getText());
         if (buttonScreenSize27_132.getSelection()) {
-            session.setScreenSize("132");
+            session.setScreenSize(ISession.SIZE_132);
         } else {
-            session.setScreenSize("");
+            session.setScreenSize(ISession.SIZE_80);
         }
         // if (buttonEnhancedMode.getSelection()) {
         // session.setEnhancedMode("Y");
@@ -581,9 +581,9 @@ public class SessionDetail {
         // session.setEnhancedMode("");
         // }
         if (buttonView.getSelection()) {
-            session.setArea("*VIEW");
+            session.setArea(ISession.AREA_VIEW);
         } else {
-            session.setArea("*EDITOR");
+            session.setArea(ISession.AREA_EDITOR);
         }
         session.setUser(textUser.getText());
 

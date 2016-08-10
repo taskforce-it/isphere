@@ -33,13 +33,13 @@ public class ScrollSession {
         display.asyncExec(new Runnable() {
             public void run() {
                 CTabItem tabItemSession = tabFolderSessions.getSelection();
-                ArrayList arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
-                ArrayList arrayListCompositeSession = (ArrayList)tabItemSession.getData("CompositeSession");
+                ArrayList arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData(SessionTabData.TAB_ITEM_TN5250J);
+                ArrayList arrayListCompositeSession = (ArrayList)tabItemSession.getData(SessionTabData.COMPOSITE_SESSION);
                 for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
                     TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(idx);
                     if (tn5250j.getSessionGUI().hasFocus()) {
                         Composite compositeX = (Composite)arrayListCompositeSession.get(idx);
-                        ScrolledComposite sc = (ScrolledComposite)compositeX.getData("ScrolledComposite");
+                        ScrolledComposite sc = (ScrolledComposite)compositeX.getData(SessionPanelData.SCROLLED_COMPOSITE);
                         if (keyEvent.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
                             Point point = sc.getOrigin();
                             point.y = point.y - 50;

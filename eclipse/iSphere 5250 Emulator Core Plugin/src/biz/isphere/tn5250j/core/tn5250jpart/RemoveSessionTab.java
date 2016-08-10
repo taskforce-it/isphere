@@ -12,10 +12,14 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.custom.CTabItem;
 
+/**
+ * This class closes all multi-sessions of a given session tab of an
+ * "iSphere 5250 Sessions" view and closes the tab.
+ */
 public class RemoveSessionTab {
 
     public static void run(CTabItem closedTab, ITN5250JPart tn5250jPart) {
-        ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData("TabItemTN5250J");
+        ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData(SessionTabData.TAB_ITEM_TN5250J);
         for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
             TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(idx);
             tn5250j.removeScreenListener();

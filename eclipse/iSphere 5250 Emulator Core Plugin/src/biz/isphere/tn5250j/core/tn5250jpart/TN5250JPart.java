@@ -99,7 +99,7 @@ public class TN5250JPart {
 
                 CTabItem closedTab = (CTabItem)event.item;
 
-                ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData("TabItemTN5250J");
+                ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData(SessionTabData.TAB_ITEM_TN5250J);
 
                 boolean signOn = false;
                 for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
@@ -201,8 +201,8 @@ public class TN5250JPart {
                 @SuppressWarnings("unchecked")
                 public void run() {
                     CTabItem tabItemSession = tabFolderSessions.getSelection();
-                    int sessionToDelete = ((Integer)tabItemSession.getData("LastFocus")).intValue();
-                    ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
+                    int sessionToDelete = ((Integer)tabItemSession.getData(SessionTabData.LAST_FOCUS)).intValue();
+                    ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData(SessionTabData.TAB_ITEM_TN5250J);
                     TN5250JPanel tn5250jPanel = arrayListTabItemTN5250J.get(sessionToDelete);
 
                     if (tn5250jPanel.getSession5250().isSignedOn()) {
@@ -277,7 +277,7 @@ public class TN5250JPart {
         int tabItemNumber = -1;
         CTabItem[] tabItems = tn5250jPart.getTabFolderSessions().getItems();
         for (int idx = 0; idx < tabItems.length; idx++) {
-            TN5250JInfo tabItemTN5250JInfo = (TN5250JInfo)tabItems[idx].getData("TN5250JInfo");
+            TN5250JInfo tabItemTN5250JInfo = (TN5250JInfo)tabItems[idx].getData(SessionTabData.TN5250J_INFO);
             if (tn5250jInfo.isTN5250JEqual(tabItemTN5250JInfo)) {
                 tabItemNumber = idx;
                 break;

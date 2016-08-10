@@ -44,14 +44,14 @@ public class ProcessSessionFocus {
                 CTabItem[] tabItems = tabFolderSessions.getItems();
                 for (int idx1 = 0; idx1 < tabItems.length; idx1++) {
                     if (!tabItems[idx1].isDisposed()) {
-                        ArrayList arrayListCompositeSession = (ArrayList)tabItems[idx1].getData("CompositeSession");
+                        ArrayList arrayListCompositeSession = (ArrayList)tabItems[idx1].getData(SessionTabData.COMPOSITE_SESSION);
                         for (int idx2 = 0; idx2 < arrayListCompositeSession.size(); idx2++) {
                             Composite compositeSession = (Composite)arrayListCompositeSession.get(idx2);
-                            TN5250JPanel tn5250j = (TN5250JPanel)compositeSession.getData("CompositeTN5250J");
+                            TN5250JPanel tn5250j = (TN5250JPanel)compositeSession.getData(SessionPanelData.COMPOSITE_TN5250J);
                             if (tn5250j.getSessionGUI() == event.getSource()) {
                                 compositeSession.setBackground(Display.getCurrent().getSystemColor(color));
                                 if (mode.equals("*GAINED")) {
-                                    tabItems[idx1].setData("LastFocus", new Integer(idx2));
+                                    tabItems[idx1].setData(SessionTabData.LAST_FOCUS, new Integer(idx2));
                                 }
                             }
                         }

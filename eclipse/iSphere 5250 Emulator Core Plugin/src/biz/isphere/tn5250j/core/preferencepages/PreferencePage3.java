@@ -26,6 +26,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 
+/**
+ * 5250 preferences page: Minimal session size
+ */
 public class PreferencePage3 extends PreferencePage implements IWorkbenchPreferencePage {
 
     private IPreferenceStore store;
