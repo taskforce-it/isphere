@@ -31,7 +31,7 @@ import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.tn5250jpart.AddMultiSession;
-import biz.isphere.tn5250j.core.tn5250jpart.AddSession;
+import biz.isphere.tn5250j.core.tn5250jpart.AddSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
@@ -229,7 +229,7 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
 
                     int tabIndex = sessionsView.findSessionTab(sessionsInfo);
                     if (tabIndex == -1) {
-                        AddSession.run(sessionsInfo);
+                        AddSessionTab.run(sessionsInfo);
                     } else {
                         if (sessionsView.isMultiSession()) {
                             AddMultiSession.run(sessionsView, tabIndex);

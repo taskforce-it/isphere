@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.tn5250j.Session5250;
 
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
-import biz.isphere.tn5250j.core.tn5250jpart.RemoveSession;
+import biz.isphere.tn5250j.core.tn5250jpart.RemoveSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JGUI;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
@@ -98,7 +98,7 @@ public abstract class CoreDesignerGUI extends TN5250JGUI {
         public void run() {
             tabFolderSessions.getDisplay().asyncExec(new Runnable() {
                 public void run() {
-                    RemoveSession.run(tabFolderSessions.getSelection(), tn5250jPart);
+                    RemoveSessionTab.run(tabFolderSessions.getSelection(), tn5250jPart);
                 }
             });
         }

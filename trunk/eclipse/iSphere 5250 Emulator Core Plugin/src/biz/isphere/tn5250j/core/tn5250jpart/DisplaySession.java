@@ -19,7 +19,7 @@ public class DisplaySession {
         int tabItemNumber = tn5250jPart.findSessionTab(tn5250jInfo);
         if (tabItemNumber == -1) {
 
-            AddSession.run(tn5250jInfo);
+            AddSessionTab.run(tn5250jInfo);
 
         } else {
             
