@@ -14,6 +14,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * This class serves the ALT+UP and ALT+DOWN key events to move forth and back
+ * between the multi-sessions of a session tab.
+ */
 public class SetMinorSession {
 
     private Display display;
@@ -33,7 +37,7 @@ public class SetMinorSession {
             @SuppressWarnings("unchecked")
             public void run() {
                 CTabItem tabItemSession = tabFolderSessions.getSelection();
-                ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
+                ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData(SessionTabData.TAB_ITEM_TN5250J);
                 int currentItem = -1;
                 for (int idx = 0; idx < arrayListTabItemTN5250J.size(); idx++) {
                     TN5250JPanel tn5250j = arrayListTabItemTN5250J.get(idx);

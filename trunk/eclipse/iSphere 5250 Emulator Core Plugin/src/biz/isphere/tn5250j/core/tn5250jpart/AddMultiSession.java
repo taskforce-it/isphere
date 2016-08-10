@@ -17,8 +17,11 @@ import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.tn5250j.core.session.Session;
 
+/**
+ * This class adds a multi-session to a tab of an "iSphere 5250 Sessions" view.
+ */
 public class AddMultiSession {
-    
+
     public static void run(ITN5250JPart tn5250jPart, int index) {
         tn5250jPart.getTabFolderSessions().setSelection(index);
         run(tn5250jPart);
@@ -29,18 +32,25 @@ public class AddMultiSession {
 
         CTabItem tabItemSession = tn5250jPart.getTabFolderSessions().getSelection();
 
-        ArrayList<Composite> arrayListCompositeSession = (ArrayList)tabItemSession.getData("CompositeSession");
-        ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
-        Session session = (Session)tabItemSession.getData("Session");
-        TN5250JInfo tn5250jInfo = (TN5250JInfo)tabItemSession.getData("TN5250JInfo");
+        ArrayList<Composite> arrayListCompositeSession = (ArrayList)tabItemSession.getData(SessionTabData.COMPOSITE_SESSION);
+        ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData(SessionTabData.TAB_ITEM_TN5250J);
+        Session session = (Session)tabItemSession.getData(SessionTabData.SESSION);
+        TN5250JInfo tn5250jInfo = (TN5250JInfo)tabItemSession.getData(SessionTabData.TN5250J_INFO);
 
         int numberOfSessions = arrayListCompositeSession.size();
 
         if (numberOfSessions < 4) {
 
+            int numColumns;
+            if (numberOfSessions == 0) {
+                numColumns = 1;
+            } else {
+                numColumns = 2;
+            }
+
             Composite compositeControl = new Composite(tn5250jPart.getTabFolderSessions(), SWT.NONE);
             GridLayout gridLayoutControl = new GridLayout();
-            gridLayoutControl.numColumns = 2;
+            gridLayoutControl.numColumns = numColumns;
             compositeControl.setLayout(gridLayoutControl);
 
             for (int idx = 0; idx < numberOfSessions; idx++) {

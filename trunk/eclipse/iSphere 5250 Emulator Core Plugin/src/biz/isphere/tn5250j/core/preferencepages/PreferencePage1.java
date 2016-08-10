@@ -25,6 +25,9 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 
+/**
+ * 5250 preferences page: Welcome to TN5250J screen
+ */
 public class PreferencePage1 extends PreferencePage implements IWorkbenchPreferencePage {
 
     public PreferencePage1() {

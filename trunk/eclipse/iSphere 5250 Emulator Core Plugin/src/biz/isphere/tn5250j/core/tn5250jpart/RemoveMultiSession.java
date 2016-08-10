@@ -15,6 +15,10 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This class removes a multi-session from a tab of an "iSphere 5250 Sessions"
+ * view.
+ */
 public class RemoveMultiSession {
 
     @SuppressWarnings("unchecked")
@@ -22,9 +26,9 @@ public class RemoveMultiSession {
 
         CTabItem tabItemSession = tn5250jPart.getTabFolderSessions().getSelection();
 
-        int sessionToDelete = ((Integer)tabItemSession.getData("LastFocus")).intValue();
-        ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData("TabItemTN5250J");
-        ArrayList<Composite> arrayListCompositeSession = (ArrayList)tabItemSession.getData("CompositeSession");
+        int sessionToDelete = ((Integer)tabItemSession.getData(SessionTabData.LAST_FOCUS)).intValue();
+        ArrayList<TN5250JPanel> arrayListTabItemTN5250J = (ArrayList)tabItemSession.getData(SessionTabData.TAB_ITEM_TN5250J);
+        ArrayList<Composite> arrayListCompositeSession = (ArrayList)tabItemSession.getData(SessionTabData.COMPOSITE_SESSION);
 
         int numberOfSessions = arrayListCompositeSession.size();
 

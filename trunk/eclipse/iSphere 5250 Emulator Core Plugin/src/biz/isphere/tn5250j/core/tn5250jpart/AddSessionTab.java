@@ -20,6 +20,10 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.session.Session;
 
+/**
+ * First this class creates a new session tab and adds it to an
+ * "iSphere 5250 Sessions" view. Then it adds a new multi-session to that tab.
+ */
 public class AddSessionTab {
 
     public static void run(TN5250JInfo tn5250jInfo) {
@@ -53,13 +57,13 @@ public class AddSessionTab {
 
             CTabItem tabItemSession = new CTabItem(tn5250jPart.getTabFolderSessions(), SWT.NONE);
             tabItemSession.setText(tn5250jInfo.getTN5250JDescription());
-            tabItemSession.setData("Connection", tn5250jInfo.getQualifiedConnection());
-            tabItemSession.setData("Name", tn5250jInfo.getSession());
-            tabItemSession.setData("TN5250JInfo", tn5250jInfo);
-            tabItemSession.setData("CompositeSession", arrayListCompositeSession);
-            tabItemSession.setData("TabItemTN5250J", arrayListTabItemTN5250J);
-            tabItemSession.setData("Session", session);
-            tabItemSession.setData("LastFocus", new Integer(0));
+            tabItemSession.setData(SessionTabData.CONNECTION, tn5250jInfo.getQualifiedConnection());
+            tabItemSession.setData(SessionTabData.NAME, tn5250jInfo.getSession());
+            tabItemSession.setData(SessionTabData.TN5250J_INFO, tn5250jInfo);
+            tabItemSession.setData(SessionTabData.COMPOSITE_SESSION, arrayListCompositeSession);
+            tabItemSession.setData(SessionTabData.TAB_ITEM_TN5250J, arrayListTabItemTN5250J);
+            tabItemSession.setData(SessionTabData.SESSION, session);
+            tabItemSession.setData(SessionTabData.LAST_FOCUS, new Integer(0));
             tabItemSession.setControl(compositeControl);
 
             tn5250jPart.getTabFolderSessions().setSelection(tabItemSession);

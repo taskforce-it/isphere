@@ -25,7 +25,7 @@ public interface ITN5250JPart {
     public void setRemoveSession(boolean value);
 
     public void setBindingService(boolean value);
-    
+
     public int findSessionTab(TN5250JInfo tn5250jInfo);
 
 }

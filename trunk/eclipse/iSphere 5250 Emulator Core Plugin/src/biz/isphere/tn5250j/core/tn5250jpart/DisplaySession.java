@@ -10,6 +10,11 @@ package biz.isphere.tn5250j.core.tn5250jpart;
 
 import org.eclipse.swt.custom.CTabItem;
 
+/**
+ * This class serves the double-click on a 5250 session item of an
+ * "iSphere 5250" node of the RSE tree. It either creates a new session tab or
+ * selects the tab that belongs to the session item.
+ */
 public class DisplaySession {
 
     public static void run(TN5250JInfo tn5250jInfo) {
@@ -22,7 +27,7 @@ public class DisplaySession {
             AddSessionTab.run(tn5250jInfo);
 
         } else {
-            
+
             CTabItem tabItem = tn5250jPart.getTabFolderSessions().getItem(tabItemNumber);
             tn5250jPart.getTabFolderSessions().setSelection(tabItem);
 

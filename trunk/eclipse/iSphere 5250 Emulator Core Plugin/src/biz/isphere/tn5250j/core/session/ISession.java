@@ -13,4 +13,10 @@ public interface ISession {
     public static final String ISPHERE_PRODUCT_LIBRARY = "%ISPHERE%";
     public static final String DESIGNER = "_DESIGNER";
 
+    public final static String AREA_VIEW = "*VIEW"; //$NON-NLS-1$
+    public final static String AREA_EDITOR = "*EDITOR"; //$NON-NLS-1$
+
+    public final static String SIZE_132 = "132"; //$NON-NLS-1$
+    public final static String SIZE_80 = "80"; //$NON-NLS-1$
+
 }

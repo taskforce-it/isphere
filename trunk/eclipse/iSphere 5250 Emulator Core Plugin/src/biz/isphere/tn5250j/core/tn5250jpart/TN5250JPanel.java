@@ -136,7 +136,7 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         } else if (parameter.equals("-gui")) {
             return false;
         } else if (parameter.equals("-132")) {
-            if (session.getScreenSize().equals("132")) {
+            if (session.getScreenSize().equals(ISession.SIZE_132)) {
                 return true;
             } else {
                 return false;

@@ -29,6 +29,10 @@ import org.eclipse.swt.widgets.Display;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.session.Session;
 
+/**
+ * This class creates a session panel, that is about to be added to a session
+ * tab of an "iSphere 5250 Sessions" view.
+ */
 public class CreateSessionPanel {
 
     private ITN5250JPart tn5250jPart;
@@ -121,7 +125,7 @@ public class CreateSessionPanel {
             @Override
             public void keyPressed(final KeyEvent keyEvent) {
                 Composite sourceComposite = (Composite)keyEvent.getSource();
-                final TN5250JPanel sourceTN5250J = (TN5250JPanel)sourceComposite.getData("CompositeTN5250J");
+                final TN5250JPanel sourceTN5250J = (TN5250JPanel)sourceComposite.getData(SessionPanelData.COMPOSITE_TN5250J);
                 if (keyEvent.keyCode == SWT.F10) {
                     keyEvent.doit = false;
                     if ((keyEvent.stateMask & SWT.SHIFT) == 0) {
@@ -142,10 +146,10 @@ public class CreateSessionPanel {
                 }
             }
         });
-        swingControl.setData("CompositeTN5250J", tn5250j);
+        swingControl.setData(SessionPanelData.COMPOSITE_TN5250J, tn5250j);
 
-        compositeBorder.setData("ScrolledComposite", sc);
-        compositeBorder.setData("CompositeTN5250J", tn5250j);
+        compositeBorder.setData(SessionPanelData.SCROLLED_COMPOSITE, sc);
+        compositeBorder.setData(SessionPanelData.COMPOSITE_TN5250J, tn5250j);
 
         arrayListCompositeSession.add(compositeBorder);
         arrayListTabItemTN5250J.add(tn5250j);

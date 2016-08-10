@@ -20,6 +20,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import biz.isphere.tn5250j.core.Messages;
 
+/**
+ * 5250 preferences page: Key bindings information screen
+ */
 public class PreferencePage4 extends PreferencePage implements IWorkbenchPreferencePage {
 
     public PreferencePage4() {

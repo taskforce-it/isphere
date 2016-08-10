@@ -22,9 +22,9 @@ public class SetSessionFocus {
             CTabItem tabItem = tn5250jPart.getTabFolderSessions().getItem(majorSession);
             int newMinorSession = minorSession;
             if (newMinorSession == -1) {
-                newMinorSession = ((Integer)tabItem.getData("LastFocus")).intValue();
+                newMinorSession = ((Integer)tabItem.getData(SessionTabData.LAST_FOCUS)).intValue();
             }
-            ArrayList arrayListTabItemTN5250J = (ArrayList)tabItem.getData("TabItemTN5250J");
+            ArrayList arrayListTabItemTN5250J = (ArrayList)tabItem.getData(SessionTabData.TAB_ITEM_TN5250J);
             final TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(newMinorSession);
             if (tn5250j != null) {
                 EventQueue.invokeLater(new Runnable() {
@@ -33,7 +33,7 @@ public class SetSessionFocus {
                     }
                 });
                 if (tn5250jPart.isMultiSession()) {
-                    Session session = (Session)tabItem.getData("Session");
+                    Session session = (Session)tabItem.getData(SessionTabData.SESSION);
                     if (!session.getDevice().equals("")) {
                         tn5250jPart.setAddSession(false);
                         tn5250jPart.setRemoveSession(false);
