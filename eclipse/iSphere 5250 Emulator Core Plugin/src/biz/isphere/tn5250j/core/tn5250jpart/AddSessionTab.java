@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.session.Session;
 
-public class AddSession {
+public class AddSessionTab {
 
     public static void run(TN5250JInfo tn5250jInfo) {
 
@@ -47,7 +47,7 @@ public class AddSession {
             ArrayList<Composite> arrayListCompositeSession = new ArrayList<Composite>();
             ArrayList<TN5250JPanel> arrayListTabItemTN5250J = new ArrayList<TN5250JPanel>();
 
-            CreateSession createSession = new CreateSession();
+            CreateSessionPanel createSession = new CreateSessionPanel();
             final TN5250JPanel tn5250j = createSession
                 .run(compositeControl, arrayListCompositeSession, arrayListTabItemTN5250J, session, tn5250jInfo);
 

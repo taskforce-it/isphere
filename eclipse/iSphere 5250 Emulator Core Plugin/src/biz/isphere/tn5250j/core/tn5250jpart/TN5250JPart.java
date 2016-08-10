@@ -132,7 +132,7 @@ public class TN5250JPart {
                 }
 
                 if (dialogResult == 0) {
-                    RemoveSession.run(closedTab, tn5250jPart);
+                    RemoveSessionTab.run(closedTab, tn5250jPart);
                 } else {
                     event.doit = false;
                 }

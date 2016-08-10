@@ -48,7 +48,7 @@ public class AddMultiSession {
                 compositeSession.setParent(compositeControl);
             }
 
-            CreateSession createSession = new CreateSession();
+            CreateSessionPanel createSession = new CreateSessionPanel();
             final TN5250JPanel tn5250j = createSession
                 .run(compositeControl, arrayListCompositeSession, arrayListTabItemTN5250J, session, tn5250jInfo);
 

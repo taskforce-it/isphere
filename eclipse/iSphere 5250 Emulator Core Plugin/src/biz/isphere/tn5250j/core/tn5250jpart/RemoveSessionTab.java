@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.custom.CTabItem;
 
-public class RemoveSession {
+public class RemoveSessionTab {
 
     public static void run(CTabItem closedTab, ITN5250JPart tn5250jPart) {
         ArrayList arrayListTabItemTN5250J = (ArrayList)closedTab.getData("TabItemTN5250J");

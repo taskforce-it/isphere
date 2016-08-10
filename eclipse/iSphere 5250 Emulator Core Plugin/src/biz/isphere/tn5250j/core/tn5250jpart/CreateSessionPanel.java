@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.session.Session;
 
-public class CreateSession {
+public class CreateSessionPanel {
 
     private ITN5250JPart tn5250jPart;
 
