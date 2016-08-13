@@ -72,6 +72,10 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         super.stop(context);
 
         ConnectionManager.dispose();
+        
+        for (IViewManager viewManager : viewManagers.values()) {
+            viewManager.dispose();
+        }
     }
 
     public static ISphereRSEPlugin getDefault() {
