@@ -663,11 +663,7 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
 
-        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.WARNING_COMPARE_FILTERS_NOT_INSTALLED), true);
-        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION), true);
-        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.WARNING_REMOVE_STRPREPRC_SECTIONS), true);
-        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.CONFIRM_REMOVE_STRPREPRC_HEADER), true);
-        preferenceStore.setDefault(getShowWarningKey(DoNotAskMeAgain.TOO_MANY_SPOOLED_FILES_WARNING), true);
+        DoNotAskMeAgainDialog.resetAllMessages();
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
@@ -721,7 +717,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
-        
+
         preferenceStore.setDefault(DECORATION_OBJECT_EXTENSION, getDefaultObjectDecorationExtension());
         preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
         preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());

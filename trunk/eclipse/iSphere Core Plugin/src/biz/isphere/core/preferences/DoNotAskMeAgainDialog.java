@@ -51,7 +51,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
             return true;
         }
     }
-    
+
     public static void resetAllMessages() {
         Preferences preferences = Preferences.getInstance();
         preferences.setShowWarningMessage(WARNING_COMPARE_FILTERS_NOT_INSTALLED, true);
@@ -59,6 +59,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         preferences.setShowWarningMessage(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, true);
         preferences.setShowWarningMessage(CONFIRM_REMOVE_STRPREPRC_HEADER, true);
         preferences.setShowWarningMessage(TOO_MANY_SPOOLED_FILES_WARNING, true);
+        preferences.setShowWarningMessage(TN5250_SESSION_GROUPING_CHANGED, true);
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {

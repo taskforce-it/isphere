@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,8 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private boolean isLoadingView;
 
+    private boolean hasPinnedView;
+
     /**
      * Produces a view manager for a given view.
      * 
@@ -99,6 +101,18 @@ public abstract class AbstractViewManager implements IViewManager {
      *        displayed by the view
      */
     public synchronized IPinnableView getView(String viewId, String contentId) throws PartInitException {
+        return getView(viewId, contentId, false);
+    }
+
+    /**
+     * Returns the view that matches a given ID and secondary ID. If no matching
+     * view is found, a new view is created.
+     * 
+     * @param viewId - ID of the view
+     * @param contentId - ID that uniquely identified the content that is
+     *        displayed by the view
+     */
+    public synchronized IPinnableView getView(String viewId, String contentId, boolean considerContentId) throws PartInitException {
 
         IPinnableView view = null;
         boolean visible = false;
@@ -123,7 +137,8 @@ public abstract class AbstractViewManager implements IViewManager {
              */
             if (view == null) {
                 for (IPinnableView monitorView : monitorViews) {
-                    if (!monitorView.isPinned()) {
+                    if (!monitorView.isPinned()
+                        && (!considerContentId || monitorView.getContentId() == null || monitorView.getContentId().equals(contentId))) {
                         view = monitorView;
                         break;
                     }
@@ -187,7 +202,12 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param view - view, that is removed from the manager
      */
     public void remove(IPinnableView view) {
+
         saveViewStatus(view);
+        if (isPinned(view)) {
+            hasPinnedView = true;
+        }
+
         monitorViews.remove(view);
     }
 
@@ -263,9 +283,9 @@ public abstract class AbstractViewManager implements IViewManager {
             settings.put(getKey(view, VIEW_PIN_PROPERTY + key), value);
         }
     }
-    
+
     public void clearViewStatus(IPinnableView view) {
-        
+
         IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
         settings = workbenchSettings.getSection(name);
         if (settings != null) {
@@ -299,5 +319,12 @@ public abstract class AbstractViewManager implements IViewManager {
             }
         }
         return settings;
+    }
+
+    public void dispose() {
+
+        if (!hasPinnedView) {
+            clearViewStatus(null);
+        }
     }
 }
