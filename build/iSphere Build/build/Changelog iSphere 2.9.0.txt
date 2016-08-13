@@ -9,7 +9,7 @@ Changelog: iSphere 2.9.0.b004
  • Updated icon of the "Copy Members to" menu option of the iSphere
    "Source File Search" result view.
  • Fixed broken image link in iSphere help.   
- • Added iSphere support page. 
+ • Added iSphere support web page. 
  • Disabled "Delete Session" option (RSE context menu), when one or 
    more 5250 sessions are still connected.  
  • Fixed problem that 5250 sessions were not disconnected when closing 
