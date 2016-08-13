@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,14 @@ import java.util.Set;
 
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.sessionsview.CoreSessionsView;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
 public class SessionsView extends CoreSessionsView {
 
-    public static final String ID = "biz.isphere.tn5250j.rse.sessionsview.SessionsView"; //$NON-NLS-1$
+    public static final String ID = ISession.SESSION_VIEW_ID;
 
     public SessionsView() {
         super();
