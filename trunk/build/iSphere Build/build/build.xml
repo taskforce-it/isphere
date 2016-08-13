@@ -490,6 +490,8 @@
 
 		<echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
 
+		<mkdir dir="${local.updateSite.path}" />
+		
 		<delete includeemptydirs="true">
 			<fileset dir="${local.updateSite.path}" includes="**/*" />
 		</delete>
