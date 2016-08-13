@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.preferences.Preferences;
@@ -43,7 +47,12 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     // private Button buttonEnhancedMode;
     private Button buttonView;
     private Button buttonEditor;
+    private Label labelView;
+    private Group groupView;
+    private Label labelGroupSessionsBy;
     private Button buttonMultiSession;
+    private CCombo comboGroupSessionsBy;
+
     private String[] codePages = { "37", "37PT", "273", "280", "284", "285", "277-dk", "277-no", "278", "297", "424", "500-ch", "870-pl", "870-sk",
         "871", "875", "1025-r", "1026", "1112", "1141", "1140", "1147", "1148" };
 
@@ -94,10 +103,10 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         groupScreenSize.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         buttonScreenSize24_80 = new Button(groupScreenSize, SWT.RADIO);
-        buttonScreenSize24_80.setText("24*80");
+        buttonScreenSize24_80.setText("24*80"); //$NON-NLS-1$
 
         buttonScreenSize27_132 = new Button(groupScreenSize, SWT.RADIO);
-        buttonScreenSize27_132.setText("27*132");
+        buttonScreenSize27_132.setText("27*132"); //$NON-NLS-1$
 
         // Enhanced mode
         /*
@@ -138,9 +147,28 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             }
         });
 
-        buttonMultiSession = new Button(groupArea, SWT.CHECK);
+        labelView = new Label(container, SWT.NONE);
+        labelView.setText("View");
+
+        groupView = new Group(container, SWT.NONE);
+        final GridLayout gridLayoutView = new GridLayout();
+        gridLayoutView.numColumns = 2;
+        groupView.setLayout(gridLayoutView);
+        groupView.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+
+        buttonMultiSession = new Button(groupView, SWT.CHECK);
         buttonMultiSession.setText(Messages.Enable_multiple_sessions);
         buttonMultiSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        labelGroupSessionsBy = new Label(groupView, SWT.NONE);
+        labelGroupSessionsBy.setText(Messages.Group_sessions_by);
+
+        comboGroupSessionsBy = new CCombo(groupView, SWT.BORDER + SWT.READ_ONLY);
+        comboGroupSessionsBy.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        String[] labelsGrouping = Preferences.getInstance().getSessionGroupingLables();
+        for (int idx = 0; idx < labelsGrouping.length; idx++) {
+            comboGroupSessionsBy.add(labelsGrouping[idx]);
+        }
 
         // Miscellaneous
 
@@ -164,8 +192,29 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 
     @Override
     public boolean performOk() {
+
+        String oldGrouping = preferences.getSessionGrouping();
         setStoreToValues();
+        String newGrouping = preferences.getSessionGrouping();
+
+        if (!oldGrouping.equals(newGrouping) && is5250ViewVisible()) {
+            DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.TN5250_SESSION_GROUPING_CHANGED,
+                Messages.The_Group_sessions_by_attribute_has_been_changed_Please_close_all_5250_views_to_let_the_new_value_take_effect);
+        }
+
         return super.performOk();
+    }
+
+    private boolean is5250ViewVisible() {
+
+        IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
+        for (IViewReference iViewReference : viewReferences) {
+            if ("biz.isphere.tn5250j.rse.sessionsview.SessionsView".equals(iViewReference.getId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected void setStoreToValues() {
@@ -190,6 +239,8 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         } else {
             preferences.setIsMultiSessionEnabled(false);
         }
+
+        preferences.setSessionGroupingByLabel(comboGroupSessionsBy.getText());
     }
 
     protected void setScreenToDefaultValues() {
@@ -205,7 +256,6 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         }
 
         if (ISession.AREA_VIEW.equals(preferences.getDefaultSessionArea())) {
-
             buttonView.setSelection(true);
             buttonEditor.setSelection(false);
         } else {
@@ -214,6 +264,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         }
 
         buttonMultiSession.setSelection(preferences.getDefaultIsMultiSessionEnabled());
+        comboGroupSessionsBy.setText(preferences.getDefaultSessionGroupingLabel());
 
         setControlEnablement();
     }
@@ -240,6 +291,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         }
 
         buttonMultiSession.setSelection(preferences.isMultiSessionEnabled());
+        comboGroupSessionsBy.setText(preferences.getSessionGroupingLabel());
 
         setControlEnablement();
     }
@@ -247,9 +299,17 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     private void setControlEnablement() {
 
         if (buttonView.getSelection()) {
-            buttonMultiSession.setEnabled(true);
+            // labelView.setEnabled(true);
+            // groupView.setEnabled(true);
+            // buttonMultiSession.setEnabled(true);
+            // labelGroupSessionsBy.setEnabled(true);
+            // comboGroupSessionsBy.setEnabled(true);
         } else {
-            buttonMultiSession.setEnabled(false);
+            // labelView.setEnabled(false);
+            // groupView.setEnabled(false);
+            // buttonMultiSession.setEnabled(false);
+            // labelGroupSessionsBy.setEnabled(false);
+            // comboGroupSessionsBy.setEnabled(false);
         }
     }
 

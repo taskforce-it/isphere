@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,6 +99,11 @@ public class Messages extends NLS {
     public static String Session_configuration_file_A_not_found_in_directory_colon_B;
     public static String E_R_R_O_R;
     public static String Enable_multiple_sessions;
+    public static String Group_sessions_by;
+    public static String SessionGrouping_No_Grouping;
+    public static String SessionGrouping_Connection;
+    public static String SessionGrouping_Session;
+    public static String The_Group_sessions_by_attribute_has_been_changed_Please_close_all_5250_views_to_let_the_new_value_take_effect;
 
     static {
         // initialize resource bundle

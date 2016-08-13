@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.tn5250j.core.preferences.Preferences;
+import biz.isphere.tn5250j.core.session.ISession;
 import biz.isphere.tn5250j.core.tn5250jpart.AddMultiSession;
 import biz.isphere.tn5250j.core.tn5250jpart.AddSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
@@ -63,7 +64,23 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
     }
 
     public String getContentId() {
-        return null;
+
+        TN5250JInfo[] sessionInfos = getSessionInfos();
+        if (sessionInfos == null || sessionInfos.length == 0) {
+            return null;
+        }
+
+        String contentId;
+        String viewScope = Preferences.getInstance().getSessionGrouping();
+        if (ISession.GROUP_BY_SESSION.equals(viewScope)) {
+            contentId = sessionInfos[0].getRSEConnection() + "/" + sessionInfos[0].getSession();
+        } else if (ISession.GROUP_BY_CONNECTION.equals(viewScope)) {
+            contentId = sessionInfos[0].getRSEConnection();
+        } else {
+            contentId = "";
+        }
+
+        return contentId;
     }
 
     public Map<String, String> getPinProperties() {
@@ -142,7 +159,7 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
 
     protected void updatePinProperties() {
 
-        getViewManager().clearViewStatus(this);
+        // getViewManager().clearViewStatus(this);
 
         pinProperties.clear();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.tn5250j.core.session.Session;
 
@@ -19,6 +21,10 @@ public class SetSessionFocus {
 
     public static void run(int majorSession, int minorSession, ITN5250JPart tn5250jPart) {
         if (majorSession >= 0) {
+            if (tn5250jPart instanceof IWorkbenchPart) {
+                IWorkbenchPart part = (IWorkbenchPart)tn5250jPart;
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(part);
+            }
             CTabItem tabItem = tn5250jPart.getTabFolderSessions().getItem(majorSession);
             int newMinorSession = minorSession;
             if (newMinorSession == -1) {

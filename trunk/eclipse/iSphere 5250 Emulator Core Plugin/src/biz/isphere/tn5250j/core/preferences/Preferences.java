@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.session.ISession;
 
@@ -51,25 +52,29 @@ public final class Preferences {
      */
     private Map<String, String> suggestedSpooledFileNames;
 
+    private String[] groupByLabels;
+
     /*
      * Preferences keys:
      */
 
-    public static final String BIZ_ISPHERE_TN5250J_PORT = "BIZ.ISPHERE.TN5250J.PORT"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_PORT = "BIZ.ISPHERE.TN5250J.PORT"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_CODEPAGE = "BIZ.ISPHERE.TN5250J.CODEPAGE"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_CODEPAGE = "BIZ.ISPHERE.TN5250J.CODEPAGE"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_SCREENSIZE = "BIZ.ISPHERE.TN5250J.SCREENSIZE"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_SCREENSIZE = "BIZ.ISPHERE.TN5250J.SCREENSIZE"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_AREA = "BIZ.ISPHERE.TN5250J.AREA"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_AREA = "BIZ.ISPHERE.TN5250J.AREA"; //$NON-NLS-1$
 
     private static final String BIZ_ISPHERE_TN5250J_MULTI_SESSIONS_ENABLED = "BIZ.ISPHERE.TN5250J.MULTI_SESSIONS_ENABLED"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_MSACTIVE = "BIZ.ISPHERE.TN5250J.MSACTIVE"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_SESSION_GROUPING = "BIZ.ISPHERE.TN5250J.SESSION.GROUPING"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_MSHSIZE = "BIZ.ISPHERE.TN5250J.MSHSIZE"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_MSACTIVE = "BIZ.ISPHERE.TN5250J.MSACTIVE"; //$NON-NLS-1$
 
-    public static final String BIZ_ISPHERE_TN5250J_MSVSIZE = "BIZ.ISPHERE.TN5250J.MSVSIZE"; //$NON-NLS-1$
+    private static final String BIZ_ISPHERE_TN5250J_MSHSIZE = "BIZ.ISPHERE.TN5250J.MSHSIZE"; //$NON-NLS-1$
+
+    private static final String BIZ_ISPHERE_TN5250J_MSVSIZE = "BIZ.ISPHERE.TN5250J.MSVSIZE"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -125,6 +130,23 @@ public final class Preferences {
         return preferenceStore.getBoolean(BIZ_ISPHERE_TN5250J_MULTI_SESSIONS_ENABLED);
     }
 
+    public String getSessionGrouping() {
+        return preferenceStore.getString(BIZ_ISPHERE_TN5250J_SESSION_GROUPING);
+    }
+
+    public String getSessionGroupingLabel() {
+
+        String groupBy = preferenceStore.getString(BIZ_ISPHERE_TN5250J_SESSION_GROUPING);
+
+        if (ISession.GROUP_BY_SESSION.equals(groupBy)) {
+            return Messages.SessionGrouping_Session;
+        } else if (ISession.GROUP_BY_CONNECTION.equals(groupBy)) {
+            return Messages.SessionGrouping_Connection;
+        } else {
+            return Messages.SessionGrouping_No_Grouping;
+        }
+    }
+
     public boolean isMinimalSessionSizeEnabled() {
         if ("Y".equals(preferenceStore.getString(BIZ_ISPHERE_TN5250J_MSACTIVE))) {
             return true;
@@ -165,6 +187,18 @@ public final class Preferences {
         preferenceStore.setValue(BIZ_ISPHERE_TN5250J_MULTI_SESSIONS_ENABLED, enabled);
     }
 
+    public void setSessionGroupingByLabel(String groupByLabel) {
+
+        String[] labels = getSessionGroupingLables();
+        if (labels[2].equals(groupByLabel)) {
+            preferenceStore.setValue(BIZ_ISPHERE_TN5250J_SESSION_GROUPING, ISession.GROUP_BY_SESSION); // Session
+        } else if (labels[1].equals(groupByLabel)) {
+            preferenceStore.setValue(BIZ_ISPHERE_TN5250J_SESSION_GROUPING, ISession.GROUP_BY_CONNECTION); // Connection
+        } else {
+            preferenceStore.setValue(BIZ_ISPHERE_TN5250J_SESSION_GROUPING, ISession.GROUP_BY_NOTHING); // All
+        }
+    }
+
     public void setIsMinimalSessionEnabled(boolean enabled) {
         if (enabled) {
             preferenceStore.setValue(BIZ_ISPHERE_TN5250J_MSACTIVE, "Y");
@@ -192,6 +226,7 @@ public final class Preferences {
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_SCREENSIZE, getDefaultSessionScreenSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_AREA, getDefaultSessionArea());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MULTI_SESSIONS_ENABLED, getDefaultIsMultiSessionEnabled());
+        preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_SESSION_GROUPING, getDefaultSessionGrouping());
 
         if (getDefaultIsMinimalSessionSizeEnabled()) {
             preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSACTIVE, "Y");
@@ -227,6 +262,14 @@ public final class Preferences {
         return true;
     }
 
+    public String getDefaultSessionGrouping() {
+        return ISession.GROUP_BY_NOTHING;
+    }
+
+    public String getDefaultSessionGroupingLabel() {
+        return Messages.SessionGrouping_No_Grouping;
+    }
+
     public boolean getDefaultIsMinimalSessionSizeEnabled() {
         return false;
     }
@@ -237,5 +280,15 @@ public final class Preferences {
 
     public int getDefaultMinimalSessionVerticalSize() {
         return 0;
+    }
+
+    public String[] getSessionGroupingLables() {
+
+        if (groupByLabels == null) {
+            groupByLabels = new String[] { Messages.SessionGrouping_No_Grouping, Messages.SessionGrouping_Connection,
+                Messages.SessionGrouping_Session };
+        }
+
+        return groupByLabels;
     }
 }
