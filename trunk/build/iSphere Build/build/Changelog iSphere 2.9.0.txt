@@ -1,6 +1,9 @@
 
 Changelog: iSphere 2.9.0.b004
 -----------------------------
+ • Added option to pin 5250 session views.
+ • Added option to group 5250 sessions by connections or to open 
+   individual views for each session. 
  • Added option "Copy Members to" to source file items of the object
    table view.   
  • Updated icon of the "Copy Members to" menu option of the iSphere
