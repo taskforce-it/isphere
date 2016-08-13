@@ -21,6 +21,7 @@ public interface DoNotAskMeAgain {
      */
     public static final String INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION = "DATA_SPACE_FIND_REPLACE_INFORMATION"; //$NON-NLS-1$
     public static final String TOO_MANY_SPOOLED_FILES_WARNING = "TOO_MANY_SPOOLED_FILES_WARNING"; //$NON-NLS-1$
+    public static final String TN5250_SESSION_GROUPING_CHANGED = "TN5250_SESSION_GROUPING_CHANGED"; //$NON-NLS-1$
 
     /*
      * Confirmation message keys
