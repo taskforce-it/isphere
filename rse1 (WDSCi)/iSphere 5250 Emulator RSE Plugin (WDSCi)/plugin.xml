@@ -25,10 +25,8 @@
             icon="icons/tn5250j.png"
             category="biz.isphere.core.views.categories"
             class="biz.isphere.tn5250j.rse.sessionsview.SessionsView"
-            id="biz.isphere.tn5250j.rse.sessionsview.SessionsView">
-            <!--
+            id="biz.isphere.tn5250j.rse.sessionsview.SessionsView"
             allowMultiple="true">
-            -->
       </view>
 
       <view
