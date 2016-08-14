@@ -1,4 +1,8 @@
 
+Changelog: iSphere 2.9.0.b005
+-----------------------------
+ • Added missing NLS string.
+
 Changelog: iSphere 2.9.0.b004
 -----------------------------
  • Added option to pin 5250 session views.
