@@ -148,7 +148,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         });
 
         labelView = new Label(container, SWT.NONE);
-        labelView.setText("View");
+        labelView.setText(Messages.View);
 
         groupView = new Group(container, SWT.NONE);
         final GridLayout gridLayoutView = new GridLayout();
