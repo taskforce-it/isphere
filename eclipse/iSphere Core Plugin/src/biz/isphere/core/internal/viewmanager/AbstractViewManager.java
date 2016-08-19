@@ -18,8 +18,11 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
@@ -59,6 +62,12 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private boolean hasPinnedView;
 
+    private IPageService pageService;
+
+    private IPerspectiveListener perspectiveListener;
+
+    private IWorkbenchListener workbenchListener;
+
     /**
      * Produces a view manager for a given view.
      * 
@@ -66,11 +75,12 @@ public abstract class AbstractViewManager implements IViewManager {
      *        constants defined in {@link IViewManager}.
      */
     protected AbstractViewManager(String name) {
+
         this.name = name;
         this.monitorViews = new ArrayList<IPinnableView>();
+        this.pageService = (IPageService)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
-        IPageService pageService = (IPageService)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        pageService.addPerspectiveListener(new PerspectiveAdapter() {
+        this.perspectiveListener = new PerspectiveAdapter() {
             @Override
             public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
                 super.perspectiveChanged(page, perspective, partRef, changeId);
@@ -83,7 +93,34 @@ public abstract class AbstractViewManager implements IViewManager {
                     }
                 }
             }
-        });
+        };
+
+        this.workbenchListener = new IWorkbenchListener() {
+
+            public boolean preShutdown(IWorkbench arg0, boolean arg1) {
+                pageService.removePerspectiveListener(perspectiveListener);
+                return true;
+            }
+
+            public void postShutdown(IWorkbench arg0) {
+            }
+        };
+
+        addListeners();
+    }
+
+    private void addListeners() {
+
+        pageService.addPerspectiveListener(perspectiveListener);
+
+        PlatformUI.getWorkbench().addWorkbenchListener(workbenchListener);
+    }
+
+    private void removeListeners() {
+
+        pageService.removePerspectiveListener(perspectiveListener);
+
+        PlatformUI.getWorkbench().removeWorkbenchListener(workbenchListener);
     }
 
     /**
@@ -326,5 +363,7 @@ public abstract class AbstractViewManager implements IViewManager {
         if (!hasPinnedView) {
             clearViewStatus(null);
         }
+
+        removeListeners();
     }
 }

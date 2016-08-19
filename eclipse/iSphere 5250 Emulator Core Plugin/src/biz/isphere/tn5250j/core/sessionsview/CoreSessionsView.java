@@ -51,6 +51,8 @@ public abstract class CoreSessionsView extends TN5250JView implements IPinnableV
     public CoreSessionsView() {
         super();
 
+        getViewManager().add(this);
+        
         pinProperties = new HashMap<String, String>();
     }
 
