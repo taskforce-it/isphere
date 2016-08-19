@@ -361,7 +361,7 @@ public abstract class AbstractViewManager implements IViewManager {
     public void dispose() {
 
         if (!hasPinnedView) {
-            clearViewStatus(null);
+            // clearViewStatus(null);
         }
 
         removeListeners();
