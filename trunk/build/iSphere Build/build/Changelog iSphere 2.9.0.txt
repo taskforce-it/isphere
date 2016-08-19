@@ -2,6 +2,8 @@
 Changelog: iSphere 2.9.0.b005
 -----------------------------
  • Added missing NLS string.
+ • Fixed broken "pin view" option.
+ • Removed console output.
 
 Changelog: iSphere 2.9.0.b004
 -----------------------------
