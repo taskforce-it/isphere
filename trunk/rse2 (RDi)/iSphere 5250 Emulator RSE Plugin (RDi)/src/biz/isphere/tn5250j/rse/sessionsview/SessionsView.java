@@ -24,8 +24,6 @@ public class SessionsView extends CoreSessionsView {
 
     public SessionsView() {
         super();
-
-        getViewManager().add(this);
     }
 
     protected IViewManager getViewManager() {
