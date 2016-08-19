@@ -76,6 +76,8 @@ public final class Preferences {
 
     private static final String BIZ_ISPHERE_TN5250J_MSVSIZE = "BIZ.ISPHERE.TN5250J.MSVSIZE"; //$NON-NLS-1$
 
+    private static final String BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP = "BIZ.ISPHERE.TN5250J.ACTIVATE.VIEWS.ON.STARTUP"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -163,6 +165,10 @@ public final class Preferences {
         return preferenceStore.getInt(BIZ_ISPHERE_TN5250J_MSVSIZE);
     }
 
+    public boolean isActivateViewsOnStartup() {
+        return preferenceStore.getBoolean(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -215,6 +221,10 @@ public final class Preferences {
         preferenceStore.setValue(BIZ_ISPHERE_TN5250J_MSVSIZE, vSize);
     }
 
+    public void setActivateViewsOnStartup(boolean enable) {
+        preferenceStore.setValue(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, enable);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -236,6 +246,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSHSIZE, getDefaultMinimalSessionHorizontalSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSVSIZE, getDefaultMinimalSessionVerticalSize());
+        preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, getDefaultActivateViewsOnStartup());
     }
 
     /*
@@ -280,6 +291,10 @@ public final class Preferences {
 
     public int getDefaultMinimalSessionVerticalSize() {
         return 0;
+    }
+
+    public boolean getDefaultActivateViewsOnStartup() {
+        return false;
     }
 
     public String[] getSessionGroupingLables() {

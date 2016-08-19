@@ -104,6 +104,7 @@ public class Messages extends NLS {
     public static String SessionGrouping_Connection;
     public static String SessionGrouping_Session;
     public static String The_Group_sessions_by_attribute_has_been_changed_Please_close_all_5250_views_to_let_the_new_value_take_effect;
+    public static String Activate_pinned_views_on_startup;
 
     static {
         // initialize resource bundle
