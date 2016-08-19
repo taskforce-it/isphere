@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.tasks"
       label="iSphere Task Tags for RDi 8.0+ (optional)"
-      version="2.9.0.b005"
+      version="2.9.0.b006"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
