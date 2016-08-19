@@ -41,7 +41,8 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
             return;
         }
 
-        System.out.println(tResource.getName() + ", type/sub type: " + tResource.getType() + "/" + tResource.getSubType());
+        // System.out.println(tResource.getName() + ", type/sub type: " +
+        // tResource.getType() + "/" + tResource.getSubType());
 
         String mask;
         if (isLibrary(tResource)) {
