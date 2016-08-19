@@ -1,4 +1,8 @@
 
+Changelog: iSphere 2.9.0.b006
+-----------------------------
+ • Added option to restore pinned 5250 session views on startup.
+
 Changelog: iSphere 2.9.0.b005
 -----------------------------
  • Added missing NLS string.
