@@ -13,13 +13,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
+import biz.isphere.tn5250j.core.preferences.Preferences;
+import biz.isphere.tn5250j.rse.sessionsview.SessionsView;
 
 public class TN5250JRSEPlugin extends AbstractUIPlugin {
 
@@ -50,6 +59,10 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
         manager.registerAdapters(factory, biz.isphere.tn5250j.rse.model.RSESession.class);
 
         initializePreferenceStoreDefaults();
+
+        if (Preferences.getInstance().isActivateViewsOnStartup()) {
+            activatePinned5250Sessions();
+        }
     }
 
     @Override
@@ -99,6 +112,34 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
 
     public static String getRSESessionDirectory(String connection) {
         return getRSEConnectionDirectory() + File.separator + connection;
+    }
+
+    private void activatePinned5250Sessions() {
+
+        UIJob job = new UIJob("Restoring 5250 sessions ...") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor paramIProgressMonitor) {
+
+                IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
+                for (IViewReference iViewReference : viewReferences) {
+                    if (SessionsView.ID.equals(iViewReference.getId())) {
+                        IWorkbenchPart part = iViewReference.getPart(false);
+                        if (part == null) {
+                            part = iViewReference.getPart(true);
+                        }
+                        if (part instanceof SessionsView) {
+                            SessionsView sessionsView = (SessionsView)part;
+                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(sessionsView);
+                        }
+                    }
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+
+        job.schedule();
     }
 
 }
