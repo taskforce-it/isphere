@@ -50,8 +50,9 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     private Label labelView;
     private Group groupView;
     private Label labelGroupSessionsBy;
-    private Button buttonMultiSession;
+    private Button checkboxMultiSession;
     private CCombo comboGroupSessionsBy;
+    private Button checkboxActivateViewsOnStartup;
 
     private String[] codePages = { "37", "37PT", "273", "280", "284", "285", "277-dk", "277-no", "278", "297", "424", "500-ch", "870-pl", "870-sk",
         "871", "875", "1025-r", "1026", "1112", "1141", "1140", "1147", "1148" };
@@ -156,9 +157,13 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         groupView.setLayout(gridLayoutView);
         groupView.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        buttonMultiSession = new Button(groupView, SWT.CHECK);
-        buttonMultiSession.setText(Messages.Enable_multiple_sessions);
-        buttonMultiSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        checkboxMultiSession = new Button(groupView, SWT.CHECK);
+        checkboxMultiSession.setText(Messages.Enable_multiple_sessions);
+        checkboxMultiSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+        checkboxActivateViewsOnStartup = new Button(groupView, SWT.CHECK);
+        checkboxActivateViewsOnStartup.setText(Messages.Activate_pinned_views_on_startup);
+        checkboxActivateViewsOnStartup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
         labelGroupSessionsBy = new Label(groupView, SWT.NONE);
         labelGroupSessionsBy.setText(Messages.Group_sessions_by);
@@ -234,13 +239,19 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             preferences.setSessionArea(ISession.AREA_EDITOR);
         }
 
-        if (buttonMultiSession.getSelection()) {
+        if (checkboxMultiSession.getSelection()) {
             preferences.setIsMultiSessionEnabled(true);
         } else {
             preferences.setIsMultiSessionEnabled(false);
         }
 
         preferences.setSessionGroupingByLabel(comboGroupSessionsBy.getText());
+
+        if (checkboxActivateViewsOnStartup.getSelection()) {
+            preferences.setActivateViewsOnStartup(true);
+        } else {
+            preferences.setActivateViewsOnStartup(false);
+        }
     }
 
     protected void setScreenToDefaultValues() {
@@ -263,8 +274,9 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             buttonEditor.setSelection(true);
         }
 
-        buttonMultiSession.setSelection(preferences.getDefaultIsMultiSessionEnabled());
+        checkboxMultiSession.setSelection(preferences.getDefaultIsMultiSessionEnabled());
         comboGroupSessionsBy.setText(preferences.getDefaultSessionGroupingLabel());
+        checkboxActivateViewsOnStartup.setSelection(preferences.getDefaultActivateViewsOnStartup());
 
         setControlEnablement();
     }
@@ -290,8 +302,9 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
             buttonEditor.setSelection(true);
         }
 
-        buttonMultiSession.setSelection(preferences.isMultiSessionEnabled());
+        checkboxMultiSession.setSelection(preferences.isMultiSessionEnabled());
         comboGroupSessionsBy.setText(preferences.getSessionGroupingLabel());
+        checkboxActivateViewsOnStartup.setSelection(preferences.isActivateViewsOnStartup());
 
         setControlEnablement();
     }
