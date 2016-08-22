@@ -166,7 +166,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
         final int index = sessTabbedPane.getSelectedIndex();
 
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 int index1 = index;
                 if (index1 < sessTabbedPane.getTabCount() - 1) {
@@ -185,7 +184,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
         final int index = sessTabbedPane.getSelectedIndex();
 
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 int index1 = index;
                 if (index1 == 0) {
@@ -204,7 +202,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
      * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
      * )
      */
-    @Override
     public void stateChanged(ChangeEvent e) {
         JTabbedPane p = (JTabbedPane)e.getSource();
         setSessionTitle((SessionPanel)p.getSelectedComponent());
@@ -311,7 +308,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
 
                 this.getContentPane().add(sessTabbedPane, BorderLayout.CENTER);
                 SwingUtilities.invokeLater(new Runnable() {
-                    @Override
                     public void run() {
                         repaint();
                     }
@@ -343,7 +339,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
 
         // visual cleanups
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 sesgui.resizeMe();
                 sesgui.repaint();
@@ -359,7 +354,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
      * (non-Javadoc)
      * @see org.tn5250j.event.TabClosedListener#onTabClosed(int)
      */
-    @Override
     public void onTabClosed(int tabToBeClosed) {
         final SessionPanel sesspanel = this.getSessionAt(tabToBeClosed);
         sesspanel.confirmCloseSession(true);
@@ -453,7 +447,6 @@ public class Gui5250Frame extends GUIViewInterface implements ChangeListener, Ta
                 }
                 if (tabidx >= 0 && tabidx < sessTabbedPane.getTabCount()) {
                     Runnable tc = new Runnable() {
-                        @Override
                         public void run() {
                             sessTabbedPane.setTitleAt(tabidx, determineTabName(sesgui));
                         }

@@ -76,7 +76,6 @@ public class Session5250 implements SessionInterface {
 
     }
 
-    @Override
     public String getConfigurationResource() {
 
         return configurationResource;
@@ -92,7 +91,6 @@ public class Session5250 implements SessionInterface {
         return SessionManager.instance();
     }
 
-    @Override
     public boolean isConnected() {
         if (vt == null) {
             return false;
@@ -101,7 +99,6 @@ public class Session5250 implements SessionInterface {
 
     }
 
-    @Override
     public boolean isSignedOn() {
         if (!isConnected()) {
             return false;
@@ -164,7 +161,6 @@ public class Session5250 implements SessionInterface {
         return guiComponent;
     }
 
-    @Override
     public String getSessionName() {
         return sessionName;
     }
@@ -176,7 +172,6 @@ public class Session5250 implements SessionInterface {
         return null;
     }
 
-    @Override
     public int getSessionType() {
 
         return sessionType;
@@ -193,7 +188,6 @@ public class Session5250 implements SessionInterface {
 
     }
 
-    @Override
     public void signalBell() {
         Toolkit.getDefaultToolkit().beep();
     }
@@ -202,13 +196,11 @@ public class Session5250 implements SessionInterface {
      * (non-Javadoc)
      * @see org.tn5250j.interfaces.SessionInterface#displaySystemRequest()
      */
-    @Override
     public String showSystemRequest() {
         final SystemRequestDialog sysreqdlg = new SystemRequestDialog(this.guiComponent);
         return sysreqdlg.show();
     }
 
-    @Override
     public void connect() {
 
         String proxyPort = "1080"; // default socks proxy port
@@ -256,7 +248,7 @@ public class Session5250 implements SessionInterface {
 
         // lets set this puppy up to connect within its own thread
         Runnable connectIt = new Runnable() {
-            @Override
+
             public void run() {
                 vt.connect(ses, portp);
             }
@@ -272,7 +264,6 @@ public class Session5250 implements SessionInterface {
 
     }
 
-    @Override
     public void disconnect() {
         vt.disconnect();
     }
@@ -403,7 +394,6 @@ public class Session5250 implements SessionInterface {
      * 
      * @param listener The SessionListener to be added
      */
-    @Override
     public final void addSessionListener(SessionListener listener) {
         sessionListenerLock.writeLock().lock();
         try {
@@ -421,7 +411,6 @@ public class Session5250 implements SessionInterface {
      * 
      * @param listener The SessionListener to be removed
      */
-    @Override
     public final void removeSessionListener(SessionListener listener) {
         sessionListenerLock.writeLock().lock();
         try {

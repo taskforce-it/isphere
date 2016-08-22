@@ -48,7 +48,6 @@ public class SessionScroller implements MouseWheelListener {
         ses.removeMouseWheelListener(this);
     }
 
-    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (this.screen != null) {
             int notches = e.getWheelRotation();
