@@ -363,7 +363,13 @@ public class MonitoringAttributes {
     }
 
     public String getSmtpUser() {
-        return getSecureValue(SMTP_USER, SMTP_USER_DEFAULT);
+        
+        String user = getSecureValue(SMTP_USER, SMTP_USER_DEFAULT);
+        if (user == null) {
+            user = SMTP_EXAMPLE_USER;
+        }
+        
+        return user;
     }
 
     public void setSmtpUser(String user) {
@@ -376,7 +382,13 @@ public class MonitoringAttributes {
     }
 
     public String getSmtpPassword() {
-        return getSecureValue(SMTP_PASSWORD, SMTP_PASSWORD_DEFAULT);
+        
+        String password = getSecureValue(SMTP_PASSWORD, SMTP_PASSWORD_DEFAULT);
+        if (password == null) {
+            password = SMTP_EXAMPLE_PASSWORD;
+        }
+        
+        return password;
     }
 
     public void setSmtpPassword(String password) {
