@@ -59,8 +59,8 @@ public class OpenLpexAsync extends AbstractAsyncHandler {
                 }
 
                 if (_editor != null) {
-                    MessageDialog dialog = new MessageDialog(getShell(), Messages.getString("Choose_Editor"), null,
-                        Messages.getString("Please_choose_the_editor_for_the_source_member."), MessageDialog.INFORMATION, new String[] { _editor,
+                    MessageDialog dialog = new MessageDialog(getShell(), Messages.Choose_Editor, null,
+                        Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION, new String[] { _editor,
                             "LPEX Editor" }, 0);
 
                     final int dialogResult = dialog.open();

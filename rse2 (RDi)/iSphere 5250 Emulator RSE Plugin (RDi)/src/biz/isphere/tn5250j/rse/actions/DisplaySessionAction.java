@@ -20,7 +20,7 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 public class DisplaySessionAction extends SystemBaseAction {
 
     public DisplaySessionAction(Shell parent) {
-        super(Messages.getString("Display_session"), parent);
+        super(Messages.Display_session, parent);
         setAvailableOffline(true);
         setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DISPLAY));
     }
