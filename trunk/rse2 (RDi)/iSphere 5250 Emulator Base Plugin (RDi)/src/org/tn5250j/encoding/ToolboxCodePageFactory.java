@@ -118,7 +118,6 @@ import org.tn5250j.tools.logging.TN5250jLogger;
             this.tostringMethod = tostringMethod;
         }
 
-        @Override
         public char ebcdic2uni(int index) {
             Object result;
             try {
@@ -132,7 +131,6 @@ import org.tn5250j.tools.logging.TN5250jLogger;
             return ((String)result).charAt(0);
         }
 
-        @Override
         public byte uni2ebcdic(char index) {
             Object result;
             try {

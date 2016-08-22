@@ -392,7 +392,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
     }
 
-    @Override
     public void actionPerformed(ActionEvent actionevent) {
 
         Object obj = actionevent.getSource();
@@ -412,7 +411,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
      * 
      * @param pce
      */
-    @Override
     public void onConfigChanged(SessionConfigEvent pce) {
 
         String pn = pce.getPropertyName();
@@ -484,7 +482,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         } else {
             // lets set this puppy up to connect within its own thread
             Runnable connectIt = new Runnable() {
-                @Override
+                
                 public void run() {
                     session.getVT().connect();
                 }
@@ -680,21 +678,17 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
     }
 
-    @Override
     public void componentHidden(ComponentEvent e) {
     }
 
-    @Override
     public void componentMoved(ComponentEvent e) {
     }
 
-    @Override
     public void componentResized(ComponentEvent e) {
 
         resizeMe();
     }
 
-    @Override
     public void componentShown(ComponentEvent e) {
 
     }
@@ -881,7 +875,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
     /**
      * Returns a pointer to the graphics area that we can draw on
      */
-    @Override
     public Graphics getDrawingGraphics() {
 
         return guiGraBuf.getDrawingArea();
@@ -901,12 +894,10 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         return result;
     }
 
-    @Override
     public Point translateStart(Point start) {
         return guiGraBuf.translateStart(start);
     }
 
-    @Override
     public Point translateEnd(Point end) {
         return guiGraBuf.translateEnd(end);
     }
@@ -919,7 +910,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         guiGraBuf.getBoundingArea(bounds);
     }
 
-    @Override
     public void areaBounded(RubberBand band, int x1, int y1, int x2, int y2) {
 
         // repaint(x1,y1,x2-1,y2-1);
@@ -929,7 +919,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         }
     }
 
-    @Override
     public boolean canDrawRubberBand(RubberBand b) {
 
         // before we get the row col we first have to translate the x,y point
@@ -1104,7 +1093,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         session.disconnect();
     }
 
-    @Override
     public void onSessionChanged(SessionChangeEvent changeEvent) {
 
         switch (changeEvent.getState()) {

@@ -78,12 +78,10 @@ public class SessionManager implements SessionManagerInterface {
 
     }
 
-    @Override
     public Sessions getSessions() {
         return sessions;
     }
 
-    @Override
     public void closeSession(SessionPanel sesspanel) {
 
         sesspanel.closeDown();
@@ -91,7 +89,6 @@ public class SessionManager implements SessionManagerInterface {
 
     }
 
-    @Override
     public synchronized Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
 
         if (sessionName == null)

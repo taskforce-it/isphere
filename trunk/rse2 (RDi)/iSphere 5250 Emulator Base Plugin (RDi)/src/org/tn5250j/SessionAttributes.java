@@ -123,7 +123,6 @@ public class SessionAttributes extends JDialog {
 
         // Listen for when the selection changes.
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
             public void valueChanged(TreeSelectionEvent e) {
 
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
@@ -248,7 +247,6 @@ public class SessionAttributes extends JDialog {
         });
 
         saOptionPane.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
             public void propertyChange(PropertyChangeEvent e) {
                 String prop = e.getPropertyName();
 
