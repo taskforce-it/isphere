@@ -21,7 +21,7 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 public class ChangeSessionAction extends SystemBaseAction {
 
     public ChangeSessionAction(Shell shell) {
-        super(Messages.getString("Change_session"), shell);
+        super(Messages.Change_session, shell);
         setAvailableOffline(true);
         setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_CHANGE));
     }

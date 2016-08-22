@@ -27,7 +27,7 @@ import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 public class DeleteSessionAction extends SystemBaseAction {
 
     public DeleteSessionAction(Shell parent) {
-        super(Messages.getString("Delete_session"), parent);
+        super(Messages.Delete_session, parent);
         setAvailableOffline(true);
         setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DELETE));
     }

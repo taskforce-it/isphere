@@ -15,5 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator Core Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere STRPREPRC Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator RSE Plugin (RDi)"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
