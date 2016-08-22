@@ -30,7 +30,7 @@ public class NewDesignerSessionAction extends SystemBaseAction {
     private String connection;
 
     public NewDesignerSessionAction(String profil, String connection, Shell parent) {
-        super(Messages.getString("New_designer_session"), parent);
+        super(Messages.New_designer_session, parent);
         this.profil = profil;
         this.connection = connection;
         setAvailableOffline(true);

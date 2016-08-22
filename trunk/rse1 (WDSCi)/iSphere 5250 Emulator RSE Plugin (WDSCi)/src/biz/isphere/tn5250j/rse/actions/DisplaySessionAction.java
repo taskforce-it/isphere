@@ -10,6 +10,7 @@ package biz.isphere.tn5250j.rse.actions;
 
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
 import biz.isphere.tn5250j.rse.Messages;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
@@ -17,12 +18,10 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 
 import com.ibm.etools.systems.core.ui.actions.SystemBaseAction;
 
-import biz.isphere.tn5250j.core.session.SessionDetailDialog;
-
 public class DisplaySessionAction extends SystemBaseAction {
 
     public DisplaySessionAction(Shell parent) {
-        super(Messages.getString("Display_session"), parent);
+        super(Messages.Display_session, parent);
         setAvailableOffline(true);
         setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_DISPLAY));
     }

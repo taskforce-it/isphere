@@ -8,10 +8,11 @@
 
 package biz.isphere.tn5250j.rse.actions;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.tn5250j.core.session.Session;
+import biz.isphere.tn5250j.core.session.SessionDetailDialog;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
 import biz.isphere.tn5250j.rse.Messages;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
@@ -20,13 +21,10 @@ import biz.isphere.tn5250j.rse.model.RSESession;
 import com.ibm.etools.systems.core.ui.actions.SystemBaseAction;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-import biz.isphere.tn5250j.core.session.Session;
-import biz.isphere.tn5250j.core.session.SessionDetailDialog;
-
 public class NewSessionAction extends SystemBaseAction {
 
     public NewSessionAction(Shell parent) {
-        super(Messages.getString("New_session"), parent);
+        super(Messages.New_session, parent);
         setAvailableOffline(true);
         setImageDescriptor(TN5250JRSEPlugin.getImageDescriptor(TN5250JRSEPlugin.IMAGE_NEW));
     }
