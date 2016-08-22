@@ -16,24 +16,4 @@ public class DialogActionTypes {
     public static final int DELETE = 4;
     public static final int DISPLAY = 5;
 
-    public static String getText(int actionType) {
-        switch (actionType) {
-        case CREATE: {
-            return Messages.getString("CREATEX");
-        }
-        case CHANGE: {
-            return Messages.getString("CHANGEX");
-        }
-        case COPY: {
-            return Messages.getString("COPYX");
-        }
-        case DELETE: {
-            return Messages.getString("DELETEX");
-        }
-        case DISPLAY: {
-            return Messages.getString("DISPLAYX");
-        }
-        }
-        return "";
-    }
 }
