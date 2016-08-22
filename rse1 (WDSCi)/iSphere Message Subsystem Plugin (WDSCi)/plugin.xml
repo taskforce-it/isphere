@@ -45,7 +45,7 @@
          point="org.eclipse.ui.propertyPages">
       <page
             objectClass="biz.isphere.messagesubsystem.rse.internal.QueuedMessageSubSystem"
-            name="Message Queue Monitoring"
+            name="%Message_Queue_Monitoring"
             nameFilter="*"
             class="biz.isphere.messagesubsystem.rse.internal.MonitoringPropertiesPage"
             id="biz.isphere.messagesubsystem.internal.MonitoringPropertiesPage">
