@@ -49,7 +49,7 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
     protected ArrayList arrayListSelection;
 
     public DesignerOpenWithAction() {
-        super(Messages.getString("iSphere_5250_Designer"), "", null);
+        super(Messages.iSphere_5250_Designer, "", null);
         arrayListSelection = new ArrayList();
         setContextMenuGroup("group.openwith");
         allowOnMultipleSelection(true);
@@ -154,8 +154,8 @@ public class DesignerOpenWithAction extends ISeriesSystemBaseAction implements I
 
                 } else if (area.equals("*EDITOR")) {
 
-                    TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.getString("iSphere_5250_Designer"),
-                        "TN5250J", TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));
+                    TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.iSphere_5250_Designer, "TN5250J",
+                        TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));
 
                     tn5250jPart = (ITN5250JPart)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput,
                         DesignerEditor.ID);
