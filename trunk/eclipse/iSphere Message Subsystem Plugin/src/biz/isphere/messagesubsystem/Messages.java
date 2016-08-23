@@ -177,6 +177,8 @@ public class Messages extends NLS {
     public static String Previous_request_is_still_pending;
 
     public static String One_or_more_messages_could_not_be_removed;
+
+    public static String Please_enter_a_value;
     
     static {
         // initialize resource bundle
