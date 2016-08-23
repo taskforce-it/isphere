@@ -1,4 +1,9 @@
 
+Changelog: iSphere 2.9.0.b007
+-----------------------------
+ • Moved RSEHostObjectDecorator to the RSE plug-in.
+   (Requires enabling the RSE decorator again.)
+
 Changelog: iSphere 2.9.0.b006
 -----------------------------
  • Added option to restore pinned 5250 session views on startup.
