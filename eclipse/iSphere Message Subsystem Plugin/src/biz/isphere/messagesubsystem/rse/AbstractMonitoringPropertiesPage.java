@@ -211,7 +211,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
     private void validateStringInput(Object control, String text) {
 
         if (StringHelper.isNullOrEmpty(text)) {
-            setErrorMessage("Missing value.");
+            setErrorMessage(Messages.Please_enter_a_value);
             controlsInError.add(control);
         } else {
             controlsInError.remove(control);
