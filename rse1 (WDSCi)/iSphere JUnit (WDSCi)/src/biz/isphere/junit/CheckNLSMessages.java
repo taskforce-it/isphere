@@ -56,6 +56,8 @@ public class CheckNLSMessages {
      */
     @Test
     public void testNLSMessages() throws Exception {
+        checkMessagesForLocales(biz.isphere.tn5250j.core.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.tn5250j.rse.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.adapter.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.base.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.core.Messages.class, "messages");
