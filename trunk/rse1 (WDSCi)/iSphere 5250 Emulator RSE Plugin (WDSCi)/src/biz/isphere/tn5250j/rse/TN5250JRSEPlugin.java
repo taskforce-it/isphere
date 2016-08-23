@@ -26,8 +26,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.core.internal.viewmanager.IViewManager;
-import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.rse.sessionsview.SessionsView;
