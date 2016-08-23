@@ -208,29 +208,4 @@
    		 schema="schema/biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions.xsd">
    </extension-point>
 
-      	<!--
-      	  ==========================================
-      	    iSphere RSE Decorator
-      	  ==========================================
-      	-->
-
-   <extension point="org.eclipse.ui.decorators">
-      <decorator
-            adaptable="false"
-            class="biz.isphere.core.decorators.RSEHostObjectDecorator"
-            id="biz.isphere.core.decorators.RSEHostObjectDecorator"
-            label="%iSphere_Object_and_Source_Decorator_Label"
-            lightweight="true"
-            state="false">
-         <description>
-           %iSphere_Object_and_Source_Decorator_Description
-         </description>
-         <enablement>
-            <objectClass
-                  name="com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief">
-            </objectClass>
-         </enablement>
-      </decorator>
-   </extension>
-
 </plugin>
