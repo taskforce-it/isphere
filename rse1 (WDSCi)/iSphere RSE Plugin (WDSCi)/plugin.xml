@@ -655,6 +655,31 @@
 
       	<!--
       	  ==========================================
+      	    iSphere RSE Decorator
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="false"
+            class="biz.isphere.rse.decorators.RSEHostObjectDecorator"
+            id="biz.isphere.rse.decorators.RSEHostObjectDecorator"
+            label="%iSphere_Object_and_Source_Decorator_Label"
+            lightweight="true"
+            state="false">
+         <description>
+           %iSphere_Object_and_Source_Decorator_Description
+         </description>
+         <enablement>
+            <objectClass
+                  name="com.ibm.etools.systems.dstore.core.model.DataElement">
+            </objectClass>
+         </enablement>
+      </decorator>
+   </extension>
+
+      	<!--
+      	  ==========================================
       	    iSphere i Project Decorator
       	  ==========================================
       	-->
