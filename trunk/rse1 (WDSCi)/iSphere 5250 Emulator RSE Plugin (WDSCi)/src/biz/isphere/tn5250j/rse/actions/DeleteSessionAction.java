@@ -10,12 +10,18 @@ package biz.isphere.tn5250j.rse.actions;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.tn5250j.Session5250;
+import org.tn5250j.framework.common.SessionManager;
+import org.tn5250j.framework.common.Sessions;
 
 import biz.isphere.tn5250j.core.session.SessionDetailDialog;
+import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.rse.DialogActionTypes;
 import biz.isphere.tn5250j.rse.Messages;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
 import biz.isphere.tn5250j.rse.model.RSESession;
+import biz.isphere.tn5250j.rse.sessionspart.SessionsGUI;
+import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
 import com.ibm.etools.systems.core.ui.actions.SystemBaseAction;
 
@@ -40,6 +46,52 @@ public class DeleteSessionAction extends SystemBaseAction {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isEnabled() {
+
+        if (!super.isEnabled()) {
+            return false;
+        }
+
+        RSESession rseSession = getRSESession();
+        if (rseSession == null) {
+            return false;
+        }
+
+        Sessions sessions = SessionManager.instance().getSessions();
+        int count = sessions.getCount();
+        for (int i = 0; i < count; i++) {
+            Session5250 session5250 = sessions.item(i);
+
+            if (session5250.getGUI() instanceof SessionsGUI) {
+                SessionsGUI sessionsGUI = (SessionsGUI)session5250.getGUI();
+                TN5250JInfo tn5250JInfo = sessionsGUI.getTN5250JInfo();
+                if (tn5250JInfo instanceof SessionsInfo) {
+                    SessionsInfo sessionsInfo = (SessionsInfo)tn5250JInfo;
+                    if (rseSession.getRSEProfil().equalsIgnoreCase(sessionsInfo.getRSEProfil())
+                        && rseSession.getRSEConnection().equalsIgnoreCase(sessionsInfo.getRSEConnection())
+                        && rseSession.getName().equalsIgnoreCase(sessionsInfo.getSession())) {
+                        if (session5250.isConnected()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private RSESession getRSESession() {
+
+        if (getFirstSelection() instanceof RSESession) {
+            RSESession rseSession = (RSESession)getFirstSelection();
+            return rseSession;
+        }
+
+        return null;
     }
 
 }
