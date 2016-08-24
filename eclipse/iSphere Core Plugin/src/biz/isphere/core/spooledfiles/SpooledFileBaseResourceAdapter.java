@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,10 +118,10 @@ public class SpooledFileBaseResourceAdapter {
         if ("Job_user".equals(propKey)) return splf.getJobUser();
         if ("Job_number".equals(propKey)) return new Integer(splf.getJobNumber()); // splf.getJobNumber();
         if ("Job_system".equals(propKey)) return splf.getJobSystem();
-        if ("Creation_date".equals(propKey)) return splf.getCreationDateFormated();
-        if ("Creation_time".equals(propKey)) return splf.getCreationTimeFormated();
+        if ("Creation_date".equals(propKey)) return splf.getCreationDateFormatted();
+        if ("Creation_time".equals(propKey)) return splf.getCreationTimeFormatted();
         if ("Status".equals(propKey)) return splf.getStatus();
-        if ("Output_queue".equals(propKey)) return splf.getOutputQueueFormated();
+        if ("Output_queue".equals(propKey)) return splf.getOutputQueueFormatted();
         if ("Output_priority".equals(propKey)) return splf.getOutputPriority();
         if ("User_data".equals(propKey)) return splf.getUserData();
         if ("Form_type".equals(propKey)) return splf.getFormType();

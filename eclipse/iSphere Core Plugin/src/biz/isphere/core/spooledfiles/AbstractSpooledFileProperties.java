@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,12 +72,12 @@ public abstract class AbstractSpooledFileProperties extends PropertyPage {
         Label creationDate = new Label(propGroup, SWT.NONE);
         creationDate.setText(Messages.Creation_date + ":");
         Label _creationDate = new Label(propGroup, SWT.NONE);
-        _creationDate.setText(spooledFile.getCreationDateFormated());
+        _creationDate.setText(spooledFile.getCreationDateFormatted());
 
         Label creationTime = new Label(propGroup, SWT.NONE);
         creationTime.setText(Messages.Creation_time + ":");
         Label _creationTime = new Label(propGroup, SWT.NONE);
-        _creationTime.setText(spooledFile.getCreationTimeFormated());
+        _creationTime.setText(spooledFile.getCreationTimeFormatted());
 
         Label status = new Label(propGroup, SWT.NONE);
         status.setText(Messages.Status + ":");
@@ -87,7 +87,7 @@ public abstract class AbstractSpooledFileProperties extends PropertyPage {
         Label outputQueue = new Label(propGroup, SWT.NONE);
         outputQueue.setText(Messages.Output_queue + ":");
         Label _outputQueue = new Label(propGroup, SWT.NONE);
-        _outputQueue.setText(spooledFile.getOutputQueueFormated());
+        _outputQueue.setText(spooledFile.getOutputQueueFormatted());
 
         Label outputPriority = new Label(propGroup, SWT.NONE);
         outputPriority.setText(Messages.Output_priority + ":");
