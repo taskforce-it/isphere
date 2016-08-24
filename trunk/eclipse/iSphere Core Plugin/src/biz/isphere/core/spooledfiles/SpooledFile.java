@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -501,7 +501,7 @@ public class SpooledFile {
         return null;
     }
 
-    public String getOutputQueueFormated() {
+    public String getOutputQueueFormatted() {
         return outputQueueLibrary + "/" + outputQueue;
     }
 
@@ -513,7 +513,7 @@ public class SpooledFile {
      * 
      * @return date the spooled file was created
      */
-    public String getCreationDateFormated() {
+    public String getCreationDateFormatted() {
         if (creationDateFormatted == null) {
             if (creationDate == null) {
                 return "";
@@ -537,7 +537,7 @@ public class SpooledFile {
      * 
      * @return time the spooled file was created
      */
-    public String getCreationTimeFormated() {
+    public String getCreationTimeFormatted() {
         if (creationTimeFormatted == null) {
             if (creationTime == null) {
                 return "";
@@ -554,7 +554,7 @@ public class SpooledFile {
     }
 
     public String getCreationTimestampFormatted() {
-        return getCreationDateFormated() + "   " + getCreationTimeFormated();
+        return getCreationDateFormatted() + "   " + getCreationTimeFormatted();
     }
 
     public void asyncOpen(final String format, final Shell shell) {
