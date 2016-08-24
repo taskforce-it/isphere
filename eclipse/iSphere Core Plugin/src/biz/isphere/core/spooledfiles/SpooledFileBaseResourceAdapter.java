@@ -40,8 +40,8 @@ public class SpooledFileBaseResourceAdapter {
 
     }
 
-    public String getText(SpooledFile splf) {
-        return splf.getFile() + " - " + splf.getStatus();
+    public String getText(SpooledFile splf, SpooledFileTextDecoration decorationStyle) {
+        return decorationStyle.createDecoration(splf);
     }
 
     public String getAbsoluteName(SpooledFile splf) {

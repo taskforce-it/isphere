@@ -688,6 +688,56 @@
       </handler>
 	</extension>	 
 
+        <!--
+      	  ==========================================
+      	    Subsystem: Spooled file decoration
+      	  ==========================================
+        -->
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            objectClass="biz.isphere.rse.spooledfiles.SpooledFileSubSystem"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.rse.spooledfilesubsystem.actions">
+         <menu
+               label="Decoration"
+               id="biz.isphere.rse.menu.spooledfilesubsystem.decoration"             
+               path="group.expandto">
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <action
+               label="Creation time"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithCreationTimeAction"
+               menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
+               enablesFor="1"
+               style="radio"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithCreationTimeAction">
+         </action>
+         <action
+               label="User data"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDataAction"
+               menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
+               enablesFor="1"
+               style="radio"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDataAction">
+         </action>
+         <action
+               label="Status"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithStatusAction"
+               menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
+               enablesFor="1"
+               style="radio"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithStatusAction">
+         </action>
+      </objectContribution>
+   </extension>
 	     	
       	<!--
       	  ==========================================
@@ -1061,7 +1111,7 @@
       </command>
       
    </extension>
-
+  
       	<!--
       	  ==========================================
       	    iSphere RSE Decorator
