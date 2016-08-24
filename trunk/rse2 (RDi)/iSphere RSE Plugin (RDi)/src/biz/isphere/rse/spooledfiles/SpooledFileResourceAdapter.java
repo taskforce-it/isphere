@@ -18,7 +18,10 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
+import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 
 public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter {
 
@@ -46,7 +49,9 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     public String getText(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getText(((SpooledFileResource)object).getSpooledFile());
+            SpooledFile spooledFile = ((SpooledFileResource)object).getSpooledFile();
+            SpooledFileTextDecoration decorationStyle = ((ISpooledFileSubSystem)getSubSystem(object)).getDecorationTextStyle();
+            return base.getText(spooledFile, decorationStyle);
         }
         return "";
     }
@@ -157,5 +162,4 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     public String getSubSystemConfigurationId(Object object) {
         return "biz.isphere.core.spooledfiles.subsystems.factory";
     }
-
 }

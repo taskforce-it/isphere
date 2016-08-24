@@ -14,15 +14,23 @@ import java.sql.SQLException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
+import org.eclipse.rse.core.model.PropertySet;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.actions.SystemRefreshAction;
 
+import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.core.spooledfiles.SpooledFileSubSystemAttributes;
+import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
@@ -33,11 +41,14 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem, ISpooledFileSubSystem {
 
     private SpooledFileBaseSubSystem base = new SpooledFileBaseSubSystem();
+    private SpooledFileSubSystemAttributes spooledFileSubsystemAttributes;
 
     public SpooledFileSubSystem(IHost host, IConnectorService connectorService) {
         super(host, connectorService);
-    }
 
+        spooledFileSubsystemAttributes = new SpooledFileSubSystemAttributes(this);
+    }
+    
     @Override
     protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
@@ -108,4 +119,41 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     private void handleError(Exception e) {
     }
 
+    private void refreshFilter() {
+        new SystemRefreshAction(getShell()).run();
+    }
+
+    public SpooledFileTextDecoration getDecorationTextStyle() {
+        return spooledFileSubsystemAttributes.getDecorationTextStyle();
+    }
+
+    public void setDecorationTextStyle(SpooledFileTextDecoration decorationStyle) {
+        spooledFileSubsystemAttributes.setDecorationTextStyle(decorationStyle);
+        refreshFilter();
+    }
+
+    public String getVendorAttribute(String key) {
+
+        IProperty property = getVendorAttributes().getProperty(key);
+        if (property == null) {
+            return null;
+        }
+
+        return property.getValue();
+    }
+
+    public void setVendorAttribute(String key, String value) {
+        getVendorAttributes().addProperty(key, value);
+    }
+
+    private IPropertySet getVendorAttributes() {
+
+        IPropertySet propertySet = getPropertySet(SpooledFileSubSystemAttributes.VENDOR_ID);
+        if (propertySet == null) {
+            propertySet = new PropertySet(SpooledFileSubSystemAttributes.VENDOR_ID);
+            addPropertySet(propertySet);
+        }
+
+        return propertySet;
+    }
 }
