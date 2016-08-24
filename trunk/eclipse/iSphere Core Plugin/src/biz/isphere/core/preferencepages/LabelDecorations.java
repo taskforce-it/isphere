@@ -164,7 +164,7 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
     private void applyChangesToRSETree() {
 
         IDecoratorManager manager = getDecoratorManager();
-        manager.update("biz.isphere.core.decorators.RSEHostObjectDecorator");
+        manager.update("biz.isphere.rse.decorators.RSEHostObjectDecorator");
 
     }
 
