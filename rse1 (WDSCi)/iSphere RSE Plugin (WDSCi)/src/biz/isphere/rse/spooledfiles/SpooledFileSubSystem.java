@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2015 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,11 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
+import biz.isphere.core.spooledfiles.SpooledFileSubSystemAttributes;
+import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
@@ -34,6 +37,7 @@ import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
 import com.ibm.etools.systems.core.ISystemMessages;
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.messages.SystemMessage;
+import com.ibm.etools.systems.core.ui.actions.SystemRefreshAction;
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemImpl;
 import com.ibm.etools.systems.model.ISystemMessageObject;
 import com.ibm.etools.systems.model.SystemConnection;
@@ -45,9 +49,12 @@ import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
 public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeriesSubSystem, ISpooledFileSubSystem {
 
     private SpooledFileBaseSubSystem base = new SpooledFileBaseSubSystem();
+    private SpooledFileSubSystemAttributes spooledFileSubsystemAttributes;
 
     public SpooledFileSubSystem() {
         super();
+
+        spooledFileSubsystemAttributes = new SpooledFileSubSystemAttributes(this);
     }
 
     @Override
@@ -140,4 +147,29 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
     private void handleError(Exception e) {
     }
 
+    private void refreshFilter() {
+        new SystemRefreshAction(getShell()).run();
+    }
+
+    public SpooledFileTextDecoration getDecorationTextStyle() {
+        return spooledFileSubsystemAttributes.getDecorationTextStyle();
+    }
+
+    public void setDecorationTextStyle(SpooledFileTextDecoration decorationStyle) {
+        spooledFileSubsystemAttributes.setDecorationTextStyle(decorationStyle);
+        refreshFilter();
+    }
+
+    public String getVendorAttribute(String key) {
+        return super.getVendorAttribute(SpooledFileSubSystemAttributes.VENDOR_ID, key);
+    }
+
+    public void setVendorAttribute(String key, String value) {
+        super.setVendorAttribute(SpooledFileSubSystemAttributes.VENDOR_ID, key, value);
+    }
+    
+    public boolean commit() {
+        // Not needed for WDSCi.
+        return true;
+    }
 }

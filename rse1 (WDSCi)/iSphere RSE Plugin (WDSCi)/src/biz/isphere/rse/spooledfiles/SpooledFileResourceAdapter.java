@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2015 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
+import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter;
@@ -53,7 +56,9 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     @Override
     public String getText(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getText(((SpooledFileResource)object).getSpooledFile());
+            SpooledFile spooledFile = ((SpooledFileResource)object).getSpooledFile();
+            SpooledFileTextDecoration decorationStyle = ((ISpooledFileSubSystem)getSubSystem(object)).getDecorationTextStyle();
+            return base.getText(spooledFile, decorationStyle);
         }
         return "";
     }
