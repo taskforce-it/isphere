@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,29 +8,32 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 
-import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
+public abstract class AbstractSpooledFileDecorateWithAction implements IObjectActionDelegate {
 
-public abstract class AbstractSpooledFileDecorateWithAction extends ISeriesAbstractQSYSPopupMenuAction {
+    protected IWorkbenchPart targetPart;
+    protected IAction action;
+    protected Shell shell;
 
     protected String decorationStyleKey;
+    protected IStructuredSelection structuredSelection;
 
     public AbstractSpooledFileDecorateWithAction(String decorationStyleKey) {
         this.decorationStyleKey = decorationStyleKey;
     }
 
-    @Override
     public void run(IAction action) {
-        super.run(action);
-    }
-
-    @Override
-    public void run() {
 
         Object[] selection = getSelectedRemoteObjects();
         for (int i = 0; i < selection.length; i++) {
@@ -43,11 +46,35 @@ public abstract class AbstractSpooledFileDecorateWithAction extends ISeriesAbstr
         }
     }
 
-    @Override
-    public void selectionChanged(IAction action, ISelection sel) {
-        super.selectionChanged(action, sel);
+    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+        this.targetPart = targetPart;
+        this.action = action;
+        this.shell = targetPart.getSite().getShell();
+    }
+
+    public void setChecked(boolean checked) {
+        action.setChecked(checked);
+    }
+
+    public void setEnabled(boolean enabled) {
+        action.setEnabled(enabled);
+    }
+
+    public void selectionChanged(IAction action, ISelection selection) {
+
+        if (!action.isEnabled()) {
+            return;
+        }
+
+        if (selection instanceof IStructuredSelection) {
+            structuredSelection = ((IStructuredSelection)selection);
+        } else {
+            structuredSelection = null;
+            setEnabled(false);
+        }
 
         if (!(getFirstSelectedRemoteObject() instanceof ISpooledFileSubSystem)) {
+            setEnabled(false);
             return;
         }
 
@@ -61,4 +88,33 @@ public abstract class AbstractSpooledFileDecorateWithAction extends ISeriesAbstr
         }
     }
 
+    public Object getFirstSelectedRemoteObject() {
+        if (structuredSelection == null) {
+            return null;
+        }
+
+        return structuredSelection.getFirstElement();
+    }
+
+    public Object[] getSelectedRemoteObjects() {
+
+        Object[] selectedObjects;
+        if (structuredSelection != null) {
+            selectedObjects = new Object[structuredSelection.size()];
+        } else {
+            selectedObjects = new Object[0];
+        }
+
+        if (structuredSelection == null) {
+            return selectedObjects;
+        }
+
+        Iterator<?> i = structuredSelection.iterator();
+        int idx = 0;
+        while (i.hasNext()) {
+            selectedObjects[(idx++)] = i.next();
+        }
+
+        return selectedObjects;
+    }
 }

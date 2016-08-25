@@ -705,7 +705,7 @@
             namefilter="*"
             id="biz.isphere.rse.spooledfilesubsystem.actions">
          <menu
-               label="Decoration"
+               label="%SplfDecoration_Menu"
                id="biz.isphere.rse.menu.spooledfilesubsystem.decoration"             
                path="group.expandto">
             <separator
@@ -713,7 +713,15 @@
             </separator>
          </menu> 
          <action
-               label="Creation time"
+               label="%SplfDecoration_Job"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithJobAction"
+               menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
+               enablesFor="1"
+               style="radio"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithJobAction">
+         </action>
+         <action
+               label="%SplfDecoration_CreationTime"
                class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithCreationTimeAction"
                menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
                enablesFor="1"
@@ -721,7 +729,7 @@
                id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithCreationTimeAction">
          </action>
          <action
-               label="User data"
+               label="%SplfDecoration_UserData"
                class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDataAction"
                menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
                enablesFor="1"
@@ -729,7 +737,7 @@
                id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDataAction">
          </action>
          <action
-               label="Status"
+               label="%SplfDecoration_Status"
                class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithStatusAction"
                menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
                enablesFor="1"
