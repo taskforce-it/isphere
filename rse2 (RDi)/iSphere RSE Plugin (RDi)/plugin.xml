@@ -744,6 +744,14 @@
                style="radio"
                id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithStatusAction">
          </action>
+         <action
+               label="%SplfDecoration_UserDefined"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDefinedAction"
+               menubarPath="biz.isphere.rse.menu.spooledfilesubsystem.decoration/main"
+               enablesFor="1"
+               style="radio"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDecorateWithUserDefinedAction">
+         </action>
       </objectContribution>
    </extension>
 	     	

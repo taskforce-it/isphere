@@ -1234,6 +1234,14 @@ public class Messages extends NLS {
 
     public static String Add_library_name_to_objects;
 
+    public static String Creation_Timestamp;
+    
+    public static String Creation_Date;
+    
+    public static String Creation_Time;
+
+    public static String RSE_spooled_file_text_colon;
+    
     /*
      * Warning messages
      */

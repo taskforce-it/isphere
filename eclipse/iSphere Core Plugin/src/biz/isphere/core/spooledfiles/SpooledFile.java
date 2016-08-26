@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -68,6 +67,12 @@ public class SpooledFile {
     public static final String VARIABLE_STMF = "&STMF";
     public static final String VARIABLE_CODPAG = "&CODPAG";
     public static final String VARIABLE_FMT = "&FMT";
+
+    public static final String VARIABLE_STATUS = "&STATUS";
+    public static final String VARIABLE_CTIME_STAMP = "&CTIMESTAMP";
+    public static final String VARIABLE_CDATE = "&CDATE";
+    public static final String VARIABLE_CTIME = "&CTIME";
+    public static final String VARIABLE_USRDTA = "&USRDTA";
 
     private static final String IBMI_FILE_SEPARATOR = "/";
     private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; //$NON-NLS-N$
@@ -762,7 +767,7 @@ public class SpooledFile {
             library = conversionCommandLibrary;
         }
 
-        command = replaceReplacementVariables(format, command);
+        command = replaceVariables(command, format);
 
         String currentLibrary = null;
 
@@ -802,20 +807,37 @@ public class SpooledFile {
 
     }
 
-    private String replaceReplacementVariables(String format, String command) {
+    public String replaceVariables(String mask) {
+        return replaceVariables(mask, null);
+    }
 
-        command = command.replaceAll(VARIABLE_SPLFNBR, Integer.toString(fileNumber));
-        command = command.replaceAll(VARIABLE_SPLF, file);
-        command = command.replaceAll(VARIABLE_JOBNBR, jobNumber);
-        command = command.replaceAll(VARIABLE_JOBUSR, jobUser);
-        command = command.replaceAll(VARIABLE_JOBNAME, jobName);
-        command = command.replaceAll(VARIABLE_JOBSYS, getJobSystem());
-        command = command.replaceAll(VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
-        command = command.replaceAll(VARIABLE_STMF, getTemporaryName(format));
-        command = command.replaceAll(VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
-        command = command.replaceAll(VARIABLE_FMT, format);
+    public String replaceVariables(String mask, String outputFormat) {
 
-        return command;
+        String tFormat;
+        if (outputFormat == null) {
+            tFormat = ""; //$NON-NLS-1$
+        } else {
+            tFormat = outputFormat;
+        }
+
+        mask = mask.replaceAll(VARIABLE_SPLFNBR, Integer.toString(getFileNumber()));
+        mask = mask.replaceAll(VARIABLE_SPLF, getFile());
+        mask = mask.replaceAll(VARIABLE_JOBNBR, getJobNumber());
+        mask = mask.replaceAll(VARIABLE_JOBUSR, getJobUser());
+        mask = mask.replaceAll(VARIABLE_JOBNAME, getJobName());
+        mask = mask.replaceAll(VARIABLE_JOBSYS, getJobSystem());
+        mask = mask.replaceAll(VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
+        mask = mask.replaceAll(VARIABLE_STMF, getTemporaryName(tFormat));
+        mask = mask.replaceAll(VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
+        mask = mask.replaceAll(VARIABLE_FMT, tFormat); //$NON-NLS-1$
+
+        mask = mask.replaceAll(VARIABLE_STATUS, getStatus());
+        mask = mask.replaceAll(VARIABLE_CTIME_STAMP, getCreationTimestampFormatted());
+        mask = mask.replaceAll(VARIABLE_CDATE, getCreationDateFormatted());
+        mask = mask.replaceAll(VARIABLE_CTIME, getCreationTimeFormatted());
+        mask = mask.replaceAll(VARIABLE_USRDTA, getUserData());
+
+        return mask;
     }
 
     private boolean transformSpooledFile(String format, String target) throws Exception {
@@ -932,7 +954,7 @@ public class SpooledFile {
         dialog.setFilterNames(new String[] { fileDescription, "All Files" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
-        String suggestedFileName = replaceReplacementVariables(format, Preferences.getInstance().getSuggestedSpooledFileName());
+        String suggestedFileName = replaceVariables(Preferences.getInstance().getSuggestedSpooledFileName(), format);
         dialog.setFileName(suggestedFileName + fileExtension);
         dialog.setOverwrite(true);
         String file = dialog.open();
