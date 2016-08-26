@@ -1,4 +1,10 @@
 
+Changelog: iSphere 2.9.0.b008
+-----------------------------
+ • Added options for changing the spooled file text (displayed
+   next to the name of the spooled file) to the context menu of 
+   the spooled file subsystem.
+
 Changelog: iSphere 2.9.0.b007
 -----------------------------
  • Moved RSEHostObjectDecorator to the RSE plug-in.
