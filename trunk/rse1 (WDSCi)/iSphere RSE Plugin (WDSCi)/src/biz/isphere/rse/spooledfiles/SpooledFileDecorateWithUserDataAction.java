@@ -8,12 +8,17 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import java.util.ArrayList;
+
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
+import biz.isphere.rse.Messages;
 
 public class SpooledFileDecorateWithUserDataAction extends AbstractSpooledFileDecorateWithAction {
 
-    public SpooledFileDecorateWithUserDataAction() {
-        super(SpooledFileTextDecoration.USER_DATA.getKey());
-    }
+    protected ArrayList arrayListSelection;
 
+    public SpooledFileDecorateWithUserDataAction() {
+        super(SpooledFileTextDecoration.USER_DEFINED.getKey(), Messages.SplfDecoration_UserDefined);
+    }
+    
 }

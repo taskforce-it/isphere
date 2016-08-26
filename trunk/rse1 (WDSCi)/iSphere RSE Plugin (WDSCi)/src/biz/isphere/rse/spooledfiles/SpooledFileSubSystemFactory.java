@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2016 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package biz.isphere.rse.spooledfiles;
 import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 
@@ -21,6 +22,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFileFilter;
 
+import com.ibm.etools.systems.core.ui.actions.SystemBaseSubMenuAction;
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterPool;
@@ -82,6 +84,32 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
         action.setDialogTitle(Messages.Change_Spooled_File_Filter);
         action.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));
         return action;
+    }
+
+    @Override
+    protected Vector getAdditionalSubSystemActions(SubSystem arg0, Shell arg1) {
+
+        Vector<IAction> actions = new Vector<IAction>();
+
+        actions.add(
+
+        new SystemBaseSubMenuAction(biz.isphere.rse.Messages.SplfDecoration_Menu, null) {
+
+            @Override
+            public IMenuManager populateSubMenu(IMenuManager menu) {
+                
+                menu.add(new SpooledFileDecorateWithUserDefinedAction());
+                menu.add(new SpooledFileDecorateWithStatusAction());
+                menu.add(new SpooledFileDecorateWithUserDataAction());
+                menu.add(new SpooledFileDecorateWithCreationTimeAction());
+                menu.add(new SpooledFileDecorateWithJobAction());
+                
+                return menu;
+            }
+
+        });
+
+        return actions;
     }
 
     @Override

@@ -8,12 +8,17 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import java.util.ArrayList;
+
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
+import biz.isphere.rse.Messages;
 
 public class SpooledFileDecorateWithStatusAction extends AbstractSpooledFileDecorateWithAction {
 
-    public SpooledFileDecorateWithStatusAction() {
-        super(SpooledFileTextDecoration.STATUS.getKey());
-    }
+    protected ArrayList arrayListSelection;
 
+    public SpooledFileDecorateWithStatusAction() {
+        super(SpooledFileTextDecoration.STATUS.getKey(), Messages.SplfDecoration_Status);
+    }
+    
 }

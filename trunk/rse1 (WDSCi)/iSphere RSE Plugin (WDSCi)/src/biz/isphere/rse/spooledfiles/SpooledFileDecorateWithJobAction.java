@@ -8,13 +8,16 @@
 
 package biz.isphere.rse.spooledfiles;
 
+import java.util.ArrayList;
+
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 import biz.isphere.rse.Messages;
 
-public class SpooledFileDecorateWithCreationTimeAction extends AbstractSpooledFileDecorateWithAction {
+public class SpooledFileDecorateWithJobAction extends AbstractSpooledFileDecorateWithAction {
 
-    public SpooledFileDecorateWithCreationTimeAction() {
-        super(SpooledFileTextDecoration.CREATION_TIME.getKey(), Messages.SplfDecoration_CreationTime);
+    protected ArrayList arrayListSelection;
+
+    public SpooledFileDecorateWithJobAction() {
+        super(SpooledFileTextDecoration.JOB.getKey(), Messages.SplfDecoration_Job);
     }
-    
 }
