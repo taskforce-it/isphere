@@ -104,6 +104,8 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_MAX_FILES_TO_LOAD = DOMAIN + "MAX_FILES_TO_LOAD"; //$NON-NLS-1$
 
+    private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
+
     private static final String SOURCEFILESEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
@@ -282,6 +284,10 @@ public final class Preferences {
 
     public int getSpooledFilesMaxFilesToLoad() {
         return preferenceStore.getInt(SPOOLED_FILES_MAX_FILES_TO_LOAD);
+    }
+
+    public String getSpooledFileRSEDescription() {
+        return preferenceStore.getString(SPOOLED_FILES_RSE_DESCRIPTION);
     }
 
     public String getSpooledFileConversionText() {
@@ -529,6 +535,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_MAX_FILES_TO_LOAD, count);
     }
 
+    public void setSpooledFileRSEDescription(String description) {
+        preferenceStore.setValue(SPOOLED_FILES_RSE_DESCRIPTION, description);
+    }
+
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
@@ -679,6 +689,7 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
 
         preferenceStore.setDefault(SPOOLED_FILES_MAX_FILES_TO_LOAD, getDefaultSpooledFileMaxFilesToLoad());
+        preferenceStore.setDefault(SPOOLED_FILES_RSE_DESCRIPTION, getDefaultSpooledFileRSEDescription());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, getDefaultSpooledFileConversionTextCommand());
@@ -815,6 +826,15 @@ public final class Preferences {
      */
     public int getDefaultSpooledFileMaxFilesToLoad() {
         return 5000;
+    }
+
+    /**
+     * Returns the default value for maximum number of spooled files to load.
+     * 
+     * @return default maximum number of spooled files to load
+     */
+    public String getDefaultSpooledFileRSEDescription() {
+        return SpooledFile.VARIABLE_SPLF + " - " + SpooledFile.VARIABLE_STATUS; //$NON-NLS-1$
     }
 
     /**

@@ -42,6 +42,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF;
 import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -92,6 +93,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private boolean isLoadAsynchronously;
     private Text textMaxNumSpooledFiles;
     private int maxNumSpooledFiles;
+    private Text textRSEDescription;
+    private String rseDescription;
 
     public ISphereSpooledFiles() {
         super();
@@ -121,16 +124,15 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        Label labelSuggestedFileName = new Label(container, SWT.NONE);
-        labelSuggestedFileName.setText(Messages.Suggested_file_name);
-
-        comboSuggestedFileName = WidgetFactory.createCombo(container);
-        comboSuggestedFileName.setLayoutData(createLayoutData());
-        comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
-        comboSuggestedFileName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                suggestedFileName = comboSuggestedFileName.getText();
+        buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
+        buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
+        buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
+        buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
             }
         });
 
@@ -146,13 +148,26 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textMaxNumSpooledFiles.setLayoutData(createLayoutData());
         textMaxNumSpooledFiles.setTextLimit(6);
 
-        buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
-        buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
-        buttonLoadAsynchronously.setText(Messages.Load_spooled_files_asynchronously);
-        buttonLoadAsynchronously.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                isLoadAsynchronously = buttonLoadAsynchronously.getSelection();
+        Label labelSuggestedFileName = new Label(container, SWT.NONE);
+        labelSuggestedFileName.setText(Messages.Suggested_file_name);
+
+        comboSuggestedFileName = WidgetFactory.createCombo(container);
+        comboSuggestedFileName.setLayoutData(createLayoutData());
+        comboSuggestedFileName.setItems(Preferences.getInstance().getSpooledFileSuggestedNames());
+        comboSuggestedFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                suggestedFileName = comboSuggestedFileName.getText();
+            }
+        });
+
+        Label labelRSEDescription = new Label(container, SWT.NONE);
+        labelRSEDescription.setText(Messages.RSE_spooled_file_text_colon);
+
+        textRSEDescription = WidgetFactory.createText(container);
+        textRSEDescription.setLayoutData(createLayoutData());
+        textRSEDescription.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                rseDescription = textRSEDescription.getText();
             }
         });
 
@@ -165,6 +180,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
         // Group: Default conversion
         Group groupDefaultFormat = new Group(container, SWT.NONE);
@@ -459,16 +475,23 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         groupSubstitutionVariables.setLayout(gridLayoutSubstitutionVariables);
         groupSubstitutionVariables.setLayoutData(createGroupLayoutData());
 
-        createSpooledFileVariable(groupSubstitutionVariables, "&&SPLF", Messages.File);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&SPLFNBR", Messages.File_number);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBNAME", Messages.Job_name);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBUSR", Messages.Job_user);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBNBR", Messages.Job_number);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&JOBSYS", Messages.Job_system);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&STMFDIR", Messages.Directory);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&STMF", Messages.Stream_file);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&CODPAG", Messages.Code_page);
-        createSpooledFileVariable(groupSubstitutionVariables, "&&FMT", Messages.Format);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_SPLF, Messages.File);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_SPLFNBR, Messages.File_number);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_JOBNAME, Messages.Job_name);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_JOBUSR, Messages.Job_user);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_JOBNBR, Messages.Job_number);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_JOBSYS, Messages.Job_system);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_STMFDIR, Messages.Directory);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_STMF, Messages.Stream_file);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CODPAG, Messages.Code_page);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_FMT, Messages.Format);
+
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_STATUS, Messages.Format);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME_STAMP, Messages.Creation_Timestamp);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CDATE, Messages.Creation_Date);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME, Messages.Creation_Time);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_USRDTA, Messages.User_data);
+
     }
 
     private GridData createGroupLayoutData() {
@@ -509,6 +532,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     public void checkError() {
 
+        rseDescription = textRSEDescription.getText().toUpperCase().trim();
         conversionTextLibrary = textConversionTextLibrary.getText().toUpperCase().trim();
         conversionTextCommand = textConversionTextCommand.getText().toUpperCase().trim();
         conversionHTMLLibrary = textConversionHTMLLibrary.getText().toUpperCase().trim();
@@ -616,6 +640,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Preferences.getInstance().setSpooledFileAdjustFontSize(adjustFontSize);
         Preferences.getInstance().setSpooledFilesSuggestedFileName(suggestedFileName);
         Preferences.getInstance().setSpooledFileMaxFilesToLoad(maxNumSpooledFiles);
+
+        Preferences.getInstance().setSpooledFileRSEDescription(rseDescription);
     }
 
     protected void setScreenToValues() {
@@ -639,6 +665,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         adjustFontSize = Preferences.getInstance().getSpooledFileAdjustFontSize();
         suggestedFileName = Preferences.getInstance().getSpooledFilesSuggestedFileName();
         maxNumSpooledFiles = Preferences.getInstance().getSpooledFilesMaxFilesToLoad();
+
+        rseDescription = Preferences.getInstance().getSpooledFileRSEDescription();
 
         setScreenValues();
 
@@ -665,6 +693,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         adjustFontSize = Preferences.getInstance().getDefaultSpooledFileAdjustFontSize();
         suggestedFileName = Preferences.getInstance().getDefaultSpooledFilesSuggestedFileName();
         maxNumSpooledFiles = Preferences.getInstance().getDefaultSpooledFileMaxFilesToLoad();
+
+        rseDescription = Preferences.getInstance().getDefaultSpooledFileRSEDescription();
 
         setScreenValues();
 
@@ -775,6 +805,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         chkBoxAdjustFontSize.setSelection(adjustFontSize);
         comboSuggestedFileName.setText(suggestedFileName);
         textMaxNumSpooledFiles.setText(Integer.toString(maxNumSpooledFiles));
+
+        textRSEDescription.setText(rseDescription);
     }
 
     public void init(IWorkbench workbench) {
