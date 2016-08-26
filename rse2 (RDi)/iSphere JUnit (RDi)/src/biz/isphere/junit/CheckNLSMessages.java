@@ -47,7 +47,7 @@ public class CheckNLSMessages {
     }
 
     private final String defaultLocale = "en";
-    private final String[] locales = new String[] { defaultLocale, "de", "nl" };
+    private final String[] locales = new String[] { defaultLocale, "de", "nl", "it" };
 
     /**
      * Verifies the NLS messages of the iSphere project.
