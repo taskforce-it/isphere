@@ -22,12 +22,12 @@ import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 
 public abstract class AbstractSpooledFileDecorateWithAction implements IObjectActionDelegate {
 
-    protected IWorkbenchPart targetPart;
-    protected IAction action;
-    protected Shell shell;
+    private IWorkbenchPart targetPart;
+    private IAction action;
+    private Shell shell;
 
-    protected String decorationStyleKey;
-    protected IStructuredSelection structuredSelection;
+    private String decorationStyleKey;
+    private IStructuredSelection structuredSelection;
 
     public AbstractSpooledFileDecorateWithAction(String decorationStyleKey) {
         this.decorationStyleKey = decorationStyleKey;
