@@ -133,6 +133,18 @@ public class Messages extends NLS {
     public static String Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D;
 
     public static String Failed_to_connect_to_system_A;
+
+    public static String SplfDecoration_Menu;
+    
+    public static String SplfDecoration_Status;
+    
+    public static String SplfDecoration_CreationTime;
+    
+    public static String SplfDecoration_UserData;
+    
+    public static String SplfDecoration_Job;
+    
+    public static String SplfDecoration_UserDefined;
     
     static {
         // initialize resource bundle
