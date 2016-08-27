@@ -40,7 +40,8 @@ import biz.isphere.core.ISpherePlugin;
  * <p>
  * The view can implement @link {@link IPinnableView#getPinProperties()} to
  * provide custom properties that are required to restore the state of the view.
- * These properties are stored in 'dialog_settings.xml'.
+ * These properties are stored in 'dialog_settings.xml' in folder
+ * '[workspace]/.metadata/.plugins/bzi.isphere.core'.
  * 
  * @author Thomas Raddatz
  */
