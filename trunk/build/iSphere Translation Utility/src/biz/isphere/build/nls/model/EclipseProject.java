@@ -27,12 +27,24 @@ import biz.isphere.build.nls.utils.FileUtil;
  */
 public class EclipseProject {
 
-    File fPath;
-    Map<String, NLSResourceBundle> fNLSBundle;
+    private File fPath;
+    private Map<String, NLSResourceBundle> fNLSBundle;
+    private String[] fLanguageIds;
 
-    public EclipseProject(String projectName) throws JobCanceledException {
+    public EclipseProject(String projectName, String[] languageIds) throws JobCanceledException {
         fPath = new File(Configuration.getInstance().getWorkspacePath() + projectName);
         fNLSBundle = new HashMap<String, NLSResourceBundle>();
+        fLanguageIds = languageIds;
+    }
+
+    /**
+     * Returns the language IDs (e.g. nl, it) that are selected for
+     * import/export.
+     * 
+     * @return String array of language IDs
+     */
+    public String[] getLanguageIds() {
+        return fLanguageIds;
     }
 
     public String getPath() {
@@ -47,7 +59,7 @@ public class EclipseProject {
         Set<String> languages = new TreeSet<String>();
         for (String bundleKey : fNLSBundle.keySet()) {
             NLSResourceBundle bundle = fNLSBundle.get(bundleKey);
-            languages.addAll(bundle.getLanguageKeys());
+            languages.addAll(bundle.getLanguageKeys(fLanguageIds));
         }
         return languages.toArray(new String[languages.size()]);
     }
