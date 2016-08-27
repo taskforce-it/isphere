@@ -61,10 +61,10 @@ public class NLSResourceBundle {
      * @return list of language IDs.
      * @throws JobCanceledException
      */
-    public Set<String> getLanguageKeys() throws JobCanceledException {
+    public Set<String> getLanguageKeys(String[] languageIds) throws JobCanceledException {
         Set<String> languageKeys = new TreeSet<String>();
         for (NLSPropertiesFile nlsFile : fNLSFiles.values()) {
-            if (nlsFile.getLanguage().isProtected() || isSelectedForExport(nlsFile.getLanguage(), Configuration.getInstance().getExportLanguageIDs())) {
+            if (nlsFile.getLanguage().isProtected() || isSelectedForExport(nlsFile.getLanguage(), languageIds)) {
                 languageKeys.add(nlsFile.getKey());
             }
         }
@@ -91,9 +91,9 @@ public class NLSResourceBundle {
      * @return Strings (one per language) that are associated to the key.
      * @throws JobCanceledException
      */
-    public NLSTextEntry[] getValues(String key) throws JobCanceledException {
+    public NLSTextEntry[] getValues(String key, String[] languageIds) throws JobCanceledException {
         List<NLSTextEntry> values = new ArrayList<NLSTextEntry>();
-        for (String languageKey : getLanguageKeys()) {
+        for (String languageKey : getLanguageKeys(languageIds)) {
             NLSPropertiesFile nlsFile = getNLSFile(languageKey);
             String value = nlsFile.getText(key);
             values.add(new NLSTextEntry(value, nlsFile.getLanguage()));

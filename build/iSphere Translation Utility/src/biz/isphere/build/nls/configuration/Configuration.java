@@ -38,9 +38,11 @@ public final class Configuration {
     private static final String EXPORT_FILE = "exportFile";
     private static final String IMPORT_FILE = "importFile";
     private static final String DEFAULT_LANGUAGE = "defaultLanguage";
-    private static final String EXPORT_LANGUAGE_IDS = "exportLanguageIDs";
-    private static final String IMPORT_LANGUAGE_IDS = "importLanguageIDs";
+    private static final String LANGUAGE_IDS = "languageIDs";
+    // private static final String EXPORT_LANGUAGE_IDS = "exportLanguageIDs";
+    // private static final String IMPORT_LANGUAGE_IDS = "importLanguageIDs";
     private static final String BUILD_PROPERTIES = "buildProperties";
+    private static final String SEPARATE_LANGUAGE_FILES = "separateLanguageFiles";
 
     private static final String BUILD_VERSION = "build.version";
 
@@ -71,17 +73,41 @@ public final class Configuration {
         fProperties = null;
     }
 
-    public File getExportFile() throws JobCanceledException {
+    public File getExportFile(String[] languageIds) throws JobCanceledException {
         String file = getString(EXPORT_FILE);
         file = addFileExtension(file);
+
         int i = file.lastIndexOf(".");
         if (i != -1) {
             file = file.substring(0, i) + "_" + getDateAsString() + file.substring(i);
         }
+
         if (file.indexOf("${version}") >= 0) {
             file = file.replaceAll("\\$\\{version}", "v" + getString(BUILD_VERSION));
         }
+
+        if (file.indexOf("${langid}") >= 0) {
+            file = file.replaceAll("\\$\\{langid}", buildLanguageIdsString(languageIds));
+        }
+
         return new File(file);
+    }
+
+    private String buildLanguageIdsString(String[] languageIds) {
+
+        if (languageIds.length == 1 && "*".equals(languageIds[0])) {
+            return "all";
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        for (String languageId : languageIds) {
+            if (buffer.length() > 0) {
+                buffer.append("_");
+            }
+            buffer.append(languageId);
+        }
+
+        return buffer.toString();
     }
 
     public File getImportFile() throws JobCanceledException {
@@ -124,7 +150,7 @@ public final class Configuration {
         return getStringArray(PROJECTS);
     }
 
-    public FileSelectionEntry[] getFiles() throws JobCanceledException {
+    public FileSelectionEntry[] getFilesWithNLSStrings() throws JobCanceledException {
         List<FileSelectionEntry> files = new ArrayList<FileSelectionEntry>();
         String[] entries = getStringArray(FILES);
         for (String entry : entries) {
@@ -137,12 +163,16 @@ public final class Configuration {
         return getString(DEFAULT_LANGUAGE);
     }
 
+    public boolean isSeparateLanguageFiles() throws JobCanceledException {
+        return getBoolean(SEPARATE_LANGUAGE_FILES);
+    }
+
     public boolean isDefaultLanguage(String languageID) throws JobCanceledException {
         return getDefaultLanguageID().equalsIgnoreCase(languageID);
     }
 
     public String[] getExportLanguageIDs() throws JobCanceledException {
-        String[] languageIDs = getStringArray(EXPORT_LANGUAGE_IDS);
+        String[] languageIDs = getStringArray(LANGUAGE_IDS);
         if (languageIDs.length == 0) {
             throw new JobCanceledException("No languages specified for export: exportLanguageIDs");
         }
@@ -150,7 +180,7 @@ public final class Configuration {
     }
 
     public String[] getImportLanguageIDs() throws JobCanceledException {
-        String[] languageIDs = getStringArray(IMPORT_LANGUAGE_IDS);
+        String[] languageIDs = getStringArray(LANGUAGE_IDS);
         if (languageIDs.length == 0) {
             throw new JobCanceledException("No languages specified for import: importLanguageIDs");
         }
@@ -195,6 +225,16 @@ public final class Configuration {
 
     private String getString(String key) throws JobCanceledException {
         return getProperties().getProperty(key);
+    }
+
+    private boolean getBoolean(String key) throws JobCanceledException {
+
+        String value = getProperties().getProperty(key);
+        if ("true".equalsIgnoreCase(value) || "1".equals(value)) {
+            return true;
+        }
+
+        return false;
     }
 
     private String[] getStringArray(String key) throws JobCanceledException {

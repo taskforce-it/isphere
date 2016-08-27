@@ -49,7 +49,8 @@ public class NLSImporter {
 
     /**
      * Main method of the importer utility. Valid optional arguments are:
-     * <p> - name of the configuration properties file
+     * <p>
+     * - name of the configuration properties file
      * 
      * @param args
      */
@@ -60,31 +61,38 @@ public class NLSImporter {
             if (args.length > 0) {
                 Configuration.getInstance().setConfigurationFile(args[0]);
             }
-            main.run();
+
+            String[] languageIds = Configuration.getInstance().getImportLanguageIDs();
+
+            main.run(languageIds);
+
         } catch (JobCanceledException e) {
             System.out.println(e.getLocalizedMessage());
         }
     }
 
-    private void run() throws JobCanceledException {
+    private void run(String[] languageIds) throws JobCanceledException {
+
+        LogUtil.print("\nStarting Excel Import for languages: " + buildLanguageIdsString(languageIds));
+
         Workbook workbook = loadWorkbook(Configuration.getInstance().getImportFile());
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
-            EclipseProject project = loadFromExcelSheet(sheet, workbook);
+            EclipseProject project = loadFromExcelSheet(sheet, workbook, languageIds);
             project.updateNLSPropertiesFiles();
         }
 
-        LogUtil.print("Finished Excel Import");
+        LogUtil.print("Finished Excel Export for languages: " + buildLanguageIdsString(languageIds));
     }
 
-    private EclipseProject loadFromExcelSheet(Sheet sheet, Workbook wb) throws JobCanceledException {
+    private EclipseProject loadFromExcelSheet(Sheet sheet, Workbook wb, String[] languageIds) throws JobCanceledException {
 
         LogUtil.print("Loading data from Excel sheet: " + sheet.getSheetName());
 
         Cell cell = findHeadlineCell(sheet);
 
         String projectName = cell.getStringCellValue(); // sheet.getSheetName();
-        EclipseProject project = new EclipseProject(projectName);
+        EclipseProject project = new EclipseProject(projectName, languageIds);
 
         Row firstDataRow = findFirstDataRow(sheet);
         while (firstDataRow != null) {
@@ -148,12 +156,12 @@ public class NLSImporter {
     private Cell findHeadlineCell(Sheet sheet) {
         for (Iterator<Row> iterator = sheet.iterator(); iterator.hasNext();) {
             Row row = iterator.next();
-            for (Iterator cellIterator = row.iterator(); cellIterator.hasNext();) {
+            for (Iterator<?> cellIterator = row.iterator(); cellIterator.hasNext();) {
                 Object object = cellIterator.next();
                 if (object instanceof HSSFCell) {
                     HSSFCell cell = (HSSFCell)object;
-                    if (cell.getCellStyle().getFillForegroundColor() == IndexedColors.LIGHT_YELLOW.getIndex() && 
-                        cell.getCellStyle().getFont(sheet.getWorkbook()).getBoldweight() == Font.BOLDWEIGHT_BOLD) {
+                    if (cell.getCellStyle().getFillForegroundColor() == IndexedColors.LIGHT_YELLOW.getIndex()
+                        && cell.getCellStyle().getFont(sheet.getWorkbook()).getBoldweight() == Font.BOLDWEIGHT_BOLD) {
                         return cell;
                     }
                 }
@@ -226,6 +234,19 @@ public class NLSImporter {
             throw new JobCanceledException("Failed to load workbook from: " + file.getAbsolutePath());
         }
 
+    }
+
+    private String buildLanguageIdsString(String[] languageIds) {
+
+        StringBuilder buffer = new StringBuilder();
+        for (String languageId : languageIds) {
+            if (buffer.length() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append(languageId);
+        }
+
+        return buffer.toString();
     }
 
 }

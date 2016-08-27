@@ -81,13 +81,26 @@ public class NLSExporter {
             if (args.length >= 1) {
                 Configuration.getInstance().setConfigurationFile(args[0]);
             }
-            main.run();
+
+            boolean separateFilePerLanguage = Configuration.getInstance().isSeparateLanguageFiles();
+            String[] languageIds = Configuration.getInstance().getExportLanguageIDs();
+
+            if (separateFilePerLanguage) {
+                for (String languageId : languageIds) {
+                    main.run(new String[] { languageId });
+                }
+            } else {
+                main.run(languageIds);
+            }
+
         } catch (JobCanceledException e) {
             System.out.println(e.getLocalizedMessage());
         }
     }
 
-    private void run() throws JobCanceledException {
+    private void run(String[] languageIds) throws JobCanceledException {
+
+        LogUtil.print("\nStarting Excel Export for languages: " + buildLanguageIdsString(languageIds));
 
         Configuration config = Configuration.getInstance();
 
@@ -98,14 +111,14 @@ public class NLSExporter {
 
         String[] projectNames = config.getProjects();
         for (String projectName : projectNames) {
-            EclipseProject project = new EclipseProject(projectName);
-            project.loadNLSPropertiesFiles(config.getFiles());
+            EclipseProject project = new EclipseProject(projectName, languageIds);
+            project.loadNLSPropertiesFiles(config.getFilesWithNLSStrings());
             addToExcelSheet(workbook, project);
         }
 
-        saveWorkbook(workbook, config.getExportFile());
+        saveWorkbook(workbook, config.getExportFile(languageIds));
 
-        LogUtil.print("Finished Excel Export");
+        LogUtil.print("Finished Excel Export for languages: " + buildLanguageIdsString(languageIds));
     }
 
     private void saveWorkbook(Workbook workbook, File file) throws JobCanceledException {
@@ -156,7 +169,7 @@ public class NLSExporter {
                     firstDataRow = dataRow;
                 }
                 lastDataRow = dataRow;
-                for (NLSTextEntry value : bundle.getValues(key)) {
+                for (NLSTextEntry value : bundle.getValues(key, project.getLanguageIds())) {
                     addLanguageCell(dataRow, value.getText(), value.isProtected());
                 }
             }
@@ -510,6 +523,19 @@ public class NLSExporter {
             formatting.applyFormatting(richTextString);
         }
         return richTextString;
+    }
+
+    private String buildLanguageIdsString(String[] languageIds) {
+
+        StringBuilder buffer = new StringBuilder();
+        for (String languageId : languageIds) {
+            if (buffer.length() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append(languageId);
+        }
+
+        return buffer.toString();
     }
 
     private interface IFormatting {
