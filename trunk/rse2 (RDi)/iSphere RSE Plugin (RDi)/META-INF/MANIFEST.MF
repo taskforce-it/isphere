@@ -40,6 +40,7 @@ Export-Package: biz.isphere.rse,
  biz.isphere.rse.compareeditor,
  biz.isphere.rse.dataareaeditor,
  biz.isphere.rse.internal,
- biz.isphere.rse.spooledfiles
+ biz.isphere.rse.spooledfiles,
+ biz.isphere.rse.userspaceeditor
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
