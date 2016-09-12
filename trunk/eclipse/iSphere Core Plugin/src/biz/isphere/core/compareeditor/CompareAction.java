@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,11 +110,13 @@ public class CompareAction {
                     }
                 }
 
-                IEditorPart editor = findMemberInEditor(leftMember);
-                if (editor != null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, Messages.bind(
-                        Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
-                    return;
+                if (cc.isLeftEditable()) {
+                    IEditorPart editor = findMemberInEditor(leftMember);
+                    if (editor != null) {
+                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                            Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
+                        return;
+                    }
                 }
 
                 ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
@@ -172,7 +174,15 @@ public class CompareAction {
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {
-                    fInput.setTitle(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
+                    String title;
+                    if (cc.isLeftEditable()) {
+                        title = Messages.bind(Messages.CompareEditor_Compare_Edit, new String[] { getQualifiedMemberName(leftMember),
+                            getQualifiedMemberName(rightMember) });
+                    } else {
+                        title = Messages.bind(Messages.CompareEditor_Compare, new String[] { getQualifiedMemberName(leftMember),
+                            getQualifiedMemberName(rightMember) });
+                    }
+                    fInput.setTitle(title);
                 }
 
                 IEditorReference editorReference = findCompareEditor(leftMember, rightMember);
@@ -194,6 +204,20 @@ public class CompareAction {
                     (cleanupListener.get(index)).cleanup();
                 }
 
+            }
+
+            private String getQualifiedMemberName(Member member) {
+
+                StringBuilder buffer = new StringBuilder();
+
+                buffer.append(member.getLibrary());
+                buffer.append("/");
+                buffer.append(member.getSourceFile());
+                buffer.append("(");
+                buffer.append(member.getMember());
+                buffer.append(")");
+
+                return buffer.toString();
             }
 
             private void displayMemberNotFoundMessage(String library, String file, String member) {

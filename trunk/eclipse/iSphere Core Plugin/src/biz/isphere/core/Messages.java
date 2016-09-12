@@ -1245,6 +1245,11 @@ public class Messages extends NLS {
     public static String Creation_Time;
 
     public static String RSE_spooled_file_text_colon;
+
+    public static String CompareEditor_Compare;
+    
+    public static String CompareEditor_Compare_Edit;
+
     
     /*
      * Warning messages

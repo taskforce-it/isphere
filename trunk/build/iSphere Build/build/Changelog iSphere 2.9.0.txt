@@ -2,6 +2,8 @@ Changelog: iSphere 2.9.0.b009
 -----------------------------
  • Added option to ignore data lost errors, when copying source members
    of 112-byte source fiels to 92-byte source files.
+ • Changed the iSphere Compare Editor to ignore already opened members,
+   when started in "Browse" mode.
 
 Changelog: iSphere 2.9.0.b008
 -----------------------------
