@@ -54,6 +54,7 @@ public class CopyMemberDialog extends XDialog {
     private Text textToLibrary;
     private TableViewer tableViewer;
     private Button chkBoxReplace;
+    private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
 
     private Validator nameValidator;
@@ -144,7 +145,7 @@ public class CopyMemberDialog extends XDialog {
                 jobDescription.setToLibrary(libraryName);
                 jobDescription.setToFile(fileName);
 
-                if (!jobDescription.validate(chkBoxReplace.getSelection())) {
+                if (!jobDescription.validate(chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection())) {
                     setErrorMessage(Messages.Validation_ended_with_errors_Request_canceled);
                     isValidated = false;
                     return;
@@ -257,6 +258,10 @@ public class CopyMemberDialog extends XDialog {
         chkBoxReplace.setText(Messages.Replace_existing_members);
         chkBoxReplace.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
+        chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
+        chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
+        chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+        
         createStatusLine(mainArea);
 
         loadScreenValues();

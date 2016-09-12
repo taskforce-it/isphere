@@ -16,8 +16,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.file.description.RecordFormatDescription;
+import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.FieldDescription;
 
 /**
  * This class copies a given list of members to another library, file or member
@@ -34,6 +39,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
 
+    private boolean hasDataLostError;
+    
     private List<ModifiedListener> modifiedListeners;
     private int copiedCount;
     private boolean isActive;
@@ -42,6 +49,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         this.fromConnectionName = fromConnectionName;
         this.toConnectionName = fromConnectionName;
         this.members = new TreeSet<CopyMemberItem>();
+        this.hasDataLostError = false;
     }
 
     public CopyMemberItem addItem(String file, String library, String member) {
@@ -172,7 +180,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
      * 
      * @return <code>true</code> on success, else <code>false</code>.
      */
-    public boolean validate(boolean replace) {
+    public boolean validate(boolean replace, boolean ignoreDataLostError) {
 
         startProcess();
 
@@ -180,8 +188,16 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
         try {
 
-            Set<String> targetMembers = new HashSet<String>();
+            hasDataLostError = false;
 
+            AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
+            AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
+
+            RecordFormatDescriptionsStore fromSourceFiles = new RecordFormatDescriptionsStore(fromSystem);
+            RecordFormatDescriptionsStore toSourceFiles = new RecordFormatDescriptionsStore(toSystem);
+            
+            Set<String> targetMembers = new HashSet<String>();
+            
             for (CopyMemberItem member : members) {
                 if (member.isCopied()) {
                     continue;
@@ -190,6 +206,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
                 String from = member.getFromQSYSName();
                 String to = member.getToQSYSName();
 
+                member.setErrorMessage(null);
+                
                 if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
                     member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
                     isError = true;
@@ -205,8 +223,19 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
                         member.getToMember())) {
                     member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
                     isError = true;
-                } else {
-                    member.setErrorMessage(null);
+                } else if (!ignoreDataLostError) {
+
+                    RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
+                    RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
+
+                    FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
+                    FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
+
+                    if (fromSrcDta.getLength() > toSrcDta.getLength()) {
+                        member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
+                        hasDataLostError = true;
+                        isError = true;
+                    }
                 }
 
                 targetMembers.add(to);
@@ -219,6 +248,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return !isError;
     }
 
+    public boolean hasDataLostError() {
+        return hasDataLostError;
+    }
+    
     /**
      * Validates the job description.
      * 
