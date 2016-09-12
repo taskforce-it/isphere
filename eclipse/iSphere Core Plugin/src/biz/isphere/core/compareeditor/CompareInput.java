@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,11 +208,19 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     }
 
     public IFile getFile() {
-        return leftMember.getLocalResource();
+        if (editable) {
+            return leftMember.getLocalResource();
+        } else {
+            return null;
+        }
     }
 
     public IStorage getStorage() throws CoreException {
-        return leftMember.getLocalResource();
+        if (editable) {
+            return leftMember.getLocalResource();
+        } else {
+            return null;
+        }
     }
 
     public CompareEditorConfiguration getConfiguration() {
