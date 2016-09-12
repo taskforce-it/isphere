@@ -1129,7 +1129,11 @@ public class Messages extends NLS {
     public static String Can_not_copy_member_twice_to_same_target_member;
 
     public static String Replace_existing_members;
+    
+    public static String Ignore_data_lost_error;
 
+    public static String Data_lost_error_From_source_line_is_longer_than_target_source_line;
+    
     public static String C_O_P_I_E_D;
 
     public static String Validating_dots;

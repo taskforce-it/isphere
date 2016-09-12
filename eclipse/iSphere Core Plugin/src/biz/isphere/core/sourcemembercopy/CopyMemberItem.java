@@ -267,6 +267,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             command.append(")"); //$NON-NLS-1$
             command.append(" MBROPT(*REPLACE)"); //$NON-NLS-1$
             command.append(" CRTFILE(*NO)"); //$NON-NLS-1$
+            command.append(" FMTOPT(*MAP)"); //$NON-NLS-1$
 
             message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
             if (message != null) {

@@ -1,3 +1,7 @@
+Changelog: iSphere 2.9.0.b009
+-----------------------------
+ • Added option to ignore data lost errors, when copying source members
+   of 112-byte source fiels to 92-byte source files.
 
 Changelog: iSphere 2.9.0.b008
 -----------------------------
