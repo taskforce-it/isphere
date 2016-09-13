@@ -68,6 +68,8 @@ public class CopyMemberDialog extends XDialog {
     private static final int COLUMN_TO_MEMBER = 3;
     private static final int COLUMN_ERROR_MESSAGE = 4;
 
+    private static final String TABLE_COLUMN = "TABLE_COLUMN_";
+
     private Composite mainArea;
 
     public CopyMemberDialog(Shell parentShell) {
@@ -86,6 +88,8 @@ public class CopyMemberDialog extends XDialog {
     @Override
     protected void okPressed() {
 
+        storeScreenValues();
+
         setErrorMessage(null);
         mainArea.update();
 
@@ -102,6 +106,14 @@ public class CopyMemberDialog extends XDialog {
         setStatusMessage(Messages.EMPTY);
 
         // super.okPressed();
+    }
+
+    @Override
+    protected void cancelPressed() {
+        
+        storeScreenValues();
+        
+        super.cancelPressed();
     }
 
     private boolean validateUserInput() {
@@ -261,7 +273,7 @@ public class CopyMemberDialog extends XDialog {
         chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
-        
+
         createStatusLine(mainArea);
 
         loadScreenValues();
@@ -277,6 +289,9 @@ public class CopyMemberDialog extends XDialog {
         getButton(IDialogConstants.OK_ID).setText(Messages.Copy);
     }
 
+    /**
+     * Restores the screen values of the last copy operation.
+     */
     private void loadScreenValues() {
 
         if (comboToConnection != null) {
@@ -296,6 +311,40 @@ public class CopyMemberDialog extends XDialog {
         }
 
         tableViewer.setInput(jobDescription);
+
+        loadColumnWidth(COLUMN_FROM_LIBRARY, 120);
+        loadColumnWidth(COLUMN_FROM_FILE, 120);
+        loadColumnWidth(COLUMN_FROM_MEMBER, 120);
+        loadColumnWidth(COLUMN_TO_MEMBER, 120);
+        loadColumnWidth(COLUMN_ERROR_MESSAGE, 400);
+    }
+
+    private void loadColumnWidth(int tableColumnIndex, int defaultWidth) {
+
+        int width = loadIntValue(TABLE_COLUMN + tableColumnIndex, defaultWidth);
+
+        Table table = tableViewer.getTable();
+        table.getColumn(tableColumnIndex).setWidth(width);
+    }
+
+    /**
+     * Stores the screen values that are preserved for the next copy operation.
+     */
+    private void storeScreenValues() {
+
+        storeColumnWidth(COLUMN_FROM_LIBRARY);
+        storeColumnWidth(COLUMN_FROM_FILE);
+        storeColumnWidth(COLUMN_FROM_MEMBER);
+        storeColumnWidth(COLUMN_TO_MEMBER);
+        storeColumnWidth(COLUMN_ERROR_MESSAGE);
+    }
+
+    private void storeColumnWidth(int tableColumnIndex) {
+
+        Table table = tableViewer.getTable();
+        int width = table.getColumn(tableColumnIndex).getWidth();
+
+        storeValue(TABLE_COLUMN + tableColumnIndex, width);
     }
 
     private Text createNameField(Composite mainArea, String label) {
@@ -342,11 +391,13 @@ public class CopyMemberDialog extends XDialog {
 
         if (jobDescription == null || !jobDescription.haveItemsToCopy() || jobDescription.isActive()) {
             setButtonEnablement(getButton(IDialogConstants.OK_ID), false);
+            setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CLOSE_LABEL);
         } else {
             setButtonEnablement(getButton(IDialogConstants.OK_ID), true);
+            setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CANCEL_LABEL);
         }
 
-        if (jobDescription == null || jobDescription.isActive()) {
+        if (jobDescription.isActive()) {
             setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), false);
         } else {
             setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), true);
@@ -359,6 +410,14 @@ public class CopyMemberDialog extends XDialog {
         }
 
         button.setEnabled(enabled);
+    }
+
+    private void setButtonLabel(Button button, String label) {
+        if (button == null) {
+            return;
+        }
+
+        button.setText(label);
     }
 
     /**

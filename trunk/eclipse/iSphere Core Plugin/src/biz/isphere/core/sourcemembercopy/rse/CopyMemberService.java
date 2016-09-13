@@ -136,7 +136,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         }
     }
 
-    public CopyMemberItem[] getCopiedCopied() {
+    public CopyMemberItem[] getCopiedItems() {
 
         SortedSet<CopyMemberItem> copied = new TreeSet<CopyMemberItem>();
 
@@ -253,7 +253,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
     }
     
     /**
-     * Validates the job description.
+     * Copies the members.
      * 
      * @return <code>true</code> on success, else <code>false</code>.
      */
