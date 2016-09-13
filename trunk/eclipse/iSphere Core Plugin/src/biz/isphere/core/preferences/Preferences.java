@@ -829,7 +829,7 @@ public final class Preferences {
     }
 
     /**
-     * Returns the default value for maximum number of spooled files to load.
+     * Returns the default spooled file description.
      * 
      * @return default maximum number of spooled files to load
      */
