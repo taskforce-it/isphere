@@ -18,8 +18,10 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -211,7 +213,11 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         if (editable) {
             return leftMember.getLocalResource();
         } else {
-            return null;
+            /*
+             * Produce an invalid file name, so that Eclipse does not find the
+             * member in any open editor.
+             */
+            return getBrowseModeFile();
         }
     }
 
@@ -219,8 +225,18 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         if (editable) {
             return leftMember.getLocalResource();
         } else {
-            return null;
+            /*
+             * Produce an invalid file name, so that Eclipse does not find the
+             * member in any open editor.
+             */
+            return getBrowseModeFile();
         }
+    }
+
+    private IFile getBrowseModeFile() {
+        String osPath = leftMember.getLocalResource().getFullPath().toOSString();
+        Path path = new Path(osPath + "(browse mode)"); //$NON-NLS-1$
+        return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
     }
 
     public CompareEditorConfiguration getConfiguration() {
