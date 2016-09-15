@@ -358,6 +358,10 @@
                           LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
                           SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
+             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('SETDBGSEP') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
              /* ----------------------------------------------- */
              /* Create service programs                         */
              /* ----------------------------------------------- */
@@ -458,6 +462,10 @@
             STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('EDITOR') LIB(&PRDLIB) +
                          OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
                          TGTRLS(&TGTRLS)
+
+            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('SETDBGSEP') +
+                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('HANDLER') +
                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
