@@ -32,6 +32,7 @@ Export-Package: biz.isphere.tn5250j.rse,
  biz.isphere.tn5250j.rse.model,
  biz.isphere.tn5250j.rse.sessionseditor,
  biz.isphere.tn5250j.rse.sessionspart,
+ biz.isphere.tn5250j.rse.sessionspart.handler,
  biz.isphere.tn5250j.rse.sessionsview,
  biz.isphere.tn5250j.rse.subsystems
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
