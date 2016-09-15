@@ -8,8 +8,11 @@
 
 package biz.isphere.tn5250j.rse.sessionspart.handler;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -17,8 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSObject;
-import com.ibm.etools.systems.as400.debug.launchconfig.AS400DebugResources;
-import com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate;
 
 public class SetSEPAsync extends AbstractAsyncHandler {
 
@@ -37,24 +38,80 @@ public class SetSEPAsync extends AbstractAsyncHandler {
 
     public void runInternally() {
 
+    	Class _class = null;
+    	String _classFound = null;
+    	try { 
+    		_class = Class.forName("com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate");
+        	if (_class != null) {
+        		_classFound = "com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate";
+        	}
+   		} 
+    	catch (Exception e) {
+    	};
+    	if (_class == null) {
+        	try { 
+        		_class = Class.forName("com.ibm.etools.iseries.debug.internal.ui.sep.ServiceEntryPointActionDelegate");
+            	if (_class != null) {
+            		_classFound = "com.ibm.etools.iseries.debug.internal.ui.sep.ServiceEntryPointActionDelegate";
+            	}
+       		} 
+        	catch (Exception e) {
+        	};
+    	}
+    	if (_class == null) {
+    		return;
+    	}
+    	
         try {
 
             IQSYSObject[] objects = getConnection().listObjects(library, object, new String[] { type }, null);
             if (objects != null && objects.length > 0) {
                 IAction action = new SetSEPAction();
                 IStructuredSelection selection = new StructuredSelection(objects);
-                ServiceEntryPointActionDelegate delegate = new ServiceEntryPointActionDelegate();
-                delegate.selectionChanged(action, selection);
-                delegate.run(action);
+    
+                // import com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointActionDelegate;
+                // ServiceEntryPointActionDelegate delegate = new ServiceEntryPointActionDelegate();
+                // delegate.selectionChanged(action, selection);
+                // delegate.run(action);
+                
+        		ClassLoader myClassLoader = SetSEPAsync.class.getClassLoader();
+        		Class myClass = myClassLoader.loadClass(_classFound);
+        		Object myInstance = myClass.newInstance();
+                
+        		Method myMethod;
+        		
+    			myMethod = myInstance.getClass().getMethod("selectionChanged",
+    					new Class[] { 
+    						IAction.class,
+    						ISelection.class
+    					});
+    			myMethod.invoke(myInstance,
+    					new Object[] { 
+    						action, 
+    						selection
+    					});
+                
+    			myMethod = myInstance.getClass().getMethod("run",
+    					new Class[] { 
+    						IAction.class
+    					});
+    			myMethod.invoke(myInstance,
+    					new Object[] { 
+    						action
+    					});
+                
             }
         } catch (Throwable e) {
+        	e.printStackTrace();
         }
     }
 
     private class SetSEPAction extends Action {
         @Override
         public String getText() {
-            return AS400DebugResources.RESID_SET_SEP_NOPROMPT_MENUITEM;
+        	// import com.ibm.etools.systems.as400.debug.launchconfig.AS400DebugResources;
+            // return AS400DebugResources.RESID_SET_SEP_NOPROMPT_MENUITEM;
+        	return "Set Service Entry Point";
         }
     };
 }
