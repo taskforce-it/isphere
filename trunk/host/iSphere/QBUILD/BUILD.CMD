@@ -67,7 +67,7 @@
                           RSTD(*YES) SPCVAL((*YES) (*NO)) +
                           PROMPT('Create iSphere')
 
-             PARM       KWD(TGTRLS) TYPE(*CHAR) LEN(10) DFT(V5R4M0) +
+             PARM       KWD(TGTRLS) TYPE(*CHAR) LEN(10) DFT(V6R1M0) +
                           SPCVAL((*CURRENT)) +
                           PROMPT('Target release')
 
