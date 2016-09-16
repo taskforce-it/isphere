@@ -631,6 +631,12 @@
              CHGLIB     LIB(&PRDLIB) TEXT(&PRDTEXT)
 
              /* ----------------------------------------------- */
+             /* Delete temporary objects                        */
+             /* ----------------------------------------------- */
+             DLTF       FILE(&PRDLIB/EVFEVENT)
+             DLTF       FILE(&PRDLIB/EVFTEMPF01)
+
+             /* ----------------------------------------------- */
              /* Save library ISPHERE                            */
              /* ----------------------------------------------- */
 
