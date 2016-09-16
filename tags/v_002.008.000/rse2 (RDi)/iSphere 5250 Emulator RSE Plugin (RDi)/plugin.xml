@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.editors">
+   
+      <editor
+            name=""
+            icon="icons/tn5250j.png"
+            class="biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor"
+            id="biz.isphere.tn5250j.rse.sessionseditor.SessionsEditor"/>
+            
+      <editor
+            name=""
+            icon="icons/tn5250j.png"
+            class="biz.isphere.tn5250j.rse.designereditor.DesignerEditor"
+            id="biz.isphere.tn5250j.rse.designereditor.DesignerEditor"/>
+            
+   </extension>
+ 
+   <extension point="org.eclipse.ui.views">
+   
+      <view
+            name="%iSphere_5250_Sessions"
+            icon="icons/tn5250j.png"
+            category="biz.isphere.core.views.categories"
+            class="biz.isphere.tn5250j.rse.sessionsview.SessionsView"
+            id="biz.isphere.tn5250j.rse.sessionsview.SessionsView">
+      </view>
+      
+      <view
+            name="%iSphere_5250_Designer"
+            icon="icons/tn5250j.png"
+            category="biz.isphere.core.views.categories"
+            class="biz.isphere.tn5250j.rse.designerview.DesignerView"
+            id="biz.isphere.tn5250j.rse.designerview.DesignerView">
+      </view>
+      
+   </extension>
+   
+   <extension point="org.eclipse.rse.core.subsystemConfigurations">
+   
+        <configuration
+             name="%iSphere_5250_Emulator"
+             icon="icons/tn5250j.png"
+             iconlive="icons/tn5250j.png"
+             category="biz.isphere.tn5250j"
+             vendor="iSphere Project Team"
+             systemTypeIds="org.eclipse.rse.systemtype.iseries"
+             class="biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystemConfiguration"
+             id="biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystemConfiguration">
+        </configuration>
+        
+   </extension> 
+    
+    <extension point="org.eclipse.ui.popupMenus">
+    
+        <objectContribution
+              id ="biz.isphere.tn5250j.rse.actions"
+              objectClass="org.eclipse.rse.core.subsystems.ISubSystem">
+              <filter name="subsystemConfigurationId" value="biz.isphere.tn5250j.rse.subsystems.TN5250JSubSystemConfiguration"/>
+              <action id="biz.isphere.tn5250j.rse.actions.NewSessionAction"
+                      label="%New_session"
+                      icon="icons/new.gif"
+                      class="biz.isphere.tn5250j.rse.actions.NewSessionAction">
+              </action>
+              <action id="biz.isphere.tn5250j.rse.actions.NewDesignerSessionAction"
+                      label="%New_designer_session"
+                      icon="icons/designer.gif"
+                      class="biz.isphere.tn5250j.rse.actions.NewDesignerSessionAction">
+              </action>
+        </objectContribution>
+        
+       	<objectContribution
+             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember"
+             id="biz.isphere.tn5250j.menu.designer">
+	         <menu
+	            id="biz.isphere.tn5250j.menu.designer" 
+	            path="additions" 
+	            label="%iSphere_5250_Designer"> 
+	            <separator name="group"/> 
+	         </menu> 
+	         <action
+                class="biz.isphere.tn5250j.rse.actions.DesignerOpenWithAction"
+                enablesFor="1+"
+                id="biz.isphere.tn5250j.rse.actions.DesignerOpenWithAction"
+                label="%Open"
+                icon="icons/edit_designer.gif"
+                menubarPath="biz.isphere.tn5250j.menu.designer/group">
+	         </action>
+	         <action
+                class="biz.isphere.tn5250j.rse.actions.DesignerBrowseWithAction"
+                enablesFor="1+"
+                id="biz.isphere.tn5250j.rse.actions.DesignerBrowseWithAction"
+                label="%Browse"
+                icon="icons/browse_designer.gif"
+                menubarPath="biz.isphere.tn5250j.menu.designer/group">
+	         </action>
+      	</objectContribution>
+        
+    </extension>
+    
+</plugin>
