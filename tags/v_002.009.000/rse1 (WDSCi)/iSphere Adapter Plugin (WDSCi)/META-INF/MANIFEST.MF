@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Adapter for WDSCi 7.0
+Bundle-SymbolicName: biz.isphere.adapter;singleton:=true
+Bundle-Version: 2.9.0.r
+Bundle-Activator: biz.isphere.adapter.ISphereAdapterPlugin
+Bundle-Vendor: iSphere Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ biz.isphere.core
+Export-Package: biz.isphere.adapter.swt.widgets
+Eclipse-LazyStart: true
