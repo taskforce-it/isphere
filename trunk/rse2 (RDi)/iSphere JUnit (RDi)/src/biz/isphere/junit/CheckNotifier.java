@@ -11,6 +11,9 @@ package biz.isphere.junit;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.jar.Attributes;
@@ -53,8 +56,12 @@ public class CheckNotifier {
     public void testReleaseProperties() throws Exception {
 
         String path = workspace + "/iSphere Notifier/MANIFEST.MF";
-        Manifest manifest = new Manifest(new FileInputStream(path));
-
+        URL url = new URL("file:" + path);
+        URLConnection connection = url.openConnection();
+        InputStream is = connection.getInputStream();
+        Manifest manifest = new Manifest(is);
+        is.close();
+        
         String xReleaseVersion = getString(manifest, "Bundle-Version");
         new Version(xReleaseVersion);
 
@@ -103,8 +110,11 @@ public class CheckNotifier {
     public void testBetaProperties() throws Exception {
 
         String path = workspace + "/iSphere Notifier/MANIFEST.MF";
-
-        Manifest manifest = new Manifest(new FileInputStream(path));
+        URL url = new URL("file:" + path);
+        URLConnection connection = url.openConnection();
+        InputStream is = connection.getInputStream();
+        Manifest manifest = new Manifest(is);
+        is.close();
 
         String xBetaVersion = getString(manifest, "X-Beta-Version");
         if (xBetaVersion != null) {
