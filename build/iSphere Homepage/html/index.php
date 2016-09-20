@@ -147,6 +147,8 @@
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article3" href="http://www.itjungle.com/fhs/fhs092314-story02.html">iSphere : A Free and Functional Plugin by Alex Woodie (September 23, 2014)</a></td></tr>
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article4" href="http://www.mcpressonline.com/dev-tools/techtip-rational-developer-for-i-rdi-and-isphere-the-missing-link.html">Rational Developer for i (RDi) and iSphere: The Missing Link by Frank Hildebrandt (November 7, 2014)</a></td></tr>
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article5" href="http://www.itjungle.com/fhg/fhg061615-story01.html">iSphere Plug-in Expands RSE/RDi Toolset (June 25, 2015)</a></td></tr>
+		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article6" href="http://www.itjungle.com/fhg/fhg070715-story01.html">Looking For Stuff With iSphere (July 7, 2015)</a></td></tr>
+		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article7" href="http://www.itjungle.com/fhg/fhg092915-story03.html">More iSphere Goodies (September 29, 2015)</a></td></tr>
 		</table>
 		</div>
         <p/>
