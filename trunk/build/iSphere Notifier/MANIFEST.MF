@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Version: 2.9.1.r
 X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: .
+X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
 X-Bundle-Info: Bugfix: Fixed IllegalArgumentException when producing the spooled file description for a spooled file containing dollar ($) characters in the name. 
 X-Beta-Version: 2.9.0.r
 X-Beta-Update-Library: true
