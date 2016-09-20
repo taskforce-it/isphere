@@ -820,24 +820,35 @@ public class SpooledFile {
             tFormat = outputFormat;
         }
 
-        mask = mask.replaceAll(VARIABLE_SPLFNBR, Integer.toString(getFileNumber()));
-        mask = mask.replaceAll(VARIABLE_SPLF, getFile());
-        mask = mask.replaceAll(VARIABLE_JOBNBR, getJobNumber());
-        mask = mask.replaceAll(VARIABLE_JOBUSR, getJobUser());
-        mask = mask.replaceAll(VARIABLE_JOBNAME, getJobName());
-        mask = mask.replaceAll(VARIABLE_JOBSYS, getJobSystem());
-        mask = mask.replaceAll(VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
-        mask = mask.replaceAll(VARIABLE_STMF, getTemporaryName(tFormat));
-        mask = mask.replaceAll(VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
-        mask = mask.replaceAll(VARIABLE_FMT, tFormat); //$NON-NLS-1$
+        try {
 
-        mask = mask.replaceAll(VARIABLE_STATUS, getStatus());
-        mask = mask.replaceAll(VARIABLE_CTIME_STAMP, getCreationTimestampFormatted());
-        mask = mask.replaceAll(VARIABLE_CDATE, getCreationDateFormatted());
-        mask = mask.replaceAll(VARIABLE_CTIME, getCreationTimeFormatted());
-        mask = mask.replaceAll(VARIABLE_USRDTA, getUserData());
+            mask = replace(mask, VARIABLE_SPLFNBR, Integer.toString(getFileNumber()));
+            mask = replace(mask, VARIABLE_SPLF, getFile());
+            mask = replace(mask, VARIABLE_JOBNBR, getJobNumber());
+            mask = replace(mask, VARIABLE_JOBUSR, getJobUser());
+            mask = replace(mask, VARIABLE_JOBNAME, getJobName());
+            mask = replace(mask, VARIABLE_JOBSYS, getJobSystem());
+            mask = replace(mask, VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
+            mask = replace(mask, VARIABLE_STMF, getTemporaryName(tFormat));
+            mask = replace(mask, VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
+            mask = replace(mask, VARIABLE_FMT, tFormat); //$NON-NLS-1$
+
+            mask = replace(mask, VARIABLE_STATUS, getStatus());
+            mask = replace(mask, VARIABLE_CTIME_STAMP, getCreationTimestampFormatted());
+            mask = replace(mask, VARIABLE_CDATE, getCreationDateFormatted());
+            mask = replace(mask, VARIABLE_CTIME, getCreationTimeFormatted());
+            mask = replace(mask, VARIABLE_USRDTA, getUserData());
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Could not replace spooled file variable ***", e);
+            return getFile();
+        }
 
         return mask;
+    }
+
+    private String replace(String mask, String variable, String value) {
+        return mask.replaceAll(variable, value.replaceAll("\\$", "\\\\\\$"));
     }
 
     private boolean transformSpooledFile(String format, String target) throws Exception {
