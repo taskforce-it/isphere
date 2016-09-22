@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 2.9.1.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
+X-Bundle-Info: Bugfix: Fixed IllegalArgumentException when producing the spooled file description for a spooled file containing dollar ($) characters in the name. 
+X-Beta-Version: 2.9.0.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: .
+X-Beta-Info: Added option to pin 5250 views. Enhanced spool file filter options. Enabled "Copy Members to" for source files and member filters. Enhanced "Copy Members to" to copy members between connections.\n\n*** Last library for V5R4. See documentation. ***
