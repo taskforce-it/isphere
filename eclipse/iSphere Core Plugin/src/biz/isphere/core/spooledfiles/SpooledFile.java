@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.Buffer;
@@ -39,6 +40,7 @@ import biz.isphere.core.internal.BrowserEditor;
 import biz.isphere.core.internal.BrowserEditorInput;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
@@ -658,13 +660,17 @@ public class SpooledFile {
 
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
 
-            // IWorkbenchPage page =
-            // ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            // org.eclipse.ui.ide.IDE.openEditor(page, file);
-
-            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
-                file.getLocation().toOSString());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
+            // TODO: remove browser input or add switch to preferences
+            // Do not forget to remove the editor from plugin.xml
+            boolean useBrowser = false;
+            if (useBrowser) {
+                BrowserEditorInput browserInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format),
+                    image, file.getLocation().toOSString());
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(browserInput, BrowserEditor.ID);
+            } else {
+                FileEditorInput editorInput = new FileEditorInput(file);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, ReadOnlyEditor.ID);
+            }
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
