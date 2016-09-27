@@ -36,6 +36,11 @@
             icon="icons/browser.gif"
             class="biz.isphere.core.internal.BrowserEditor"
             id="biz.isphere.core.internal.BrowserEditor"/>
+      <editor
+            name=""
+            icon="icons/browser.gif"
+            class="biz.isphere.core.internal.ReadOnlyEditor"
+            id="biz.isphere.core.internal.ReadOnlyEditor"/>
    </extension>
       	
       	<!--
