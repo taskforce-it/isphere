@@ -28,8 +28,8 @@
              DCL        VAR(&LIB     ) TYPE(*CHAR) LEN(10)
              DCL        VAR(&OBJ     ) TYPE(*CHAR) LEN(10)
 
-             DCL        VAR(&LENGTH  ) TYPE(*DEC ) LEN(5  0) VALUE(120)
-             DCL        VAR(&DATA    ) TYPE(*CHAR) LEN(120 )
+             DCL        VAR(&LENGTH  ) TYPE(*DEC ) LEN(5  0) VALUE(500)
+             DCL        VAR(&DATA    ) TYPE(*CHAR) LEN(500 )
              DCL        VAR(&COUNT   ) TYPE(*DEC ) LEN(5  0)
              DCL        VAR(&COUNT_A ) TYPE(*CHAR) LEN(5)
 
@@ -126,6 +126,18 @@ WORLD:
              IF         COND(&COUNT *LT 5) THEN(DO)
                 GOTO       CMDLBL(WORLD)
              ENDDO
+
+             /* Very long message to demonstrate the 259-character limitation */
+             /* of the Windows org.eclipse.jface.viewers.TableViewer          */
+             CHGVAR     VAR(&LENGTH) VALUE(295)
+             CHGVAR     VAR(&DATA) VALUE('Lorem ipsum dolor sit amet, consetetur sadipscing +
+                                          elitr, sed diam nonumy eirmod tempor invidunt ut +
+                                          labore et dolore magna aliquyam erat, sed diam +
+                                          voluptua. At vero eos et accusam et justo duo +
+                                          dolores et ea rebum. Stet clita kasd gubergren, no +
+                                          sea takimata sanctus est Lorem ipsum dolor sit +
+                                          amet.')
+             CALL       PGM(QSNDDTAQ) PARM(&OBJ &LIB &LENGTH &DATA)
 
 EXIT:
              RETURN
