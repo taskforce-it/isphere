@@ -1250,6 +1250,17 @@ public class Messages extends NLS {
     
     public static String CompareEditor_Compare_Edit;
 
+    public static String Number_of_messages_colon;
+    
+    public static String Tooltip_Number_of_messages;
+    
+    public static String Replacement_character_colon;
+    
+    public static String Tooltip_Replacement_character;
+    
+    public static String Invalid_or_missing_numeric_value;
+    
+    public static String Invalid_or_missing_value;
     
     /*
      * Warning messages

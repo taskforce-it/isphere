@@ -117,10 +117,10 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     private static final String TABLE_COLUMN = "tableColumn_"; //$NON-NLS-1$
     private static final String VIEW_IN_HEX = "viewInHex"; //$NON-NLS-1$
     private static final String DISPLAY_END_OF_DATA = "displayEndOfData"; //$NON-NLS-1$
+    private static final String NUMBER_OF_MESSAGES_TO_RETRIEVE = "numberOfMessagesToRetrieve"; //$NON-NLS-1$
 
     private static final boolean DEFAULT_VIEW_IN_HEX = true;
     private static final boolean DEFAULT_DISPLAY_END_OF_DATA = false;
-    private static final int DEFAULT_NUMBER_OF_MESSAGES = 1;
 
     private Composite mainArea;
     private RemoteObject remoteObject;
@@ -167,6 +167,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         pinKeys.add(DESCRIPTION);
         pinKeys.add(VIEW_IN_HEX);
         pinKeys.add(DISPLAY_END_OF_DATA);
+        pinKeys.add(NUMBER_OF_MESSAGES_TO_RETRIEVE);
 
         for (int i = 0; i < LabelProviderTableViewer.getNumColumns(); i++) {
             pinKeys.add(TABLE_COLUMN + i);
@@ -204,7 +205,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         tableViewerAreaLayoutData.grabExcessVerticalSpace = true;
         tableViewerArea.setLayoutData(tableViewerAreaLayoutData);
 
-        createActions(comboNumberOfMessagesToRetrieve);
+        createActions();
         initializeToolBar();
         initializeViewMenu();
 
@@ -231,7 +232,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         job.schedule();
     }
 
-    private void createActions(Combo messageLengthListener) {
+    private void createActions() {
 
         viewInHexAction = new ViewInHexAction(this);
         viewInHexAction.setChecked(Preferences.getInstance().isDataQueueViewInHex());
@@ -458,19 +459,22 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
         comboNumberOfMessagesToRetrieve = WidgetFactory.createCombo(optionsArea);
         comboNumberOfMessagesToRetrieve.setToolTipText(Messages.Tooltip_Number_of_messages_to_retrieve);
-        comboNumberOfMessagesToRetrieve.setItems(new String[] { "1", "5", "10", "50", "100" });
-        comboNumberOfMessagesToRetrieve.select(DEFAULT_NUMBER_OF_MESSAGES);
+        comboNumberOfMessagesToRetrieve.setItems(Preferences.getInstance().getDataQueueNumberOfMessagesToRetrieveItems());
+
         GridData numMessagesLayoutData = createGridDataSimple();
         numMessagesLayoutData.widthHint = 40;
         comboNumberOfMessagesToRetrieve.setLayoutData(numMessagesLayoutData);
-        setNumberOfMessagesToRetrieve();
+        setNumberOfMessagesToRetrieve(Integer.toString(Preferences.getInstance().getDataQueueNumberOfMessagesToRetrieve()));
 
         comboNumberOfMessagesToRetrieve.addVerifyListener(new NumericOnlyVerifyListener());
         comboNumberOfMessagesToRetrieve.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
-                setNumberOfMessagesToRetrieve();
-                refreshViewAction.run();
+                int oldNumberOfMessagesToRetrieve = getNumberOfMessagesToRetrieve();
+                setNumberOfMessagesToRetrieve(comboNumberOfMessagesToRetrieve.getText());
+                if (oldNumberOfMessagesToRetrieve != getNumberOfMessagesToRetrieve()) {
+                    refreshViewAction.run();
+                }
             }
 
             public void widgetDefaultSelected(SelectionEvent event) {
@@ -480,13 +484,13 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
             public void keyReleased(KeyEvent event) {
                 if (Character.isDigit(event.character)) {
-                    setNumberOfMessagesToRetrieve();
+                    setNumberOfMessagesToRetrieve(comboNumberOfMessagesToRetrieve.getText());
                 }
             }
 
             public void keyPressed(KeyEvent event) {
                 if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
-                    setNumberOfMessagesToRetrieve();
+                    setNumberOfMessagesToRetrieve(comboNumberOfMessagesToRetrieve.getText());
                     refreshViewAction.run();
                 }
             }
@@ -645,7 +649,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             List<RDQM0200MessageEntry> tmpMessages = new ArrayList<RDQM0200MessageEntry>();
             for (Object item : selection.toArray()) {
                 if (item instanceof RDQM0200MessageEntry) {
-                    tmpMessages.add((RDQM0200MessageEntry) item);
+                    tmpMessages.add((RDQM0200MessageEntry)item);
                 }
             }
             messages = tmpMessages.toArray(new RDQM0200MessageEntry[tmpMessages.size()]);
@@ -865,6 +869,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             pinProperties.put(DESCRIPTION, remoteObject.getDescription());
             pinProperties.put(VIEW_IN_HEX, Boolean.toString(viewInHexAction.isChecked()));
             pinProperties.put(DISPLAY_END_OF_DATA, Boolean.toString(displayEndOfDataAction.isChecked()));
+            pinProperties.put(NUMBER_OF_MESSAGES_TO_RETRIEVE, Integer.toString(getNumberOfMessagesToRetrieve()));
         } else {
             pinProperties.put(CONNECTION_NAME, null);
             pinProperties.put(OBJECT, null);
@@ -873,6 +878,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             pinProperties.put(DESCRIPTION, null);
             pinProperties.put(VIEW_IN_HEX, Boolean.toString(DEFAULT_VIEW_IN_HEX));
             pinProperties.put(DISPLAY_END_OF_DATA, Boolean.toString(DEFAULT_DISPLAY_END_OF_DATA));
+            pinProperties.put(NUMBER_OF_MESSAGES_TO_RETRIEVE, Integer.toString(0));
         }
 
         updateColumnWidths();
@@ -888,13 +894,20 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
     }
 
-    private void setNumberOfMessagesToRetrieve() {
+    private void setNumberOfMessagesToRetrieve(String numberOfMessages) {
         try {
-            numberOfMessagesToRetrieve = Integer.parseInt(comboNumberOfMessagesToRetrieve.getText());
+            numberOfMessagesToRetrieve = Integer.parseInt(numberOfMessages);
+            int index = comboNumberOfMessagesToRetrieve.indexOf(numberOfMessages);
+            if (index >= 0) {
+                comboNumberOfMessagesToRetrieve.select(index);
+            } else {
+                comboNumberOfMessagesToRetrieve.select(-1);
+            }
         } catch (Throwable e) {
-            comboNumberOfMessagesToRetrieve.select(DEFAULT_NUMBER_OF_MESSAGES);
-            numberOfMessagesToRetrieve = Integer.parseInt(comboNumberOfMessagesToRetrieve.getText());
+            numberOfMessagesToRetrieve = Preferences.getInstance().getDataQueueNumberOfMessagesToRetrieve();
         }
+
+        comboNumberOfMessagesToRetrieve.setText(Integer.toString(numberOfMessagesToRetrieve));
     }
 
     private int getNumberOfMessagesToRetrieve() {
@@ -1245,6 +1258,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             String objectType = pinProperties.get(OBJECT_TYPE);
             String description = pinProperties.get(DESCRIPTION);
 
+            setNumberOfMessagesToRetrieve(pinProperties.get(NUMBER_OF_MESSAGES_TO_RETRIEVE));
+
             if (connectionName == null || name == null || library == null || objectType == null) {
                 return Status.OK_STATUS;
             }
@@ -1368,6 +1383,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
 
         public RDQM0200 loadMessages(RDQD0100 rdqd0100) throws Throwable {
+
+            System.out.println("Loading " + getNumberOfMessagesToRetrieve() + " messages ...");
 
             QMHRDQM qmhrdqm = new QMHRDQM(as400);
             qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());
