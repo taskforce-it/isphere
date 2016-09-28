@@ -16,6 +16,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.base.internal.ByteHelper;
@@ -126,7 +127,12 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
             } else if (columnIndex == visibleColumns[COLUMN_SENDER_ID]) {
                 return StringHelper.trimR(messageDescription.getSenderID().toString());
             } else if (columnIndex == visibleColumns[COLUMN_MESSAGE_TEXT_LENGTH]) {
-                return Integer.toString(messageDescription.getEnqueuedMesageEntryLength());
+                if (messageDescription.getSenderID() != null) {
+                    return Integer.toString(messageDescription.getEnqueuedMesageEntryLength()) + " ("
+                        + messageDescription.getMessageTextLength(false) + ")";
+                } else {
+                    return Integer.toString(messageDescription.getEnqueuedMesageEntryLength());
+                }
             } else if (columnIndex == visibleColumns[COLUMN_MESSAGE_TEXT]) {
 
                 String label;
@@ -157,11 +163,22 @@ public class LabelProviderTableViewer extends LabelProvider implements ITableLab
     }
 
     public Image getColumnImage(Object element, int columnIndex) {
+
+        RDQM0200MessageEntry messageDescription = (RDQM0200MessageEntry)element;
+
         if (columnIndex == COLUMN_ENTRY_TYPE) {
-            if (rdqd0100.isKeyed()) {
-                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_KEY);
+            if (messageDescription.isTableViewerDataTruncation()) {
+                if (rdqd0100.isKeyed()) {
+                    return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_KEY_WARNING);
+                } else {
+                    return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MESSAGE_WARNING);
+                }
             } else {
-                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MESSAGE);
+                if (rdqd0100.isKeyed()) {
+                    return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_KEY);
+                } else {
+                    return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MESSAGE);
+                }
             }
         } else {
             return null;
