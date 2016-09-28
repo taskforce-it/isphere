@@ -134,6 +134,10 @@ public final class Preferences {
 
     public static final String MONITOR_DTAQ_DISPLAY_END_OF_DATA = MONITOR_DTAQ + "DISPLAY_END_OF_DATA"; //$NON-NLS-1$
 
+    public static final String MONITOR_DTAQ_REPLACEMENT_CHARACTER = MONITOR_DTAQ + "REPLACEMENT_CHARACTER"; //$NON-NLS-1$
+
+    public static final String MONITOR_DTAQ_NUMBER_OF_MESSAGES = MONITOR_DTAQ + "NUMBER_OF_MESSAGES"; //$NON-NLS-1$
+
     private static final String SOURCE_FILE_SEARCH_RESULTS = DOMAIN + "SOURCE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
@@ -352,6 +356,14 @@ public final class Preferences {
 
     public boolean isDataQueueDisplayEndOfData() {
         return preferenceStore.getBoolean(MONITOR_DTAQ_DISPLAY_END_OF_DATA);
+    }
+
+    public String getDataQueueReplacementCharacter() {
+        return preferenceStore.getString(MONITOR_DTAQ_REPLACEMENT_CHARACTER);
+    }
+
+    public int getDataQueueNumberOfMessagesToRetrieve() {
+        return preferenceStore.getInt(MONITOR_DTAQ_NUMBER_OF_MESSAGES);
     }
 
     public boolean isSourceFileSearchResultsEditEnabled() {
@@ -599,6 +611,14 @@ public final class Preferences {
         preferenceStore.setValue(MONITOR_DTAQ_DISPLAY_END_OF_DATA, viewInHex);
     }
 
+    public void setDataQueueReplacementCharacter(String replacementCharacter) {
+        preferenceStore.setValue(MONITOR_DTAQ_REPLACEMENT_CHARACTER, replacementCharacter);
+    }
+
+    public void setDataQueueNumberOfMessagesToRetrieve(int numberOfMessages) {
+        preferenceStore.setValue(MONITOR_DTAQ_NUMBER_OF_MESSAGES, numberOfMessages);
+    }
+
     public void setSourceFileSearchResultsEditEnabled(boolean editable) {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, editable);
     }
@@ -709,6 +729,8 @@ public final class Preferences {
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
         preferenceStore.setDefault(MONITOR_DTAQ_DISPLAY_END_OF_DATA, getDefaultDataQueueDisplayEndOfData());
+        preferenceStore.setDefault(MONITOR_DTAQ_REPLACEMENT_CHARACTER, getDefaultDataQueueReplacementCharacter());
+        preferenceStore.setDefault(MONITOR_DTAQ_NUMBER_OF_MESSAGES, getDefaultDataQueueNumberOfMessagesToRetrieve());
 
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultSourceFileSearchResultsSaveDirectory());
@@ -972,6 +994,26 @@ public final class Preferences {
     }
 
     /**
+     * Returns the default 'replacement character' that is used to replace
+     * non-displayable characters.
+     * 
+     * @return default 'replacement character'.
+     */
+    public String getDefaultDataQueueReplacementCharacter() {
+        return "÷";
+    }
+
+    /**
+     * Returns the default 'number of messages' that are retrieved in the
+     * iSphere data queue monitor view.
+     * 
+     * @return default 'number of messages'.
+     */
+    public int getDefaultDataQueueNumberOfMessagesToRetrieve() {
+        return 10;
+    }
+
+    /**
      * Returns the default 'is edit mode' flag of the view search results view.
      * 
      * @return default 'is edit mode' flag.
@@ -1223,6 +1265,10 @@ public final class Preferences {
         }
 
         return getSpooledFileSuggestedNamesMap().get(key);
+    }
+    
+    public String[] getDataQueueNumberOfMessagesToRetrieveItems() {
+        return new String[] { "1", "5", "10", "50", "100" };
     }
 
     private Map<String, String> getTimeFormatsMap() {

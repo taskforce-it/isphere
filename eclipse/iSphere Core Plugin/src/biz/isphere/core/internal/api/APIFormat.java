@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
@@ -271,8 +272,32 @@ public class APIFormat {
      * @throws UnsupportedEncodingException
      */
     protected String convertToText(byte[] bytes) throws UnsupportedEncodingException {
+        return convertToText(bytes, false);
+    }
 
-        return getCharConverter().byteArrayToString(bytes);
+    /**
+     * Returns the text starting at a given offset and length.
+     * 
+     * @param offset - offset to start from
+     * @param length - number of characters to return
+     * @return text value
+     * @throws UnsupportedEncodingException
+     */
+    protected String convertToText(byte[] bytes, boolean replaceControlCharacters) throws UnsupportedEncodingException {
+
+        if (!replaceControlCharacters) {
+            return getCharConverter().byteArrayToString(bytes);
+        }
+
+        StringBuilder text = new StringBuilder(getCharConverter().byteArrayToString(bytes));
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!Character.isDefined(ch) || Character.isISOControl(ch)) {
+                text.replace(i, i + 1, getReplacementCharacter()); //$NON-NLS-1$
+            }
+        }
+
+        return text.toString();
     }
 
     protected APICharFieldDescription addCharField(String name, int offset, int length) {
@@ -407,5 +432,9 @@ public class APIFormat {
         }
 
         return true;
+    }
+
+    private String getReplacementCharacter() {
+        return Preferences.getInstance().getDataQueueReplacementCharacter();
     }
 }

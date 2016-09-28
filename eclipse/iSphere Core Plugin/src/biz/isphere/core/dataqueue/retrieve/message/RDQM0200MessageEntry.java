@@ -143,7 +143,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     public String getKeyText() throws UnsupportedEncodingException {
 
-        return convertToText(getKeyBytes());
+        return convertToText(getKeyBytes(), true);
     }
 
     /**
@@ -154,7 +154,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     public String getMessageText() throws UnsupportedEncodingException {
 
-        return convertToText(getMessageBytes());
+        return getMessageText(false);
     }
 
     /**
@@ -168,7 +168,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     public String getMessageText(boolean includeSenderID) throws UnsupportedEncodingException {
 
-        return convertToText(getMessageBytes(includeSenderID));
+        return convertToText(getMessageBytes(includeSenderID), true);
     }
 
     /**
