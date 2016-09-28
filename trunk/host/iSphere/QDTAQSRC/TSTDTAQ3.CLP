@@ -8,7 +8,7 @@
      /*                                                                       */
      /* --------------------------------------------------------------------- */
      /*                                                                       */
-     /* iSphere Test Data Queue - Sequention LIFO                             */
+     /* iSphere Test Data Queue - Sequention LIFO Keyed                       */
      /*                                                                       */
      /* --------------------------------------------------------------------- */
      /* STRPREPRC Compile Options:                                            */
