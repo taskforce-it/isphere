@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import org.eclipse.swt.SWT;
+
 import biz.isphere.core.internal.api.APIDateTimeFieldDescription;
 import biz.isphere.core.internal.api.APIFormat;
 
@@ -157,6 +159,14 @@ public class RDQM0200MessageEntry extends APIFormat {
         return getMessageText(false);
     }
 
+    public int getMessageTextLength() {
+        return getMessageTextLength(false);
+    }
+
+    public int getMessageTextLength(boolean includeSenderId) {
+        return getLengthMessageText(includeSenderId);
+    }
+
     /**
      * Returns the message text. Optionally the sender ID can be included in the
      * message text.
@@ -194,6 +204,28 @@ public class RDQM0200MessageEntry extends APIFormat {
      */
     public RDQM0200 getRDQM0200() {
         return rdqm0200;
+    }
+
+    public boolean isTableViewerDataTruncation() {
+
+        if (isWin32() && getMessageTextLength() > getDataTruncationWarningLength()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static int getDataTruncationWarningLength() {
+
+        if (isWin32()) {
+            return 259;
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    private static boolean isWin32() {
+        return "win32".equals(SWT.getPlatform());
     }
 
     /**

@@ -76,6 +76,7 @@ import biz.isphere.core.dataqueue.ControlListenerTableViewer;
 import biz.isphere.core.dataqueue.DataQueueEntryMenuAdapter;
 import biz.isphere.core.dataqueue.DataQueuePropertySource;
 import biz.isphere.core.dataqueue.LabelProviderTableViewer;
+import biz.isphere.core.dataqueue.ViewerFilterTableViewer;
 import biz.isphere.core.dataqueue.action.DisplayEndOfDataAction;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.dataqueue.action.ViewInHexAction;
@@ -150,6 +151,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     private Composite tableViewerArea;
     private TableViewer tableViewer;
+    private ViewerFilterTableViewer viewerFilter;
 
     private int numberOfMessagesToRetrieve;
 
@@ -615,6 +617,9 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
                     }
                 }
             });
+
+            viewerFilter = new ViewerFilterTableViewer();
+            tableViewer.addFilter(viewerFilter);
 
             // Create the status line
             Composite statusLine = new Composite(parent, SWT.NONE);
@@ -1184,6 +1189,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
                 // setPinned(false);
             }
 
+            viewerFilter.reset();
             tableViewer.setInput(rdqm0200);
 
             updateDataQueueEditorLabels(remoteObject);
@@ -1195,8 +1201,12 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
                 clearInvalidDataErrorMessage();
             }
 
-            setInfoMessage(Messages.bind(Messages.A_of_B_messages_retrieved,
-                new Object[] { rdqm0200.getMessages().length, rdqd0100.getNumberOfMessages() }));
+            String text = Messages.bind(Messages.A_of_B_messages_retrieved,
+                new Object[] { rdqm0200.getMessages().length, rdqd0100.getNumberOfMessages() });
+            if (viewerFilter.isMessageTooLongWarning()) {
+                text = text + " " + Messages.bind(Messages.Message_too_long_warning, RDQM0200MessageEntry.getDataTruncationWarningLength());
+            }
+            setInfoMessage(text);
 
             refreshActionsEnablement();
 

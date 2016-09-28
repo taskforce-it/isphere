@@ -1262,6 +1262,8 @@ public class Messages extends NLS {
     
     public static String Invalid_or_missing_value;
     
+    public static String Message_too_long_warning;
+    
     /*
      * Warning messages
      */
