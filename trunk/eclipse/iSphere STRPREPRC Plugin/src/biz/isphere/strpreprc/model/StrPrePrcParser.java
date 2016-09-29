@@ -232,53 +232,45 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         return false;
     }
 
-    public boolean loadDefaultTemplate() {
+    public void loadDefaultTemplate() {
 
         String[] lines = HeaderTemplates.getInstance().getTemplate(memberType);
 
         parseLines(Arrays.asList(lines));
 
-        if (firstLine > 0 && lastLine > 0) {
-            firstLine = 0;
-            lastLine = 0;
-            return true;
-        }
-
-        firstLine = 0;
-        lastLine = 0;
-
-        return false;
+        firstLine = -1;
+        lastLine = -1;
     }
 
     public void updateLpexView(LpexView view, CLFormatter formatter) {
 
         produceParameterSequence(getFullCommand(), formatter);
 
+        int positionCursorTo = IntHelper.tryParseInt(view.query("line"), 0);
+
         // Remove existing header
-        removeFromLpexView(view);
+        int insertAtLine;
+        if (removeFromLpexView(view)) {
+            insertAtLine = firstLine - 1;
+        } else {
+            insertAtLine = IntHelper.tryParseInt(view.query("line"), 0) - 1;
+        }
 
         // Add new header
         String[] headerLines = produceHeader(formatter);
 
-        int cursorLine;
-        if (firstLine <= 0) {
-            cursorLine = IntHelper.tryParseInt(view.query("element"), 0) - 1;
-        } else {
-            cursorLine = 0;
-        }
-
-        int insertLine = Math.max(this.firstLine - 1, 0) + cursorLine;
         for (String line : headerLines) {
-            if (insertLine <= 0) {
+            if (insertAtLine <= 0) {
                 view.doCommand(new LpexDocumentLocation(1, 0), "add before 1");
                 view.setElementText(1, line);
+                positionCursorTo = 1;
             } else {
-                view.doCommand(new LpexDocumentLocation(insertLine, 0), "insert " + line);
+                view.doCommand(new LpexDocumentLocation(insertAtLine, 0), "insert " + line);
             }
-            insertLine++;
+            insertAtLine++;
         }
 
-        view.doCommand("locate element " + Math.max(firstLine, 1));
+        view.doCommand("locate element " + Math.max(positionCursorTo, 1));
     }
 
     public boolean hasSections() {
@@ -331,14 +323,16 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         }
     }
 
-    public void removeFromLpexView(LpexView view) {
+    public boolean removeFromLpexView(LpexView view) {
 
-        if (firstLine == 0) {
-            return;
+        if (firstLine <= 0) {
+            return false;
         }
 
         // Remove existing header
         view.doCommand(new LpexDocumentLocation(firstLine, 0), "delete " + (lastLine - firstLine + 1));
+
+        return true;
     }
 
     private void updateParameters(CLParameter[] clParameters) {
@@ -385,17 +379,16 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
 
     private void removeDeletedParameters(CLParameter[] clParameters) {
 
-
         Set<String> newKeywords = new HashSet<String>();
         for (CLParameter clParameter : clParameters) {
             newKeywords.add(clParameter.getKeyword());
         }
-        
+
         Set<String> currentKeywords = new HashSet<String>();
         for (CLParameter clParameter : parameters.values()) {
             currentKeywords.add(clParameter.getKeyword());
         }
-        
+
         currentKeywords.removeAll(newKeywords);
         for (String keyword : currentKeywords) {
             removeParameter(keyword);
