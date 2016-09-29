@@ -46,8 +46,6 @@ public class DataQueueEntryViewer extends XDialog {
     private final static String SASH_WEIGHTS = "SASH_WEIGHTS_";
     private final int[] DEFAULT_SASH_WEIGHTS = new int[] { 1, 3 };
 
-    protected Shell shell;
-
     private List<RDQM0200MessageEntry> messages;
     private int selectedMessage;
 
@@ -141,7 +139,9 @@ public class DataQueueEntryViewer extends XDialog {
         GridLayout compositeInfoLayout = new GridLayout(1, true);
         compositeInfoLayout.marginWidth = 20;
         compositeInfo.setLayout(compositeInfoLayout);
+        compositeInfo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         labelInfo = new Label(compositeInfo, SWT.NONE);
+        labelInfo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         layout.numColumns++;
 
         if (parent.getLayout() instanceof GridLayout) {
@@ -242,7 +242,7 @@ public class DataQueueEntryViewer extends XDialog {
             getButton(NEXT_ID).setEnabled(true);
         }
 
-        labelInfo.setText("Message " + (selectedMessage + 1) + " of " + messages.size() + ".");
+        labelInfo.setText(Messages.bind(Messages.Message_A_of_B, new Object[] { selectedMessage + 1, messages.size() }));
     }
 
     private void displayKeyValue(String key) {
@@ -277,9 +277,9 @@ public class DataQueueEntryViewer extends XDialog {
     private void loadScreenValues() {
 
         int[] weights = new int[DEFAULT_SASH_WEIGHTS.length];
-        
+
         int i;
-        for (i = 0 ; i < weights.length; i++) {
+        for (i = 0; i < weights.length; i++) {
             if (getDialogBoundsSettings().get(SASH_WEIGHTS + i) == null) {
                 break;
             }
@@ -306,7 +306,7 @@ public class DataQueueEntryViewer extends XDialog {
     public boolean close() {
 
         storeScreenValues();
-        
+
         return super.close();
     }
 
