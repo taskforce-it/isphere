@@ -169,11 +169,16 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
     private void ensurePreconditions() {
 
         if (StringHelper.isNullOrEmpty(rightCommentChars)) {
-            rightCommentChars = "";
+            rightCommentChars = "*/";
+            rightCommentPosition = 70;
         }
 
         if (StringHelper.isNullOrEmpty(leftCommentChars)) {
             leftCommentChars = "//*";
+        }
+        
+        if (StringHelper.isNullOrEmpty(indent)) {
+            indent = "    "; // 4 spaces
         }
     }
 
