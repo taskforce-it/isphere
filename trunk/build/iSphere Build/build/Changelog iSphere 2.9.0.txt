@@ -1,3 +1,24 @@
+
+Changelog: iSphere 2.9.2.b003
+-----------------------------
+•	Changed spooled file editor back to an editor instead of being a 
+    browser, because the search option is more comfortable. The editor 
+    is read-only, now.
+•	Fixed problem, that messages, retrieved from a data queue, were not 
+    correctly copied to the clipboard.
+•	Added option to specify the maximum number of messages to retrieve 
+    from a data queue.
+•	Added option to specify a replacement character that is used to 
+    replace non-displayable characters when retrieving messages from 
+    a data queue.
+•	Added warning message for data queue messages exceeding the 259 
+    table column boundary of MS Windows.
+•	Added additional demo/test data queues to the iSphere library.
+•	Added option to use the font size of the spooled file viewer 
+    (Colors and Fonts: Basic -> Text Font) to compute the page size 
+     when converting a spooled file to PDF.
+•	Fixed problems when adding a STRPREPRC header to a source member.
+
 Changelog: iSphere 2.9.0.b010
 -----------------------------
  • Fixed NPE for RDi 9.5 when opening the iSphere Compare Editor in
