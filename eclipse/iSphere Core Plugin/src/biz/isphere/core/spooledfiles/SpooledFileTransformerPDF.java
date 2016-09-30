@@ -44,8 +44,6 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private Set<PageSize> pageSizesPortrait = null;
     private boolean fitToPage = false;
 
-    private float fontSize;
-
     public SpooledFileTransformerPDF(String connectionName, SpooledFile spooledFile) {
         super(connectionName, spooledFile);
 
@@ -149,27 +147,22 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
     private PageSize getFitToPageSize(int pageWidthInDots, int pageHeightInDots) {
 
-        if (fitToPage) {
+        PageSize fitToPageSize = null;
 
-            PageSize fitToPageSize = null;
-
-            String pageSizeId = Preferences.getInstance().getSpooledFilePageSize();
-            if (!StringHelper.isNullOrEmpty(pageSizeId)) {
-                fitToPageSize = findPageSize(pageSizeId);
-            }
-
-            if (fitToPageSize == null) {
-                fitToPageSize = new PageSize(595, 842, PageSize.PAGE_SIZE_A4);
-            }
-
-            if (isLandscape(pageWidthInDots, pageHeightInDots)) {
-                fitToPageSize = new PageSize(fitToPageSize.getHeight(), fitToPageSize.getWidth(), fitToPageSize.getFormat());
-            }
-
-            return fitToPageSize;
+        String pageSizeId = Preferences.getInstance().getSpooledFilePageSize();
+        if (!StringHelper.isNullOrEmpty(pageSizeId)) {
+            fitToPageSize = findPageSize(pageSizeId);
         }
 
-        return null;
+        if (fitToPageSize == null) {
+            fitToPageSize = new PageSize(595, 842, PageSize.PAGE_SIZE_A4);
+        }
+
+        if (isLandscape(pageWidthInDots, pageHeightInDots)) {
+            fitToPageSize = new PageSize(fitToPageSize.getHeight(), fitToPageSize.getWidth(), fitToPageSize.getFormat());
+        }
+
+        return fitToPageSize;
     }
 
     private PageSize findPageSize(String pageSizeId) {
@@ -216,13 +209,11 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         PageSize pageSize = null;
         if (fitToPage) {
             pageSize = getFitToPageSize(getPageWidthInDots(), getPageHeightInDots());
-        }
-
-        if (pageSize == null) {
+        } else {
             pageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
         }
 
-        fontSize = getFontSize(pageSize);
+        float fontSize = getFontSize(pageSize);
         font = new Font(Font.FontFamily.COURIER, fontSize, Font.NORMAL, BaseColor.BLACK);
         PageMargins pageMargins = getPageMargins(fontSize);
 
@@ -275,8 +266,8 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
         PageSize requiredPageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
 
-        float factorHeight = requiredPageSize.getHeight() / wantedPageSize.getHeight();
-        float factorWidth = requiredPageSize.getWidth() / wantedPageSize.getWidth();
+        float factorHeight = (float)requiredPageSize.getHeight() / (float)wantedPageSize.getHeight();
+        float factorWidth = (float)requiredPageSize.getWidth() / (float)wantedPageSize.getWidth();
 
         if (factorHeight > factorWidth) {
             charHeight = charHeight / factorHeight;
@@ -284,9 +275,9 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             charHeight = charHeight / factorWidth;
         }
 
-        boolean adjustCharSize = true;
+        boolean adjustFontSize = Preferences.getInstance().getSpooledFileAdjustFontSize();
 
-        if (adjustCharSize) {
+        if (adjustFontSize) {
             if (charHeight * getPageHeightInLines() < wantedPageSize.getHeight()) {
                 charHeight = wantedPageSize.getHeight() / getPageHeightInLines();
                 charHeight = dropDecimals(charHeight);
