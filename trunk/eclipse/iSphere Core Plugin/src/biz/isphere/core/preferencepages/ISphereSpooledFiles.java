@@ -30,11 +30,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -49,11 +51,15 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
 
+    // Tab "Conversion"
     private Button buttonDefaultFormatText;
     private Button buttonDefaultFormatHTML;
     private Button buttonDefaultFormatPDF;
     private String defaultFormat;
 
+    // Tab "Font"
+
+    // Tab "Conversion": *TEXT
     private Button buttonConversionTextDefault;
     private Button buttonConversionTextUserDefined;
     private Button buttonConversionTextTransform;
@@ -61,9 +67,10 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private Text textConversionTextLibrary;
     private Validator validatorConversionTextLibrary;
     private String conversionTextLibrary;
-
     private Text textConversionTextCommand;
     private String conversionTextCommand;
+
+    // Tab "Conversion": *HTML
     private Button buttonConversionHTMLDefault;
     private Button buttonConversionHTMLUserDefined;
     private Button buttonConversionHTMLTransform;
@@ -74,6 +81,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private Text textConversionHTMLCommand;
     private String conversionHTMLCommand;
 
+    // Tab "Conversion": *PDF
     private Button buttonConversionPDFDefault;
     private Button buttonConversionPDFUserDefined;
     private Button buttonConversionPDFTransform;
@@ -85,14 +93,17 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionPDFCommand;
     private Combo comboConversionPDFPageSize;
     private String conversionPDFPageSize;
-    private Button chkBoxAdjustFontSize;
+    private Button chkBoxConversionPDFAdjustFontSize;
     private boolean adjustFontSize;
-    private Combo comboSuggestedFileName;
-    private String suggestedFileName;
+    private Label labelConversionPDFUsingFontSize;
+
+    // Tab "General"
     private Button buttonLoadAsynchronously;
     private boolean isLoadAsynchronously;
     private Text textMaxNumSpooledFiles;
     private int maxNumSpooledFiles;
+    private Combo comboSuggestedFileName;
+    private String suggestedFileName;
     private Text textRSEDescription;
     private String rseDescription;
 
@@ -287,6 +298,20 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextCommand.setLayoutData(createGroupLayoutData());
         textConversionTextCommand.setTextLimit(256);
 
+        String colorsAndFonts = Messages.bind(Messages.Change_viewer_font_Basic_Text_Font, new String[] {
+            "<a href=\"org.eclipse.ui.preferencePages.ColorsAndFonts\">", "</a>" });
+
+        Link lnkJavaTaskTags = new Link(groupConversionText, SWT.MULTI | SWT.WRAP);
+        lnkJavaTaskTags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 3, 1));
+        lnkJavaTaskTags.setText(colorsAndFonts);
+        lnkJavaTaskTags.pack();
+        lnkJavaTaskTags.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
+            }
+        });
+
         // Group: HTML conversion
         Group groupConversionHTML = new Group(container, SWT.NONE);
         groupConversionHTML.setText(Messages.Conversion_to_format + " *HTML");
@@ -376,7 +401,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 textConversionPDFLibrary.setEnabled(false);
                 textConversionPDFCommand.setEnabled(false);
                 comboConversionPDFPageSize.setEnabled(false);
-                chkBoxAdjustFontSize.setEnabled(false);
+                setPDFOptionsEnablement();
                 checkError();
             }
         });
@@ -390,7 +415,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 textConversionPDFLibrary.setEnabled(true);
                 textConversionPDFCommand.setEnabled(true);
                 comboConversionPDFPageSize.setEnabled(false);
-                chkBoxAdjustFontSize.setEnabled(false);
+                setPDFOptionsEnablement();
                 checkError();
             }
         });
@@ -404,7 +429,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
                 textConversionPDFLibrary.setEnabled(false);
                 textConversionPDFCommand.setEnabled(false);
                 comboConversionPDFPageSize.setEnabled(true);
-                chkBoxAdjustFontSize.setEnabled(true);
+                setPDFOptionsEnablement();
                 checkError();
             }
         });
@@ -445,24 +470,44 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             @Override
             public void widgetSelected(SelectionEvent e) {
                 conversionPDFPageSize = comboConversionPDFPageSize.getText();
+                setPDFOptionsEnablement();
             }
         });
         comboConversionPDFPageSize.setLayoutData(createGroupLayoutData());
         comboConversionPDFPageSize.setItems(loadAvailablePageSizes());
 
-        chkBoxAdjustFontSize = WidgetFactory.createCheckbox(groupConversionPDF);
-        chkBoxAdjustFontSize.setText(Messages.Adjust_font_size);
-        chkBoxAdjustFontSize.addSelectionListener(new SelectionAdapter() {
+        chkBoxConversionPDFAdjustFontSize = WidgetFactory.createCheckbox(groupConversionPDF);
+        chkBoxConversionPDFAdjustFontSize.setText(Messages.Adjust_font_size);
+        chkBoxConversionPDFAdjustFontSize.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                adjustFontSize = chkBoxAdjustFontSize.getSelection();
+                adjustFontSize = chkBoxConversionPDFAdjustFontSize.getSelection();
             }
         });
-        chkBoxAdjustFontSize.setLayoutData(createLayoutData(3));
+        chkBoxConversionPDFAdjustFontSize.setLayoutData(createLayoutData(2));
+
+        labelConversionPDFUsingFontSize = new Label(groupConversionPDF, SWT.NONE);
+        labelConversionPDFUsingFontSize.setText(Messages.Using_font_size_of_TEXT_conversion);
 
         createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_conversion_commands);
 
         return container;
+    }
+
+    private void setPDFOptionsEnablement() {
+
+        if (IPreferences.SPLF_CONVERSION_TRANSFORM.equals(conversionPDF)) {
+            if (!PageSize.PAGE_SIZE_FONT.equals(conversionPDFPageSize)) {
+                chkBoxConversionPDFAdjustFontSize.setEnabled(true);
+                labelConversionPDFUsingFontSize.setVisible(false);
+            } else {
+                chkBoxConversionPDFAdjustFontSize.setEnabled(false);
+                labelConversionPDFUsingFontSize.setVisible(true);
+            }
+        } else {
+            chkBoxConversionPDFAdjustFontSize.setEnabled(false);
+            labelConversionPDFUsingFontSize.setVisible(false);
+        }
     }
 
     private void createGroupSubstitutionVariables(Composite container, String headline) {
@@ -519,6 +564,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         List<String> pagesSizesList = new ArrayList<String>();
         pagesSizesList.add(PageSize.PAGE_SIZE_CALCULATE);
+        pagesSizesList.add(PageSize.PAGE_SIZE_FONT);
         for (Iterator<PageSize> iterator = pagesSizes.iterator(); iterator.hasNext();) {
             SpooledFileTransformerPDF.PageSize pageSize = (PageSize)iterator.next();
             pagesSizesList.add(pageSize.getFormat());
@@ -802,7 +848,9 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             comboConversionPDFPageSize.setText(PageSize.PAGE_SIZE_A4);
         }
 
-        chkBoxAdjustFontSize.setSelection(adjustFontSize);
+        chkBoxConversionPDFAdjustFontSize.setSelection(adjustFontSize);
+        setPDFOptionsEnablement();
+        
         comboSuggestedFileName.setText(suggestedFileName);
         textMaxNumSpooledFiles.setText(Integer.toString(maxNumSpooledFiles));
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.eclipse.jface.resource.FontRegistry;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -42,16 +44,9 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private Document document = null;
     private Font font = null;
     private Set<PageSize> pageSizesPortrait = null;
-    private boolean fitToPage = false;
 
     public SpooledFileTransformerPDF(String connectionName, SpooledFile spooledFile) {
         super(connectionName, spooledFile);
-
-        if (PageSize.PAGE_SIZE_CALCULATE.equals(Preferences.getInstance().getSpooledFilePageSize())) {
-            fitToPage = false;
-        } else {
-            fitToPage = true;
-        }
 
         pageSizesPortrait = getPageSizes_Portrait();
     }
@@ -145,7 +140,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         return getPageSizes();
     }
 
-    private PageSize getFitToPageSize(int pageWidthInDots, int pageHeightInDots) {
+    private PageSize getPredefinedPageSize(boolean isLandscape) {
 
         PageSize fitToPageSize = null;
 
@@ -158,7 +153,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             fitToPageSize = new PageSize(595, 842, PageSize.PAGE_SIZE_A4);
         }
 
-        if (isLandscape(pageWidthInDots, pageHeightInDots)) {
+        if (isLandscape) {
             fitToPageSize = new PageSize(fitToPageSize.getHeight(), fitToPageSize.getWidth(), fitToPageSize.getFormat());
         }
 
@@ -207,14 +202,23 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
     private Document createPFD(String aPath) throws FileNotFoundException, DocumentException {
 
         PageSize pageSize = null;
-        if (fitToPage) {
-            pageSize = getFitToPageSize(getPageWidthInDots(), getPageHeightInDots());
-        } else {
+        float fontSize;
+        String pageSizeId = Preferences.getInstance().getSpooledFilePageSize();
+
+        if (PageSize.PAGE_SIZE_CALCULATE.equals(pageSizeId)) {
             pageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
+            fontSize = getFontSize(pageSize);
+        } else if (PageSize.PAGE_SIZE_FONT.equals(pageSizeId)) {
+            FontRegistry fontRegistry = ISpherePlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
+            fontSize = fontRegistry.get("org.eclipse.jface.textfont").getFontData()[0].getHeight();
+            pageSize = computePageSize(fontSize);
+        } else {
+            pageSize = getPredefinedPageSize(isLandscape(getPageWidthInDots(), getPageHeightInDots()));
+            fontSize = getFontSize(pageSize);
         }
 
-        float fontSize = getFontSize(pageSize);
         font = new Font(Font.FontFamily.COURIER, fontSize, Font.NORMAL, BaseColor.BLACK);
+
         PageMargins pageMargins = getPageMargins(fontSize);
 
         Document pdf = new Document();
@@ -294,6 +298,30 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
         }
 
         return dropDecimals(charHeight);
+    }
+
+    private PageSize computePageSize(float fontSize) {
+
+        float WIDTH_FACTOR = 1.685493827F;
+
+        PageSize spooledFilePageSize = findRequiredPageSize(getPageWidthInDots(), getPageHeightInDots());
+
+        float tCharWidth = fontSize / WIDTH_FACTOR;
+
+        float tPageWidthInDots = tCharWidth * getPageWidthInChars();
+        float tPageHeightInDots = fontSize * getPageHeightInLines();
+
+        int pageWidthInDots = (int)(tPageWidthInDots + 0.5F); // round up
+        int pageHeightInDots = (int)(tPageHeightInDots + 0.5F); // round up
+
+        float sizeFactor = (float)pageHeightInDots / (float)pageWidthInDots;
+        float suggestedSizeFactor = (float)spooledFilePageSize.getHeight() / (float)spooledFilePageSize.getWidth();
+
+        if (sizeFactor > suggestedSizeFactor) {
+            pageWidthInDots = (int)((pageHeightInDots / suggestedSizeFactor) + 0.5F);
+        }
+
+        return new PageSize(pageWidthInDots, pageHeightInDots, "*USRDEF");
     }
 
     private float dropDecimals(float charHeight) {
@@ -484,6 +512,7 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
 
         public static final String PAGE_SIZE_A4 = "DIN A4"; //$NON-NLS-1$
         public static final String PAGE_SIZE_CALCULATE = "*CALCULATE"; //$NON-NLS-1$
+        public static final String PAGE_SIZE_FONT = "*FONT"; //$NON-NLS-1$
 
         private String format;
         private Rectangle pageSize;
@@ -554,5 +583,4 @@ public class SpooledFileTransformerPDF extends AbstractSpooledFileTransformer {
             return format + " (width: " + pageSize.getWidth() + ", height:" + pageSize.getHeight() + ")";
         }
     }
-
 }
