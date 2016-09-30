@@ -115,6 +115,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_COPY_MEMBERS_TO = "copy_members_to.png";
     public static final String IMAGE_KEY_WARNING = "key_warning.gif";
     public static final String IMAGE_MESSAGE_WARNING = "message_warning.gif";
+    public static final String IMAGE_SEND_MESSAGE = "send_message.png";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -268,6 +269,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_COPY_MEMBERS_TO, getImageDescriptor(IMAGE_COPY_MEMBERS_TO));
         reg.put(IMAGE_KEY_WARNING, getImageDescriptor(IMAGE_KEY_WARNING));
         reg.put(IMAGE_MESSAGE_WARNING, getImageDescriptor(IMAGE_MESSAGE_WARNING));
+        reg.put(IMAGE_SEND_MESSAGE, getImageDescriptor(IMAGE_SEND_MESSAGE));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")

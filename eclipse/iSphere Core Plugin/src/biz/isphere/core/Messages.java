@@ -1265,6 +1265,10 @@ public class Messages extends NLS {
     public static String Message_too_long_warning;
 
     public static String Message_A_of_B;
+
+    public static String Change_viewer_font_Basic_Text_Font;
+
+    public static String Using_font_size_of_TEXT_conversion;
     
     /*
      * Warning messages
