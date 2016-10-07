@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 2.9.2.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
+X-Bundle-Info: Bugfixes and minor enhancements. No changes to v2.9.2beta3. 
+X-Beta-Version: 2.9.2.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
+X-Beta-Info: Bugfixes and minor enhancements. No changes to v2.9.2beta3.
