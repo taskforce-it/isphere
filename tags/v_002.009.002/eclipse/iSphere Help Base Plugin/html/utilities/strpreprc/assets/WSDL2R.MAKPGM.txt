@@ -1,0 +1,72 @@
+     /* ===================================================================== */
+     /*  WSDL2RPG: Convert WSDL to RPG          (CPP)                         */
+     /* ===================================================================== */
+     /*  Author  :  Thomas Raddatz                                            */
+     /*  Date    :  06.11.2007                                                */
+     /*  E-mail  :  thomas.raddatz@Tools400.de                                */
+     /*  Homepage:  www.tools400.de                                           */
+     /* ===================================================================== */
+     /* >>PRE-COMPILER<<                                                      */
+     /*                                                                       */
+     /*   >>CRTCMD<< CRTPGM       PGM(&LI/WSDL2RPG);                          */
+     /*                                                                       */
+     /*   >>LINK<<                                                            */
+     /*     >>PARM<< MODULE(&LI/WSDL2R01 +                                    */
+     /*                     &LI/WSDL2R02 +                                    */
+     /*                     &LI/WSDL2R03 +                                    */
+     /*                     &LI/WSDL2R04 +                                    */
+     /*                     &LI/WSDL2R05 +                                    */
+     /*                     &LI/WSDL2R41 +                                    */
+     /*                     &LI/WSDL2R42 +                                    */
+     /*                     &LI/WSDL2R50 +                                    */
+     /*                     &LI/WSDL2R51 +                                    */
+     /*                     &LI/WSDL2R52 +                                    */
+     /*                     &LI/WSDL2R53 +                                    */
+     /*                     &LI/WSDL2R54 +                                    */
+     /*                     &LI/WSDL2R55 +                                    */
+     /*                     &LI/WSDL2R56 +                                    */
+     /*                     &LI/WSDL2R57 +                                    */
+     /*                     &LI/WSDL2R58 +                                    */
+     /*                     &LI/WSDL2R59 +                                    */
+     /*                     &LI/WSDL2R60 +                                    */
+     /*                     &LI/WSDL2R61 +                                    */
+     /*                     &LI/WSDL2R62 +                                    */
+     /*                     &LI/WSDL2R63 +                                    */
+     /*                     &LI/WSDL2R68 +                                    */
+     /*                     &LI/WSDL2R69 +                                    */
+     /*                     &LI/WSDL2R71 +                                    */
+     /*                     &LI/WSDL2R72 +                                    */
+     /*                     &LI/WSDL2R80 +                                    */
+     /*                     &LI/WSDL2R81 +                                    */
+     /*                     &LI/WSDL2R83 +                                    */
+     /*                     &LI/WSDL2R86 +                                    */
+     /*                     &LI/WSDL2R87 +                                    */
+     /*                     &LI/WSDL2R88 +                                    */
+     /*                     &LI/WSDL2R90 +                                    */
+     /*                     &LI/WSDL2R91 +                                    */
+     /*                     &LI/WSDL2R92 +                                    */
+     /*                     &LI/WSDL2R93 +                                    */
+     /*                     &LI/WSDL2R95 +                                    */
+     /*                     &LI/WSDL2R96 +                                    */
+     /*                     &LI/WSDL2R97 +                                    */
+     /*                     &LI/WSDL2R98 +                                    */
+     /*                     &LI/WSDL2R99 +                                    */
+     /*                     &LI/BASE64R4 +                                    */
+     /*                     &LI/HEXBINR4);                                    */
+     /*     >>PARM<< USRPRF(*USER);                                           */
+     /*     >>PARM<< ACTGRP(*NEW      );                                      */
+     /*     >>PARM<< ENTMOD(&LI/WSDL2R01);                                    */
+     /*     >>PARM<< BNDSRVPGM(BASICS1    +                                   */
+     /*                        EXPAT      +                                   */
+     /*                        HTTPAPIR4  +                                   */
+     /*                        IFS        +                                   */
+     /*                        LOG4RPG    );                                  */
+     /*     >>PARM<< BNDDIR(*LIBL/QC2LE);                                     */
+     /*     >>PARM<< TGTRLS(V6R1M0  );                                        */
+     /*     >>PARM<< DETAIL(*BASIC);                                          */
+     /*   >>END-LINK<<                                                        */
+     /*                                                                       */
+     /*   >>EXECUTE<<                                                         */
+     /*                                                                       */
+     /* >>END-PRE-COMPILER<<                                                  */
+     /* ===================================================================== */

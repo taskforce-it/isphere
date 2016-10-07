@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Message File Compare Editor</title>
+</head>
+
+<body>
+	<h1>Message File Compare Editor</h1>
+	<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+		<img src="assets/messagefilecompareeditor.png"
+		style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
+		border=0>
+	</a> The Message File Compare Editor lets you compare,  edit and synchronize the
+	messages descriptions of two given message files. The comparison very
+	clearly hightlights the differences. Here is a sample comparison:
+	<p>
+		<img src="assets/message_file_compare_editor.png" align="middle">
+	<h2>Comparing Message Files</h2>
+	<p>
+		Select one, preferably two, message files from the RSE tree and from
+		the context menu (right click) and select <i> iSphere Message File
+			Compare Edito</i>r. If you select only one message file, then you need to
+		open the second file from the compare editor.
+	<p>Once these is a message file in both sides, click [Compare] to
+		start a comparison.
+	<p>After the compare process finishes, note that icons between the
+		two panes clearly display the differences.
+	<h2>Filtering Message Descriptions</h2>
+	<p>Use the filter buttons in the &quot;Display&quot; section to
+		filter the message descriptions:
+	<p>
+		<img src="assets/filter_options.png" align="middle">
+	<p>A checked button indicates that the relevant entries are
+		displayed. Uncheck one or more buttons to remove entries from the
+		display. For example, unchecking [=] will remove from the display all
+		message that are identical in both message files.
+	<p>
+		<img src="assets/message_file_compare_editor_filtered.png"
+			align="middle">
+	<p>The status bar provides information on filtered entries. In the
+		two message files compared above, &quot;Identical: 0/7&quot; means
+		zero of the 7 identical messages are displayed. The &quot;7&quot; at
+		the right shows that a total of 7 messages are not displayed.
+	<h2>Synchronzing Message Descriptions</h2>
+	Messages selected to be synchronized are indicated by a right green
+	arrow and a left blue arrow between the panes. A message that does not
+	have an arrow will not be changed by the [Synchronize] button.
+	<p>Use the context (right click) menu on messages to set the left
+		or right arrows in the direction you want synchronization to occur.
+	<p>The complete context menu looks like this:
+	<p>
+		<img src="assets/context_menu.png" align="middle">
+	<p>For example you may want to change the &quot;not equal&quot;
+		action using &quot;Select for copying &lt;- (right to left)&quot; or
+		using &quot;Select for copying -&gt; (left to right)&quot;. You may
+		want to use &quot;Remove selection&quot; on messages which are missing
+		from one of the message files to avoid copying them to the other
+		message file.
+	<p>Note that you can also conveniently delete, edit and compare
+		message descriptions using the context menu.<p>
+		When you are satisfied that you have all the left and right arrows set
+		correctly, click [Synchronize] to make the changes. <b>Note:</b> There
+		is no &quot;Undo&quot; after you click [Synchronize].
+	<p>
+	<table>
+		<tr>
+			<td class="notice">Note the &quot;Auto-Compare&quot; checkbox.
+				If checked, the message files will be compared automatically after
+				the files are synchronized. If not checked, changed table items
+				which  no longer match the filter options are not immediately
+				removed from the table. The items are kept in the table to give you
+				a chance to change them again, without changing the filter options.
+				The status bar always show the correct values according to the
+				filter options. You can toggle a filter option of your choice to
+				update the table view.</td>
+		</tr>
+	</table>
+	<p>
+	<h2>
+		<p>
+		<p>
+		<h2>Comparing Message Descriptions Side by Side</h2>
+		<p>There are three ways to find differences by opening the compare
+			dialog:
+		<ul>
+			<li>Double click a message description</li>
+			<li>Select a message and use the <i>Enter</i> key
+			</li>
+			<li>Right click, then click &quot;Compare left & right&quot; from the
+				context menu</li>
+		</ul>
+		<p>
+			<img src="assets/compare_message_descriptions.png" align="middle">
+		<p>
+		<h2>Notes on Merging Message Descriptions</h2>
+		<p>
+		<h3>Attributes</h3>
+		<p>The following attributes are used for comparing and
+			synchronizing message descriptions:
+		<p>
+		<ul>
+			<li>Message identifier</li>
+			<li>First-level message text</li>
+			<li>Second-level message text</li>
+			<li>Severity code</li>
+			<li>Coded character set ID</li>
+			<li>Message data fields formats</li>
+			<li>Reply type</li>
+			<li>Valid reply values</li>
+			<li>Special reply values</li>
+			<li>Range of reply values</li>
+			<li>Default reply value</li>
+			<li>Relationship for valid replies</li>
+		</ul>
+		<p>
+		<h3>Synchronizing on the Same System</h3>
+		<p>
+			The <i>Message File Compare Editor</i> uses the <i>MRGMSGF</i>
+			command for merging message descriptions.
+		<p>
+		<h3>Synchronizing on Different Systems</h3>
+		<p>
+			The <i>Message File Compare Editor</i> uses the <i>ADDMSGD</i> and <i>CHGMSGD</i>
+			commands for merging message descriptions.
+		<p>
+			<iframe src="../copyright.html" width="100%" frameborder="0"
+				marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
