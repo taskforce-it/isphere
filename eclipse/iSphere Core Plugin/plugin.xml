@@ -38,7 +38,7 @@
             id="biz.isphere.core.internal.BrowserEditor"/>
       <editor
             name=""
-            icon="icons/browser.gif"
+            icon="icons/text_editor.png"
             class="biz.isphere.core.internal.ReadOnlyEditor"
             id="biz.isphere.core.internal.ReadOnlyEditor"/>
    </extension>
