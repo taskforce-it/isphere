@@ -15,6 +15,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+
+import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
 public class ProcessSessionFocus {
 
@@ -58,8 +62,60 @@ public class ProcessSessionFocus {
                     }
 
                 }
+
+                // TODO: remove debug code
+                // System.out.println("Focus: " + mode);
+                if (mode.equals("*GAINED")) {
+                    switchKeyBindings();
+                }
+            }
+
+            /**
+             * Bugfix for iSphere ticket #29.
+             * 
+             * <pre>
+             * The integrated 5250 terminal has big problems with keyboard shortcuts in RDi 9.5:
+             * "5250 keybindings are applied to RSE items"
+             * 1. Click an IFS item (a folder) to see the sub-folders.
+             * 2. Then click back into 5250.
+             * 3. Press F5.
+             * 4. => you act on the IFS item
+             * </pre>
+             */
+            private void switchKeyBindings() {
+
+                TN5250JGUI tn5250jGUI = (TN5250JGUI)event.getSource();
+                ITN5250JPart workbenchPart = tn5250jGUI.getTN5250JInfo().getTN5250JPart();
+                if (workbenchPart instanceof TN5250JView) {
+                    IWorkbenchPart activePart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+
+                    if (workbenchPart == activePart) {
+                        /*
+                         * View is already active. So we do not need to activate
+                         * it again.
+                         */
+                        return;
+                    }
+
+                    // TODO: remove debug code
+                    // System.out.println("Switching key bindings ...");
+
+                    /*
+                     * Activate a SWT control to force Eclipse to activate the
+                     * view.
+                     * "PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(...);"
+                     * does not work, because for unknown reasons the part is
+                     * not properly deactivated again. See: TN5250JPart,
+                     * IPartListener2
+                     */
+                    tabFolderSessions.forceFocus();
+
+                    /*
+                     * Switch back to the actual AWT control.
+                     */
+                    tn5250jGUI.requestFocus();
+                }
             }
         });
     }
-
 }
