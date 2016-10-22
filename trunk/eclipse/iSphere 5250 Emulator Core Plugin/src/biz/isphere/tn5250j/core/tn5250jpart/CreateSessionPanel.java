@@ -170,9 +170,10 @@ public class CreateSessionPanel {
     }
 
     private void processFocusLost(java.awt.event.FocusEvent event) {
-        if (!tn5250jPart.getTabFolderSessions().isDisposed()) {
-            new ProcessSessionFocus(tn5250jPart.getTabFolderSessions().getDisplay(), tn5250jPart.getTabFolderSessions(), "*LOST", event).start();
+        if (tn5250jPart.getTabFolderSessions().isDisposed()) {
+            return;
         }
+        new ProcessSessionFocus(tn5250jPart.getTabFolderSessions().getDisplay(), tn5250jPart.getTabFolderSessions(), "*LOST", event).start();
     }
 
 }
