@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditor;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
 public class ProcessSessionFocus {
@@ -86,7 +87,7 @@ public class ProcessSessionFocus {
 
                 TN5250JGUI tn5250jGUI = (TN5250JGUI)event.getSource();
                 ITN5250JPart workbenchPart = tn5250jGUI.getTN5250JInfo().getTN5250JPart();
-                if (workbenchPart instanceof TN5250JView) {
+                if (workbenchPart instanceof TN5250JView || workbenchPart instanceof TN5250JEditor) {
                     IWorkbenchPart activePart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 
                     if (workbenchPart == activePart) {
