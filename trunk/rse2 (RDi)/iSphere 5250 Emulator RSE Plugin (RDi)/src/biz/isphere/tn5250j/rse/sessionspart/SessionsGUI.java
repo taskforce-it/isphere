@@ -13,6 +13,10 @@ import org.tn5250j.Session5250;
 import biz.isphere.tn5250j.core.sessionspart.CoreSessionsGUI;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 
+/**
+ * This class is the starting point of the actual emulator and the AWT
+ * components.
+ */
 public class SessionsGUI extends CoreSessionsGUI {
 
     private static final long serialVersionUID = 1L;
