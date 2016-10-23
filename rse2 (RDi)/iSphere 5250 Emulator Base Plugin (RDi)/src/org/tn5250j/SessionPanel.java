@@ -69,6 +69,9 @@ import org.tn5250j.tools.logging.TN5250jLogger;
 
 /**
  * A host GUI session (Hint: old name was SessionGUI)
+ * <p>
+ * This class is the GUI of a 5250 emulator session. It is the top-level AWT
+ * class of the 5250 emulator.
  */
 public class SessionPanel extends JPanel implements ComponentListener, ActionListener, RubberBandCanvasIF, SessionConfigListener, SessionListener {
 
@@ -482,7 +485,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         } else {
             // lets set this puppy up to connect within its own thread
             Runnable connectIt = new Runnable() {
-                
+
                 public void run() {
                     session.getVT().connect();
                 }

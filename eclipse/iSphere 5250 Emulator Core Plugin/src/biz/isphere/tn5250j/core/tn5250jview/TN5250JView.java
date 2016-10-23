@@ -19,6 +19,10 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
 
+/**
+ * This class is the TN5250 view. It uses a tab folder and tabs to arrange up to
+ * 4 sessions in a tab.
+ */
 public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISaveablePart2 {
 
     private TN5250JPart tn5250jPart;
