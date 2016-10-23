@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -31,6 +33,9 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 
+/**
+ * This class produces the content of a 5250 view or editor.
+ */
 public class TN5250JPart {
 
     public static int CLOSE_PART_YES = 0;
@@ -91,6 +96,15 @@ public class TN5250JPart {
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new FillLayout());
+
+        container.addHelpListener(new HelpListener() {
+            public void helpRequested(HelpEvent event) {
+                /*
+                 * Empty method to disable the Eclipse help on F1. This way F1
+                 * is only processed by the 5250 emulator.
+                 */
+            }
+        });
 
         tabFolderSessions = new CTabFolder(container, SWT.CLOSE);
         tabFolderSessions.addCTabFolder2Listener(new CTabFolder2Adapter() {
