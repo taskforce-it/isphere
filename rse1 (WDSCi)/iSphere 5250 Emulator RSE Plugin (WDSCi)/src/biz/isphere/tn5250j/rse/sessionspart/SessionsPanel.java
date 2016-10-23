@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,8 +142,14 @@ public class SessionsPanel extends CoreSessionsPanel {
         return new String(chars).substring(0, chars.length - 1);
     }
 
+    /**
+     * This method creates the actual 5250 emulator session.
+     * <p>
+     * Up to 4 sessions can be added to a 5250 view.
+     */
     @Override
     public TN5250JGUI getTN5250JGUI(TN5250JInfo tn5250jInfo, Session5250 session5250) {
+        // Create the session GUI. AWT components start here.
         return new SessionsGUI(tn5250jInfo, session5250);
     }
 
