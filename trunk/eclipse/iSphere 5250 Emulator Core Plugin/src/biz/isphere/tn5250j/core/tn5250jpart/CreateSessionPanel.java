@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -120,6 +122,36 @@ public class CreateSessionPanel {
                 return compositeSession;
             }
         };
+
+        swingControl.addTraverseListener(new TraverseListener() {
+            /**
+             * This one is hard to explain. Actually there is no explanation for
+             * it. All I know is that for whatever reasons, the following keys
+             * influence the way a [tab] is processed afterwards:
+             * 
+             * <pre>
+             * '  = apostrophe
+             * °  = degree sign
+             * "  = double quote (quotion mark)
+             * `  = grave accent
+             * ~  = tilde
+             * </pre>
+             * 
+             * When a [tab] or Shift+[tab] key is pressed right after one of
+             * these keys, the traverse listener is called instead of the key
+             * listener. I assume that the problem is very deep in the Swing
+             * framework or even at OS level.
+             * <p>
+             * Therefore traversal is disallowed at all.
+             * 
+             * @see iSphere ticker #29.
+             * @author Thomas Raddatz, 24.10.2016
+             */
+            public void keyTraversed(TraverseEvent paramTraverseEvent) {
+                paramTraverseEvent.doit = false;
+            }
+        });
+
         swingControl.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(final KeyEvent keyEvent) {
