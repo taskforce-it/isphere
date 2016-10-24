@@ -72,7 +72,7 @@ public class ProcessSessionFocus {
             }
 
             /**
-             * Bugfix for iSphere ticket #29.
+             * Bugfix for iSphere ticket #29, relates to RDi 9.5.
              * 
              * <pre>
              * The integrated 5250 terminal has big problems with keyboard shortcuts in RDi 9.5:
@@ -82,6 +82,8 @@ public class ProcessSessionFocus {
              * 3. Press F5.
              * 4. => you act on the IFS item
              * </pre>
+             * 
+             * TODO: Fix Eclipse key Ctrl+F7 for switching between views.
              */
             private void switchKeyBindings() {
 
@@ -106,8 +108,8 @@ public class ProcessSessionFocus {
                      * view.
                      * "PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(...);"
                      * does not work, because for unknown reasons the part is
-                     * not properly deactivated again. See: TN5250JPart,
-                     * IPartListener2
+                     * not properly deactivated again. Use: TN5250JPart,
+                     * IPartListener2 for logging that.
                      */
                     tabFolderSessions.forceFocus();
 
