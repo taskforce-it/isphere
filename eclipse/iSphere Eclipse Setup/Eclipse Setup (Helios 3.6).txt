@@ -46,7 +46,12 @@ a) Preferences -> Java -> Installed JREs (
    JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
    JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
    
-   Flagged as "Default JRE".
+   Flagged as "Default JRE". (WDSC 7.0)
+
+   JRE home:   C:\Programme_x86\IBM\SDP_080\jdk   (example path)
+   JRE name:   JRE 1.6.0 IBM J9                   (must be spelled as shown)
+
+   Flagged as "Default JRE". (RDP 8.0 and RDi 9.1+)
 
 b) Preferences - Java -> Code Style -> Clean Up
    
