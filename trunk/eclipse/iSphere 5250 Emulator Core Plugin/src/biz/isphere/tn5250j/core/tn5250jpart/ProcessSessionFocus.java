@@ -67,7 +67,7 @@ public class ProcessSessionFocus {
                 // TODO: remove debug code
                 // System.out.println("Focus: " + mode);
                 if (mode.equals("*GAINED")) {
-                    switchKeyBindings();
+                    bugFixRDi95_activateView();
                 }
             }
 
@@ -76,14 +76,16 @@ public class ProcessSessionFocus {
              * 
              * <pre>
              * The integrated 5250 terminal has big problems with keyboard shortcuts in RDi 9.5:
-             * "5250 keybindings are applied to RSE items"
+             * "5250 key bindings are applied to RSE items"
              * 1. Click an IFS item (a folder) to see the sub-folders.
              * 2. Then click back into 5250.
              * 3. Press F5.
              * 4. => you act on the IFS item
              * </pre>
+             * 
+             * @see biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart
              */
-            private void switchKeyBindings() {
+            private void bugFixRDi95_activateView() {
 
                 TN5250JGUI tn5250jGUI = (TN5250JGUI)event.getSource();
                 ITN5250JPart workbenchPart = tn5250jGUI.getTN5250JInfo().getTN5250JPart();
@@ -99,7 +101,7 @@ public class ProcessSessionFocus {
                     }
 
                     /*
-                     * Carry control that shall get the focus to the focus
+                     * Carry the control that shall get the focus to the focus
                      * listener of the "tabFolderSessions" control of call
                      * TN5250JPart.
                      */
