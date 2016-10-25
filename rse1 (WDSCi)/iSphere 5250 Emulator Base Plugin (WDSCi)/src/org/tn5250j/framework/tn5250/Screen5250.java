@@ -3748,11 +3748,15 @@ public class Screen5250 implements TN5250jConstants {
      * 
      */
     private void fireScreenChanged(int which, int startRow, int startCol, int endRow, int endCol) {
-
         if (listeners != null) {
-            int size = listeners.size();
+            // Patch below contributed by Mitch Blevins
+            // int size = listeners.size();
+            Vector<ScreenListener> lc = new Vector<ScreenListener>(listeners);
+            int size = lc.size();
             for (int i = 0; i < size; i++) {
-                ScreenListener target = (ScreenListener)listeners.elementAt(i);
+                // ScreenListener target =
+                // (ScreenListener)listeners.elementAt(i);
+                ScreenListener target = lc.elementAt(i);
                 target.onScreenChanged(1, startRow, startCol, endRow, endCol);
             }
         }
@@ -3782,9 +3786,9 @@ public class Screen5250 implements TN5250jConstants {
         int startCol = getCol(lastPos);
 
         if (listeners != null) {
-            int size = listeners.size();
-            for (int i = 0; i < size; i++) {
-                ScreenListener target = (ScreenListener)listeners.elementAt(i);
+            Vector<ScreenListener> lc = new Vector<ScreenListener>(listeners);
+            for (int i = 0, len = lc.size(); i < len; i++) {
+                ScreenListener target = lc.elementAt(i);
                 target.onScreenChanged(update, startRow, startCol, startRow, startCol);
             }
         }
@@ -3795,11 +3799,10 @@ public class Screen5250 implements TN5250jConstants {
      * 
      */
     private void fireScreenSizeChanged() {
-
         if (listeners != null) {
-            int size = listeners.size();
-            for (int i = 0; i < size; i++) {
-                ScreenListener target = (ScreenListener)listeners.elementAt(i);
+            Vector<ScreenListener> lc = new Vector<ScreenListener>(listeners);
+            for (int i = 0, size = lc.size(); i < size; i++) {
+                ScreenListener target = lc.elementAt(i);
                 target.onScreenSizeChanged(numRows, numCols);
             }
         }
@@ -3825,7 +3828,6 @@ public class Screen5250 implements TN5250jConstants {
             listeners = new java.util.Vector(3);
         }
         listeners.addElement(listener);
-
     }
 
     /**
