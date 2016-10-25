@@ -17,11 +17,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Version;
 
+import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditor;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
 public class ProcessSessionFocus {
+
+    // RDi 9.5+ = Eclipse 4.4+
+    private static final Version RDI95 = new Version(4, 4, 0);
 
     private Display display;
     private CTabFolder tabFolderSessions;
@@ -64,10 +69,10 @@ public class ProcessSessionFocus {
 
                 }
 
-                // TODO: remove debug code
-                // System.out.println("Focus: " + mode);
                 if (mode.equals("*GAINED")) {
-                    bugFixRDi95_activateView();
+                    if (PluginCheck.getPlatformVersion().compareTo(RDI95) > 0) {
+                        bugFixRDi95_activateView();
+                    }
                 }
             }
 
