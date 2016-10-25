@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -158,6 +160,22 @@ public class TN5250JPart {
             public void widgetSelected(final SelectionEvent event) {
                 SetSessionFocus.run(tabFolderSessions.getSelectionIndex(), -1, tn5250jPart);
 
+            }
+        });
+
+        tabFolderSessions.addFocusListener(new FocusListener() {
+
+            public void focusLost(FocusEvent arg0) {
+            }
+
+            public void focusGained(FocusEvent arg0) {
+                Object object = tabFolderSessions.getData(TabFolderSessionsData.TARGET_FOCUS_CONTROL);
+                if (object instanceof TN5250JGUI) {
+                    // Focus set
+                    tabFolderSessions.setData(TabFolderSessionsData.TARGET_FOCUS_CONTROL, null);
+                    TN5250JGUI tn5250jGUI = (TN5250JGUI)object;
+                    tn5250jGUI.requestFocus();
+                }
             }
         });
 

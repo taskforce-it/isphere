@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,8 +82,6 @@ public class ProcessSessionFocus {
              * 3. Press F5.
              * 4. => you act on the IFS item
              * </pre>
-             * 
-             * TODO: Fix Eclipse key Ctrl+F7 for switching between views.
              */
             private void switchKeyBindings() {
 
@@ -100,8 +98,12 @@ public class ProcessSessionFocus {
                         return;
                     }
 
-                    // TODO: remove debug code
-                    // System.out.println("Switching key bindings ...");
+                    /*
+                     * Carry control that shall get the focus to the focus
+                     * listener of the "tabFolderSessions" control of call
+                     * TN5250JPart.
+                     */
+                    tabFolderSessions.setData(TabFolderSessionsData.TARGET_FOCUS_CONTROL, tn5250jGUI);
 
                     /*
                      * Activate a SWT control to force Eclipse to activate the
@@ -112,11 +114,6 @@ public class ProcessSessionFocus {
                      * IPartListener2 for logging that.
                      */
                     tabFolderSessions.forceFocus();
-
-                    /*
-                     * Switch back to the actual AWT control.
-                     */
-                    tn5250jGUI.requestFocus();
                 }
             }
         });
