@@ -163,6 +163,19 @@ public class TN5250JPart {
             }
         });
 
+        /**
+         * Bugfix for iSphere ticket #29, relates to RDi 9.5.
+         * 
+         * <pre>
+         * The integrated 5250 terminal has big problems with keyboard shortcuts in RDi 9.5:
+         * "5250 key bindings are applied to RSE items"
+         * 1. Click an IFS item (a folder) to see the sub-folders.
+         * 2. Then click back into 5250.
+         * 3. Press F5.
+         * 4. => you act on the IFS item
+         * </pre>
+         * @see biz.isphere.tn5250j.core.tn5250jpart.ProcessSessionFocus
+         */
         tabFolderSessions.addFocusListener(new FocusListener() {
 
             public void focusLost(FocusEvent arg0) {
