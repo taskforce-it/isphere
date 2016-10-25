@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,16 @@ public final class PluginCheck implements IObsoleteBundles {
             return null;
         }
 
-        Object version = headers.get("Bundle-Version");
+        Object version = headers.get("Bundle-Version"); //$NON-NLS-1$
         if (version instanceof String) {
             return new Version((String)version);
         }
 
         return null;
+    }
+
+    public static Version getPlatformVersion() {
+        return getVersion("org.eclipse.platform"); //$NON-NLS-1$
     }
 
     private void performBundleCheck() {
@@ -69,7 +73,7 @@ public final class PluginCheck implements IObsoleteBundles {
             return;
         }
 
-        new UIJob("OBSOLETE_BUNDLES_WARNING") {
+        new UIJob("OBSOLETE_BUNDLES_WARNING") { //$NON-NLS-1$
             @Override
             public IStatus runInUIThread(IProgressMonitor arg0) {
                 Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
