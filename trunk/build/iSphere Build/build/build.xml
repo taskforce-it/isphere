@@ -313,15 +313,15 @@
     * ===================================================================== -->
 	<target name="downloadISphereLibrary" depends="ftpCredentialsIBMi" description="Download iSphere library from IBM i">
 
-		<echo>Downloading save file ${ftp.savefile.name} ...</echo>
+		<echo>Downloading save file ${IBMi.ftp.savefile.name} ...</echo>
 
 		<ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400">
 			<fileset dir="${local.download.directory}" casesensitive="false">
-				<include name="${ftp.savefile.name}" />
+				<include name="${IBMi.ftp.savefile.name}" />
 			</fileset>
 		</ftp>
 
-		<move file="${local.download.directory}/${ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
+		<move file="${local.download.directory}/${IBMi.ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.isphere.core}" depth="infinite" />
