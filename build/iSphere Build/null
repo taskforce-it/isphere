@@ -1,0 +1,144 @@
+// ---------------------------------------------------------- //
+//  http://www.dynamicdrive.com/dynamicindex1/navigate1.htm   //
+// ---------------------------------------------------------- //
+document.write('\<ul id="treemenu" class="treeview">\
+  <li><a href="../html/introduction/introduction.html" target="content" style="text-decoration:none">Introduction</a></li>\
+  <li><a href="../html/upgrade/upgrade_instructions.html" target="content" style="text-decoration:none">Upgrade Instructions</a></li>\
+  <li>Install Instructions\
+  <ul>\
+    <li><a href="../html/install/wdsci7.0/install_wdsci.html" target="content" style="text-decoration:none">Install Plugin for WDSCi 7.0</a></li>\
+    <li><a href="../html/install/rdi8.0/install_rdi.html" target="content" style="text-decoration:none">Install Plugin for RDi 8.0+</a></li>\
+    <li><a href="../html/install/install_library.html" target="content" style="text-decoration:none">Install iSphere Library</a></li>\
+  </ul>\
+  </li>\
+  <li>Uninstall Instructions\
+  <ul>\
+    <li><a href="../html/uninstall/uninstall_wdsci/uninstall_wdsci.html" target="content" style="text-decoration:none">Uninstall WDSC</a></li>\
+    <li><a href="../html/uninstall/uninstall_rdi.html" target="content" style="text-decoration:none">Uninstall RDi</a></li>\
+    <li><a href="../html/uninstall/uninstall_library.html" target="content" style="text-decoration:none">Uninstall Library</a></li>\
+  </ul>\
+  </li>\
+  <li>Reference\
+  <ul>\
+    <li><a href="../html/core/core.html" target="content" style="text-decoration:none">iSphere Core</a></li>\
+    <li><a href="../html/appearance/appearance.html" target="content" style="text-decoration:none">Appearance</a></li>\
+    <li><a href="../html/connection/properties.html" target="content" style="text-decoration:none">Connection Properties</a></li>\
+    <li><a href="../html/sourcefilesearch/sourcefilesearch.html" target="content" style="text-decoration:none">Source File Search</a>\
+    <ul>\
+      <li><a href="../html/search/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/comparemergeeditor/comparemergeeditor.html" target="content" style="text-decoration:none">Source File Compare/Merge Editor</a>\
+    <ul>\
+      <li><a href="../html/comparemergeeditor/rdi95extensions/rdi95extensions.html" target="content" style="text-decoration:none">RDi 9.5 Extensions</a></li>\
+      <li><a href="../html/compare/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/messagefilesearch/messagefilesearch.html" target="content" style="text-decoration:none">Message File Search</a>\
+    <ul>\
+      <li><a href="../html/search/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/messagefileeditor/messagefileeditor.html" target="content" style="text-decoration:none">Message File Editor</a></li>\
+    <li><a href="../html/messagefilecompareeditor/messagefilecompareeditor.html" target="content" style="text-decoration:none">Message File Compare Editor</a>\
+    <ul>\
+      <li><a href="../html/compare/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/bindingdirectoryeditor/bindingdirectoryeditor.html" target="content" style="text-decoration:none">Binding Directory Editor</a></li>\
+    <li><a href="../html/dataareaeditor/dataareaeditor.html" target="content" style="text-decoration:none">Data Area Editor</a>\
+    <ul>\
+      <li><a href="../html/dataareaeditor/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/userspaceeditor/userspaceeditor.html" target="content" style="text-decoration:none">User Space Editor</a>\
+    <ul>\
+      <li><a href="../html/dataareaeditor/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/dataspaces/dataspaces.html" target="content" style="text-decoration:none">Data Spaces</a>\
+    <ul>\
+      <li><a href="../html/dataspaces/designer/dataspaceeditordesigner.html" target="content" style="text-decoration:none">Designer</a></li>\
+      <li><a href="../html/dataspaces/editor/dataspaceeditor.html" target="content" style="text-decoration:none">Editor</a></li>\
+      <li><a href="../html/dataspaces/monitor/dataspacemonitor.html" target="content" style="text-decoration:none">Monitor</a></li>\
+      <li><a href="../html/dataspaces/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/dataqueues/dataqueues.html" target="content" style="text-decoration:none">Data Queues</a>\
+    <ul>\
+      <li><a href="../html/dataqueues/monitor/dataqueuemonitor.html" target="content" style="text-decoration:none">Monitor</a></li>\
+      <li><a href="../html/dataqueues/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/decorator/hostobjectdecorator.html" target="content" style="text-decoration:none">Host Object Decorator</a>\
+    <ul>\
+      <li><a href="../html/decorator/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/filtermanagement/filtermanagement.html" target="content" style="text-decoration:none">RSE Filter Management</a></li>\
+    <li><a href="../html/spooledfilesubsystem/spooledfilesubsystem.html" target="content" style="text-decoration:none">Spooled File Subsystem</a>\
+    <ul>\
+      <li><a href="../html/spooledfilesubsystem/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/copymembers/copymembers.html" target="content" style="text-decoration:none">Copy Members</a></li>\
+    <li><a href="../html/tasktags/tasktags.html" target="content" style="text-decoration:none">Task Tags</a>\
+    <ul>\
+      <li><a href="../html/tasktags/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/messagesubsystem/messagesubsystem.html" target="content" style="text-decoration:none">Message Subsystem</a></li>\
+    <li><a href="../html/strpreprc/strpreprc.html" target="content" style="text-decoration:none">SPRPREPRC Plug-in</a>\
+    <ul>\
+      <li><a href="../html/strpreprc/preferences/preferences.html" target="content" style="text-decoration:none">Preferences</a></li>\
+    </ul>\
+    </li>\
+    <li><a href="../html/5250emulator/5250emulator.html" target="content" style="text-decoration:none">5250 Emulator</a>\
+    <ul>\
+      <li><a href="../html/5250emulator/configuration/configuration.html" target="content" style="text-decoration:none">Configuration</a></li>\
+      <li><a href="../html/5250emulator/session/session.html" target="content" style="text-decoration:none">Session</a></li>\
+      <li><a href="../html/5250emulator/session/designer_session.html" target="content" style="text-decoration:none">Designer Session</a></li>\
+      <li>PDM Options\
+      <ul>\
+        <li><a href="../html/5250emulator/pdm/start_eclipse_editor.html" target="content" style="text-decoration:none">Start Eclipse Editor</a></li>\
+        <li><a href="../html/5250emulator/pdm/start_isphere_compare_merge_editor.html" target="content" style="text-decoration:none">Start iSphere Compare/Merge Editor</a></li>\
+        <li><a href="../html/5250emulator/pdm/set_debugger_sep.html" target="content" style="text-decoration:none">Set Debugger Service Entry Point</a></li>\
+      </ul>\
+      </li>\
+      <li><a href="../html/5250emulator/problems/problems.html" target="content" style="text-decoration:none">Known Problems</a></li>\
+    </ul>\
+    </li>\
+  </ul>\
+  </li>\
+  <li><a href="../html/contributions/contributions.html" target="content" style="text-decoration:none">Contribution</a>\
+  <ul>\
+    <li><a href="../html/contributions/setup/setup_rdp_svn.html" target="content" style="text-decoration:none">Setting up RDP and SVN</a></li>\
+    <li><a href="../html/contributions/setup/setup_isphere.html" target="content" style="text-decoration:none">Setting up iSphere</a></li>\
+    <li><a href="../html/contributions/build/build_isphere.html" target="content" style="text-decoration:none">Building iSphere</a></li>\
+    <li><a href="../html/contributions/specialprojects/specialprojects.html" target="content" style="text-decoration:none">Special Projects</a></li>\
+  </ul>\
+  </li>\
+  <li>Utilities\
+  <ul>\
+    <li><a href="../html/utilities/strpreprc/strpreprc.html" target="content" style="text-decoration:none">Start Pre-Processor (STRPREPRC)</a>\
+    <ul>\
+      <li><a href="../html/utilities/strpreprc/usage.html" target="content" style="text-decoration:none">Usage</a></li>\
+      <li><a href="../html/utilities/strpreprc/header.html" target="content" style="text-decoration:none">Header</a></li>\
+      <li>Example Headers\
+      <ul>\
+        <li><a href="../html/utilities/strpreprc/example_crtrpgmod.html" target="content" style="text-decoration:none">Create RPG Module</a></li>\
+        <li><a href="../html/utilities/strpreprc/example_crtpgm.html" target="content" style="text-decoration:none">Create Program</a></li>\
+        <li><a href="../html/utilities/strpreprc/example_crtsrvpgm.html" target="content" style="text-decoration:none">Create Service Program</a></li>\
+        <li><a href="../html/utilities/strpreprc/example_crtdtaara.html" target="content" style="text-decoration:none">Create Data Area</a></li>\
+        <li><a href="../html/utilities/strpreprc/example_runsqlstm.html" target="content" style="text-decoration:none">Create SQL Table</a></li>\
+      </ul>\
+      </li>\
+      <li>Plug-in</li>\
+      <li><a href="../html/utilities/strpreprc/history.html" target="content" style="text-decoration:none">History</a></li>\
+    </ul>\
+    </li>\
+  </ul>\
+  </li>\
+  <li><a href="../html/links/links.html" target="content" style="text-decoration:none">Links</a></li>\
+</ul>\
+');

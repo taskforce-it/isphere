@@ -23,4 +23,8 @@ public class Anchor {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "#" + id;
+    }
 }

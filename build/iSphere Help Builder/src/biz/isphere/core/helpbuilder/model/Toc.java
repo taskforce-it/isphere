@@ -103,4 +103,9 @@ public class Toc {
         return topic;
     }
 
+    @Override
+    public String toString() {
+        return getLabel() + " -> "+ getLinkToFile();
+    }
+    
 }
