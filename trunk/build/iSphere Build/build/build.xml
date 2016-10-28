@@ -688,9 +688,10 @@
 	<target name="createSourceForgeHelp" unless="ignore.build.help">
 
 		<echo>Creating iSphere help ...</echo>
+		
+		<copy todir="${workspace.home}/${build.help.builder}/build/" file="${basedir}/helpproject.properties" overwrite="true" />
 
-		<ant inheritAll="false" inheritrefs="false" antfile="${workspace.home}/${build.help.builder}/build/build.xml" target="build">
-		</ant>
+		<ant inheritAll="false" inheritrefs="false" antfile="${workspace.home}/${build.help.builder}/build/build.xml" target="build" />
 
 		<copy todir="${build.upload.dir.help}">
 			<fileset dir="${workspace.home}/${build.help.builder}/upload" />
