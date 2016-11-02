@@ -79,6 +79,7 @@ import biz.isphere.core.dataqueue.LabelProviderTableViewer;
 import biz.isphere.core.dataqueue.ViewerFilterTableViewer;
 import biz.isphere.core.dataqueue.action.DisplayEndOfDataAction;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
+import biz.isphere.core.dataqueue.action.SendMessageAction;
 import biz.isphere.core.dataqueue.action.ViewInHexAction;
 import biz.isphere.core.dataqueue.retrieve.description.QMHQRDQD;
 import biz.isphere.core.dataqueue.retrieve.description.RDQD0100;
@@ -140,6 +141,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     private Label labelInfoMessage;
     private Label labelInvalidDataWarningOrError;
 
+    private SendMessageAction sendMessageAction;
     private ViewInHexAction viewInHexAction;
     private RefreshViewAction refreshViewAction;
     private RefreshViewIntervalAction disableRefreshViewAction;
@@ -236,6 +238,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
 
     private void createActions() {
 
+        sendMessageAction = new SendMessageAction();
+
         viewInHexAction = new ViewInHexAction(this);
         viewInHexAction.setChecked(Preferences.getInstance().isDataQueueViewInHex());
 
@@ -279,6 +283,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         toolbarManager.add(pinViewAction);
         toolbarManager.add(disableRefreshViewAction);
         toolbarManager.add(refreshViewAction);
+        toolbarManager.add(sendMessageAction);
     }
 
     private void initializeViewMenu() {
@@ -290,6 +295,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         viewMenu.add(createMessageLengthSubMenu());
         viewMenu.add(viewInHexAction);
         viewMenu.add(displayEndOfDataAction);
+        viewMenu.add(sendMessageAction);
     }
 
     private MenuManager createAuoRefreshSubMenu() {
@@ -673,6 +679,8 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         remoteObject = null;
         propertySource = null;
 
+        sendMessageAction.setDataQueue(remoteObject, false, 0, 0);
+
         deleteDataQueueEditor();
 
         refreshActionsEnablement();
@@ -755,6 +763,12 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             displayEndOfDataAction.setEnabled(false);
         } else {
             displayEndOfDataAction.setEnabled(true);
+        }
+
+        if (noObjectAvailable()) {
+            sendMessageAction.setEnabled(false);
+        } else {
+            sendMessageAction.setEnabled(true);
         }
 
         if (isAutoRefreshOn()) {
@@ -1177,6 +1191,9 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             AbstractDataQueueMonitorView.this.remoteObject = remoteObject;
             AbstractDataQueueMonitorView.this.propertySource = new DataQueuePropertySource(rdqd0100);
 
+            AbstractDataQueueMonitorView.this.sendMessageAction.setDataQueue(remoteObject, rdqd0100.isKeyed(), rdqd0100.getKeyLength(),
+                rdqd0100.getMessageLength());
+
             if (tableViewerArea == null || tableViewerArea.getChildren().length == 0) {
                 createDataQueueEditor(tableViewerArea, rdqd0100, rdqm0200);
             }
@@ -1204,7 +1221,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
             String text = Messages.bind(Messages.A_of_B_messages_retrieved,
                 new Object[] { rdqm0200.getMessages().length, rdqd0100.getNumberOfMessages() });
             if (viewerFilter.isMessageTooLongWarning()) {
-                text = text + " " + Messages.bind(Messages.Message_too_long_warning, RDQM0200MessageEntry.getDataTruncationWarningLength());
+                text = text + " " + Messages.bind(Messages.Message_too_long_warning, RDQM0200MessageEntry.getDataTruncationWarningLength()); //$NON-NLS-1$
             }
             setInfoMessage(text);
 
@@ -1393,8 +1410,6 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
         }
 
         public RDQM0200 loadMessages(RDQD0100 rdqd0100) throws Throwable {
-
-            System.out.println("Loading " + getNumberOfMessagesToRetrieve() + " messages ...");
 
             QMHRDQM qmhrdqm = new QMHRDQM(as400);
             qmhrdqm.setDataQueue(remoteObject.getName(), remoteObject.getLibrary(), rdqd0100.isSenderIDIncludedInMessageText());

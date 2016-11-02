@@ -37,7 +37,7 @@
 			<p>
 		<li>At the bottom left you can how many messages are displayed
 			and how many messages there are on the data queue; in this example
-			the first 5 of 9 messages are displayed.
+			the first 5 of 21 messages are displayed.
 	</ul>
 	<h2>Customizing the display</h2>
 	There are a number of options to customize how the messages are
@@ -88,6 +88,12 @@
 			<td valign="top">Optionally adds an <i>end-of-data</i> indicator
 				to the message data. This may be useful if your messages have
 				trailing blanks.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">Send message</td>
+			<td valign="top">-</td>
+			<td valign="top">Sends a message to a data queue.
 			</td>
 		</tr>
 	</table>
@@ -205,6 +211,15 @@
 	information is shown in a separate column:
 	<p>
 		<img src="assets/dtaq_senderid.png" align="middle">
+	<p>
+	<p>
+	<h2>Send Message to Data Queue</h2>
+	The following dialog sends a message to a data queue. If the data queue is keyed, an
+	additional <i>key</i> field is displayed. Data can be entered as a string or as a
+	hex-string value. A hex-string value is a series of 2-character tokens, each describing
+	a byte value.
+	<p>
+		<img src="assets/dtaq_sendmessage.png" align="middle">
 	<p>
 	<h2>Preferences</h2>
 	Some of the options may be defaulted on the

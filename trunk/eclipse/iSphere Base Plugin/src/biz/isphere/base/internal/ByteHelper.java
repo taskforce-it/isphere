@@ -19,6 +19,18 @@ public final class ByteHelper {
         + "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF" + "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECF" + "D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF"
         + "E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF" + "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF").toCharArray();;
 
+    public static byte[] getByteArray(String string) {
+
+        int len = string.length();
+        byte[] bytes = new byte[len / 2];
+
+        for (int i = 0; i < len; i += 2) {
+            bytes[i / 2] = (byte)((Character.digit(string.charAt(i), 16) << 4) + Character.digit(string.charAt(i + 1), 16));
+        }
+
+        return bytes;
+    }
+
     public static String getHexString(byte[] bytes) {
         final int len = bytes.length;
         final char[] chars = new char[len << 1];
