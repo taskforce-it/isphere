@@ -1129,11 +1129,11 @@ public class Messages extends NLS {
     public static String Can_not_copy_member_twice_to_same_target_member;
 
     public static String Replace_existing_members;
-    
+
     public static String Ignore_data_lost_error;
 
     public static String Data_lost_error_From_source_line_is_longer_than_target_source_line;
-    
+
     public static String C_O_P_I_E_D;
 
     public static String Validating_dots;
@@ -1193,43 +1193,43 @@ public class Messages extends NLS {
     public static String Valid_of_field_a_is_invalid;
 
     public static String End_date_and_time_must_be_greater_than_from_date_and_time;
-    
+
     public static String From_date;
 
     public static String From_time;
-    
+
     public static String To_date;
 
     public static String To_time;
 
     public static String The_value_in_field_max_Num_SplF_is_not_valid;
-    
+
     public static String Substitution_variables_for_file_name;
-    
+
     public static String Could_not_download_member_2_of_file_1_of_library_0;
-    
+
     public static String Result;
- 
+
     public static String Directory_colon;
-    
+
     public static String Stream_file_colon;
-    
+
     public static String Compare_Stream_Files;
-    
+
     public static String Compare_stream_files;
-    
+
     public static String Stream_file_not_found_colon_ANCESTOR;
-    
+
     public static String Stream_file_not_found_colon_LEFT;
-    
+
     public static String Stream_file_not_found_colon_RIGHT;
-    
+
     public static String Stream_file_is_already_open_in_an_editor;
-    
+
     public static String Stream_file_1_in_directory_0_not_found;
-    
+
     public static String Downloading_stream_files;
-    
+
     public static String Comparing_stream_files;
 
     public static String Add_library_and_file_name_to_source_members;
@@ -1239,29 +1239,29 @@ public class Messages extends NLS {
     public static String Add_library_name_to_objects;
 
     public static String Creation_Timestamp;
-    
+
     public static String Creation_Date;
-    
+
     public static String Creation_Time;
 
     public static String RSE_spooled_file_text_colon;
 
     public static String CompareEditor_Compare;
-    
+
     public static String CompareEditor_Compare_Edit;
 
     public static String Number_of_messages_colon;
-    
+
     public static String Tooltip_Number_of_messages;
-    
+
     public static String Replacement_character_colon;
-    
+
     public static String Tooltip_Replacement_character;
-    
+
     public static String Invalid_or_missing_numeric_value;
-    
+
     public static String Invalid_or_missing_value;
-    
+
     public static String Message_too_long_warning;
 
     public static String Message_A_of_B;
@@ -1269,7 +1269,29 @@ public class Messages extends NLS {
     public static String Change_viewer_font_Basic_Text_Font;
 
     public static String Using_font_size_of_TEXT_conversion;
+
+    public static String Invalid_length_Length_must_be_a_multiple_of_2_for_hex_data;
+
+    public static String Invalid_length_Length_must_not_exceed_A_characters;
     
+    public static String Invalid_length_Length_must_exxactly_match_A_characters;
+
+    public static String Invalid_characters_Only_characters_0_9_and_A_F_are_allowed_for_hex_data;
+
+    public static String Key_colon;
+
+    public static String Data_colon;
+
+    public static String Hex_key_input;
+
+    public static String Hex_data_input;
+
+    public static String Send_message;
+
+    public static String Send_message_tooltip;
+
+    public static String Send_Data_Queue_Entry;
+
     /*
      * Warning messages
      */

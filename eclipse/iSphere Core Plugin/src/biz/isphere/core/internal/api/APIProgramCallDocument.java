@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.AS400PackedDecimal;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CharConverter;
 import com.ibm.as400.access.ErrorCompletingRequestException;
@@ -41,7 +42,7 @@ public abstract class APIProgramCallDocument {
     private ProgramCall program;
     private ProgramParameter[] parameterList;
 
-    private CharConverter conv;
+    private CharConverter charConv;
     private AS400Bin2 shortConv;
     private AS400Bin4 intConv;
     private AS400Message[] errorMessages;
@@ -112,8 +113,8 @@ public abstract class APIProgramCallDocument {
         //                return message.getID() + ": " +  message.getText(); //$NON-NLS-1$
         // }
         // }
-        
-        return messages[0].getID() + ": " +  messages[0].getText();
+
+        return messages[0].getID() + ": " + messages[0].getText();
     }
 
     /**
@@ -157,6 +158,21 @@ public abstract class APIProgramCallDocument {
     protected ProgramParameter produceIntegerParameter(int aValue) {
         byte[] bytes = new byte[4];
         getIntConverter().toBytes(new Integer(aValue), bytes);
+        return new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, bytes, bytes.length);
+    }
+
+    /**
+     * Produces a packed decimal parameter.
+     * 
+     * @param aValue - packed decimal parameter value
+     * @return packed decimal parameter
+     */
+    protected ProgramParameter producePackedDecimalParameter(float aValue, int length, int decimalPositions) {
+
+        AS400PackedDecimal packedDecimal = new AS400PackedDecimal(length, decimalPositions);
+        byte[] bytes = packedDecimal.toBytes(aValue);
+
+//        byte[] bytes = new byte[packedDecimal.getByteLength()];
         return new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, bytes, bytes.length);
     }
 
@@ -333,10 +349,10 @@ public abstract class APIProgramCallDocument {
      * @return string converter
      */
     protected CharConverter getCharConverter() throws Exception {
-        if (conv == null) {
-            conv = new CharConverter(getSystem().getCcsid(), getSystem());
+        if (charConv == null) {
+            charConv = new CharConverter(getSystem().getCcsid(), getSystem());
         }
-        return conv;
+        return charConv;
     }
 
     /**

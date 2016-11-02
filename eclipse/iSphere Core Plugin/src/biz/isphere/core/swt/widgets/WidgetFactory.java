@@ -200,7 +200,7 @@ public final class WidgetFactory {
         if (wordWrap) {
             style = SWT.WRAP;
         } else {
-            style = SWT.NONE;
+            style = SWT.H_SCROLL;
         }
         return WidgetFactory.getInstance().produceMultilineText(parent, style, autoSelect);
     }
