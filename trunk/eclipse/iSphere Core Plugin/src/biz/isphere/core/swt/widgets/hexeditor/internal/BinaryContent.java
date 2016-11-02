@@ -341,8 +341,18 @@ public final class BinaryContent {
         notifyModifyListeners(position, length);
     }
 
+    private long bitsToBytes(long bits) {
+        
+        long bytes = bits / 8;
+        if (bits % 8 > 0) {
+            bytes++;
+        }
+        
+        return bytes;
+    }
+    
     private boolean isPositionOrLengthOutOfRange(long position, long length) {
-        return isPositionOutOfRange(position) || isLengthOutOfRange(length);
+        return isPositionOutOfRange(position) || isLengthOutOfRange(position, length);
     }
 
     private boolean isPositionOutOfRange(long position) {
@@ -353,7 +363,7 @@ public final class BinaryContent {
         return position < 0 || position > length();
     }
 
-    private boolean isLengthOutOfRange(long length) {
+    private boolean isLengthOutOfRange(long position, long length) {
         return length < 1L || length > length();
     }
 
@@ -963,7 +973,7 @@ public final class BinaryContent {
      * @throws IOException
      */
     public void overwrite(byte source, int offset, int length, long position) throws IOException {
-        if (offset < 0 || offset > 7 || isPositionOrLengthOutOfRange(position, length)) {
+        if (offset < 0 || offset > 7 || isPositionOrLengthOutOfRange(position, bitsToBytes(length))) {
             return;
         }
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * javahexeditor, a java hex editor
- * Copyright (C) 2006-2015 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
+ * Copyright (C) 2006-2016 Jordi Bergenthal, pestatije(-at_)users.sourceforge.net
  * The official javahexeditor site is sourceforge.net/projects/javahexeditor
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -76,24 +78,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.dataspaceeditor.dialog.IGoToTarget;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentClipboard;
-import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
-import biz.isphere.core.swt.widgets.hexeditor.internal.DisplayedContent;
-import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyEvent;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContent.ModifyListener;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentClipboard;
+import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder;
 import biz.isphere.core.swt.widgets.hexeditor.internal.BinaryContentFinder.Match;
+import biz.isphere.core.swt.widgets.hexeditor.internal.DisplayedContent;
+import biz.isphere.core.swt.widgets.hexeditor.internal.SWTUtility;
 
 /**
- * A hex editor, composed of two synchronized displays: an hexadecimal
- * and a basic ASCII char display. The file size has no effect on the memory
- * footprint of the editor. It has binary, ASCII and unicode find functionality.
- * Use addStateChangeListener(Listener) to listen to changes of the
+ * A hex editor, composed of two synchronized displays: an hexadecimal and a
+ * basic ASCII char display. The file size has no effect on the memory footprint
+ * of the editor. It has binary, ASCII and unicode find functionality. Use
+ * addStateChangeListener(Listener) to listen to changes of the
  * 'overwrite/insert' and 'canUndo/canRedo' status.
  * 
  * @author Jordi
@@ -1085,7 +1089,12 @@ public final class HexText extends Composite implements IGoToTarget {
 
     void doModifyKeyPressed(KeyEvent event) {
         char aChar = event.character;
-        if (aChar == '\0' || aChar == '\b' || aChar == '\u007f' || event.stateMask == SWT.CTRL || event.widget == hexEdit
+
+        if (aChar == SWT.BS || aChar == SWT.DEL) {
+            throw new IllegalAccessError("BACKSPACE and DEL should have been handled by verifyKey()");
+        }
+
+        if (aChar == '\0' || event.stateMask == SWT.CTRL || event.widget == hexEdit
             && ((event.stateMask & SWT.MODIFIER_MASK) != 0 || aChar < '0' || aChar > '9' && aChar < 'A' || aChar > 'F' && aChar < 'a' || aChar > 'f')) {
             return;
         }
@@ -1095,7 +1104,11 @@ public final class HexText extends Composite implements IGoToTarget {
             redrawTextAreas(false);
             return;
         }
+
+        // Delete selected characters
         handleSelectedPreModify();
+
+        // Insert or overwrite the value of the pressed key
         try {
             if (myInserting) {
                 if (event.widget == charEdit) {
@@ -1142,9 +1155,9 @@ public final class HexText extends Composite implements IGoToTarget {
 
         try {
 
-            if (myCharBuffer==null) {
-                myCharBuffer=CharBuffer.allocate(1);
-            }else {
+            if (myCharBuffer == null) {
+                myCharBuffer = CharBuffer.allocate(1);
+            } else {
                 myCharBuffer.clear();
             }
             myCharBuffer.append(aChar);
@@ -1251,23 +1264,21 @@ public final class HexText extends Composite implements IGoToTarget {
 
         GC unfocusedGC = null;
         Caret unfocusedCaret = null;
-        int chars = 0;
-        int shift = 0;
         if (myLastFocusedTextArea == HEX_EDITOR) {
             unfocusedCaret = charEdit.getCaret();
             unfocusedGC = styledText2GC;
         } else {
             unfocusedCaret = hexEdit.getCaret();
             unfocusedGC = styledText1GC;
-            chars = 1;
             if (hexEdit.getCaretOffset() % 3 == 1) {
-                shift = -1;
+                throw new IllegalAccessError("Should not be executed any longer.");
             }
         }
+
         if (unfocusedCaret.getVisible()) {
             Rectangle unfocused = unfocusedCaret.getBounds();
             unfocusedGC.setForeground(visible ? colorNormalShadow : colorCaretLine);
-            unfocusedGC.drawRectangle(unfocused.x + shift * unfocused.width, unfocused.y, unfocused.width << chars, unfocused.height - 1);
+            unfocusedGC.drawRectangle((unfocused.x * unfocused.width) - 1, unfocused.y, unfocused.width, unfocused.height - 1);
         }
     }
 
