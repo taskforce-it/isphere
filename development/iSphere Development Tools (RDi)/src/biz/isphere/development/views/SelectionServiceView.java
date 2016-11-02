@@ -40,7 +40,7 @@ public class SelectionServiceView extends ViewPart {
     /**
      * Shows the given selection in this view.
      */
-    public void showSelection(IWorkbenchPart sourcepart, ISelection selection) {
+    private void showSelection(IWorkbenchPart sourcepart, ISelection selection) {
         setContentDescription(sourcepart.getTitle() + " (" + selection.getClass().getName() + ")");
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection)selection;
