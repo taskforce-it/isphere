@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Job Log Analyzer
+Bundle-SymbolicName: biz.isphere.jobloganalyzer
+Bundle-Version: 1.0.0.b001
+Bundle-Activator: biz.isphere.jobloganalyzer.ISphereJobLogAnalyzerPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ biz.isphere.base,
+ biz.isphere.core
+Bundle-ActivationPolicy: lazy
