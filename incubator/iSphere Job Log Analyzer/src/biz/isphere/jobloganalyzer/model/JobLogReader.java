@@ -39,7 +39,7 @@ public class JobLogReader {
      * Constructs a new JobLogReader object.
      */
     public JobLogReader() {
-        
+
         this.configuration = new JobLogReaderConfiguration();
         this.configuration.loadConfiguration("en");
     }
@@ -50,7 +50,7 @@ public class JobLogReader {
      * @param pathName - Name of the file.
      * @return number of bytes processed (linefeed bytes excluded)
      */
-    public int loadFromStmf(String pathName) {
+    public JobLog loadFromStmf(String pathName) {
 
         BufferedReader br = null;
         jobLog = new JobLog();
@@ -58,8 +58,6 @@ public class JobLogReader {
         messageAttributes = new LinkedList<String>();
         lastMessageAttribute = -1;
 
-        int count = -1;
-        
         try {
 
             String line;
@@ -69,8 +67,6 @@ public class JobLogReader {
             mode = IDLE;
             while ((line = br.readLine()) != null) {
 
-                count = count + line.length();
-                
                 mode = checkForStartOfPage(line);
 
                 switch (mode) {
@@ -102,9 +98,7 @@ public class JobLogReader {
             }
         }
 
-        print(jobLog);
-
-        return count;
+        return jobLog;
     }
 
     /**
@@ -355,44 +349,19 @@ public class JobLogReader {
      */
     public static void main(String[] args) {
 
+        String directory = "C:/workspaces/rdp_095/workspace/iSphere Job Log Analyzer/temp/";
+
         JobLogReader main = new JobLogReader();
-        // main.importFromStmf("c:/Temp/iSphere/Job Log Analyzer/iSphere Joblog - English_GFD400.txt");
-        main.loadFromStmf("c:/Temp/iSphere/Job Log Analyzer/QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
-        // main.loadFromStmf("c:/Temp/iSphere/Job Log Analyzer/iSphere_Spooled_File_QPJOBLOG_2_TRADDATZB1_RADDATZ_246474_WWSOBIDE_1160827_202522.txt");
-        // main.loadFromStmf("c:/Temp/iSphere/Job Log Analyzer/QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
+        // main.importFromStmf(directory +
+        // "iSphere Joblog - English_GFD400.txt");
+        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
+        // main.loadFromStmf(directory +
+        // "iSphere_Spooled_File_QPJOBLOG_2_TRADDATZB1_RADDATZ_246474_WWSOBIDE_1160827_202522.txt");
+        // main.loadFromStmf(directory +
+        // "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
 
-    }
+        jobLog.dump();
 
-    private void print(JobLog jobLog) {
-
-        System.out.println("Job log . . . . : " + jobLog.getQualifiedJobName());
-        System.out.println("Job description : " + jobLog.getQualifiedJobDescriptionName());
-
-        for (JobLogPage page : jobLog.getPages()) {
-            System.out.println("  Page#: " + page.getPageNumber());
-            for (JobLogMessage message : page.getMessages()) {
-
-                System.out.println("    " + message.toString());
-
-                printMessageAttribute("      Cause: ", message.getCause());
-                printMessageAttribute("         to: ", message.getToModule());
-                printMessageAttribute("           : ", message.getToProcedure());
-                printMessageAttribute("           : ", message.getToStatement());
-                printMessageAttribute("       from: ", message.getFromModule());
-                printMessageAttribute("           : ", message.getFromProcedure());
-                printMessageAttribute("           : ", message.getFromStatement());
-            }
-        }
-
-    }
-
-    private void printMessageAttribute(String label, String value) {
-
-        if (value == null) {
-            return;
-        }
-
-        System.out.println(label + value);
     }
 
 }

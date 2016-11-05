@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Editors
+      	  ==========================================
+      	-->
+
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			name=""
+			icon="icons/joblog_analyzer.png"
+			class="biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor"
+			id="biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor"/>
+	</extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Job Log Analyzer Editor Contributions
+      	  ==========================================
+      	-->
+         
+   <extension
+         point="org.eclipse.ui.popupMenus">
+         
+      <objectContribution
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.jobloganalyzer.action">
+            
+	         <action
+                class="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
+                enablesFor="1"
+                id="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
+                label="%menu_Job_Log_Analyzer"
+                icon="icons/joblog_analyzer.png"
+                menubarPath="group.browsewith">
+	         </action>
+      	</objectContribution>
+      	
+	</extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Menu Contribution
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.actionSets">
+         
+      <actionSet
+            id="biz.isphere.jobloganalyzer.actionSet"
+            label="%menu_iSphere_Menu_JobLogAnalyzer"
+            visible="true">
+         
+         <action
+               class="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
+               id="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
+               definitionId="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
+               label="Job Log Analyzer"
+               icon="icons/joblog_analyzer.png"
+               menubarPath="biz.isphere.core.menu.isphere/additions"
+               tooltip="%menu_Tooltip_Opens_the_iSphere_Job_Log_Analyzer">
+         </action>
+      </actionSet>
+      
+	</extension>
+   
+      	<!--
+      	  ==========================================
+      	    iSphere Commands
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.commands">
+         
+      <category
+            name="iSphere"
+            id="biz.isphere.category.Commands">
+      </category>
+         
+      <command
+            defaultHandler="biz.isphere.jobloganalyzer.handler.OpenJobLogAnalyzerHandler"
+            id="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%cmd_Open_Job_Log_Analyzer">
+      </command>
+      
+	</extension>
+   
+      	<!--
+      	  ==========================================
+      	    iSphere Key Bindings
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.bindings">
+   
+      <key 
+        sequence="Ctrl+I J"
+        commandId="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
+            
+   </extension>
+
+</plugin>

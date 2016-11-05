@@ -113,6 +113,38 @@ public class JobLog {
         return jobLogPages.toArray(new JobLogPage[jobLogPages.size()]);
     }
 
+    public void dump() {
+
+        System.out.println("Job log . . . . : " + getQualifiedJobName());
+        System.out.println("Job description : " + getQualifiedJobDescriptionName());
+
+        for (JobLogPage page : getPages()) {
+            System.out.println("  Page#: " + page.getPageNumber());
+            for (JobLogMessage message : page.getMessages()) {
+
+                System.out.println("    " + message.toString());
+
+                printMessageAttribute("      Cause: ", message.getCause());
+                printMessageAttribute("         to: ", message.getToModule());
+                printMessageAttribute("           : ", message.getToProcedure());
+                printMessageAttribute("           : ", message.getToStatement());
+                printMessageAttribute("       from: ", message.getFromModule());
+                printMessageAttribute("           : ", message.getFromProcedure());
+                printMessageAttribute("           : ", message.getFromStatement());
+            }
+        }
+
+    }
+
+    private void printMessageAttribute(String label, String value) {
+
+        if (value == null) {
+            return;
+        }
+
+        System.out.println(label + value);
+    }
+
     private boolean validateJobLogHeader() {
 
         if (getJobName() != null && getJobUserName() != null && getJobNumber() != null && getJobDescriptionLibraryName() != null
