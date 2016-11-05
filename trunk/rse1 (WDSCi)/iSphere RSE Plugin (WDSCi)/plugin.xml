@@ -491,6 +491,7 @@
                label="%menu_iSphere">
 	         <separator name="group0" visible="true" />
 	         <separator name="transferlibrary" visible="true" />
+	         <separator name="additions" visible="true" />
 	         <separator name="help" visible="true" />
          </menu>
          
