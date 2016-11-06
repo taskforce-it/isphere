@@ -214,14 +214,20 @@ public class JobLogReader {
         matcher = configuration.getStartOfMessage().matcher(line.trim());
         while (matcher.find()) {
             updateMessageAttributes(jobLogMessage, messageAttributes);
-            jobLogMessage = jobLogPage.addMessage();
+            jobLogMessage = jobLog.addMessage();
             jobLogMessage.setId(matcher.group(1));
             jobLogMessage.setType(matcher.group(2));
             if (matcher.group(3) != null) {
-                jobLogMessage.setSeverity(new Integer(matcher.group(3)).intValue());
+                jobLogMessage.setSeverity(matcher.group(3));
             }
             jobLogMessage.setDate(matcher.group(4));
             jobLogMessage.setTime(matcher.group(5));
+            jobLogMessage.setFromProgram(matcher.group(6));
+            jobLogMessage.setFromLibrary(matcher.group(7));
+            jobLogMessage.setFromStatement(matcher.group(8));
+            jobLogMessage.setToProgram(matcher.group(9));
+            jobLogMessage.setToLibrary(matcher.group(10));
+            jobLogMessage.setToStatement(matcher.group(11));
 
             messageIndent = null;
             messageAttributes.clear();

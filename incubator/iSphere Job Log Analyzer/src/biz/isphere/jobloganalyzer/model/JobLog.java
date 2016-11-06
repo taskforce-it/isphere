@@ -22,10 +22,14 @@ public class JobLog {
 
     private boolean isHeaderComplete;
     private List<JobLogPage> jobLogPages;
+    private List<JobLogMessage> jobLogMessages;
+    private JobLogPage currentPage;
 
     public JobLog() {
         this.isHeaderComplete = validateJobLogHeader();
         this.jobLogPages = new LinkedList<JobLogPage>();
+        this.jobLogMessages = new LinkedList<JobLogMessage>();
+        this.currentPage = null;
     }
 
     public String getJobName() {
@@ -103,14 +107,32 @@ public class JobLog {
 
     public JobLogPage addPage() {
 
-        JobLogPage page = new JobLogPage();
-        jobLogPages.add(page);
+        currentPage = new JobLogPage();
+        jobLogPages.add(currentPage);
 
-        return page;
+        return currentPage;
+    }
+
+    public JobLogMessage addMessage() {
+
+        JobLogMessage message = new JobLogMessage(currentPage.getPageNumber());
+        jobLogMessages.add(message);
+
+        if (currentPage.getFirstMessage() == null) {
+            currentPage.setFirstMessage(message);
+        }
+        currentPage.setLastMessage(message);
+
+        return message;
     }
 
     public JobLogPage[] getPages() {
         return jobLogPages.toArray(new JobLogPage[jobLogPages.size()]);
+    }
+
+    public List<JobLogMessage> getMessages() {
+
+        return jobLogMessages;
     }
 
     public void dump() {
@@ -118,22 +140,19 @@ public class JobLog {
         System.out.println("Job log . . . . : " + getQualifiedJobName());
         System.out.println("Job description : " + getQualifiedJobDescriptionName());
 
-        for (JobLogPage page : getPages()) {
-            System.out.println("  Page#: " + page.getPageNumber());
-            for (JobLogMessage message : page.getMessages()) {
+        for (JobLogMessage message : jobLogMessages) {
 
-                System.out.println("    " + message.toString());
+            System.out.println("  " + message.toString());
 
-                printMessageAttribute("      Cause: ", message.getCause());
-                printMessageAttribute("         to: ", message.getToModule());
-                printMessageAttribute("           : ", message.getToProcedure());
-                printMessageAttribute("           : ", message.getToStatement());
-                printMessageAttribute("       from: ", message.getFromModule());
-                printMessageAttribute("           : ", message.getFromProcedure());
-                printMessageAttribute("           : ", message.getFromStatement());
-            }
+            printMessageAttribute("  Page#: ", "" + message.getPageNumber());
+            printMessageAttribute("    Cause: ", message.getCause());
+            printMessageAttribute("       to: ", message.getToModule());
+            printMessageAttribute("         : ", message.getToProcedure());
+            printMessageAttribute("         : ", message.getToStatement());
+            printMessageAttribute("     from: ", message.getFromModule());
+            printMessageAttribute("         : ", message.getFromProcedure());
+            printMessageAttribute("         : ", message.getFromStatement());
         }
-
     }
 
     private void printMessageAttribute(String label, String value) {

@@ -8,17 +8,14 @@
 
 package biz.isphere.jobloganalyzer.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class JobLogPage {
 
     private int pageNumber;
-    private List<JobLogMessage> jobLogMessages;
+    private JobLogMessage firstMessage;
+    private JobLogMessage lastMessage;
 
     public JobLogPage() {
         this.pageNumber = -1;
-        this.jobLogMessages = new LinkedList<JobLogMessage>();
     }
 
     public int getPageNumber() {
@@ -29,16 +26,26 @@ public class JobLogPage {
         this.pageNumber = pageNumber;
     }
 
-    public JobLogMessage addMessage() {
-
-        JobLogMessage message = new JobLogMessage();
-        jobLogMessages.add(message);
-
-        return message;
+    public JobLogMessage getFirstMessage() {
+        return this.firstMessage;
     }
 
-    public JobLogMessage[] getMessages() {
-        return jobLogMessages.toArray(new JobLogMessage[jobLogMessages.size()]);
+    public void setFirstMessage(JobLogMessage firstMessage) {
+
+        if (this.firstMessage != null) {
+            throw new RuntimeException("First message already set.");
+        }
+
+        this.firstMessage = firstMessage;
+    }
+
+    public JobLogMessage getLastMessage() {
+        return this.lastMessage;
+    }
+
+    public void setLastMessage(JobLogMessage lastMessage) {
+
+        this.lastMessage = lastMessage;
     }
 
     @Override
@@ -47,8 +54,10 @@ public class JobLogPage {
         StringBuilder buffer = new StringBuilder();
         buffer.append("#");
         buffer.append(getPageNumber());
-        buffer.append(" (#msg: ");
-        buffer.append(jobLogMessages.size());
+        buffer.append(" (from: ");
+        buffer.append(firstMessage.getId());
+        buffer.append(" to: ");
+        buffer.append(lastMessage.getId());
         buffer.append(")");
 
         return buffer.toString();

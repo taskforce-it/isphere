@@ -39,6 +39,10 @@ public class JobLogReaderConfiguration {
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "30";
     private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+";
     private String MESSAGE_ATTRIBUTE_VALUE = "(.+)";
+    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}";
+    private String STMT = "(\\\\*STMT|\\\\*N|[0-9A-F]{4})";
+    private String PROGRAM = OBJECT_NAME;
+    private String LIBRARY = OBJECT_NAME;
 
     private String regex_pageNumber;
     private String regex_headerAttribute;
@@ -195,7 +199,9 @@ public class JobLogReaderConfiguration {
 
         regex_pageNumber = replaceVariables("^ *(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{PAGE_NUMBER_LABEL}(&{PAGE_NUMBER_VALUE})");
         regex_headerAttribute = replaceVariables("(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})");
-        regex_messageFirstLine = replaceVariables("(^\\*NONE|&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})(.*$)");
+        regex_messageFirstLine = replaceVariables("(^\\*NONE|&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})"
+            + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}"
+            + "&{SPACES}(\\\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}(.*$)");
         regex_messageContinuationLine = replaceVariables("^[ ]{&{MESSAGE_CONTINUATION_LINE_INDENTION},}&{MESSAGE_ATTRIBUTE_NAME}:&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}");
     }
 
@@ -225,6 +231,10 @@ public class JobLogReaderConfiguration {
         result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_NAME}", MESSAGE_ATTRIBUTE_NAME);
         result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_VALUE}", MESSAGE_ATTRIBUTE_VALUE);
         result = result.replaceAll("&\\{MESSAGE_CONTINUATION_LINE_INDENTION}", MESSAGE_CONTINUATION_LINE_INDENTION);
+
+        result = result.replaceAll("&\\{PROGRAM}", PROGRAM);
+        result = result.replaceAll("&\\{LIBRARY}", LIBRARY);
+        result = result.replaceAll("&\\{STMT}", STMT);
 
         result = result.replaceAll("&\\{SPACES}", SPACES);
 

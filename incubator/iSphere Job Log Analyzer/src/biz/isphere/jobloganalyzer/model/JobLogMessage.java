@@ -10,23 +10,45 @@ package biz.isphere.jobloganalyzer.model;
 
 public class JobLogMessage {
 
+    private int pageNumber;
+    private boolean selected;
+
     private String id;
     private String type;
-    private int severity;
+    private String severity;
     private String date;
     private String time;
     private String text;
     private String cause;
 
+    private String toLibrary;
+    private String toProgram;
     private String toModule;
     private String toProcedure;
     private String toStatement;
 
+    private String fromLibrary;
+    private String fromProgram;
     private String fromModule;
     private String fromProcedure;
     private String fromStatement;
 
-    private String lastAttribute;
+    public JobLogMessage(int pageNumber) {
+        this.selected = false;
+        this.pageNumber = pageNumber;
+    }
+
+    public int getPageNumber() {
+        return this.pageNumber;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean select) {
+        this.selected = select;
+    }
 
     public String getId() {
         return id;
@@ -34,7 +56,6 @@ public class JobLogMessage {
 
     public void setId(String id) {
         this.id = id;
-        lastAttribute = null;
     }
 
     public String getType() {
@@ -43,16 +64,14 @@ public class JobLogMessage {
 
     public void setType(String type) {
         this.type = type;
-        lastAttribute = null;
     }
 
-    public int getSeverity() {
+    public String getSeverity() {
         return severity;
     }
 
-    public void setSeverity(int severity) {
+    public void setSeverity(String severity) {
         this.severity = severity;
-        lastAttribute = null;
     }
 
     public String getDate() {
@@ -61,7 +80,6 @@ public class JobLogMessage {
 
     public void setDate(String date) {
         this.date = date;
-        lastAttribute = null;
     }
 
     public String getTime() {
@@ -70,7 +88,6 @@ public class JobLogMessage {
 
     public void setTime(String time) {
         this.time = time;
-        lastAttribute = null;
     }
 
     public String getText() {
@@ -79,7 +96,6 @@ public class JobLogMessage {
 
     public void setText(String text) {
         this.text = text;
-        lastAttribute = this.text;
     }
 
     public String getCause() {
@@ -88,7 +104,6 @@ public class JobLogMessage {
 
     public void setCause(String cause) {
         this.cause = cause;
-        lastAttribute = this.cause;
     }
 
     public String getToModule() {
@@ -96,8 +111,23 @@ public class JobLogMessage {
     }
 
     public void setToModule(String toModule) {
-        lastAttribute = null;
         this.toModule = toModule;
+    }
+
+    public String getToLibrary() {
+        return toLibrary;
+    }
+
+    public void setToLibrary(String toLibrary) {
+        this.toLibrary = toLibrary;
+    }
+
+    public String getToProgram() {
+        return toProgram;
+    }
+
+    public void setToProgram(String toProgram) {
+        this.toProgram = toProgram;
     }
 
     public String getToProcedure() {
@@ -106,7 +136,6 @@ public class JobLogMessage {
 
     public void setToProcedure(String toProcedure) {
         this.toProcedure = toProcedure;
-        lastAttribute = null;
     }
 
     public String getToStatement() {
@@ -115,7 +144,6 @@ public class JobLogMessage {
 
     public void setToStatement(String toStatement) {
         this.toStatement = toStatement;
-        lastAttribute = null;
     }
 
     public String getFromModule() {
@@ -124,7 +152,22 @@ public class JobLogMessage {
 
     public void setFromModule(String fromModule) {
         this.fromModule = fromModule;
-        lastAttribute = null;
+    }
+
+    public String getFromLibrary() {
+        return fromLibrary;
+    }
+
+    public void setFromLibrary(String fromLibrary) {
+        this.fromLibrary = fromLibrary;
+    }
+
+    public String getFromProgram() {
+        return fromProgram;
+    }
+
+    public void setFromProgram(String fromProgram) {
+        this.fromProgram = fromProgram;
     }
 
     public String getFromProcedure() {
@@ -133,7 +176,6 @@ public class JobLogMessage {
 
     public void setFromProcedure(String fromProcedure) {
         this.fromProcedure = fromProcedure;
-        lastAttribute = null;
     }
 
     public String getFromStatement() {
@@ -142,17 +184,7 @@ public class JobLogMessage {
 
     public void setFromStatement(String fromStatement) {
         this.fromStatement = fromStatement;
-        lastAttribute = null;
     }
-
-//    public void appendAttributeValue(String string) {
-//
-//        if (lastAttribute == null) {
-//            return;
-//        }
-//
-//        lastAttribute = lastAttribute + " " + string;
-//    }
 
     @Override
     public String toString() {

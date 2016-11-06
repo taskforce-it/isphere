@@ -9,6 +9,8 @@
 package biz.isphere.jobloganalyzer.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -21,16 +23,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.jobloganalyzer.editor.tableviewer.JobLogAnalyzerTableViewer;
 import biz.isphere.jobloganalyzer.jobs.IDropFileListener;
 import biz.isphere.jobloganalyzer.model.JobLog;
 import biz.isphere.jobloganalyzer.model.JobLogReader;
@@ -39,7 +42,7 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
     public static final String ID = "biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor";
 
-    private Composite editorArea;
+    private JobLogAnalyzerTableViewer viewer;
 
     public JobLogAnalyzerEditor() {
         return;
@@ -85,7 +88,7 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
         createLeftPanel(sashForm);
         createRightPanel(sashForm);
-        sashForm.setWeights(new int[] { 2, 3 });
+        sashForm.setWeights(new int[] { 8, 2 });
     }
 
     @Override
@@ -104,9 +107,16 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
         }
 
         JobLogReader reader = new JobLogReader();
-        JobLog jobLog = reader.loadFromStmf(droppedJobLog.getPathName());
+        final JobLog jobLog = reader.loadFromStmf(droppedJobLog.getPathName());
 
-        jobLog.dump();
+        new UIJob("") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+                viewer.setInputData(jobLog);
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     private void addDropSupportOnComposite(Composite dialogEditorComposite) {
@@ -138,37 +148,43 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
     private Composite createLeftPanel(SashForm sashForm) {
 
-        Composite panel = new Composite(sashForm, SWT.BORDER);
-        GridLayout layout = createGridLayoutWithMargin(2);
-        layout.verticalSpacing = 10;
-        panel.setLayout(layout);
+        Composite leftMainPanel = new Composite(sashForm, SWT.BORDER);
+        leftMainPanel.setLayout(createGridLayoutWithMargin());
+        leftMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        addDropSupportOnComposite(panel);
+        new Label(leftMainPanel, SWT.NONE).setText("Left Panel");
 
-        return panel;
+        Label separator = new Label(leftMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
+        separator.setLayoutData(createGridDataFillAndGrab(1));
+
+        Composite tableArea = new Composite(leftMainPanel, SWT.BORDER);
+        tableArea.setLayout(createGridLayoutNoMargin());
+        tableArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        viewer = new JobLogAnalyzerTableViewer();
+        viewer.createViewer(tableArea);
+
+        addDropSupportOnComposite(leftMainPanel);
+
+        return leftMainPanel;
     }
 
     private Composite createRightPanel(SashForm sashForm) {
 
-        Composite mainArea = new Composite(sashForm, SWT.BORDER);
-        mainArea.setLayout(createGridLayoutWithMargin());
-        mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        Composite rightMainPanel = new Composite(sashForm, SWT.BORDER);
+        rightMainPanel.setLayout(createGridLayoutWithMargin());
+        rightMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        ToolBar toolBar = new ToolBar(mainArea, SWT.FLAT | SWT.RIGHT);
-        toolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+        new Label(rightMainPanel, SWT.NONE).setText("Right Panel");
 
-        // ToolItem helpItem = new ToolItem(toolBar, SWT.NONE);
-        // helpItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SYSTEM_HELP).createImage());
-        // helpItem.addSelectionListener(new DisplayHelpListener());
-
-        Label separator = new Label(mainArea, SWT.SEPARATOR | SWT.HORIZONTAL);
+        Label separator = new Label(rightMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
         separator.setLayoutData(createGridDataFillAndGrab(1));
 
-        editorArea = new Composite(mainArea, SWT.NONE);
-        editorArea.setLayout(createGridLayoutNoMargin());
-        editorArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        Composite detailsArea = new Composite(rightMainPanel, SWT.BORDER);
+        detailsArea.setLayout(createGridLayoutNoMargin());
+        detailsArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        return mainArea;
+        return rightMainPanel;
     }
 
     protected Shell getShell() {
