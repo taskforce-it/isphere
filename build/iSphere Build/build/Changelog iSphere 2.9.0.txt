@@ -1,8 +1,12 @@
 
+Changelog: iSphere 2.9.4.b001
+-----------------------------
+ • Added option "Send message" to the iSphere Data Queue Monitor.
+
 Changelog: iSphere 2.9.3.b002
 -----------------------------
  • Fixed problem that 5250 key bindings are applied to RSE items with 
-    RDi 9.5.
+   RDi 9.5.
  • Disabled Eclipse F1 key (Help) for 5250 vies and editors.
  • Updated STRPREPRC utility to report errors in the header tags to RDi.
  • Fixed problem, that certain key strokes followed by the [tab] key 
