@@ -6,12 +6,19 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.jobs;
+package biz.isphere.joblogexplorer.editor;
 
-import biz.isphere.jobloganalyzer.editor.DroppedLocalFile;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
 
-public interface ILocalFileReceiver {
+/**
+ * Listener, that forbids dropping at all.
+ */
+public class DropVetoListerner extends DropTargetAdapter {
 
-    public void setRemoteObjects(DroppedLocalFile[] droppedLocalFiles);
-
+    @Override
+    public void dragEnter(DropTargetEvent event) {
+        event.detail = DND.DROP_NONE;
+    }
 }

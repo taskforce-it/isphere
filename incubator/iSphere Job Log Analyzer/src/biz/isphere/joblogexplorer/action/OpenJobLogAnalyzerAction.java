@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.action;
+package biz.isphere.joblogexplorer.action;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -15,11 +15,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import biz.isphere.jobloganalyzer.handler.OpenJobLogAnalyzerHandler;
+import biz.isphere.joblogexplorer.handler.OpenJobLogAnalyzerHandler;
 
 public class OpenJobLogAnalyzerAction implements IWorkbenchWindowActionDelegate {
 
-    public static final String ID = "biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction";
+    public static final String ID = "biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"; //$NON-NLS-1$
 
     public void run(IAction action) {
         try {

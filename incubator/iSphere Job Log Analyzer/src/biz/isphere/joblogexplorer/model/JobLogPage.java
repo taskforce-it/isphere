@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.model;
+package biz.isphere.joblogexplorer.model;
 
 public class JobLogPage {
 
@@ -33,7 +33,7 @@ public class JobLogPage {
     public void setFirstMessage(JobLogMessage firstMessage) {
 
         if (this.firstMessage != null) {
-            throw new RuntimeException("First message already set.");
+            throw new RuntimeException("First message already set."); //$NON-NLS-1$
         }
 
         this.firstMessage = firstMessage;
@@ -52,13 +52,13 @@ public class JobLogPage {
     public String toString() {
 
         StringBuilder buffer = new StringBuilder();
-        buffer.append("#");
+        buffer.append("#"); //$NON-NLS-1$
         buffer.append(getPageNumber());
-        buffer.append(" (from: ");
+        buffer.append(" (from: "); //$NON-NLS-1$
         buffer.append(firstMessage.getId());
-        buffer.append(" to: ");
+        buffer.append(" to: "); //$NON-NLS-1$
         buffer.append(lastMessage.getId());
-        buffer.append(")");
+        buffer.append(")"); //$NON-NLS-1$
 
         return buffer.toString();
     }

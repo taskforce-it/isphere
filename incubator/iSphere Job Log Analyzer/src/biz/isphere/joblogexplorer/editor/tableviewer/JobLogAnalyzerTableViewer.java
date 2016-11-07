@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor.tableviewer;
+package biz.isphere.joblogexplorer.editor.tableviewer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,29 +24,30 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import biz.isphere.jobloganalyzer.model.JobLog;
-import biz.isphere.jobloganalyzer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogAnalyzerTableColumns {
 
     public enum Columns {
-        SELECTED ("selected", COLUMN_SELECTED),
-        DATE ("date", COLUMN_DATE),
-        TIME ("time", COLUMN_TIME),
-        ID ("id", COLUMN_ID),
-        TYPE ("type", COLUMN_TYPE),
-        SEVERITY ("severity", COLUMN_SEVERITY),
-        TEXT ("text", COLUMN_TEXT),
-        FROM_LIBRARY ("fromLibrary", COLUMN_FROM_LIBRARY),
-        FROM_PROGRAM ("fromProgram", COLUMN_FROM_PROGRAM),
-        FROM_STATEMENT ("fromStatement", COLUMN_FROM_STATEMENT),
-        TO_LIBRARY ("toLibrary", COLUMN_TO_LIBRARY),
-        TO_PROGRAM ("toProgram", COLUMN_TO_PROGRAM),
-        TO_STATEMENT ("toStatement", COLUMN_TO_STATEMENT),
-        FROM_MODULE ("fromModule", COLUMN_FROM_MODULE),
-        TO_MODULE ("toModule", COLUMN_TO_MODULE),
-        FROM_PROCEDURE ("fromProcedure", COLUMN_FROM_PROCEDURE),
-        TO_PROCEDURE ("toProcedure", COLUMN_TO_PROCEDURE);
+        SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
+        DATE ("date", COLUMN_DATE), //$NON-NLS-1$
+        TIME ("time", COLUMN_TIME), //$NON-NLS-1$
+        ID ("id", COLUMN_ID), //$NON-NLS-1$
+        TYPE ("type", COLUMN_TYPE), //$NON-NLS-1$
+        SEVERITY ("severity", COLUMN_SEVERITY), //$NON-NLS-1$
+        TEXT ("text", COLUMN_TEXT), //$NON-NLS-1$
+        FROM_LIBRARY ("fromLibrary", COLUMN_FROM_LIBRARY), //$NON-NLS-1$
+        FROM_PROGRAM ("fromProgram", COLUMN_FROM_PROGRAM), //$NON-NLS-1$
+        FROM_STATEMENT ("fromStatement", COLUMN_FROM_STATEMENT), //$NON-NLS-1$
+        TO_LIBRARY ("toLibrary", COLUMN_TO_LIBRARY), //$NON-NLS-1$
+        TO_PROGRAM ("toProgram", COLUMN_TO_PROGRAM), //$NON-NLS-1$
+        TO_STATEMENT ("toStatement", COLUMN_TO_STATEMENT), //$NON-NLS-1$
+        FROM_MODULE ("fromModule", COLUMN_FROM_MODULE), //$NON-NLS-1$
+        TO_MODULE ("toModule", COLUMN_TO_MODULE), //$NON-NLS-1$
+        FROM_PROCEDURE ("fromProcedure", COLUMN_FROM_PROCEDURE), //$NON-NLS-1$
+        TO_PROCEDURE ("toProcedure", COLUMN_TO_PROCEDURE); //$NON-NLS-1$
 
         public final String name;
         public final int columnNumber;
@@ -120,17 +121,18 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
         // 1. column with image/checkboxes - NOTE: The SWT.CENTER has no
         // effect!!
         TableColumn column = new TableColumn(table, SWT.CENTER, Columns.SELECTED.columnNumber);
-        column.setText("");
+        column.setText(""); //$NON-NLS-1$
         column.setWidth(WIDTH_SELECTED);
 
         // 2. column with date sent
         column = new TableColumn(table, SWT.LEFT, Columns.DATE.columnNumber);
-        column.setText("Date");
+        column.setText(Messages.Column_Date_sent);
         column.setWidth(WIDTH_DATE);
         // Add listener to column so tasks are sorted by description when
         // clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.DESCRIPTION));
@@ -139,11 +141,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 3. column with time sent
         column = new TableColumn(table, SWT.LEFT, Columns.TIME.columnNumber);
-        column.setText("Time");
+        column.setText(Messages.Column_Time_sent);
         column.setWidth(WIDTH_TIME);
         // Add listener to column so tasks are sorted by owner when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.OWNER));
@@ -152,11 +155,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 4. column with message id
         column = new TableColumn(table, SWT.LEFT, Columns.ID.columnNumber);
-        column.setText("Id");
+        column.setText(Messages.Column_ID);
         column.setWidth(WIDTH_ID);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -165,11 +169,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 5. column with message type
         column = new TableColumn(table, SWT.LEFT, Columns.TYPE.columnNumber);
-        column.setText("Type");
+        column.setText(Messages.Column_Type);
         column.setWidth(WIDTH_TYPE);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -178,11 +183,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 6. column with message severity
         column = new TableColumn(table, SWT.CENTER, Columns.SEVERITY.columnNumber);
-        column.setText("Severity");
+        column.setText(Messages.Column_Severity);
         column.setWidth(WIDTH_SEVERITY);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -191,11 +197,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 7. column with message text
         column = new TableColumn(table, SWT.LEFT, Columns.TEXT.columnNumber);
-        column.setText("Text");
+        column.setText(Messages.Column_Text);
         column.setWidth(WIDTH_TEXT);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -204,11 +211,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 8. column with from library
         column = new TableColumn(table, SWT.LEFT, Columns.FROM_LIBRARY.columnNumber);
-        column.setText("From library");
+        column.setText(Messages.Column_From_Library);
         column.setWidth(WIDTH_FROM_LIBRARY);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -217,11 +225,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 9. column with from program
         column = new TableColumn(table, SWT.LEFT, Columns.FROM_PROGRAM.columnNumber);
-        column.setText("From program");
+        column.setText(Messages.Column_From_Program);
         column.setWidth(WIDTH_FROM_PROGRAM);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -230,11 +239,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 10. column with from statement
         column = new TableColumn(table, SWT.LEFT, Columns.FROM_STATEMENT.columnNumber);
-        column.setText("From statement");
+        column.setText(Messages.Column_From_Stmt);
         column.setWidth(WIDTH_FROM_STATEMENT);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -243,11 +253,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 11. column with to library
         column = new TableColumn(table, SWT.LEFT, Columns.TO_LIBRARY.columnNumber);
-        column.setText("To library");
+        column.setText(Messages.Column_To_Library);
         column.setWidth(WIDTH_TO_LIBRARY);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -256,11 +267,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 12. column with to program
         column = new TableColumn(table, SWT.LEFT, Columns.TO_PROGRAM.columnNumber);
-        column.setText("To program");
+        column.setText(Messages.Column_To_Program);
         column.setWidth(WIDTH_TO_PROGRAM);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -269,11 +281,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 13. column with to statement
         column = new TableColumn(table, SWT.LEFT, Columns.TO_STATEMENT.columnNumber);
-        column.setText("To statement");
+        column.setText(Messages.Column_To_Stmt);
         column.setWidth(WIDTH_TO_STATEMENT);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -282,11 +295,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 14. column with from module
         column = new TableColumn(table, SWT.LEFT, Columns.FROM_MODULE.columnNumber);
-        column.setText("From module");
+        column.setText(Messages.Column_From_Module);
         column.setWidth(WIDTH_FROM_MODULE);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -295,11 +309,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 15. column with to module
         column = new TableColumn(table, SWT.LEFT, Columns.TO_MODULE.columnNumber);
-        column.setText("To module");
+        column.setText(Messages.Column_To_Module);
         column.setWidth(WIDTH_TO_MODULE);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -308,11 +323,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 16. column with from module
         column = new TableColumn(table, SWT.LEFT, Columns.FROM_PROCEDURE.columnNumber);
-        column.setText("From procedure");
+        column.setText(Messages.Column_From_Procedure);
         column.setWidth(WIDTH_FROM_PROCEDURE);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
@@ -321,11 +337,12 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // 17. column with to module
         column = new TableColumn(table, SWT.LEFT, Columns.TO_PROCEDURE.columnNumber);
-        column.setText("To procedure");
+        column.setText(Messages.Column_To_Procedure);
         column.setWidth(WIDTH_TO_PROCEDURE);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 // tableViewer.setSorter(new
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));

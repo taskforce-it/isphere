@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.model;
+package biz.isphere.joblogexplorer.model;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +89,7 @@ public class JobLog {
         buffer.append("/"); //$NON-NLS-1$
         buffer.append(getJobUserName());
         buffer.append("/"); //$NON-NLS-1$
-        buffer.append(getJobName()); //$NON-NLS-1$
+        buffer.append(getJobName());
 
         return buffer.toString();
     }
@@ -137,21 +137,21 @@ public class JobLog {
 
     public void dump() {
 
-        System.out.println("Job log . . . . : " + getQualifiedJobName());
-        System.out.println("Job description : " + getQualifiedJobDescriptionName());
+        System.out.println("Job log . . . . : " + getQualifiedJobName()); //$NON-NLS-1$
+        System.out.println("Job description : " + getQualifiedJobDescriptionName()); //$NON-NLS-1$
 
         for (JobLogMessage message : jobLogMessages) {
 
-            System.out.println("  " + message.toString());
+            System.out.println("  " + message.toString()); //$NON-NLS-1$
 
-            printMessageAttribute("  Page#: ", "" + message.getPageNumber());
-            printMessageAttribute("    Cause: ", message.getCause());
-            printMessageAttribute("       to: ", message.getToModule());
-            printMessageAttribute("         : ", message.getToProcedure());
-            printMessageAttribute("         : ", message.getToStatement());
-            printMessageAttribute("     from: ", message.getFromModule());
-            printMessageAttribute("         : ", message.getFromProcedure());
-            printMessageAttribute("         : ", message.getFromStatement());
+            printMessageAttribute("  Page#: ", "" + message.getPageNumber()); //$NON-NLS-1$ //$NON-NLS-2$
+            printMessageAttribute("    Cause: ", message.getCause()); //$NON-NLS-1$
+            printMessageAttribute("       to: ", message.getToModule()); //$NON-NLS-1$
+            printMessageAttribute("         : ", message.getToProcedure()); //$NON-NLS-1$
+            printMessageAttribute("         : ", message.getToStatement()); //$NON-NLS-1$
+            printMessageAttribute("     from: ", message.getFromModule()); //$NON-NLS-1$
+            printMessageAttribute("         : ", message.getFromProcedure()); //$NON-NLS-1$
+            printMessageAttribute("         : ", message.getFromStatement()); //$NON-NLS-1$
         }
     }
 

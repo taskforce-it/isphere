@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.jobs;
+package biz.isphere.joblogexplorer.jobs;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import biz.isphere.jobloganalyzer.editor.DroppedLocalFile;
+import biz.isphere.joblogexplorer.editor.DroppedLocalFile;
 
 public class LoadLocalSpooledFileJob extends Job {
 

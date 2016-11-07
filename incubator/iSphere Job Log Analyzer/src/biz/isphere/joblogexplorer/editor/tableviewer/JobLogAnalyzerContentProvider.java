@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor.tableviewer;
+package biz.isphere.joblogexplorer.editor.tableviewer;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import biz.isphere.jobloganalyzer.model.JobLog;
-import biz.isphere.jobloganalyzer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class JobLogAnalyzerContentProvider implements IStructuredContentProvider {
 
@@ -31,6 +31,11 @@ public class JobLogAnalyzerContentProvider implements IStructuredContentProvider
 
     // Return the tasks as an array of Objects
     public JobLogMessage[] getElements(Object parent) {
+
+        if (jobLog == null) {
+            return new JobLogMessage[0];
+        }
+
         JobLogMessage[] messages = jobLog.getMessages().toArray(new JobLogMessage[jobLog.getMessages().size()]);
         return messages;
     }

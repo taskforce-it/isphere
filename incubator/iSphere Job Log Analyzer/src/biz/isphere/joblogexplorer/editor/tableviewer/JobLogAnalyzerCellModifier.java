@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor.tableviewer;
+package biz.isphere.joblogexplorer.editor.tableviewer;
 
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.TableItem;
 
-import biz.isphere.jobloganalyzer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 /**
  * This class implements an ICellModifier An ICellModifier is called when the
@@ -65,7 +65,7 @@ public class JobLogAnalyzerCellModifier implements ICellModifier, JobLogAnalyzer
             result = new Boolean(jobLogMessage.isSelected());
             break;
         default:
-            result = "";
+            result = ""; //$NON-NLS-1$
         }
         return result;
     }

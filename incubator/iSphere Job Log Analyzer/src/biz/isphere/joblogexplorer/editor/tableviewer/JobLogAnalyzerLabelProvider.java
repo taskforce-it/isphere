@@ -6,20 +6,20 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor.tableviewer;
+package biz.isphere.joblogexplorer.editor.tableviewer;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import biz.isphere.jobloganalyzer.ISphereJobLogAnalyzerPlugin;
-import biz.isphere.jobloganalyzer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.ISphereJobLogAnalyzerPlugin;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class JobLogAnalyzerLabelProvider extends LabelProvider implements ITableLabelProvider, JobLogAnalyzerTableColumns {
 
     public String getColumnText(Object element, int columnIndex) {
 
-        String result = "";
+        String result = ""; //$NON-NLS-1$
         JobLogMessage jobLogMessage = (JobLogMessage)element;
 
         switch (columnIndex) {

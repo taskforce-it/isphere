@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.model;
+package biz.isphere.joblogexplorer.model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,28 +19,28 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.jobloganalyzer.ISphereJobLogAnalyzerPlugin;
+import biz.isphere.joblogexplorer.ISphereJobLogAnalyzerPlugin;
 
 public class JobLogReaderConfiguration {
 
-    private static final String REPOSITORY_LOCATION = "joblogparser";
+    private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
-    private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}";
-    private String RELEASE = "V[0-9]{1,1}R[0-9]{1,1}M[0-9]{1,1}";
-    private String PAGE_NUMBER_LABEL = "[a-zA-Z]+";
-    private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}";
-    private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+";
-    private String HEADER_ATTRIBUTE_VALUE = "[A-Z0-9]{1,10}";
-    private String MESSAGE_ID = "[A-Z][A-Z0-9]{2}[A-F0-9]{4}";
-    private String MESSAGE_TYPE = "[A-Z][a-z]+";
-    private String MESSAGE_SEVERITY = "[0-9]{2}";
-    private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}";
-    private String MESSAGE_TIME = "[0-9:.,]{15}";
-    private String MESSAGE_CONTINUATION_LINE_INDENTION = "30";
-    private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+";
-    private String MESSAGE_ATTRIBUTE_VALUE = "(.+)";
-    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}";
-    private String STMT = "(\\\\*STMT|\\\\*N|[0-9A-F]{4})";
+    private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}"; //$NON-NLS-1$
+    private String RELEASE = "V[0-9]{1,1}R[0-9]{1,1}M[0-9]{1,1}"; //$NON-NLS-1$
+    private String PAGE_NUMBER_LABEL = "[a-zA-Z]+"; //$NON-NLS-1$
+    private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}"; //$NON-NLS-1$
+    private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+"; //$NON-NLS-1$
+    private String HEADER_ATTRIBUTE_VALUE = "[A-Z0-9]{1,10}"; //$NON-NLS-1$
+    private String MESSAGE_ID = "[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
+    private String MESSAGE_TYPE = "[A-Z][a-z]+"; //$NON-NLS-1$
+    private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
+    private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
+    private String MESSAGE_TIME = "[0-9:.,]{15}"; //$NON-NLS-1$
+    private String MESSAGE_CONTINUATION_LINE_INDENTION = "30"; //$NON-NLS-1$
+    private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+"; //$NON-NLS-1$
+    private String MESSAGE_ATTRIBUTE_VALUE = "(.+)"; //$NON-NLS-1$
+    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}"; //$NON-NLS-1$
+    private String STMT = "(\\\\*STMT|\\\\*N|[0-9A-F]{4})"; //$NON-NLS-1$
     private String PROGRAM = OBJECT_NAME;
     private String LIBRARY = OBJECT_NAME;
 
@@ -54,7 +54,7 @@ public class JobLogReaderConfiguration {
     private Pattern pattern_messageFirstLine;
     private Pattern pattern_messageContinuationLine;
 
-    private static final String SPACES = "[ ]+";
+    private static final String SPACES = "[ ]+"; //$NON-NLS-1$
 
     /**
      * Constructs a new JobLogReaderConfiguration object.
@@ -124,10 +124,10 @@ public class JobLogReaderConfiguration {
 
     /**
      * Loads a new configuration from a 'jobLogParser.properties' file in folder
-     * '[workspace]/.metadata/.plugins/biz.isphere.jobloganalyzer/'.
+     * '[workspace]/.metadata/.plugins/biz.isphere.joblogexplorer/'.
      * <p>
      * An example properties file can be found in package
-     * 'biz.isphere.jobloganalyzer.model'.
+     * 'biz.isphere.joblogexplorer.model'.
      * 
      * @param locale - Locale, the configuration is loaded for
      * @return <code>true</code> on success, else <code>false</code>.
@@ -147,37 +147,37 @@ public class JobLogReaderConfiguration {
             properties.load(new FileInputStream(path));
 
             // Page number properties
-            LICENSED_PROGRAM = getProperty(properties, "global.licensed.program", LICENSED_PROGRAM);
-            RELEASE = getProperty(properties, "global.os.release", RELEASE);
-            PAGE_NUMBER_LABEL = getProperty(properties, "page.number.label", PAGE_NUMBER_LABEL);
-            PAGE_NUMBER_VALUE = getProperty(properties, "page.number.value", PAGE_NUMBER_VALUE);
+            LICENSED_PROGRAM = getProperty(properties, "global.licensed.program", LICENSED_PROGRAM); //$NON-NLS-1$
+            RELEASE = getProperty(properties, "global.os.release", RELEASE); //$NON-NLS-1$
+            PAGE_NUMBER_LABEL = getProperty(properties, "page.number.label", PAGE_NUMBER_LABEL); //$NON-NLS-1$
+            PAGE_NUMBER_VALUE = getProperty(properties, "page.number.value", PAGE_NUMBER_VALUE); //$NON-NLS-1$
 
             // Page header properties
-            HEADER_ATTRIBUTE_NAME = getProperty(properties, "header.attribute.name", HEADER_ATTRIBUTE_NAME);
-            HEADER_ATTRIBUTE_VALUE = getProperty(properties, "header.attribute.value", HEADER_ATTRIBUTE_VALUE);
+            HEADER_ATTRIBUTE_NAME = getProperty(properties, "header.attribute.name", HEADER_ATTRIBUTE_NAME); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_VALUE = getProperty(properties, "header.attribute.value", HEADER_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
             // Message properties
-            MESSAGE_ID = getProperty(properties, "message.id", MESSAGE_ID);
-            MESSAGE_TYPE = getProperty(properties, "message.type", MESSAGE_TYPE);
-            MESSAGE_SEVERITY = getProperty(properties, "message.severity", MESSAGE_SEVERITY);
-            MESSAGE_DATE = getProperty(properties, "message.date", MESSAGE_DATE);
-            MESSAGE_TIME = getProperty(properties, "message.time", MESSAGE_TIME);
-            MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, "message.continuation.line.indention", MESSAGE_CONTINUATION_LINE_INDENTION);
+            MESSAGE_ID = getProperty(properties, "message.id", MESSAGE_ID); //$NON-NLS-1$
+            MESSAGE_TYPE = getProperty(properties, "message.type", MESSAGE_TYPE); //$NON-NLS-1$
+            MESSAGE_SEVERITY = getProperty(properties, "message.severity", MESSAGE_SEVERITY); //$NON-NLS-1$
+            MESSAGE_DATE = getProperty(properties, "message.date", MESSAGE_DATE); //$NON-NLS-1$
+            MESSAGE_TIME = getProperty(properties, "message.time", MESSAGE_TIME); //$NON-NLS-1$
+            MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, "message.continuation.line.indention", MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
 
             produceRegularExpressions();
 
             // Override default expressions
-            regex_pageNumber = getProperty(properties, "regex.pageNumber", regex_pageNumber);
-            regex_headerAttribute = getProperty(properties, "regex.headerAttribute", regex_headerAttribute);
-            regex_messageFirstLine = getProperty(properties, "regex.messageFirstLine", regex_messageFirstLine);
-            regex_messageContinuationLine = getProperty(properties, "regex.messageContinuationLine", regex_messageContinuationLine);
+            regex_pageNumber = getProperty(properties, "regex.pageNumber", regex_pageNumber); //$NON-NLS-1$
+            regex_headerAttribute = getProperty(properties, "regex.headerAttribute", regex_headerAttribute); //$NON-NLS-1$
+            regex_messageFirstLine = getProperty(properties, "regex.messageFirstLine", regex_messageFirstLine); //$NON-NLS-1$
+            regex_messageContinuationLine = getProperty(properties, "regex.messageContinuationLine", regex_messageContinuationLine); //$NON-NLS-1$
 
             compilePattern();
 
             return true;
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Could not load job log parser configuration ***", e);
+            ISpherePlugin.logError("*** Could not load job log parser configuration ***", e); //$NON-NLS-1$
         } finally {
             if (inStream != null) {
                 try {
@@ -197,12 +197,12 @@ public class JobLogReaderConfiguration {
      */
     private void produceRegularExpressions() {
 
-        regex_pageNumber = replaceVariables("^ *(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{PAGE_NUMBER_LABEL}(&{PAGE_NUMBER_VALUE})");
-        regex_headerAttribute = replaceVariables("(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})");
-        regex_messageFirstLine = replaceVariables("(^\\*NONE|&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})"
-            + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}"
-            + "&{SPACES}(\\\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}(.*$)");
-        regex_messageContinuationLine = replaceVariables("^[ ]{&{MESSAGE_CONTINUATION_LINE_INDENTION},}&{MESSAGE_ATTRIBUTE_NAME}:&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}");
+        regex_pageNumber = replaceVariables("^ *(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{PAGE_NUMBER_LABEL}(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
+        regex_headerAttribute = replaceVariables("(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})"); //$NON-NLS-1$
+        regex_messageFirstLine = replaceVariables("(^\\*NONE|&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})" //$NON-NLS-1$
+            + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}" //$NON-NLS-1$
+            + "&{SPACES}(\\\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}(.*$)"); //$NON-NLS-1$
+        regex_messageContinuationLine = replaceVariables("^[ ]{&{MESSAGE_CONTINUATION_LINE_INDENTION},}&{MESSAGE_ATTRIBUTE_NAME}:&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}"); //$NON-NLS-1$
     }
 
     /**
@@ -215,28 +215,28 @@ public class JobLogReaderConfiguration {
 
         String result = string;
 
-        result = result.replaceAll("&\\{LICENSED_PROGRAM}", LICENSED_PROGRAM);
-        result = result.replaceAll("&\\{RELEASE}", RELEASE);
-        result = result.replaceAll("&\\{PAGE_NUMBER_LABEL}", PAGE_NUMBER_LABEL);
-        result = result.replaceAll("&\\{PAGE_NUMBER_VALUE}", PAGE_NUMBER_VALUE);
+        result = result.replaceAll("&\\{LICENSED_PROGRAM}", LICENSED_PROGRAM); //$NON-NLS-1$
+        result = result.replaceAll("&\\{RELEASE}", RELEASE); //$NON-NLS-1$
+        result = result.replaceAll("&\\{PAGE_NUMBER_LABEL}", PAGE_NUMBER_LABEL); //$NON-NLS-1$
+        result = result.replaceAll("&\\{PAGE_NUMBER_VALUE}", PAGE_NUMBER_VALUE); //$NON-NLS-1$
 
-        result = result.replaceAll("&\\{HEADER_ATTRIBUTE_NAME}", HEADER_ATTRIBUTE_NAME);
-        result = result.replaceAll("&\\{HEADER_ATTRIBUTE_VALUE}", HEADER_ATTRIBUTE_VALUE);
+        result = result.replaceAll("&\\{HEADER_ATTRIBUTE_NAME}", HEADER_ATTRIBUTE_NAME); //$NON-NLS-1$
+        result = result.replaceAll("&\\{HEADER_ATTRIBUTE_VALUE}", HEADER_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
-        result = result.replaceAll("&\\{MESSAGE_ID}", MESSAGE_ID);
-        result = result.replaceAll("&\\{MESSAGE_TYPE}", MESSAGE_TYPE);
-        result = result.replaceAll("&\\{MESSAGE_SEVERITY}", MESSAGE_SEVERITY);
-        result = result.replaceAll("&\\{MESSAGE_DATE}", MESSAGE_DATE);
-        result = result.replaceAll("&\\{MESSAGE_TIME}", MESSAGE_TIME);
-        result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_NAME}", MESSAGE_ATTRIBUTE_NAME);
-        result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_VALUE}", MESSAGE_ATTRIBUTE_VALUE);
-        result = result.replaceAll("&\\{MESSAGE_CONTINUATION_LINE_INDENTION}", MESSAGE_CONTINUATION_LINE_INDENTION);
+        result = result.replaceAll("&\\{MESSAGE_ID}", MESSAGE_ID); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_TYPE}", MESSAGE_TYPE); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_SEVERITY}", MESSAGE_SEVERITY); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_DATE}", MESSAGE_DATE); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_TIME}", MESSAGE_TIME); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_NAME}", MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_ATTRIBUTE_VALUE}", MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
+        result = result.replaceAll("&\\{MESSAGE_CONTINUATION_LINE_INDENTION}", MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
 
-        result = result.replaceAll("&\\{PROGRAM}", PROGRAM);
-        result = result.replaceAll("&\\{LIBRARY}", LIBRARY);
-        result = result.replaceAll("&\\{STMT}", STMT);
+        result = result.replaceAll("&\\{PROGRAM}", PROGRAM); //$NON-NLS-1$
+        result = result.replaceAll("&\\{LIBRARY}", LIBRARY); //$NON-NLS-1$
+        result = result.replaceAll("&\\{STMT}", STMT); //$NON-NLS-1$
 
-        result = result.replaceAll("&\\{SPACES}", SPACES);
+        result = result.replaceAll("&\\{SPACES}", SPACES); //$NON-NLS-1$
 
         return result;
     }

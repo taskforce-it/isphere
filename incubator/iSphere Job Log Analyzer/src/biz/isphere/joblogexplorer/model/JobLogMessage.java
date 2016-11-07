@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.model;
+package biz.isphere.joblogexplorer.model;
 
 public class JobLogMessage {
 
@@ -191,9 +191,9 @@ public class JobLogMessage {
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(getId());
-        buffer.append(" (");
+        buffer.append(" ("); //$NON-NLS-1$
         buffer.append(getType());
-        buffer.append(") ");
+        buffer.append(") "); //$NON-NLS-1$
         buffer.append(getText());
 
         return buffer.toString();

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.jobs;
+package biz.isphere.joblogexplorer.jobs;
 
-import biz.isphere.jobloganalyzer.editor.DroppedLocalFile;
+import biz.isphere.joblogexplorer.editor.DroppedLocalFile;
 
 public interface IDropFileListener {
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor;
+package biz.isphere.joblogexplorer.editor;
 
 import java.io.UnsupportedEncodingException;
 
@@ -15,32 +15,34 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.ui.part.PluginTransferData;
 
-import biz.isphere.jobloganalyzer.jobs.IDropFileListener;
-import biz.isphere.jobloganalyzer.jobs.ILocalFileReceiver;
-import biz.isphere.jobloganalyzer.jobs.LoadLocalSpooledFileJob;
+import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 
-public class DropFileListener extends DropTargetAdapter implements ILocalFileReceiver {
+public class DropFileListener extends DropTargetAdapter {
 
     private IDropFileListener target;
-    private DropTargetEvent event;
 
     public DropFileListener(IDropFileListener iDropFileListener) {
         this.target = iDropFileListener;
     }
 
+    @Override
     public void dragEnter(DropTargetEvent event) {
         event.detail = DND.DROP_COPY;
     }
 
+    @Override
     public void dragOver(DropTargetEvent event) {
     }
 
+    @Override
     public void dragLeave(DropTargetEvent event) {
     }
 
+    @Override
     public void dropAccept(DropTargetEvent event) {
     }
 
+    @Override
     public void drop(DropTargetEvent event) {
 
         if ((event.data instanceof PluginTransferData)) {
@@ -50,31 +52,21 @@ public class DropFileListener extends DropTargetAdapter implements ILocalFileRec
 
             String str = null;
             try {
-                str = new String(result, "UTF-8");
+                str = new String(result, "UTF-8"); //$NON-NLS-1$
             } catch (UnsupportedEncodingException localUnsupportedEncodingException) {
                 str = new String(result);
             }
 
-            this.event = event;
-
             // Split plug-in transfer data into objects
-            String[] droppedLocalFilesData = str.split("\\|");
+            String[] droppedLocalFilesData = str.split("\\|"); //$NON-NLS-1$
 
             DroppedLocalFile[] droppedFiles = new DroppedLocalFile[droppedLocalFilesData.length];
             for (int i = 0; i < droppedLocalFilesData.length; i++) {
                 droppedFiles[i] = new DroppedLocalFile(droppedLocalFilesData[i]);
             }
 
-            loadFilesAsync(droppedFiles, this, "Parsing Job Log");
+            target.dropJobLog(droppedFiles[0], event.item);
         }
     }
 
-    public void setRemoteObjects(DroppedLocalFile[] pathName) {
-        target.dropJobLog(pathName[0], event.item);
-    }
-
-    protected void loadFilesAsync(DroppedLocalFile[] droppedFiles, ILocalFileReceiver receiver, String jobName) {
-        LoadLocalSpooledFileJob job = new LoadLocalSpooledFileJob(jobName, droppedFiles, this);
-        job.schedule();
-    }
 }

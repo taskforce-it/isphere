@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor;
+package biz.isphere.joblogexplorer.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -31,16 +32,16 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.UIJob;
 
-import biz.isphere.core.Messages;
 import biz.isphere.core.internal.MessageDialogAsync;
-import biz.isphere.jobloganalyzer.editor.tableviewer.JobLogAnalyzerTableViewer;
-import biz.isphere.jobloganalyzer.jobs.IDropFileListener;
-import biz.isphere.jobloganalyzer.model.JobLog;
-import biz.isphere.jobloganalyzer.model.JobLogReader;
+import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.editor.tableviewer.JobLogAnalyzerTableViewer;
+import biz.isphere.joblogexplorer.jobs.IDropFileListener;
+import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogReader;
 
 public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListener {
 
-    public static final String ID = "biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor";
+    public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"; //$NON-NLS-1$
 
     private JobLogAnalyzerTableViewer viewer;
 
@@ -62,7 +63,7 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         setSite(site);
         setInput(input);
-        setPartName("Job Log Analyzer");
+        setPartName(Messages.Job_Log_Explorer);
     }
 
     @Override
@@ -106,17 +107,10 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
             return;
         }
 
-        JobLogReader reader = new JobLogReader();
-        final JobLog jobLog = reader.loadFromStmf(droppedJobLog.getPathName());
+        viewer.setInputData(null);
 
-        new UIJob("") {
-
-            @Override
-            public IStatus runInUIThread(IProgressMonitor arg0) {
-                viewer.setInputData(jobLog);
-                return Status.OK_STATUS;
-            }
-        }.schedule();
+        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(droppedJobLog, viewer);
+        parserJob.schedule();
     }
 
     private void addDropSupportOnComposite(Composite dialogEditorComposite) {
@@ -148,16 +142,16 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
     private Composite createLeftPanel(SashForm sashForm) {
 
-        Composite leftMainPanel = new Composite(sashForm, SWT.BORDER);
+        Composite leftMainPanel = new Composite(sashForm, SWT.NONE);
         leftMainPanel.setLayout(createGridLayoutWithMargin());
         leftMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        new Label(leftMainPanel, SWT.NONE).setText("Left Panel");
+        new Label(leftMainPanel, SWT.NONE).setText("Left Panel"); //$NON-NLS-1$
 
         Label separator = new Label(leftMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
         separator.setLayoutData(createGridDataFillAndGrab(1));
 
-        Composite tableArea = new Composite(leftMainPanel, SWT.BORDER);
+        Composite tableArea = new Composite(leftMainPanel, SWT.NONE);
         tableArea.setLayout(createGridLayoutNoMargin());
         tableArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -171,16 +165,16 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
     private Composite createRightPanel(SashForm sashForm) {
 
-        Composite rightMainPanel = new Composite(sashForm, SWT.BORDER);
+        Composite rightMainPanel = new Composite(sashForm, SWT.NONE);
         rightMainPanel.setLayout(createGridLayoutWithMargin());
         rightMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        new Label(rightMainPanel, SWT.NONE).setText("Right Panel");
+        new Label(rightMainPanel, SWT.NONE).setText("Right Panel"); //$NON-NLS-1$
 
         Label separator = new Label(rightMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
         separator.setLayoutData(createGridDataFillAndGrab(1));
 
-        Composite detailsArea = new Composite(rightMainPanel, SWT.BORDER);
+        Composite detailsArea = new Composite(rightMainPanel, SWT.NONE);
         detailsArea.setLayout(createGridLayoutNoMargin());
         detailsArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -237,5 +231,36 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
         layoutData.horizontalSpan = numColumns;
         layoutData.grabExcessVerticalSpace = false;
         return layoutData;
+    }
+
+    private class ParseSpooledFileJob extends Job {
+
+        private DroppedLocalFile droppedJobLog;
+        private JobLogAnalyzerTableViewer viewer;
+
+        public ParseSpooledFileJob(DroppedLocalFile droppedJobLog, JobLogAnalyzerTableViewer viewer) {
+            super(Messages.Job_Parsing_job_log);
+
+            this.droppedJobLog = droppedJobLog;
+            this.viewer = viewer;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor arg0) {
+
+            JobLogReader reader = new JobLogReader();
+            final JobLog jobLog = reader.loadFromStmf(droppedJobLog.getPathName());
+
+            new UIJob("") { //$NON-NLS-1$
+                @Override
+                public IStatus runInUIThread(IProgressMonitor arg0) {
+                    viewer.setInputData(jobLog);
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
+
+            return Status.OK_STATUS;
+        }
+
     }
 }

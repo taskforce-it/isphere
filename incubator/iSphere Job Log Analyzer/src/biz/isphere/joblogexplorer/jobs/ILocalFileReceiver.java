@@ -6,17 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor.tableviewer;
+package biz.isphere.joblogexplorer.jobs;
 
-import biz.isphere.jobloganalyzer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.editor.DroppedLocalFile;
 
-public interface IJobLogMessagesViewer {
+public interface ILocalFileReceiver {
 
-    /**
-     * Update the view to reflect the fact that one of the messages was modified
-     * 
-     * @param task
-     */
-    public void updateJobLogMessage(JobLogMessage task);
+    public void setRemoteObjects(DroppedLocalFile[] droppedLocalFiles);
 
 }

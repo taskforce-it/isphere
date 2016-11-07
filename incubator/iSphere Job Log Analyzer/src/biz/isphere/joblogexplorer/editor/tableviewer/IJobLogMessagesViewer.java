@@ -6,18 +6,17 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.editor;
+package biz.isphere.joblogexplorer.editor.tableviewer;
 
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetAdapter;
-import org.eclipse.swt.dnd.DropTargetEvent;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-/**
- * Listener, that forbids dropping at all.
- */
-public class DropVetoListerner extends DropTargetAdapter {
+public interface IJobLogMessagesViewer {
 
-    public void dragEnter(DropTargetEvent event) {
-        event.detail = DND.DROP_NONE;
-    }
+    /**
+     * Update the view to reflect the fact that one of the messages was modified
+     * 
+     * @param task
+     */
+    public void updateJobLogMessage(JobLogMessage task);
+
 }

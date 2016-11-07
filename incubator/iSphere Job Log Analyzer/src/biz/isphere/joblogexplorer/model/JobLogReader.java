@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.model;
+package biz.isphere.joblogexplorer.model;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 import biz.isphere.base.internal.StringHelper;
@@ -41,7 +42,7 @@ public class JobLogReader {
     public JobLogReader() {
 
         this.configuration = new JobLogReaderConfiguration();
-        this.configuration.loadConfiguration("en");
+        this.configuration.loadConfiguration(Locale.getDefault().getLanguage());
     }
 
     /**
@@ -283,7 +284,7 @@ public class JobLogReader {
         // return string1 + string2;
         // }
 
-        return string1 + " " + string2;
+        return string1 + " " + string2; //$NON-NLS-1$
     }
 
     /**
@@ -296,7 +297,7 @@ public class JobLogReader {
     private void updateMessageAttributes(JobLogMessage jobLogMessage, List<String> messageAttributes) {
 
         if (jobLogMessage == null && messageAttributes.size() > 0) {
-            throw new RuntimeException("Parameter 'jobLogMessage' must not be null!");
+            throw new RuntimeException("Parameter 'jobLogMessage' must not be null!"); //$NON-NLS-1$
         }
 
         if (messageAttributes.size() >= 7) {
@@ -355,7 +356,7 @@ public class JobLogReader {
      */
     public static void main(String[] args) {
 
-        String directory = "C:/workspaces/rdp_095/workspace/iSphere Job Log Analyzer/temp/";
+        String directory = "C:/workspaces/rdp_095/workspace/iSphere Job Log Explorer/temp/";
 
         JobLogReader main = new JobLogReader();
         // main.importFromStmf(directory +

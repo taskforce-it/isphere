@@ -14,13 +14,13 @@
 		<editor
 			name=""
 			icon="icons/joblog_analyzer.png"
-			class="biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor"
-			id="biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor"/>
+			class="biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"
+			id="biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"/>
 	</extension>
       	
       	<!--
       	  ==========================================
-      	    Job Log Analyzer Editor Contributions
+      	    Job Log Explorer Editor Contributions
       	  ==========================================
       	-->
          
@@ -34,13 +34,13 @@
             typecategoryfilter="*"
             typefilter="*"
             namefilter="*"
-            id="biz.isphere.jobloganalyzer.action">
+            id="biz.isphere.joblogexplorer.action">
             
 	         <action
-                class="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
+                class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
                 enablesFor="1"
-                id="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
-                label="%menu_Job_Log_Analyzer"
+                id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+                label="%menu_Job_Log_Explorer"
                 icon="icons/joblog_analyzer.png"
                 menubarPath="group.browsewith">
 	         </action>
@@ -58,18 +58,18 @@
          point="org.eclipse.ui.actionSets">
          
       <actionSet
-            id="biz.isphere.jobloganalyzer.actionSet"
-            label="%menu_iSphere_Menu_JobLogAnalyzer"
+            id="biz.isphere.joblogexplorer.actionSet"
+            label="%menu_iSphere_Menu_Job_Log_Explorer"
             visible="true">
          
          <action
-               class="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
-               id="biz.isphere.jobloganalyzer.action.OpenJobLogAnalyzerAction"
-               definitionId="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
-               label="Job Log Analyzer"
+               class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+               id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+               definitionId="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
+               label="%menu_Job_Log_Explorer"
                icon="icons/joblog_analyzer.png"
                menubarPath="biz.isphere.core.menu.isphere/additions"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_Job_Log_Analyzer">
+               tooltip="%menu_Tooltip_Opens_the_iSphere_Job_Log_Explorer">
          </action>
       </actionSet>
       
@@ -90,10 +90,10 @@
       </category>
          
       <command
-            defaultHandler="biz.isphere.jobloganalyzer.handler.OpenJobLogAnalyzerHandler"
-            id="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
+            defaultHandler="biz.isphere.joblogexplorer.handler.OpenJobLogAnalyzerHandler"
+            id="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
             categoryId="biz.isphere.category.Commands"
-            name="%cmd_Open_Job_Log_Analyzer">
+            name="%cmd_Open_Job_Log_Explorer">
       </command>
       
 	</extension>
@@ -108,7 +108,7 @@
    
       <key 
         sequence="Ctrl+I J"
-        commandId="biz.isphere.jobloganalyzer.command.JobLogAnalyzer.open"
+        commandId="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
             

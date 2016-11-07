@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer;
+package biz.isphere.joblogexplorer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,11 +23,11 @@ import org.osgi.framework.BundleContext;
 public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
 
     // Names of images used to represent checkboxes
-    public static final String IMAGE_CHECKED = "checked.gif";
-    public static final String IMAGE_UNCHECKED = "unchecked.gif";
+    public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
+    public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "biz.isphere.jobloganalyzer"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
 
     // The shared instance
     private static ISphereJobLogAnalyzerPlugin plugin;
@@ -46,11 +46,12 @@ public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
      * )
      */
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
 
         plugin = this;
-        installURL = context.getBundle().getEntry("/");
+        installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
     }
 
     /*
@@ -59,6 +60,7 @@ public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
      * )
      */
+    @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
@@ -89,7 +91,7 @@ public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
     }
 
     private ImageDescriptor getImageDescriptor(String name) {
-        String iconPath = "icons/";
+        String iconPath = "icons/"; //$NON-NLS-1$
         try {
             URL url = new URL(installURL, iconPath + name);
             return ImageDescriptor.createFromURL(url);

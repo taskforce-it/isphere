@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobloganalyzer.handler;
+package biz.isphere.joblogexplorer.handler;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -16,8 +16,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditor;
-import biz.isphere.jobloganalyzer.editor.JobLogAnalyzerEditorInput;
+import biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor;
+import biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditorInput;
 
 public class OpenJobLogAnalyzerHandler extends AbstractHandler implements IHandler {
 
@@ -33,7 +33,7 @@ public class OpenJobLogAnalyzerHandler extends AbstractHandler implements IHandl
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogAnalyzerEditor.ID);
 
         } catch (PartInitException e) {
-            ISpherePlugin.logError("Failed to open job log analyzer editor", e);
+            ISpherePlugin.logError("*** Failed to open job log explorer editor ***", e); //$NON-NLS-1$
         }
         return null;
     }
