@@ -1292,6 +1292,8 @@ public class Messages extends NLS {
 
     public static String Send_Data_Queue_Entry;
 
+    public static String A_of_B_bytes;
+    
     /*
      * Warning messages
      */

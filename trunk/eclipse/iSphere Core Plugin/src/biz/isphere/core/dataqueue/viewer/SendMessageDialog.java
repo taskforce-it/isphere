@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@ package biz.isphere.core.dataqueue.viewer;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -49,9 +51,13 @@ public class SendMessageDialog extends XDialog {
 
     private Text textKey;
     private Button checkboxKeyHexMode;
+    private DataLengthDisplayer keyLengthDisplayer;
+    private InputModeListener keyInputModeListener;
 
     private Text textData;
     private Button checkboxDataHexMode;
+    private DataLengthDisplayer dataLengthDisplayer;
+    private InputModeListener dataInputModeListener;
 
     private String key;
     private boolean isHexKey;
@@ -154,7 +160,7 @@ public class SendMessageDialog extends XDialog {
     private void createKeyInputField(Composite parent) {
 
         Composite inputArea = new Composite(parent, SWT.NONE);
-        inputArea.setLayout(new GridLayout(2, false));
+        inputArea.setLayout(new GridLayout(3, false));
         inputArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Label textKeyLabel = new Label(inputArea, SWT.NONE);
@@ -163,31 +169,30 @@ public class SendMessageDialog extends XDialog {
 
         textKey = WidgetFactory.createMultilineText(inputArea, false, false);
         textKey.setFont(getEditorFont());
-        GridData dataAreaTextLayoutData = new GridData(GridData.FILL_BOTH);
+        GridData dataAreaTextLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
         textKey.setLayoutData(dataAreaTextLayoutData);
 
         new Label(inputArea, SWT.NONE).setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false)); // Dummy
 
         checkboxKeyHexMode = WidgetFactory.createCheckbox(inputArea);
         checkboxKeyHexMode.setText(Messages.Hex_key_input);
-        checkboxKeyHexMode.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                Point selection = textKey.getSelection();
-                textKey.setFocus();
-                if (selection != null) {
-                    textKey.setSelection(selection);
-                }
-            }
-        });
+        keyInputModeListener = new InputModeListener(textKey, keyLen);
+        checkboxKeyHexMode.addSelectionListener(keyInputModeListener);
 
         textKey.addVerifyListener(new DataInputVerifier(checkboxKeyHexMode));
+
+        Label textKeyLengthLabel = new Label(inputArea, SWT.RIGHT);
+        textKeyLengthLabel.setText(Messages.bind(Messages.A_of_B_bytes, new Object[] { 0, keyLen }));
+        textKeyLengthLabel.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, false));
+
+        keyLengthDisplayer = new DataLengthDisplayer(textKeyLengthLabel, checkboxKeyHexMode, keyLen);
+        textKey.addModifyListener(keyLengthDisplayer);
     }
 
     private void createDataInputField(Composite parent) {
 
         Composite inputArea = new Composite(parent, SWT.NONE);
-        inputArea.setLayout(new GridLayout(2, false));
+        inputArea.setLayout(new GridLayout(3, false));
         inputArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Label textDataLabel = new Label(inputArea, SWT.NONE);
@@ -196,25 +201,24 @@ public class SendMessageDialog extends XDialog {
 
         textData = WidgetFactory.createMultilineText(inputArea, false, false);
         textData.setFont(getEditorFont());
-        GridData dataAreaTextLayoutData = new GridData(GridData.FILL_BOTH);
+        GridData dataAreaTextLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
         textData.setLayoutData(dataAreaTextLayoutData);
 
         new Label(inputArea, SWT.NONE).setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false)); // Dummy
 
         checkboxDataHexMode = WidgetFactory.createCheckbox(inputArea);
         checkboxDataHexMode.setText(Messages.Hex_data_input);
-        checkboxDataHexMode.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                Point selection = textData.getSelection();
-                textData.setFocus();
-                if (selection != null) {
-                    textData.setSelection(selection);
-                }
-            }
-        });
+        dataInputModeListener = new InputModeListener(textData, maxDataLen);
+        checkboxDataHexMode.addSelectionListener(dataInputModeListener);
 
         textData.addVerifyListener(new DataInputVerifier(checkboxDataHexMode));
+
+        Label textDataLengthLabel = new Label(inputArea, SWT.RIGHT);
+        textDataLengthLabel.setText(Messages.bind(Messages.A_of_B_bytes, new Object[] { 0, maxDataLen }));
+        textDataLengthLabel.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, false));
+
+        dataLengthDisplayer = new DataLengthDisplayer(textDataLengthLabel, checkboxDataHexMode, maxDataLen);
+        textData.addModifyListener(dataLengthDisplayer);
     }
 
     @Override
@@ -308,6 +312,24 @@ public class SendMessageDialog extends XDialog {
         }
     }
 
+    private void refreshLimits() {
+
+        if (displayKeyInputField) {
+            keyInputModeListener.update(checkboxKeyHexMode.getSelection());
+        }
+
+        dataInputModeListener.update(checkboxDataHexMode.getSelection());
+    }
+
+    private void refreshUsages() {
+
+        if (displayKeyInputField) {
+            keyLengthDisplayer.update(textKey.getText().length());
+        }
+
+        dataLengthDisplayer.update(textData.getText().length());
+    }
+
     private void refreshButtonEnablement() {
 
     }
@@ -324,6 +346,8 @@ public class SendMessageDialog extends XDialog {
             sashForm.setWeights(sashWeights);
         }
 
+        refreshLimits();
+        refreshUsages();
         refreshButtonEnablement();
     }
 
@@ -408,4 +432,72 @@ public class SendMessageDialog extends XDialog {
 
     }
 
+    private class InputModeListener extends SelectionAdapter {
+
+        private Text textControl;
+        private int maxLength;
+
+        public InputModeListener(Text control, int maxLength) {
+            this.textControl = control;
+            this.maxLength = maxLength;
+        }
+
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            Button checkbox = (Button)event.getSource();
+            update(checkbox.getSelection());
+
+            Point selection = textControl.getSelection();
+            textControl.setFocus();
+            if (selection != null) {
+                textControl.setSelection(selection);
+            }
+        }
+
+        public void update(boolean isHexMode) {
+
+            if (isHexMode) {
+                textControl.setTextLimit(maxLength * 2);
+            } else {
+                textControl.setTextLimit(maxLength);
+            }
+        }
+    }
+
+    private class DataLengthDisplayer implements ModifyListener {
+
+        private Label label;
+        private Button checkboxHexMode;
+        private int maxLength;
+
+        private Object[] byteUsage;
+
+        public DataLengthDisplayer(Label label, Button checkboxHexMode, int maxLength) {
+            this.label = label;
+            this.checkboxHexMode = checkboxHexMode;
+            this.maxLength = maxLength;
+
+            this.byteUsage = new Object[2];
+        }
+
+        public void modifyText(ModifyEvent event) {
+
+            Text textControl = (Text)event.getSource();
+            update(textControl.getText().length());
+        }
+
+        public void update(int currentLength) {
+
+            if (checkboxHexMode.getSelection()) {
+                byteUsage[0] = currentLength / 2;
+            } else {
+                byteUsage[0] = currentLength;
+            }
+
+            byteUsage[1] = maxLength;
+
+            label.setText(Messages.bind(Messages.A_of_B_bytes, byteUsage));
+        }
+    }
 }
