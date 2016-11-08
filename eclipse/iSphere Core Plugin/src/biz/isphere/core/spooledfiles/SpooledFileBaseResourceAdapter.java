@@ -52,6 +52,10 @@ public class SpooledFileBaseResourceAdapter {
         return Messages.Spooled_file_resource;
     }
 
+    public String getFile(SpooledFile splf) {
+        return splf.getFile();
+    }
+
     public IPropertyDescriptor[] internalGetPropertyDescriptors() {
 
         PropertyDescriptor[] ourPDs = new PropertyDescriptor[17];
