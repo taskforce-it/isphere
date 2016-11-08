@@ -119,7 +119,7 @@ public class JobLogReader {
             return mode;
         }
 
-        Matcher matcher = configuration.getStartOfPage().matcher(line.trim());
+        Matcher matcher = configuration.getStartOfPage().matcher(line);
         while (matcher.find()) {
             jobLogPage = jobLog.addPage();
             jobLogPage.setPageNumber(new Integer(matcher.group(3).trim()).intValue());
@@ -212,7 +212,7 @@ public class JobLogReader {
         }
 
         // Scan for the first line of the message
-        matcher = configuration.getStartOfMessage().matcher(line.trim());
+        matcher = configuration.getStartOfMessage().matcher(line);
         while (matcher.find()) {
             updateMessageAttributes(jobLogMessage, messageAttributes);
             jobLogMessage = jobLog.addMessage();
@@ -361,7 +361,9 @@ public class JobLogReader {
         JobLogReader main = new JobLogReader();
         // main.importFromStmf(directory +
         // "iSphere Joblog - English_GFD400.txt");
-        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
+//        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
+//        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
+        JobLog jobLog = main.loadFromStmf(directory + "Test Single Message.txt");
         // main.loadFromStmf(directory +
         // "iSphere_Spooled_File_QPJOBLOG_2_TRADDATZB1_RADDATZ_246474_WWSOBIDE_1160827_202522.txt");
         // main.loadFromStmf(directory +

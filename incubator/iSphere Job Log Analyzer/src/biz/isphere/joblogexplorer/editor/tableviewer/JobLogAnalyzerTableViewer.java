@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -71,10 +72,20 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
     private Table table;
     private TableViewer tableViewer;
+    private Label labelCount;
 
     public void setInputData(JobLog jobLog) {
 
         tableViewer.setInput(jobLog);
+
+        int count;
+        if (jobLog != null) {
+            count=jobLog.getMessages().size();
+        } else {
+            count=0;
+        }
+        
+        labelCount.setText("Number of messages: " + count);
     }
 
     public void createViewer(Composite composite) {
@@ -96,6 +107,9 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
         tableViewer.setContentProvider(new JobLogAnalyzerContentProvider());
         tableViewer.setLabelProvider(new JobLogAnalyzerLabelProvider());
 
+        labelCount = new Label(composite, SWT.NONE);
+        labelCount.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        labelCount.setText("Number of messages: 0");
     }
 
     public List<String> getColumnNames() {

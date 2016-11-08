@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-      	
       	<!--
       	  ==========================================
       	    iSphere Editors
@@ -23,27 +22,49 @@
       	    Job Log Explorer Editor Contributions
       	  ==========================================
       	-->
-         
+
    <extension
          point="org.eclipse.ui.popupMenus">
-         
+         <!--
       <objectContribution
-            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+         subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+         objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
+         subtypefilter="*"
+         typecategoryfilter="*"
+         typefilter="*"
+         namefilter="*"
+         id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction">
+
+           <visibility>
+              <objectState name="name" value="QPJOBLOG" />
+           </visibility>
+
+	       <action
+              class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              enablesFor="1"
+              id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              label="%menu_Job_Log_Explorer"
+              icon="icons/joblog_analyzer.png"
+              menubarPath="group.browsewith">
+	       </action>
+      	</objectContribution>
+      	-->
+      	<objectContribution
             objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
-            subtypefilter="*"
-            typecategoryfilter="*"
-            typefilter="*"
-            namefilter="*"
-            id="biz.isphere.joblogexplorer.action">
-            
-	         <action
-                class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-                enablesFor="1"
-                id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-                label="%menu_Job_Log_Explorer"
-                icon="icons/joblog_analyzer.png"
-                menubarPath="group.browsewith">
-	         </action>
+            id="biz.isphere.joblogexplorer.menu.spooledfile">
+
+           <visibility>
+              <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
+           </visibility>
+
+	       <action
+              class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              enablesFor="1"
+              id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              label="%menu_Job_Log_Explorer"
+              icon="icons/joblog_analyzer.png"
+              menubarPath="group.browsewith">
+	       </action>
       	</objectContribution>
       	
 	</extension>
@@ -53,15 +74,15 @@
       	    iSphere Menu Contribution
       	  ==========================================
       	-->
-   
+
    <extension
          point="org.eclipse.ui.actionSets">
-         
+
       <actionSet
             id="biz.isphere.joblogexplorer.actionSet"
             label="%menu_iSphere_Menu_Job_Log_Explorer"
             visible="true">
-         
+
          <action
                class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
                id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
@@ -72,9 +93,9 @@
                tooltip="%menu_Tooltip_Opens_the_iSphere_Job_Log_Explorer">
          </action>
       </actionSet>
-      
+
 	</extension>
-   
+
       	<!--
       	  ==========================================
       	    iSphere Commands
@@ -83,21 +104,21 @@
 
    <extension
          point="org.eclipse.ui.commands">
-         
+
       <category
             name="iSphere"
             id="biz.isphere.category.Commands">
       </category>
-         
+
       <command
             defaultHandler="biz.isphere.joblogexplorer.handler.OpenJobLogAnalyzerHandler"
             id="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
             categoryId="biz.isphere.category.Commands"
             name="%cmd_Open_Job_Log_Explorer">
       </command>
-      
+
 	</extension>
-   
+
       	<!--
       	  ==========================================
       	    iSphere Key Bindings
@@ -105,13 +126,13 @@
       	-->
 
    <extension point="org.eclipse.ui.bindings">
-   
-      <key 
+
+      <key
         sequence="Ctrl+I J"
         commandId="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
-            
+
    </extension>
 
 </plugin>
