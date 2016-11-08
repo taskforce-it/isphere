@@ -34,7 +34,7 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     @Override
     public ImageDescriptor getImageDescriptor(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getImageDescriptor(((SpooledFileResource)object).getSpooledFile());
+            return base.getImageDescriptor(getSpooledFile(object));
         }
         return null;
     }
@@ -42,14 +42,14 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     @Override
     public boolean handleDoubleClick(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.handleDoubleClick(((SpooledFileResource)object).getSpooledFile());
+            return base.handleDoubleClick(getSpooledFile(object));
         }
         return false;
     }
 
     public String getText(Object object) {
         if (object instanceof SpooledFileResource) {
-            SpooledFile spooledFile = ((SpooledFileResource)object).getSpooledFile();
+            SpooledFile spooledFile = getSpooledFile(object);
             SpooledFileTextDecoration decorationStyle = ((ISpooledFileSubSystem)getSubSystem(object)).getDecorationTextStyle();
             return base.getText(spooledFile, decorationStyle);
         }
@@ -58,7 +58,7 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     public String getAbsoluteName(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getAbsoluteName(((SpooledFileResource)object).getSpooledFile());
+            return base.getAbsoluteName(getSpooledFile(object));
         }
         return "";
     }
@@ -66,7 +66,7 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     @Override
     public String getType(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getType(((SpooledFileResource)object).getSpooledFile());
+            return base.getType(getSpooledFile(object));
         }
         return "";
     }
@@ -113,7 +113,7 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     public String getAbsoluteParentName(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getAbsoluteParentName(((SpooledFileResource)object).getSpooledFile());
+            return base.getAbsoluteParentName(getSpooledFile(object));
         }
         return "";
     }
@@ -124,14 +124,14 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     public String getRemoteTypeCategory(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getRemoteTypeCategory(((SpooledFileResource)object).getSpooledFile());
+            return base.getRemoteTypeCategory(getSpooledFile(object));
         }
         return "";
     }
 
     public String getRemoteType(Object object) {
         if (object instanceof SpooledFileResource) {
-            return base.getRemoteType(((SpooledFileResource)object).getSpooledFile());
+            return base.getRemoteType(getSpooledFile(object));
         }
         return "";
     }
@@ -161,5 +161,17 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     public String getSubSystemConfigurationId(Object object) {
         return "biz.isphere.core.spooledfiles.subsystems.factory";
+    }
+    
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (name != null && "biz.isphere.rse.spooledfiles.SpooledFileResource.file".equals(name)) {
+            return value.equalsIgnoreCase(base.getFile(getSpooledFile(target)));
+        }
+        return super.testAttribute(target, name, value);
+    }
+
+    private SpooledFile getSpooledFile(Object object) {
+        return ((SpooledFileResource)object).getSpooledFile();
     }
 }
