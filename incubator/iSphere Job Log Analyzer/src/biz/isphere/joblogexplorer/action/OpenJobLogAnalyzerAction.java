@@ -16,10 +16,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import biz.isphere.joblogexplorer.handler.OpenJobLogAnalyzerHandler;
 
-public class OpenJobLogAnalyzerAction implements IObjectActionDelegate {
+public class OpenJobLogAnalyzerAction implements IWorkbenchWindowActionDelegate, IObjectActionDelegate {
 
     public static final String ID = "biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"; //$NON-NLS-1$
 
@@ -36,19 +37,17 @@ public class OpenJobLogAnalyzerAction implements IObjectActionDelegate {
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
-        System.out.println("Selection change ***");
-        return;
     }
 
     public void dispose() {
-        return;
     }
 
     public void init(IWorkbenchWindow window) {
-        return;
+        this.shell = window.getShell();
     }
 
+    @Override
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-        shell = workbenchPart.getSite().getShell();
+        this.shell = workbenchPart.getSite().getShell();
     }
 }
