@@ -1273,7 +1273,7 @@ public class Messages extends NLS {
     public static String Invalid_length_Length_must_be_a_multiple_of_2_for_hex_data;
 
     public static String Invalid_length_Length_must_not_exceed_A_characters;
-    
+
     public static String Invalid_length_Length_must_exxactly_match_A_characters;
 
     public static String Invalid_characters_Only_characters_0_9_and_A_F_are_allowed_for_hex_data;
@@ -1293,7 +1293,17 @@ public class Messages extends NLS {
     public static String Send_Data_Queue_Entry;
 
     public static String A_of_B_bytes;
+
+    public static String Open_spooled_file_in_colon;
+
+    public static String Label_Editor;
+
+    public static String Label_Viewer;
     
+    public static String Show_substituion_variables;
+    
+    public static String Hide_substituion_variables;
+
     /*
      * Warning messages
      */

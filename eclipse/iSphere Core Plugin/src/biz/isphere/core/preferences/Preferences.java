@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
@@ -90,11 +91,15 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_CONVERSION_HTML = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML"; //$NON-NLS-1$
 
+    private static final String SPOOLED_FILES_CONVERSION_HTML_EDIT_ALLOWED = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML.EDIT_ALLOWED"; //$NON-NLS-1$
+
     private static final String SPOOLED_FILES_CONVERSION_TEXT_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.COMMAND"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_CONVERSION_TEXT_LIBRARY = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.LIBRARY"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_CONVERSION_TEXT = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILES_CONVERSION_TEXT_EDIT_ALLOWED = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.EDIT_ALLOWED"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_PAGE_SIZE = DOMAIN + "SPOOLED_FILES.PAGE_SIZE"; //$NON-NLS-1$
 
@@ -306,6 +311,10 @@ public final class Preferences {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT_COMMAND);
     }
 
+    public boolean isSpooledFileConversionTextEditAllowed() {
+        return preferenceStore.getBoolean(SPOOLED_FILES_CONVERSION_TEXT_EDIT_ALLOWED);
+    }
+
     public String getSpooledFileConversionHTML() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_HTML);
     }
@@ -316,6 +325,10 @@ public final class Preferences {
 
     public String getSpooledFileConversionHTMLCommand() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_HTML_COMMAND);
+    }
+
+    public boolean isSpooledFileConversionHTMLEditAllowed() {
+        return preferenceStore.getBoolean(SPOOLED_FILES_CONVERSION_HTML_EDIT_ALLOWED);
     }
 
     public String getSpooledFileConversionPDF() {
@@ -563,6 +576,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, aCommand);
     }
 
+    public void setSpooledFileConversionTextEditAllowed(boolean enableEdit) {
+        preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT_EDIT_ALLOWED, enableEdit);
+    }
+
     public void setSpooledFileConversionHTML(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML, aConversionType);
     }
@@ -573,6 +590,10 @@ public final class Preferences {
 
     public void setSpooledFileConversionCommandHTML(String aCommand) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML_COMMAND, aCommand);
+    }
+
+    public void setSpooledFileConversionHTMLEditAllowed(boolean enableEdit) {
+        preferenceStore.setValue(SPOOLED_FILES_CONVERSION_HTML_EDIT_ALLOWED, enableEdit);
     }
 
     public void setSpooledFileConversionPDF(String aConversionType) {
@@ -714,10 +735,12 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT, getDefaultSpooledFileConversionText());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_COMMAND, getDefaultSpooledFileConversionTextCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_LIBRARY, getDefaultSpooledFileConversionTextLibrary());
+        preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_TEXT_EDIT_ALLOWED, getDefaultSpooledFileConversionTextEditAllowed());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML, getDefaultSpooledFileConversionHTML());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML_COMMAND, getDefaultSpooledFileConversionHTMLCommand());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML_LIBRARY, getDefaultSpooledFileConversionHTMLLibrary());
+        preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_HTML_EDIT_ALLOWED, getDefaultSpooledFileConversionHTMLEditAllowed());
 
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF, getDefaultSpooledFileConversionPDF());
         preferenceStore.setDefault(SPOOLED_FILES_CONVERSION_PDF_COMMAND, getDefaultSpooledFileConversionPDFCommand());
@@ -889,6 +912,16 @@ public final class Preferences {
     }
 
     /**
+     * Return the default for "allow edit" for spooled files converted to text.
+     * 
+     * @return <code>true</code>, when editing is allowed, else
+     *         <code>false</code>.
+     */
+    public boolean getDefaultSpooledFileConversionTextEditAllowed() {
+        return false;
+    }
+
+    /**
      * Returns the default conversion type for spooled file to HTML conversion.
      * 
      * @return default spooled file to HTML conversion type
@@ -915,6 +948,16 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileConversionHTMLCommand() {
         return "";
+    }
+
+    /**
+     * Return the default for "allow edit" for spooled files converted to HTML.
+     * 
+     * @return <code>true</code>, when editing is allowed, else
+     *         <code>false</code>.
+     */
+    public boolean getDefaultSpooledFileConversionHTMLEditAllowed() {
+        return false;
     }
 
     /**
@@ -1198,6 +1241,11 @@ public final class Preferences {
         return new SimpleDateFormat(pattern);
     }
 
+    public String[] getSpooledFileAllowEditLabels() {
+
+        return new String[] { Messages.Label_Viewer, Messages.Label_Editor };
+    }
+
     public String[] getDateFormatLabels() {
 
         Set<String> formats = getDateFormatsMap().keySet();
@@ -1266,7 +1314,7 @@ public final class Preferences {
 
         return getSpooledFileSuggestedNamesMap().get(key);
     }
-    
+
     public String[] getDataQueueNumberOfMessagesToRetrieveItems() {
         return new String[] { "1", "5", "10", "50", "100" };
     }
