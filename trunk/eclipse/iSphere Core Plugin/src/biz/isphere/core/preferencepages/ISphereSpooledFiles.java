@@ -51,6 +51,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPreferencePage {
 
+    private static final Boolean SHOW_SUBSTITUTION_VARIABLES_YES = Boolean.TRUE;
+    private static final Boolean SHOW_SUBSTITUTION_VARIABLES_NO = Boolean.FALSE;
+
     // Tab "Conversion"
     private Button buttonDefaultFormatText;
     private Button buttonDefaultFormatHTML;
@@ -69,6 +72,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionTextLibrary;
     private Text textConversionTextCommand;
     private String conversionTextCommand;
+    private Combo comboConversionTextEditAllowed;
+    private boolean isConversionTextEditAllowed;
 
     // Tab "Conversion": *HTML
     private Button buttonConversionHTMLDefault;
@@ -80,6 +85,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private String conversionHTMLLibrary;
     private Text textConversionHTMLCommand;
     private String conversionHTMLCommand;
+    private Combo comboConversionHTMLEditAllowed;
+    private boolean isConversionHTMLEditAllowed;
 
     // Tab "Conversion": *PDF
     private Button buttonConversionPDFDefault;
@@ -96,6 +103,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private Button chkBoxConversionPDFAdjustFontSize;
     private boolean adjustFontSize;
     private Label labelConversionPDFUsingFontSize;
+
+    private Group groupSubstitutionVariables;
 
     // Tab "General"
     private Button buttonLoadAsynchronously;
@@ -127,6 +136,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         tabOpenSave.setControl(createTabConversion(tabFolder));
 
         setScreenToValues();
+
+        tabFolder.pack(true);
 
         return tabFolder;
     }
@@ -189,7 +200,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     private Composite createTabConversion(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NONE);
+        final Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
         container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
@@ -298,6 +309,23 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextCommand.setLayoutData(createGroupLayoutData());
         textConversionTextCommand.setTextLimit(256);
 
+        Label labelConversionTextEditAllowed = new Label(groupConversionText, SWT.NONE);
+        labelConversionTextEditAllowed.setText(Messages.Open_spooled_file_in_colon);
+
+        comboConversionTextEditAllowed = WidgetFactory.createReadOnlyCombo(groupConversionText);
+        comboConversionTextEditAllowed.setLayoutData(createGroupLayoutData());
+        comboConversionTextEditAllowed.setItems(Preferences.getInstance().getSpooledFileAllowEditLabels());
+        comboConversionTextEditAllowed.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (Messages.Label_Viewer.equals(comboConversionTextEditAllowed.getText())) {
+                    isConversionTextEditAllowed = false;
+                } else {
+                    isConversionTextEditAllowed = true;
+                }
+            }
+        });
+
         String colorsAndFonts = Messages.bind(Messages.Change_viewer_font_Basic_Text_Font, new String[] {
             "<a href=\"org.eclipse.ui.preferencePages.ColorsAndFonts\">", "</a>" });
 
@@ -383,6 +411,23 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         });
         textConversionHTMLCommand.setLayoutData(createGroupLayoutData());
         textConversionHTMLCommand.setTextLimit(256);
+
+        Label labelConversionHTMLEditAllowed = new Label(groupConversionHTML, SWT.NONE);
+        labelConversionHTMLEditAllowed.setText(Messages.Open_spooled_file_in_colon);
+
+        comboConversionHTMLEditAllowed = WidgetFactory.createReadOnlyCombo(groupConversionHTML);
+        comboConversionHTMLEditAllowed.setLayoutData(createGroupLayoutData());
+        comboConversionHTMLEditAllowed.setItems(Preferences.getInstance().getSpooledFileAllowEditLabels());
+        comboConversionHTMLEditAllowed.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (Messages.Label_Viewer.equals(comboConversionHTMLEditAllowed.getText())) {
+                    isConversionHTMLEditAllowed = false;
+                } else {
+                    isConversionHTMLEditAllowed = true;
+                }
+            }
+        });
 
         // Group: PDF conversion
         Group groupConversionPDF = new Group(container, SWT.NONE);
@@ -489,9 +534,51 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         labelConversionPDFUsingFontSize = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFUsingFontSize.setText(Messages.Using_font_size_of_TEXT_conversion);
 
-        createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_conversion_commands);
+        final Button showVars = WidgetFactory.createPushButton(container);
+        showVars.setData(SHOW_SUBSTITUTION_VARIABLES_NO);
+        showVars.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                performToggleSubstitutionVariable(container, showVars);
+            }
+        });
+
+        performToggleSubstitutionVariable(container, showVars);
 
         return container;
+    }
+
+    private void performToggleSubstitutionVariable(final Composite container, Button showVars) {
+
+        if ((Boolean)showVars.getData()) {
+            showVars.setText(Messages.Hide_substituion_variables);
+            showVars.setData(SHOW_SUBSTITUTION_VARIABLES_NO);
+            groupSubstitutionVariables = createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_conversion_commands);
+            updateControl(container);
+        } else {
+            showVars.setText(Messages.Show_substituion_variables);
+            showVars.setData(SHOW_SUBSTITUTION_VARIABLES_YES);
+            if (groupSubstitutionVariables != null && !groupSubstitutionVariables.isDisposed()) {
+                groupSubstitutionVariables.dispose();
+                groupSubstitutionVariables = null;
+                updateControl(container);
+            }
+        }
+    }
+
+    private void updateControl(Composite composite) {
+
+        composite.pack();
+        composite.getParent().pack();
+        getShell().pack();
+
+        composite.layout();
+        composite.getParent().layout();
+        getShell().layout();
+
+        composite.update();
+        composite.getParent().update();
+        getShell().update();
     }
 
     private void setPDFOptionsEnablement() {
@@ -510,7 +597,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         }
     }
 
-    private void createGroupSubstitutionVariables(Composite container, String headline) {
+    private Group createGroupSubstitutionVariables(Composite container, String headline) {
 
         // Group: Replacement variables
         Group groupSubstitutionVariables = new Group(container, SWT.NONE);
@@ -537,6 +624,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME, Messages.Creation_Time);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_USRDTA, Messages.User_data);
 
+        return groupSubstitutionVariables;
     }
 
     private GridData createGroupLayoutData() {
@@ -673,10 +761,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Preferences.getInstance().setSpooledFileConversionText(conversionText);
         Preferences.getInstance().setSpooledFileConversionLibraryText(conversionTextLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandText(conversionTextCommand);
+        Preferences.getInstance().setSpooledFileConversionTextEditAllowed(isConversionTextEditAllowed);
 
         Preferences.getInstance().setSpooledFileConversionHTML(conversionHTML);
         Preferences.getInstance().setSpooledFileConversionLibraryHTML(conversionHTMLLibrary);
         Preferences.getInstance().setSpooledFileConversionCommandHTML(conversionHTMLCommand);
+        Preferences.getInstance().setSpooledFileConversionHTMLEditAllowed(isConversionHTMLEditAllowed);
 
         Preferences.getInstance().setSpooledFileConversionPDF(conversionPDF);
         Preferences.getInstance().setSpooledFileConversionLibraryPDF(conversionPDFLibrary);
@@ -698,10 +788,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionText = Preferences.getInstance().getSpooledFileConversionText();
         conversionTextLibrary = Preferences.getInstance().getSpooledFileConversionTextLibrary();
         conversionTextCommand = Preferences.getInstance().getSpooledFileConversionTextCommand();
+        isConversionTextEditAllowed = Preferences.getInstance().isSpooledFileConversionTextEditAllowed();
 
         conversionHTML = Preferences.getInstance().getSpooledFileConversionHTML();
         conversionHTMLLibrary = Preferences.getInstance().getSpooledFileConversionHTMLLibrary();
         conversionHTMLCommand = Preferences.getInstance().getSpooledFileConversionHTMLCommand();
+        isConversionHTMLEditAllowed = Preferences.getInstance().isSpooledFileConversionHTMLEditAllowed();
 
         conversionPDF = Preferences.getInstance().getSpooledFileConversionPDF();
         conversionPDFLibrary = Preferences.getInstance().getSpooledFileConversionPDFLibrary();
@@ -726,10 +818,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         conversionText = Preferences.getInstance().getDefaultSpooledFileConversionText();
         conversionTextLibrary = Preferences.getInstance().getDefaultSpooledFileConversionTextLibrary();
         conversionTextCommand = Preferences.getInstance().getDefaultSpooledFileConversionTextCommand();
+        isConversionTextEditAllowed = Preferences.getInstance().getDefaultSpooledFileConversionTextEditAllowed();
 
         conversionHTML = Preferences.getInstance().getDefaultSpooledFileConversionHTML();
         conversionHTMLLibrary = Preferences.getInstance().getDefaultSpooledFileConversionHTMLLibrary();
         conversionHTMLCommand = Preferences.getInstance().getDefaultSpooledFileConversionHTMLCommand();
+        isConversionHTMLEditAllowed = Preferences.getInstance().getDefaultSpooledFileConversionHTMLEditAllowed();
 
         conversionPDF = Preferences.getInstance().getDefaultSpooledFileConversionPDF();
         conversionPDFLibrary = Preferences.getInstance().getDefaultSpooledFileConversionPDFLibrary();
@@ -787,6 +881,11 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         } else if (conversionText.equals(IPreferences.SPLF_CONVERSION_TRANSFORM)) {
             textConversionTextCommand.setEnabled(false);
         }
+        if (isConversionTextEditAllowed) {
+            comboConversionTextEditAllowed.setText(Messages.Label_Editor);
+        } else {
+            comboConversionTextEditAllowed.setText(Messages.Label_Viewer);
+        }
 
         buttonConversionHTMLDefault.setSelection(false);
         buttonConversionHTMLUserDefined.setSelection(false);
@@ -813,6 +912,11 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             textConversionHTMLCommand.setEnabled(true);
         } else if (conversionHTML.equals(IPreferences.SPLF_CONVERSION_TRANSFORM)) {
             textConversionHTMLCommand.setEnabled(false);
+        }
+        if (isConversionHTMLEditAllowed) {
+            comboConversionHTMLEditAllowed.setText(Messages.Label_Editor);
+        } else {
+            comboConversionHTMLEditAllowed.setText(Messages.Label_Viewer);
         }
 
         buttonConversionPDFDefault.setSelection(false);
@@ -850,7 +954,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
         chkBoxConversionPDFAdjustFontSize.setSelection(adjustFontSize);
         setPDFOptionsEnablement();
-        
+
         comboSuggestedFileName.setText(suggestedFileName);
         textMaxNumSpooledFiles.setText(Integer.toString(maxNumSpooledFiles));
 

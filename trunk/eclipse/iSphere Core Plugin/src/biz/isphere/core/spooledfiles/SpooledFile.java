@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -660,23 +661,32 @@ public class SpooledFile {
 
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
 
-            // TODO: remove browser input or add switch to preferences
-            // Do not forget to remove the editor from plugin.xml
-            boolean useBrowser = false;
-            if (useBrowser) {
-                BrowserEditorInput browserInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format),
-                    image, file.getLocation().toOSString());
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(browserInput, BrowserEditor.ID);
+            boolean useEditor = Preferences.getInstance().isSpooledFileConversionTextEditAllowed();
+            if (useEditor) {
+                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                org.eclipse.ui.ide.IDE.openEditor(page, file);
             } else {
+                // BrowserEditorInput browserInput = new
+                // BrowserEditorInput(getTemporaryName(format),
+                // getTemporaryName(format), getToolTip(format),
+                // image, file.getLocation().toOSString());
+                // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(browserInput,
+                // BrowserEditor.ID);
                 FileEditorInput editorInput = new FileEditorInput(file);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, ReadOnlyEditor.ID);
             }
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
-            BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
-                file.getLocation().toOSString());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
+            boolean useEditor = Preferences.getInstance().isSpooledFileConversionHTMLEditAllowed();
+            if (useEditor) {
+                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                org.eclipse.ui.ide.IDE.openEditor(page, file);
+            } else {
+                BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format),
+                    image, file.getLocation().toOSString());
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
+            }
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
 
