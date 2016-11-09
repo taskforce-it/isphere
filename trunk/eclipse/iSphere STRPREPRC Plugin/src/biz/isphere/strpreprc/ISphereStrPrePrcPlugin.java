@@ -11,6 +11,7 @@ package biz.isphere.strpreprc;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.strpreprc.lpex.MenuExtension;
 import biz.isphere.strpreprc.model.HeaderTemplates;
 
 /**
@@ -23,6 +24,9 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
 
     // The shared instance
     private static ISphereStrPrePrcPlugin plugin;
+
+    // The Lpex menu extension
+    private MenuExtension menuExtension;
 
     /**
      * The constructor
@@ -50,10 +54,18 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
 
+        if (menuExtension != null) {
+            menuExtension.uninstall();
+        }
+
         plugin = null;
         super.stop(context);
 
         HeaderTemplates.dispose();
+    }
+
+    public void setLpexMenuExtension(MenuExtension menuExtension) {
+        this.menuExtension = menuExtension;
     }
 
     /**
