@@ -8,6 +8,7 @@
 
 package biz.isphere.core.swt.widgets;
 
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -57,6 +58,16 @@ public final class WidgetFactory {
             instance = new WidgetFactory();
         }
         return instance;
+    }
+
+    /**
+     * Produces a color selector control.
+     * 
+     * @param parent - parent composite
+     * @return color selector
+     */
+    public static ColorSelector createColorSelector(Composite parent) {
+        return new ColorSelector(parent);
     }
 
     /**
@@ -172,6 +183,43 @@ public final class WidgetFactory {
      */
     public static Text createPassword(Composite parent) {
         return WidgetFactory.getInstance().produceText(parent, SWT.PASSWORD, true);
+    }
+
+    /**
+     * Produces a label with selectable text.
+     * 
+     * @param parent - parent composite
+     * @return label with selectable text
+     */
+    public static Text createSelectableLabel(Composite parent) {
+
+        Text text = new Text(parent, SWT.NONE);
+        text.setEditable(false);
+
+        return text;
+    }
+
+    /**
+     * Produces a multi-line line label with selectable text. If the text does
+     * not fit into the field, a vertical scroll bar is displayed.
+     * 
+     * @param parent - parent composite
+     * @return multi-line label with selectable text
+     */
+    public static Text createSelectableMultilineLabel(Composite parent) {
+
+        Text text = new Text(parent, SWT.MULTI | SWT.V_SCROLL);
+
+        Listener scrollBarListener = new AutoScrollbarsListener();
+        text.addListener(SWT.Resize, scrollBarListener);
+        text.addListener(SWT.Modify, scrollBarListener);
+        text.setEditable(false);
+
+        // if (autoSelect) {
+        // text.addFocusListener(new SelectAllFocusListener());
+        // }
+
+        return text;
     }
 
     /**
