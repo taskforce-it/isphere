@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
     private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
     private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
+    private static final String INCLUDE_MESSAGE_ID = "includeMessageId";
 
     /**
      * The MAX_END_COLUMN value specified here must match the maximum message
@@ -87,6 +88,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private SearchArgumentsListEditor searchArgumentsListEditor;
     private Button includeFirstLevelTextButton;
     private Button includeSecondLevelTextButton;
+    private Button includeMessageIdButton;
 
     public MessageFileSearchPage() {
         super();
@@ -205,6 +207,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         tGridData = new GridData(SWT.HORIZONTAL);
         tGridData.grabExcessHorizontalSpace = false;
         includeSecondLevelTextButton.setLayoutData(tGridData);
+
+        includeMessageIdButton = WidgetFactory.createCheckbox(tOptionsGroup);
+        includeMessageIdButton.setText(Messages.IncludeMessageId);
+        includeMessageIdButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_message_id);
+        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData.grabExcessHorizontalSpace = false;
+        includeMessageIdButton.setLayoutData(tGridData);
     }
 
     private Group createGroup(Composite aParent, String aText) {
@@ -237,6 +246,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         endColumnText.addVerifyListener(new NumericOnlyVerifyListener());
         includeFirstLevelTextButton.addListener(SWT.Selection, this);
         includeSecondLevelTextButton.addListener(SWT.Selection, this);
+        includeMessageIdButton.addListener(SWT.Selection, this);
     }
 
     /**
@@ -247,6 +257,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
         includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
+        includeMessageIdButton.setSelection(loadBooleanValue(INCLUDE_MESSAGE_ID, false));
         if (loadValue(CONNECTION, null) != null) {
             ISeriesConnection connection = ISeriesConnection.getConnection(loadValue(CONNECTION, null));
             if (connection != null) {
@@ -258,7 +269,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         loadColumnButtonsSelection();
 
-        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText() && !isIncludeMessageId()) {
             includeFirstLevelTextButton.setSelection(true);
         }
     }
@@ -271,6 +282,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+        storeValue(INCLUDE_MESSAGE_ID, isIncludeMessageId());
         storeValue(CONNECTION, getConnectionName());
         storeValue(LIBRARY, getMessageFileLibrary());
         storeValue(MESSAGE_FILE, getMessageFile());
@@ -404,6 +416,15 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
+     * Returns the status of the "include message id" check box.
+     * 
+     * @return status of the "include message id" check box
+     */
+    private boolean isIncludeMessageId() {
+        return includeMessageIdButton.getSelection();
+    }
+
+    /**
      * Overridden to let {@link XDialogPage} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
@@ -472,6 +493,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
             searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
             searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
+            searchOptions.setOption(SearchExec.INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), tConnection.getJDBCConnection(null,
                 false), searchOptions, new ArrayList<SearchElement>(searchElements.values()), postRun);
@@ -613,7 +635,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             }
         }
 
-        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText() && !isIncludeMessageId()) {
             return false;
         }
 

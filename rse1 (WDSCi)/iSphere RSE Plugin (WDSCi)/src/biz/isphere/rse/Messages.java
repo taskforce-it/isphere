@@ -145,6 +145,10 @@ public class Messages extends NLS {
     public static String SplfDecoration_Job;
     
     public static String SplfDecoration_UserDefined;
+
+    public static String IncludeMessageId;
+
+    public static String Specify_whether_or_not_to_include_the_message_id;
     
     static {
         // initialize resource bundle
