@@ -60,6 +60,8 @@ import com.ibm.as400.access.RequestNotSupportedException;
 
 public class SpooledFile {
 
+    private static final String ISPHERE_SPOOLED_FILE_NAME_PREFIX = "iSphere_Spooled_File_"; //$NON-NLS-1$
+
     public static final String VARIABLE_SPLFNBR = "&SPLFNBR";
     public static final String VARIABLE_SPLF = "&SPLF";
     public static final String VARIABLE_JOBNBR = "&JOBNBR";
@@ -696,10 +698,24 @@ public class SpooledFile {
         }
     }
 
+    public IFile downloadSpooledFile(String format, String target) throws Exception {
+
+        String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
+        IFile file = getLocalSpooledFile(format, source, target);
+
+        return file;
+    }
+
     private IFile getLocalSpooledFile(String format, String source) throws Exception {
 
-        boolean hasSpooledFile = false;
         String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + getTemporaryName(format);
+
+        return getLocalSpooledFile(format, source, target);
+    }
+
+    private IFile getLocalSpooledFile(String format, String source, String target) throws Exception {
+
+        boolean hasSpooledFile = false;
 
         if (doTransformSpooledFile(format)) {
             hasSpooledFile = transformSpooledFile(format, target);
@@ -941,6 +957,10 @@ public class SpooledFile {
         return "iSphereSpooledFiles/" + getTemporaryName(format); //$NON-NLS-1$
     }
 
+    public String getQualifiedName() {
+        return getAbsoluteNameInternal("_");
+    }
+
     public String getTemporaryName(String format) {
 
         String fileExtension = "";
@@ -952,7 +972,7 @@ public class SpooledFile {
             fileExtension = ".pdf";
         }
 
-        return "iSphere_Spooled_File_" + getAbsoluteNameInternal("_") + fileExtension;
+        return ISPHERE_SPOOLED_FILE_NAME_PREFIX + getAbsoluteNameInternal("_") + fileExtension;
     }
 
     private String getAbsoluteNameInternal(String delimiter) {
@@ -1038,4 +1058,42 @@ public class SpooledFile {
         Preferences.getInstance().setSpooledFileSaveDirectory(directory);
     }
 
+    @Override
+    public int hashCode() {
+        /*
+         * Siehe: http://www.ibm.com/developerworks/library/j-jtp05273/
+         */
+        int hash = 5;
+        hash = hash * 19 + getFile().hashCode();
+        hash = hash * 19 + getFileNumber();
+        hash = hash * 19 + getJobName().hashCode();
+        hash = hash * 19 + getJobUser().hashCode();
+        hash = hash * 19 + getJobNumber().hashCode();
+        hash = hash * 19 + getJobSystem().hashCode();
+
+        return hash;
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+
+        SpooledFile other = (SpooledFile)obj;
+        // @formatter:off
+        if (!getFile().equals(other.getFile()) 
+            || !(getFileNumber() == other.getFileNumber()) 
+            || !getJobName().equals(other.getJobName())
+            || !getJobUser().equals(other.getJobUser())
+            || !getJobNumber().equals(other.getJobNumber()) 
+            || !getJobSystem().equals(other.getJobSystem())) {
+            return false;
+        }
+        // @formatter:on
+
+        return true;
+    }
 }
