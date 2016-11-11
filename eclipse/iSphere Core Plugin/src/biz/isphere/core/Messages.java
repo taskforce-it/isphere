@@ -1304,6 +1304,10 @@ public class Messages extends NLS {
     
     public static String Hide_substituion_variables;
 
+    public static String IncludeMessageId;
+
+    public static String Specify_whether_or_not_to_include_the_message_id;
+
     /*
      * Warning messages
      */

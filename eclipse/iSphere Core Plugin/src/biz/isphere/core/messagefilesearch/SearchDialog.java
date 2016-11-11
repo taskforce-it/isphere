@@ -35,10 +35,12 @@ public class SearchDialog extends AbstractSearchDialog {
     private HashMap<String, SearchElement> searchElements;
     private Button includeFirstLevelTextButton;
     private Button includeSecondLevelTextButton;
+    private Button includeMessageIdButton;
 
     // iSphere settings
     private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
     private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
+    private static final String INCLUDE_MESSAGE_ID = "includeMessageId";
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, 132, false, false);
@@ -89,6 +91,10 @@ public class SearchDialog extends AbstractSearchDialog {
         return includeSecondLevelTextButton.getSelection();
     }
 
+    public boolean isIncludeMessageId() {
+        return includeMessageIdButton.getSelection();
+    }
+
     @Override
     public void addElements(Composite container) {
 
@@ -128,13 +134,29 @@ public class SearchDialog extends AbstractSearchDialog {
             }
         });
 
+        includeMessageIdButton = WidgetFactory.createCheckbox(groupOptions);
+        includeMessageIdButton.setText(Messages.IncludeMessageId);
+        includeMessageIdButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_message_id);
+        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData.grabExcessHorizontalSpace = false;
+        includeMessageIdButton.setLayoutData(tGridData);
+        includeMessageIdButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent arg0) {
+                setOKButtonEnablement();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
     }
 
     @Override
     public void loadElementValues() {
         includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
         includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
-        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText()) {
+        includeMessageIdButton.setSelection(loadBooleanValue(INCLUDE_MESSAGE_ID, false));
+        if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText() && !isIncludeMessageId()) {
             includeFirstLevelTextButton.setSelection(true);
         }
     };
@@ -143,21 +165,19 @@ public class SearchDialog extends AbstractSearchDialog {
     public void saveElementValues() {
         storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+        storeValue(INCLUDE_MESSAGE_ID, isIncludeMessageId());
     };
 
     @Override
     public boolean checkElements() {
-        return isIncludeFirstLevelText() || isIncludeSecondLevelText();
+        return isIncludeFirstLevelText() || isIncludeSecondLevelText() || isIncludeMessageId();
     }
 
     @Override
     public void setElementsSearchOptions(SearchOptions _searchOptions) {
         _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-        // _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new
-        // Boolean(isIncludeFirstLevelText()));
-        // _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new
-        // Boolean(isIncludeSecondLevelText()));
+        _searchOptions.setOption(SearchExec.INCLUDE_MESSAGE_ID, isIncludeMessageId());
     };
 
 }

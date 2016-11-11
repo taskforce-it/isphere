@@ -25,11 +25,11 @@ public class Messages extends NLS {
     public static String iSphere_Data_Area_Monitor; // Only for WDSCi
 
     public static String iSphere_User_Space_Monitor; // Only for WDSCi
-    
+
     public static String iSphere_Data_Queue_Monitor; // Only for WDSCi
-    
+
     public static String iSphere_Compare_Message_File_Editor; // Only for WDSCi
-    
+
     public static String iSphere_CopyMembersTo; // Only for WDSCi
 
     public static String Right;
@@ -107,33 +107,37 @@ public class Messages extends NLS {
     public static String Loading_remote_objects;
 
     public static String Library_A_not_found;
-    
+
     public static String File_A_in_library_B_not_found;
 
     public static String Select_Message_File;
-    
+
     public static String Select_Object;
 
     public static String Object_A_in_library_B_not_found;
-    
+
     public static String No_filter_pool_available;
-    
+
     public static String A_filter_with_name_A_already_exists;
 
     public static String Failed_to_save_data_to_file_colon_A;
 
     public static String Failed_to_load_data_from_file_colon_A;
-    
+
     public static String Connection_A_not_found;
 
     public static String Failed_to_execute_command_A;
 
     public static String Cannot_copy_source_members_from_different_connections;
-    
+
     public static String Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D;
 
     public static String Failed_to_connect_to_system_A;
-    
+
+    public static String IncludeMessageId;
+
+    public static String Specify_whether_or_not_to_include_the_message_id;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

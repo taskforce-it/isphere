@@ -1,6 +1,6 @@
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      //* Copyright (c) 2012-2016 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
       //* are made available under the terms of the Common Public License v1.0                     *
       //* which accompanies this distribution, and is available at                                 *
@@ -22,6 +22,7 @@
      d matchAll                        N   Const                                --> Match all finds
      d firstLvlText                    N   Const                                --> Inc. 1.level txt
      d secLvlText                      N   Const                                --> Inc. 2.level txt
+     d messageId                       N   Const                                --> Inc. message id
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)

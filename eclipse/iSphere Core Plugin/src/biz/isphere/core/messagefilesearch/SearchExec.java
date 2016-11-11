@@ -32,6 +32,7 @@ public class SearchExec {
     public static final String CASE_IGNORE = "*IGNORE";
     public static final String INCLUDE_FIRST_LEVEL_TEXT = "INCLUDE_FIRST_LEVEL_TEXT";
     public static final String INCLUDE_SECOND_LEVEL_TEXT = "INCLUDE_SECOND_LEVEL_TEXT";
+    public static final String INCLUDE_MESSAGE_ID = "INCLUDE_MESSAGE_ID";
 
     private class Search extends Job {
 
