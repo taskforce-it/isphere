@@ -22,5 +22,6 @@
       <data name="secLvlText"   type="char"   length="1"                usage="input" />
       <data name="size"         type="int"    length="4"                usage="input" />
       <data name="arguments"    type="struct" struct="searchArgument"   usage="input" count="size" />
+      <data name="messageId"    type="char"   length="1"                usage="input" />
    </program>
 </pcml>

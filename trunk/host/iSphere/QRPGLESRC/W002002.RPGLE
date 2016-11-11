@@ -1,6 +1,6 @@
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      //* Copyright (c) 2012-2016 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
       //* are made available under the terms of the Common Public License v1.0                     *
       //* which accompanies this distribution, and is available at                                 *
@@ -40,6 +40,7 @@
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d messageId                       N   Const Options(*nopass)               --> Inc. message id
 
       // Procedure interface for procedure 'W002002'
 
@@ -53,6 +54,7 @@
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d LSMESSAGEID                     N   Const Options(*nopass)               --> Inc. message id
 
       //*------------------------------------------------------------------------------------------*
 
@@ -62,18 +64,41 @@
 
       //*------------------------------------------------------------------------------------------*
 
+      // Locale field declarations
+
+     d p_LSMESSAGEID   c                   8
+
+      //*------------------------------------------------------------------------------------------*
+
       /Free
 
-       // Call service program
-       XFNDSTR_search(
-        LPHDL :      // --> Handle
-        LSSHWRCDS :  // --> Show records
-        LSMTCALL :   // --> Match all finds
-        LSFSTLVLTX : // --> Inc. 1.level txt
-        LSSECLVLTX : // --> Inc. 2.level txt
-        LISIZE :     // --> Number of args.
-        LSARGS       // --> Search arguments
-       );
+       // TODO: move parameter LSMESSAGEID after LSSECLVLTX and
+       //       remove the *nopass option.
+       If (%parms() >= p_LSMESSAGEID);
+         // Call service program
+         XFNDSTR_search(
+          LPHDL :       // --> Handle
+          LSSHWRCDS :   // --> Show records
+          LSMTCALL :    // --> Match all finds
+          LSFSTLVLTX :  // --> Inc. 1.level txt
+          LSSECLVLTX :  // --> Inc. 2.level txt
+          LSMESSAGEID : // --> Inc. message id
+          LISIZE :      // --> Number of args.
+          LSARGS
+         );
+       Else;
+         // Call service program
+         XFNDSTR_search(
+          LPHDL :       // --> Handle
+          LSSHWRCDS :   // --> Show records
+          LSMTCALL :    // --> Match all finds
+          LSFSTLVLTX :  // --> Inc. 1.level txt
+          LSSECLVLTX :  // --> Inc. 2.level txt
+          *Off :        // not passed: Inc. message id
+          LISIZE :      // --> Number of args.
+          LSARGS        // --> Search arguments
+         );
+       EndIf;
 
        // Leave procedure
        Return;

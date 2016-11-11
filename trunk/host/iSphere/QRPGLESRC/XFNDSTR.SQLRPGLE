@@ -2,7 +2,7 @@
       //* Find String in Message File                                                              *
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      //* Copyright (c) 2012-2016 iSphere Project Owners                                           *
       //* All rights reserved. This program and the accompanying materials                         *
       //* are made available under the terms of the Common Public License v1.0                     *
       //* which accompanies this distribution, and is available at                                 *
@@ -192,6 +192,7 @@
      d LSMTCALL                        N   Const                                --> Match all finds
      d LSFSTLVLTX                      N   Const                                --> Inc. 1.level txt
      d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
+     d LSMESSAGEID                     N   Const                                --> Inc. message id
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
@@ -204,6 +205,7 @@
      dLISTG            S             40A   varying                              String
      dLITXT            S            132A   varying                              Text to be searched
      dLIHELP           S           3000A   varying                              Text to be searched
+     dLIMESSAGEID      S              7A   varying                              MsgId to be searched
      dLICNT            S              6S 0                                      Counter
      dLICNL            S             10A                                        Cancel
      dLIRTVOPT         S             10A                                        Retrieve options
@@ -363,6 +365,13 @@
              LIHELP = '';
            EndIf;
 
+           // Add message id
+           If (LSMESSAGEID);
+             LIMESSAGEID = RTVMMsgId;
+           Else;
+             LIMESSAGEID = '';
+           EndIf;
+
            // Set retrieve option
            LIRTVOPT = '*NEXT';
 
@@ -396,7 +405,7 @@
                LITXT = '';
              EndIf;
 
-             // Initialize string
+             // Initialize search string
              LISTG = %trimR(LSARGS(LIIDX).string);
 
              // Ignore upper/lower case
@@ -404,11 +413,13 @@
                LISTG = %XLate(GILO:GIUP:LISTG);
                LITXT = %XLate(GILO:GIUP:LITXT);
                LIHELP = %XLate(GILO:GIUP:LIHELP);
+               LIMESSAGEID = %XLate(GILO:GIUP:LIMESSAGEID);
              EndIf;
 
              // Match!
              If %Scan(LISTG : LITXT) > *Zero or
-                %Scan(LISTG : LIHELP) > *Zero;
+                %Scan(LISTG : LIHELP) > *Zero or
+                %Scan(LISTG : LIMESSAGEID) > *Zero;
                matchesResult(LIIDX).hasBeenFound = *ON;
                if (matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;

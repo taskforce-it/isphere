@@ -72,6 +72,12 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.secLvlText", "0");
             }
 
+            if (_searchOptions.isOption(SearchExec.INCLUDE_MESSAGE_ID)) {
+                pcml.setValue("XFNDSTR_search.messageId", "1");
+            } else {
+                pcml.setValue("XFNDSTR_search.messageId", "0");
+            }
+
             boolean rc = pcml.callProgram("XFNDSTR_search");
 
             if (rc == false) {
