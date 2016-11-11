@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.joblogexplorer.ISphereJobLogAnalyzerPlugin;
+import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 
 public class JobLogReaderConfiguration {
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
     private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}"; //$NON-NLS-1$
-    private String JOB_NUMBER = "[0-9]{6}";
+    private String JOB_NUMBER = "[0-9]{6}"; //$NON-NLS-1$
     private String PROGRAM = OBJECT_NAME;
     private String LIBRARY = OBJECT_NAME;
     private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}"; //$NON-NLS-1$
@@ -36,7 +36,7 @@ public class JobLogReaderConfiguration {
     private String PAGE_NUMBER_LABEL = "[a-zA-Z]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}"; //$NON-NLS-1$
     private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+"; //$NON-NLS-1$
-    private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}" + "|" + "&{JOB_NUMBER}"; //$NON-NLS-1$
+    private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}" + "|" + "&{JOB_NUMBER}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     private String MESSAGE_ID = "\\*NONE|[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
     private String MESSAGE_TYPE = "[A-Z][a-z]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
@@ -223,7 +223,7 @@ public class JobLogReaderConfiguration {
 
         String result = string;
 
-        while (result.indexOf("&") >= 0) {
+        while (result.indexOf("&") >= 0) { //$NON-NLS-1$
 
             result = result.replaceAll("&\\{JOB_NUMBER}", fixEscapeCharacters(JOB_NUMBER)); //$NON-NLS-1$
             result = result.replaceAll("&\\{OBJECT_NAME}", fixEscapeCharacters(OBJECT_NAME)); //$NON-NLS-1$
@@ -256,7 +256,7 @@ public class JobLogReaderConfiguration {
     }
 
     private String fixEscapeCharacters(String value) {
-        return value.replaceAll("\\*", "\\\\*");
+        return value.replaceAll("\\*", "\\\\*"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -308,9 +308,9 @@ public class JobLogReaderConfiguration {
     private File findConfigurationFile(String fileName) throws UnsupportedEncodingException {
 
         String path;
-        if (ISphereJobLogAnalyzerPlugin.getDefault() != null) {
+        if (ISphereJobLogExplorerPlugin.getDefault() != null) {
             // Executed, when started from a plug-in.
-            String folder = ISphereJobLogAnalyzerPlugin.getDefault().getStateLocation().toFile().getAbsolutePath() + File.separator
+            String folder = ISphereJobLogExplorerPlugin.getDefault().getStateLocation().toFile().getAbsolutePath() + File.separator
                 + REPOSITORY_LOCATION + File.separator;
             FileHelper.ensureDirectory(folder);
             path = folder + fileName;

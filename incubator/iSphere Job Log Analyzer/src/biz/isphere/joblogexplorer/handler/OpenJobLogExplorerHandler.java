@@ -16,10 +16,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor;
-import biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditorInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
 
-public class OpenJobLogAnalyzerHandler extends AbstractHandler implements IHandler {
+public class OpenJobLogExplorerHandler extends AbstractHandler implements IHandler {
 
     /*
      * (non-Javadoc)
@@ -29,8 +29,8 @@ public class OpenJobLogAnalyzerHandler extends AbstractHandler implements IHandl
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
-            JobLogAnalyzerEditorInput editorInput = new JobLogAnalyzerEditorInput();
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogAnalyzerEditor.ID);
+            JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(null, ""); //$NON-NLS-1$
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
 
         } catch (PartInitException e) {
             ISpherePlugin.logError("*** Failed to open job log explorer editor ***", e); //$NON-NLS-1$

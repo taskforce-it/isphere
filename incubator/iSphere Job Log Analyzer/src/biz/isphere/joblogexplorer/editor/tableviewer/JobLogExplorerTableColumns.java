@@ -8,7 +8,7 @@
 
 package biz.isphere.joblogexplorer.editor.tableviewer;
 
-public interface JobLogAnalyzerTableColumns {
+public interface JobLogExplorerTableColumns {
 
     public static int COLUMN_SELECTED = 0;
     public static int COLUMN_DATE = 1;

@@ -17,9 +17,11 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.joblogexplorer.InvalidJobLogFormatException;
 
 public class JobLogReader {
 
+    private static final int NUMBER_OF_LINES_SCANNED_FOR_FIRST_LINE_OF_JOIB_LOG = 3;
     private static final int IDLE = 1;
     private static final int PARSE_PAGE_HEADER = 2;
     private static final int PARSE_MESSAGE = 3;
@@ -50,14 +52,17 @@ public class JobLogReader {
      * 
      * @param pathName - Name of the file.
      * @return number of bytes processed (linefeed bytes excluded)
+     * @throws InvalidJobLogFormatException
      */
-    public JobLog loadFromStmf(String pathName) {
+    public JobLog loadFromStmf(String pathName) throws InvalidJobLogFormatException {
 
         BufferedReader br = null;
         jobLog = new JobLog();
         messageIndent = null;
         messageAttributes = new LinkedList<String>();
         lastMessageAttribute = -1;
+
+        int errCount = NUMBER_OF_LINES_SCANNED_FOR_FIRST_LINE_OF_JOIB_LOG;
 
         try {
 
@@ -66,9 +71,13 @@ public class JobLogReader {
             br = new BufferedReader(new FileReader(pathName));
 
             mode = IDLE;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && errCount > 0) {
 
                 mode = checkForStartOfPage(line);
+                if (mode == IDLE) {
+                    errCount--;
+                    continue;
+                }
 
                 switch (mode) {
                 case PARSE_PAGE_HEADER:
@@ -83,6 +92,10 @@ public class JobLogReader {
                     break;
                 }
 
+            }
+
+            if (mode == IDLE) {
+                throw new InvalidJobLogFormatException();
             }
 
             if (jobLogMessage != null && messageAttributes.size() > 0) {
@@ -354,16 +367,18 @@ public class JobLogReader {
      * 
      * @param args - none (not used)
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        String directory = "C:/workspaces/rdp_095/workspace/iSphere Job Log Explorer/temp/";
+        String directory = "C:/workspaces/rdp_095/workspace/iSphere Job Log Explorer/temp/"; //$NON-NLS-1$
 
         JobLogReader main = new JobLogReader();
         // main.importFromStmf(directory +
         // "iSphere Joblog - English_GFD400.txt");
-//        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
-//        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
-        JobLog jobLog = main.loadFromStmf(directory + "Test Single Message.txt");
+        // JobLog jobLog = main.loadFromStmf(directory +
+        // "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt");
+        // JobLog jobLog = main.loadFromStmf(directory +
+        // "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
+        JobLog jobLog = main.loadFromStmf(directory + "Test Single Message.txt"); //$NON-NLS-1$
         // main.loadFromStmf(directory +
         // "iSphere_Spooled_File_QPJOBLOG_2_TRADDATZB1_RADDATZ_246474_WWSOBIDE_1160827_202522.txt");
         // main.loadFromStmf(directory +

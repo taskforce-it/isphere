@@ -1,13 +1,17 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Job Log Explorer
-Bundle-SymbolicName: biz.isphere.jobloganalyzer;singleton:=true
+Bundle-SymbolicName: biz.isphere.joblogexplorer;singleton:=true
 Bundle-Version: 1.0.0.b001
-Bundle-Activator: biz.isphere.joblogexplorer.ISphereJobLogAnalyzerPlugin
+Bundle-Activator: biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.rse.core,
+ org.eclipse.core.resources,
+ org.eclipse.rse.subsystems.files.core,
  biz.isphere.base,
- biz.isphere.core
+ biz.isphere.core,
+ biz.isphere.rse
 Bundle-ActivationPolicy: lazy

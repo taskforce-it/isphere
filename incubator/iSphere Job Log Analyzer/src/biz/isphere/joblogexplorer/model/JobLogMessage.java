@@ -8,7 +8,11 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import biz.isphere.base.internal.IntHelper;
+
 public class JobLogMessage {
+
+    private static final int SEVERITY_NULL = -1;
 
     private int pageNumber;
     private boolean selected;
@@ -33,9 +37,12 @@ public class JobLogMessage {
     private String fromProcedure;
     private String fromStatement;
 
+    private int severityInt;
+
     public JobLogMessage(int pageNumber) {
         this.selected = false;
         this.pageNumber = pageNumber;
+        updateSeverityIntValue();
     }
 
     public int getPageNumber() {
@@ -70,8 +77,13 @@ public class JobLogMessage {
         return severity;
     }
 
+    public int getSeverityInt() {
+        return severityInt;
+    }
+
     public void setSeverity(String severity) {
         this.severity = severity;
+        updateSeverityIntValue();
     }
 
     public String getDate() {
@@ -184,6 +196,14 @@ public class JobLogMessage {
 
     public void setFromStatement(String fromStatement) {
         this.fromStatement = fromStatement;
+    }
+
+    private void updateSeverityIntValue() {
+        if (severity == null) {
+            severityInt = SEVERITY_NULL;
+        } else {
+            severityInt = IntHelper.tryParseInt(severity, SEVERITY_NULL);
+        }
     }
 
     @Override

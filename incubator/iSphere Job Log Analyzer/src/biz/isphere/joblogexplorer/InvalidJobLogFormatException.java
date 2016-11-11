@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.jobs;
+package biz.isphere.joblogexplorer;
 
-public interface IDropFileListener {
+public class InvalidJobLogFormatException extends Exception {
 
-    public void dropJobLog(String pathName, String originalFileName, Object target);
+    private static final long serialVersionUID = 411713919999706178L;
 
 }

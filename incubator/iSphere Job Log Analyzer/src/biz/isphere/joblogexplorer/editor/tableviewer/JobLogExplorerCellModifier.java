@@ -18,15 +18,15 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
  * user modifes a cell in the tableViewer
  */
 
-public class JobLogAnalyzerCellModifier implements ICellModifier, JobLogAnalyzerTableColumns {
-    private JobLogAnalyzerTableViewer tableViewer;
+public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorerTableColumns {
+    private JobLogExplorerTableViewer tableViewer;
 
     /**
      * Constructor
      * 
      * @param TableViewerExample an instance of a TableViewerExample
      */
-    public JobLogAnalyzerCellModifier(JobLogAnalyzerTableViewer tableViewer) {
+    public JobLogExplorerCellModifier(JobLogExplorerTableViewer tableViewer) {
         super();
         this.tableViewer = tableViewer;
     }
@@ -41,7 +41,7 @@ public class JobLogAnalyzerCellModifier implements ICellModifier, JobLogAnalyzer
         int columnIndex = tableViewer.getColumnNames().indexOf(property);
 
         switch (columnIndex) {
-        case JobLogAnalyzerTableColumns.COLUMN_SELECTED:
+        case JobLogExplorerTableColumns.COLUMN_SELECTED:
             return true;
         default:
             return false;
@@ -61,7 +61,7 @@ public class JobLogAnalyzerCellModifier implements ICellModifier, JobLogAnalyzer
         JobLogMessage jobLogMessage = (JobLogMessage)element;
 
         switch (columnIndex) {
-        case JobLogAnalyzerTableColumns.COLUMN_SELECTED:
+        case JobLogExplorerTableColumns.COLUMN_SELECTED:
             result = new Boolean(jobLogMessage.isSelected());
             break;
         default:
@@ -83,7 +83,7 @@ public class JobLogAnalyzerCellModifier implements ICellModifier, JobLogAnalyzer
         JobLogMessage jobLogMessages = (JobLogMessage)item.getData();
 
         switch (columnIndex) {
-        case JobLogAnalyzerTableColumns.COLUMN_SELECTED:
+        case JobLogExplorerTableColumns.COLUMN_SELECTED:
             jobLogMessages.setSelected(((Boolean)value).booleanValue());
             break;
         default:

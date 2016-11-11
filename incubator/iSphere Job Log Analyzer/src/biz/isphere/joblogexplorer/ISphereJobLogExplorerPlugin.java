@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
+public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
 
     // Names of images used to represent checkboxes
     public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
@@ -30,14 +30,14 @@ public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
 
     // The shared instance
-    private static ISphereJobLogAnalyzerPlugin plugin;
+    private static ISphereJobLogExplorerPlugin plugin;
 
     private static URL installURL;
 
     /**
      * The constructor
      */
-    public ISphereJobLogAnalyzerPlugin() {
+    public ISphereJobLogExplorerPlugin() {
     }
 
     /*
@@ -71,7 +71,7 @@ public class ISphereJobLogAnalyzerPlugin extends AbstractUIPlugin {
      *
      * @return the shared instance
      */
-    public static ISphereJobLogAnalyzerPlugin getDefault() {
+    public static ISphereJobLogExplorerPlugin getDefault() {
         return plugin;
     }
 

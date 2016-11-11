@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.Viewer;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class JobLogAnalyzerContentProvider implements IStructuredContentProvider {
+public class JobLogExplorerContentProvider implements IStructuredContentProvider {
 
     private JobLog jobLog;
 

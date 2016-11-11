@@ -33,20 +33,25 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.joblogexplorer.InvalidJobLogFormatException;
 import biz.isphere.joblogexplorer.Messages;
-import biz.isphere.joblogexplorer.editor.tableviewer.JobLogAnalyzerTableViewer;
+import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
+import biz.isphere.joblogexplorer.editor.tableviewer.JobLogExplorerTableViewer;
 import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogReader;
 
-public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListener {
+public class JobLogExplorerEditor extends EditorPart implements IDropFileListener {
 
-    public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"; //$NON-NLS-1$
 
-    private JobLogAnalyzerTableViewer viewer;
+    private JobLogExplorerTableViewer viewer;
+    private StatusLine statusLine;
+    private StatusLineData statusLineData;
 
-    public JobLogAnalyzerEditor() {
-        return;
+    public JobLogExplorerEditor() {
+
+        this.statusLineData = new StatusLineData();
     }
 
     @Override
@@ -64,6 +69,7 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
         setSite(site);
         setInput(input);
         setPartName(Messages.Job_Log_Explorer);
+        setTitleToolTip(Messages.Job_Log_Explorer_Tooltip);
     }
 
     @Override
@@ -89,7 +95,15 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
         createLeftPanel(sashForm);
         createRightPanel(sashForm);
-        sashForm.setWeights(new int[] { 8, 2 });
+        sashForm.setWeights(new int[] { 8, 4 });
+
+        JobLogExplorerEditorInput input = (JobLogExplorerEditorInput)getEditorInput();
+
+        if (input.getPath() != null) {
+            dropJobLog(input.getPath(), input.getOriginalFileName(), null);
+        } else {
+            // Open empty editor to drag & drop files.
+        }
     }
 
     @Override
@@ -100,16 +114,20 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
      * Drag & drop support
      */
 
-    public void dropJobLog(DroppedLocalFile droppedJobLog, Object target) {
+    public void dropJobLog(String pathName, String originalFileName, Object target) {
 
-        if (droppedJobLog == null) {
-            MessageDialogAsync.displayError(getShell(), Messages.Dropped_object_does_not_match_expected_type);
+        if (pathName == null) {
             return;
         }
 
-        viewer.setInputData(null);
+        if (!viewer.isDisposed()) {
+            viewer.setInputData(null);
+        }
 
-        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(droppedJobLog, viewer);
+        viewer.setEnabled(false);
+        JobLogExplorerEditor.this.showBusy(true);
+
+        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(pathName, originalFileName, viewer);
         parserJob.schedule();
     }
 
@@ -146,16 +164,17 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
         leftMainPanel.setLayout(createGridLayoutWithMargin());
         leftMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        new Label(leftMainPanel, SWT.NONE).setText("Left Panel"); //$NON-NLS-1$
+        new Label(leftMainPanel, SWT.NONE).setText("Left Panel - Under Construction"); //$NON-NLS-1$
 
-        Label separator = new Label(leftMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
-        separator.setLayoutData(createGridDataFillAndGrab(1));
+        // Label separator = new Label(leftMainPanel, SWT.SEPARATOR |
+        // SWT.HORIZONTAL);
+        // separator.setLayoutData(createGridDataFillAndGrab(1));
 
         Composite tableArea = new Composite(leftMainPanel, SWT.NONE);
-        tableArea.setLayout(createGridLayoutNoMargin());
+        // tableArea.setLayout(createGridLayoutNoMargin());
         tableArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        viewer = new JobLogAnalyzerTableViewer();
+        viewer = new JobLogExplorerTableViewer();
         viewer.createViewer(tableArea);
 
         addDropSupportOnComposite(leftMainPanel);
@@ -169,14 +188,20 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
         rightMainPanel.setLayout(createGridLayoutWithMargin());
         rightMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        new Label(rightMainPanel, SWT.NONE).setText("Right Panel"); //$NON-NLS-1$
+        new Label(rightMainPanel, SWT.NONE).setText("Message details"); //$NON-NLS-1$
 
-        Label separator = new Label(rightMainPanel, SWT.SEPARATOR | SWT.HORIZONTAL);
-        separator.setLayoutData(createGridDataFillAndGrab(1));
+        // Label separator = new Label(rightMainPanel, SWT.SEPARATOR |
+        // SWT.HORIZONTAL);
+        // separator.setLayoutData(createGridDataFillAndGrab(1));
 
-        Composite detailsArea = new Composite(rightMainPanel, SWT.NONE);
-        detailsArea.setLayout(createGridLayoutNoMargin());
+        Composite detailsArea = new Composite(rightMainPanel, SWT.BORDER);
+        // detailsArea.setLayout(createGridLayoutWithMargin(2));
         detailsArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        JobLogExplorerDetailsViewer details = new JobLogExplorerDetailsViewer();
+        details.createViewer(detailsArea);
+
+        viewer.addSelectionChangedListener(details);
 
         return rightMainPanel;
     }
@@ -235,32 +260,71 @@ public class JobLogAnalyzerEditor extends EditorPart implements IDropFileListene
 
     private class ParseSpooledFileJob extends Job {
 
-        private DroppedLocalFile droppedJobLog;
-        private JobLogAnalyzerTableViewer viewer;
+        private String pathName;
+        private String originalFileName;
+        private JobLogExplorerTableViewer viewer;
 
-        public ParseSpooledFileJob(DroppedLocalFile droppedJobLog, JobLogAnalyzerTableViewer viewer) {
+        public ParseSpooledFileJob(String pathName, String originalFileName, JobLogExplorerTableViewer viewer) {
             super(Messages.Job_Parsing_job_log);
 
-            this.droppedJobLog = droppedJobLog;
+            this.pathName = pathName;
+            this.originalFileName = originalFileName;
             this.viewer = viewer;
         }
 
         @Override
         protected IStatus run(IProgressMonitor arg0) {
 
-            JobLogReader reader = new JobLogReader();
-            final JobLog jobLog = reader.loadFromStmf(droppedJobLog.getPathName());
+            try {
 
-            new UIJob("") { //$NON-NLS-1$
-                @Override
-                public IStatus runInUIThread(IProgressMonitor arg0) {
-                    viewer.setInputData(jobLog);
-                    return Status.OK_STATUS;
-                }
-            }.schedule();
+                JobLogReader reader = new JobLogReader();
+                final JobLog jobLog = reader.loadFromStmf(pathName);
+
+                new UIJob("") { //$NON-NLS-1$
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor arg0) {
+
+                        setPartName(originalFileName);
+                        viewer.setInputData(jobLog);
+
+                        int count;
+                        if (jobLog != null) {
+                            count = jobLog.getMessages().size();
+                        } else {
+                            count = 0;
+                        }
+
+                        showStatusMessage(Messages.bind(Messages.Number_of_messages_A, count));
+
+                        viewer.setEnabled(true);
+                        JobLogExplorerEditor.this.showBusy(false);
+
+                        viewer.setSelection(0);
+                        viewer.setFocus();
+
+                        return Status.OK_STATUS;
+                    }
+
+                }.schedule();
+
+            } catch (InvalidJobLogFormatException e) {
+                MessageDialogAsync.displayError(getShell(), Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log);
+            }
 
             return Status.OK_STATUS;
         }
+    }
 
+    private void showStatusMessage(String message) {
+        statusLineData.setMessage(message);
+        updateActionsStatusAndStatusLine();
+    }
+
+    public void setStatusLine(StatusLine statusLine) {
+        this.statusLine = statusLine;
+    }
+
+    public void updateActionsStatusAndStatusLine() {
+        statusLine.setData(statusLineData);
     }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,7 +22,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -29,7 +29,7 @@ import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogAnalyzerTableColumns {
+public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogExplorerTableColumns {
 
     public enum Columns {
         SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
@@ -72,23 +72,42 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
     private Table table;
     private TableViewer tableViewer;
-    private Label labelCount;
+    private Composite viewerArea;
+
+    public boolean isDisposed() {
+        return tableViewer.getControl().isDisposed();
+    }
+
+    public void setEnabled(boolean enabled) {
+        viewerArea.setEnabled(enabled);
+    }
 
     public void setInputData(JobLog jobLog) {
 
         tableViewer.setInput(jobLog);
+    }
 
-        int count;
-        if (jobLog != null) {
-            count=jobLog.getMessages().size();
-        } else {
-            count=0;
+    public void setFocus() {
+        tableViewer.getTable().setFocus();
+    }
+    
+    public void setSelection(int index) {
+
+        if (tableViewer.getTable().getItemCount() <= 0) {
+            return;
         }
-        
-        labelCount.setText("Number of messages: " + count);
+
+        tableViewer.getTable().setSelection(index);
+
+        /*
+         * Ugly hack to enforce a selection changed event
+         */
+        tableViewer.setSelection(tableViewer.getSelection());
     }
 
     public void createViewer(Composite composite) {
+
+        viewerArea = composite;
 
         // Create a composite to hold the children
         GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_BOTH);
@@ -104,12 +123,16 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
 
         // Create and setup the TableViewer
         createTableViewer();
-        tableViewer.setContentProvider(new JobLogAnalyzerContentProvider());
-        tableViewer.setLabelProvider(new JobLogAnalyzerLabelProvider());
+        tableViewer.setContentProvider(new JobLogExplorerContentProvider());
+        tableViewer.setLabelProvider(new JobLogExplorerLabelProvider(tableViewer));
+    }
 
-        labelCount = new Label(composite, SWT.NONE);
-        labelCount.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-        labelCount.setText("Number of messages: 0");
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.addSelectionChangedListener(listener);
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.removeSelectionChangedListener(listener);
     }
 
     public List<String> getColumnNames() {
@@ -405,7 +428,7 @@ public class JobLogAnalyzerTableViewer implements IJobLogMessagesViewer, JobLogA
         // Assign the cell editors to the viewer
         tableViewer.setCellEditors(editors);
         // Set the cell modifier for the viewer
-        tableViewer.setCellModifier(new JobLogAnalyzerCellModifier(this));
+        tableViewer.setCellModifier(new JobLogExplorerCellModifier(this));
         // Set the default sorter for the viewer
         // tableViewer.setSorter(new
         // ExampleTaskSorter(ExampleTaskSorter.DESCRIPTION));

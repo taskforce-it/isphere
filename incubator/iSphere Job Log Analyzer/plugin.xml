@@ -12,88 +12,80 @@
 		point="org.eclipse.ui.editors">
 		<editor
 			name=""
-			icon="icons/joblog_analyzer.png"
-			class="biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"
-			id="biz.isphere.joblogexplorer.editor.JobLogAnalyzerEditor"/>
+			icon="icons/joblog_explorer.png"
+			class="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"
+			contributorClass="biz.isphere.joblogexplorer.editor.JobLogExplorerEditorActionBarContributor"
+			id="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"/>
 	</extension>
       	
       	<!--
       	  ==========================================
       	    Job Log Explorer Editor Contributions
+      	    Object: Spooled Files
       	  ==========================================
       	-->
 
    <extension
          point="org.eclipse.ui.popupMenus">
-         <!--
-      <objectContribution
-         subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
-         objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
-         subtypefilter="*"
-         typecategoryfilter="*"
-         typefilter="*"
-         namefilter="*"
-         id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction">
 
-           <visibility>
-              <objectState name="name" value="QPJOBLOG" />
-           </visibility>
-
-	       <action
-              class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-              enablesFor="1"
-              id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-              label="%menu_Job_Log_Explorer"
-              icon="icons/joblog_analyzer.png"
-              menubarPath="group.browsewith">
-	       </action>
-      	</objectContribution>
-      	-->
       	<objectContribution
             objectClass="biz.isphere.rse.spooledfiles.SpooledFileResource"
-            id="biz.isphere.joblogexplorer.menu.spooledfile">
+            id="biz.isphere.joblogexplorer.menu.spooledfileresource">
 
            <visibility>
               <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
            </visibility>
 
 	       <action
-              class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              class="biz.isphere.joblogexplorer.action.OpenJobLogExplorerWithSpooledFileAction"
               enablesFor="1"
-              id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
+              id="biz.isphere.joblogexplorer.action.OpenJobLogExplorerWithSpooledFileAction"
               label="%menu_Job_Log_Explorer"
-              icon="icons/joblog_analyzer.png"
+              icon="icons/joblog_explorer.png"
               menubarPath="group.browsewith">
+              <!--
+              <enablement>
+                 <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
+              </enablement>
+              -->
 	       </action>
       	</objectContribution>
       	
 	</extension>
-
+      	
       	<!--
       	  ==========================================
-      	    iSphere Menu Contribution
+      	    Job Log Explorer Editor Contributions
+      	    Object: Stream Files
       	  ==========================================
       	-->
 
    <extension
-         point="org.eclipse.ui.actionSets">
+         point="org.eclipse.ui.popupMenus">
 
-      <actionSet
-            id="biz.isphere.joblogexplorer.actionSet"
-            label="%menu_iSphere_Menu_Job_Log_Explorer"
-            visible="true">
+      	<objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            id="biz.isphere.joblogexplorer.menu.iremotefile">
 
-         <action
-               class="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-               id="biz.isphere.joblogexplorer.action.OpenJobLogAnalyzerAction"
-               definitionId="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
-               label="%menu_Job_Log_Explorer"
-               icon="icons/joblog_analyzer.png"
-               menubarPath="biz.isphere.core.menu.isphere/additions"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_Job_Log_Explorer">
-         </action>
-      </actionSet>
+           <visibility>
+              <objectState name="isfile" value="true"/>
+           </visibility>
 
+	       <action
+              class="biz.isphere.joblogexplorer.action.OpenJobLogExplorerWithRemoteFileAction"
+              enablesFor="1"
+              id="biz.isphere.joblogexplorer.action.OpenJobLogExplorerWithRemoteFileAction"
+              label="%menu_Job_Log_Explorer"
+              icon="icons/joblog_explorer.png"
+              menubarPath="group.browsewith">
+              <!--
+              <enablement>
+                 <objectState name="isfile" value="true"/>
+              </enablement>
+              -->
+	       </action>
+      	</objectContribution>
+      	
 	</extension>
 
       	<!--
@@ -111,8 +103,8 @@
       </category>
 
       <command
-            defaultHandler="biz.isphere.joblogexplorer.handler.OpenJobLogAnalyzerHandler"
-            id="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
+            defaultHandler="biz.isphere.joblogexplorer.handler.OpenJobLogExplorerHandler"
+            id="biz.isphere.joblogexplorer.command.JobLogExplorer.open"
             categoryId="biz.isphere.category.Commands"
             name="%cmd_Open_Job_Log_Explorer">
       </command>
@@ -129,10 +121,48 @@
 
       <key
         sequence="Ctrl+I J"
-        commandId="biz.isphere.joblogexplorer.command.JobLogAnalyzer.open"
+        commandId="biz.isphere.joblogexplorer.command.JobLogExplorer.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
 
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Preferences
+      	  ==========================================
+      	-->
 
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage"
+            category="biz.isphere.base.preferencepages.General"
+            name="Job Log Explorer"
+            id="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage" >
+         <keywordReference id="biz.isphere.joblogexplorer.preferences.general"/>
+      </page>
+
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.joblogexplorer.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Keywords
+      	  ==========================================
+      	-->
+
+   <extension
+      point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="biz.isphere.joblogexplorer.preferences.general"/>
+   </extension>
+   
 </plugin>

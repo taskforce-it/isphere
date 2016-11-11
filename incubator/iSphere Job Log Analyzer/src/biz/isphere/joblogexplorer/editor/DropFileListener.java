@@ -65,7 +65,7 @@ public class DropFileListener extends DropTargetAdapter {
                 droppedFiles[i] = new DroppedLocalFile(droppedLocalFilesData[i]);
             }
 
-            target.dropJobLog(droppedFiles[0], event.item);
+            target.dropJobLog(droppedFiles[0].getPathName(), droppedFiles[0].getPathName(), event.item);
         }
     }
 
