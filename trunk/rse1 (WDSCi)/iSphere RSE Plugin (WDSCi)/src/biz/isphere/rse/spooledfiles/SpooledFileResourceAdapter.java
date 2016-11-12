@@ -29,10 +29,6 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
 
     private SpooledFileBaseResourceAdapter base = new SpooledFileBaseResourceAdapter();
 
-    public SpooledFileResourceAdapter() {
-        super();
-    }
-
     @Override
     public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup) {
     }
@@ -167,5 +163,16 @@ public class SpooledFileResourceAdapter extends AbstractSystemViewAdapter implem
     public boolean supportsUserDefinedActions(Object object) {
         return false;
     }
+    
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (name != null && "biz.isphere.rse.spooledfiles.SpooledFileResource.file".equals(name)) {
+            return value.equalsIgnoreCase(base.getFile(getSpooledFile(target)));
+        }
+        return super.testAttribute(target, name, value);
+    }
 
+    private SpooledFile getSpooledFile(Object object) {
+        return ((SpooledFileResource)object).getSpooledFile();
+    }
 }
