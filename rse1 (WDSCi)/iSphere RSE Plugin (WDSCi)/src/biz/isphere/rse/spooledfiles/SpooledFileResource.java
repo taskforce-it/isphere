@@ -20,12 +20,12 @@ public class SpooledFileResource extends AbstractResource {
 
     private SpooledFile spooledFile;
 
-    public SpooledFileResource(SubSystem subSystem) {
-        super(subSystem);
-    }
-
     public SpooledFileResource() {
         super();
+    }
+
+    public SpooledFileResource(SubSystem subSystem) {
+        super(subSystem);
     }
 
     public SpooledFile getSpooledFile() {
