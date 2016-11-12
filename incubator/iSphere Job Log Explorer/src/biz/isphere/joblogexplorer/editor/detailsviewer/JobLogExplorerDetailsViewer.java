@@ -13,11 +13,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
-import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
@@ -26,6 +26,9 @@ import biz.isphere.joblogexplorer.preferences.Preferences;
 import biz.isphere.joblogexplorer.preferences.SeverityColor;
 
 public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
+
+    private static final String EMPTY = ""; //$NON-NLS-1$
+    private static final String NEW_LINE = "\n"; //$NON-NLS-1$ 
 
     private JobLogMessage jobLogMessage;
 
@@ -82,13 +85,14 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         detailsArea.setLayout(layout);
         detailsArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        detailsArea.setBackground(ColorHelper.getDefaultBackgroundColor());
+        detailsArea.setBackground(getBackgroundColor());
 
         Composite messageDetailsArea = new Composite(detailsArea, SWT.NONE);
         GridLayout messageDetailsLayout = new GridLayout(2, false);
-        messageDetailsLayout.horizontalSpacing=30;
+        messageDetailsLayout.horizontalSpacing = 30;
         messageDetailsArea.setLayout(messageDetailsLayout);
         messageDetailsArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        messageDetailsArea.setBackground(getBackgroundColor());
 
         textID = createDetailsField(messageDetailsArea, Messages.Label_ID);
         textSeverity = createDetailsField(messageDetailsArea, Messages.Label_Severity);
@@ -115,6 +119,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         Composite messageArea = new Composite(detailsArea, SWT.NONE);
         messageArea.setLayout(new GridLayout(2, false));
         messageArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        messageArea.setBackground(getBackgroundColor());
 
         textMessage = createMultilineDetailsField(messageArea);
     }
@@ -128,10 +133,11 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         Label labelField = new Label(parent, SWT.NONE);
         labelField.setText(label);
         labelField.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+        labelField.setBackground(getBackgroundColor());
 
         Text textField = WidgetFactory.createSelectableLabel(parent);
-        textField.setBackground(ColorHelper.getDefaultBackgroundColor());
-        textField.setLayoutData(new GridData(GridData.FILL_BOTH));
+        textField.setBackground(getBackgroundColor());
+        textField.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         return textField;
     }
@@ -139,13 +145,12 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private Text createMultilineDetailsField(Composite parent) {
 
         Text textField = WidgetFactory.createSelectableMultilineLabel(parent);
-        textField.setBackground(ColorHelper.getDefaultBackgroundColor());
+        textField.setBackground(getBackgroundColor());
         textField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         return textField;
     }
 
-    @Override
     public void selectionChanged(SelectionChangedEvent event) {
 
         if (event.getSelection() instanceof IStructuredSelection) {
@@ -173,16 +178,29 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
                 updateValue(textToProcedure, jobLogMessage.getToProcedure());
                 updateValue(textToStatement, jobLogMessage.getToStatement());
 
-                updateValue(textMessage, jobLogMessage.getText() + "\n" + "\n" + jobLogMessage.getCause()); //$NON-NLS-1$ //$NON-NLS-2$
+                updateValue(textMessage, getCompleteMessageText());
 
                 updateColor(jobLogMessage);
             }
         }
     }
 
+    private String getCompleteMessageText() {
+
+        if (jobLogMessage.getText() == null && jobLogMessage.getCause() == null) {
+            return EMPTY;
+        } else if (jobLogMessage.getText() != null && jobLogMessage.getCause() != null) {
+            return jobLogMessage.getText() + NEW_LINE + NEW_LINE + jobLogMessage.getCause();
+        } else if (jobLogMessage.getText() != null) {
+            return jobLogMessage.getText();
+        } else {
+            return jobLogMessage.getCause();
+        }
+    }
+
     private void updateColor(JobLogMessage jobLogMessage) {
 
-        Color background = ColorHelper.getDefaultBackgroundColor();
+        Color background = getBackgroundColor();
 
         if (isColoring) {
             int severity = jobLogMessage.getSeverityInt();
@@ -199,7 +217,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
             }
 
             if (background == null) {
-                background = ColorHelper.getDefaultBackgroundColor();
+                background = getBackgroundColor();
             }
         }
 
@@ -209,7 +227,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private void updateValue(Text textControl, String value) {
 
         if (value == null) {
-            textControl.setText(""); //$NON-NLS-1$
+            textControl.setText(EMPTY);
         } else {
             textControl.setText(value);
         }
@@ -233,7 +251,6 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private void registerPropertyChangeListener() {
 
         ISphereJobLogExplorerPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
-            @Override
             public void propertyChange(PropertyChangeEvent event) {
                 String propertyName = event.getProperty();
                 if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) {
@@ -255,7 +272,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private class UpdateDetailsViewerJob extends UIJob {
 
         public UpdateDetailsViewerJob() {
-            super("");
+            super(EMPTY);
         }
 
         @Override
@@ -264,6 +281,10 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
             updateColor(jobLogMessage);
             return Status.OK_STATUS;
         }
+    }
+
+    private Color getBackgroundColor() {
+        return Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
     }
 
 }

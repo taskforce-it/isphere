@@ -6,21 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.jobs;
+package biz.isphere.joblogexplorer.jobs.rse;
 
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
 
-public class LoadIRemoteFileJob {
-
-    IRemoteFile remoteFile;
-
-    public LoadIRemoteFileJob(IRemoteFile remoteFile) {
-        this.remoteFile = remoteFile;
-    }
+public abstract class AbstractLoadIRemoteFileJob {
 
     public void run() {
 
@@ -28,8 +21,8 @@ public class LoadIRemoteFileJob {
 
             try {
 
-                String filePath = remoteFile.getAbsolutePath();
-                String originalFileName = remoteFile.getName();
+                String filePath = getRemoteFileAbsolutePath();
+                String originalFileName = getRemoteFileName();
 
                 JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(filePath, originalFileName);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
@@ -42,4 +35,8 @@ public class LoadIRemoteFileJob {
             e.printStackTrace();
         }
     }
+
+    protected abstract String getRemoteFileName();
+
+    protected abstract String getRemoteFileAbsolutePath();
 }

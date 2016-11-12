@@ -8,10 +8,10 @@ Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.rse.core,
  org.eclipse.core.resources,
- org.eclipse.rse.subsystems.files.core,
  biz.isphere.base,
- biz.isphere.core,
- biz.isphere.rse
+ biz.isphere.core
 Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Export-Package: biz.isphere.joblogexplorer.action.rse,
+ biz.isphere.joblogexplorer.jobs.rse

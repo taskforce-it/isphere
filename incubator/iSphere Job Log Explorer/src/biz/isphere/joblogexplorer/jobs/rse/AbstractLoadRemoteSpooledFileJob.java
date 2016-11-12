@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.jobs;
+package biz.isphere.joblogexplorer.jobs.rse;
 
 import java.io.File;
 
@@ -24,15 +24,11 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
-import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
-public class LoadRemoteSpooledFileJob extends Job {
+public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
 
-    SpooledFileResource spooledFileResource;
-
-    public LoadRemoteSpooledFileJob(SpooledFileResource spooledFileResource) {
+    public AbstractLoadRemoteSpooledFileJob() {
         super(Messages.Loading_remote_job_log_dots);
-        this.spooledFileResource = spooledFileResource;
     }
 
     @Override
@@ -40,7 +36,7 @@ public class LoadRemoteSpooledFileJob extends Job {
 
         try {
 
-            SpooledFile spooledFile = spooledFileResource.getSpooledFile();
+            SpooledFile spooledFile = getSpooledFile();
 
             String format = IPreferences.OUTPUT_FORMAT_TEXT;
             String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + spooledFile.getTemporaryName(format);
@@ -112,4 +108,5 @@ public class LoadRemoteSpooledFileJob extends Job {
         }
     }
 
+    protected abstract SpooledFile getSpooledFile();
 }

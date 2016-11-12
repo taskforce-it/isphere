@@ -90,7 +90,7 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
     public void setFocus() {
         tableViewer.getTable().setFocus();
     }
-    
+
     public void setSelection(int index) {
 
         if (tableViewer.getTable().getItemCount() <= 0) {
@@ -124,7 +124,8 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
         // Create and setup the TableViewer
         createTableViewer();
         tableViewer.setContentProvider(new JobLogExplorerContentProvider());
-        tableViewer.setLabelProvider(new JobLogExplorerLabelProvider(tableViewer));
+        tableViewer.setLabelProvider(new JobLogExplorerLabelProvider());
+        tableViewer.getTable().addListener(SWT.EraseItem, new JobLogExplorerBackgroundProvider(tableViewer));
     }
 
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
