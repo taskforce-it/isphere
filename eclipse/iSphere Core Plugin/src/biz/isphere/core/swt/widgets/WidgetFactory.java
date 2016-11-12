@@ -208,7 +208,7 @@ public final class WidgetFactory {
      */
     public static Text createSelectableMultilineLabel(Composite parent) {
 
-        Text text = new Text(parent, SWT.MULTI | SWT.V_SCROLL);
+        Text text = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
 
         Listener scrollBarListener = new AutoScrollbarsListener();
         text.addListener(SWT.Resize, scrollBarListener);
