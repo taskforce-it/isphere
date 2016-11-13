@@ -1,5 +1,5 @@
 
-Changelog: iSphere 2.9.4.b001
+Changelog: iSphere 2.9.4.b002
 -----------------------------
  • Added option "Send message" to the iSphere Data Queue Monitor.
  • Added preference option to specify how to open spooled files
@@ -7,7 +7,11 @@ Changelog: iSphere 2.9.4.b001
  • Added button to show/hide replacement variables.
  • Changed STRPREPRC plug-in to properly remove user actions on shutdown.
  • Added option to include the message id to the iSphere message file
-   search.
+   search. (Requires updating the library.)
+ • Added special search mode "Search for specific message IDs" to the 
+   iSphere Message File Search. Please refer to the iSphere help for 
+   details. (Requires updating the library.)
+
 
 Changelog: iSphere 2.9.3.b002
 -----------------------------

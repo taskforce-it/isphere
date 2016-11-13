@@ -15,6 +15,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -22,7 +23,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
@@ -101,13 +104,13 @@ public class SearchDialog extends AbstractSearchDialog {
         Group groupOptions = new Group(container, SWT.NONE);
         groupOptions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         groupOptions.setText(Messages.Options);
-        groupOptions.setLayout(new GridLayout(1, false));
+        groupOptions.setLayout(new GridLayout(2, false));
 
         GridData tGridData;
         includeFirstLevelTextButton = WidgetFactory.createCheckbox(groupOptions);
         includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
         includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeFirstLevelTextButton.setLayoutData(tGridData);
         includeFirstLevelTextButton.addSelectionListener(new SelectionListener() {
@@ -122,7 +125,7 @@ public class SearchDialog extends AbstractSearchDialog {
         includeSecondLevelTextButton = WidgetFactory.createCheckbox(groupOptions);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeSecondLevelTextButton.setLayoutData(tGridData);
         includeSecondLevelTextButton.addSelectionListener(new SelectionListener() {
@@ -137,7 +140,7 @@ public class SearchDialog extends AbstractSearchDialog {
         includeMessageIdButton = WidgetFactory.createCheckbox(groupOptions);
         includeMessageIdButton.setText(Messages.IncludeMessageId);
         includeMessageIdButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_message_id);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 1, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeMessageIdButton.setLayoutData(tGridData);
         includeMessageIdButton.addSelectionListener(new SelectionListener() {
@@ -149,6 +152,16 @@ public class SearchDialog extends AbstractSearchDialog {
             }
         });
 
+        Link lnkHelp = new Link(groupOptions, SWT.NONE);
+        lnkHelp.setLayoutData(new GridData(SWT.NONE));
+        lnkHelp.setText("<a>(" + Messages.Refer_to_help_for_details + ")</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+        lnkHelp.pack();
+        lnkHelp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.core.help/html/messagefilesearch/messagefilesearch.html"); //$NON-NLS-1$
+            }
+        });
     }
 
     @Override
