@@ -226,6 +226,11 @@
 
      d recordFound     S               N
 
+     d searchSpecificIds...
+     d                 DS                  Qualified
+     d enabled                         N
+     d index                         10I 0
+
       //*------------------------------------------------------------------------------------------*
 
       /Free
@@ -315,13 +320,44 @@
            matchesResult(LIIDX).hasBeenFound = *OFF;
          EndFor;
 
+         // Check, whether the user want to search for
+         // specific message IDs. The "search for specific
+         // message IDs" mode is set, when:
+         //  1) Only "Include message ID is selected.
+         //  2) All search arguments are 7-char long.
+         If (LSMESSAGEID and      // Inc. message id
+             not LSFSTLVLTX and   // Inc. 1.level txt
+             not LSSECLVLTX);     // Inc. 2.level txt
+           searchSpecificIds.enabled = *ON;
+           For LIIDX = 1 to LISIZE;
+             If (LSARGS(LIIDX).operator <> SRCHOPTS_OPERATOR_CONTAINS and
+                 %len(%trim(LSARGS(LIIDX).string)) <> 7);
+               searchSpecificIds.enabled = *OFF;
+             EndIf;
+           EndFor;
+         EndIf;
+
          // Initialize message id.
          LIMSGID = *Blanks;
 
          // Initialize retrieve option
-         LIRTVOPT = '*FIRST';
+         If (searchSpecificIds.enabled);
+           // Search for specific message IDs
+           searchSpecificIds.index = 1;
+           LIRTVOPT = '*MSGID';
+         Else;
+           // Search all messages
+           searchSpecificIds.index = -1;
+           LIRTVOPT = '*FIRST';
+         EndIf;
 
          DoW GILoop;
+
+           // SCet and convert message ID to upper case, when
+           // searching for specfic message IDs.
+           If (searchSpecificIds.enabled);
+             LIMSGID = %XLate(GILO:GIUP:LSARGS(searchSpecificIds.index).string);
+           EndIf;
 
            // Retrieve message
            Reset ERRC0100;
@@ -341,6 +377,15 @@
             0 :               // --> CCSID to convert
             0                 // --> CCSID of replace
            );
+
+           // Search for specific message IDs: Message ID not found.
+           If (searchSpecificIds.enabled And ERRCExcId = 'CPF2419');
+             searchSpecificIds.index = searchSpecificIds.index + 1;
+             If (searchSpecificIds.index <= LISIZE);
+               Iter;
+             Endif;
+             Leave;
+           EndIf;
 
            // Error occured
            If ERRCExcId <> *Blanks;
@@ -370,6 +415,12 @@
              LIMESSAGEID = RTVMMsgId;
            Else;
              LIMESSAGEID = '';
+           EndIf;
+
+           If (searchSpecificIds.enabled);
+             addMessageDescription(LPHDL: XIMSGF: XILIB: LIMSGID: LIMSG);
+             searchSpecificIds.index = searchSpecificIds.index + 1;
+             Iter;
            EndIf;
 
            // Set retrieve option
