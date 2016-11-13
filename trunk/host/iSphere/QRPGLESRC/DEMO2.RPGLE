@@ -84,6 +84,7 @@
         *OFF :          // --> Match all search arguments
         *ON :           // --> Include first level text
         *OFF :          // --> Include second level text
+        *OFF :          // --> Include message ID
         2 :             // --> Number of search arguments
         searchArguments // --> search arguments
        );
