@@ -4,7 +4,7 @@ Bundle-Name: iSphere for WDSCi 7.0
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
 Bundle-Version: 2.9.4.b001
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
-Bundle-Vendor: iSphere Project Owners
+Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
