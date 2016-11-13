@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -184,7 +187,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
     private void createOptionsGroup(Composite aMainPanel) {
         Group tOptionsGroup = createGroup(aMainPanel, Messages.Options);
-        GridLayout tOptionsGroupLayout = new GridLayout(1, false);
+        GridLayout tOptionsGroupLayout = new GridLayout(2, false);
         tOptionsGroupLayout.marginWidth = 5;
         tOptionsGroupLayout.marginHeight = 5;
         tOptionsGroup.setLayout(tOptionsGroupLayout);
@@ -197,23 +200,34 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         includeFirstLevelTextButton = WidgetFactory.createCheckbox(tOptionsGroup);
         includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
         includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeFirstLevelTextButton.setLayoutData(tGridData);
 
         includeSecondLevelTextButton = WidgetFactory.createCheckbox(tOptionsGroup);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeSecondLevelTextButton.setLayoutData(tGridData);
 
         includeMessageIdButton = WidgetFactory.createCheckbox(tOptionsGroup);
         includeMessageIdButton.setText(Messages.IncludeMessageId);
         includeMessageIdButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_message_id);
-        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 1, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeMessageIdButton.setLayoutData(tGridData);
+
+        Link lnkHelp = new Link(tOptionsGroup, SWT.NONE);
+        lnkHelp.setLayoutData(new GridData(SWT.NONE));
+        lnkHelp.setText("<a>(" + Messages.Refer_to_help_for_details + ")</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+        lnkHelp.pack();
+        lnkHelp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.core.help/html/messagefilesearch/messagefilesearch.html"); //$NON-NLS-1$
+            }
+        });
     }
 
     private Group createGroup(Composite aParent, String aText) {
