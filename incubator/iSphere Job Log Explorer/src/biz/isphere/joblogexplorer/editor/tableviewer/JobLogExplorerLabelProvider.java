@@ -8,14 +8,84 @@
 
 package biz.isphere.joblogexplorer.editor.tableviewer;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.preferences.Preferences;
+import biz.isphere.joblogexplorer.preferences.SeverityColor;
 
-public class JobLogExplorerLabelProvider extends LabelProvider implements ITableLabelProvider, JobLogExplorerTableColumns {
+public class JobLogExplorerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider, JobLogExplorerTableColumns {
+
+    private TableViewer tableViewer;
+
+    private Preferences preferences;
+    private boolean isColoring;
+    private Color severityColor00;
+    private Color severityColor10;
+    private Color severityColor20;
+    private Color severityColor30;
+    private Color severityColor40;
+
+    private UIJob updateTableViewerJob;
+
+    private Object lock1 = new Object();
+
+    public JobLogExplorerLabelProvider(TableViewer tableViewer) {
+
+        this.tableViewer = tableViewer;
+        this.preferences = Preferences.getInstance();
+
+        initializeColors();
+        registerPropertyChangeListener();
+    }
+
+    private void initializeColors() {
+
+        synchronized (lock1) {
+            isColoring = preferences.isColoringEnabled();
+
+            if (isColoring) {
+                severityColor00 = preferences.getColorSeverity(SeverityColor.SEVERITY_00);
+                severityColor10 = preferences.getColorSeverity(SeverityColor.SEVERITY_10);
+                severityColor20 = preferences.getColorSeverity(SeverityColor.SEVERITY_20);
+                severityColor30 = preferences.getColorSeverity(SeverityColor.SEVERITY_30);
+                severityColor40 = preferences.getColorSeverity(SeverityColor.SEVERITY_40);
+            }
+        }
+    }
+
+    private void registerPropertyChangeListener() {
+
+        ISphereJobLogExplorerPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                String propertyName = event.getProperty();
+                if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) {
+                    if (updateTableViewerJob != null) {
+                        updateTableViewerJob.cancel();
+                        updateTableViewerJob = null;
+                    }
+                    updateTableViewerJob = new UpdateTableViewerJob();
+                    updateTableViewerJob.schedule(100);
+                    /*
+                     * Delay update for 100 mSecs to cancel updating the table
+                     * viewer, when multiple colors have changed.
+                     */
+                }
+            }
+        });
+    }
 
     public String getColumnText(Object element, int columnIndex) {
 
@@ -92,5 +162,46 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
     private Image getImage(boolean isSelected) {
         String key = isSelected ? ISphereJobLogExplorerPlugin.IMAGE_CHECKED : ISphereJobLogExplorerPlugin.IMAGE_UNCHECKED;
         return ISphereJobLogExplorerPlugin.getDefault().getImage(key);
+    }
+
+    public Color getBackground(Object element, int columnIndex) {
+
+        if (isColoring && element instanceof JobLogMessage) {
+
+            JobLogMessage jobLogMessage = (JobLogMessage)element;
+            int severity = jobLogMessage.getSeverityInt();
+            if (severity >= 40) {
+                return severityColor40;
+            } else if (severity >= 30) {
+                return severityColor30;
+            } else if (severity >= 20) {
+                return severityColor20;
+            } else if (severity >= 10) {
+                return severityColor10;
+            } else {
+                return severityColor00;
+            }
+        }
+
+        return null;
+    }
+
+    public Color getForeground(Object arg0, int arg1) {
+        return null;
+    }
+
+    private class UpdateTableViewerJob extends UIJob {
+
+        public UpdateTableViewerJob() {
+            super("");
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor arg0) {
+            initializeColors();
+            tableViewer.refresh(true);
+            tableViewer.getTable().redraw();
+            return Status.OK_STATUS;
+        }
     }
 }

@@ -124,8 +124,7 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
         // Create and setup the TableViewer
         createTableViewer();
         tableViewer.setContentProvider(new JobLogExplorerContentProvider());
-        tableViewer.setLabelProvider(new JobLogExplorerLabelProvider());
-        tableViewer.getTable().addListener(SWT.EraseItem, new JobLogExplorerBackgroundProvider(tableViewer));
+        tableViewer.setLabelProvider(new JobLogExplorerLabelProvider(tableViewer));
     }
 
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
