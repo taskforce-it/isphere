@@ -9,7 +9,6 @@
 package biz.isphere.joblogexplorer.editor.tableviewer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -27,9 +26,8 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.model.JobLog;
-import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogExplorerTableColumns {
+public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
 
     public enum Columns {
         SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
@@ -133,10 +131,6 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
 
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
         tableViewer.removeSelectionChangedListener(listener);
-    }
-
-    public List<String> getColumnNames() {
-        return Arrays.asList(Columns.names());
     }
 
     /**
@@ -394,8 +388,18 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
 
         tableViewer = new TableViewer(table);
         tableViewer.setUseHashlookup(true);
-
         tableViewer.setColumnProperties(Columns.names());
+
+        enableEditing(tableViewer);
+
+        // Set the default sorter for the viewer
+        // tableViewer.setSorter(new
+        // ExampleTaskSorter(ExampleTaskSorter.DESCRIPTION));
+    }
+
+    private void enableEditing(TableViewer tableViewer) {
+
+        Table table = tableViewer.getTable();
 
         // Create the cell editors
         CellEditor[] editors = new CellEditor[Columns.values().length];
@@ -428,13 +432,6 @@ public class JobLogExplorerTableViewer implements IJobLogMessagesViewer, JobLogE
         // Assign the cell editors to the viewer
         tableViewer.setCellEditors(editors);
         // Set the cell modifier for the viewer
-        tableViewer.setCellModifier(new JobLogExplorerCellModifier(this));
-        // Set the default sorter for the viewer
-        // tableViewer.setSorter(new
-        // ExampleTaskSorter(ExampleTaskSorter.DESCRIPTION));
-    }
-
-    public void updateJobLogMessage(JobLogMessage jobLogMessage) {
-        tableViewer.update(jobLogMessage, null);
+        tableViewer.setCellModifier(new JobLogExplorerCellModifier(tableViewer));
     }
 }

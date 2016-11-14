@@ -8,27 +8,35 @@
 
 package biz.isphere.joblogexplorer.editor.tableviewer;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 /**
- * This class implements an ICellModifier An ICellModifier is called when the
+ * This class implements an ICellModifier. An ICellModifier is called when the
  * user modifes a cell in the tableViewer
  */
 
 public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorerTableColumns {
-    private JobLogExplorerTableViewer tableViewer;
+
+    private List<Object> columnNames;
+    private TableViewer tableViewer;
 
     /**
      * Constructor
      * 
      * @param TableViewerExample an instance of a TableViewerExample
      */
-    public JobLogExplorerCellModifier(JobLogExplorerTableViewer tableViewer) {
+    public JobLogExplorerCellModifier(TableViewer tableViewer) {
         super();
+
         this.tableViewer = tableViewer;
+        this.columnNames = Arrays.asList(tableViewer.getColumnProperties());
     }
 
     /**
@@ -38,7 +46,7 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
     public boolean canModify(Object element, String property) {
 
         // Find the index of the column
-        int columnIndex = tableViewer.getColumnNames().indexOf(property);
+        int columnIndex = columnNames.indexOf(property);
 
         switch (columnIndex) {
         case JobLogExplorerTableColumns.COLUMN_SELECTED:
@@ -55,7 +63,7 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
     public Object getValue(Object element, String property) {
 
         // Find the index of the column
-        int columnIndex = tableViewer.getColumnNames().indexOf(property);
+        int columnIndex = columnNames.indexOf(property);
 
         Object result = null;
         JobLogMessage jobLogMessage = (JobLogMessage)element;
@@ -77,7 +85,7 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
     public void modify(Object element, String property, Object value) {
 
         // Find the index of the column
-        int columnIndex = tableViewer.getColumnNames().indexOf(property);
+        int columnIndex = columnNames.indexOf(property);
 
         TableItem item = (TableItem)element;
         JobLogMessage jobLogMessages = (JobLogMessage)item.getData();
@@ -89,6 +97,6 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
         default:
         }
 
-        tableViewer.updateJobLogMessage(jobLogMessages);
+        tableViewer.update(element, null);
     }
 }
