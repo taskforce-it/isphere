@@ -8,7 +8,12 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
+import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 
 public class JobLogMessage {
 
@@ -16,6 +21,8 @@ public class JobLogMessage {
 
     private int pageNumber;
     private boolean selected;
+
+    private List<MessageModifyListener> listeners;
 
     private String id;
     private String type;
@@ -42,6 +49,8 @@ public class JobLogMessage {
     public JobLogMessage(int pageNumber) {
         this.selected = false;
         this.pageNumber = pageNumber;
+        this.listeners = new ArrayList<MessageModifyListener>();
+
         updateSeverityIntValue();
     }
 
@@ -71,6 +80,7 @@ public class JobLogMessage {
 
     public void setType(String type) {
         this.type = type;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TYPE, this.type));
     }
 
     public String getSeverity() {
@@ -204,6 +214,24 @@ public class JobLogMessage {
         } else {
             severityInt = IntHelper.tryParseInt(severity, SEVERITY_NULL);
         }
+    }
+
+    public void addModifyChangedListener(MessageModifyListener listener) {
+
+        listeners.add(listener);
+    }
+
+    public void removeModifyListener(MessageModifyListener listener) {
+
+        listeners.remove(listener);
+    }
+
+    private void notifyModifyListeners(MessageModifyEvent event) {
+
+        for (MessageModifyListener listener : listeners) {
+            listener.modifyText(event);
+        }
+
     }
 
     @Override

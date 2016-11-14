@@ -8,10 +8,16 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-public class JobLog {
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
+import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
+
+public class JobLog implements MessageModifyListener {
 
     private String jobName;
     private String userName;
@@ -25,11 +31,15 @@ public class JobLog {
     private List<JobLogMessage> jobLogMessages;
     private JobLogPage currentPage;
 
+    private Set<String> messageTypes;
+
     public JobLog() {
         this.isHeaderComplete = validateJobLogHeader();
         this.jobLogPages = new LinkedList<JobLogPage>();
         this.jobLogMessages = new LinkedList<JobLogMessage>();
         this.currentPage = null;
+
+        this.messageTypes = new HashSet<String>();
     }
 
     public String getJobName() {
@@ -105,6 +115,10 @@ public class JobLog {
         return buffer.toString();
     }
 
+    public String[] getMessageTypes() {
+        return messageTypes.toArray(new String[messageTypes.size()]);
+    }
+
     public JobLogPage addPage() {
 
         currentPage = new JobLogPage();
@@ -116,6 +130,8 @@ public class JobLog {
     public JobLogMessage addMessage() {
 
         JobLogMessage message = new JobLogMessage(currentPage.getPageNumber());
+        message.addModifyChangedListener(this);
+
         jobLogMessages.add(message);
 
         if (currentPage.getFirstMessage() == null) {
@@ -123,7 +139,16 @@ public class JobLog {
         }
         currentPage.setLastMessage(message);
 
+        addNotNullOrEmptyFilterItem(messageTypes, message.getType());
+
         return message;
+    }
+
+    private void addNotNullOrEmptyFilterItem(Set<String> set, String value) {
+
+        if (!StringHelper.isNullOrEmpty(value)) {
+            set.add(value);
+        }
     }
 
     public JobLogPage[] getPages() {
@@ -180,5 +205,18 @@ public class JobLog {
     public String toString() {
 
         return getQualifiedJobName();
+    }
+
+    public void modifyText(MessageModifyEvent event) {
+
+        switch (event.type) {
+        case MessageModifyEvent.TYPE:
+            addNotNullOrEmptyFilterItem(messageTypes, event.value);
+            break;
+
+        default:
+            break;
+        }
+
     }
 }

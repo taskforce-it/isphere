@@ -18,16 +18,20 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.editor.filter.FilterData;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.StringFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 
-public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
+public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener {
 
     public enum Columns {
         SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
@@ -72,6 +76,12 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
     private TableViewer tableViewer;
     private Composite viewerArea;
 
+    private StringFilter typeFilter;
+
+    public JobLogExplorerTableViewer() {
+        this.typeFilter = new StringFilter();
+    }
+
     public boolean isDisposed() {
         return tableViewer.getControl().isDisposed();
     }
@@ -103,21 +113,15 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
         tableViewer.setSelection(tableViewer.getSelection());
     }
 
-    public void createViewer(Composite composite) {
+    public void createViewer(Composite parent) {
 
-        viewerArea = composite;
-
-        // Create a composite to hold the children
-        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_BOTH);
-        composite.setLayoutData(gridData);
-
-        // Set numColumns to 3 for the buttons
-        GridLayout layout = new GridLayout(3, false);
-        layout.marginWidth = 4;
-        composite.setLayout(layout);
+        // Create main panel
+        viewerArea = new Composite(parent, SWT.NONE);
+        viewerArea.setLayout(new GridLayout(1, false));
+        viewerArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // Create the table
-        createTable(composite);
+        createTable(viewerArea);
 
         // Create and setup the TableViewer
         createTableViewer();
@@ -137,14 +141,11 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
      * Create the Table
      */
     private void createTable(Composite parent) {
+
         int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
         table = new Table(parent, style);
-
-        GridData gridData = new GridData(GridData.FILL_BOTH);
-        gridData.grabExcessVerticalSpace = true;
-        gridData.horizontalSpan = 3;
-        table.setLayoutData(gridData);
+        table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -433,5 +434,23 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns {
         tableViewer.setCellEditors(editors);
         // Set the cell modifier for the viewer
         tableViewer.setCellModifier(new JobLogExplorerCellModifier(tableViewer));
+    }
+
+    public void widgetDefaultSelected(SelectionEvent arg0) {
+        System.out.println("Filter: " + "??? widgetDefaultSelected ???");
+    }
+
+    public void widgetSelected(SelectionEvent event) {
+
+        FilterData filterData = (FilterData)event.data;
+
+        tableViewer.removeFilter(typeFilter);
+
+        if (!StringHelper.isNullOrEmpty(filterData.type)) {
+            typeFilter.setType(filterData.type);
+            tableViewer.addFilter(typeFilter);
+        }
+
+        tableViewer.refresh();
     }
 }

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2016 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.joblogexplorer.editor.detailsviewer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,26 +80,13 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         registerPropertyChangeListener();
     }
 
-    public void createViewer(Composite detailsArea) {
+    public void createViewer(Composite parent) {
 
-        // Create a composite to hold the children
-        GridLayout layout = new GridLayout(1, false);
-        layout.marginBottom = 0;
-        layout.marginTop = 0;
-        layout.marginLeft = 0;
-        layout.marginRight = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
-        detailsArea.setLayout(layout);
-        detailsArea.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        detailsArea.setBackground(getBackgroundColor());
-
-        Composite messageDetailsArea = new Composite(detailsArea, SWT.NONE);
+        Composite messageDetailsArea = new Composite(parent, SWT.BORDER);
         GridLayout messageDetailsLayout = new GridLayout(2, false);
         messageDetailsLayout.horizontalSpacing = 30;
         messageDetailsArea.setLayout(messageDetailsLayout);
-        messageDetailsArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        messageDetailsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         messageDetailsArea.setBackground(getBackgroundColor());
 
         textID = createDetailsField(messageDetailsArea, Messages.Label_ID);
@@ -114,14 +109,21 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         textToProcedure = createDetailsField(messageDetailsArea, Messages.Label_To_Procedure);
         textToStatement = createDetailsField(messageDetailsArea, Messages.Label_To_Stmt);
 
-        createSeparator(messageDetailsArea);
+        // createSeparator(messageDetailsArea);
 
-        Composite messageArea = new Composite(detailsArea, SWT.NONE);
-        messageArea.setLayout(new GridLayout(2, false));
+        Composite messageArea = new Composite(parent, SWT.BORDER);
+        messageArea.setLayout(new GridLayout(1, false));
         messageArea.setLayoutData(new GridData(GridData.FILL_BOTH));
         messageArea.setBackground(getBackgroundColor());
 
         textMessage = createMultilineDetailsField(messageArea);
+    }
+
+    /**
+     * Create the Details
+     */
+    private void createDetails(Composite parent) {
+
     }
 
     private void createSeparator(Composite detailsArea) {
