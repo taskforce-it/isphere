@@ -68,7 +68,7 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance
-     *
+     * 
      * @return the shared instance
      */
     public static ISphereJobLogExplorerPlugin getDefault() {
