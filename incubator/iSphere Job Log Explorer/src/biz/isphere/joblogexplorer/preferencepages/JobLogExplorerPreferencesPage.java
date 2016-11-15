@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
+import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.preferences.Preferences;
 import biz.isphere.joblogexplorer.preferences.SeverityColor;
 
@@ -66,8 +67,8 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
     private void createSectionCommon(Composite parent) {
 
         checkboxEnableColoring = WidgetFactory.createCheckbox(parent);
-        checkboxEnableColoring.setText("Enable coloring");
-        checkboxEnableColoring.setToolTipText("Enable coloring ...");
+        checkboxEnableColoring.setText(Messages.Enable_coloring);
+        checkboxEnableColoring.setToolTipText(Messages.Enable_coloring_tooltip);
         checkboxEnableColoring.setLayoutData(createLayoutData(1));
         checkboxEnableColoring.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -80,14 +81,14 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
     private void createGroupColors(Composite parent) {
 
         groupColors = new Group(parent, SWT.NONE);
-        groupColors.setText("Colors");
+        groupColors.setText(Messages.Colors);
         groupColors.setLayout(new GridLayout(2, false));
 
-        buttonSeverity00 = createColorSelector(groupColors, "Severity 00:");
-        buttonSeverity10 = createColorSelector(groupColors, "Severity 10:");
-        buttonSeverity20 = createColorSelector(groupColors, "Severity 20:");
-        buttonSeverity30 = createColorSelector(groupColors, "Severity 30:");
-        buttonSeverity40 = createColorSelector(groupColors, "Severity 40:");
+        buttonSeverity00 = createColorSelector(groupColors, Messages.Severity_00_colon);
+        buttonSeverity10 = createColorSelector(groupColors, Messages.Severity_10_colon);
+        buttonSeverity20 = createColorSelector(groupColors, Messages.Severity_20_colon);
+        buttonSeverity30 = createColorSelector(groupColors, Messages.Severity_30_colon);
+        buttonSeverity40 = createColorSelector(groupColors, Messages.Severity_40_colon);
     }
 
     private ColorSelector createColorSelector(Group parent, String label) {

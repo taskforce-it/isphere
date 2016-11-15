@@ -46,6 +46,8 @@ public final class Preferences {
 
     private static final String DOMAIN = ISphereJobLogExplorerPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
+    private static final String LANGUAGE = DOMAIN + "LANGUAGE."; //$NON-NLS-1$
+
     private static final String COLORS = DOMAIN + "COLORS."; //$NON-NLS-1$
 
     private static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
@@ -102,6 +104,10 @@ public final class Preferences {
         return loadColor(severity);
     }
 
+    public String getLanguage() {
+        return preferenceStore.getString(LANGUAGE);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -112,6 +118,10 @@ public final class Preferences {
 
     public void setColorSeverity(SeverityColor severity, RGB rgb) {
         storeColor(severity, rgb);
+    }
+
+    public void setLanguage(String languageId) {
+        preferenceStore.setValue(LANGUAGE, languageId);
     }
 
     /*
@@ -126,6 +136,7 @@ public final class Preferences {
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_20), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_20)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_30), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_30)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_40), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_40)));
+        preferenceStore.setDefault(LANGUAGE, getDefaultLanguage());
     }
 
     /*
@@ -144,6 +155,10 @@ public final class Preferences {
             Color color = ColorHelper.getListBackground();
             return color.getRGB();
         }
+    }
+
+    public String getDefaultLanguage() {
+        return "*CURRENT";//$NON-NLS-1$
     }
 
     /*
@@ -171,7 +186,7 @@ public final class Preferences {
 
             String rgb = preferenceStore.getString(colorKey);
 
-            String[] rgbParts = rgb.split("\\" + DELIMITER);
+            String[] rgbParts = rgb.split("\\" + DELIMITER); //$NON-NLS-1$
             if (rgbParts.length < 3) {
                 return null;
             }

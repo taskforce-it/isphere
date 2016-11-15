@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,15 @@ public class Messages extends NLS {
     public static String Number_of_messages_A;
     public static String Loading_remote_job_log_dots;
     public static String Invalid_job_log_Format_Could_not_find_first_line_of_job_log;
+
+    public static String Enable_coloring;
+    public static String Enable_coloring_tooltip;
+    public static String Colors;
+    public static String Severity_00_colon;
+    public static String Severity_10_colon;
+    public static String Severity_20_colon;
+    public static String Severity_30_colon;
+    public static String Severity_40_colon;
 
     static {
         // initialize resource bundle

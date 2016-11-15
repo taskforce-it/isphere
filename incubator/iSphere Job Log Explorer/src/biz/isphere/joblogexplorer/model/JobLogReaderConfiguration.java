@@ -10,11 +10,15 @@ package biz.isphere.joblogexplorer.model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.FileHelper;
@@ -22,6 +26,9 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 
 public class JobLogReaderConfiguration {
+
+    private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
+    private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
@@ -124,22 +131,78 @@ public class JobLogReaderConfiguration {
     }
 
     /**
+     * Tests whether the configuration file for a given language exists.
+     * 
+     * @param languageId - Language, the configuration is loaded for
+     * @return <code>true</code> on success, else <code>false</code>.
+     */
+    public boolean exists(String languageId) {
+
+        try {
+
+            if (findConfigurationFile(languageId, CONFIGURATION_DIRECTORY) != null) {
+                return true;
+            }
+
+        } catch (UnsupportedEncodingException e) {
+        }
+
+        return false;
+    }
+
+    public String[] getAvailableLanguageIDs() {
+
+        final List<String> languageIds = new ArrayList<String>();
+
+        try {
+
+            String pathName = getConfigurationDirectory();
+            File directory = new File(pathName);
+            if (directory.exists() || directory.isDirectory()) {
+
+                final Pattern pattern = Pattern.compile("jobLogParser(?:_([a-z]{2}))?.properties");//$NON-NLS-1$
+
+                directory.list(new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+
+                        if (DEFAULT_CONFIGURATION_FILE.equalsIgnoreCase(name)) {
+                            languageIds.add("*DEFAULT");//$NON-NLS-1$
+                        } else {
+                            Matcher matcher = pattern.matcher(name);
+                            if (matcher.find()) {
+                                languageIds.add(matcher.group(1));
+                            }
+                        }
+                        return false;
+                    }
+                });
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            // Only thrown, when started from a command line
+            e.printStackTrace();
+        }
+
+        return languageIds.toArray(new String[languageIds.size()]);
+    }
+
+    /**
      * Loads a new configuration from a 'jobLogParser.properties' file in folder
      * '[workspace]/.metadata/.plugins/biz.isphere.joblogexplorer/'.
      * <p>
      * An example properties file can be found in package
      * 'biz.isphere.joblogexplorer.model'.
      * 
-     * @param locale - Locale, the configuration is loaded for
+     * @param languageId - Language, the configuration is loaded for
      * @return <code>true</code> on success, else <code>false</code>.
      */
-    public boolean loadConfiguration(String locale) {
+    public boolean loadConfiguration(String languageId) {
 
         FileInputStream inStream = null;
 
         try {
 
-            File path = findConfigurationFile(locale, "jobLogParser"); //$NON-NLS-1$
+            File path = findConfigurationFile(languageId, CONFIGURATION_DIRECTORY);
             if (path == null) {
                 return false;
             }
@@ -273,19 +336,19 @@ public class JobLogReaderConfiguration {
 
     /**
      * Searches for the configuration file that is identified by a base file
-     * name and a locale.
+     * name and a language ID.
      * 
-     * @param locale - Locale that is used to identify the file.
-     * @param fileName - Base file name without locale and '.properties'
+     * @param languageId - Language that is used to identify the file.
+     * @param fileName - Base file name without '_language' and '.properties'
      *        extension.
      * @return file on success, else null
      * @throws UnsupportedEncodingException
      */
-    private File findConfigurationFile(String locale, String fileName) throws UnsupportedEncodingException {
+    private File findConfigurationFile(String languageId, String fileName) throws UnsupportedEncodingException {
 
-        String configFileName = ""; ////$NON-NLS-1$
-        if (locale != null) {
-            configFileName = fileName + "_" + locale; //$NON-NLS-1$
+        String configFileName = ""; //$NON-NLS-1$
+        if (languageId != null) {
+            configFileName = fileName + "_" + languageId; //$NON-NLS-1$
         }
 
         File configFile = findConfigurationFile(configFileName + ".properties"); //$NON-NLS-1$
@@ -307,21 +370,12 @@ public class JobLogReaderConfiguration {
      */
     private File findConfigurationFile(String fileName) throws UnsupportedEncodingException {
 
-        String path;
-        if (ISphereJobLogExplorerPlugin.getDefault() != null) {
-            // Executed, when started from a plug-in.
-            String folder = ISphereJobLogExplorerPlugin.getDefault().getStateLocation().toFile().getAbsolutePath() + File.separator
-                + REPOSITORY_LOCATION + File.separator;
-            FileHelper.ensureDirectory(folder);
-            path = folder + fileName;
-        } else {
-            // Executed, when started on a command line.
-            URL url = getClass().getResource(fileName);
-            if (url == null) {
-                return null;
-            }
-            path = URLDecoder.decode(url.getFile(), "utf-8"); //$NON-NLS-1$
+        String directory = getConfigurationDirectory();
+        if (directory == null) {
+            return null;
         }
+
+        String path = directory + fileName;
 
         File configFile = new File(path);
         if (configFile.exists() && configFile.isFile()) {
@@ -329,6 +383,34 @@ public class JobLogReaderConfiguration {
         }
 
         return null;
+    }
+
+    /**
+     * Return the name of the directory where the configuration files are
+     * stored.
+     * 
+     * @param fileName
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private String getConfigurationDirectory() throws UnsupportedEncodingException {
+
+        String folder;
+        if (ISphereJobLogExplorerPlugin.getDefault() != null) {
+            // Executed, when started from a plug-in.
+            folder = ISphereJobLogExplorerPlugin.getDefault().getStateLocation().toFile().getAbsolutePath() + File.separator + REPOSITORY_LOCATION
+                + File.separator;
+            FileHelper.ensureDirectory(folder);
+        } else {
+            // Executed, when started on a command line.
+            URL url = getClass().getResource(DEFAULT_CONFIGURATION_FILE);
+            if (url == null) {
+                return null;
+            }
+            String resource = URLDecoder.decode(url.getFile(), "utf-8"); //$NON-NLS-1$
+            folder = new File(resource).getParent() + File.separator;
+        }
+        return folder;
     }
 
     /**
@@ -352,5 +434,24 @@ public class JobLogReaderConfiguration {
         }
 
         return defaultValue;
+    }
+
+    /**
+     * This method is used for testing purposes.
+     * <p>
+     * It parses the specified job log and prints the result.
+     * 
+     * @param args - none (not used)
+     */
+    public static void main(String[] args) throws Exception {
+
+        JobLogReaderConfiguration main = new JobLogReaderConfiguration();
+        String[] languageIDs = main.getAvailableLanguageIDs();
+
+        System.out.println("Language IDs:"); //$NON-NLS-1$
+        for (String languageId : languageIDs) {
+            System.out.println("  " + languageId); //$NON-NLS-1$
+        }
+
     }
 }

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.joblogexplorer.Messages;
 
 public class JobLogExplorerFilterPanel {
 
@@ -51,7 +52,7 @@ public class JobLogExplorerFilterPanel {
 
     private void createControls(Composite filterArea) {
 
-        comboTypeFilter = createCombo(filterArea, "Message type:");
+        comboTypeFilter = createCombo(filterArea, Messages.Label_Type);
     }
 
     private Combo createCombo(Composite filterArea, String label) {
