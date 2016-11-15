@@ -37,13 +37,13 @@ import biz.isphere.core.internal.FontHelper;
  */
 public final class StatusLine {
 
-    public static final String STATUS_LINE_ID = "biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor.StatusLine";
+    public static final String STATUS_LINE_ID = "biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor.StatusLine"; //$NON-NLS-1$
 
     private CLabel messageLabel;
 
     private int messageWidthHint = -1;
 
-    private String message = "";
+    private String message = ""; //$NON-NLS-1$
 
     public void fill(Composite parent) {
 

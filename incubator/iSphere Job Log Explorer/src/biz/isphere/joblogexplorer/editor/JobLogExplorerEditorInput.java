@@ -61,7 +61,7 @@ public class JobLogExplorerEditorInput implements IEditorInput {
     public String getName() {
 
         if (file == null) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
         return file.getName();

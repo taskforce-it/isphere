@@ -13,7 +13,7 @@ public class FilterData {
     public String type;
 
     public FilterData() {
-        this.type = "";
+        this.type = ""; //$NON-NLS-1$
     }
 
 }
