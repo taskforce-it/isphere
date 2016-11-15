@@ -71,7 +71,11 @@ c) Preferences - Java -> Code Style -> Formatter
    Alternatively import and enable the formatter profile for
    each iSphere project.
 
-d) Preferences - Java -> Editor -> Save Actions:
+d) Preferences - Java -> Code Style -> Code Templates
+
+   Import: Preferences_Java_CodeStyle_Code_Template (iSphere)_3.6.xml
+
+e) Preferences - Java -> Editor -> Save Actions:
 
    Enable:  Perform the selected actions on save
    Enable:  Format source code
