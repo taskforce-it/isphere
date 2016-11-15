@@ -6,20 +6,18 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.editor.filter;
+package biz.isphere.joblogexplorer.editor.tableviewer.filters;
 
-public class FilterData {
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-    private String EMPTY = ""; //$NON-NLS-1$
+public class SeverityFilter extends AbstractIntegerFilter {
 
-    public String id;
-    public String type;
-    public String severity;
+    public SeverityFilter(String severity) {
+        setValue(severity);
+    }
 
-    public FilterData() {
-        this.id = EMPTY;
-        this.type = EMPTY;
-        this.severity = EMPTY;
+    protected int getCurrentValue(JobLogMessage jobLogMessage) {
+        return jobLogMessage.getSeverityInt();
     }
 
 }

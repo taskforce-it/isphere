@@ -8,34 +8,41 @@
 
 package biz.isphere.joblogexplorer.editor.tableviewer.filters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import biz.isphere.joblogexplorer.model.JobLogMessage;
+public class MasterFilter extends ViewerFilter {
 
-public class StringFilter extends ViewerFilter {
+    List<ViewerFilter> filters;
 
-    public static final String SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
+    public MasterFilter() {
+        this.filters = new ArrayList<ViewerFilter>();
+    }
 
-    private String value;
+    public void addFilter(ViewerFilter filter) {
+        filters.add(filter);
+    }
 
-    public void setType(String value) {
-        this.value = value;
+    public void removeAllFilters() {
+        filters.clear();
+    }
+
+    public int countFilters() {
+        return filters.size();
     }
 
     @Override
     public boolean select(Viewer tableViewer, Object parentElement, Object element) {
 
-        if (SPCVAL_ALL.equals(value)) {
-            return true;
-        }
-
-        if (element instanceof JobLogMessage) {
-            JobLogMessage jobLogMessage = (JobLogMessage)element;
-            return value.equalsIgnoreCase(jobLogMessage.getType());
+        for (ViewerFilter filter : filters) {
+            if (!filter.select(tableViewer, parentElement, element)) {
+                return false;
+            }
         }
 
         return true;
     }
-
 }

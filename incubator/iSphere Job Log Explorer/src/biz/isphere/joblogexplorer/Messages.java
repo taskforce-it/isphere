@@ -67,6 +67,8 @@ public class Messages extends NLS {
     public static String Severity_30_colon;
     public static String Severity_40_colon;
 
+    public static String Apply_filters;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

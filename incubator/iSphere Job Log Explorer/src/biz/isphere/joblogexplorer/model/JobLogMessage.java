@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractIntegerFilter;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 
 public class JobLogMessage {
 
-    private static final int SEVERITY_NULL = -1;
+    private static final int SEVERITY_BLANK = AbstractIntegerFilter.NULL_VALUE;
 
     private int pageNumber;
     private boolean selected;
@@ -51,7 +52,7 @@ public class JobLogMessage {
         this.pageNumber = pageNumber;
         this.listeners = new ArrayList<MessageModifyListener>();
 
-        updateSeverityIntValue();
+        setSeverity(null);
     }
 
     public int getPageNumber() {
@@ -72,6 +73,7 @@ public class JobLogMessage {
 
     public void setId(String id) {
         this.id = id;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.ID, this.id));
     }
 
     public String getType() {
@@ -92,8 +94,13 @@ public class JobLogMessage {
     }
 
     public void setSeverity(String severity) {
-        this.severity = severity;
+        if (severity == null) {
+            this.severity = "";//$NON-NLS-1$
+        } else {
+            this.severity = severity;
+        }
         updateSeverityIntValue();
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SEVERITY, this.severity));
     }
 
     public String getDate() {
@@ -209,10 +216,10 @@ public class JobLogMessage {
     }
 
     private void updateSeverityIntValue() {
-        if (severity == null) {
-            severityInt = SEVERITY_NULL;
+        if (severity.length() == 0) {
+            severityInt = SEVERITY_BLANK;
         } else {
-            severityInt = IntHelper.tryParseInt(severity, SEVERITY_NULL);
+            severityInt = IntHelper.tryParseInt(severity, SEVERITY_BLANK);
         }
     }
 

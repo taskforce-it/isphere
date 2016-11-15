@@ -41,7 +41,10 @@ import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanel;
 import biz.isphere.joblogexplorer.editor.tableviewer.JobLogExplorerTableViewer;
-import biz.isphere.joblogexplorer.editor.tableviewer.filters.StringFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractStringFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogReader;
@@ -277,12 +280,16 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
                         viewer.setEnabled(true);
                         JobLogExplorerEditor.this.showBusy(false);
 
+                        if (!filterPanel.isDisposed()) {
+                            filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.SPCVAL_ALL));
+                            filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.SPCVAL_ALL));
+                            filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.SPCVAL_ALL,
+                                AbstractStringFilter.SPCVAL_BLANK));
+                            filterPanel.refreshFilters();
+                        }
+
                         viewer.setSelection(0);
                         viewer.setFocus();
-
-                        if (!filterPanel.isDisposed()) {
-                            filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), StringFilter.SPCVAL_ALL));
-                        }
 
                         return Status.OK_STATUS;
                     }

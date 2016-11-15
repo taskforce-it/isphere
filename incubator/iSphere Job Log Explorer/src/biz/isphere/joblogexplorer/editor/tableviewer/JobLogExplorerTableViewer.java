@@ -28,7 +28,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.filter.FilterData;
-import biz.isphere.joblogexplorer.editor.tableviewer.filters.StringFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.MasterFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 
 public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener {
@@ -76,10 +80,18 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     private TableViewer tableViewer;
     private Composite viewerArea;
 
-    private StringFilter typeFilter;
+    private MasterFilter masterFilter;
+
+    // private List<AbstractFilter> filters;
 
     public JobLogExplorerTableViewer() {
-        this.typeFilter = new StringFilter();
+
+        this.masterFilter = new MasterFilter();
+
+        // this.filters = new ArrayList<AbstractFilter>();
+        // this.filters.add(idFilter);
+        // this.filters.add(typeFilter);
+        // this.filters.add(severityFilter);
     }
 
     public boolean isDisposed() {
@@ -436,20 +448,42 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         tableViewer.setCellModifier(new JobLogExplorerCellModifier(tableViewer));
     }
 
-    public void widgetDefaultSelected(SelectionEvent arg0) {
+    public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
     }
 
     public void widgetSelected(SelectionEvent event) {
 
-        FilterData filterData = (FilterData)event.data;
+        masterFilter.removeAllFilters();
 
-        tableViewer.removeFilter(typeFilter);
+        if (event != null) {
+            FilterData filterData = (FilterData)event.data;
 
-        if (!StringHelper.isNullOrEmpty(filterData.type)) {
-            typeFilter.setType(filterData.type);
-            tableViewer.addFilter(typeFilter);
+            if (isFilterValue(filterData.id)) {
+                masterFilter.addFilter(new IdFilter(filterData.id));
+            }
+
+            if (isFilterValue(filterData.type)) {
+                masterFilter.addFilter(new TypeFilter(filterData.type));
+            }
+
+            if (isFilterValue(filterData.severity)) {
+                masterFilter.addFilter(new SeverityFilter(filterData.severity));
+            }
         }
 
-        tableViewer.refresh();
+        if (masterFilter.countFilters() == 0) {
+            tableViewer.removeFilter(masterFilter);
+        } else {
+            tableViewer.addFilter(masterFilter);
+        }
+    }
+
+    private boolean isFilterValue(String value) {
+
+        if (AbstractFilter.SPCVAL_ALL.equals(value)) {
+            return false;
+        }
+
+        return !StringHelper.isNullOrEmpty(value);
     }
 }

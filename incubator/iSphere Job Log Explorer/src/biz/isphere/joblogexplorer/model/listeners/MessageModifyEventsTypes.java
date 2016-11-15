@@ -10,6 +10,10 @@ package biz.isphere.joblogexplorer.model.listeners;
 
 public interface MessageModifyEventsTypes {
 
+    public static final int ALL = -1;
+
     public static final int TYPE = 1;
+    public static final int SEVERITY = 2;
+    public static final int ID = 3;
 
 }

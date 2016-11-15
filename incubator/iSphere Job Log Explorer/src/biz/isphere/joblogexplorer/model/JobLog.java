@@ -31,7 +31,9 @@ public class JobLog implements MessageModifyListener {
     private List<JobLogMessage> jobLogMessages;
     private JobLogPage currentPage;
 
+    private Set<String> messageIds;
     private Set<String> messageTypes;
+    private Set<String> messageSeverities;
 
     public JobLog() {
         this.isHeaderComplete = validateJobLogHeader();
@@ -39,7 +41,9 @@ public class JobLog implements MessageModifyListener {
         this.jobLogMessages = new LinkedList<JobLogMessage>();
         this.currentPage = null;
 
+        this.messageIds = new HashSet<String>();
         this.messageTypes = new HashSet<String>();
+        this.messageSeverities = new HashSet<String>();
     }
 
     public String getJobName() {
@@ -115,8 +119,16 @@ public class JobLog implements MessageModifyListener {
         return buffer.toString();
     }
 
+    public String[] getMessageIds() {
+        return messageIds.toArray(new String[messageIds.size()]);
+    }
+
     public String[] getMessageTypes() {
         return messageTypes.toArray(new String[messageTypes.size()]);
+    }
+
+    public String[] getMessageSeverities() {
+        return messageSeverities.toArray(new String[messageSeverities.size()]);
     }
 
     public JobLogPage addPage() {
@@ -139,7 +151,7 @@ public class JobLog implements MessageModifyListener {
         }
         currentPage.setLastMessage(message);
 
-        addNotNullOrEmptyFilterItem(messageTypes, message.getType());
+        // addNotNullOrEmptyFilterItem(messageTypes, message.getType());
 
         return message;
     }
@@ -210,8 +222,16 @@ public class JobLog implements MessageModifyListener {
     public void modifyText(MessageModifyEvent event) {
 
         switch (event.type) {
+        case MessageModifyEvent.ID:
+            addNotNullOrEmptyFilterItem(messageIds, event.value);
+            break;
+
         case MessageModifyEvent.TYPE:
             addNotNullOrEmptyFilterItem(messageTypes, event.value);
+            break;
+
+        case MessageModifyEvent.SEVERITY:
+            addNotNullOrEmptyFilterItem(messageSeverities, event.value);
             break;
 
         default:

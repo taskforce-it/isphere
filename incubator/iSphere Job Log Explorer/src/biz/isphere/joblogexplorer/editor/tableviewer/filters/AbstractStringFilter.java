@@ -1,0 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2016 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
+package biz.isphere.joblogexplorer.editor.tableviewer.filters;
+
+import org.eclipse.jface.viewers.Viewer;
+
+import biz.isphere.joblogexplorer.model.JobLogMessage;
+
+public abstract class AbstractStringFilter extends AbstractFilter {
+
+    public void setValue(String value) {
+        super.setValue(value);
+    }
+
+    @Override
+    public boolean select(Viewer tableViewer, Object parentElement, Object element) {
+
+        if (super.select(tableViewer, parentElement, element)) {
+            return true;
+        }
+
+        if (element instanceof JobLogMessage) {
+            JobLogMessage jobLogMessage = (JobLogMessage)element;
+            String currentValue = getCurrentValue(jobLogMessage);
+            if (currentValue.length() == 0) {
+                currentValue = SPCVAL_BLANK;
+            }
+            return value.equalsIgnoreCase(currentValue);
+        }
+
+        return true;
+    }
+
+    protected abstract String getCurrentValue(JobLogMessage jobLogMessage);
+}

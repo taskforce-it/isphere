@@ -233,6 +233,8 @@ public class JobLogReader {
             jobLogMessage.setType(matcher.group(2));
             if (matcher.group(3) != null) {
                 jobLogMessage.setSeverity(matcher.group(3));
+            } else {
+                jobLogMessage.setSeverity(null);
             }
             jobLogMessage.setDate(matcher.group(4));
             jobLogMessage.setTime(matcher.group(5));
