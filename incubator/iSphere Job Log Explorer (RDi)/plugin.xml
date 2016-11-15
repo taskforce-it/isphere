@@ -71,5 +71,22 @@
       	</objectContribution>
       	
 	</extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Perspective
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.perspectives">
+   
+      <perspective 
+	       id="biz.isphere.joblogexplorer.rse.perspective.JobLogExplorerPerspectiveLayout" 
+	       name="Job Log Explorer"
+	       class="biz.isphere.joblogexplorer.rse.perspective.JobLogExplorerPerspectiveLayout"
+	       icon="icons/joblog_explorer.png">
+      </perspective>
+       
+   </extension>   
 
 </plugin>
