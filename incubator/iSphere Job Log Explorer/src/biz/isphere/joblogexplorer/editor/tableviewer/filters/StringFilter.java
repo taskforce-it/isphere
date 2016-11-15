@@ -15,7 +15,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class StringFilter extends ViewerFilter {
 
-    public static final String SPCVAL_ALL = "*ALL";
+    public static final String SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
 
     private String value;
 

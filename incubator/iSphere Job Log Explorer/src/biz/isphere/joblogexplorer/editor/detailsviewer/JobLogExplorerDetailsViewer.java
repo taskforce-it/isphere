@@ -255,7 +255,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         ISphereJobLogExplorerPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String propertyName = event.getProperty();
-                if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) {
+                if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) { //$NON-NLS-1$
                     if (updateDetailsViewerJob != null) {
                         updateDetailsViewerJob.cancel();
                         updateDetailsViewerJob = null;

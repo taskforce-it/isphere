@@ -71,7 +71,7 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
         ISphereJobLogExplorerPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String propertyName = event.getProperty();
-                if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) {
+                if (propertyName.startsWith("biz.isphere.joblogexplorer.COLORS.")) { //$NON-NLS-1$
                     if (updateTableViewerJob != null) {
                         updateTableViewerJob.cancel();
                         updateTableViewerJob = null;
@@ -193,7 +193,7 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
     private class UpdateTableViewerJob extends UIJob {
 
         public UpdateTableViewerJob() {
-            super("");
+            super(""); //$NON-NLS-1$
         }
 
         @Override

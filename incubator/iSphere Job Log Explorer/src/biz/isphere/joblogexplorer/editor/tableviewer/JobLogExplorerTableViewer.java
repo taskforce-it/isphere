@@ -437,7 +437,6 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     }
 
     public void widgetDefaultSelected(SelectionEvent arg0) {
-        System.out.println("Filter: " + "??? widgetDefaultSelected ???");
     }
 
     public void widgetSelected(SelectionEvent event) {
