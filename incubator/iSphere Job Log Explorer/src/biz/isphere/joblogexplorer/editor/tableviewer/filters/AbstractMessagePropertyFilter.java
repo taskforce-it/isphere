@@ -1,9 +1,10 @@
 package biz.isphere.joblogexplorer.editor.tableviewer.filters;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 
-public abstract class AbstractFilter extends ViewerFilter {
+import biz.isphere.joblogexplorer.model.JobLogMessage;
+
+public abstract class AbstractMessagePropertyFilter {
 
     public static final String SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
     public static final String SPCVAL_BLANK = "*BLANK"; //$NON-NLS-1$
@@ -14,8 +15,7 @@ public abstract class AbstractFilter extends ViewerFilter {
         this.value = value;
     }
 
-    @Override
-    public boolean select(Viewer tableViewer, Object parentElement, Object element) {
+    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
         if (SPCVAL_ALL.equals(value)) {
             return true;

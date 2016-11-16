@@ -110,7 +110,7 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         sashForm.setWeights(new int[] { 8, 4 });
 
         tableViewer.addSelectionChangedListener(details);
-        filter.addSelectionChangedListener(tableViewer);
+        filter.addFilterChangedListener(tableViewer);
 
         JobLogExplorerEditorInput input = (JobLogExplorerEditorInput)getEditorInput();
 
@@ -285,7 +285,7 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
                             filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.SPCVAL_ALL));
                             filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.SPCVAL_ALL,
                                 AbstractStringFilter.SPCVAL_BLANK));
-                            filterPanel.refreshFilters();
+                            filterPanel.clearFilters();
                         }
 
                         viewer.setSelection(0);

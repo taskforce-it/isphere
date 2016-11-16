@@ -12,29 +12,25 @@ import org.eclipse.jface.viewers.Viewer;
 
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public abstract class AbstractStringFilter extends AbstractFilter {
+public abstract class AbstractStringFilter extends AbstractMessagePropertyFilter {
 
     public void setValue(String value) {
         super.setValue(value);
     }
 
     @Override
-    public boolean select(Viewer tableViewer, Object parentElement, Object element) {
+    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
         if (super.select(tableViewer, parentElement, element)) {
             return true;
         }
 
-        if (element instanceof JobLogMessage) {
-            JobLogMessage jobLogMessage = (JobLogMessage)element;
-            String currentValue = getCurrentValue(jobLogMessage);
-            if (currentValue.length() == 0) {
-                currentValue = SPCVAL_BLANK;
-            }
-            return value.equalsIgnoreCase(currentValue);
+        JobLogMessage jobLogMessage = (JobLogMessage)element;
+        String currentValue = getCurrentValue(jobLogMessage);
+        if (currentValue.length() == 0) {
+            currentValue = SPCVAL_BLANK;
         }
-
-        return true;
+        return value.equalsIgnoreCase(currentValue);
     }
 
     protected abstract String getCurrentValue(JobLogMessage jobLogMessage);

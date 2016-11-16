@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -30,19 +31,21 @@ import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 public class JobLogExplorerFilterPanel {
 
     private Composite filterArea;
-    private FilterData filterData;
 
-    private List<SelectionListener> listeners;
+    private List<SelectionListener> filterChangedListeners;
 
     private Combo comboIdFilter;
     private Combo comboTypeFilter;
     private Combo comboSeverityFilter;
-    private Button applyFilters;
+
+    private Button buttonApplyFilters;
+    private Button buttonClearFilters;
+    private Button buttonSelectAll;
+    private Button buttonDeselectAll;
 
     public JobLogExplorerFilterPanel() {
 
-        this.listeners = new ArrayList<SelectionListener>();
-        this.filterData = new FilterData();
+        this.filterChangedListeners = new ArrayList<SelectionListener>();
     }
 
     public void createViewer(Composite parent) {
@@ -52,17 +55,16 @@ public class JobLogExplorerFilterPanel {
         filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Create controls
-        createControls(filterArea);
+        createFilterControls(filterArea);
+
+        createButtons(parent);
     }
 
-    private void createControls(Composite filterArea) {
+    private void createFilterControls(Composite filterArea) {
 
         comboIdFilter = createCombo(filterArea, Messages.Label_ID, MessageModifyEvent.ID);
         comboTypeFilter = createCombo(filterArea, Messages.Label_Type, MessageModifyEvent.TYPE);
         comboSeverityFilter = createCombo(filterArea, Messages.Label_Severity, MessageModifyEvent.SEVERITY);
-
-        applyFilters = WidgetFactory.createPushButton(filterArea, Messages.Apply_filters);
-        applyFilters.addSelectionListener(new ComboSelectionListener(MessageModifyEvent.ALL));
     }
 
     private Combo createCombo(Composite filterArea, String label, int messageEventType) {
@@ -75,30 +77,57 @@ public class JobLogExplorerFilterPanel {
         return combo;
     }
 
-    public void addSelectionChangedListener(SelectionListener listener) {
+    private void createButtons(Composite parent) {
 
-        listeners.add(listener);
+        Composite buttonsArea = new Composite(parent, SWT.NONE);
+        buttonsArea.setLayout(new GridLayout(0, true));
+        buttonsArea.setLayoutData(new GridData());
+
+        buttonApplyFilters = createCommandButton(buttonsArea, Messages.Apply_filters, new ApplyFiltersSelectionListener());
+        buttonClearFilters = createCommandButton(buttonsArea, Messages.Clear_filters, new ClearFiltersSelectionListener());
+        createSpacer(buttonsArea);
+        buttonSelectAll = createCommandButton(buttonsArea, Messages.Select_all, new SelectAllSelectionListener());
+        buttonDeselectAll = createCommandButton(buttonsArea, Messages.Deselect_all, new DeselectAllSelectionListener());
     }
 
-    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+    private void createSpacer(Composite parent) {
 
-        listeners.remove(listener);
+        Composite spacer = new Composite(parent, SWT.NONE);
+        GridData layoutData = new GridData();
+        layoutData.heightHint = 0;
+        spacer.setLayoutData(layoutData);
+
+        GridLayout layout = (GridLayout)parent.getLayout();
+        layout.numColumns++;
     }
 
-    private void notifySelectionChangedListeners(SelectionEvent event) {
+    private Button createCommandButton(Composite parent, String label, SelectionListener listener) {
 
-        for (SelectionListener listener : listeners) {
+        Button button = WidgetFactory.createPushButton(parent, label);
+        button.addSelectionListener(listener);
+        button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        GridLayout layout = (GridLayout)parent.getLayout();
+        layout.numColumns++;
+
+        return button;
+    }
+
+    public void addFilterChangedListener(SelectionListener listener) {
+
+        filterChangedListeners.add(listener);
+    }
+
+    public void removeFilterChangedListener(ISelectionChangedListener listener) {
+
+        filterChangedListeners.remove(listener);
+    }
+
+    private void notifyFilterChangedListeners(SelectionEvent event) {
+
+        for (SelectionListener listener : filterChangedListeners) {
             listener.widgetSelected(event);
         }
-
-    }
-
-    public void widgetDefaultSelected(SelectionEvent event) {
-        notifySelectionChangedListeners(event);
-    }
-
-    public void widgetSelected(SelectionEvent event) {
-        notifySelectionChangedListeners(event);
     }
 
     public boolean isDisposed() {
@@ -123,64 +152,67 @@ public class JobLogExplorerFilterPanel {
         comboSeverityFilter.select(0);
     }
 
-    public void refreshFilters() {
+    public void clearFilters() {
 
-        notifySelectionChangedListeners(null);
+        Event e = new Event();
+        e.widget = buttonClearFilters;
+        SelectionEvent event = new SelectionEvent(e);
+        event.detail = JobLogExplorerFilterPanelEvents.REMOVE_FILTERS;
+
+        notifyFilterChangedListeners(event);
     }
 
-    private class ComboSelectionListener extends SelectionAdapter {
-
-        private int messageEventType;
-
-        public ComboSelectionListener(int messageEventType) {
-            this.messageEventType = messageEventType;
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-        }
+    private class ApplyFiltersSelectionListener extends SelectionAdapter {
 
         @Override
         public void widgetSelected(SelectionEvent event) {
 
-            String filterValue;
-            if (event.getSource() instanceof Combo) {
-                filterValue = ((Combo)event.getSource()).getText();
-            } else {
-                filterValue = null;
-            }
+            FilterData filterData = new FilterData();
 
-            switch (messageEventType) {
-            case MessageModifyEvent.ALL:
-                filterData.id = getFilterValue(comboIdFilter.getText());
-                filterData.type = getFilterValue(comboTypeFilter.getText());
-                filterData.severity = getFilterValue(comboSeverityFilter.getText());
-                break;
+            filterData.id = comboIdFilter.getText();
+            filterData.type = comboTypeFilter.getText();
+            filterData.severity = comboSeverityFilter.getText();
 
-            case MessageModifyEvent.ID:
-                filterData.id = filterValue;
-                break;
-
-            case MessageModifyEvent.TYPE:
-                filterData.type = filterValue;
-                break;
-
-            case MessageModifyEvent.SEVERITY:
-                filterData.severity = filterValue;
-                break;
-
-            default:
-                break;
-            }
-
+            event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
             event.data = filterData;
-            event.detail = messageEventType;
-            notifySelectionChangedListeners(event);
+            notifyFilterChangedListeners(event);
         }
+    }
 
-        private String getFilterValue(String text) {
+    private class ClearFiltersSelectionListener extends SelectionAdapter {
 
-            return text;
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            comboIdFilter.select(0);
+            comboTypeFilter.select(0);
+            comboSeverityFilter.select(0);
+
+            event.detail = JobLogExplorerFilterPanelEvents.REMOVE_FILTERS;
+            event.data = null;
+            notifyFilterChangedListeners(event);
+        }
+    }
+
+    private class SelectAllSelectionListener extends SelectionAdapter {
+
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            event.detail = JobLogExplorerFilterPanelEvents.SELECT_ALL;
+            event.data = null;
+            notifyFilterChangedListeners(event);
+        }
+    }
+
+    private class DeselectAllSelectionListener extends SelectionAdapter {
+
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            event.detail = JobLogExplorerFilterPanelEvents.DESELECT_ALL;
+            event.data = null;
+            notifyFilterChangedListeners(event);
         }
     }
 }

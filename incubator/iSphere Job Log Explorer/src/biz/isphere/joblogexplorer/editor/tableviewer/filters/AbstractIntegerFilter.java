@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public abstract class AbstractIntegerFilter extends AbstractFilter {
+public abstract class AbstractIntegerFilter extends AbstractMessagePropertyFilter {
 
     public static final int NULL_VALUE = -1; //$NON-NLS-1$
 
@@ -31,19 +31,15 @@ public abstract class AbstractIntegerFilter extends AbstractFilter {
     }
 
     @Override
-    public boolean select(Viewer tableViewer, Object parentElement, Object element) {
+    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
         if (super.select(tableViewer, parentElement, element)) {
             return true;
         }
 
-        if (element instanceof JobLogMessage) {
-            JobLogMessage jobLogMessage = (JobLogMessage)element;
-            int currentValue = getCurrentValue(jobLogMessage);
-            return intValue == currentValue;
-        }
-
-        return true;
+        JobLogMessage jobLogMessage = (JobLogMessage)element;
+        int currentValue = getCurrentValue(jobLogMessage);
+        return intValue == currentValue;
     }
 
     protected abstract int getCurrentValue(JobLogMessage jobLogMessage);

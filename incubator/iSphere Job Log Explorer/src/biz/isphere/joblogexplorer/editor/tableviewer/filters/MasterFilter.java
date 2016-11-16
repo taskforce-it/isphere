@@ -14,15 +14,17 @@ import java.util.List;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import biz.isphere.joblogexplorer.model.JobLogMessage;
+
 public class MasterFilter extends ViewerFilter {
 
-    List<ViewerFilter> filters;
+    List<AbstractMessagePropertyFilter> filters;
 
     public MasterFilter() {
-        this.filters = new ArrayList<ViewerFilter>();
+        this.filters = new ArrayList<AbstractMessagePropertyFilter>();
     }
 
-    public void addFilter(ViewerFilter filter) {
+    public void addFilter(AbstractMessagePropertyFilter filter) {
         filters.add(filter);
     }
 
@@ -37,9 +39,17 @@ public class MasterFilter extends ViewerFilter {
     @Override
     public boolean select(Viewer tableViewer, Object parentElement, Object element) {
 
-        for (ViewerFilter filter : filters) {
-            if (!filter.select(tableViewer, parentElement, element)) {
-                return false;
+        if (element instanceof JobLogMessage) {
+
+            JobLogMessage jobLogMessage = (JobLogMessage)element;
+            if (jobLogMessage.isSelected()) {
+                return true;
+            }
+
+            for (AbstractMessagePropertyFilter filter : filters) {
+                if (!filter.select(tableViewer, parentElement, jobLogMessage)) {
+                    return false;
+                }
             }
         }
 

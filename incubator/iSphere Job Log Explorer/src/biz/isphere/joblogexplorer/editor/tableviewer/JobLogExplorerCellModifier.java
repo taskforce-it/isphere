@@ -97,6 +97,6 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
         default:
         }
 
-        tableViewer.update(element, null);
+        tableViewer.update(jobLogMessages, new String[] { property });
     }
 }

@@ -24,16 +24,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.filter.FilterData;
-import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractFilter;
+import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanelEvents;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractMessagePropertyFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.MasterFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener {
 
@@ -453,19 +456,41 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     public void widgetSelected(SelectionEvent event) {
 
+        switch (event.detail) {
+        case JobLogExplorerFilterPanelEvents.APPLY_FILTERS:
+            doApplyFilters(event.data);
+            break;
+
+        case JobLogExplorerFilterPanelEvents.REMOVE_FILTERS:
+            doApplyFilters(null);
+            break;
+
+        case JobLogExplorerFilterPanelEvents.SELECT_ALL:
+            doSetSelection(true);
+            break;
+
+        case JobLogExplorerFilterPanelEvents.DESELECT_ALL:
+            doSetSelection(false);
+            break;
+
+        default:
+            break;
+        }
+
+    }
+
+    private void doApplyFilters(Object object) {
+
         masterFilter.removeAllFilters();
 
-        if (event != null) {
-            FilterData filterData = (FilterData)event.data;
-
+        if (object instanceof FilterData) {
+            FilterData filterData = (FilterData)object;
             if (isFilterValue(filterData.id)) {
                 masterFilter.addFilter(new IdFilter(filterData.id));
             }
-
             if (isFilterValue(filterData.type)) {
                 masterFilter.addFilter(new TypeFilter(filterData.type));
             }
-
             if (isFilterValue(filterData.severity)) {
                 masterFilter.addFilter(new SeverityFilter(filterData.severity));
             }
@@ -478,9 +503,20 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         }
     }
 
+    private void doSetSelection(boolean selected) {
+
+        TableItem[] tableItems = tableViewer.getTable().getItems();
+        for (TableItem tableItem : tableItems) {
+            JobLogMessage jobLogMessage = (JobLogMessage)tableItem.getData();
+            jobLogMessage.setSelected(selected);
+        }
+
+        tableViewer.refresh();
+    }
+
     private boolean isFilterValue(String value) {
 
-        if (AbstractFilter.SPCVAL_ALL.equals(value)) {
+        if (AbstractMessagePropertyFilter.SPCVAL_ALL.equals(value)) {
             return false;
         }
 

@@ -68,6 +68,9 @@ public class Messages extends NLS {
     public static String Severity_40_colon;
 
     public static String Apply_filters;
+    public static String Clear_filters;
+    public static String Select_all;
+    public static String Deselect_all;
 
     static {
         // initialize resource bundle
