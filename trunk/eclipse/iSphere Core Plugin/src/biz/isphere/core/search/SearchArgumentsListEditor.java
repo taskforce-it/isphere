@@ -43,8 +43,10 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
     private Button rdoMatchAll;
     private Button rdoMatchAny;
+    private Button rdoSpecialOption;
     private List<AbstractSearchArgumentEditor> searchArgumentEditors;
     private int maxNumSearchArguments;
+    private String labelSpecialOption;
     private Listener listener;
     private boolean regularExpressionsOption;
 
@@ -53,8 +55,13 @@ public abstract class SearchArgumentsListEditor implements Listener {
     }
 
     public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption) {
+        this(aMaxNumSearchArguments, false, null);
+    }
+
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption, String aLabelSpecialOption) {
         regularExpressionsOption = aRegularExpressionsOption;
         maxNumSearchArguments = aMaxNumSearchArguments;
+        labelSpecialOption = aLabelSpecialOption;
         listener = null;
     }
 
@@ -74,6 +81,11 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
         rdoMatchAny = WidgetFactory.createRadioButton(tMatchGroup);
         rdoMatchAny.setText(Messages.MatchAnyCondition);
+
+        if (labelSpecialOption != null) {
+            rdoSpecialOption = WidgetFactory.createRadioButton(tMatchGroup);
+            rdoSpecialOption.setText(labelSpecialOption);
+        }
 
         Composite scrollableContainer = new Composite(aParent, SWT.NONE);
         scrollableContainer.setLayout(new GridLayout(1, false));
