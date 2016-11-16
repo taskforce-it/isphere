@@ -13,8 +13,8 @@ import biz.isphere.core.search.SearchOptions;
 
 public class SearchArgumentsListEditorProvider implements ISearchArgumentsListEditorProvider {
 
-    public biz.isphere.core.search.SearchArgumentsListEditor getListEditor(boolean regularExpressionsOption) {
-        return new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, regularExpressionsOption);
+    public biz.isphere.core.search.SearchArgumentsListEditor getListEditor(boolean regularExpressionsOption, String labelSpecialOption) {
+        return new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, regularExpressionsOption, labelSpecialOption);
     }
 
 }
