@@ -51,7 +51,9 @@ public class SearchDialog extends AbstractSearchDialog {
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, 132, searchArgumentsListEditor, false);
+        // TODO: implement "Search for specific message IDs", SrvPgm XFNDSTR ->
+        // new parameter
+        super(parentShell, 132, searchArgumentsListEditor, false, null);
         this.searchElements = searchElements;
     }
 
