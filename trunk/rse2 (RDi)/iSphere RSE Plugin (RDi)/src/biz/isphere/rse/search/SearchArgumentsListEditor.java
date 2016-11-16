@@ -22,6 +22,10 @@ public class SearchArgumentsListEditor extends biz.isphere.core.search.SearchArg
         super(aMaxNumSearchArguments, regularExpressionsOption);
     }
 
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean regularExpressionsOption, String labelSpecialOption) {
+        super(aMaxNumSearchArguments, regularExpressionsOption, labelSpecialOption);
+    }
+
     @Override
     protected AbstractSearchArgumentEditor createEditor(Composite aParent) {
         SearchArgumentEditor tEditor = new SearchArgumentEditor(isRegularExpressions());
