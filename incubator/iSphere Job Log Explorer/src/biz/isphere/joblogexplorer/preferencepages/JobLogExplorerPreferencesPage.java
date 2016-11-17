@@ -86,11 +86,17 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         groupColors.setLayout(new GridLayout(2, false));
 
         buttonSeverityBL = createColorSelector(groupColors, Messages.Severity_BL_colon);
+        buttonSeverityBL.getButton().setToolTipText(Messages.Severity_BLANK_tooltip);
         buttonSeverity00 = createColorSelector(groupColors, Messages.Severity_00_colon);
+        buttonSeverity00.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "00", "09" }));
         buttonSeverity10 = createColorSelector(groupColors, Messages.Severity_10_colon);
+        buttonSeverity10.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "10", "19" }));
         buttonSeverity20 = createColorSelector(groupColors, Messages.Severity_20_colon);
+        buttonSeverity20.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "20", "29" }));
         buttonSeverity30 = createColorSelector(groupColors, Messages.Severity_30_colon);
+        buttonSeverity30.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "30", "39" }));
         buttonSeverity40 = createColorSelector(groupColors, Messages.Severity_40_colon);
+        buttonSeverity40.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "40", "99" }));
     }
 
     private ColorSelector createColorSelector(Group parent, String label) {

@@ -67,6 +67,8 @@ public class Messages extends NLS {
     public static String Severity_20_colon;
     public static String Severity_30_colon;
     public static String Severity_40_colon;
+    public static String Severity_BLANK_tooltip;
+    public static String Severity_A_to_B_tooltip;
 
     public static String Apply_filters;
     public static String Clear_filters;
