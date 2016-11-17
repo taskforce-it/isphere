@@ -44,4 +44,10 @@ The &quot;iSphere Job Log Explorer Feature (RDi)&quot; provides an editor for ex
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="biz.isphere.joblogexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>
