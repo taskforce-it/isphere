@@ -46,6 +46,10 @@ public class MasterFilter extends ViewerFilter {
                 return true;
             }
 
+            if (filters.isEmpty()) {
+                return false;
+            }
+
             for (AbstractMessagePropertyFilter filter : filters) {
                 if (!filter.select(tableViewer, parentElement, jobLogMessage)) {
                     return false;

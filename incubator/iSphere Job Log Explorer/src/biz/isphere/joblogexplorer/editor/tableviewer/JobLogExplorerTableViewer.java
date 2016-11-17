@@ -13,7 +13,10 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,7 +41,7 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener {
+public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener, ISelectionProvider {
 
     public enum Columns {
         SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
@@ -110,6 +113,10 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         tableViewer.setInput(jobLog);
     }
 
+    private JobLog getInput() {
+        return (JobLog)tableViewer.getInput();
+    }
+
     public void setFocus() {
         tableViewer.getTable().setFocus();
     }
@@ -144,11 +151,11 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         tableViewer.setLabelProvider(new JobLogExplorerLabelProvider(tableViewer));
     }
 
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    public void addMessageSelectionChangedListener(ISelectionChangedListener listener) {
         tableViewer.addSelectionChangedListener(listener);
     }
 
-    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+    public void removeMessageSelectionChangedListener(ISelectionChangedListener listener) {
         tableViewer.removeSelectionChangedListener(listener);
     }
 
@@ -481,6 +488,11 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     private void doApplyFilters(Object object) {
 
+        if (object == null) {
+            tableViewer.removeFilter(masterFilter);
+            return;
+        }
+
         masterFilter.removeAllFilters();
 
         if (object instanceof FilterData) {
@@ -496,11 +508,25 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             }
         }
 
-        if (masterFilter.countFilters() == 0) {
+        if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
             tableViewer.removeFilter(masterFilter);
         } else {
             tableViewer.addFilter(masterFilter);
         }
+    }
+
+    private boolean haveSelectedMessages() {
+
+        JobLog jobLog = getInput();
+        if (jobLog == null) {
+            return false;
+        }
+
+        if (jobLog.getNumMessagesSelected() == 0) {
+            return false;
+        }
+
+        return true;
     }
 
     private void doSetSelection(boolean selected) {
@@ -521,5 +547,24 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         }
 
         return !StringHelper.isNullOrEmpty(value);
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener arg0) {
+        return;
+    }
+
+    public ISelection getSelection() {
+        if (tableViewer.getInput() == null) {
+            return null;
+        }
+        return new StructuredSelection(tableViewer.getInput());
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener arg0) {
+        return;
+    }
+
+    public void setSelection(ISelection arg0) {
+        return;
     }
 }

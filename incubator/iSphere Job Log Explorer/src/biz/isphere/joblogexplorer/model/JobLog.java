@@ -13,11 +13,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 
-public class JobLog implements MessageModifyListener {
+public class JobLog implements MessageModifyListener, IAdaptable {
 
     private String jobName;
     private String userName;
@@ -34,6 +40,9 @@ public class JobLog implements MessageModifyListener {
     private Set<String> messageIds;
     private Set<String> messageTypes;
     private Set<String> messageSeverities;
+    private int numMessagesSelected;
+
+    private JobLogPropertySource propertySource;
 
     public JobLog() {
         this.isHeaderComplete = validateJobLogHeader();
@@ -44,6 +53,7 @@ public class JobLog implements MessageModifyListener {
         this.messageIds = new HashSet<String>();
         this.messageTypes = new HashSet<String>();
         this.messageSeverities = new HashSet<String>();
+        this.numMessagesSelected = 0;
     }
 
     public String getJobName() {
@@ -172,6 +182,24 @@ public class JobLog implements MessageModifyListener {
         return jobLogMessages;
     }
 
+    public JobLogPage getFirstPage() {
+        if (jobLogPages.size() == 0) {
+            return null;
+        }
+        return jobLogPages.get(0);
+    }
+
+    public JobLogPage getLastPage() {
+        if (jobLogPages.size() == 0) {
+            return null;
+        }
+        return jobLogPages.get(jobLogPages.size() - 1);
+    }
+
+    public int getNumMessagesSelected() {
+        return numMessagesSelected;
+    }
+
     public void dump() {
 
         System.out.println("Job log . . . . : " + getQualifiedJobName()); //$NON-NLS-1$
@@ -234,8 +262,144 @@ public class JobLog implements MessageModifyListener {
             addNotNullOrEmptyFilterItem(messageSeverities, event.value);
             break;
 
+        case MessageModifyEvent.SELECTED:
+            if ("1".equals(event.value)) {//$NON-NLS-1$
+                numMessagesSelected++;
+            } else {
+                numMessagesSelected--;
+            }
+            break;
+
         default:
             break;
+        }
+
+    }
+
+    public Object getAdapter(Class adapter) {
+        if (adapter == IPropertySource.class) {
+            if (propertySource == null) {
+                // cache the buttonelementpropertysource
+                propertySource = new JobLogPropertySource(this);
+            }
+            return propertySource;
+        }
+        return null;
+    }
+
+    public class JobLogPropertySource implements IPropertySource {
+
+        private static final String PROPERTY_JOB_NAME = "biz.isphere.joblogexplorer.model.JobLog.jobName";//$NON-NLS-1$
+        private static final String PROPERTY_JOB_USER = "biz.isphere.joblogexplorer.model.JobLog.jobUser";//$NON-NLS-1$
+        private static final String PROPERTY_JOB_NUMBER = "biz.isphere.joblogexplorer.model.JobLog.jobNUmber";//$NON-NLS-1$
+        private static final String PROPERTY_PAGES = "biz.isphere.joblogexplorer.model.JobLog.numPages";//$NON-NLS-1$
+        private static final String PROPERTY_START_DATE = "biz.isphere.joblogexplorer.model.JobLog.startDate";//$NON-NLS-1$
+        private static final String PROPERTY_END_DATE = "biz.isphere.joblogexplorer.model.JobLog.endDate";//$NON-NLS-1$
+
+        private JobLog jobLog;
+        private IPropertyDescriptor[] propertyDescriptors;
+
+        public JobLogPropertySource(JobLog jobLog) {
+            this.jobLog = jobLog;
+        }
+
+        public Object getEditableValue() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public IPropertyDescriptor[] getPropertyDescriptors() {
+
+            if (propertyDescriptors == null) {
+
+                // "Job" descriptors
+                PropertyDescriptor jobNameDescriptor = createPropertyDescriptor(PROPERTY_JOB_NAME, Messages.Property_job_name,
+                    Messages.Property_Category_job);
+
+                PropertyDescriptor jobUserDescriptor = createPropertyDescriptor(PROPERTY_JOB_USER, Messages.Property_job_user,
+                    Messages.Property_Category_job);
+
+                PropertyDescriptor jobNumberDescriptor = createPropertyDescriptor(PROPERTY_JOB_NUMBER, Messages.Property_job_number,
+                    Messages.Property_Category_job);
+
+                // "Statistics" descriptors
+                PropertyDescriptor pagesDescriptor = createPropertyDescriptor(PROPERTY_PAGES, Messages.Property_pages,
+                    Messages.Property_Category_statistics);
+
+                PropertyDescriptor startDateDescriptor = createPropertyDescriptor(PROPERTY_START_DATE, Messages.Property_start_date,
+                    Messages.Property_Category_statistics);
+
+                PropertyDescriptor endDateDescriptor = createPropertyDescriptor(PROPERTY_END_DATE, Messages.Property_last_date,
+                    Messages.Property_Category_statistics);
+
+                // Read-only (instance of PropertyDescriptor)
+                propertyDescriptors = new IPropertyDescriptor[] { jobNameDescriptor, jobUserDescriptor, jobNumberDescriptor, pagesDescriptor,
+                    startDateDescriptor, endDateDescriptor };
+            }
+
+            return propertyDescriptors;
+        }
+
+        private PropertyDescriptor createPropertyDescriptor(Object id, String displayName, String category) {
+
+            PropertyDescriptor descriptor = new PropertyDescriptor(id, displayName);
+            descriptor.setCategory(category);
+
+            return descriptor;
+        }
+
+        public Object getPropertyValue(Object name) {
+            if (name.equals(PROPERTY_JOB_NAME)) {
+                return getJobName();
+            } else if (name.equals(PROPERTY_JOB_USER)) {
+                return getJobUserName();
+            } else if (name.equals(PROPERTY_JOB_NUMBER)) {
+                return getJobNumber();
+            } else if (name.equals(PROPERTY_PAGES)) {
+                return getPages().length;
+            } else if (name.equals(PROPERTY_START_DATE)) {
+                if (getFirstPage() == null) {
+                    return "";//$NON-NLS-1$
+                } else {
+                    return getDateTimeValue(getFirstPage().getFirstMessage());
+                }
+            } else if (name.equals(PROPERTY_END_DATE)) {
+                if (getLastPage() == null) {
+                    return "";//$NON-NLS-1$
+                } else {
+                    return getDateTimeValue(getLastPage().getLastMessage());
+                }
+            } else {
+                return null;
+            }
+        }
+
+        private Object getDateTimeValue(JobLogMessage message) {
+
+            if (message == null) {
+                return "";//$NON-NLS-1$
+            }
+
+            String date = message.getDate();
+            String time = message.getTime();
+
+            if (date != null && time != null) {
+                return date + " / " + time;//$NON-NLS-1$
+            } else if (date != null) {
+                return date + " / ?";//$NON-NLS-1$
+            } else {
+                return "? / " + time;//$NON-NLS-1$
+            }
+        }
+
+        public boolean isPropertySet(Object arg0) {
+            return false;
+        }
+
+        public void resetPropertyValue(Object arg0) {
+        }
+
+        public void setPropertyValue(Object arg0, Object arg1) {
         }
 
     }

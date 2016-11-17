@@ -9,6 +9,7 @@
 package biz.isphere.joblogexplorer.preferences;
 
 public enum SeverityColor {
+    SEVERITY_BL ("SEVERITY_BL"), //$NON-NLS-1$
     SEVERITY_00 ("SEVERITY_00"), //$NON-NLS-1$
     SEVERITY_10 ("SEVERITY_10"), //$NON-NLS-1$
     SEVERITY_20 ("SEVERITY_20"), //$NON-NLS-1$

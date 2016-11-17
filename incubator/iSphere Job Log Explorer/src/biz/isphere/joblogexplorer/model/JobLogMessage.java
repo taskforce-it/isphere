@@ -18,7 +18,7 @@ import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 
 public class JobLogMessage {
 
-    private static final int SEVERITY_BLANK = AbstractIntegerFilter.NULL_VALUE;
+    public static final int SEVERITY_BLANK = AbstractIntegerFilter.NULL_VALUE;
 
     private int pageNumber;
     private boolean selected;
@@ -65,6 +65,11 @@ public class JobLogMessage {
 
     public void setSelected(boolean select) {
         this.selected = select;
+        if (this.selected) {
+            notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SELECTED, "1"));////$NON-NLS-1$
+        } else {
+            notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SELECTED, "0"));//$NON-NLS-1$
+        }
     }
 
     public String getId() {

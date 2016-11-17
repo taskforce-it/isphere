@@ -131,6 +131,7 @@ public final class Preferences {
     public void initializeDefaultPreferences() {
 
         preferenceStore.setDefault(ENABLED, getDefaultColoringEnabled());
+        preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_BL), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_BL)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_00), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_00)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_10), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_10)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_20), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_20)));
@@ -149,8 +150,14 @@ public final class Preferences {
 
     public RGB getDefaultColorSeverity(SeverityColor severity) {
 
-        if (severity == SeverityColor.SEVERITY_40) {
-            return new RGB(255, 221, 221);
+        if (severity == SeverityColor.SEVERITY_BL) {
+            return new RGB(185, 255, 185);
+        } else if (severity == SeverityColor.SEVERITY_20) {
+            return new RGB(255, 255, 128);
+        } else if (severity == SeverityColor.SEVERITY_30) {
+            return new RGB(255, 128, 128);
+        } else if (severity == SeverityColor.SEVERITY_40) {
+            return new RGB(255, 0, 0);
         } else {
             Color color = ColorHelper.getListBackground();
             return color.getRGB();

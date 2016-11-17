@@ -15,5 +15,6 @@ public interface MessageModifyEventsTypes {
     public static final int TYPE = 1;
     public static final int SEVERITY = 2;
     public static final int ID = 3;
+    public static final int SELECTED = 4;
 
 }

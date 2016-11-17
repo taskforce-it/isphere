@@ -61,6 +61,7 @@ public class Messages extends NLS {
     public static String Enable_coloring;
     public static String Enable_coloring_tooltip;
     public static String Colors;
+    public static String Severity_BL_colon;
     public static String Severity_00_colon;
     public static String Severity_10_colon;
     public static String Severity_20_colon;
@@ -71,6 +72,15 @@ public class Messages extends NLS {
     public static String Clear_filters;
     public static String Select_all;
     public static String Deselect_all;
+
+    public static String Property_Category_job;
+    public static String Property_Category_statistics;
+    public static String Property_job_name;
+    public static String Property_job_user;
+    public static String Property_job_number;
+    public static String Property_start_date;
+    public static String Property_last_date;
+    public static String Property_pages;
 
     static {
         // initialize resource bundle

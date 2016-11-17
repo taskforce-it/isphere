@@ -32,6 +32,7 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
 
     private Preferences preferences;
     private boolean isColoring;
+    private Color severityColorBL;
     private Color severityColor00;
     private Color severityColor10;
     private Color severityColor20;
@@ -57,6 +58,7 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
             isColoring = preferences.isColoringEnabled();
 
             if (isColoring) {
+                severityColorBL = preferences.getColorSeverity(SeverityColor.SEVERITY_BL);
                 severityColor00 = preferences.getColorSeverity(SeverityColor.SEVERITY_00);
                 severityColor10 = preferences.getColorSeverity(SeverityColor.SEVERITY_10);
                 severityColor20 = preferences.getColorSeverity(SeverityColor.SEVERITY_20);
@@ -170,7 +172,9 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
 
             JobLogMessage jobLogMessage = (JobLogMessage)element;
             int severity = jobLogMessage.getSeverityInt();
-            if (severity >= 40) {
+            if (severity == JobLogMessage.SEVERITY_BLANK) {
+                return severityColorBL;
+            } else if (severity >= 40) {
                 return severityColor40;
             } else if (severity >= 30) {
                 return severityColor30;

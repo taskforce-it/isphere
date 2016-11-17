@@ -34,6 +34,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
 
     private Button checkboxEnableColoring;
     private Group groupColors;
+    private ColorSelector buttonSeverityBL;
     private ColorSelector buttonSeverity00;
     private ColorSelector buttonSeverity10;
     private ColorSelector buttonSeverity20;
@@ -84,6 +85,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         groupColors.setText(Messages.Colors);
         groupColors.setLayout(new GridLayout(2, false));
 
+        buttonSeverityBL = createColorSelector(groupColors, Messages.Severity_BL_colon);
         buttonSeverity00 = createColorSelector(groupColors, Messages.Severity_00_colon);
         buttonSeverity10 = createColorSelector(groupColors, Messages.Severity_10_colon);
         buttonSeverity20 = createColorSelector(groupColors, Messages.Severity_20_colon);
@@ -127,6 +129,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         Preferences preferences = Preferences.getInstance();
 
         preferences.setColoringEnabled(checkboxEnableColoring.getSelection());
+        preferences.setColorSeverity(SeverityColor.SEVERITY_BL, buttonSeverityBL.getColorValue());
         preferences.setColorSeverity(SeverityColor.SEVERITY_00, buttonSeverity00.getColorValue());
         preferences.setColorSeverity(SeverityColor.SEVERITY_10, buttonSeverity10.getColorValue());
         preferences.setColorSeverity(SeverityColor.SEVERITY_20, buttonSeverity20.getColorValue());
@@ -141,6 +144,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         Preferences preferences = Preferences.getInstance();
 
         checkboxEnableColoring.setSelection(preferences.isColoringEnabled());
+        buttonSeverityBL.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_BL).getRGB());
         buttonSeverity00.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_00).getRGB());
         buttonSeverity10.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_10).getRGB());
         buttonSeverity20.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_20).getRGB());
@@ -156,6 +160,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         Preferences preferences = Preferences.getInstance();
 
         checkboxEnableColoring.setSelection(preferences.getDefaultColoringEnabled());
+        buttonSeverityBL.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_BL));
         buttonSeverity00.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_00));
         buttonSeverity10.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_10));
         buttonSeverity20.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_20));

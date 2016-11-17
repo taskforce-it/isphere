@@ -109,7 +109,7 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         JobLogExplorerDetailsViewer details = createRightPanel(sashForm);
         sashForm.setWeights(new int[] { 8, 4 });
 
-        tableViewer.addSelectionChangedListener(details);
+        tableViewer.addMessageSelectionChangedListener(details);
         filter.addFilterChangedListener(tableViewer);
 
         JobLogExplorerEditorInput input = (JobLogExplorerEditorInput)getEditorInput();
@@ -119,6 +119,8 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         } else {
             // Open empty editor to drag & drop files.
         }
+
+        getSite().setSelectionProvider(tableViewer);
     }
 
     @Override
