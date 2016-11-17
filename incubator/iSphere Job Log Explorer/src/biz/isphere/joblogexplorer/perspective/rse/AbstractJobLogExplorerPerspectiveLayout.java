@@ -42,7 +42,7 @@ public abstract class AbstractJobLogExplorerPerspectiveLayout implements IPerspe
 
         // Place command log view below editor area.
         folder = layout.createFolder(CMDLOG_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, editorArea);
-        folder.addView("com.ibm.etools.iseries.rse.ui.view.cmdlog");
+        folder.addView(getCommandLogViewID());
 
         layout.addShowViewShortcut(getRemoveSystemsViewID());
         layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
@@ -52,4 +52,6 @@ public abstract class AbstractJobLogExplorerPerspectiveLayout implements IPerspe
     }
 
     protected abstract String getRemoveSystemsViewID();
+    
+    protected abstract String getCommandLogViewID();
 }

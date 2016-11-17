@@ -15,4 +15,9 @@ public class JobLogExplorerPerspectiveLayout extends AbstractJobLogExplorerPersp
     protected String getRemoveSystemsViewID() {
         return "com.ibm.etools.systems.core.ui.view.systemView";//$NON-NLS-1$
     }
+
+    @Override
+    protected String getCommandLogViewID() {
+        return "com.ibm.etools.iseries.core.ui.view.cmdlog";//$NON-NLS-1$
+    }
 }
