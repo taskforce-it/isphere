@@ -360,6 +360,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         private static final String PROPERTY_PAGES = "biz.isphere.joblogexplorer.model.JobLog.numPages";//$NON-NLS-1$
         private static final String PROPERTY_START_DATE = "biz.isphere.joblogexplorer.model.JobLog.startDate";//$NON-NLS-1$
         private static final String PROPERTY_END_DATE = "biz.isphere.joblogexplorer.model.JobLog.endDate";//$NON-NLS-1$
+        private static final String PROPERTY_NUMBER_OF_MESSAGES = "biz.isphere.joblogexplorer.model.JobLog.numberOfMessages";//$NON-NLS-1$
 
         private JobLog jobLog;
         private IPropertyDescriptor[] propertyDescriptors;
@@ -397,9 +398,12 @@ public class JobLog implements MessageModifyListener, IAdaptable {
                 PropertyDescriptor endDateDescriptor = createPropertyDescriptor(PROPERTY_END_DATE, Messages.Property_last_date,
                     Messages.Property_Category_statistics);
 
+                PropertyDescriptor numberOfMessagesDescriptor = createPropertyDescriptor(PROPERTY_NUMBER_OF_MESSAGES,
+                    Messages.Property_number_of_messages, Messages.Property_Category_statistics);
+
                 // Read-only (instance of PropertyDescriptor)
                 propertyDescriptors = new IPropertyDescriptor[] { jobNameDescriptor, jobUserDescriptor, jobNumberDescriptor, pagesDescriptor,
-                    startDateDescriptor, endDateDescriptor };
+                    startDateDescriptor, endDateDescriptor, numberOfMessagesDescriptor };
             }
 
             return propertyDescriptors;
@@ -434,6 +438,8 @@ public class JobLog implements MessageModifyListener, IAdaptable {
                 } else {
                     return getDateTimeValue(getLastPage().getLastMessage());
                 }
+            } else if (name.equals(PROPERTY_NUMBER_OF_MESSAGES)) {
+                return getMessages().size();
             } else {
                 return null;
             }

@@ -84,6 +84,7 @@ public class Messages extends NLS {
     public static String Property_start_date;
     public static String Property_last_date;
     public static String Property_pages;
+    public static String Property_number_of_messages;
 
     static {
         // initialize resource bundle
