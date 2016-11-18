@@ -27,8 +27,8 @@ public abstract class AbstractStringFilter extends AbstractMessagePropertyFilter
 
         JobLogMessage jobLogMessage = (JobLogMessage)element;
         String currentValue = getCurrentValue(jobLogMessage);
-        if (currentValue.length() == 0) {
-            currentValue = SPCVAL_BLANK;
+        if (currentValue == null || currentValue.length() == 0) {
+            currentValue = UI_SPCVAL_BLANK;
         }
         return value.equalsIgnoreCase(currentValue);
     }

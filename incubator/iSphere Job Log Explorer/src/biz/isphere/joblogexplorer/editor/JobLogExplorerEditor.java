@@ -42,6 +42,9 @@ import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsView
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanel;
 import biz.isphere.joblogexplorer.editor.tableviewer.JobLogExplorerTableViewer;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractStringFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromLibraryFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromProgramFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromStatementFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
@@ -49,19 +52,17 @@ import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogReader;
 
-public class JobLogExplorerEditor extends EditorPart implements IDropFileListener {
+public class JobLogExplorerEditor extends EditorPart implements IDropFileListener, IJobLogExplorerStatusChangedListener {
 
     public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"; //$NON-NLS-1$
 
     private StatusLine statusLine;
     private StatusLineData statusLineData;
 
-    private JobLogExplorerTableViewer tableViewer;
+    private JobLogExplorerTableViewer tableViewerPanel;
     private JobLogExplorerFilterPanel filterPanel;
 
     public JobLogExplorerEditor() {
-
-        this.statusLineData = new StatusLineData();
     }
 
     @Override
@@ -99,18 +100,19 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         mainArea.setLayout(createGridLayoutNoMargin());
         disableDropSupportOnComposite(mainArea);
 
-        JobLogExplorerFilterPanel filter = createTopPanel(mainArea);
+        JobLogExplorerFilterPanel filterPanel = createTopPanel(mainArea);
 
         SashForm sashForm = new SashForm(mainArea, SWT.NONE);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
         sashForm.setLayoutData(sashFormLayoutData);
 
-        tableViewer = createLeftPanel(sashForm);
-        JobLogExplorerDetailsViewer details = createRightPanel(sashForm);
+        tableViewerPanel = createLeftPanel(sashForm);
+        JobLogExplorerDetailsViewer detailsPanel = createRightPanel(sashForm);
         sashForm.setWeights(new int[] { 8, 4 });
 
-        tableViewer.addMessageSelectionChangedListener(details);
-        filter.addFilterChangedListener(tableViewer);
+        tableViewerPanel.addMessageSelectionChangedListener(detailsPanel);
+        tableViewerPanel.addStatusChangedListener(this);
+        filterPanel.addFilterChangedListener(tableViewerPanel);
 
         JobLogExplorerEditorInput input = (JobLogExplorerEditorInput)getEditorInput();
 
@@ -120,7 +122,7 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
             // Open empty editor to drag & drop files.
         }
 
-        getSite().setSelectionProvider(tableViewer);
+        getSite().setSelectionProvider(tableViewerPanel);
     }
 
     @Override
@@ -137,14 +139,14 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
             return;
         }
 
-        if (!tableViewer.isDisposed()) {
-            tableViewer.setInputData(null);
+        if (!tableViewerPanel.isDisposed()) {
+            tableViewerPanel.setInputData(null);
         }
 
-        tableViewer.setEnabled(false);
+        tableViewerPanel.setEnabled(false);
         JobLogExplorerEditor.this.showBusy(true);
 
-        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(pathName, originalFileName, tableViewer);
+        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(pathName, originalFileName, tableViewerPanel);
         parserJob.schedule();
     }
 
@@ -277,16 +279,26 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
                             count = 0;
                         }
 
-                        showStatusMessage(Messages.bind(Messages.Number_of_messages_A, count));
+                        // statusChanged(new StatusLineData(count));
 
                         viewer.setEnabled(true);
                         JobLogExplorerEditor.this.showBusy(false);
 
                         if (!filterPanel.isDisposed()) {
-                            filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.SPCVAL_ALL));
-                            filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.SPCVAL_ALL));
-                            filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.SPCVAL_ALL,
-                                AbstractStringFilter.SPCVAL_BLANK));
+
+                            filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
+                            filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
+                            filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
+                                AbstractStringFilter.UI_SPCVAL_BLANK));
+
+                            filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
+                            filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));
+                            filterPanel.setFromStmtFilterItems(addSpecialTypes(jobLog.getMessageFromStatements(), FromStatementFilter.UI_SPCVAL_ALL));
+
+                            filterPanel.setToLibraryFilterItems(addSpecialTypes(jobLog.getMessageToLibraries(), TypeFilter.UI_SPCVAL_ALL));
+                            filterPanel.setToProgramFilterItems(addSpecialTypes(jobLog.getMessageToPrograms(), TypeFilter.UI_SPCVAL_ALL));
+                            filterPanel.setToStmtFilterItems(addSpecialTypes(jobLog.getMessageToStatements(), TypeFilter.UI_SPCVAL_ALL));
+
                             filterPanel.clearFilters();
                         }
 
@@ -326,16 +338,30 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         }
     }
 
-    private void showStatusMessage(String message) {
-        statusLineData.setMessage(message);
-        updateActionsStatusAndStatusLine();
-    }
+    // private void showStatusMessage(String message) {
+    // statusLineData.setMessage(message);
+    // updateActionsStatusAndStatusLine();
+    // }
 
     public void setStatusLine(StatusLine statusLine) {
         this.statusLine = statusLine;
     }
 
+    /**
+     * Used by the JobLogExplorerEditorActionBarContributor to update the status
+     * line.
+     */
     public void updateActionsStatusAndStatusLine() {
+
         statusLine.setData(statusLineData);
+    }
+
+    public void statusChanged(StatusLineData status) {
+
+        statusLineData = status;
+
+        if (statusLine != null) {
+            statusLine.setData(statusLineData);
+        }
     }
 }

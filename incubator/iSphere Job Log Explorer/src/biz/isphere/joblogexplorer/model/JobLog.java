@@ -40,6 +40,12 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     private Set<String> messageIds;
     private Set<String> messageTypes;
     private Set<String> messageSeverities;
+    private Set<String> messageFromLibraries;
+    private Set<String> messageFromPrograms;
+    private Set<String> messageFromStmts;
+    private Set<String> messageToLibraries;
+    private Set<String> messageToPrograms;
+    private Set<String> messageToStmts;
     private int numMessagesSelected;
 
     private JobLogPropertySource propertySource;
@@ -53,6 +59,12 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         this.messageIds = new HashSet<String>();
         this.messageTypes = new HashSet<String>();
         this.messageSeverities = new HashSet<String>();
+        this.messageFromLibraries = new HashSet<String>();
+        this.messageFromPrograms = new HashSet<String>();
+        this.messageFromStmts = new HashSet<String>();
+        this.messageToLibraries = new HashSet<String>();
+        this.messageToPrograms = new HashSet<String>();
+        this.messageToStmts = new HashSet<String>();
         this.numMessagesSelected = 0;
     }
 
@@ -141,6 +153,30 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         return messageSeverities.toArray(new String[messageSeverities.size()]);
     }
 
+    public String[] getMessageFromLibraries() {
+        return messageFromLibraries.toArray(new String[messageFromLibraries.size()]);
+    }
+
+    public String[] getMessageFromPrograms() {
+        return messageFromPrograms.toArray(new String[messageFromPrograms.size()]);
+    }
+
+    public String[] getMessageFromStatements() {
+        return messageFromStmts.toArray(new String[messageFromStmts.size()]);
+    }
+
+    public String[] getMessageToLibraries() {
+        return messageToLibraries.toArray(new String[messageToLibraries.size()]);
+    }
+
+    public String[] getMessageToPrograms() {
+        return messageToPrograms.toArray(new String[messageToPrograms.size()]);
+    }
+
+    public String[] getMessageToStatements() {
+        return messageToStmts.toArray(new String[messageToStmts.size()]);
+    }
+
     public JobLogPage addPage() {
 
         currentPage = new JobLogPage();
@@ -196,8 +232,13 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         return jobLogPages.get(jobLogPages.size() - 1);
     }
 
-    public int getNumMessagesSelected() {
-        return numMessagesSelected;
+    public boolean haveSelectedMessages() {
+
+        if (numMessagesSelected > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public void dump() {
@@ -260,6 +301,30 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
         case MessageModifyEvent.SEVERITY:
             addNotNullOrEmptyFilterItem(messageSeverities, event.value);
+            break;
+
+        case MessageModifyEvent.FROM_LIBRARY:
+            addNotNullOrEmptyFilterItem(messageFromLibraries, event.value);
+            break;
+
+        case MessageModifyEvent.FROM_PROGRAM:
+            addNotNullOrEmptyFilterItem(messageFromPrograms, event.value);
+            break;
+
+        case MessageModifyEvent.FROM_STMT:
+            addNotNullOrEmptyFilterItem(messageFromStmts, event.value);
+            break;
+
+        case MessageModifyEvent.TO_LIBRARY:
+            addNotNullOrEmptyFilterItem(messageToLibraries, event.value);
+            break;
+
+        case MessageModifyEvent.TO_PROGRAM:
+            addNotNullOrEmptyFilterItem(messageToPrograms, event.value);
+            break;
+
+        case MessageModifyEvent.TO_STMT:
+            addNotNullOrEmptyFilterItem(messageToStmts, event.value);
             break;
 
         case MessageModifyEvent.SELECTED:

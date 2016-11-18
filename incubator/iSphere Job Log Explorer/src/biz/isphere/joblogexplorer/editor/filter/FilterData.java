@@ -16,10 +16,24 @@ public class FilterData {
     public String type;
     public String severity;
 
+    public String fromLibrary;
+    public String fromProgram;
+    public String fromStmt;
+
+    public String toLibrary;
+    public String toProgram;
+    public String toStmt;
+
     public FilterData() {
         this.id = EMPTY;
         this.type = EMPTY;
         this.severity = EMPTY;
+        this.fromLibrary = EMPTY;
+        this.fromProgram = EMPTY;
+        this.fromStmt = EMPTY;
+        this.toLibrary = EMPTY;
+        this.toProgram = EMPTY;
+        this.toStmt = EMPTY;
     }
 
 }

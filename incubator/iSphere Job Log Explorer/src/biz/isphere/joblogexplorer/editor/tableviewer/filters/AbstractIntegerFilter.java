@@ -21,9 +21,9 @@ public abstract class AbstractIntegerFilter extends AbstractMessagePropertyFilte
     public void setValue(String value) {
         super.setValue(value);
 
-        if (SPCVAL_ALL.equals(this.value)) {
+        if (UI_SPCVAL_ALL.equals(this.value)) {
             // Does not matter
-        } else if (SPCVAL_BLANK.equals(this.value)) {
+        } else if (UI_SPCVAL_BLANK.equals(this.value)) {
             this.intValue = NULL_VALUE;
         } else {
             this.intValue = Integer.parseInt(value);

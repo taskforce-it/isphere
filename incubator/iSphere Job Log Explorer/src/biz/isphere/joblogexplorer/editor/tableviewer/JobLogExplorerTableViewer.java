@@ -31,12 +31,20 @@ import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
+import biz.isphere.joblogexplorer.editor.StatusLineData;
 import biz.isphere.joblogexplorer.editor.filter.FilterData;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanelEvents;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractMessagePropertyFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromLibraryFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromProgramFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromStatementFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.MasterFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToLibraryFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToProgramFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToStatementFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
@@ -88,16 +96,10 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     private MasterFilter masterFilter;
 
-    // private List<AbstractFilter> filters;
+    private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
 
     public JobLogExplorerTableViewer() {
-
-        this.masterFilter = new MasterFilter();
-
-        // this.filters = new ArrayList<AbstractFilter>();
-        // this.filters.add(idFilter);
-        // this.filters.add(typeFilter);
-        // this.filters.add(severityFilter);
+        this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
     }
 
     public boolean isDisposed() {
@@ -111,6 +113,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     public void setInputData(JobLog jobLog) {
 
         tableViewer.setInput(jobLog);
+
+        notifyStatusChangedListeners(new StatusLineData(tableViewer.getTable().getItemCount()));
     }
 
     private JobLog getInput() {
@@ -488,30 +492,69 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     private void doApplyFilters(Object object) {
 
-        if (object == null) {
-            tableViewer.removeFilter(masterFilter);
-            return;
-        }
+        try {
 
-        masterFilter.removeAllFilters();
+            if (object == null) {
+                if (masterFilter != null) {
+                    tableViewer.removeFilter(masterFilter);
+                    masterFilter = null;
+                }
+                return;
+            }
 
-        if (object instanceof FilterData) {
-            FilterData filterData = (FilterData)object;
-            if (isFilterValue(filterData.id)) {
-                masterFilter.addFilter(new IdFilter(filterData.id));
+            boolean updateMasterAddFilter;
+            if (masterFilter == null) {
+                updateMasterAddFilter = false;
+                masterFilter = new MasterFilter();
+            } else {
+                updateMasterAddFilter = true;
+                masterFilter.removeAllFilters();
             }
-            if (isFilterValue(filterData.type)) {
-                masterFilter.addFilter(new TypeFilter(filterData.type));
-            }
-            if (isFilterValue(filterData.severity)) {
-                masterFilter.addFilter(new SeverityFilter(filterData.severity));
-            }
-        }
 
-        if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
-            tableViewer.removeFilter(masterFilter);
-        } else {
-            tableViewer.addFilter(masterFilter);
+            if (object instanceof FilterData) {
+                FilterData filterData = (FilterData)object;
+                if (isFilterValue(filterData.id)) {
+                    masterFilter.addFilter(new IdFilter(filterData.id));
+                }
+                if (isFilterValue(filterData.type)) {
+                    masterFilter.addFilter(new TypeFilter(filterData.type));
+                }
+                if (isFilterValue(filterData.severity)) {
+                    masterFilter.addFilter(new SeverityFilter(filterData.severity));
+                }
+                if (isFilterValue(filterData.fromLibrary)) {
+                    masterFilter.addFilter(new FromLibraryFilter(filterData.fromLibrary));
+                }
+                if (isFilterValue(filterData.fromProgram)) {
+                    masterFilter.addFilter(new FromProgramFilter(filterData.fromProgram));
+                }
+                if (isFilterValue(filterData.fromStmt)) {
+                    masterFilter.addFilter(new FromStatementFilter(filterData.fromStmt));
+                }
+                if (isFilterValue(filterData.toLibrary)) {
+                    masterFilter.addFilter(new ToLibraryFilter(filterData.toLibrary));
+                }
+                if (isFilterValue(filterData.toProgram)) {
+                    masterFilter.addFilter(new ToProgramFilter(filterData.toProgram));
+                }
+                if (isFilterValue(filterData.toStmt)) {
+                    masterFilter.addFilter(new ToStatementFilter(filterData.toStmt));
+                }
+            }
+
+            if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
+                tableViewer.removeFilter(masterFilter);
+                masterFilter = null;
+            } else {
+                if (updateMasterAddFilter) {
+                    tableViewer.refresh();
+                } else {
+                    tableViewer.addFilter(masterFilter);
+                }
+            }
+
+        } finally {
+            notifyStatusChangedListeners();
         }
     }
 
@@ -522,11 +565,22 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             return false;
         }
 
-        if (jobLog.getNumMessagesSelected() == 0) {
-            return false;
+        return jobLog.haveSelectedMessages();
+    }
+
+    private int getTotalNumberOfMessages() {
+
+        JobLog jobLog = getInput();
+        if (jobLog == null) {
+            return 0;
         }
 
-        return true;
+        return jobLog.getMessages().size();
+    }
+
+    private int getNumberOfDisplayedMessages() {
+
+        return tableViewer.getTable().getItemCount();
     }
 
     private void doSetSelection(boolean selected) {
@@ -542,7 +596,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     private boolean isFilterValue(String value) {
 
-        if (AbstractMessagePropertyFilter.SPCVAL_ALL.equals(value)) {
+        if (AbstractMessagePropertyFilter.UI_SPCVAL_ALL.equals(value)) {
             return false;
         }
 
@@ -566,5 +620,30 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
     public void setSelection(ISelection arg0) {
         return;
+    }
+
+    public void addStatusChangedListener(IJobLogExplorerStatusChangedListener listener) {
+
+        statusChangedListeners.add(listener);
+    }
+
+    public void removeStatusChangedListener(IJobLogExplorerStatusChangedListener listener) {
+
+        statusChangedListeners.remove(listener);
+    }
+
+    private void notifyStatusChangedListeners() {
+
+        StatusLineData data = new StatusLineData();
+        data.setNumberOfMessages(getTotalNumberOfMessages());
+        data.setNumberOfMessagesSelected(getNumberOfDisplayedMessages());
+        notifyStatusChangedListeners(data);
+    }
+
+    private void notifyStatusChangedListeners(StatusLineData status) {
+
+        for (IJobLogExplorerStatusChangedListener listener : statusChangedListeners) {
+            listener.statusChanged(status);
+        }
     }
 }

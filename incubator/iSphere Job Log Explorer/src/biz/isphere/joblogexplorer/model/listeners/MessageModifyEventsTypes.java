@@ -16,5 +16,11 @@ public interface MessageModifyEventsTypes {
     public static final int SEVERITY = 2;
     public static final int ID = 3;
     public static final int SELECTED = 4;
+    public static final int FROM_PROGRAM = 5;
+    public static final int FROM_LIBRARY = 6;
+    public static final int FROM_STMT = 7;
+    public static final int TO_PROGRAM = 8;
+    public static final int TO_LIBRARY = 9;
+    public static final int TO_STMT = 10;
 
 }

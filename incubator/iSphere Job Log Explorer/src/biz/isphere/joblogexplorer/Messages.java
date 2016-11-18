@@ -55,6 +55,7 @@ public class Messages extends NLS {
 
     public static String Message_details;
     public static String Number_of_messages_A;
+    public static String Number_of_messages_B_slash_A;
     public static String Loading_remote_job_log_dots;
     public static String Invalid_job_log_Format_Could_not_find_first_line_of_job_log;
 

@@ -37,6 +37,12 @@ public class JobLogExplorerFilterPanel {
     private Combo comboIdFilter;
     private Combo comboTypeFilter;
     private Combo comboSeverityFilter;
+    private Combo comboFromLibraryFilter;
+    private Combo comboFromProgramFilter;
+    private Combo comboFromStmtFilter;
+    private Combo comboToLibraryFilter;
+    private Combo comboToProgramFilter;
+    private Combo comboToStmtFilter;
 
     private Button buttonApplyFilters;
     private Button buttonClearFilters;
@@ -51,20 +57,33 @@ public class JobLogExplorerFilterPanel {
     public void createViewer(Composite parent) {
 
         filterArea = new Composite(parent, SWT.NONE);
-        filterArea.setLayout(new GridLayout(2, false));
+        filterArea.setLayout(new GridLayout(1, false));
         filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Create controls
         createFilterControls(filterArea);
 
-        createButtons(parent);
+        createButtons(filterArea);
     }
 
-    private void createFilterControls(Composite filterArea) {
+    private void createFilterControls(Composite parent) {
 
-        comboIdFilter = createCombo(filterArea, Messages.Label_ID, MessageModifyEvent.ID);
-        comboTypeFilter = createCombo(filterArea, Messages.Label_Type, MessageModifyEvent.TYPE);
-        comboSeverityFilter = createCombo(filterArea, Messages.Label_Severity, MessageModifyEvent.SEVERITY);
+        Composite combosArea = new Composite(parent, SWT.NONE);
+        combosArea.setLayout(new GridLayout(6, true));
+        combosArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        comboIdFilter = createCombo(combosArea, Messages.Label_ID, MessageModifyEvent.ID);
+        comboTypeFilter = createCombo(combosArea, Messages.Label_Type, MessageModifyEvent.TYPE);
+        comboSeverityFilter = createCombo(combosArea, Messages.Label_Severity, MessageModifyEvent.SEVERITY);
+
+        comboFromLibraryFilter = createCombo(combosArea, "From library", MessageModifyEvent.FROM_LIBRARY);
+        comboFromProgramFilter = createCombo(combosArea, "From program", MessageModifyEvent.FROM_PROGRAM);
+        comboFromStmtFilter = createCombo(combosArea, "From statement", MessageModifyEvent.FROM_STMT);
+
+        comboToLibraryFilter = createCombo(combosArea, "To library", MessageModifyEvent.TO_LIBRARY);
+        comboToProgramFilter = createCombo(combosArea, "To program", MessageModifyEvent.TO_PROGRAM);
+        comboToStmtFilter = createCombo(combosArea, "To statement", MessageModifyEvent.TO_STMT);
+
     }
 
     private Combo createCombo(Composite filterArea, String label, int messageEventType) {
@@ -152,6 +171,42 @@ public class JobLogExplorerFilterPanel {
         comboSeverityFilter.select(0);
     }
 
+    public void setFromLibraryFilterItems(String[] fromLibraryFilterItems) {
+
+        comboFromLibraryFilter.setItems(fromLibraryFilterItems);
+        comboFromLibraryFilter.select(0);
+    }
+
+    public void setFromProgramFilterItems(String[] fromProgramFilterItems) {
+
+        comboFromProgramFilter.setItems(fromProgramFilterItems);
+        comboFromProgramFilter.select(0);
+    }
+
+    public void setFromStmtFilterItems(String[] fromStmtFilterItems) {
+
+        comboFromStmtFilter.setItems(fromStmtFilterItems);
+        comboFromStmtFilter.select(0);
+    }
+
+    public void setToLibraryFilterItems(String[] toLibraryFilterItems) {
+
+        comboToLibraryFilter.setItems(toLibraryFilterItems);
+        comboToLibraryFilter.select(0);
+    }
+
+    public void setToProgramFilterItems(String[] toProgramFilterItems) {
+
+        comboToProgramFilter.setItems(toProgramFilterItems);
+        comboToProgramFilter.select(0);
+    }
+
+    public void setToStmtFilterItems(String[] toStmtFilterItems) {
+
+        comboToStmtFilter.setItems(toStmtFilterItems);
+        comboToStmtFilter.select(0);
+    }
+
     public void clearFilters() {
 
         Event e = new Event();
@@ -172,6 +227,12 @@ public class JobLogExplorerFilterPanel {
             filterData.id = comboIdFilter.getText();
             filterData.type = comboTypeFilter.getText();
             filterData.severity = comboSeverityFilter.getText();
+            filterData.fromLibrary = comboFromLibraryFilter.getText();
+            filterData.fromProgram = comboFromProgramFilter.getText();
+            filterData.fromStmt = comboFromStmtFilter.getText();
+            filterData.toLibrary = comboToLibraryFilter.getText();
+            filterData.toProgram = comboToProgramFilter.getText();
+            filterData.toStmt = comboToStmtFilter.getText();
 
             event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
             event.data = filterData;
@@ -187,6 +248,14 @@ public class JobLogExplorerFilterPanel {
             comboIdFilter.select(0);
             comboTypeFilter.select(0);
             comboSeverityFilter.select(0);
+
+            comboFromLibraryFilter.select(0);
+            comboFromProgramFilter.select(0);
+            comboFromStmtFilter.select(0);
+
+            comboToLibraryFilter.select(0);
+            comboToProgramFilter.select(0);
+            comboToStmtFilter.select(0);
 
             event.detail = JobLogExplorerFilterPanelEvents.REMOVE_FILTERS;
             event.data = null;

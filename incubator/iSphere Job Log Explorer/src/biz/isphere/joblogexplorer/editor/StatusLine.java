@@ -28,8 +28,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.core.internal.FontHelper;
+import biz.isphere.joblogexplorer.Messages;
 
 /**
  * Status line component of the editor. Displays the current position, the
@@ -39,32 +41,31 @@ public final class StatusLine {
 
     public static final String STATUS_LINE_ID = "biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor.StatusLine"; //$NON-NLS-1$
 
-    private CLabel messageLabel;
-
-    private int messageWidthHint = -1;
-
-    private String message = ""; //$NON-NLS-1$
+    private CLabel labelInfoMessage;
+    private CLabel labelNumberOfMessages;
 
     public void fill(Composite parent) {
 
-        // addSeparator(parent);
-        messageLabel = addLabel(parent, 200, messageWidthHint);
-        messageWidthHint = getWidthHint(messageLabel);
+        labelNumberOfMessages = addLabel(parent, 200, SWT.DEFAULT);
+        addSeparator(parent);
+        labelInfoMessage = addLabel(parent, 200, SWT.DEFAULT);
 
-        updateControls();
+        updateControls(new StatusLineData());
     }
 
     public void setData(StatusLineData data) {
-        this.message = data.getMessage();
-        updateControls();
+        if (data == null) {
+            data = new StatusLineData();
+        }
+        updateControls(data);
     }
 
-    // private void addSeparator(Composite parent) {
-    //
-    // Label separator = new Label(parent, SWT.SEPARATOR);
-    // StatusLineLayoutData gridData = new StatusLineLayoutData();
-    // separator.setLayoutData(gridData);
-    // }
+    private void addSeparator(Composite parent) {
+
+        Label separator = new Label(parent, SWT.SEPARATOR);
+        StatusLineLayoutData gridData = new StatusLineLayoutData();
+        separator.setLayoutData(gridData);
+    }
 
     private CLabel addLabel(Composite parent, int numChars, int widthHint) {
 
@@ -80,18 +81,33 @@ public final class StatusLine {
         return label;
     }
 
-    private void updateControls() {
+    private void updateControls(StatusLineData data) {
 
-        if (isOKForUpdate(messageLabel)) {
-            if (message != null) {
-                messageLabel.setText(message);
-                messageLabel.setToolTipText(message);
-            } else {
-                messageLabel.setText(""); //$NON-NLS-1$
-                messageLabel.setToolTipText(""); //$NON-NLS-1$
-            }
-            messageLabel.setVisible(true);
+        if (data.getNumberOfMessagesSelected() > 0) {
+            String message = Messages.bind(Messages.Number_of_messages_B_slash_A, data.getNumberOfMessages(), data.getNumberOfMessagesSelected());
+            updateLabel(labelNumberOfMessages, message);
+        } else {
+            String message = Messages.bind(Messages.Number_of_messages_A, data.getNumberOfMessages());
+            updateLabel(labelNumberOfMessages, message);
         }
+
+        updateLabel(labelInfoMessage, data.getMessage());
+    }
+
+    private void updateLabel(CLabel label, String value) {
+
+        if (!isOKForUpdate(label)) {
+            return;
+        }
+
+        if (value != null) {
+            label.setText(value);
+            label.setToolTipText(value);
+        } else {
+            label.setText(""); //$NON-NLS-1$
+            label.setToolTipText(""); //$NON-NLS-1$
+        }
+        label.setVisible(true);
     }
 
     private boolean isOKForUpdate(Control control) {

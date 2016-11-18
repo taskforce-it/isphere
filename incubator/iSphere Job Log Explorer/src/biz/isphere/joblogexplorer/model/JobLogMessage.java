@@ -99,12 +99,12 @@ public class JobLogMessage {
     }
 
     public void setSeverity(String severity) {
-        if (severity == null) {
-            this.severity = "";//$NON-NLS-1$
-        } else {
-            this.severity = severity;
-        }
-        updateSeverityIntValue();
+        // if (severity == null) {
+        //            this.severity = "";//$NON-NLS-1$
+        // } else {
+        this.severity = severity;
+        // }
+        setSeverityIntValue(this.severity);
         notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SEVERITY, this.severity));
     }
 
@@ -154,6 +154,7 @@ public class JobLogMessage {
 
     public void setToLibrary(String toLibrary) {
         this.toLibrary = toLibrary;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TO_LIBRARY, this.toLibrary));
     }
 
     public String getToProgram() {
@@ -162,6 +163,7 @@ public class JobLogMessage {
 
     public void setToProgram(String toProgram) {
         this.toProgram = toProgram;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TO_PROGRAM, this.toProgram));
     }
 
     public String getToProcedure() {
@@ -178,6 +180,7 @@ public class JobLogMessage {
 
     public void setToStatement(String toStatement) {
         this.toStatement = toStatement;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TO_STMT, this.toStatement));
     }
 
     public String getFromModule() {
@@ -194,6 +197,7 @@ public class JobLogMessage {
 
     public void setFromLibrary(String fromLibrary) {
         this.fromLibrary = fromLibrary;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.FROM_LIBRARY, this.fromLibrary));
     }
 
     public String getFromProgram() {
@@ -202,6 +206,7 @@ public class JobLogMessage {
 
     public void setFromProgram(String fromProgram) {
         this.fromProgram = fromProgram;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.FROM_PROGRAM, this.fromProgram));
     }
 
     public String getFromProcedure() {
@@ -218,10 +223,11 @@ public class JobLogMessage {
 
     public void setFromStatement(String fromStatement) {
         this.fromStatement = fromStatement;
+        notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.FROM_STMT, this.fromStatement));
     }
 
-    private void updateSeverityIntValue() {
-        if (severity.length() == 0) {
+    private void setSeverityIntValue(String severity) {
+        if (severity == null || severity.length() == 0) {
             severityInt = SEVERITY_BLANK;
         } else {
             severityInt = IntHelper.tryParseInt(severity, SEVERITY_BLANK);
