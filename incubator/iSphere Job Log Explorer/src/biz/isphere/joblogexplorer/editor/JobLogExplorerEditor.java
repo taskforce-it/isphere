@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -23,6 +24,8 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,11 +34,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.jface.dialogs.XEditorPart;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.InvalidJobLogFormatException;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
@@ -52,15 +56,18 @@ import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogReader;
 
-public class JobLogExplorerEditor extends EditorPart implements IDropFileListener, IJobLogExplorerStatusChangedListener {
+public class JobLogExplorerEditor extends XEditorPart implements IDropFileListener, IJobLogExplorerStatusChangedListener {
 
     public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"; //$NON-NLS-1$
+
+    private final static String SASH_WEIGHTS = "SASH_WEIGHTS_";
 
     private StatusLine statusLine;
     private StatusLineData statusLineData;
 
     private JobLogExplorerTableViewer tableViewerPanel;
     private JobLogExplorerFilterPanel filterPanel;
+    private int[] sashFormWeights;
 
     public JobLogExplorerEditor() {
     }
@@ -105,10 +112,17 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         SashForm sashForm = new SashForm(mainArea, SWT.NONE);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
         sashForm.setLayoutData(sashFormLayoutData);
+        sashForm.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent event) {
+                SashForm sashForm = (SashForm)event.getSource();
+                int[] weights = sashForm.getWeights();
+                storeWeights(weights);
+            }
+        });
 
         tableViewerPanel = createLeftPanel(sashForm);
         JobLogExplorerDetailsViewer detailsPanel = createRightPanel(sashForm);
-        sashForm.setWeights(new int[] { 8, 4 });
+        sashForm.setWeights(loadWeights());
 
         tableViewerPanel.addMessageSelectionChangedListener(detailsPanel);
         tableViewerPanel.addStatusChangedListener(this);
@@ -272,15 +286,6 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
                         setPartName(originalFileName);
                         viewer.setInputData(jobLog);
 
-                        int count;
-                        if (jobLog != null) {
-                            count = jobLog.getMessages().size();
-                        } else {
-                            count = 0;
-                        }
-
-                        // statusChanged(new StatusLineData(count));
-
                         viewer.setEnabled(true);
                         JobLogExplorerEditor.this.showBusy(false);
 
@@ -363,5 +368,35 @@ public class JobLogExplorerEditor extends EditorPart implements IDropFileListene
         if (statusLine != null) {
             statusLine.setData(statusLineData);
         }
+    }
+
+    private int[] loadWeights() {
+
+        int[] weights = new int[] { 8, 4 };
+        for (int i = 0; i < weights.length; i++) {
+            if (getDialogBoundsSettings().get(SASH_WEIGHTS + i) == null) {
+                break;
+            }
+            weights[i] = getDialogBoundsSettings().getInt(SASH_WEIGHTS + i);
+        }
+
+        return weights;
+    }
+
+    private void storeWeights(int[] weights) {
+
+        int count = 0;
+        for (int weight : weights) {
+            getDialogBoundsSettings().put(SASH_WEIGHTS + count, weight);
+            count++;
+        }
+    }
+
+    /**
+     * Overridden to let {@link XEditorPart} store the state of this editor in a
+     * separate section of the dialog settings file.
+     */
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISphereJobLogExplorerPlugin.getDefault().getDialogSettings());
     }
 }
