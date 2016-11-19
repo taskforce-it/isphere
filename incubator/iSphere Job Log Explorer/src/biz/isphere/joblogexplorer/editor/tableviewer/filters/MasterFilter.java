@@ -18,13 +18,13 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class MasterFilter extends ViewerFilter {
 
-    List<AbstractMessagePropertyFilter> filters;
+    List<IMessagePropertyFilter> filters;
 
     public MasterFilter() {
-        this.filters = new ArrayList<AbstractMessagePropertyFilter>();
+        this.filters = new ArrayList<IMessagePropertyFilter>();
     }
 
-    public void addFilter(AbstractMessagePropertyFilter filter) {
+    public void addFilter(IMessagePropertyFilter filter) {
         filters.add(filter);
     }
 
@@ -50,7 +50,7 @@ public class MasterFilter extends ViewerFilter {
                 return false;
             }
 
-            for (AbstractMessagePropertyFilter filter : filters) {
+            for (IMessagePropertyFilter filter : filters) {
                 if (!filter.select(tableViewer, parentElement, jobLogMessage)) {
                     return false;
                 }

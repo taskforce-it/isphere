@@ -25,6 +25,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
     // Names of images used to represent checkboxes
     public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
     public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
+    public static final String SEARCH_UP = "search_up_small.png"; //$NON-NLS-1$
+    public static final String SEARCH_DOWN = "search_down_small.png"; //$NON-NLS-1$
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
@@ -88,6 +90,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
         reg.put(IMAGE_CHECKED, getImageDescriptor(IMAGE_CHECKED));
         reg.put(IMAGE_UNCHECKED, getImageDescriptor(IMAGE_UNCHECKED));
+        reg.put(SEARCH_UP, getImageDescriptor(SEARCH_UP));
+        reg.put(SEARCH_DOWN, getImageDescriptor(SEARCH_DOWN));
     }
 
     private ImageDescriptor getImageDescriptor(String name) {

@@ -24,6 +24,8 @@ public class FilterData {
     public String toProgram;
     public String toStmt;
 
+    public String text;
+
     public FilterData() {
         this.id = EMPTY;
         this.type = EMPTY;
@@ -34,6 +36,7 @@ public class FilterData {
         this.toLibrary = EMPTY;
         this.toProgram = EMPTY;
         this.toStmt = EMPTY;
+        this.text = EMPTY;
     }
 
 }

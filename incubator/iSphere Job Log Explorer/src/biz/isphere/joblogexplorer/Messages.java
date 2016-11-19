@@ -52,6 +52,8 @@ public class Messages extends NLS {
     public static String Label_To_Module;
     public static String Label_To_Procedure;
     public static String Label_To_Stmt;
+    public static String Label_Text;
+    public static String Label_Text_tooltip;
 
     public static String Message_details;
     public static String Number_of_messages_A;
@@ -75,6 +77,8 @@ public class Messages extends NLS {
     public static String Clear_filters;
     public static String Select_all;
     public static String Deselect_all;
+    public static String Search_up;
+    public static String Search_down;
 
     public static String Property_Category_job;
     public static String Property_Category_statistics;

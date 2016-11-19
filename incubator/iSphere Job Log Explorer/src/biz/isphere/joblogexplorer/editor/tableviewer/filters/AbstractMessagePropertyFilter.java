@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public abstract class AbstractMessagePropertyFilter {
+public abstract class AbstractMessagePropertyFilter implements IMessagePropertyFilter {
 
     public static final String UI_SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
     public static final String UI_SPCVAL_BLANK = "*BLANK"; //$NON-NLS-1$

@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -42,6 +43,7 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromStatementFilter
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.MasterFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.TextFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToLibraryFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToProgramFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToStatementFilter;
@@ -484,6 +486,14 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             doSetSelection(false);
             break;
 
+        case JobLogExplorerFilterPanelEvents.SEARCH_UP:
+            doSearchUp(event.text);
+            break;
+
+        case JobLogExplorerFilterPanelEvents.SEARCH_DOWN:
+            doSearchDown(event.text);
+            break;
+
         default:
             break;
         }
@@ -540,6 +550,9 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
                 if (isFilterValue(filterData.toStmt)) {
                     masterFilter.addFilter(new ToStatementFilter(filterData.toStmt));
                 }
+                if (isFilterValue(filterData.text)) {
+                    masterFilter.addFilter(new TextFilter(filterData.text));
+                }
             }
 
             if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
@@ -592,6 +605,78 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         }
 
         tableViewer.refresh();
+    }
+
+    private void doSearchUp(String text) {
+        doSearchUp(text, table.getSelectionIndex(), 0);
+    }
+
+    private void doSearchUp(String text, int startIndex, int minIndex) {
+
+        Table table = tableViewer.getTable();
+        if (table == null || table.getItemCount() <= 0) {
+            return;
+        }
+
+        String searchArg = text.toLowerCase();
+
+        int currentIndex = startIndex;
+        if (currentIndex == -1) {
+            currentIndex = table.getItemCount() - 1;
+        }
+
+        currentIndex--;
+
+        while (currentIndex >= minIndex) {
+            JobLogMessage jobLogMessage = (JobLogMessage)table.getItem(currentIndex).getData();
+            if (jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0) {
+                table.setSelection(currentIndex);
+                return; // Found!
+            }
+            currentIndex--;
+        }
+
+        Display.getCurrent().beep();
+
+        if (startIndex < table.getItemCount() - 1) {
+            doSearchUp(text, table.getItemCount() - 1, startIndex);
+        }
+    }
+
+    private void doSearchDown(String text) {
+        doSearchDown(text, table.getSelectionIndex(), table.getItemCount() - 1);
+    }
+
+    private void doSearchDown(String text, int startIndex, int maxIndex) {
+
+        Table table = tableViewer.getTable();
+        if (table == null || table.getItemCount() <= 0) {
+            return;
+        }
+
+        String searchArg = text.toLowerCase();
+
+        int currentIndex = startIndex;
+        if (currentIndex == -1) {
+            currentIndex = 0;
+        }
+
+        currentIndex++;
+
+        while (currentIndex <= maxIndex) {
+            JobLogMessage jobLogMessage = (JobLogMessage)table.getItem(currentIndex).getData();
+            if (jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0) {
+                table.setSelection(currentIndex);
+                return; // Found!
+            }
+            currentIndex++;
+        }
+
+        Display.getCurrent().beep();
+
+        if (startIndex > 0) {
+            doSearchDown(text, 0, startIndex);
+        }
     }
 
     private boolean isFilterValue(String value) {

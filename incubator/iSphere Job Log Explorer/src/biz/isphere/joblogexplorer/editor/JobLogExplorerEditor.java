@@ -60,7 +60,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
     public static final String ID = "biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"; //$NON-NLS-1$
 
-    private final static String SASH_WEIGHTS = "SASH_WEIGHTS_";
+    private final static String SASH_WEIGHTS = "SASH_WEIGHTS_"; //$NON-NLS-1$
 
     private StatusLine statusLine;
     private StatusLineData statusLineData;

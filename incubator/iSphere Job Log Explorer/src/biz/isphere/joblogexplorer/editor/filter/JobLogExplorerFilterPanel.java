@@ -23,8 +23,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 
@@ -43,6 +45,10 @@ public class JobLogExplorerFilterPanel {
     private Combo comboToLibraryFilter;
     private Combo comboToProgramFilter;
     private Combo comboToStmtFilter;
+    private Text textSearch;
+
+    private Button buttonUp;
+    private Button buttonDown;
 
     private Button buttonApplyFilters;
     private Button buttonClearFilters;
@@ -57,11 +63,13 @@ public class JobLogExplorerFilterPanel {
     public void createViewer(Composite parent) {
 
         filterArea = new Composite(parent, SWT.NONE);
-        filterArea.setLayout(new GridLayout(1, false));
+        filterArea.setLayout(new GridLayout(2, false));
         filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Create controls
         createFilterControls(filterArea);
+
+        createTextSearchControls(filterArea);
 
         createButtons(filterArea);
     }
@@ -70,20 +78,24 @@ public class JobLogExplorerFilterPanel {
 
         Composite combosArea = new Composite(parent, SWT.NONE);
         combosArea.setLayout(new GridLayout(6, true));
-        combosArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        combosArea.setLayoutData(new GridData(GridData.BEGINNING));
+
+        int horizontalSpan = 1;
 
         comboIdFilter = createCombo(combosArea, Messages.Label_ID, MessageModifyEvent.ID);
         comboTypeFilter = createCombo(combosArea, Messages.Label_Type, MessageModifyEvent.TYPE);
         comboSeverityFilter = createCombo(combosArea, Messages.Label_Severity, MessageModifyEvent.SEVERITY);
+        comboSeverityFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
 
-        comboFromLibraryFilter = createCombo(combosArea, "From library", MessageModifyEvent.FROM_LIBRARY);
-        comboFromProgramFilter = createCombo(combosArea, "From program", MessageModifyEvent.FROM_PROGRAM);
-        comboFromStmtFilter = createCombo(combosArea, "From statement", MessageModifyEvent.FROM_STMT);
+        comboFromLibraryFilter = createCombo(combosArea, Messages.Label_From_Library, MessageModifyEvent.FROM_LIBRARY);
+        comboFromProgramFilter = createCombo(combosArea, Messages.Label_From_Program, MessageModifyEvent.FROM_PROGRAM);
+        comboFromStmtFilter = createCombo(combosArea, Messages.Label_From_Stmt, MessageModifyEvent.FROM_STMT);
+        comboFromStmtFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
 
-        comboToLibraryFilter = createCombo(combosArea, "To library", MessageModifyEvent.TO_LIBRARY);
-        comboToProgramFilter = createCombo(combosArea, "To program", MessageModifyEvent.TO_PROGRAM);
-        comboToStmtFilter = createCombo(combosArea, "To statement", MessageModifyEvent.TO_STMT);
-
+        comboToLibraryFilter = createCombo(combosArea, Messages.Label_To_Library, MessageModifyEvent.TO_LIBRARY);
+        comboToProgramFilter = createCombo(combosArea, Messages.Label_To_Program, MessageModifyEvent.TO_PROGRAM);
+        comboToStmtFilter = createCombo(combosArea, Messages.Label_To_Stmt, MessageModifyEvent.TO_STMT);
+        comboToStmtFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
     }
 
     private Combo createCombo(Composite filterArea, String label, int messageEventType) {
@@ -96,20 +108,44 @@ public class JobLogExplorerFilterPanel {
         return combo;
     }
 
+    private void createTextSearchControls(Composite parent) {
+
+        Composite textSearchArea = new Composite(parent, SWT.NONE);
+        textSearchArea.setLayout(new GridLayout(4, false));
+        textSearchArea.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+
+        new Label(textSearchArea, SWT.NONE).setText(Messages.Label_Text);
+        textSearch = WidgetFactory.createText(textSearchArea);
+        textSearch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        textSearch.setToolTipText(Messages.Label_Text_tooltip);
+
+        buttonUp = WidgetFactory.createPushButton(textSearchArea);
+        buttonUp.setImage(ISphereJobLogExplorerPlugin.getDefault().getImage(ISphereJobLogExplorerPlugin.SEARCH_UP));
+        buttonUp.setToolTipText(Messages.Search_up);
+        buttonUp.addSelectionListener(new SearchUpSelectionListener());
+
+        buttonDown = WidgetFactory.createPushButton(textSearchArea);
+        buttonDown.setImage(ISphereJobLogExplorerPlugin.getDefault().getImage(ISphereJobLogExplorerPlugin.SEARCH_DOWN));
+        buttonDown.setToolTipText(Messages.Search_down);
+        buttonDown.addSelectionListener(new SearchDownSelectionListener());
+    }
+
     private void createButtons(Composite parent) {
 
         Composite buttonsArea = new Composite(parent, SWT.NONE);
         buttonsArea.setLayout(new GridLayout(0, true));
-        buttonsArea.setLayoutData(new GridData());
+        buttonsArea.setLayoutData(new GridData(GridData.CENTER));
 
         buttonApplyFilters = createCommandButton(buttonsArea, Messages.Apply_filters, new ApplyFiltersSelectionListener());
         buttonClearFilters = createCommandButton(buttonsArea, Messages.Clear_filters, new ClearFiltersSelectionListener());
-        createSpacer(buttonsArea);
+
+        createButtonSpacer(buttonsArea);
+
         buttonSelectAll = createCommandButton(buttonsArea, Messages.Select_all, new SelectAllSelectionListener());
         buttonDeselectAll = createCommandButton(buttonsArea, Messages.Deselect_all, new DeselectAllSelectionListener());
     }
 
-    private void createSpacer(Composite parent) {
+    private void createButtonSpacer(Composite parent) {
 
         Composite spacer = new Composite(parent, SWT.NONE);
         GridData layoutData = new GridData();
@@ -214,6 +250,20 @@ public class JobLogExplorerFilterPanel {
         SelectionEvent event = new SelectionEvent(e);
         event.detail = JobLogExplorerFilterPanelEvents.REMOVE_FILTERS;
 
+        comboIdFilter.select(0);
+        comboTypeFilter.select(0);
+        comboSeverityFilter.select(0);
+
+        comboFromLibraryFilter.select(0);
+        comboFromProgramFilter.select(0);
+        comboFromStmtFilter.select(0);
+
+        comboToLibraryFilter.select(0);
+        comboToProgramFilter.select(0);
+        comboToStmtFilter.select(0);
+
+        textSearch.setText(""); //$NON-NLS-1$
+
         notifyFilterChangedListeners(event);
     }
 
@@ -233,6 +283,7 @@ public class JobLogExplorerFilterPanel {
             filterData.toLibrary = comboToLibraryFilter.getText();
             filterData.toProgram = comboToProgramFilter.getText();
             filterData.toStmt = comboToStmtFilter.getText();
+            filterData.text = textSearch.getText();
 
             event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
             event.data = filterData;
@@ -256,6 +307,8 @@ public class JobLogExplorerFilterPanel {
             comboToLibraryFilter.select(0);
             comboToProgramFilter.select(0);
             comboToStmtFilter.select(0);
+
+            textSearch.setText(""); //$NON-NLS-1$
 
             event.detail = JobLogExplorerFilterPanelEvents.REMOVE_FILTERS;
             event.data = null;
@@ -281,6 +334,30 @@ public class JobLogExplorerFilterPanel {
 
             event.detail = JobLogExplorerFilterPanelEvents.DESELECT_ALL;
             event.data = null;
+            notifyFilterChangedListeners(event);
+        }
+    }
+
+    private class SearchUpSelectionListener extends SelectionAdapter {
+
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            event.detail = JobLogExplorerFilterPanelEvents.SEARCH_UP;
+            event.data = null;
+            event.text = textSearch.getText();
+            notifyFilterChangedListeners(event);
+        }
+    }
+
+    private class SearchDownSelectionListener extends SelectionAdapter {
+
+        @Override
+        public void widgetSelected(SelectionEvent event) {
+
+            event.detail = JobLogExplorerFilterPanelEvents.SEARCH_DOWN;
+            event.data = null;
+            event.text = textSearch.getText();
             notifyFilterChangedListeners(event);
         }
     }

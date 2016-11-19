@@ -46,6 +46,7 @@ public class JobLogMessage {
     private String fromStatement;
 
     private int severityInt;
+    private String lowerCaseText;
 
     public JobLogMessage(int pageNumber) {
         this.selected = false;
@@ -128,8 +129,13 @@ public class JobLogMessage {
         return text;
     }
 
+    public String getLowerCaseText() {
+        return lowerCaseText;
+    }
+
     public void setText(String text) {
         this.text = text;
+        this.lowerCaseText = this.text.toLowerCase();
     }
 
     public String getCause() {

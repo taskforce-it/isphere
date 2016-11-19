@@ -38,20 +38,20 @@ public abstract class AbstractJobLogExplorerPerspectiveLayout implements IPerspe
 
         // Place properties view below remote system view.
         folder = layout.createFolder(PROPS_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, NAV_FOLDER_ID);
-        folder.addView("org.eclipse.ui.views.PropertySheet");
+        folder.addView("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
 
         // Place command log view below editor area.
         folder = layout.createFolder(CMDLOG_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, editorArea);
         folder.addView(getCommandLogViewID());
 
         layout.addShowViewShortcut(getRemoveSystemsViewID());
-        layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
-        layout.addShowViewShortcut("com.ibm.etools.iseries.rse.ui.view.cmdlog");
+        layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
+        layout.addShowViewShortcut(getCommandLogViewID());
 
         layout.addPerspectiveShortcut(ID);
     }
 
     protected abstract String getRemoveSystemsViewID();
-    
+
     protected abstract String getCommandLogViewID();
 }

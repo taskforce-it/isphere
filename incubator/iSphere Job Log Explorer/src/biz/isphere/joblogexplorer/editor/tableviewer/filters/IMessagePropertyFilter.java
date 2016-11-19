@@ -6,15 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.editor.filter;
+package biz.isphere.joblogexplorer.editor.tableviewer.filters;
 
-public interface JobLogExplorerFilterPanelEvents {
+import org.eclipse.jface.viewers.Viewer;
 
-    public static final int APPLY_FILTERS = 1;
-    public static final int REMOVE_FILTERS = 2;
-    public static final int SELECT_ALL = 3;
-    public static final int DESELECT_ALL = 4;
-    public static final int SEARCH_UP = 5;
-    public static final int SEARCH_DOWN = 6;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
+
+public interface IMessagePropertyFilter {
+
+    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element);
 
 }

@@ -42,6 +42,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private Preferences preferences;
     private boolean isColoring;
+    private Color severityColorBL;
     private Color severityColor00;
     private Color severityColor10;
     private Color severityColor20;
@@ -206,7 +207,9 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
         if (isColoring) {
             int severity = jobLogMessage.getSeverityInt();
-            if (severity >= 40) {
+            if (severity == JobLogMessage.SEVERITY_BLANK) {
+                background = severityColorBL;
+            } else if (severity >= 40) {
                 background = severityColor40;
             } else if (severity >= 30) {
                 background = severityColor30;
@@ -241,6 +244,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
             isColoring = preferences.isColoringEnabled();
 
             if (isColoring) {
+                severityColorBL = preferences.getColorSeverity(SeverityColor.SEVERITY_BL);
                 severityColor00 = preferences.getColorSeverity(SeverityColor.SEVERITY_00);
                 severityColor10 = preferences.getColorSeverity(SeverityColor.SEVERITY_10);
                 severityColor20 = preferences.getColorSeverity(SeverityColor.SEVERITY_20);
