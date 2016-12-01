@@ -45,5 +45,9 @@
          Plug-in that extends the context menu of the Lpex editor with options to add/remove a STRPREPRC header.
       </description>
    </category-def>
-   <category-def name="iSphere Job Log Explorer for WDSCi 7.0" label="iSphere Job Log Explorer for WDSCi 7.0"/>
+   <category-def name="iSphere Job Log Explorer for WDSCi 7.0" label="iSphere Job Log Explorer for WDSCi 7.0">
+      <description>
+         Plug-in that adds an editor for exploring job log spooled files.
+      </description>
+   </category-def>
 </site>
