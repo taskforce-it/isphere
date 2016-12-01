@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.0.0.b001
+-----------------------------
+ • Added option "Match message ID" to the iSphere Message File Search.
+ • Incremented version number of iSphere library to 3.0.
+
 Changelog: iSphere 2.9.4.b002
 -----------------------------
  • Added option "Send message" to the iSphere Data Queue Monitor.
