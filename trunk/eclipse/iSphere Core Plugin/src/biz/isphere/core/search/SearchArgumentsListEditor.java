@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.util.List;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,6 +33,8 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class SearchArgumentsListEditor implements Listener {
 
+    private static final String CONFIG_DATA = "CONFIG_DATA";
+
     private static final String MATCH_ALL = "matchAll";
     private static final String NUM_CONDITIONS = "numberOfCompareConditions";
     private static final String COMPARE_CONDITION = "compareCondition";
@@ -41,12 +45,11 @@ public abstract class SearchArgumentsListEditor implements Listener {
     private Composite searchStringGroup;
     private ScrolledComposite scrollable;
 
-    private Button rdoMatchAll;
-    private Button rdoMatchAny;
-    private Button rdoSpecialOption;
+    private Button[] rdoMatchOptions;
+
     private List<AbstractSearchArgumentEditor> searchArgumentEditors;
     private int maxNumSearchArguments;
-    private String labelSpecialOption;
+    private SearchOptionConfig[] rdoAdditionalMatchOptions;
     private Listener listener;
     private boolean regularExpressionsOption;
 
@@ -55,13 +58,13 @@ public abstract class SearchArgumentsListEditor implements Listener {
     }
 
     public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption) {
-        this(aMaxNumSearchArguments, false, null);
+        this(aMaxNumSearchArguments, aRegularExpressionsOption, null);
     }
 
-    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption, String aLabelSpecialOption) {
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption, SearchOptionConfig[] anAdditionalMatchOptions) {
         regularExpressionsOption = aRegularExpressionsOption;
         maxNumSearchArguments = aMaxNumSearchArguments;
-        labelSpecialOption = aLabelSpecialOption;
+        rdoAdditionalMatchOptions = anAdditionalMatchOptions;
         listener = null;
     }
 
@@ -76,15 +79,19 @@ public abstract class SearchArgumentsListEditor implements Listener {
         tMatchGroupLayout.marginHeight = 5;
         tMatchGroup.setLayout(tMatchGroupLayout);
 
-        rdoMatchAll = WidgetFactory.createRadioButton(tMatchGroup);
-        rdoMatchAll.setText(Messages.MatchAllConditions);
+        List<SearchOptionConfig> rdoOptions = new ArrayList<SearchOptionConfig>();
+        rdoOptions.add(new SearchOptionConfig(SearchOptions.MATCH_ALL, Messages.MatchAllConditions));
+        rdoOptions.add(new SearchOptionConfig(SearchOptions.MATCH_ANY, Messages.MatchAnyCondition));
 
-        rdoMatchAny = WidgetFactory.createRadioButton(tMatchGroup);
-        rdoMatchAny.setText(Messages.MatchAnyCondition);
+        if (rdoAdditionalMatchOptions != null) {
+            for (int i = 0; i < rdoAdditionalMatchOptions.length; i++) {
+                rdoOptions.add(rdoAdditionalMatchOptions[i]);
+            }
+        }
 
-        if (labelSpecialOption != null) {
-            rdoSpecialOption = WidgetFactory.createRadioButton(tMatchGroup);
-            rdoSpecialOption.setText(labelSpecialOption);
+        rdoMatchOptions = new Button[rdoOptions.size()];
+        for (int i = 0; i < rdoOptions.size(); i++) {
+            rdoMatchOptions[i] = createSearchOption(tMatchGroup, rdoOptions.get(i));
         }
 
         Composite scrollableContainer = new Composite(aParent, SWT.NONE);
@@ -107,6 +114,16 @@ public abstract class SearchArgumentsListEditor implements Listener {
         scrollable.setContent(searchStringGroup);
 
         searchArgumentEditors = new ArrayList<AbstractSearchArgumentEditor>();
+    }
+
+    private Button createSearchOption(Composite tMatchGroup, SearchOptionConfig searchOptionConfig) {
+
+        Button rdoOption = WidgetFactory.createRadioButton(tMatchGroup);
+        rdoOption.setText(searchOptionConfig.getLabel());
+        rdoOption.setData(CONFIG_DATA, searchOptionConfig);
+        rdoOption.addSelectionListener(new SearchOptionSelectionListener());
+
+        return rdoOption;
     }
 
     protected boolean isRegularExpressions() {
@@ -141,6 +158,9 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
         rearrangeSearchArgumentEditors();
 
+        Button currentMatchOption = getCurrentMatchOption();
+        applySearchOptionConfig(currentMatchOption);
+        
         return tEditor;
     }
 
@@ -202,13 +222,16 @@ public abstract class SearchArgumentsListEditor implements Listener {
      * error checking.
      */
     public void handleEvent(Event anEvent) {
+
         Widget widget = anEvent.widget;
         int type = anEvent.type;
 
-        if (widget.getData() == AbstractSearchArgumentEditor.BUTTON_ADD && (type == SWT.Selection)) {
-            addSearchArgumentEditorAndLayout((Button)widget);
-        } else if (widget.getData() == AbstractSearchArgumentEditor.BUTTON_REMOVE && (type == SWT.Selection)) {
-            removeSearchArgumentEditor((Button)widget);
+        if (widget != null) {
+            if (widget.getData() == AbstractSearchArgumentEditor.BUTTON_ADD && (type == SWT.Selection)) {
+                addSearchArgumentEditorAndLayout((Button)widget);
+            } else if (widget.getData() == AbstractSearchArgumentEditor.BUTTON_REMOVE && (type == SWT.Selection)) {
+                removeSearchArgumentEditor((Button)widget);
+            }
         }
 
         if (listener != null) {
@@ -225,12 +248,26 @@ public abstract class SearchArgumentsListEditor implements Listener {
         return tSearchArguments;
     }
 
-    public boolean getIsMatchAll() {
-        return rdoMatchAll.getSelection();
+    public String getMatchOption() {
+
+        for (int i = 0; i < rdoMatchOptions.length; i++) {
+            if (rdoMatchOptions[i].getSelection()) {
+                SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
+                return config.getId();
+            }
+        }
+
+        return null;
     }
 
     public void storeScreenValues(IDialogSettings aDialogSettings) {
-        aDialogSettings.put(MATCH_ALL, rdoMatchAll.getSelection());
+
+        for (int i = 0; i < rdoMatchOptions.length; i++) {
+            if (rdoMatchOptions[i].getSelection()) {
+                SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
+                aDialogSettings.put(MATCH_ALL, config.getId());
+            }
+        }
 
         aDialogSettings.put(NUM_CONDITIONS, searchArgumentEditors.size());
         for (int i = 0; i < searchArgumentEditors.size(); i++) {
@@ -243,8 +280,23 @@ public abstract class SearchArgumentsListEditor implements Listener {
     }
 
     public void loadScreenValues(IDialogSettings aDialogSettings) {
-        rdoMatchAll.setSelection(loadBooleanValue(aDialogSettings, MATCH_ALL, true));
-        rdoMatchAny.setSelection(!rdoMatchAll.getSelection());
+
+        Button defaultMatchOption = null;
+        String id = loadValue(aDialogSettings, MATCH_ALL, SearchOptions.MATCH_ALL);
+        for (int i = 0; i < rdoMatchOptions.length; i++) {
+            SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
+            if (id.equals(config.getId())) {
+                rdoMatchOptions[i].setSelection(true);
+                defaultMatchOption = rdoMatchOptions[i];
+            } else {
+                rdoMatchOptions[i].setSelection(false);
+            }
+        }
+
+        if (defaultMatchOption == null) {
+            rdoMatchOptions[0].setSelection(true); // Default setting
+            defaultMatchOption = rdoMatchOptions[0];
+        }
 
         int numConditions = loadIntValue(aDialogSettings, NUM_CONDITIONS, 1);
         for (int i = 0; i < numConditions; i++) {
@@ -259,6 +311,11 @@ public abstract class SearchArgumentsListEditor implements Listener {
                 // ignore all errors
             }
         }
+
+        if (defaultMatchOption != null) {
+            applySearchOptionConfig(defaultMatchOption);
+        }
+
         searchArgumentEditors.get(0).setFocus();
     }
 
@@ -280,4 +337,56 @@ public abstract class SearchArgumentsListEditor implements Listener {
     }
 
     protected abstract AbstractSearchArgumentEditor createEditor(Composite aParent);
+
+    private Button getCurrentMatchOption() {
+
+        for (int i = 0; i < rdoMatchOptions.length; i++) {
+            if (rdoMatchOptions[i].getSelection()) {
+                return rdoMatchOptions[i];
+            }
+        }
+
+        return null;
+    }
+
+    private void applySearchOptionConfig(Widget widget) {
+
+        if (widget == null) {
+            return;
+        }
+        
+        Object data = widget.getData(CONFIG_DATA);
+        if (!(data instanceof SearchOptionConfig)) {
+            return;
+        }
+
+        SearchOptionConfig searchOptionConfig = (SearchOptionConfig)data;
+        for (AbstractSearchArgumentEditor searchArgumentEditor : searchArgumentEditors) {
+            applySearchOptionConfig(searchArgumentEditor, searchOptionConfig);
+        }
+
+        Event event = new Event();
+        event.type = SWT.Selection;
+        event.widget = widget;
+        event.data = searchOptionConfig;
+        handleEvent(event);
+    }
+
+    private void applySearchOptionConfig(AbstractSearchArgumentEditor searchArgumentEditor, SearchOptionConfig searchOptionConfig) {
+
+        searchArgumentEditor.setCaseEnabled(searchOptionConfig.isCaseEnabled());
+        searchArgumentEditor.setRegularExpressionEnabled(searchOptionConfig.isRegularExpressionEnabled());
+        searchArgumentEditor.setConditionEnabled(searchOptionConfig.isConditionEnabled());
+    }
+
+    private class SearchOptionSelectionListener implements SelectionListener {
+
+        public void widgetDefaultSelected(SelectionEvent e) {
+            applySearchOptionConfig(e.widget);
+        }
+
+        public void widgetSelected(SelectionEvent e) {
+            applySearchOptionConfig(e.widget);
+        }
+    }
 }

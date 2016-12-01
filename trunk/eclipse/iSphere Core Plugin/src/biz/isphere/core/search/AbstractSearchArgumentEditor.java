@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,20 +151,20 @@ public abstract class AbstractSearchArgumentEditor {
     }
 
     public boolean isRegularExpression() {
-        
+
         if (!regularExpressionsOption) {
             return false;
         }
-        
+
         return btnRegularExpression.getSelection();
     }
 
     public void setRegularExpression(boolean anIsRegularExpression) {
-        
+
         if (!regularExpressionsOption) {
             return;
         }
-        
+
         btnRegularExpression.setSelection(anIsRegularExpression);
     }
 
@@ -188,4 +188,20 @@ public abstract class AbstractSearchArgumentEditor {
 
     public abstract void setSearchString(String aString);
 
+    public void setCaseEnabled(boolean enabled) {
+        btnCaseSensitive.setEnabled(enabled);
+    }
+
+    public void setRegularExpressionEnabled(boolean enabled) {
+
+        if (!regularExpressionsOption) {
+            return;
+        }
+
+        btnRegularExpression.setEnabled(enabled);
+    }
+
+    public void setConditionEnabled(boolean enabled) {
+        cboCondition.setEnabled(enabled);
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,11 +54,14 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.showRecords", "0");
             }
 
-            if (_searchOptions.isMatchAll()) {
-                pcml.setValue("XFNDSTR_search.matchAll", "1");
-            } else {
-                pcml.setValue("XFNDSTR_search.matchAll", "0");
-            }
+            // if
+            // (SearchOptions.MATCH_ALL.equals(_searchOptions.getMatchOption()))
+            // {
+            // pcml.setValue("XFNDSTR_search.matchAll", "1");
+            // } else {
+            // pcml.setValue("XFNDSTR_search.matchAll", "0");
+            // }
+            pcml.setValue("XFNDSTR_search.matchOption", _searchOptions.getMatchOption());
 
             if (_searchOptions.isOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "1");

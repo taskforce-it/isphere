@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,23 +21,27 @@ public class SearchOptions {
     public static final int CONTAINS = 1;
     public static final int CONTAINS_NOT = -1;
 
+    public static final String MATCH_ALL = "*ALL";
+    public static final String MATCH_ANY = "*ANY";
+    public static final String MATCH_MESSAGE_ID = "*MSGID";
+    
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
 
     public static final String SEARCH_ARG_STRING = "*STRING";
     public static final String SEARCH_ARG_REGEX = "*REGEX";
 
-    private boolean matchAll;
+    private String matchOption;
     private boolean showAllItems;
     private List<SearchArgument> searchArguments;
     private Map<String, Object> genericOptions;
 
     public SearchOptions() {
-        this(true, true);
+        this(MATCH_ALL, true);
     }
 
-    public SearchOptions(boolean aMatchAll, boolean aShowAllItems) {
-        matchAll = aMatchAll;
+    public SearchOptions(String aMatchOption, boolean aShowAllItems) {
+        matchOption = aMatchOption;
         showAllItems = aShowAllItems;
         searchArguments = null;
     }
@@ -46,8 +50,8 @@ public class SearchOptions {
         return showAllItems;
     }
 
-    public boolean isMatchAll() {
-        return matchAll;
+    public String getMatchOption() {
+        return matchOption;
     }
 
     public List<SearchArgument> getSearchArguments() {
