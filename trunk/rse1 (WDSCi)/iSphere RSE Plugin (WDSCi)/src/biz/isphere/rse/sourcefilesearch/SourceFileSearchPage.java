@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,12 +374,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
-     * Returns the status of the "is match all" radio button.
+     * Returns the status of the "match option" radio buttons.
      * 
-     * @return status of the "is match all" radio button
+     * @return status of the "match option" radio buttons
      */
-    private boolean isMatchAll() {
-        return searchArgumentsListEditor.getIsMatchAll();
+    private String getMatchOption() {
+        return searchArgumentsListEditor.getMatchOption();
     }
 
     /**
@@ -445,7 +445,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 endColumn = getNumericFieldContent(endColumnText);
             }
 
-            SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowAllRecords());
+            SearchOptions searchOptions = new SearchOptions(getMatchOption(), isShowAllRecords());
             for (SearchArgument searchArgument : searchArgumentsListEditor.getSearchArguments(startColumn, endColumn)) {
                 if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
                     searchOptions.addSearchArgument(searchArgument);

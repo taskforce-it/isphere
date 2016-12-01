@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ package biz.isphere.rse.search;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.core.search.AbstractSearchArgumentEditor;
+import biz.isphere.core.search.SearchOptionConfig;
 
 public class SearchArgumentsListEditor extends biz.isphere.core.search.SearchArgumentsListEditor {
 
@@ -19,11 +20,11 @@ public class SearchArgumentsListEditor extends biz.isphere.core.search.SearchArg
     }
 
     public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean regularExpressionsOption) {
-        super(aMaxNumSearchArguments, regularExpressionsOption);
+        this(aMaxNumSearchArguments, regularExpressionsOption, null);
     }
 
-    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean regularExpressionsOption, String labelSpecialOption) {
-        super(aMaxNumSearchArguments, regularExpressionsOption, labelSpecialOption);
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean regularExpressionsOption, SearchOptionConfig[] additionalSearchOptions) {
+        super(aMaxNumSearchArguments, regularExpressionsOption, additionalSearchOptions);
     }
 
     @Override
