@@ -50,4 +50,22 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="biz.isphere.joblogexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.messagesubsystem.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.strpreprc.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>

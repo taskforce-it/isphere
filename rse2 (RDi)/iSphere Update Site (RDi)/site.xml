@@ -30,6 +30,9 @@
    <feature url="features/biz.isphere.strpreprc_3.0.0.b001.jar" id="biz.isphere.strpreprc" version="3.0.0.b001">
       <category name="iSphere STRPREPRC Utility for RDi 8.0+"/>
    </feature>
+   <feature url="features/biz.isphere.joblogexplorer.rse_3.0.0.b001.jar" id="biz.isphere.joblogexplorer.rse" version="3.0.0.b001">
+      <category name="iSphere Job Log Explorer for RDi 8.0+"/>
+   </feature>
    <category-def name="iSphere for RDi 8.0+" label="iSphere for RDi 8.0+">
       <description>
          iSphere for RDi 8.0+
@@ -50,4 +53,5 @@
          Plug-in that extends the context menu of the Lpex editor with options to add/remove a STRPREPRC header.
       </description>
    </category-def>
+   <category-def name="iSphere Job Log Explorer for RDi 8.0+" label="iSphere Job Log Explorer for RDi 8.0+"/>
 </site>
