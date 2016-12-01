@@ -33,28 +33,28 @@
      dW002002          PR
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
-     d matchAll                        N   Const                                --> Match all finds
+     d matchOpt                      10A   Const                                --> Match option
      d firstLvlText                    N   Const                                --> Inc. 1.level txt
      d secLvlText                      N   Const                                --> Inc. 2.level txt
+     d messageId                       N   Const                                --> Inc. message id
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
-     d messageId                       N   Const Options(*nopass)               --> Inc. message id
 
       // Procedure interface for procedure 'W002002'
 
      dW002002          PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LSFSTLVLTX                      N   Const                                --> Inc. 1.level txt
      d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
+     d LSMESSAGEID                     N   Const                                --> Inc. message id
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
-     d LSMESSAGEID                     N   Const Options(*nopass)               --> Inc. message id
 
       //*------------------------------------------------------------------------------------------*
 
@@ -64,41 +64,21 @@
 
       //*------------------------------------------------------------------------------------------*
 
-      // Locale field declarations
-
-     d p_LSMESSAGEID   c                   8
-
-      //*------------------------------------------------------------------------------------------*
-
       /Free
 
        // TODO: move parameter LSMESSAGEID after LSSECLVLTX and
        //       remove the *nopass option.
-       If (%parms() >= p_LSMESSAGEID);
-         // Call service program
-         XFNDSTR_search(
-          LPHDL :       // --> Handle
-          LSSHWRCDS :   // --> Show records
-          LSMTCALL :    // --> Match all finds
-          LSFSTLVLTX :  // --> Inc. 1.level txt
-          LSSECLVLTX :  // --> Inc. 2.level txt
-          LSMESSAGEID : // --> Inc. message id
-          LISIZE :      // --> Number of args.
-          LSARGS
-         );
-       Else;
-         // Call service program
-         XFNDSTR_search(
-          LPHDL :       // --> Handle
-          LSSHWRCDS :   // --> Show records
-          LSMTCALL :    // --> Match all finds
-          LSFSTLVLTX :  // --> Inc. 1.level txt
-          LSSECLVLTX :  // --> Inc. 2.level txt
-          *Off :        // not passed: Inc. message id
-          LISIZE :      // --> Number of args.
-          LSARGS        // --> Search arguments
-         );
-       EndIf;
+       // Call service program
+       XFNDSTR_search(
+        LPHDL :       // --> Handle
+        LSSHWRCDS :   // --> Show records
+        LSMTCOPT :    // --> Match option
+        LSFSTLVLTX :  // --> Inc. 1.level txt
+        LSSECLVLTX :  // --> Inc. 2.level txt
+        LSMESSAGEID : // --> Inc. message id
+        LISIZE :      // --> Number of args.
+        LSARGS
+       );
 
        // Leave procedure
        Return;

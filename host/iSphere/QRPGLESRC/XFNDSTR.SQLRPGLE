@@ -24,7 +24,8 @@
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         ->PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         >>PARM<<  COMPILEOPT('DBGVIEW(*LIST)');                                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -189,7 +190,7 @@
      d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LSFSTLVLTX                      N   Const                                --> Inc. 1.level txt
      d LSSECLVLTX                      N   Const                                --> Inc. 2.level txt
      d LSMESSAGEID                     N   Const                                --> Inc. message id
@@ -321,20 +322,11 @@
          EndFor;
 
          // Check, whether the user want to search for
-         // specific message IDs. The "search for specific
-         // message IDs" mode is set, when:
-         //  1) Only "Include message ID is selected.
-         //  2) All search arguments are 7-char long.
-         If (LSMESSAGEID and      // Inc. message id
-             not LSFSTLVLTX and   // Inc. 1.level txt
-             not LSSECLVLTX);     // Inc. 2.level txt
+         // specific message IDs.
+         If (LSMTCOPT = SRCHOPTS_MATCH_MSGID);
            searchSpecificIds.enabled = *ON;
-           For LIIDX = 1 to LISIZE;
-             If (LSARGS(LIIDX).operator <> SRCHOPTS_OPERATOR_CONTAINS and
-                 %len(%trim(LSARGS(LIIDX).string)) <> 7);
-               searchSpecificIds.enabled = *OFF;
-             EndIf;
-           EndFor;
+         Else;
+           searchSpecificIds.enabled = *OFF;
          EndIf;
 
          // Initialize message id.
@@ -475,7 +467,7 @@
                if (matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;
                Else;
-                 If (LSMTCALL);
+                 If (LSMTCOPT = SRCHOPTS_MATCH_ALL);
                    recordFound = *OFF;
                    Leave;
                  EndIf;
@@ -484,7 +476,7 @@
                if (not matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;
                Else;
-                 If (LSMTCALL);
+                 If (LSMTCOPT = SRCHOPTS_MATCH_ALL);
                    recordFound = *OFF;
                    Leave;
                  EndIf;

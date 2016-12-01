@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -30,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
+import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -51,9 +53,7 @@ public class SearchDialog extends AbstractSearchDialog {
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        // TODO: implement "Search for specific message IDs", SrvPgm XFNDSTR ->
-        // new parameter
-        super(parentShell, 132, searchArgumentsListEditor, false, null);
+        super(parentShell, 132, searchArgumentsListEditor, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
         this.searchElements = searchElements;
     }
 
@@ -153,17 +153,6 @@ public class SearchDialog extends AbstractSearchDialog {
             public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
-
-        Link lnkHelp = new Link(groupOptions, SWT.NONE);
-        lnkHelp.setLayoutData(new GridData(SWT.NONE));
-        lnkHelp.setText("<a>(" + Messages.Refer_to_help_for_details + ")</a>"); //$NON-NLS-1$ //$NON-NLS-2$
-        lnkHelp.pack();
-        lnkHelp.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.core.help/html/messagefilesearch/messagefilesearch.html"); //$NON-NLS-1$
-            }
-        });
     }
 
     @Override
@@ -194,5 +183,20 @@ public class SearchDialog extends AbstractSearchDialog {
         _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
         _searchOptions.setOption(SearchExec.INCLUDE_MESSAGE_ID, isIncludeMessageId());
     };
+
+    protected void setSearchOptionsEnablement(Event anEvent) {
+
+        if (!(anEvent.data instanceof SearchOptionConfig)) {
+            return;
+        }
+
+        SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
+
+        includeFirstLevelTextButton.setEnabled(config.isIncludeFirstLevelTextEnabled());
+        includeSecondLevelTextButton.setEnabled(config.isIncludeSecondLevelTextEnabled());
+        includeMessageIdButton.setEnabled(config.isIncludeMessageIdEnabled());
+
+        super.setSearchOptionsEnablement(anEvent);
+    }
 
 }

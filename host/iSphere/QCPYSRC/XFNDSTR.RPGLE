@@ -19,7 +19,7 @@
      d                 PR
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
-     d matchAll                        N   Const                                --> Match all finds
+     d matchOpt                      10A   Const                                --> Match option
      d firstLvlText                    N   Const                                --> Inc. 1.level txt
      d secLvlText                      N   Const                                --> Inc. 2.level txt
      d messageId                       N   Const                                --> Inc. message id

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -120,7 +121,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE);
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(aMainPanel);
     }
@@ -216,17 +217,6 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 1, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeMessageIdButton.setLayoutData(tGridData);
-
-        Link lnkHelp = new Link(tOptionsGroup, SWT.NONE);
-        lnkHelp.setLayoutData(new GridData(SWT.NONE));
-        lnkHelp.setText("<a>(" + Messages.Refer_to_help_for_details + ")</a>"); //$NON-NLS-1$ //$NON-NLS-2$
-        lnkHelp.pack();
-        lnkHelp.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.core.help/html/messagefilesearch/messagefilesearch.html"); //$NON-NLS-1$
-            }
-        });
     }
 
     private Group createGroup(Composite aParent, String aText) {
@@ -402,12 +392,12 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
-     * Returns the status of the "is match all" radio button.
+     * Returns the status of the "match option" radio buttons.
      * 
-     * @return status of the "is match all" radio button
+     * @return status of the "match option" radio buttons
      */
-    private boolean isMatchAll() {
-        return searchArgumentsListEditor.getIsMatchAll();
+    private String getMatchOption() {
+        return searchArgumentsListEditor.getMatchOption();
     }
 
     /**
@@ -498,7 +488,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                 endColumn = getNumericFieldContent(endColumnText);
             }
 
-            SearchOptions searchOptions = new SearchOptions(isMatchAll(), isShowRecords());
+            SearchOptions searchOptions = new SearchOptions(getMatchOption(), isShowRecords());
             for (SearchArgument searchArgument : searchArgumentsListEditor.getSearchArguments(startColumn, endColumn)) {
                 if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
                     searchOptions.addSearchArgument(searchArgument);
@@ -564,6 +554,26 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         } else {
             container.setPerformActionEnabled(checkAll());
         }
+        
+        setSearchOptionsEnablement(anEvent);
+    }
+
+    protected void setSearchOptionsEnablement(Event anEvent) {
+
+        if (!(anEvent.data instanceof SearchOptionConfig)) {
+            return;
+        }
+        
+        SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
+        
+        allColumnsButton.setEnabled(config.isColumnRangeEnabled());
+        betweenColumnsButton.setEnabled(config.isColumnRangeEnabled());
+        startColumnText.setEnabled(config.isColumnRangeEnabled());
+        endColumnText.setEnabled(config.isColumnRangeEnabled());
+        
+        includeFirstLevelTextButton.setEnabled(config.isIncludeFirstLevelTextEnabled());
+        includeSecondLevelTextButton.setEnabled(config.isIncludeSecondLevelTextEnabled());
+        includeMessageIdButton.setEnabled(config.isIncludeMessageIdEnabled());
     }
 
     /**

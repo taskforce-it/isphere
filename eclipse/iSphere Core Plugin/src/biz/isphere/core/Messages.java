@@ -456,6 +456,8 @@ public class Messages extends NLS {
 
     public static String MatchAnyCondition;
 
+    public static String MatchMessageIdCondition;
+
     public static String Options;
 
     public static String IncludeFirstLevelText;
@@ -1300,16 +1302,13 @@ public class Messages extends NLS {
 
     public static String Label_Viewer;
     
-    public static String Show_substituion_variables;
+    public static String Show_substitution_variables;
     
-    public static String Hide_substituion_variables;
+    public static String Hide_substitution_variables;
 
     public static String IncludeMessageId;
 
     public static String Specify_whether_or_not_to_include_the_message_id;
-    
-    public static String Refer_to_help_for_details;
-;
 
     /*
      * Warning messages

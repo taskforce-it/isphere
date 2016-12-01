@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,12 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private String _case;
     private int _fromColumn;
     private int _toColumn;
+    private Label labelFromColumn;
+    private Label labelToColumn;
     private Button okButton;
     private int maxColumns;
     private boolean regularExpressionsOption;
-    private String labelSpecialOption;
+    private SearchOptionConfig[] searchOptionConfig;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
@@ -61,13 +63,13 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private static final String TEXT_STRING = "textString";
     @CMOne(info = "CMOne settings")
     private static final String IGNORE_CASE = "ignoreCase";
-
+    
     public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption) {
         this(parentShell, maxColumns, searchArgumentsListEditor, regularExpressionsOption, null);
     }
 
     public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption,
-        String labelSpecialOption) {
+        SearchOptionConfig[] searchOptionConfig) {
         super(parentShell);
 
         this.maxColumns = maxColumns;
@@ -79,7 +81,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             _editor = false;
         }
         this.regularExpressionsOption = regularExpressionsOption;
-        this.labelSpecialOption = labelSpecialOption;
+        this.searchOptionConfig = searchOptionConfig;
     }
 
     @Override
@@ -97,7 +99,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             _searchArguments.setLayout(new GridLayout());
 
-            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, labelSpecialOption);
+            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
             _listEditor.createControl(_searchArguments);
             _listEditor.setListener(this);
 
@@ -112,7 +114,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             createDialogForCMOne(groupAttributes);
         }
 
-        Label labelFromColumn = new Label(groupAttributes, SWT.NONE);
+        labelFromColumn = new Label(groupAttributes, SWT.NONE);
         labelFromColumn.setText(Messages.From_column_colon);
 
         textFromColumn = WidgetFactory.createText(groupAttributes);
@@ -133,7 +135,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
             }
         });
 
-        Label labelToColumn = new Label(groupAttributes, SWT.NONE);
+        labelToColumn = new Label(groupAttributes, SWT.NONE);
         labelToColumn.setText(Messages.To_column_colon);
 
         textToColumn = WidgetFactory.createText(groupAttributes);
@@ -244,6 +246,20 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         okButton.setEnabled(true);
     }
 
+    protected void setSearchOptionsEnablement(Event anEvent) {
+
+        if (!(anEvent.data instanceof SearchOptionConfig)) {
+            return;
+        }
+        
+        SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
+        
+        labelFromColumn.setEnabled(config.isColumnRangeEnabled());
+        textFromColumn.setEnabled(config.isColumnRangeEnabled());
+        labelToColumn.setEnabled(config.isColumnRangeEnabled());
+        textToColumn.setEnabled(config.isColumnRangeEnabled());
+    }
+
     @Override
     protected Control createContents(Composite parent) {
         Control control = super.createContents(parent);
@@ -258,7 +274,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
         if (_editor) {
 
-            _searchOptions = new SearchOptions(_listEditor.getIsMatchAll(), true);
+            _searchOptions = new SearchOptions(_listEditor.getMatchOption(), true);
             java.util.List<SearchArgument> searchArguments = _listEditor.getSearchArguments(_fromColumn, _toColumn);
             for (SearchArgument searchArgument : searchArguments) {
                 if (!StringHelper.isNullOrEmpty(searchArgument.getString())) {
@@ -289,7 +305,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
                 _case = SearchOptions.CASE_MATCH;
             }
 
-            _searchOptions = new SearchOptions(true, true);
+            _searchOptions = new SearchOptions(SearchOptions.MATCH_ALL, true);
             _searchOptions.addSearchArgument(new SearchArgument(getSearchArgument(), getFromColumn(), getToColumn(), getCase()));
             setElementsSearchOptions(_searchOptions);
 
@@ -357,6 +373,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
     public void handleEvent(Event anEvent) {
         setOKButtonEnablement();
+        setSearchOptionsEnablement(anEvent);
     }
 
     private boolean isSearchStringValid() {

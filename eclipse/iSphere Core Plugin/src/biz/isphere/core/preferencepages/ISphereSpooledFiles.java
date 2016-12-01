@@ -551,12 +551,12 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private void performToggleSubstitutionVariable(final Composite container, Button showVars) {
 
         if ((Boolean)showVars.getData()) {
-            showVars.setText(Messages.Hide_substituion_variables);
+            showVars.setText(Messages.Hide_substitution_variables);
             showVars.setData(SHOW_SUBSTITUTION_VARIABLES_NO);
             groupSubstitutionVariables = createGroupSubstitutionVariables(container, Messages.Substitution_variables_for_conversion_commands);
             updateControl(container);
         } else {
-            showVars.setText(Messages.Show_substituion_variables);
+            showVars.setText(Messages.Show_substitution_variables);
             showVars.setData(SHOW_SUBSTITUTION_VARIABLES_YES);
             if (groupSubstitutionVariables != null && !groupSubstitutionVariables.isDisposed()) {
                 groupSubstitutionVariables.dispose();
