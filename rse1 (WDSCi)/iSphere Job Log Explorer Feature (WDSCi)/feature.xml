@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.joblogexplorer.rse"
       label="iSphere Job Log Explorer for WDSCi 7.0+ (optional)"
-      version="1.0.0.b001"
+      version="3.0.0.b001"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -15,8 +15,10 @@ The &quot;iSphere Job Log Explorer Feature (WDSCi)&quot; provides an editor for 
       Copyright (c) 2012-2016 iSphere Project Team. All rights reserved.
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/cpl-v10.html">
+      This program and the accompanying materials are made available
+under the terms of the Common Public License v1.0 which accompanies
+this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
    </license>
 
    <url>
@@ -43,5 +45,11 @@ The &quot;iSphere Job Log Explorer Feature (WDSCi)&quot; provides an editor for 
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="biz.isphere.joblogexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
