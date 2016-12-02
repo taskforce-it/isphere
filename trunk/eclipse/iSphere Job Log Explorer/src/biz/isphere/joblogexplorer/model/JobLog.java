@@ -25,6 +25,8 @@ import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 
 public class JobLog implements MessageModifyListener, IAdaptable {
 
+    private String systemName;
+
     private String jobName;
     private String userName;
     private String jobNumber;
@@ -66,6 +68,14 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         this.messageToPrograms = new HashSet<String>();
         this.messageToStmts = new HashSet<String>();
         this.numMessagesSelected = 0;
+    }
+
+    public String getSystemName() {
+        return systemName;
+    }
+
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
     }
 
     public String getJobName() {
@@ -243,6 +253,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
     public void dump() {
 
+        System.out.println("System  . . . . : " + getSystemName()); //$NON-NLS-1$
         System.out.println("Job log . . . . : " + getQualifiedJobName()); //$NON-NLS-1$
         System.out.println("Job description : " + getQualifiedJobDescriptionName()); //$NON-NLS-1$
 
@@ -354,6 +365,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
     public class JobLogPropertySource implements IPropertySource {
 
+        private static final String PROPERTY_SYSTEM_NAME = "biz.isphere.joblogexplorer.model.JobLog.systemName";//$NON-NLS-1$
         private static final String PROPERTY_JOB_NAME = "biz.isphere.joblogexplorer.model.JobLog.jobName";//$NON-NLS-1$
         private static final String PROPERTY_JOB_USER = "biz.isphere.joblogexplorer.model.JobLog.jobUser";//$NON-NLS-1$
         private static final String PROPERTY_JOB_NUMBER = "biz.isphere.joblogexplorer.model.JobLog.jobNUmber";//$NON-NLS-1$
@@ -377,6 +389,9 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         public IPropertyDescriptor[] getPropertyDescriptors() {
 
             if (propertyDescriptors == null) {
+
+                PropertyDescriptor systemName = createPropertyDescriptor(PROPERTY_SYSTEM_NAME, Messages.Property_system_name,
+                    Messages.Property_Category_system);
 
                 // "Job" descriptors
                 PropertyDescriptor jobNameDescriptor = createPropertyDescriptor(PROPERTY_JOB_NAME, Messages.Property_job_name,
@@ -402,8 +417,8 @@ public class JobLog implements MessageModifyListener, IAdaptable {
                     Messages.Property_number_of_messages, Messages.Property_Category_statistics);
 
                 // Read-only (instance of PropertyDescriptor)
-                propertyDescriptors = new IPropertyDescriptor[] { jobNameDescriptor, jobUserDescriptor, jobNumberDescriptor, pagesDescriptor,
-                    startDateDescriptor, endDateDescriptor, numberOfMessagesDescriptor };
+                propertyDescriptors = new IPropertyDescriptor[] { systemName, jobNameDescriptor, jobUserDescriptor, jobNumberDescriptor,
+                    pagesDescriptor, startDateDescriptor, endDateDescriptor, numberOfMessagesDescriptor };
             }
 
             return propertyDescriptors;
@@ -418,7 +433,9 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         }
 
         public Object getPropertyValue(Object name) {
-            if (name.equals(PROPERTY_JOB_NAME)) {
+            if (name.equals(PROPERTY_SYSTEM_NAME)) {
+                return getSystemName();
+            } else if (name.equals(PROPERTY_JOB_NAME)) {
                 return getJobName();
             } else if (name.equals(PROPERTY_JOB_USER)) {
                 return getJobUserName();

@@ -80,8 +80,10 @@ public class Messages extends NLS {
     public static String Search_up;
     public static String Search_down;
 
+    public static String Property_Category_system;
     public static String Property_Category_job;
     public static String Property_Category_statistics;
+    public static String Property_system_name;
     public static String Property_job_name;
     public static String Property_job_user;
     public static String Property_job_number;
