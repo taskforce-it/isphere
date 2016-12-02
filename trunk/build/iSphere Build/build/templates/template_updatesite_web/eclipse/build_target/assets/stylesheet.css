@@ -42,6 +42,22 @@ h3 {
 }
 
 /*
+ *  Table header.
+ */
+
+th {
+    color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
+}
+
+/*
+ *  Table as grid.
+ */
+
+.grid {
+    border-collapse: collapse; border: 1px solid lightgrey; padding: 4px;
+}
+
+/*
  *  Beta Version Highlighter.
  */
 
