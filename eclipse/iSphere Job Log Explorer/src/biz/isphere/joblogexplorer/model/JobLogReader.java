@@ -135,7 +135,8 @@ public class JobLogReader {
         Matcher matcher = configuration.getStartOfPage().matcher(line);
         while (matcher.find()) {
             jobLogPage = jobLog.addPage();
-            jobLogPage.setPageNumber(new Integer(matcher.group(3).trim()).intValue());
+            jobLogPage.setPageNumber(new Integer(matcher.group(8).trim()).intValue());
+            jobLog.setSystemName(matcher.group(3).trim());
             if (!jobLog.isHeaderComplete()) {
                 return PARSE_PAGE_HEADER;
             } else {
@@ -376,7 +377,7 @@ public class JobLogReader {
         JobLogReader main = new JobLogReader();
         // main.importFromStmf(directory +
         // "iSphere Joblog - English_GFD400.txt");
-        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt"); //$NON-NLS-1$
+        // JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_2_712703_RADDATZ_TRADDATZA1_GFD400.txt"); //$NON-NLS-1$
         // JobLog jobLog = main.loadFromStmf(directory +
         // "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
         // JobLog jobLog = main.loadFromStmf(directory + "Test Single Message.txt"); //$NON-NLS-1$
@@ -384,6 +385,8 @@ public class JobLogReader {
         // "iSphere_Spooled_File_QPJOBLOG_2_TRADDATZB1_RADDATZ_246474_WWSOBIDE_1160827_202522.txt");
         // main.loadFromStmf(directory +
         // "QPJOBLOG_440_712206_CMONE_FR_D0008UJ_GFD400.txt");
+        // JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG.txt"); //$NON-NLS-1$
+        JobLog jobLog = main.loadFromStmf(directory + "QPJOBLOG_Julian_Dates.txt"); //$NON-NLS-1$
 
         jobLog.dump();
 

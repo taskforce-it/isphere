@@ -8,10 +8,15 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -29,36 +34,50 @@ public class JobLogReaderConfiguration {
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
+    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser.properties";//$NON-NLS-1$
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
-    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}"; //$NON-NLS-1$
+    // Global values
     private String JOB_NUMBER = "[0-9]{6}"; //$NON-NLS-1$
+    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}"; //$NON-NLS-1$
     private String PROGRAM = OBJECT_NAME;
     private String LIBRARY = OBJECT_NAME;
     private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}"; //$NON-NLS-1$
-    private String RELEASE = "V[0-9]{1,1}R[0-9]{1,1}M[0-9]{1,1}"; //$NON-NLS-1$
+    private String OS_RELEASE = "V[0-9]{1,1}R[0-9]{1,1}M[0-9]{1,1}"; //$NON-NLS-1$
     private String SPACES = "[ ]+"; //$NON-NLS-1$
+    private String TIMEZONE = "[A-Z]{2,5}"; //$NON-NLS-1$
+    private String SYSTEM_NAME = "[A-Z][0-9A-Z]{0,7}"; //$NON-NLS-1$
 
+    // Page number properties
     private String PAGE_NUMBER_LABEL = "[a-zA-Z]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}"; //$NON-NLS-1$
+    private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
+    private String PAGE_TIME = "[0-9:.,]{8}"; //$NON-NLS-1$
+
+    // Page header properties
     private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+"; //$NON-NLS-1$
     private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}" + "|" + "&{JOB_NUMBER}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+    // Message properties
     private String MESSAGE_ID = "\\*NONE|[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
     private String MESSAGE_TYPE = "[A-Z][a-z]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
     private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
     private String MESSAGE_TIME = "[0-9:.,]{15}"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
+
     private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+"; //$NON-NLS-1$
     private String MESSAGE_ATTRIBUTE_VALUE = "(.+)"; //$NON-NLS-1$
     private String STMT = "(\\*STMT|\\*N|[0-9A-F]{4})"; //$NON-NLS-1$
 
+    // Default regular expressions
     private String regex_startOfPage;
     private String regex_headerAttribute;
     private String regex_messageFirstLine;
     private String regex_messageContinuationLine;
 
+    // Compiled regular expression patterns
     private Pattern pattern_startOfPage;
     private Pattern pattern_headerAttribute;
     private Pattern pattern_messageFirstLine;
@@ -210,18 +229,24 @@ public class JobLogReaderConfiguration {
             Properties properties = new Properties();
             properties.load(new FileInputStream(path));
 
-            // Common values
+            // Global values
             JOB_NUMBER = getProperty(properties, "global.job.number", JOB_NUMBER); //$NON-NLS-1$
             OBJECT_NAME = getProperty(properties, "global.object.name", OBJECT_NAME); //$NON-NLS-1$
 
             PROGRAM = OBJECT_NAME;
             LIBRARY = OBJECT_NAME;
 
-            // Page number properties
             LICENSED_PROGRAM = getProperty(properties, "global.licensed.program", LICENSED_PROGRAM); //$NON-NLS-1$
-            RELEASE = getProperty(properties, "global.os.release", RELEASE); //$NON-NLS-1$
+            OS_RELEASE = getProperty(properties, "global.os.release", OS_RELEASE); //$NON-NLS-1$
+
+            TIMEZONE = getProperty(properties, "global.timezone", TIMEZONE); //$NON-NLS-1$
+            SYSTEM_NAME = getProperty(properties, "global.system.name", SYSTEM_NAME); //$NON-NLS-1$
+
+            // Page number properties
             PAGE_NUMBER_LABEL = getProperty(properties, "page.number.label", PAGE_NUMBER_LABEL); //$NON-NLS-1$
             PAGE_NUMBER_VALUE = getProperty(properties, "page.number.value", PAGE_NUMBER_VALUE); //$NON-NLS-1$
+            PAGE_DATE = getProperty(properties, "page.date", PAGE_DATE); //$NON-NLS-1$
+            PAGE_TIME = getProperty(properties, "page.time", PAGE_TIME); //$NON-NLS-1$
 
             // Page header properties
             HEADER_ATTRIBUTE_NAME = getProperty(properties, "header.attribute.name", HEADER_ATTRIBUTE_NAME); //$NON-NLS-1$
@@ -261,6 +286,62 @@ public class JobLogReaderConfiguration {
         return false;
     }
 
+    public void createSampleConfigurationFile() {
+
+        InputStream in = null;
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+
+        try {
+
+            String directory = getConfigurationDirectory();
+            File outFile = new File(directory, EXAMPLE_CONFIGURATION_FILE); //$NON-NLS-1$
+            if (outFile.exists()) {
+                return;
+            }
+
+            in = getClass().getResourceAsStream(DEFAULT_CONFIGURATION_FILE);
+            if (in == null) {
+                return;
+            }
+
+            final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
+            
+            reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder out = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+                out.append(NEW_LINE); //$NON-NLS-1$
+            }
+
+            writer = new BufferedWriter(new FileWriter(outFile));
+            writer.write(out.toString());
+
+        } catch (Exception e) {
+
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
     /**
      * Produces the final regular expressions. iSphere expressions can contain a
      * variable, such as <code>&{fooVariable}</code>, which is replaced by the
@@ -268,7 +349,7 @@ public class JobLogReaderConfiguration {
      */
     private void produceRegularExpressions() {
 
-        regex_startOfPage = replaceVariables("^&{SPACES}(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{PAGE_NUMBER_LABEL}(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
+        regex_startOfPage = replaceVariables("^&{SPACES}(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{SPACES}(&{SYSTEM_NAME})&{SPACES}(&{PAGE_DATE})&{SPACES}(&{PAGE_TIME})&{SPACES}(&{TIMEZONE})&{SPACES}(&{PAGE_NUMBER_LABEL})(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
         regex_headerAttribute = replaceVariables("&{SPACES}(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})"); //$NON-NLS-1$
         regex_messageFirstLine = replaceVariables("^(&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})" //$NON-NLS-1$
             + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}" //$NON-NLS-1$
@@ -295,9 +376,14 @@ public class JobLogReaderConfiguration {
             result = result.replaceAll("&\\{STMT}", fixEscapeCharacters(STMT)); //$NON-NLS-1$
 
             result = result.replaceAll("&\\{LICENSED_PROGRAM}", fixEscapeCharacters(LICENSED_PROGRAM)); //$NON-NLS-1$
-            result = result.replaceAll("&\\{RELEASE}", fixEscapeCharacters(RELEASE)); //$NON-NLS-1$
+            result = result.replaceAll("&\\{RELEASE}", fixEscapeCharacters(OS_RELEASE)); //$NON-NLS-1$
+            result = result.replaceAll("&\\{TIMEZONE}", fixEscapeCharacters(TIMEZONE)); //$NON-NLS-1$
+            result = result.replaceAll("&\\{SYSTEM_NAME}", fixEscapeCharacters(SYSTEM_NAME)); //$NON-NLS-1$
+
             result = result.replaceAll("&\\{PAGE_NUMBER_LABEL}", fixEscapeCharacters(PAGE_NUMBER_LABEL)); //$NON-NLS-1$
             result = result.replaceAll("&\\{PAGE_NUMBER_VALUE}", fixEscapeCharacters(PAGE_NUMBER_VALUE)); //$NON-NLS-1$
+            result = result.replaceAll("&\\{PAGE_DATE}", fixEscapeCharacters(PAGE_DATE)); //$NON-NLS-1$
+            result = result.replaceAll("&\\{PAGE_TIME}", fixEscapeCharacters(PAGE_TIME)); //$NON-NLS-1$
 
             result = result.replaceAll("&\\{HEADER_ATTRIBUTE_NAME}", fixEscapeCharacters(HEADER_ATTRIBUTE_NAME)); //$NON-NLS-1$
             result = result.replaceAll("&\\{HEADER_ATTRIBUTE_VALUE}", fixEscapeCharacters(HEADER_ATTRIBUTE_VALUE)); //$NON-NLS-1$
@@ -452,6 +538,5 @@ public class JobLogReaderConfiguration {
         for (String languageId : languageIDs) {
             System.out.println("  " + languageId); //$NON-NLS-1$
         }
-
     }
 }

@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.joblogexplorer.model.JobLogReaderConfiguration;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -54,6 +56,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
 
         plugin = this;
         installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
+        
+        new JobLogReaderConfiguration().createSampleConfigurationFile();
     }
 
     /*
