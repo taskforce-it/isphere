@@ -325,7 +325,7 @@ public class JobLogReader {
             jobLogMessage.setFromStatement(messageAttributes.get(5));
             jobLogMessage.setText(messageAttributes.get(6));
             if (messageAttributes.size() >= 8) {
-                jobLogMessage.setCause(messageAttributes.get(7));
+                jobLogMessage.setHelp(messageAttributes.get(7));
             }
             return;
         }
@@ -336,7 +336,7 @@ public class JobLogReader {
             jobLogMessage.setToStatement(messageAttributes.get(2));
             jobLogMessage.setText(messageAttributes.get(3));
             if (messageAttributes.size() >= 5) {
-                jobLogMessage.setCause(messageAttributes.get(4));
+                jobLogMessage.setHelp(messageAttributes.get(4));
             }
             return;
         }
@@ -344,7 +344,7 @@ public class JobLogReader {
         if (messageAttributes.size() >= 1) {
             jobLogMessage.setText(messageAttributes.get(0));
             if (messageAttributes.size() >= 2) {
-                jobLogMessage.setCause(messageAttributes.get(1));
+                jobLogMessage.setHelp(messageAttributes.get(1));
             }
             return;
         }

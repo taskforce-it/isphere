@@ -190,14 +190,14 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private String getCompleteMessageText() {
 
-        if (jobLogMessage.getText() == null && jobLogMessage.getCause() == null) {
+        if (jobLogMessage.getText() == null && jobLogMessage.getHelp() == null) {
             return EMPTY;
-        } else if (jobLogMessage.getText() != null && jobLogMessage.getCause() != null) {
-            return jobLogMessage.getText() + NEW_LINE + NEW_LINE + jobLogMessage.getCause();
+        } else if (jobLogMessage.getText() != null && jobLogMessage.getHelp() != null) {
+            return jobLogMessage.getText() + NEW_LINE + NEW_LINE + jobLogMessage.getHelp();
         } else if (jobLogMessage.getText() != null) {
             return jobLogMessage.getText();
         } else {
-            return jobLogMessage.getCause();
+            return jobLogMessage.getHelp();
         }
     }
 

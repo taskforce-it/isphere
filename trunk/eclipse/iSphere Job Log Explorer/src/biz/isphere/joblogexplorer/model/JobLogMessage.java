@@ -31,7 +31,7 @@ public class JobLogMessage {
     private String date;
     private String time;
     private String text;
-    private String cause;
+    private String help;
 
     private String toLibrary;
     private String toProgram;
@@ -138,12 +138,12 @@ public class JobLogMessage {
         this.lowerCaseText = this.text.toLowerCase();
     }
 
-    public String getCause() {
-        return cause;
+    public String getHelp() {
+        return help;
     }
 
-    public void setCause(String cause) {
-        this.cause = cause;
+    public void setHelp(String help) {
+        this.help = help;
     }
 
     public String getToModule() {

@@ -262,7 +262,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
             System.out.println("  " + message.toString()); //$NON-NLS-1$
 
             printMessageAttribute("  Page#: ", "" + message.getPageNumber()); //$NON-NLS-1$ //$NON-NLS-2$
-            printMessageAttribute("    Cause: ", message.getCause()); //$NON-NLS-1$
+            printMessageAttribute("    Cause: ", message.getHelp()); //$NON-NLS-1$
             printMessageAttribute("       to: ", message.getToModule()); //$NON-NLS-1$
             printMessageAttribute("         : ", message.getToProcedure()); //$NON-NLS-1$
             printMessageAttribute("         : ", message.getToStatement()); //$NON-NLS-1$
