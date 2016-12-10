@@ -30,7 +30,7 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 
-public class JobLogReaderConfiguration {
+public class JobLogParserConfiguration {
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
@@ -84,9 +84,9 @@ public class JobLogReaderConfiguration {
     private Pattern pattern_messageContinuationLine;
 
     /**
-     * Constructs a new JobLogReaderConfiguration object.
+     * Constructs a new JobLogParserConfiguration object.
      */
-    public JobLogReaderConfiguration() {
+    public JobLogParserConfiguration() {
 
         produceRegularExpressions();
         compilePattern();
@@ -410,7 +410,7 @@ public class JobLogReaderConfiguration {
 
     /**
      * Compiles the regular expression patterns that are used by the
-     * JobLogReader.
+     * JobLogParser.
      */
     private void compilePattern() {
 
@@ -531,7 +531,7 @@ public class JobLogReaderConfiguration {
      */
     public static void main(String[] args) throws Exception {
 
-        JobLogReaderConfiguration main = new JobLogReaderConfiguration();
+        JobLogParserConfiguration main = new JobLogParserConfiguration();
         String[] languageIDs = main.getAvailableLanguageIDs();
 
         System.out.println("Language IDs:"); //$NON-NLS-1$

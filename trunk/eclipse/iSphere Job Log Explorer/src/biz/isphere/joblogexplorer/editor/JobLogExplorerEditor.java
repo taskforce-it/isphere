@@ -54,7 +54,7 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
-import biz.isphere.joblogexplorer.model.JobLogReader;
+import biz.isphere.joblogexplorer.model.JobLogParser;
 
 public class JobLogExplorerEditor extends XEditorPart implements IDropFileListener, IJobLogExplorerStatusChangedListener {
 
@@ -276,7 +276,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
             try {
 
-                JobLogReader reader = new JobLogReader();
+                JobLogParser reader = new JobLogParser();
                 final JobLog jobLog = reader.loadFromStmf(pathName);
 
                 new UIJob("") { //$NON-NLS-1$

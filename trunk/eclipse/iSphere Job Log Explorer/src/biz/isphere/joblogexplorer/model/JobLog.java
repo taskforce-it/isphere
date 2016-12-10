@@ -197,17 +197,23 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
     public JobLogMessage addMessage() {
 
-        JobLogMessage message = new JobLogMessage(currentPage.getPageNumber());
+        JobLogMessage message;
+        if (currentPage != null) {
+            message = new JobLogMessage(currentPage.getPageNumber());
+        } else {
+            message = new JobLogMessage(0);
+        }
+
         message.addModifyChangedListener(this);
 
         jobLogMessages.add(message);
 
-        if (currentPage.getFirstMessage() == null) {
-            currentPage.setFirstMessage(message);
+        if (currentPage != null) {
+            if (currentPage.getFirstMessage() == null) {
+                currentPage.setFirstMessage(message);
+            }
+            currentPage.setLastMessage(message);
         }
-        currentPage.setLastMessage(message);
-
-        // addNotNullOrEmptyFilterItem(messageTypes, message.getType());
 
         return message;
     }
@@ -270,6 +276,8 @@ public class JobLog implements MessageModifyListener, IAdaptable {
             printMessageAttribute("         : ", message.getFromProcedure()); //$NON-NLS-1$
             printMessageAttribute("         : ", message.getFromStatement()); //$NON-NLS-1$
         }
+        
+        System.out.println("Number of messages: " + jobLogMessages.size());
     }
 
     private void printMessageAttribute(String label, String value) {
