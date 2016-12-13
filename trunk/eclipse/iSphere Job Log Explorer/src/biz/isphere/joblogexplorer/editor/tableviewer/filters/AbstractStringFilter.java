@@ -19,9 +19,9 @@ public abstract class AbstractStringFilter extends AbstractMessagePropertyFilter
     }
 
     @Override
-    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
+    protected boolean doSelect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
-        if (super.select(tableViewer, parentElement, element)) {
+        if (super.doSelect(tableViewer, parentElement, element)) {
             return true;
         }
 

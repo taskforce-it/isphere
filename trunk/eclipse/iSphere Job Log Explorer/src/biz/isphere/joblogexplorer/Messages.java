@@ -92,6 +92,10 @@ public class Messages extends NLS {
     public static String Property_pages;
     public static String Property_number_of_messages;
 
+    public static String E_R_R_O_R;
+    public static String Job_C_B_A_not_found;
+    public static String Could_not_load_job_log_of_job_C_B_A_Reason_D;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

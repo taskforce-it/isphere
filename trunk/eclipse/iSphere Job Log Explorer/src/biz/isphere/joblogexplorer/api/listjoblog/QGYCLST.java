@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ProgramParameter;
@@ -15,6 +15,9 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
+/**
+ * Close List (QGYCLST) API
+ */
 public class QGYCLST extends APIProgramCallDocument {
 
     private String requestHandle;
@@ -40,7 +43,7 @@ public class QGYCLST extends APIProgramCallDocument {
             return false;
         }
     }
-    
+
     /**
      * Produces the parameter list for calling the QUSRMBRD API.
      */

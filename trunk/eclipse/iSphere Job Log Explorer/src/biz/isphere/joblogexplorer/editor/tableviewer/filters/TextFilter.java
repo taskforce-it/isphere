@@ -14,18 +14,41 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class TextFilter implements IMessagePropertyFilter {
 
+    private static final String NEGATED_MARKER = "!"; //$NON-NLS-1$
+
     private String text;
+    protected boolean negated;
 
     public TextFilter(String text) {
-        this.text = text.toLowerCase();
+
+        if (text.startsWith(NEGATED_MARKER)) {
+            this.text = text.substring(1);
+            this.negated = true;
+        } else {
+            this.text = text;
+            this.negated = false;
+        }
     }
 
-    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
+    public boolean xselect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
+        return applyNegatedAttribute(doSelect(tableViewer, parentElement, element));
+    }
+
+    protected boolean doSelect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
         if (element == null || element.getText() == null) {
             return true;
         }
 
         return element.getLowerCaseText().indexOf(text) >= 0;
+    }
+
+    protected boolean applyNegatedAttribute(boolean isSelected) {
+
+        if (negated) {
+            return !isSelected;
+        } else {
+            return isSelected;
+        }
     }
 }

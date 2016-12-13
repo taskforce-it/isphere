@@ -11,7 +11,7 @@ package biz.isphere.joblogexplorer.jobs.rse;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorFileInput;
 
 public abstract class AbstractLoadIRemoteFileJob {
 
@@ -24,7 +24,7 @@ public abstract class AbstractLoadIRemoteFileJob {
                 String filePath = getRemoteFileAbsolutePath();
                 String originalFileName = getRemoteFileName();
 
-                JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(filePath, originalFileName);
+                JobLogExplorerEditorFileInput editorInput = new JobLogExplorerEditorFileInput(filePath, originalFileName);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
 
             } catch (Throwable e) {

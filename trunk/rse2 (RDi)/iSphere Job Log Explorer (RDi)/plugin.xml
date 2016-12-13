@@ -40,6 +40,43 @@
       	<!--
       	  ==========================================
       	    Job Log Explorer Editor Contributions
+      	    Object: Remote Job
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob"
+            id="biz.isphere.joblogexplorer.menu.qsysremotejob">
+
+		   <!--
+           <visibility>
+              <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
+           </visibility>
+           -->
+
+	       <action
+              class="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"
+              enablesFor="1"
+              id="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"
+              label="%menu_Job_Log_Explorer"
+              icon="icons/joblog_explorer.png"
+              menubarPath="group.browsewith">
+              <!--
+              <enablement>
+                 <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
+              </enablement>
+              -->
+	       </action>
+      	</objectContribution>
+      	
+	</extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Job Log Explorer Editor Contributions
       	    Object: Stream Files
       	  ==========================================
       	-->

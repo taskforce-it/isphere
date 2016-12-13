@@ -26,14 +26,14 @@ public abstract class AbstractIntegerFilter extends AbstractMessagePropertyFilte
         } else if (UI_SPCVAL_BLANK.equals(this.value)) {
             this.intValue = NULL_VALUE;
         } else {
-            this.intValue = Integer.parseInt(value);
+            this.intValue = Integer.parseInt(this.value);
         }
     }
 
     @Override
-    public boolean select(Viewer tableViewer, Object parentElement, JobLogMessage element) {
+    protected boolean doSelect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
-        if (super.select(tableViewer, parentElement, element)) {
+        if (super.doSelect(tableViewer, parentElement, element)) {
             return true;
         }
 

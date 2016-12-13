@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;

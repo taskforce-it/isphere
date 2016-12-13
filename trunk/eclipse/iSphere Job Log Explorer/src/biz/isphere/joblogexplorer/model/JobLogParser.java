@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.joblogexplorer.InvalidJobLogFormatException;
+import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
 
 public class JobLogParser {
 
@@ -317,12 +317,12 @@ public class JobLogParser {
         }
 
         if (messageAttributes.size() >= 7) {
-            jobLogMessage.setToModule(messageAttributes.get(0));
-            jobLogMessage.setToProcedure(messageAttributes.get(1));
-            jobLogMessage.setToStatement(messageAttributes.get(2));
-            jobLogMessage.setFromModule(messageAttributes.get(3));
-            jobLogMessage.setFromProcedure(messageAttributes.get(4));
-            jobLogMessage.setFromStatement(messageAttributes.get(5));
+            jobLogMessage.setFromModule(messageAttributes.get(0));
+            jobLogMessage.setFromProcedure(messageAttributes.get(1));
+            jobLogMessage.setFromStatement(messageAttributes.get(2));
+            jobLogMessage.setToModule(messageAttributes.get(3));
+            jobLogMessage.setToProcedure(messageAttributes.get(4));
+            jobLogMessage.setToStatement(messageAttributes.get(5));
             jobLogMessage.setText(messageAttributes.get(6));
             if (messageAttributes.size() >= 8) {
                 jobLogMessage.setHelp(messageAttributes.get(7));

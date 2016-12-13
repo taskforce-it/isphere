@@ -37,10 +37,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.jface.dialogs.XEditorPart;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
-import biz.isphere.joblogexplorer.InvalidJobLogFormatException;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanel;
@@ -52,9 +54,15 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromStatementFilter
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
+import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
+import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
+import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
 import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogParser;
+import biz.isphere.joblogexplorer.model.JobLogReader;
+
+import com.ibm.as400.access.AS400;
 
 public class JobLogExplorerEditor extends XEditorPart implements IDropFileListener, IJobLogExplorerStatusChangedListener {
 
@@ -128,12 +136,20 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         tableViewerPanel.addStatusChangedListener(this);
         filterPanel.addFilterChangedListener(tableViewerPanel);
 
-        JobLogExplorerEditorInput input = (JobLogExplorerEditorInput)getEditorInput();
+        Object input = getEditorInput();
 
-        if (input.getPath() != null) {
-            dropJobLog(input.getPath(), input.getOriginalFileName(), null);
-        } else {
-            // Open empty editor to drag & drop files.
+        if (input instanceof JobLogExplorerEditorFileInput) {
+            JobLogExplorerEditorFileInput fileInput = (JobLogExplorerEditorFileInput)input;
+            if (fileInput.getPath() != null) {
+                dropJobLog(fileInput.getPath(), fileInput.getOriginalFileName(), null);
+            } else {
+                // Open empty editor to drag & drop files.
+            }
+        } else if (input instanceof JobLogExplorerEditorJobInput) {
+            JobLogExplorerEditorJobInput jobInput = (JobLogExplorerEditorJobInput)input;
+            if (jobInput.getName() != null) {
+                dropJobLog(jobInput.getConnectionName(), jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber(), null);
+            }
         }
 
         getSite().setSelectionProvider(tableViewerPanel);
@@ -146,6 +162,23 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
     /*
      * Drag & drop support
      */
+
+    public void dropJobLog(String connectionName, String jobName, String userName, String jobNumber, Object target) {
+
+        if (connectionName == null || jobName == null || userName == null || jobNumber == null) {
+            return;
+        }
+
+        if (!tableViewerPanel.isDisposed()) {
+            tableViewerPanel.setInputData(null);
+        }
+
+        tableViewerPanel.setEnabled(false);
+        JobLogExplorerEditor.this.showBusy(true);
+
+        LoadJobLogJob loaderJob = new LoadJobLogJob(connectionName, jobName, userName, jobNumber, tableViewerPanel, filterPanel);
+        loaderJob.schedule();
+    }
 
     public void dropJobLog(String pathName, String originalFileName, Object target) {
 
@@ -160,7 +193,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         tableViewerPanel.setEnabled(false);
         JobLogExplorerEditor.this.showBusy(true);
 
-        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(pathName, originalFileName, tableViewerPanel);
+        ParseSpooledFileJob parserJob = new ParseSpooledFileJob(pathName, originalFileName, tableViewerPanel, filterPanel);
         parserJob.schedule();
     }
 
@@ -205,12 +238,6 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         leftMainPanel.setLayout(createGridLayoutWithMargin());
         leftMainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        //        new Label(leftMainPanel, SWT.NONE).setText("Messages"); //$NON-NLS-1$
-
-        // Label separator = new Label(leftMainPanel, SWT.SEPARATOR |
-        // SWT.HORIZONTAL);
-        // separator.setLayoutData(createGridDataFillAndGrab(1));
-
         JobLogExplorerTableViewer tableViewer = new JobLogExplorerTableViewer();
         tableViewer.createViewer(leftMainPanel);
 
@@ -224,12 +251,6 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         Composite rightMainPanel = new Composite(sashForm, SWT.NONE);
         rightMainPanel.setLayout(createGridLayoutWithMargin());
         rightMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        //        new Label(rightMainPanel, SWT.NONE).setText("Message details"); //$NON-NLS-1$
-
-        // Label separator = new Label(rightMainPanel, SWT.SEPARATOR |
-        // SWT.HORIZONTAL);
-        // separator.setLayoutData(createGridDataFillAndGrab(1));
 
         Composite alignmentHelperPanel = new Composite(rightMainPanel, SWT.NONE);
         alignmentHelperPanel.setLayout(new GridLayout(1, false));
@@ -257,18 +278,80 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         return treeAreaLayout;
     }
 
+    private class LoadJobLogJob extends Job {
+
+        private String connectionName;
+        private String jobName;
+        private String userName;
+        private String jobNumber;
+        private JobLogExplorerTableViewer viewer;
+        private JobLogExplorerFilterPanel filterPanel;
+
+        public LoadJobLogJob(String connectionName, String jobName, String userName, String jobNumber, JobLogExplorerTableViewer viewer,
+            JobLogExplorerFilterPanel filterPanel) {
+            super(Messages.Job_Parsing_job_log);
+
+            this.connectionName = connectionName;
+            this.jobName = jobName;
+            this.userName = userName;
+            this.jobNumber = jobNumber;
+            this.viewer = viewer;
+            this.filterPanel = filterPanel;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor arg0) {
+
+            try {
+
+                AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+
+                JobLogReader reader = new JobLogReader();
+                final JobLog jobLog = reader.loadFromJob(as400, jobName, userName, jobNumber);
+
+                StringBuilder qualifiedJobName = new StringBuilder();
+                qualifiedJobName.append(connectionName);
+                qualifiedJobName.append(":"); //$NON-NLS-1$
+                qualifiedJobName.append(jobNumber);
+                qualifiedJobName.append("/"); //$NON-NLS-1$
+                qualifiedJobName.append(userName);
+                qualifiedJobName.append("/"); //$NON-NLS-1$
+                qualifiedJobName.append(jobName);
+
+                new SetEditorInputJob(qualifiedJobName.toString(), jobLog, viewer, filterPanel).schedule();
+
+            } catch (JobNotFoundException e) {
+                MessageDialogAsync.displayError(Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Job_C_B_A_not_found, new Object[] { jobName, userName, jobNumber }));
+            } catch (JobLogNotLoadedException e) {
+                MessageDialogAsync.displayError(
+                    Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Could_not_load_job_log_of_job_C_B_A_Reason_D,
+                        new Object[] { jobName, userName, jobNumber, ExceptionHelper.getLocalizedMessage(e) }));
+            } catch (Throwable e) {
+                ISpherePlugin.logError("*** Failed to retrieve job log ***", e); //$NON-NLS-1$
+                MessageDialogAsync.displayError(Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+
+            return Status.OK_STATUS;
+        }
+
+    }
+
     private class ParseSpooledFileJob extends Job {
 
         private String pathName;
         private String originalFileName;
         private JobLogExplorerTableViewer viewer;
+        private JobLogExplorerFilterPanel filterPanel;
 
-        public ParseSpooledFileJob(String pathName, String originalFileName, JobLogExplorerTableViewer viewer) {
+        public ParseSpooledFileJob(String pathName, String originalFileName, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
             super(Messages.Job_Parsing_job_log);
 
             this.pathName = pathName;
             this.originalFileName = originalFileName;
             this.viewer = viewer;
+            this.filterPanel = filterPanel;
         }
 
         @Override
@@ -279,45 +362,61 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
                 JobLogParser reader = new JobLogParser();
                 final JobLog jobLog = reader.loadFromStmf(pathName);
 
-                new UIJob("") { //$NON-NLS-1$
-                    @Override
-                    public IStatus runInUIThread(IProgressMonitor arg0) {
-
-                        setPartName(originalFileName);
-                        viewer.setInputData(jobLog);
-
-                        viewer.setEnabled(true);
-                        JobLogExplorerEditor.this.showBusy(false);
-
-                        if (!filterPanel.isDisposed()) {
-
-                            filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
-                            filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
-                            filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
-                                AbstractStringFilter.UI_SPCVAL_BLANK));
-
-                            filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
-                            filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));
-                            filterPanel.setFromStmtFilterItems(addSpecialTypes(jobLog.getMessageFromStatements(), FromStatementFilter.UI_SPCVAL_ALL));
-
-                            filterPanel.setToLibraryFilterItems(addSpecialTypes(jobLog.getMessageToLibraries(), TypeFilter.UI_SPCVAL_ALL));
-                            filterPanel.setToProgramFilterItems(addSpecialTypes(jobLog.getMessageToPrograms(), TypeFilter.UI_SPCVAL_ALL));
-                            filterPanel.setToStmtFilterItems(addSpecialTypes(jobLog.getMessageToStatements(), TypeFilter.UI_SPCVAL_ALL));
-
-                            filterPanel.clearFilters();
-                        }
-
-                        viewer.setSelection(0);
-                        viewer.setFocus();
-
-                        return Status.OK_STATUS;
-                    }
-
-                }.schedule();
+                new SetEditorInputJob(originalFileName, jobLog, viewer, filterPanel).schedule();
 
             } catch (InvalidJobLogFormatException e) {
                 MessageDialogAsync.displayError(getShell(), Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log);
             }
+
+            return Status.OK_STATUS;
+        }
+    }
+
+    private class SetEditorInputJob extends UIJob {
+
+        private String partName;
+        private JobLog jobLog;
+        private JobLogExplorerTableViewer viewer;
+        private JobLogExplorerFilterPanel filterPanel;
+
+        public SetEditorInputJob(String partName, JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
+            super("");
+
+            this.partName = partName;
+            this.jobLog = jobLog;
+            this.viewer = viewer;
+            this.filterPanel = filterPanel;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor arg0) {
+
+            setPartName(partName);
+            viewer.setInputData(jobLog);
+
+            viewer.setEnabled(true);
+            JobLogExplorerEditor.this.showBusy(false);
+
+            if (!filterPanel.isDisposed()) {
+
+                filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
+                filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
+                filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
+                    AbstractStringFilter.UI_SPCVAL_BLANK));
+
+                filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
+                filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));
+                filterPanel.setFromStmtFilterItems(addSpecialTypes(jobLog.getMessageFromStatements(), FromStatementFilter.UI_SPCVAL_ALL));
+
+                filterPanel.setToLibraryFilterItems(addSpecialTypes(jobLog.getMessageToLibraries(), TypeFilter.UI_SPCVAL_ALL));
+                filterPanel.setToProgramFilterItems(addSpecialTypes(jobLog.getMessageToPrograms(), TypeFilter.UI_SPCVAL_ALL));
+                filterPanel.setToStmtFilterItems(addSpecialTypes(jobLog.getMessageToStatements(), TypeFilter.UI_SPCVAL_ALL));
+
+                filterPanel.clearFilters();
+            }
+
+            viewer.setSelection(0);
+            viewer.setFocus();
 
             return Status.OK_STATUS;
         }
@@ -341,12 +440,8 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
             return items.toArray(new String[items.size()]);
         }
-    }
 
-    // private void showStatusMessage(String message) {
-    // statusLineData.setMessage(message);
-    // updateActionsStatusAndStatusLine();
-    // }
+    }
 
     public void setStatusLine(StatusLine statusLine) {
         this.statusLine = statusLine;

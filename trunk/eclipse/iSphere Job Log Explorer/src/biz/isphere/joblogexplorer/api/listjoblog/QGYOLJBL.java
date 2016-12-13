@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
@@ -20,20 +22,49 @@ import biz.isphere.core.internal.api.APIProgramCallDocument;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ProgramParameter;
 
-public class QGYGTLE extends APIProgramCallDocument {
+/**
+ * Open List of Job Log Messages (QGYOLJBL) API
+ */
+public class QGYOLJBL extends APIProgramCallDocument {
 
     private static final int BUFFER_SIZE = 128 * 1024;
 
+    private Set<Integer> keys;
     private List<JobLogListener> listeners;
+
+    private String name;
+    private String user;
+    private String number;
 
     private String requestHandle;
     private int totalNumberOfRecords;
     private boolean isPending;
 
-    public QGYGTLE(AS400 system, String requestHandle) {
-        super(system, "QGYGTLE", "QSYS");
+    public QGYOLJBL(AS400 system) {
+        super(system, "QGYOLJBL", "QSYS");
 
-        this.requestHandle = requestHandle;
+        this.keys = new HashSet<Integer>();
+
+        try {
+            setJob("*"); //$NON-NLS-1$
+        } catch (Exception e) {
+            // Ignore this error
+        }
+    }
+
+    public void setJob(String name) {
+        setJob(name, "", ""); //$NON-NLS-1$//$NON-NLS-2$
+    }
+
+    public void setJob(String name, String user, String number) {
+
+        this.name = name;
+        this.user = user;
+        this.number = number;
+    }
+
+    public void addKey(Integer key) {
+        keys.add(key);
     }
 
     public void addListener(JobLogListener listener) {
@@ -45,21 +76,28 @@ public class QGYGTLE extends APIProgramCallDocument {
         listeners.add(listener);
     }
 
-    public boolean execute(int startingRecord) {
-        return execute(startingRecord, BUFFER_SIZE);
+    public boolean execute() {
+        return execute(BUFFER_SIZE);
     }
 
-    public boolean execute(int startingRecord, int bufferSize) {
+    public boolean execute(int bufferSize) {
 
         try {
 
-            if (!execute(createParameterList(requestHandle, startingRecord, bufferSize))) {
+            MessageSelectionInformation messageSelectionInformation = new MessageSelectionInformation(getSystem());
+            messageSelectionInformation.setJob(name, user, number);
+            for (Integer key : keys) {
+                messageSelectionInformation.addField(key.intValue());
+            }
+
+            if (!execute(createParameterList(bufferSize, messageSelectionInformation))) {
                 return false;
             }
 
             OpenListInformation openListInformation = new OpenListInformation(getSystem());
-            openListInformation.setBytes(getParameterList()[3].getOutputData());
+            openListInformation.setBytes(getParameterList()[2].getOutputData());
 
+            requestHandle = openListInformation.getRequestHandle();
             totalNumberOfRecords = openListInformation.getTotalRecords();
             if (OpenListInformation.STATUS_PENDING.equals(openListInformation.getListStatusIndicator())) {
                 isPending = true;
@@ -118,15 +156,15 @@ public class QGYGTLE extends APIProgramCallDocument {
     /**
      * Produces the parameter list for calling the QUSRMBRD API.
      */
-    protected ProgramParameter[] createParameterList(String requestHandle, int startingRecord, int length) throws Exception {
+    protected ProgramParameter[] createParameterList(int length, MessageSelectionInformation messageSelectionInformation) throws Exception {
 
         ProgramParameter[] parameterList = new ProgramParameter[7];
         parameterList[0] = new ProgramParameter(length); // Receiver
         parameterList[1] = produceIntegerParameter(length); // Length
-        parameterList[2] = produceStringParameter(requestHandle, 4);
-        parameterList[3] = new ProgramParameter(80); // List information
-        parameterList[4] = produceIntegerParameter(15); // Number of records
-        parameterList[5] = produceIntegerParameter(startingRecord); // Starting
+        parameterList[2] = new ProgramParameter(80); // List information
+        parameterList[3] = produceIntegerParameter(5); // Number of records
+        parameterList[4] = produceByteParameter(messageSelectionInformation.getBytes());
+        parameterList[5] = produceIntegerParameter(messageSelectionInformation.getLength());
         parameterList[6] = produceByteParameter(new APIErrorCode().getBytes());
 
         return parameterList;
