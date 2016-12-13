@@ -289,7 +289,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
         public LoadJobLogJob(String connectionName, String jobName, String userName, String jobNumber, JobLogExplorerTableViewer viewer,
             JobLogExplorerFilterPanel filterPanel) {
-            super(Messages.Job_Parsing_job_log);
+            super(Messages.Job_Loading_job_log);
 
             this.connectionName = connectionName;
             this.jobName = jobName;
