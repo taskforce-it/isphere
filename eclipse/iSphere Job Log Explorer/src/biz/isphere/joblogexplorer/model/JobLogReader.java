@@ -11,16 +11,23 @@ package biz.isphere.joblogexplorer.model;
 import java.io.UnsupportedEncodingException;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.joblogexplorer.api.JobLogListener;
-import biz.isphere.joblogexplorer.api.MessageSelectionInformation;
-import biz.isphere.joblogexplorer.api.OLJL0100;
-import biz.isphere.joblogexplorer.api.QGYCLST;
-import biz.isphere.joblogexplorer.api.QGYGTLE;
-import biz.isphere.joblogexplorer.api.QGYOLJBL;
+import biz.isphere.joblogexplorer.api.listjoblog.JobLogListener;
+import biz.isphere.joblogexplorer.api.listjoblog.MessageSelectionInformation;
+import biz.isphere.joblogexplorer.api.listjoblog.OLJL0100;
+import biz.isphere.joblogexplorer.api.listjoblog.QGYCLST;
+import biz.isphere.joblogexplorer.api.listjoblog.QGYGTLE;
+import biz.isphere.joblogexplorer.api.listjoblog.QGYOLJBL;
+import biz.isphere.joblogexplorer.api.retrievejobinformation.JOBI0400;
+import biz.isphere.joblogexplorer.api.retrievejobinformation.QUSRJOBI;
+import biz.isphere.joblogexplorer.api.retrievenetworkattributes.QWCRNETA;
+import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
+import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
 
 import com.ibm.as400.access.AS400;
 
 public class JobLogReader implements JobLogListener {
+
+    private static final String JOB_NOT_FOUND_MSGID = "CPF3C53"; //$NON-NLS-1$
 
     private JobLog jobLog;
 
@@ -31,9 +38,12 @@ public class JobLogReader implements JobLogListener {
      * @param jobName - Job name.
      * @param jobUser - Job user name.
      * @param jobNumber - Job number.
-     * @return the job lo
+     * @return the job log
+     * @throws JobNotFoundException
+     * @throws JobLogNotLoadedException
      */
-    public JobLog loadFromJob(String connectionName, String jobName, String jobUser, String jobNumber) {
+    public JobLog loadFromJob(String connectionName, String jobName, String jobUser, String jobNumber) throws JobNotFoundException,
+        JobLogNotLoadedException {
 
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
         return loadFromJob(as400, jobName, jobUser, jobNumber);
@@ -47,14 +57,21 @@ public class JobLogReader implements JobLogListener {
      * @param jobUser - Job user name.
      * @param jobNumber - Job number.
      * @return the job log
+     * @throws JobLogNotLoadedException
      */
-    public JobLog loadFromJob(AS400 as400, String jobName, String jobUser, String jobNumber) {
+    public JobLog loadFromJob(AS400 as400, String jobName, String jobUser, String jobNumber) throws JobNotFoundException, JobLogNotLoadedException {
 
         jobLog = new JobLog();
         jobLog.setSystemName(as400.getSystemName());
         jobLog.setJobName(jobName);
         jobLog.setJobUserName(jobUser);
         jobLog.setJobNumber(jobNumber);
+
+        JOBI0400 jobi0400 = new JOBI0400(as400);
+        QUSRJOBI qusrjobi = new QUSRJOBI(as400);
+        qusrjobi.setJob(jobLog.getJobName(), jobLog.getJobUserName(), jobLog.getJobNumber());
+
+        QWCRNETA qwcrneta = new QWCRNETA(as400);
 
         QGYOLJBL qgyljbl = new QGYOLJBL(as400);
         qgyljbl.addKey(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA);
@@ -76,7 +93,38 @@ public class JobLogReader implements JobLogListener {
 
         try {
 
-            boolean rc = qgyljbl.execute(4096);
+            boolean rc;
+
+            rc = qusrjobi.execute(jobi0400);
+            if (!rc) {
+                String errorID = qusrjobi.getErrorMessageID();
+                if (JOB_NOT_FOUND_MSGID.equals(errorID)) {
+                    // Job not found
+                    throw new JobNotFoundException(qusrjobi.getErrorMessage());
+                }
+                throw new JobLogNotLoadedException(qusrjobi.getErrorMessage());
+            }
+
+            jobLog.setJobDescriptionName(jobi0400.getJobDescriptionName());
+            jobLog.setJobDescriptionLibraryName(jobi0400.getJobDescriptionLibraryName());
+
+            rc = qwcrneta.execute(QWCRNETA.Key.SYSNAME);
+            if (rc) {
+                jobLog.setSystemName(qwcrneta.getCharValue());
+            } else {
+                jobLog.setSystemName("*ERROR");//$NON-NLS-1$
+            }
+
+            rc = qgyljbl.execute(4096);
+            if (!rc) {
+                String errorID = qusrjobi.getErrorMessageID();
+                if (JOB_NOT_FOUND_MSGID.equals(errorID)) {
+                    // Job not found
+                    throw new JobNotFoundException(qgyljbl.getErrorMessage());
+                }
+                throw new JobLogNotLoadedException(qgyljbl.getErrorMessage());
+            }
+
             requestHandle = qgyljbl.getRequestHandle();
 
             boolean isPending = qgyljbl.isPending();
@@ -84,6 +132,10 @@ public class JobLogReader implements JobLogListener {
 
             QGYGTLE qgygtle = null;
             while (rc && (isPending || jobLog.getMessages().size() < totalNumberOfRecords)) {
+
+                if (jobLog.getFirstPage() == null) {
+                    jobLog.addPage();
+                }
 
                 if (qgygtle == null) {
                     qgygtle = new QGYGTLE(as400, requestHandle);
@@ -115,15 +167,26 @@ public class JobLogReader implements JobLogListener {
 
         try {
 
+            String type = oljl0100.getMessageType();
+
             JobLogMessage message = jobLog.addMessage();
 
-            message.setId(oljl0100.getMessageId());
-            message.setType(oljl0100.getMessageType());
-            message.setSeverity(oljl0100.getMessageSeverity());
+            message.setType(type);
+
+            if ("Request".equals(type)) {
+                message.setId("*NONE");
+                message.setSeverity("");
+                message.setText("-" + oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA));
+                message.setHelp("");
+            } else {
+                message.setId(oljl0100.getMessageId());
+                message.setSeverity(oljl0100.getMessageSeverity());
+                message.setText(oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA));
+                message.setHelp(oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_HELP_WITH_REPLACEMENT_DATA));
+            }
+
             message.setDate(oljl0100.getDateSent());
             message.setTime(oljl0100.getTimeSent());
-            message.setText(oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA));
-            message.setHelp(oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_HELP_WITH_REPLACEMENT_DATA));
 
             message.setToLibrary(oljl0100.getFieldData(MessageSelectionInformation.KEY_RECEIVING_PROGRAM_LIBRARY));
             message.setToProgram(oljl0100.getFieldData(MessageSelectionInformation.KEY_RECEIVING_PROGRAM_NAME));

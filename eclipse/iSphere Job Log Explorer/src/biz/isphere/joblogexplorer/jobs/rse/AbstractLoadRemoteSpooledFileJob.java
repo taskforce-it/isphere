@@ -23,7 +23,7 @@ import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorFileInput;
 
 public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
 
@@ -61,7 +61,7 @@ public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
 
                     try {
 
-                        JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(filePath, originalFileName);
+                        JobLogExplorerEditorFileInput editorInput = new JobLogExplorerEditorFileInput(filePath, originalFileName);
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
 
                     } catch (Throwable e) {
@@ -78,34 +78,6 @@ public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
         }
 
         return Status.OK_STATUS;
-    }
-
-    private class UIOpenJobLogExplorer extends UIJob {
-
-        private String filePath;
-        private String originalFileName;
-
-        public UIOpenJobLogExplorer(String uiJobName, String filePath, String originalFileName) {
-            super(uiJobName);
-
-            this.filePath = filePath;
-            this.originalFileName = originalFileName;
-        }
-
-        @Override
-        public IStatus runInUIThread(IProgressMonitor paramIProgressMonitor) {
-
-            try {
-
-                JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(filePath, originalFileName);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
-
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
-            return Status.OK_STATUS;
-        }
     }
 
     protected abstract SpooledFile getSpooledFile();

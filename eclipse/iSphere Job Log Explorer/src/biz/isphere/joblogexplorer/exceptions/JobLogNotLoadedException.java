@@ -6,10 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.exceptions;
 
-public interface JobLogListener {
+public class JobLogNotLoadedException extends Exception {
 
-    public void addNewEntry(OLJL0100 oljl0100);
+    private static final long serialVersionUID = 7185214712627033235L;
+
+    public JobLogNotLoadedException(String message) {
+        super(message);
+    }
     
 }

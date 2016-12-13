@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
@@ -38,7 +38,7 @@ public class OLJL0100 extends APIFormat {
     private SimpleDateFormat timeFormatter;
     private SimpleDateFormat dateFormatter;
 
-    public OLJL0100(AS400 system) throws CharConversionException, UnsupportedEncodingException {
+    public OLJL0100(AS400 system) {
         super(system, "OLJL0100");
 
         // this.timeFormatter = Preferences.getInstance().getTimeFormatter();

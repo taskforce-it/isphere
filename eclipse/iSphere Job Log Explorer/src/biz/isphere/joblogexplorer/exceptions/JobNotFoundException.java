@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.editor.tableviewer.filters;
+package biz.isphere.joblogexplorer.exceptions;
 
-import org.eclipse.jface.viewers.Viewer;
+public class JobNotFoundException extends Exception {
 
-import biz.isphere.joblogexplorer.model.JobLogMessage;
+    private static final long serialVersionUID = 8470572378546941786L;
 
-public interface IMessagePropertyFilter {
-
-    public boolean xselect(Viewer tableViewer, Object parentElement, JobLogMessage element);
+    public JobNotFoundException(String message) {
+        super(message);
+    }
 
 }

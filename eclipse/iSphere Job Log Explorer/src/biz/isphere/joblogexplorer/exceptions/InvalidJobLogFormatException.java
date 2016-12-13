@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer;
+package biz.isphere.joblogexplorer.exceptions;
 
 public class InvalidJobLogFormatException extends Exception {
 

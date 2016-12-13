@@ -17,7 +17,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorFileInput;
 
 public class OpenJobLogExplorerHandler extends AbstractHandler implements IHandler {
 
@@ -29,7 +29,7 @@ public class OpenJobLogExplorerHandler extends AbstractHandler implements IHandl
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
-            JobLogExplorerEditorInput editorInput = new JobLogExplorerEditorInput(null, ""); //$NON-NLS-1$
+            JobLogExplorerEditorFileInput editorInput = new JobLogExplorerEditorFileInput(null, ""); //$NON-NLS-1$
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
 
         } catch (PartInitException e) {

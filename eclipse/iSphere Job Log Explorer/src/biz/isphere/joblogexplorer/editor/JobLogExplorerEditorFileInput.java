@@ -14,14 +14,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-public class JobLogExplorerEditorInput implements IEditorInput {
+public class JobLogExplorerEditorFileInput implements IEditorInput {
 
     private String pathName;
     private String originalFileName;
 
     private File file;
 
-    public JobLogExplorerEditorInput(String pathName, String originalFileName) {
+    public JobLogExplorerEditorFileInput(String pathName, String originalFileName) {
 
         this.pathName = pathName;
         this.originalFileName = originalFileName;
@@ -96,7 +96,7 @@ public class JobLogExplorerEditorInput implements IEditorInput {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        JobLogExplorerEditorInput other = (JobLogExplorerEditorInput)obj;
+        JobLogExplorerEditorFileInput other = (JobLogExplorerEditorFileInput)obj;
 
         String thisPath = getPath();
         String otherPath = other.getPath();

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.api;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
-import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 
 import biz.isphere.core.internal.api.APIFormat;
@@ -32,8 +31,8 @@ public class OLJL0100_Field extends APIFormat {
     private static final String TYPE_MIXED = "M"; //$NON-NLS-1$
 
     private int offsetData;
-    
-    public OLJL0100_Field(AS400 system) throws CharConversionException, UnsupportedEncodingException {
+
+    public OLJL0100_Field(AS400 system) {
         super(system, "OLJL0100_Field");
 
         createStructure();

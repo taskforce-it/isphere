@@ -51,7 +51,7 @@ public class MasterFilter extends ViewerFilter {
             }
 
             for (IMessagePropertyFilter filter : filters) {
-                if (!filter.select(tableViewer, parentElement, jobLogMessage)) {
+                if (!filter.xselect(tableViewer, parentElement, jobLogMessage)) {
                     return false;
                 }
             }

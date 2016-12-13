@@ -6,14 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.joblogexplorer.editor.tableviewer.filters;
+package biz.isphere.joblogexplorer.api.listjoblog;
 
-import org.eclipse.jface.viewers.Viewer;
+public interface JobLogListener {
 
-import biz.isphere.joblogexplorer.model.JobLogMessage;
-
-public interface IMessagePropertyFilter {
-
-    public boolean xselect(Viewer tableViewer, Object parentElement, JobLogMessage element);
-
+    public void addNewEntry(OLJL0100 oljl0100);
+    
 }

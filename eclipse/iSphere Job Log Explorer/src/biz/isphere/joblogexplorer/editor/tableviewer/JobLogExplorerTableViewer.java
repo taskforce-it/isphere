@@ -618,7 +618,12 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             return;
         }
 
+        boolean isNegated = false;
         String searchArg = text.toLowerCase();
+        if (searchArg.startsWith("!")) {
+            searchArg=searchArg.substring(1);
+            isNegated=true;
+        }
 
         int currentIndex = startIndex;
         if (currentIndex == -1) {
@@ -629,7 +634,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         while (currentIndex >= minIndex) {
             JobLogMessage jobLogMessage = (JobLogMessage)table.getItem(currentIndex).getData();
-            if (jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0) {
+            if (isMatch(isNegated, searchArg, jobLogMessage)) {
                 table.setSelection(currentIndex);
                 return; // Found!
             }
@@ -654,7 +659,12 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             return;
         }
 
+        boolean isNegated = false;
         String searchArg = text.toLowerCase();
+        if (searchArg.startsWith("!")) {
+            searchArg=searchArg.substring(1);
+            isNegated=true;
+        }
 
         int currentIndex = startIndex;
         if (currentIndex == -1) {
@@ -665,7 +675,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         while (currentIndex <= maxIndex) {
             JobLogMessage jobLogMessage = (JobLogMessage)table.getItem(currentIndex).getData();
-            if (jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0) {
+            if (isMatch(isNegated, searchArg, jobLogMessage)) {
                 table.setSelection(currentIndex);
                 return; // Found!
             }
@@ -677,6 +687,16 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         if (startIndex > 0) {
             doSearchDown(text, 0, startIndex);
         }
+    }
+
+    private boolean isMatch(boolean isNegated, String searchArg, JobLogMessage jobLogMessage) {
+        
+        boolean isFound = jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0;
+        if (isNegated) {
+            isFound = !isFound;
+        }
+        
+        return isFound;
     }
 
     private boolean isFilterValue(String value) {
