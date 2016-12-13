@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2016 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class APIFormat {
      * @param name - Name of the format as it is passed to the API
      * @throws UnsupportedEncodingException
      */
-    public APIFormat(AS400 system, String name) throws UnsupportedEncodingException {
+    public APIFormat(AS400 system, String name) {
 
         this.system = system;
         this.name = name;
@@ -145,6 +145,25 @@ public class APIFormat {
 
         APIInt4FieldDescription field = getInt4FieldDescription(name);
         return getInt4Converter().toInt(bytes, getAbsoluteFieldOffset(field));
+    }
+
+    /**
+     * Returns an array of a 4-byte integer fields.
+     * 
+     * @param fieldName - field name
+     * @param size - number of array items
+     * @return array of integer values
+     */
+    protected int[] getInt4Array(String fieldName, int size) {
+
+        int[] intArray = new int[size];
+        APIInt4FieldDescription field = getInt4FieldDescription(fieldName);
+
+        for (int i = 0; i < size; i++) {
+            intArray[i] = getInt4Converter().toInt(bytes, field.getOffset() + i * 4);
+        }
+
+        return intArray;
     }
 
     /**
