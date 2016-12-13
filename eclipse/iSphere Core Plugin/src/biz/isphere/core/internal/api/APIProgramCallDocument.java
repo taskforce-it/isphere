@@ -101,22 +101,36 @@ public abstract class APIProgramCallDocument {
         return errorMessages;
     }
 
-    public String getErrorMessage() {
+    public String getErrorMessageID() {
 
-        AS400Message[] messages = getMessageList();
-        if (messages == null || messages.length == 0) {
+        AS400Message message = getErrorMessageInternal();
+        if (message == null) {
             return ""; //$NON-NLS-1$
         }
 
-        // for (AS400Message message : messages) {
-        // if (message.getType() == AS400Message.ESCAPE) {
-        //                return message.getID() + ": " +  message.getText(); //$NON-NLS-1$
-        // }
-        // }
-
-        return messages[0].getID() + ": " + messages[0].getText();
+        return message.getID();
     }
 
+    public String getErrorMessage() {
+
+        AS400Message message = getErrorMessageInternal();
+        if (message == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return message.getID() + ": " + message.getText();
+    }
+
+    private AS400Message getErrorMessageInternal() {
+        
+        AS400Message[] messages = getMessageList();
+        if (messages == null || messages.length == 0) {
+            return null;
+        }
+
+        return messages[0];
+    }
+    
     /**
      * Produces the path to an IBM i object.
      * 
@@ -172,7 +186,7 @@ public abstract class APIProgramCallDocument {
         AS400PackedDecimal packedDecimal = new AS400PackedDecimal(length, decimalPositions);
         byte[] bytes = packedDecimal.toBytes(aValue);
 
-//        byte[] bytes = new byte[packedDecimal.getByteLength()];
+        // byte[] bytes = new byte[packedDecimal.getByteLength()];
         return new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, bytes, bytes.length);
     }
 
@@ -238,22 +252,25 @@ public abstract class APIProgramCallDocument {
      * @return string array parameter
      * @throws Exception
      */
-    protected ProgramParameter produceStringArrayParameter(String[] stringArray, int maxLength) throws Exception {
+    protected ProgramParameter produceStringArrayParameter(String[] stringArray, int maxLength, boolean addLength) throws Exception {
         byte[] tBytes = new byte[(maxLength * stringArray.length) + 2];
 
-        // Number of array items
-        Arrays.fill(tBytes, 0, 2, (byte)0x00);
+        int tOffset = 0;
+
+        if (addLength) {
+            // Number of array items
+            Arrays.fill(tBytes, 0, 2, (byte)0x00);
+
+            // Set number of array entries to the first 2 bytes
+            tBytes[tOffset] = (byte)(stringArray.length >> 8);
+            tBytes[tOffset + 1] = (byte)(stringArray.length /* >> 0 */);
+            tOffset = tOffset + 2;
+        }
 
         // Array of Char(10)
-        Arrays.fill(tBytes, 2, tBytes.length - 2, (byte)0x40);
-
-        // Set number of array entries to the first 2 bytes
-        int tOffset = 0;
-        tBytes[tOffset] = (byte)(stringArray.length >> 8);
-        tBytes[tOffset + 1] = (byte)(stringArray.length /* >> 0 */);
+        Arrays.fill(tBytes, tOffset, tBytes.length - 2, (byte)0x40);
 
         // Set array items, starting after the number of array items.
-        tOffset = tOffset + 2;
         byte[] tItemBytes = new byte[maxLength];
         for (int i = 0; i < stringArray.length; i++) {
             Arrays.fill(tItemBytes, 0, tItemBytes.length, (byte)0x40);
@@ -341,6 +358,48 @@ public abstract class APIProgramCallDocument {
         tParameter.setInputData(tBytes);
 
         return tParameter;
+    }
+
+    /**
+     * Produces a parameter that contains a qualified job name.
+     * 
+     * @param name - name of the job
+     * @param user - user name
+     * @param user - job number
+     * @return qualified job name parameter
+     * @throws Exception
+     */
+    protected ProgramParameter produceQualifiedJobName(String name, String user, String number) throws Exception {
+
+        byte[] tBytes = new byte[26];
+        Arrays.fill(tBytes, 0, tBytes.length, (byte)0x40);
+
+        int tOffset = 0;
+
+        // Copy job name
+        tOffset = copyNamePortion(tBytes, 0, 10, name);
+
+        // Copy user name
+        tOffset = copyNamePortion(tBytes, tOffset, 10, user);
+
+        // Copy job number
+        tOffset = copyNamePortion(tBytes, tOffset, 6, number);
+
+        ProgramParameter tParameter = new ProgramParameter(tOffset);
+        tParameter.setParameterType(ProgramParameter.PASS_BY_REFERENCE);
+        tParameter.setInputData(tBytes);
+
+        return tParameter;
+    }
+
+    private int copyNamePortion(byte[] bytes, int offset, int length, String value) throws Exception {
+
+        byte[] tItemBytes = new byte[length];
+        Arrays.fill(tItemBytes, 0, tItemBytes.length, (byte)0x40);
+        getCharConverter().stringToByteArray(value, tItemBytes);
+        System.arraycopy(tItemBytes, 0, bytes, offset, tItemBytes.length);
+
+        return offset + tItemBytes.length;
     }
 
     /**
