@@ -25,7 +25,9 @@ import com.ibm.as400.access.ProgramParameter;
  */
 public class QGYGTLE extends APIProgramCallDocument {
 
-    private static final int BUFFER_SIZE = 128 * 1024;
+    // Roughly 1200 bytes per entry
+    private static final int BUFFER_SIZE = 256 * 1024;
+    private static final int NUMBER_OF_RECORDS = 256;
 
     private List<JobLogListener> listeners;
 
@@ -128,7 +130,7 @@ public class QGYGTLE extends APIProgramCallDocument {
         parameterList[1] = produceIntegerParameter(length); // Length
         parameterList[2] = produceStringParameter(requestHandle, 4);
         parameterList[3] = new ProgramParameter(80); // List information
-        parameterList[4] = produceIntegerParameter(15); // Number of records
+        parameterList[4] = produceIntegerParameter(NUMBER_OF_RECORDS); // Records
         parameterList[5] = produceIntegerParameter(startingRecord); // Starting
         parameterList[6] = produceByteParameter(new APIErrorCode().getBytes());
 
