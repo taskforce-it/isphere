@@ -87,6 +87,7 @@
             <td><a href="./assets/isphere_screenshot_3.png"><img class="noborder" src="./assets/isphere_screenshot_3_preview.png"></a><br>Message file editor</td>
             <td><a href="./assets/isphere_screenshot_4.png"><img class="noborder" src="./assets/isphere_screenshot_4_preview.png"></a><br>Message file compare</td>
             <td><a href="./assets/isphere_screenshot_5.png"><img class="noborder" src="./assets/isphere_screenshot_5_preview.png"></a><br>Data area editor/monitor</td>
+            <td><a href="./assets/isphere_screenshot_6.png"><img class="noborder" src="./assets/isphere_screenshot_6_preview.png"></a><br>Job log explorer</td>
         </tr>
         </table>
         <ul>
