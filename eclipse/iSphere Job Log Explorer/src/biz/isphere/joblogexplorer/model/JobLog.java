@@ -75,7 +75,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setSystemName(String systemName) {
-        this.systemName = systemName;
+        this.systemName = trim(systemName);
     }
 
     public String getJobName() {
@@ -83,7 +83,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setJobName(String jobName) {
-        this.jobName = jobName;
+        this.jobName = trim(jobName);
         validateJobLogHeader();
     }
 
@@ -92,7 +92,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setJobUserName(String userName) {
-        this.userName = userName;
+        this.userName = trim(userName);
         validateJobLogHeader();
     }
 
@@ -101,7 +101,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setJobNumber(String jobNumber) {
-        this.jobNumber = jobNumber;
+        this.jobNumber = trim(jobNumber);
         validateJobLogHeader();
     }
 
@@ -110,7 +110,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setJobDescriptionName(String jobDescriptionName) {
-        this.jobDescriptionName = jobDescriptionName;
+        this.jobDescriptionName = trim(jobDescriptionName);
         validateJobLogHeader();
     }
 
@@ -119,7 +119,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
     }
 
     public void setJobDescriptionLibraryName(String jobDescriptionLibraryName) {
-        this.jobDescriptionLibraryName = jobDescriptionLibraryName;
+        this.jobDescriptionLibraryName = trim(jobDescriptionLibraryName);
         validateJobLogHeader();
     }
 
@@ -276,7 +276,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
             printMessageAttribute("         : ", message.getFromProcedure()); //$NON-NLS-1$
             printMessageAttribute("         : ", message.getFromStatement()); //$NON-NLS-1$
         }
-        
+
         System.out.println("Number of messages: " + jobLogMessages.size()); //$NON-NLS-1$
     }
 
@@ -360,6 +360,15 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
     }
 
+    private String trim(String value) {
+
+        if (value == null) {
+            return null;
+        }
+
+        return value.trim();
+    }
+
     public Object getAdapter(Class adapter) {
         if (adapter == IPropertySource.class) {
             if (propertySource == null) {
@@ -376,7 +385,8 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         private static final String PROPERTY_SYSTEM_NAME = "biz.isphere.joblogexplorer.model.JobLog.systemName";//$NON-NLS-1$
         private static final String PROPERTY_JOB_NAME = "biz.isphere.joblogexplorer.model.JobLog.jobName";//$NON-NLS-1$
         private static final String PROPERTY_JOB_USER = "biz.isphere.joblogexplorer.model.JobLog.jobUser";//$NON-NLS-1$
-        private static final String PROPERTY_JOB_NUMBER = "biz.isphere.joblogexplorer.model.JobLog.jobNUmber";//$NON-NLS-1$
+        private static final String PROPERTY_JOB_NUMBER = "biz.isphere.joblogexplorer.model.JobLog.jobNumber";//$NON-NLS-1$
+        private static final String PROPERTY_JOB_DESCRIPTION = "biz.isphere.joblogexplorer.model.JobLog.jobDescription";//$NON-NLS-1$
         private static final String PROPERTY_PAGES = "biz.isphere.joblogexplorer.model.JobLog.numPages";//$NON-NLS-1$
         private static final String PROPERTY_START_DATE = "biz.isphere.joblogexplorer.model.JobLog.startDate";//$NON-NLS-1$
         private static final String PROPERTY_END_DATE = "biz.isphere.joblogexplorer.model.JobLog.endDate";//$NON-NLS-1$
@@ -411,6 +421,9 @@ public class JobLog implements MessageModifyListener, IAdaptable {
                 PropertyDescriptor jobNumberDescriptor = createPropertyDescriptor(PROPERTY_JOB_NUMBER, Messages.Property_job_number,
                     Messages.Property_Category_job);
 
+                PropertyDescriptor jobDescriptionDescriptor = createPropertyDescriptor(PROPERTY_JOB_DESCRIPTION, Messages.Property_job_description,
+                    Messages.Property_Category_job);
+
                 // "Statistics" descriptors
                 PropertyDescriptor pagesDescriptor = createPropertyDescriptor(PROPERTY_PAGES, Messages.Property_pages,
                     Messages.Property_Category_statistics);
@@ -426,7 +439,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
 
                 // Read-only (instance of PropertyDescriptor)
                 propertyDescriptors = new IPropertyDescriptor[] { systemName, jobNameDescriptor, jobUserDescriptor, jobNumberDescriptor,
-                    pagesDescriptor, startDateDescriptor, endDateDescriptor, numberOfMessagesDescriptor };
+                    jobDescriptionDescriptor, pagesDescriptor, startDateDescriptor, endDateDescriptor, numberOfMessagesDescriptor };
             }
 
             return propertyDescriptors;
@@ -449,6 +462,8 @@ public class JobLog implements MessageModifyListener, IAdaptable {
                 return getJobUserName();
             } else if (name.equals(PROPERTY_JOB_NUMBER)) {
                 return getJobNumber();
+            } else if (name.equals(PROPERTY_JOB_DESCRIPTION)) {
+                return getJobDescriptionLibraryName() + "/" + getJobDescriptionName(); //$NON-NLS-1$
             } else if (name.equals(PROPERTY_PAGES)) {
                 return getPages().length;
             } else if (name.equals(PROPERTY_START_DATE)) {
