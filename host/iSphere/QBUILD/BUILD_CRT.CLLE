@@ -104,7 +104,12 @@
              CHKOBJ     OBJ(&PRDLIB) OBJTYPE(*LIB)
              MONMSG     MSGID(CPF9801) EXEC(DO)
 
-                CRTLIB     LIB(&PRDLIB)
+
+                /* CRTLIB     LIB(&PRDLIB) */
+                CHGVAR     VAR(&CMD) +
+                           VALUE('CRTLIB LIB(' *CAT &PRDLIB *TCAT ')' *BCAT +
+                                   'TYPE(*PROD)')
+                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
 
                 IF         COND(&OWNER *NE '*SAME') THEN(DO)
                    CHGOBJOWN  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) NEWOWN(&OWNER) +
