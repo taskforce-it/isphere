@@ -88,6 +88,7 @@ public class Messages extends NLS {
     public static String Property_job_name;
     public static String Property_job_user;
     public static String Property_job_number;
+    public static String Property_job_description;
     public static String Property_start_date;
     public static String Property_last_date;
     public static String Property_pages;
