@@ -15,6 +15,7 @@ import java.util.Date;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.joblogexplorer.Messages;
 
 import com.ibm.as400.access.AS400;
@@ -59,12 +60,12 @@ public class OLJL0100 extends APIFormat {
     public OLJL0100(AS400 system) {
         super(system, "OLJL0100");
 
-        // this.timeFormatter = Preferences.getInstance().getTimeFormatter();
-        // this.dateFormatter = Preferences.getInstance().getDateFormatter();
+        // this.timeFormatter = new SimpleDateFormat("HH:mm:ss");
+        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
-        this.timeFormatter = new SimpleDateFormat("HH:mm:ss");
-        this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
+        this.timeFormatter = Preferences.getInstance().getTimeFormatter();
+        this.dateFormatter = Preferences.getInstance().getDateFormatter();
+        
         createStructure();
     }
 
