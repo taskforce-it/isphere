@@ -84,10 +84,10 @@ public class MessageSelectionInformation extends APIFormat {
         createStructure();
 
         setCharValue(LIST_DIRECTION, LIST_DIRECTION_NEXT);
-        setCharValue(JOB_NAME, "*");
-        setCharValue(JOB_USER, "");
-        setCharValue(JOB_NUMBER, "");
-        setCharValue(INTERNAL_JOB_IDENTIFIER, "");
+        setCharValue(JOB_NAME, "*"); //$NON-NLS-1$
+        setCharValue(JOB_USER, ""); //$NON-NLS-1$
+        setCharValue(JOB_NUMBER, ""); //$NON-NLS-1$
+        setCharValue(INTERNAL_JOB_IDENTIFIER, ""); //$NON-NLS-1$
         setCharValue(STARTING_MESSAGE_KEY, MESSAGE_KEY_OLDEST);
         setInt4Value(MAXIMUM_MESSAGE_LENGTH, 200);
         setInt4Value(MAXIMUM_MESSAGE_HELP_LENGTH, 500);
@@ -95,7 +95,7 @@ public class MessageSelectionInformation extends APIFormat {
         setInt4Value(NUMBER_OF_FIELDS_TO_RETURN, 0);
         setInt4Value(OFFSET_TO_CALL_MESSAGE_QUEUE_NAME, offsetCallMessageQueueName);
         setInt4Value(SIZE_OF_CALL_MESSAGE_QUEUE_NAME, 1);
-        setCharValue(CALL_MESSAGE_QUEUE_NAME, "*");
+        setCharValue(CALL_MESSAGE_QUEUE_NAME, "*"); //$NON-NLS-1$
     }
 
     public void setJob(String name, String user, String number) throws CharConversionException, UnsupportedEncodingException {
