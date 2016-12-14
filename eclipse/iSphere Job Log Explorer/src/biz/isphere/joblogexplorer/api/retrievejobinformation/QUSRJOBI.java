@@ -28,7 +28,7 @@ public class QUSRJOBI extends APIProgramCallDocument {
     private String number;
 
     public QUSRJOBI(AS400 system) {
-        super(system, "QUSRJOBI", "QSYS");
+        super(system, "QUSRJOBI", "QSYS"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void setJob(String name) {
@@ -69,9 +69,9 @@ public class QUSRJOBI extends APIProgramCallDocument {
         ProgramParameter[] parameterList = new ProgramParameter[6];
         parameterList[0] = new ProgramParameter(jobi0400.getLength()); // Receiver
         parameterList[1] = produceIntegerParameter(jobi0400.getLength()); // Length
-        parameterList[2] = produceStringParameter("JOBI0400", 8); // Format name
+        parameterList[2] = produceStringParameter("JOBI0400", 8); // Format name //$NON-NLS-1$
         parameterList[3] = produceQualifiedJobName(name, user, number); // qJob
-        parameterList[4] = produceStringParameter("", 16); // Int. job ID
+        parameterList[4] = produceStringParameter("", 16); // Int. job ID //$NON-NLS-1$
         parameterList[5] = produceByteParameter(new APIErrorCode().getBytes());
 
         return parameterList;
@@ -86,19 +86,19 @@ public class QUSRJOBI extends APIProgramCallDocument {
      */
     public static void main(String[] args) throws Exception {
 
-        String hostname = System.getProperty("isphere.junit.as400");
-        String user = System.getProperty("isphere.junit.username");
-        String password = System.getProperty("isphere.junit.password");
+        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
+        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
+        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
 
         AS400 as400 = new AS400(hostname, user, password);
 
         JOBI0400 jobi0400 = new JOBI0400(as400);
         QUSRJOBI main = new QUSRJOBI(as400);
-        main.setJob("*");
+        main.setJob("*"); //$NON-NLS-1$
         main.execute(jobi0400);
 
-        System.out.println("Job description: " + jobi0400.getJobDescriptionName());
-        System.out.println("  Library      : " + jobi0400.getJobDescriptionLibraryName());
+        System.out.println("Job description: " + jobi0400.getJobDescriptionName()); //$NON-NLS-1$
+        System.out.println("  Library      : " + jobi0400.getJobDescriptionLibraryName()); //$NON-NLS-1$
     }
 
 }

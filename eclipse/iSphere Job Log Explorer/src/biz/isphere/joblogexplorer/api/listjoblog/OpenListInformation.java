@@ -41,7 +41,7 @@ public class OpenListInformation extends APIFormat {
     private static final String RESERVED_2 = "reserved_2"; //$NON-NLS-1$
 
     public OpenListInformation(AS400 system) throws CharConversionException, UnsupportedEncodingException {
-        super(system, "OpenListInformation");
+        super(system, "OpenListInformation"); //$NON-NLS-1$
 
         createStructure();
     }

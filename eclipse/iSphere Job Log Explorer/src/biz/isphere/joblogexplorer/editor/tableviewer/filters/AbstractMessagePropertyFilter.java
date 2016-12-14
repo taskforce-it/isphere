@@ -17,7 +17,7 @@ public abstract class AbstractMessagePropertyFilter implements IMessagePropertyF
     public static final String UI_SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
     public static final String UI_SPCVAL_BLANK = "*BLANK"; //$NON-NLS-1$
     
-    private static final String NEGATED_MARKER = "!"; //$NON-NLS-1$
+    public static final String NEGATED_MARKER = "!"; //$NON-NLS-1$
 
     protected String value;
     protected boolean negated;

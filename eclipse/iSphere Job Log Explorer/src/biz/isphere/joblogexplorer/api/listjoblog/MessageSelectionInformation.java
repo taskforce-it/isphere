@@ -79,7 +79,7 @@ public class MessageSelectionInformation extends APIFormat {
     private int numKeys;
 
     public MessageSelectionInformation(AS400 system) throws CharConversionException, UnsupportedEncodingException {
-        super(system, "MessageSelectionInformation");
+        super(system, "MessageSelectionInformation"); //$NON-NLS-1$
 
         createStructure();
 

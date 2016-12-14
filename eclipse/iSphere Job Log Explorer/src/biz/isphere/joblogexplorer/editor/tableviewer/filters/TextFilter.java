@@ -14,7 +14,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class TextFilter implements IMessagePropertyFilter {
 
-    private static final String NEGATED_MARKER = "!"; //$NON-NLS-1$
+    private static final String NEGATED_MARKER = AbstractMessagePropertyFilter.NEGATED_MARKER;
 
     private String text;
     protected boolean negated;

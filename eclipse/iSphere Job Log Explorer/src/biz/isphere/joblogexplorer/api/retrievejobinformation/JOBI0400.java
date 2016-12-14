@@ -87,7 +87,7 @@ public class JOBI0400 extends APIFormat {
     private String jobDescriptionLibraryName;
 
     public JOBI0400(AS400 system) {
-        super(system, "JOBI0400");
+        super(system, "JOBI0400"); //$NON-NLS-1$
 
         createStructure();
     }

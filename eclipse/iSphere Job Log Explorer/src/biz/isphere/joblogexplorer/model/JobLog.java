@@ -277,7 +277,7 @@ public class JobLog implements MessageModifyListener, IAdaptable {
             printMessageAttribute("         : ", message.getFromStatement()); //$NON-NLS-1$
         }
         
-        System.out.println("Number of messages: " + jobLogMessages.size());
+        System.out.println("Number of messages: " + jobLogMessages.size()); //$NON-NLS-1$
     }
 
     private void printMessageAttribute(String label, String value) {

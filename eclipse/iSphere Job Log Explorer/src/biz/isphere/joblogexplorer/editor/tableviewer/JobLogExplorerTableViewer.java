@@ -53,6 +53,8 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener, ISelectionProvider {
 
+    private static final String NEGATED_MARKER = AbstractMessagePropertyFilter.NEGATED_MARKER;
+
     public enum Columns {
         SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
         DATE ("date", COLUMN_DATE), //$NON-NLS-1$
@@ -620,7 +622,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
-        if (searchArg.startsWith("!")) {
+        if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
             searchArg=searchArg.substring(1);
             isNegated=true;
         }
@@ -661,7 +663,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
-        if (searchArg.startsWith("!")) {
+        if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
             searchArg=searchArg.substring(1);
             isNegated=true;
         }

@@ -24,7 +24,7 @@ public class QWCRNETA_Result extends APIFormat {
     private Set<String> keys;
 
     public QWCRNETA_Result(AS400 system) {
-        super(system, "QWCRNETA_Result");
+        super(system, "QWCRNETA_Result"); //$NON-NLS-1$
 
         keys = new HashSet<String>();
 

@@ -173,11 +173,11 @@ public class JobLogReader implements JobLogListener {
 
             message.setType(type);
 
-            if ("Request".equals(type)) {
-                message.setId("*NONE");
-                message.setSeverity("");
-                message.setText("-" + oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA));
-                message.setHelp("");
+            if ("Request".equals(type)) { //$NON-NLS-1$
+                message.setId("*NONE"); //$NON-NLS-1$
+                message.setSeverity(""); //$NON-NLS-1$
+                message.setText("-" + oljl0100.getFieldData(MessageSelectionInformation.KEY_MESSAGE_WITH_REPLACEMENT_DATA)); //$NON-NLS-1$
+                message.setHelp(""); //$NON-NLS-1$
             } else {
                 message.setId(oljl0100.getMessageId());
                 message.setSeverity(oljl0100.getMessageSeverity());
@@ -215,14 +215,14 @@ public class JobLogReader implements JobLogListener {
      */
     public static void main(String[] args) throws Exception {
 
-        String hostname = System.getProperty("isphere.junit.as400");
-        String user = System.getProperty("isphere.junit.username");
-        String password = System.getProperty("isphere.junit.password");
+        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
+        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
+        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
 
         AS400 as400 = new AS400(hostname, user, password);
 
         JobLogReader main = new JobLogReader();
-        JobLog jobLog = main.loadFromJob(as400, "TRADDATZA1", "RADDATZ", "791807");
+        JobLog jobLog = main.loadFromJob(as400, "TRADDATZA1", "RADDATZ", "791807"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         jobLog.dump();
 
