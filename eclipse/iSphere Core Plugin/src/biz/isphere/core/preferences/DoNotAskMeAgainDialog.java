@@ -60,6 +60,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         preferences.setShowWarningMessage(CONFIRM_REMOVE_STRPREPRC_HEADER, true);
         preferences.setShowWarningMessage(TOO_MANY_SPOOLED_FILES_WARNING, true);
         preferences.setShowWarningMessage(TN5250_SESSION_GROUPING_CHANGED, true);
+        preferences.setShowWarningMessage(INFORMATION_USAGE_JOB_LOG_EXPLORER, true);
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
