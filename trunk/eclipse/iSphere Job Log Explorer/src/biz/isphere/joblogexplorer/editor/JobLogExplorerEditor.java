@@ -380,7 +380,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         private JobLogExplorerFilterPanel filterPanel;
 
         public SetEditorInputJob(String partName, JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
-            super("");
+            super(""); //$NON-NLS-1$
 
             this.partName = partName;
             this.jobLog = jobLog;

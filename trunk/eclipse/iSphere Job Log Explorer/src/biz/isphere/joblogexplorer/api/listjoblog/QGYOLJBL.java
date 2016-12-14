@@ -43,7 +43,7 @@ public class QGYOLJBL extends APIProgramCallDocument {
     private boolean isPending;
 
     public QGYOLJBL(AS400 system) {
-        super(system, "QGYOLJBL", "QSYS");
+        super(system, "QGYOLJBL", "QSYS"); //$NON-NLS-1$ //$NON-NLS-2$
 
         this.keys = new HashSet<Integer>();
 

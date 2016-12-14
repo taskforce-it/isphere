@@ -33,7 +33,7 @@ public class OLJL0100_Field extends APIFormat {
     private int offsetData;
 
     public OLJL0100_Field(AS400 system) {
-        super(system, "OLJL0100_Field");
+        super(system, "OLJL0100_Field"); //$NON-NLS-1$
 
         createStructure();
     }
@@ -77,7 +77,7 @@ public class OLJL0100_Field extends APIFormat {
             }
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**

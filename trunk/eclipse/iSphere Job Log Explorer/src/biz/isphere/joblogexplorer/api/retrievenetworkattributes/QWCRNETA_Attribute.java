@@ -27,7 +27,7 @@ public class QWCRNETA_Attribute extends APIFormat {
     private int offsetData;
 
     public QWCRNETA_Attribute(AS400 system) {
-        super(system, "QWCRNETA_Attribute");
+        super(system, "QWCRNETA_Attribute"); //$NON-NLS-1$
 
         createStructure();
     }
@@ -39,7 +39,7 @@ public class QWCRNETA_Attribute extends APIFormat {
             return convertToText(getBytesAt(offsetData, getLengthOfData())).trim();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public String getKey() throws UnsupportedEncodingException {

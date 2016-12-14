@@ -30,11 +30,11 @@ public class QWCRNETA extends APIProgramCallDocument {
     private QWCRNETA_Result result;
 
     public enum Key {
-        JOBACN ("JOBACN", 10),
-        LCLLOCNAME ("LCLLOCNAME", 8),
-        MSGQ ("MSGQ", 20),
-        OUTQ ("OUTQ", 20),
-        SYSNAME ("SYSNAME", 8);
+        JOBACN ("JOBACN", 10), //$NON-NLS-1$
+        LCLLOCNAME ("LCLLOCNAME", 8), //$NON-NLS-1$
+        MSGQ ("MSGQ", 20), //$NON-NLS-1$
+        OUTQ ("OUTQ", 20), //$NON-NLS-1$
+        SYSNAME ("SYSNAME", 8); //$NON-NLS-1$
 
         private String key;
         private int length;
@@ -54,7 +54,7 @@ public class QWCRNETA extends APIProgramCallDocument {
     }
 
     public QWCRNETA(AS400 system) {
-        super(system, "QWCRNETA", "QSYS");
+        super(system, "QWCRNETA", "QSYS"); //$NON-NLS-1$ //$NON-NLS-2$
 
         keys = new HashSet<Key>();
     }

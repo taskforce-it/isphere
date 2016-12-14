@@ -23,7 +23,7 @@ public class QGYCLST extends APIProgramCallDocument {
     private String requestHandle;
 
     public QGYCLST(AS400 system, String requestHandle) {
-        super(system, "QGYCLST", "QSYS");
+        super(system, "QGYCLST", "QSYS"); //$NON-NLS-1$ //$NON-NLS-2$
 
         this.requestHandle = requestHandle;
     }

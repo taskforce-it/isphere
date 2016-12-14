@@ -58,7 +58,7 @@ public class OLJL0100 extends APIFormat {
     private SimpleDateFormat dateFormatter;
 
     public OLJL0100(AS400 system) {
-        super(system, "OLJL0100");
+        super(system, "OLJL0100"); //$NON-NLS-1$
 
         // this.timeFormatter = new SimpleDateFormat("HH:mm:ss");
         // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy");

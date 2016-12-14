@@ -36,7 +36,7 @@ public class QGYGTLE extends APIProgramCallDocument {
     private boolean isPending;
 
     public QGYGTLE(AS400 system, String requestHandle) {
-        super(system, "QGYGTLE", "QSYS");
+        super(system, "QGYGTLE", "QSYS"); //$NON-NLS-1$ //$NON-NLS-2$
 
         this.requestHandle = requestHandle;
     }
