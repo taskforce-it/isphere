@@ -8,7 +8,6 @@
 
 package biz.isphere.joblogexplorer.api.listjoblog;
 
-import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +15,7 @@ import java.util.Date;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.joblogexplorer.Messages;
 
 import com.ibm.as400.access.AS400;
 
@@ -34,6 +34,24 @@ public class OLJL0100 extends APIFormat {
     private static final String TIME_SENT = "timeSent"; //$NON-NLS-1$
     private static final String MICROSECONDS = "microSeconds"; //$NON-NLS-1$
     private static final String THREAD_ID = "threadId"; //$NON-NLS-1$
+
+    private static final String MsgType_Completion = "01"; //$NON-NLS-1$
+    private static final String MsgType_Diagnostic = "02"; //$NON-NLS-1$
+    private static final String MsgType_Informational = "04"; //$NON-NLS-1$
+    private static final String MsgType_Inquiry = "05"; //$NON-NLS-1$
+    private static final String MsgType_SendersCopy = "06"; //$NON-NLS-1$
+    private static final String MsgType_Request = "08"; //$NON-NLS-1$
+    private static final String MsgType_RequestWithPrompting = "10"; //$NON-NLS-1$
+    private static final String MsgType_Notify_ExceptionAlreadyHandled = "14"; //$NON-NLS-1$
+    private static final String MsgType_Escape_ExceptionAlreadyHandled = "15"; //$NON-NLS-1$
+    private static final String MsgType_Notify_ExceptionNotHandled = "16"; //$NON-NLS-1$
+    private static final String MsgType_Escape_ExceptionNotYetHandled = "17"; //$NON-NLS-1$
+    private static final String MsgType_Reply_ValidityNotChecked = "21"; //$NON-NLS-1$
+    private static final String MsgType_Reply_ValidityChecked = "22"; //$NON-NLS-1$
+    private static final String MsgType_Reply_MessageDefault = "23"; //$NON-NLS-1$
+    private static final String MsgType_Reply_SystemDefault = "24"; //$NON-NLS-1$
+    private static final String MsgType_Reply_SystemReplyList = "25"; //$NON-NLS-1$
+    private static final String MsgType_Reply_ExitProgram = "26"; //$NON-NLS-1$
 
     private SimpleDateFormat timeFormatter;
     private SimpleDateFormat dateFormatter;
@@ -110,42 +128,42 @@ public class OLJL0100 extends APIFormat {
 
         String type = getCharValue(MESSAGE_TYPE);
 
-        if ("01".equals(type)) {
-            return "Completion";
-        } else if ("02".equals(type)) {
-            return "Diagnostic";
-        } else if ("04".equals(type)) {
-            return "Informational";
-        } else if ("05".equals(type)) {
-            return "Inquery";
-        } else if ("06".equals(type)) {
-            return "Copy";
-        } else if ("08".equals(type)) {
-            return "Request";
-        } else if ("10".equals(type)) {
-            return "Request";
-        } else if ("14".equals(type)) {
-            return "Notify";
-        } else if ("15".equals(type)) {
-            return "Escape";
-        } else if ("16".equals(type)) {
-            return "Notify";
-        } else if ("17".equals(type)) {
-            return "Escape";
-        } else if ("21".equals(type)) {
-            return "Reply";
-        } else if ("22".equals(type)) {
-            return "Reply";
-        } else if ("23".equals(type)) {
-            return "Reply";
-        } else if ("24".equals(type)) {
-            return "Reply";
-        } else if ("25".equals(type)) {
-            return "Reply";
-        } else if ("26".equals(type)) {
-            return "Reply";
+        if (MsgType_Completion.equals(type)) {
+            return Messages.MsgType_Completion;
+        } else if (MsgType_Diagnostic.equals(type)) {
+            return Messages.MsgType_Diagnostic;
+        } else if (MsgType_Informational.equals(type)) {
+            return Messages.MsgType_Informational;
+        } else if (MsgType_Inquiry.equals(type)) {
+            return Messages.MsgType_Inquery;
+        } else if (MsgType_SendersCopy.equals(type)) {
+            return Messages.MsgType_Copy;
+        } else if (MsgType_Request.equals(type)) {
+            return Messages.MsgType_Request;
+        } else if (MsgType_RequestWithPrompting.equals(type)) {
+            return Messages.MsgType_Request;
+        } else if (MsgType_Notify_ExceptionAlreadyHandled.equals(type)) {
+            return Messages.MsgType_Notify;
+        } else if (MsgType_Escape_ExceptionAlreadyHandled.equals(type)) {
+            return Messages.MsgType_Escape;
+        } else if (MsgType_Notify_ExceptionNotHandled.equals(type)) {
+            return Messages.MsgType_Notify;
+        } else if (MsgType_Escape_ExceptionNotYetHandled.equals(type)) {
+            return Messages.MsgType_Escape;
+        } else if (MsgType_Reply_ValidityNotChecked.equals(type)) {
+            return Messages.MsgType_Reply;
+        } else if (MsgType_Reply_ValidityChecked.equals(type)) {
+            return Messages.MsgType_Reply;
+        } else if (MsgType_Reply_MessageDefault.equals(type)) {
+            return Messages.MsgType_Reply;
+        } else if (MsgType_Reply_SystemDefault.equals(type)) {
+            return Messages.MsgType_Reply;
+        } else if (MsgType_Reply_SystemReplyList.equals(type)) {
+            return Messages.MsgType_Reply;
+        } else if (MsgType_Reply_ExitProgram.equals(type)) {
+            return Messages.MsgType_Reply;
         } else {
-            return "*Unknown";
+            return "*Unknown"; //$NON-NLS-1$
         }
     }
 

@@ -97,6 +97,16 @@ public class Messages extends NLS {
     public static String Job_C_B_A_not_found;
     public static String Could_not_load_job_log_of_job_C_B_A_Reason_D;
 
+    public static String MsgType_Completion;
+    public static String MsgType_Diagnostic;
+    public static String MsgType_Informational;
+    public static String MsgType_Inquery;
+    public static String MsgType_Copy;
+    public static String MsgType_Request;
+    public static String MsgType_Notify;
+    public static String MsgType_Escape;
+    public static String MsgType_Reply;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
