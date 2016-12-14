@@ -76,6 +76,7 @@ public class General extends PreferencePage implements IWorkbenchPreferencePage 
         createFeatureLabel(container, "Host Object Decorator"); //$NON-NLS-1$
         createFeatureLabel(container, "RSE Filter Manager"); //$NON-NLS-1$
         createFeatureLabel(container, "Messages Subsystem"); //$NON-NLS-1$
+        createFeatureLabel(container, "Job Log Explorer"); //$NON-NLS-1$
 
         // Compute size
         Point point = container.computeSize(SWT.DEFAULT, SWT.DEFAULT);
