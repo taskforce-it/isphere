@@ -17,7 +17,7 @@
             typecategoryfilter="*"
             typefilter="*"
             namefilter="*"
-            id="biz.isphere.rse.spooledfiles.actions">
+            id="biz.isphere.joblogexplorer.menu.spooledfileresource">
             
          <visibility>
             <objectState name="biz.isphere.rse.spooledfiles.SpooledFileResource.file" value="QPJOBLOG" />
@@ -44,7 +44,7 @@
    
    <extension point="com.ibm.etools.systems.core.popupMenus">
       <objectContribution 
-            id="biz.isphere.joblogexplorer.menu.iremotefile"
+            id="biz.isphere.joblogexplorer.menu.iremotejob"
             typecategoryfilter="jobs"
             typefilter="job"
             namefilter="*"

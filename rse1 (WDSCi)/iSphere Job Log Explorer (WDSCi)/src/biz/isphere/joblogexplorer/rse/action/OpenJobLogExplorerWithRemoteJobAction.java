@@ -15,7 +15,9 @@ import biz.isphere.joblogexplorer.rse.jobs.LoadRemoteJobLogJob;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.core.api.ISeriesJob;
+import com.ibm.etools.iseries.core.api.ISeriesObject;
 import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
+import com.ibm.etools.systems.dstore.core.model.DataElement;
 
 public class OpenJobLogExplorerWithRemoteJobAction extends ISeriesAbstractQSYSPopupMenuExtensionAction {
 
@@ -23,9 +25,10 @@ public class OpenJobLogExplorerWithRemoteJobAction extends ISeriesAbstractQSYSPo
 
     protected void execute(Object object) {
 
-        if (object instanceof ISeriesJob) {
-            ISeriesJob remoteJob = (ISeriesJob)object;
-            String connectionName = remoteJob.getISeriesConnection().getSystemConnection().getHostName();
+        if (object instanceof DataElement) { 
+            DataElement dataElement = (DataElement)object;
+            ISeriesJob remoteJob = new ISeriesJob( dataElement);
+            String connectionName = remoteJob.getCommandSubSystem().getSystemConnectionName();
             ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
             LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, jobName);
             job.run();
