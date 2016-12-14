@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.0.0.b002
+-----------------------------
+ • Added new feature "iSphere Job Log Explorer".
+
 Changelog: iSphere 3.0.0.b001
 -----------------------------
  • Added option "Match message ID" to the iSphere Message File Search.
@@ -16,7 +20,6 @@ Changelog: iSphere 2.9.4.b002
  • Added special search mode "Search for specific message IDs" to the 
    iSphere Message File Search. Please refer to the iSphere help for 
    details. (Requires updating the library.)
-
 
 Changelog: iSphere 2.9.3.b002
 -----------------------------
