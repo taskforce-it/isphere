@@ -107,6 +107,8 @@ public class Messages extends NLS {
     public static String MsgType_Notify;
     public static String MsgType_Escape;
     public static String MsgType_Reply;
+
+    public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
     
     static {
         // initialize resource bundle

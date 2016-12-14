@@ -29,6 +29,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -42,6 +43,8 @@ import biz.isphere.base.jface.dialogs.XEditorPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
@@ -117,6 +120,8 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
         JobLogExplorerFilterPanel filterPanel = createTopPanel(mainArea);
 
+        // createUsagePanel(mainArea);
+
         SashForm sashForm = new SashForm(mainArea, SWT.NONE);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
         sashForm.setLayoutData(sashFormLayoutData);
@@ -153,6 +158,18 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         }
 
         getSite().setSelectionProvider(tableViewerPanel);
+
+        new UIJob("") { //$NON-NLS-1$
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+
+                DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
+                    Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
+
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     @Override
@@ -230,6 +247,17 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         filterPanel.createViewer(parent);
 
         return filterPanel;
+    }
+
+    private void createUsagePanel(Composite parent) {
+
+        Composite usageArea = new Composite(parent, SWT.NONE);
+        usageArea.setLayout(createGridLayoutWithMargin());
+        usageArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label labelUsage = new Label(usageArea, SWT.NONE);
+        labelUsage.setText(Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
+        labelUsage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private JobLogExplorerTableViewer createLeftPanel(SashForm sashForm) {
