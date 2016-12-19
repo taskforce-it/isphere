@@ -16,6 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -31,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -47,6 +51,7 @@ import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.action.rse.ExportToExcelAction;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanel;
 import biz.isphere.joblogexplorer.editor.tableviewer.JobLogExplorerTableViewer;
@@ -62,6 +67,7 @@ import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
 import biz.isphere.joblogexplorer.jobs.IDropFileListener;
 import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogMessage;
 import biz.isphere.joblogexplorer.model.JobLogParser;
 import biz.isphere.joblogexplorer.model.JobLogReader;
 
@@ -482,6 +488,16 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
     public void updateActionsStatusAndStatusLine() {
 
         statusLine.setData(statusLineData);
+
+        updateActionStatus();
+    }
+
+    public JobLogMessage[] getItems() {
+        return tableViewerPanel.getItems();
+    }
+
+    public int getItemCount() {
+        return tableViewerPanel.getItemCount();
     }
 
     public void statusChanged(StatusLineData status) {
@@ -491,8 +507,25 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         if (statusLine != null) {
             statusLine.setData(statusLineData);
         }
+        
+        updateActionStatus();
     }
 
+    private void updateActionStatus() {
+        
+        IActionBars actionBars = getEditorSite().getActionBars();
+        IContributionItem item = actionBars.getToolBarManager().find(ExportToExcelAction.ID);
+        if (item instanceof ActionContributionItem) {
+            ActionContributionItem actionItem = (ActionContributionItem)item;
+            IAction action = actionItem.getAction();
+            if (tableViewerPanel.getItemCount() > 0) {
+                action.setEnabled(true);
+            } else {
+                action.setEnabled(false);
+            }
+        }
+    }
+    
     private int[] loadWeights() {
 
         int[] weights = new int[] { 8, 4 };
