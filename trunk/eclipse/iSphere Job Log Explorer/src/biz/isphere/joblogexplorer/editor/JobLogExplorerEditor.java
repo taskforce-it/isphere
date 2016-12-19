@@ -10,6 +10,7 @@ package biz.isphere.joblogexplorer.editor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -507,12 +508,12 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         if (statusLine != null) {
             statusLine.setData(statusLineData);
         }
-        
+
         updateActionStatus();
     }
 
     private void updateActionStatus() {
-        
+
         IActionBars actionBars = getEditorSite().getActionBars();
         IContributionItem item = actionBars.getToolBarManager().find(ExportToExcelAction.ID);
         if (item instanceof ActionContributionItem) {
@@ -525,7 +526,7 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
             }
         }
     }
-    
+
     private int[] loadWeights() {
 
         int[] weights = new int[] { 8, 4 };
