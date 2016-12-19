@@ -29,6 +29,7 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
     public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
     public static final String SEARCH_UP = "search_up_small.png"; //$NON-NLS-1$
     public static final String SEARCH_DOWN = "search_down_small.png"; //$NON-NLS-1$
+    public static final String EXCEL = "excel.png"; //$NON-NLS-1$
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
@@ -96,9 +97,10 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
         reg.put(IMAGE_UNCHECKED, getImageDescriptor(IMAGE_UNCHECKED));
         reg.put(SEARCH_UP, getImageDescriptor(SEARCH_UP));
         reg.put(SEARCH_DOWN, getImageDescriptor(SEARCH_DOWN));
+        reg.put(EXCEL, getImageDescriptor(EXCEL));
     }
 
-    private ImageDescriptor getImageDescriptor(String name) {
+    public ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/"; //$NON-NLS-1$
         try {
             URL url = new URL(installURL, iconPath + name);

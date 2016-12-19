@@ -9,13 +9,29 @@
 package biz.isphere.joblogexplorer.editor;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.EditorActionBarContributor;
+
+import biz.isphere.joblogexplorer.action.rse.ExportToExcelAction;
 
 public class JobLogExplorerEditorActionBarContributor extends EditorActionBarContributor {
 
     private StatusLineContributionItem statusLineContribution;
     private JobLogExplorerEditor activeEditorPart;
+
+    private ExportToExcelAction exportToExcelAction;
+
+    public JobLogExplorerEditorActionBarContributor() {
+        
+        this.exportToExcelAction = new ExportToExcelAction();
+    }
+
+    @Override
+    public void contributeToToolBar(IToolBarManager toolBarManager) {
+
+        toolBarManager.add(exportToExcelAction);
+    }
 
     @Override
     public void contributeToStatusLine(IStatusLineManager statusLineManager) {
@@ -31,6 +47,8 @@ public class JobLogExplorerEditorActionBarContributor extends EditorActionBarCon
             activeEditorPart = (JobLogExplorerEditor)editorPart;
             activeEditorPart.setStatusLine(statusLineContribution.getStatusLine());
             activeEditorPart.updateActionsStatusAndStatusLine();
+            
+            exportToExcelAction.setActiveEditor(activeEditorPart);
         }
     }
 

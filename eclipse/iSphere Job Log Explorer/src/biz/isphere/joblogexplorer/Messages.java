@@ -110,6 +110,8 @@ public class Messages extends NLS {
 
     public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
     
+    public static String Exort_to_Excel;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

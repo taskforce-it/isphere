@@ -121,6 +121,23 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         notifyStatusChangedListeners(new StatusLineData(tableViewer.getTable().getItemCount()));
     }
 
+    public JobLogMessage[] getItems() {
+
+        List<JobLogMessage> messages = new ArrayList<JobLogMessage>();
+
+        TableItem[] items = tableViewer.getTable().getItems();
+        for (TableItem item : items) {
+            JobLogMessage message = (JobLogMessage)item.getData();
+            messages.add(message);
+        }
+
+        return messages.toArray(new JobLogMessage[messages.size()]);
+    }
+
+    public int getItemCount() {
+        return tableViewer.getTable().getItemCount();
+    }
+
     private JobLog getInput() {
         return (JobLog)tableViewer.getInput();
     }
@@ -623,8 +640,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
         if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
-            searchArg=searchArg.substring(1);
-            isNegated=true;
+            searchArg = searchArg.substring(1);
+            isNegated = true;
         }
 
         int currentIndex = startIndex;
@@ -664,8 +681,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
         if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
-            searchArg=searchArg.substring(1);
-            isNegated=true;
+            searchArg = searchArg.substring(1);
+            isNegated = true;
         }
 
         int currentIndex = startIndex;
@@ -692,12 +709,12 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     }
 
     private boolean isMatch(boolean isNegated, String searchArg, JobLogMessage jobLogMessage) {
-        
+
         boolean isFound = jobLogMessage.getLowerCaseText().indexOf(searchArg) >= 0;
         if (isNegated) {
             isFound = !isFound;
         }
-        
+
         return isFound;
     }
 
