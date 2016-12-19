@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Event;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
+import biz.isphere.joblogexplorer.export.ExcelExporter;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public class ExportToExcelAction extends Action {
@@ -38,7 +39,12 @@ public class ExportToExcelAction extends Action {
             return;
         }
 
-        System.out.println("Exporting " + editor.getItemCount() + " messages to Excel ...");
+        String partName = editor.getPartName();
+        String sheetName = partName.replaceAll("/", "_").replaceAll(":", "_");
+        String suggestedFileName = sheetName + ".xls";
+
+        ExcelExporter exporter = new ExcelExporter();
+        exporter.exportToExcel(sheetName, suggestedFileName, messages);
     }
 
     public void setActiveEditor(JobLogExplorerEditor editor) {

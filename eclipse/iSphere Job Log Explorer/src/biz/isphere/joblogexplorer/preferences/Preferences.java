@@ -13,7 +13,9 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 
@@ -45,18 +47,10 @@ public final class Preferences {
      */
 
     private static final String DOMAIN = ISphereJobLogExplorerPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
-
     private static final String LANGUAGE = DOMAIN + "LANGUAGE."; //$NON-NLS-1$
-
     private static final String COLORS = DOMAIN + "COLORS."; //$NON-NLS-1$
-
     private static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
-
-    //    private static final String COLOR_SYSTEM_DEFAULT = "default"; //$NON-NLS-1$
-
-    //    private static final String RED = "red"; //$NON-NLS-1$
-    //    private static final String BLUE = "blue"; //$NON-NLS-1$
-    //    private static final String GREEN = "green"; //$NON-NLS-1$
+    private static final String EXPORT_FOLDER = DOMAIN + "EXPORT_FOLDER"; //$NON-NLS-1$
 
     private ColorRegistry colorRegistry;
 
@@ -108,6 +102,16 @@ public final class Preferences {
         return preferenceStore.getString(LANGUAGE);
     }
 
+    public String getExportFolder() {
+        
+        String directory = preferenceStore.getString(EXPORT_FOLDER);
+        if (StringHelper.isNullOrEmpty(directory)) {
+            directory = FileHelper.getDefaultRootDirectory();
+        }
+        
+        return directory;
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -124,6 +128,10 @@ public final class Preferences {
         preferenceStore.setValue(LANGUAGE, languageId);
     }
 
+    public void setExportFolder(String folderPath) {
+        preferenceStore.setValue(EXPORT_FOLDER, folderPath);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -138,6 +146,7 @@ public final class Preferences {
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_30), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_30)));
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_40), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_40)));
         preferenceStore.setDefault(LANGUAGE, getDefaultLanguage());
+        preferenceStore.setDefault(EXPORT_FOLDER, getDefaultExportFolder());
     }
 
     /*
@@ -166,6 +175,10 @@ public final class Preferences {
 
     public String getDefaultLanguage() {
         return "*CURRENT";//$NON-NLS-1$
+    }
+
+    private String getDefaultExportFolder() {
+        return FileHelper.getDefaultRootDirectory();
     }
 
     /*

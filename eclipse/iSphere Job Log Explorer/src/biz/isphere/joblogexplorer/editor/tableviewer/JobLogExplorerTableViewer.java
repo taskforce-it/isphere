@@ -137,7 +137,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     public int getItemCount() {
         return tableViewer.getTable().getItemCount();
     }
-
+    
     private JobLog getInput() {
         return (JobLog)tableViewer.getInput();
     }

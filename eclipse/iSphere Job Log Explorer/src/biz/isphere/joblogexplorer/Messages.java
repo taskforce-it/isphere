@@ -111,6 +111,8 @@ public class Messages extends NLS {
     public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
     
     public static String Exort_to_Excel;
+    public static String SaveDialog_Excel_Workbook;
+    public static String SaveDialog_All_Files;
     
     static {
         // initialize resource bundle
