@@ -7,7 +7,8 @@ Bundle-ClassPath: .,
  commons-codec-1.1.jar,
  commons-lang-2.1.jar,
  activation.jar,
- mail.jar
+ mail.jar,
+ jxl.jar
 Bundle-Vendor: iSphere Project Team
 Export-Package: com.sun.activation.registries,
  com.sun.activation.viewers,
@@ -23,6 +24,8 @@ Export-Package: com.sun.activation.registries,
  javax.mail.event,
  javax.mail.internet,
  javax.mail.search,
+ jxl,
+ jxl.write,
  org.apache.commons.codec,
  org.apache.commons.codec.base64,
  org.apache.commons.codec.binary,
