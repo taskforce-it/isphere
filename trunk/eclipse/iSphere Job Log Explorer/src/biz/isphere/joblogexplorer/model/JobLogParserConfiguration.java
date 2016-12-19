@@ -50,7 +50,7 @@ public class JobLogParserConfiguration {
     private String SYSTEM_NAME = "[A-Z][0-9A-Z]{0,7}"; //$NON-NLS-1$
 
     // Page number properties
-    private String PAGE_NUMBER_LABEL = "[a-zA-Z]+"; //$NON-NLS-1$
+    private String PAGE_NUMBER_LABEL = "[a-zA-Z.]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}"; //$NON-NLS-1$
     private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
     private String PAGE_TIME = "[0-9:.,]{8}"; //$NON-NLS-1$
