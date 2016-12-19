@@ -44,22 +44,30 @@ public final class StatusLine {
     private CLabel labelInfoMessage;
     private CLabel labelNumberOfMessages;
 
+    private StatusLineData data;
+
+    public StatusLine() {
+
+        setData(null);
+    }
+    
     public void fill(Composite parent) {
 
         labelNumberOfMessages = addLabel(parent, 200, SWT.DEFAULT);
         addSeparator(parent);
         labelInfoMessage = addLabel(parent, 200, SWT.DEFAULT);
 
-        updateControls(new StatusLineData());
+        updateControls();
     }
 
     public void setData(StatusLineData data) {
         if (data == null) {
             data = new StatusLineData();
         }
-        updateControls(data);
+        this.data = data;
+        updateControls();
     }
-
+    
     private void addSeparator(Composite parent) {
 
         Label separator = new Label(parent, SWT.SEPARATOR);
@@ -81,7 +89,7 @@ public final class StatusLine {
         return label;
     }
 
-    private void updateControls(StatusLineData data) {
+    private void updateControls() {
 
         if (data.getNumberOfMessagesSelected() > 0) {
             String message = Messages.bind(Messages.Number_of_messages_B_slash_A, data.getNumberOfMessages(), data.getNumberOfMessagesSelected());
