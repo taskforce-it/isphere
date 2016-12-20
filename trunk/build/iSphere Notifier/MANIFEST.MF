@@ -3,7 +3,7 @@ Bundle-Version: 2.9.3.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
 X-Bundle-Info: Bugfixes of 5250 view. No changes to v2.9.3beta2. 
-X-Beta-Version: 3.0.0.b002
+X-Beta-Version: 3.0.0.b003
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: New job log explorer feature. Enhancements to message file search.
+X-Beta-Info: Job log explorer bugfix and Excel export. Fixed issue with disabling warning messages (do not ask me again).
