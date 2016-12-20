@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
+import biz.isphere.joblogexplorer.Messages;
 
 public class JobLogParserConfiguration {
 
@@ -44,14 +46,15 @@ public class JobLogParserConfiguration {
     private String PROGRAM = OBJECT_NAME;
     private String LIBRARY = OBJECT_NAME;
     private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}"; //$NON-NLS-1$
-    private String OS_RELEASE = "V[0-9]{1,1}R[0-9]{1,1}M[0-9]{1,1}"; //$NON-NLS-1$
+    private String OS_RELEASE = "V[0-9]R[0-9]M[0-9]"; //$NON-NLS-1$
     private String SPACES = "[ ]+"; //$NON-NLS-1$
     private String TIMEZONE = "[A-Z]{2,5}"; //$NON-NLS-1$
     private String SYSTEM_NAME = "[A-Z][0-9A-Z]{0,7}"; //$NON-NLS-1$
+    private String STMT = "\\*STMT|\\*N|[0-9A-F]{4}"; //$NON-NLS-1$
 
     // Page number properties
     private String PAGE_NUMBER_LABEL = "[a-zA-Z.]+"; //$NON-NLS-1$
-    private String PAGE_NUMBER_VALUE = "[ ]+[0-9]{1,4}"; //$NON-NLS-1$
+    private String PAGE_NUMBER_VALUE = "[0-9]{1,4}"; //$NON-NLS-1$
     private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
     private String PAGE_TIME = "[0-9:.,]{8}"; //$NON-NLS-1$
 
@@ -69,7 +72,6 @@ public class JobLogParserConfiguration {
 
     private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+"; //$NON-NLS-1$
     private String MESSAGE_ATTRIBUTE_VALUE = "(.+)"; //$NON-NLS-1$
-    private String STMT = "(\\*STMT|\\*N|[0-9A-F]{4})"; //$NON-NLS-1$
 
     // Default regular expressions
     private String regex_startOfPage;
@@ -218,6 +220,7 @@ public class JobLogParserConfiguration {
     public boolean loadConfiguration(String languageId) {
 
         FileInputStream inStream = null;
+        String pathName = null;
 
         try {
 
@@ -226,6 +229,8 @@ public class JobLogParserConfiguration {
                 return false;
             }
 
+            pathName = path.getAbsolutePath();
+            
             Properties properties = new Properties();
             properties.load(new FileInputStream(path));
 
@@ -239,8 +244,11 @@ public class JobLogParserConfiguration {
             LICENSED_PROGRAM = getProperty(properties, "global.licensed.program", LICENSED_PROGRAM); //$NON-NLS-1$
             OS_RELEASE = getProperty(properties, "global.os.release", OS_RELEASE); //$NON-NLS-1$
 
+            SPACES = getProperty(properties, "global.spaces", SPACES); //$NON-NLS-1$
+            
             TIMEZONE = getProperty(properties, "global.timezone", TIMEZONE); //$NON-NLS-1$
             SYSTEM_NAME = getProperty(properties, "global.system.name", SYSTEM_NAME); //$NON-NLS-1$
+            STMT = getProperty(properties, "global.stmt", STMT); //$NON-NLS-1$
 
             // Page number properties
             PAGE_NUMBER_LABEL = getProperty(properties, "page.number.label", PAGE_NUMBER_LABEL); //$NON-NLS-1$
@@ -263,10 +271,10 @@ public class JobLogParserConfiguration {
             produceRegularExpressions();
 
             // Override default expressions
-            regex_startOfPage = getProperty(properties, "regex_startOfPage", regex_startOfPage); //$NON-NLS-1$
-            regex_headerAttribute = getProperty(properties, "regex.headerAttribute", regex_headerAttribute); //$NON-NLS-1$
-            regex_messageFirstLine = getProperty(properties, "regex.messageFirstLine", regex_messageFirstLine); //$NON-NLS-1$
-            regex_messageContinuationLine = getProperty(properties, "regex.messageContinuationLine", regex_messageContinuationLine); //$NON-NLS-1$
+            regex_startOfPage = replaceVariables(getProperty(properties, "regex.startOfPage", regex_startOfPage)); //$NON-NLS-1$
+            regex_headerAttribute = replaceVariables(getProperty(properties, "regex.headerAttribute", regex_headerAttribute)); //$NON-NLS-1$
+            regex_messageFirstLine = replaceVariables(getProperty(properties, "regex.messageFirstLine", regex_messageFirstLine)); //$NON-NLS-1$
+            regex_messageContinuationLine = replaceVariables(getProperty(properties, "regex.messageContinuationLine", regex_messageContinuationLine)); //$NON-NLS-1$
 
             compilePattern();
 
@@ -274,6 +282,7 @@ public class JobLogParserConfiguration {
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Could not load job log parser configuration ***", e); //$NON-NLS-1$
+            MessageDialogAsync.displayError(Messages.bind(Messages.Could_not_load_job_log_parser_configuration, pathName));
         } finally {
             if (inStream != null) {
                 try {
@@ -349,11 +358,11 @@ public class JobLogParserConfiguration {
      */
     private void produceRegularExpressions() {
 
-        regex_startOfPage = replaceVariables("^&{SPACES}(&{LICENSED_PROGRAM}).+(&{RELEASE}).+&{SPACES}(&{SYSTEM_NAME})&{SPACES}(&{PAGE_DATE})&{SPACES}(&{PAGE_TIME})&{SPACES}(&{TIMEZONE})&{SPACES}(&{PAGE_NUMBER_LABEL})(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
+        regex_startOfPage = replaceVariables("^&{SPACES}(&{LICENSED_PROGRAM})&{SPACES}(&{RELEASE}).+&{SPACES}(&{SYSTEM_NAME})&{SPACES}(&{PAGE_DATE})&{SPACES}(&{PAGE_TIME})&{SPACES}(&{TIMEZONE})?&{SPACES}(&{PAGE_NUMBER_LABEL})&{SPACES}(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
         regex_headerAttribute = replaceVariables("&{SPACES}(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})"); //$NON-NLS-1$
         regex_messageFirstLine = replaceVariables("^(&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})" //$NON-NLS-1$
-            + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}" //$NON-NLS-1$
-            + "&{SPACES}(\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}&{STMT}(.*)?$"); //$NON-NLS-1$
+            + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}(&{STMT})" //$NON-NLS-1$
+            + "&{SPACES}(\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}(&{STMT})(.*)?$"); //$NON-NLS-1$
         regex_messageContinuationLine = replaceVariables("^&{MESSAGE_CONTINUATION_LINE_INDENTION}&{MESSAGE_ATTRIBUTE_NAME}:&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}"); //$NON-NLS-1$
     }
 

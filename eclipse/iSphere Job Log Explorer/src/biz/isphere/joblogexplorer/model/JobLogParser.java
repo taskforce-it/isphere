@@ -119,9 +119,11 @@ public class JobLogParser {
      * This method check the current line for the page number to start a new
      * page.
      * <p>
-     * <code><ul>
-     * <li>.5770SS1.V7R2M0.140418........................Display.Job.Log.......................GFD400....03.11.16..14:58:40.CET.....Page....1</li>
-     * </ul></code>
+     * 
+     * <pre>
+     * .5770SS1.V7R2M0.140418........................Display.Job.Log.......................GFD400....03.11.16..14:58:40.CET.....Page....1</li>
+     *    (1)     (2)                                                                        (3)        (4)       (5)   (6)      (7)  (8)
+     * </pre>
      * 
      * @param line - current line of the job log.
      * @return new parser mode
@@ -151,16 +153,11 @@ public class JobLogParser {
      * This method parses the header data that are at the top of each page of
      * the job log.
      * <p>
-     * <code><ul>
-     * <li>From module . . . . . . . . : LIBL#LOAD</li>
-     * <li>From procedure . . . . . . : LIBL#LOAD</li>
-     * <li>Statement . . . . . . . . . : 5500</li>
-     * <li>To module . . . . . . . . . : START#RZ</li>
-     * <li>To procedure . . . . . . . : START#RZ</li>
-     * <li>Statement . . . . . . . . . : 5300</li>
-     * <li>Message . . . . : ISPHEREDVP PY27V5R4 ...</li>
-     * <li>Cause . . . . . : Es ist kein zusätzlicher ...</li> *
-     * </ul></code>
+     * 
+     * <pre>
+     * Job name . . . . . . . . . . :   TRADDATZA1      User  . . . . . . :   RADDATZ      Number . . . . . . . . . . . :   245231
+     * Job description  . . . . . . :   QDFTJOBD        Library . . . . . :   QGPL
+     * </pre>
      * 
      * @param line - current line of the job log.
      * @return new parser mode
@@ -213,6 +210,23 @@ public class JobLogParser {
      * <li>Start a new message.</li>
      * <li>Collect the attributes of the current message.</li>
      * </ul>
+     * <p>
+     * 
+     * <pre>
+     * CPCA980....Completion..............00...19.12.16..11:52:58,698357..QP0ZADDE.....QSYS........*STMT....START#RZ....RADDATZ.....*STMT
+     *   (1)         (2)                 (3)      (4)          (5)           (6)        (7)         (8)        (9)       (10)        (11)
+     * </pre>
+     * 
+     * <pre>
+     * From module . . . . . . . . : LIBL#LOAD
+     * From procedure  . . . . . . : LIBL#LOAD
+     * Statement . . . . . . . . . : 5500
+     * To module . . . . . . . . . : START#RZ
+     * To procedure  . . . . . . . : START#RZ
+     * Statement . . . . . . . . . : 5300
+     * Message . . . . : ISPHEREDVP PY27V5R4 ...
+     * Cause . . . . . : Es ist kein zusätzlicher ...
+     * </pre>
      * 
      * @param line - current line of the job log.
      * @return new parser mode
