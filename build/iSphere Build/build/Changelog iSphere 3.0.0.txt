@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.0.0.b003
+-----------------------------
+ • Fixed problem that "do not ask me again" messages could not be disabled.
+
 Changelog: iSphere 3.0.0.b002
 -----------------------------
  • Added new feature "iSphere Job Log Explorer".
