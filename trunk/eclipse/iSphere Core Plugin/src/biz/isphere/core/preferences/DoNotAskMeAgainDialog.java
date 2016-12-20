@@ -8,6 +8,9 @@
 
 package biz.isphere.core.preferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -52,6 +55,25 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         }
     }
 
+    public static boolean getDefaultShowWarning() {
+        return true;
+    }
+    
+    public static String[] getKeys() {
+        
+        List<String> keys = new ArrayList<String>();
+        
+        keys.add(WARNING_COMPARE_FILTERS_NOT_INSTALLED);
+        keys.add(WARNING_REMOVE_STRPREPRC_SECTIONS);
+        keys.add(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION);
+        keys.add(CONFIRM_REMOVE_STRPREPRC_HEADER);
+        keys.add(TOO_MANY_SPOOLED_FILES_WARNING);
+        keys.add(TN5250_SESSION_GROUPING_CHANGED);
+        keys.add(INFORMATION_USAGE_JOB_LOG_EXPLORER);
+        
+        return keys.toArray(new String[keys.size()]);
+    }
+    
     public static void resetAllMessages() {
         Preferences preferences = Preferences.getInstance();
         preferences.setShowWarningMessage(WARNING_COMPARE_FILTERS_NOT_INSTALLED, true);

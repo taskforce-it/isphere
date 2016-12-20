@@ -714,7 +714,10 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
 
-        DoNotAskMeAgainDialog.resetAllMessages();
+        String[] showWarningKeys = DoNotAskMeAgainDialog.getKeys();
+        for (String showWarningKey : showWarningKeys) {
+            preferenceStore.setDefault(getShowWarningKey(showWarningKey), DoNotAskMeAgainDialog.getDefaultShowWarning());
+        }
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
