@@ -30,7 +30,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="3.0.0.b003" match="greaterOrEqual"/>
+      <import feature="biz.isphere.core" version="3.0.0.b004" match="greaterOrEqual"/>
    </requires>
 
    <plugin
