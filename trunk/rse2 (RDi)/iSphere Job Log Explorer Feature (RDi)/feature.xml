@@ -28,8 +28,8 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="2.9.3.r"/>
-      <import feature="biz.isphere.rse" version="2.9.3.r"/>
+      <import feature="biz.isphere.core" version="3.0.0.b003" match="greaterOrEqual"/>
+      <import feature="biz.isphere.rse" version="3.0.0.b003" match="greaterOrEqual"/>
    </requires>
 
    <plugin
