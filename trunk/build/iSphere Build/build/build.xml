@@ -1062,7 +1062,7 @@
 							</then>
 						</if>
 		
-						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="g" byline="false">
+						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 		
