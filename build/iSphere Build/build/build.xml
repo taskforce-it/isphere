@@ -196,7 +196,7 @@
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
 			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
 			<property name="target.ide.sf.dir" value="${target.ide.rdi}" />
-			<property name="target.ide.exclude.site.xml" value="site.xml" />
+			<property name="target.ide.exclude.site.xml" value="" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
 			<property name="target.execution.environment" value="${build.execution.environment.RDi}" />
@@ -219,16 +219,21 @@
 		<then>
 			<property name="target.ide.update.site.url" value="http://isphere.sourceforge.net/${beta.dir}/eclipse/${target.ide.sf.dir}/" />
 			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+			<property name="site.property.url" value="http://master.dl.sourceforge.net/project/isphere/${beta.dir}/eclipse/${target.ide.sf.dir}" />
 		</then>
 		<else>
 			<property name="target.ide.update.site.url" value="http://isphere.sourceforge.net/eclipse/${target.ide.sf.dir}/" />
 			<property name="target.ide.help.site.url" value="http://isphere.sourceforge.net/${sf.dir.updatesite.help.dir}/" />
+			<property name="site.property.url" value="http://master.dl.sourceforge.net/project/isphere/eclipse/${target.ide.sf.dir}" />
 		</else>
 	</if>
 
 	<property name="manifest.execution.environment.regex" value="(Bundle-RequiredExecutionEnvironment:\s)(J2SE-1.5|JavaSE-1.6)" />
 	<property name="manifest.execution.environment.replace" value="\1${target.execution.environment}" />
 
+	<property name="site.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
+	<property name="site.property.url.replace" value="\1 url=&quot;${site.property.url}&quot;\3" />
+	
 	<!-- Check what shall be build -->
 	<if>
 		<equals arg1="${build.files.enabled}" arg2="true" />
@@ -546,6 +551,10 @@
 				<exclude name=".project" />
 			</fileset>
 		</copy>
+		
+		<replaceregexp match="${site.property.url.regex}" replace="${site.property.url.replace}" flags="s" byline="false">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" includes="site.xml" />
+		</replaceregexp>
 
 		<echo>Copying release/beta version dependant files ...</echo>
 		<if>
