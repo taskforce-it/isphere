@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.0.0.b004
+-----------------------------
+ • Fixed problem that the filter string was not reset, when restoring
+   the attributes of the iSphere Message Monitor.
+
 Changelog: iSphere 3.0.0.b003
 -----------------------------
  • Fixed issues when parsing job logs.

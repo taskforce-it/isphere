@@ -92,6 +92,8 @@ public class MonitoringAttributes {
         setSmtpLogin(SMTP_LOGIN_DEFAULT);
         setSmtpUser(SMTP_USER_DEFAULT);
         setSmtpPassword(SMTP_PASSWORD_DEFAULT);
+        
+        setFilterString(null);
     }
 
     public boolean isDialogHandler(ReceivedMessage message) {
