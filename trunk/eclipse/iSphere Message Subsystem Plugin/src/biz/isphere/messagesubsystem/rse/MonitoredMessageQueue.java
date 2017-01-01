@@ -21,6 +21,7 @@ import biz.isphere.messagesubsystem.internal.FilteredMessageQueue;
 import biz.isphere.messagesubsystem.internal.MessageMonitorThread;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.QueuedMessage;
 
 public class MonitoredMessageQueue extends FilteredMessageQueue {
@@ -32,6 +33,7 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     private MessageMonitorThread monitoringThread;
     private LinkedList<QueuedMessage> messagesToRemove;
+    private QSYSObjectPathName messageQueuePathNaame;
 
     public MonitoredMessageQueue(IQueuedMessageSubsystem messageSubsystem, AS400 system, MonitoringAttributes monitoringAttributes) {
         super(system, new QueuedMessageFilter(monitoringAttributes.getFilterString()));
@@ -39,6 +41,7 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
         this.messageSubsystem = messageSubsystem;
         this.monitoringAttributes = monitoringAttributes;
         this.messagesToRemove = new LinkedList<QueuedMessage>();
+        this.messageQueuePathNaame = new QSYSObjectPathName(getPath());
     }
 
     public void startMonitoring() {
@@ -77,6 +80,14 @@ public class MonitoredMessageQueue extends FilteredMessageQueue {
 
     public MonitoringAttributes getMonitoringAttributes() {
         return monitoringAttributes;
+    }
+
+    public String getName() {
+        return messageQueuePathNaame.getObjectName();
+    }
+
+    public String getLibrary() {
+        return messageQueuePathNaame.getLibraryName();
     }
 
     public synchronized void remove(QueuedMessage queuedMessage) {

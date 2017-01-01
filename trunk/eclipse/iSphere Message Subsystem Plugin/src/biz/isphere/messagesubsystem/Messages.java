@@ -179,6 +179,8 @@ public class Messages extends NLS {
     public static String One_or_more_messages_could_not_be_removed;
 
     public static String Please_enter_a_value;
+
+    public static String Message_queue_A_not_found_in_library_B;
     
     static {
         // initialize resource bundle

@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.ObjectLockManager;
@@ -97,38 +98,51 @@ public class MessageMonitorThread extends Thread {
 
         try {
 
-            // First try to get an exclusive lock.
-            debugPrint("Thread " + messageQueue.hashCode() + ": Trying to get an *EXCL lock ...");
-            exclusiveLock = objectLockManager.setExclusiveLock(remoteMessageQueue);
-            if (exclusiveLock != null) {
-                debugPrint("Thread " + messageQueue.hashCode() + ": Got *EXCL lock: " + exclusiveLock.hashCode());
-                // Then add a shared for read lock to allow other job to display
-                // messages and remove the exclusive lock
-                debugPrint("Thread " + messageQueue.hashCode() + ": Adding *SHHRD lock ...");
-                sharedReadLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
-                if (sharedReadLock != null) {
-                    debugPrint("Thread " + messageQueue.hashCode() + ": Got *SHRRD lock: " + sharedReadLock.hashCode());
-                    debugPrint("Thread " + messageQueue.hashCode() + ": Removing *EXCL lock: " + exclusiveLock.hashCode());
-                    objectLockManager.removeObjectLock(exclusiveLock);
-                    exclusiveLock = null;
-                }
-            }
-
-            if (sharedReadLock == null) {
+            // Check, whether the message queue exists
+            if (!ISphereHelper.checkObject(messageQueue.getSystem(), messageQueue.getPath())) {
+                debugPrint("Thread " + messageQueue.hashCode() + ": Message queue does not exist");
                 Display.getDefault().syncExec(new Runnable() {
                     public void run() {
-                        MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error,
-                            objectLockManager.getErrorMessage());
+                        MessageDialog.openError(
+                            Display.getDefault().getActiveShell(),
+                            Messages.Message_Queue_Monitoring_Error,
+                            Messages.bind(Messages.Message_queue_A_not_found_in_library_B,
+                                new Object[] { messageQueue.getLibrary(), messageQueue.getName() }));
                     }
                 });
                 monitoringAttributes.setMonitoring(false);
+            } else {
+
+                // First try to get an exclusive lock.
+                debugPrint("Thread " + messageQueue.hashCode() + ": Trying to get an *EXCL lock ...");
+                exclusiveLock = objectLockManager.setExclusiveLock(remoteMessageQueue);
+                if (exclusiveLock != null) {
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Got *EXCL lock: " + exclusiveLock.hashCode());
+                    // Then add a shared for read lock to allow other job to
+                    // display messages and remove the exclusive lock
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Adding *SHHRD lock ...");
+                    sharedReadLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
+                    if (sharedReadLock != null) {
+                        debugPrint("Thread " + messageQueue.hashCode() + ": Got *SHRRD lock: " + sharedReadLock.hashCode());
+                        debugPrint("Thread " + messageQueue.hashCode() + ": Removing *EXCL lock: " + exclusiveLock.hashCode());
+                        objectLockManager.removeObjectLock(exclusiveLock);
+                        exclusiveLock = null;
+                    }
+                }
+
+                if (sharedReadLock == null) {
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Could not allocate message queue");
+                    Display.getDefault().syncExec(new Runnable() {
+                        public void run() {
+                            MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error,
+                                objectLockManager.getErrorMessage());
+                        }
+                    });
+                    monitoringAttributes.setMonitoring(false);
+                }
             }
 
             messageQueue.messageMonitorStarted(messageQueue);
-
-            if (sharedReadLock == null) {
-                debugPrint("Thread " + messageQueue.hashCode() + ": Could not allocate message queue");
-            }
 
             while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
                 try {
