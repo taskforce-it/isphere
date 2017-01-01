@@ -15,9 +15,11 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -66,10 +68,15 @@ public class QueuedMessageDialog extends XDialog {
     @Override
     public Control createDialogArea(Composite parent) {
 
-        Composite promptGroup = (Composite)super.createDialogArea(parent);
+        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        scrolledComposite.setLayout(new GridLayout());
+        scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrolledComposite.setExpandHorizontal(true);
+        scrolledComposite.setExpandVertical(true);
+
+        Composite promptGroup = (Composite)super.createDialogArea(scrolledComposite);
         parent.getShell().setText(Messages.iSeries_Message);
-        GridLayout layout = new GridLayout();
-        promptGroup.setLayout(layout);
+        promptGroup.setLayout(new GridLayout());
         promptGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Composite headerGroup = new Composite(promptGroup, SWT.NONE);
@@ -161,7 +168,10 @@ public class QueuedMessageDialog extends XDialog {
             responseText.setFocus();
         }
 
-        return promptGroup;
+        scrolledComposite.setContent(promptGroup);
+        scrolledComposite.setMinSize(promptGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+        return scrolledComposite;
     }
 
     @Override
