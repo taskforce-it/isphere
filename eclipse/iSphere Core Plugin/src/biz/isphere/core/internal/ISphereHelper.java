@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -28,6 +29,7 @@ import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.Job;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 public class ISphereHelper {
 
@@ -76,7 +78,7 @@ public class ISphereHelper {
         if (as400 == null) {
             return false;
         }
-        
+
         String dataAreaISphereContent = readISphereDataArea(shell, as400, library);
         if (dataAreaISphereContent == null) {
             return false;
@@ -269,5 +271,31 @@ public class ISphereHelper {
         // }
 
         return true;
+    }
+
+    public static boolean checkObject(AS400 system, String path) {
+
+        QSYSObjectPathName pathName = new QSYSObjectPathName(path);
+
+        StringBuilder command = new StringBuilder();
+        command.append("CHKOBJ OBJ("); //$NON-NLS-1$
+        command.append(pathName.getLibraryName());
+        command.append("/"); //$NON-NLS-1$
+        command.append(pathName.getObjectName());
+        command.append(") OBJTYPE("); //$NON-NLS-1$
+        command.append("*"); //$NON-NLS-1$
+        command.append(pathName.getObjectType());
+        command.append(")"); //$NON-NLS-1$
+
+        try {
+            String message = executeCommand(system, command.toString());
+            if (StringHelper.isNullOrEmpty(message)) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Ignore exceptions
+        }
+
+        return false;
     }
 }

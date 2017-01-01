@@ -3,6 +3,8 @@ Changelog: iSphere 3.0.0.b004
 -----------------------------
  • Fixed problem that the filter string was not reset, when restoring
    the attributes of the iSphere Message Monitor.
+ • Added check for existence of the message queue, when the message
+   monitor starts.   
 
 Changelog: iSphere 3.0.0.b003
 -----------------------------
