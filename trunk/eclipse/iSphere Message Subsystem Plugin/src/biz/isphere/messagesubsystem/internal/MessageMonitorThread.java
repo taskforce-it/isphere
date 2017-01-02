@@ -31,6 +31,7 @@ import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
+import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.QueuedMessage;
@@ -224,6 +225,11 @@ public class MessageMonitorThread extends Thread {
             for (QueuedMessage queuedMessage : messageToRemove) {
                 try {
                     queuedMessage.getQueue().remove(queuedMessage.getKey());
+                } catch (AS400Exception e) {
+                    // Message key not found
+                    if (!"CPF2410".equals(e.getAS400Message().getID())) {
+                        isError = true;
+                    }
                 } catch (Throwable e) {
                     isError = true;
                 } finally {
@@ -232,7 +238,7 @@ public class MessageMonitorThread extends Thread {
             }
 
             if (isError) {
-                MessageDialogAsync.displayError(Display.getDefault().getActiveShell(), Messages.One_or_more_messages_could_not_be_removed);
+                MessageDialogAsync.displayError(Messages.One_or_more_messages_could_not_be_removed);
             }
 
         } catch (Throwable e) {
