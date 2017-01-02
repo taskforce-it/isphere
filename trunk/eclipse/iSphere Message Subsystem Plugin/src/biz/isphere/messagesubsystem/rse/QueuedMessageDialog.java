@@ -19,7 +19,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -68,108 +67,99 @@ public class QueuedMessageDialog extends XDialog {
     @Override
     public Control createDialogArea(Composite parent) {
 
-        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
         scrolledComposite.setLayout(new GridLayout());
         scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
 
-        Composite promptGroup = (Composite)super.createDialogArea(scrolledComposite);
-        parent.getShell().setText(Messages.iSeries_Message);
-        promptGroup.setLayout(new GridLayout());
-        promptGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        Composite headerGroup = new Composite(promptGroup, SWT.NONE);
+        Composite mainPanel = new Composite(scrolledComposite, SWT.BORDER);
         GridLayout headerLayout = new GridLayout(2, false);
-        headerGroup.setLayout(headerLayout);
-        headerGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        mainPanel.setLayout(headerLayout);
+        mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        Label idLabel = new Label(headerGroup, SWT.NONE);
+        Label idLabel = new Label(mainPanel, SWT.NONE);
         idLabel.setText(Messages.Message_ID_colon);
 
-        Text idText = WidgetFactory.createReadOnlyText(headerGroup);
+        Text idText = WidgetFactory.createReadOnlyText(mainPanel);
         idText.setLayoutData(new GridData(200, SWT.DEFAULT));
         idText.setEnabled(false);
         if (queuedMessage.getID() != null) {
             idText.setText(queuedMessage.getID());
         }
 
-        Label sevLabel = new Label(headerGroup, SWT.NONE);
+        Label sevLabel = new Label(mainPanel, SWT.NONE);
         sevLabel.setText(Messages.Severity_colon);
 
-        Text sevText = WidgetFactory.createReadOnlyText(headerGroup);
+        Text sevText = WidgetFactory.createReadOnlyText(mainPanel);
         sevText.setLayoutData(new GridData(200, SWT.DEFAULT));
         sevText.setEnabled(false);
         sevText.setText(new Integer(queuedMessage.getSeverity()).toString());
 
-        Label typeLabel = new Label(headerGroup, SWT.NONE);
+        Label typeLabel = new Label(mainPanel, SWT.NONE);
         typeLabel.setText(Messages.Message_type_colon);
 
-        Text typeText = WidgetFactory.createReadOnlyText(headerGroup);
+        Text typeText = WidgetFactory.createReadOnlyText(mainPanel);
         typeText.setLayoutData(new GridData(200, SWT.DEFAULT));
         typeText.setEnabled(false);
         typeText.setText(queuedMessage.getMessageType());
 
-        Label dateLabel = new Label(headerGroup, SWT.NONE);
+        Label dateLabel = new Label(mainPanel, SWT.NONE);
         dateLabel.setText(Messages.Date_sent_colon);
 
-        Text dateText = WidgetFactory.createReadOnlyText(headerGroup);
+        Text dateText = WidgetFactory.createReadOnlyText(mainPanel);
         dateText.setLayoutData(new GridData(200, SWT.DEFAULT));
         dateText.setEnabled(false);
         dateText.setText(queuedMessage.getDate().getTime().toString());
 
-        Label userLabel = new Label(headerGroup, SWT.NONE);
+        Label userLabel = new Label(mainPanel, SWT.NONE);
         userLabel.setText(Messages.From_colon);
 
-        Text userText = WidgetFactory.createReadOnlyText(headerGroup);
+        Text userText = WidgetFactory.createReadOnlyText(mainPanel);
         userText.setLayoutData(new GridData(200, SWT.DEFAULT));
         userText.setEnabled(false);
         if (queuedMessage.getUser() != null) {
             userText.setText(queuedMessage.getUser());
         }
 
-        Label msgTextLabel = new Label(headerGroup, SWT.NONE);
+        Label msgTextLabel = new Label(mainPanel, SWT.NONE);
         msgTextLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         msgTextLabel.setText(Messages.Message_colon);
 
-        Text msgText = WidgetFactory.createReadOnlyMultilineText(headerGroup, true, false);
-        msgText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-        msgText.setEditable(false);
-        msgText.setRedraw(true);
+        Text msgText = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
+        msgText.setLayoutData(new GridData(GridData.FILL_BOTH));
         msgText.setFont(FontHelper.getFixedSizeFont());
+        msgText.setText(queuedMessage.getText());
 
-        // Place holder label
-        new Label(headerGroup, SWT.NONE);
+        if (queuedMessage.getHelpFormatted() != null && !queuedMessage.getHelpFormatted().equals(queuedMessage.getText())) {
 
-        Text msgHelp = WidgetFactory.createReadOnlyMultilineText(headerGroup, true, false);
-        msgHelp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        msgHelp.setEditable(false);
-        msgHelp.setRedraw(true);
-        msgHelp.setFont(FontHelper.getFixedSizeFont());
+            // Place holder label for message help text box
+            new Label(mainPanel, SWT.NONE);
 
-        if ((queuedMessage.getHelpFormatted() == null) || (queuedMessage.getHelpFormatted().equals(queuedMessage.getText()))) {
-            msgText.setText(queuedMessage.getText());
-            msgHelp.setVisible(false);
-        } else {
-            msgText.setText(queuedMessage.getText());
+            Text msgHelp = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
+            msgHelp.setLayoutData(new GridData(GridData.FILL_BOTH));
+            msgHelp.setFont(FontHelper.getFixedSizeFont());
             msgHelp.setText(messageFormatter.formatHelpText(queuedMessage.getHelpFormatted()));
         }
 
         if (queuedMessage.getType() == QueuedMessage.INQUIRY) {
-            Label replyLabel = new Label(headerGroup, SWT.NONE);
+
+            Label replyLabel = new Label(mainPanel, SWT.NONE);
             replyLabel.setText(Messages.Reply_colon);
 
-            responseText = WidgetFactory.createText(headerGroup);
+            responseText = WidgetFactory.createText(mainPanel);
             responseText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
             responseText.setTextLimit(132);
             if (queuedMessage.getDefaultReply() != null) {
                 responseText.setText(queuedMessage.getDefaultReply());
+            } else {
+                responseText.setText("");
             }
             responseText.setFocus();
         }
 
-        scrolledComposite.setContent(promptGroup);
-        scrolledComposite.setMinSize(promptGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        scrolledComposite.setContent(mainPanel);
+        scrolledComposite.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         return scrolledComposite;
     }
