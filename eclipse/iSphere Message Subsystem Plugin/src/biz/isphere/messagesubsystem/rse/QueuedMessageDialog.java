@@ -67,13 +67,15 @@ public class QueuedMessageDialog extends XDialog {
     @Override
     public Control createDialogArea(Composite parent) {
 
+        parent.getShell().setText(Messages.iSeries_Message);
+
         ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
         scrolledComposite.setLayout(new GridLayout());
         scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
 
-        Composite mainPanel = new Composite(scrolledComposite, SWT.BORDER);
+        Composite mainPanel = new Composite(scrolledComposite, SWT.NONE);
         GridLayout headerLayout = new GridLayout(2, false);
         mainPanel.setLayout(headerLayout);
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
