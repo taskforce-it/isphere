@@ -71,10 +71,16 @@ public class SendMessageDialog extends XDialog {
     private SendMessageOptions sendMessageOptions;
     private StringListEditor receipientsEditor;
 
+    private String overWriteMessageText;
+
     public SendMessageDialog(Shell shell) {
         super(shell);
 
         this.sendMessageOptions = null;
+    }
+
+    public void setMessageText(String text) {
+        this.overWriteMessageText = text;
     }
 
     @Override
@@ -160,6 +166,7 @@ public class SendMessageDialog extends XDialog {
             public void widgetSelected(SelectionEvent e) {
                 setControlEnablement();
             }
+
             public void widgetDefaultSelected(SelectionEvent e) {
                 widgetSelected(e);
             }
@@ -246,6 +253,10 @@ public class SendMessageDialog extends XDialog {
     }
 
     private void resetPressed() {
+        performReset();
+    }
+
+    private void performReset() {
 
         comboMessageType.select(DEFAULT_INDEX_MESSAGE_TYPE);
         comboDeliveryMode.select(DEFAULT_INDEX_DELIVERY_MODE);
@@ -253,6 +264,8 @@ public class SendMessageDialog extends XDialog {
         comboRecipientTypes.select(DEFAULT_INDEX_RECIPIENT_TYPES);
         comboRecipient.select(DEFAULT_INDEX_RECIPIENT);
         comboRecipient.setText("");
+
+        overWriteInitialValues();
 
         receipientsEditor.clearAll();
 
@@ -375,7 +388,16 @@ public class SendMessageDialog extends XDialog {
 
         receipientsEditor.setItems(recipients);
 
+        overWriteInitialValues();
+        
         validateInput();
+    }
+
+    private void overWriteInitialValues() {
+
+        if (overWriteMessageText != null) {
+            textMessageText.setText(overWriteMessageText);
+        }
     }
 
     /**
