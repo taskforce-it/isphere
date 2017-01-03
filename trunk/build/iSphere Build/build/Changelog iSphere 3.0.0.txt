@@ -6,6 +6,7 @@ Changelog: iSphere 3.0.0.b004
  • Added check for existence of the message queue, when the message
    monitor starts.   
  • Added scrollbars to the QueuedMessageDialog.
+ • Added SendMessageDialog for calling the QEZSNDMG API.
 
 Changelog: iSphere 3.0.0.b003
 -----------------------------

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
+
 package biz.isphere.messagesubsystem;
 
 import org.eclipse.osgi.util.NLS;
@@ -167,6 +168,8 @@ public class Messages extends NLS {
     public static String Monitor;
 
     public static String OK_To_All_LABEL;
+    
+    public static String RESET_LABEL;
 
     public static String Collect_informational_messages_on_startup;
 
@@ -181,6 +184,20 @@ public class Messages extends NLS {
     public static String Please_enter_a_value;
 
     public static String Message_queue_A_not_found_in_library_B;
+
+    public static String Delivery_mode_colon;
+
+    public static String Message_text_colon;
+    
+    public static String Recipient_type_colon;
+    
+    public static String Recipients_colon;
+    
+    public static String Recipient;
+    
+    public static String Message_text_is_missing;
+    
+    public static String Recipients_are_missing;
     
     static {
         // initialize resource bundle
