@@ -747,6 +747,8 @@ public class Messages extends NLS {
     public static String Restoring_view;
 
     public static String Remove;
+    
+    public static String Remove_all;
 
     public static String Tooltip_Remove;
 
@@ -1310,6 +1312,10 @@ public class Messages extends NLS {
 
     public static String Specify_whether_or_not_to_include_the_message_id;
 
+    public static String Add;
+
+    public static String Item;
+    
     /*
      * Warning messages
      */
