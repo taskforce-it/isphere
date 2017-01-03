@@ -80,7 +80,7 @@ public class SendMessageDialog extends XDialog {
     @Override
     public Control createDialogArea(Composite parent) {
 
-        parent.getShell().setText(Messages.iSeries_Message);
+        parent.getShell().setText(Messages.Send_Message);
 
         ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
         scrolledComposite.setLayout(new GridLayout());
