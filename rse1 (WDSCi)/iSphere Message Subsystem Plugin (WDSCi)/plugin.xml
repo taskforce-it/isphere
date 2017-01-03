@@ -40,6 +40,13 @@
                enablesFor="1"
                id="biz.isphere.messagesubsystem.internal.QueuedMessageDetailsPopupMenuExtensionAction">
          </action>
+         <action
+               label="%Forward_Message"
+               icon="icons/send_message.png"
+               class="biz.isphere.messagesubsystem.rse.internal.SendMessageAction"
+               enablesFor="1"
+               id="biz.isphere.messagesubsystem.rse.internal.SendMessageAction">
+         </action>
       </objectContribution>
       
       <objectContribution
