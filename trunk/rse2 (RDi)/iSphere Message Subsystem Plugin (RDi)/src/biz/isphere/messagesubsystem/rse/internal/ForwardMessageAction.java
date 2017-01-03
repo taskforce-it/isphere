@@ -25,19 +25,21 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
  * This class adds a popup menu extension to queued message resources in order
  * to display the message details in a message dialog.
  */
-public class SendMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
+public class ForwardMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
 
-    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.SendMessageAction";
+    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.ForwardMessageAction";
 
-    public SendMessageAction() {
+    public ForwardMessageAction() {
         super();
     }
 
     @Override
     public void run() {
         Object[] selection = getSelectedRemoteObjects();
-        if (selection != null && selection.length >= 1 && selection[0] instanceof QueuedMessageSubSystem) {
+        if (selection != null && selection.length >= 1 && (selection[0] instanceof QueuedMessageResource)) {
             SendMessageDialog dialog = new SendMessageDialog(getShell());
+            QueuedMessageResource messageResource = (QueuedMessageResource)selection[0];
+            dialog.setMessageText(messageResource.getQueuedMessage().getText());
             if (dialog.open() == SendMessageDialog.OK) {
                 try {
                     SendMessageDelegate delegate = new SendMessageDelegate();

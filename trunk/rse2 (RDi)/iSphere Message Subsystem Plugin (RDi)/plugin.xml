@@ -43,9 +43,9 @@
          <action
                label="%Forward_Message"
                icon="icons/send_message.png"
-               class="biz.isphere.messagesubsystem.rse.internal.SendMessageAction"
+               class="biz.isphere.messagesubsystem.rse.internal.ForwardMessageAction"
                enablesFor="1"
-               id="biz.isphere.messagesubsystem.rse.internal.SendMessageAction">
+               id="biz.isphere.messagesubsystem.rse.internal.ForwardMessageAction">
          </action>
       </objectContribution>
       
