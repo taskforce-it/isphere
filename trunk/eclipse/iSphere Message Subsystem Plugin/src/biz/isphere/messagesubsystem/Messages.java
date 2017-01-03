@@ -201,6 +201,7 @@ public class Messages extends NLS {
     
     public static String Invalid_recipient;
     
+    public static String Send_Message;
     
     static {
         // initialize resource bundle
