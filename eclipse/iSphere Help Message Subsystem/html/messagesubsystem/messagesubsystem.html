@@ -8,6 +8,15 @@
 </head>
 <body>
 	<h1>Message Subsystem</h1>
+	<ul>
+	<li><a href="#monitoring_messages">Monitoring Messages</a></li>
+	<li><a href="#send_messages">Send Message</a></li>
+	<li><a href="#forward_messages">Forward Message</a></li>
+	<li><a href="#remove_messages">Remove Messages</a></li>
+	<li><a href="#remove_messagesfrom_a_command_line">Remove Messages from an IBM i Command Line</a></li>
+	<li><a href="end_message_monitor">End Message Monitor</a></li>
+	<li><a href="#acknowledgement">Acknowledgement</a></li>
+	</ul> 
 	<a href="https://sourceforge.net/projects/isphere/" target="_blank">
 		<img src="assets/messagesubsystem.png"
 		style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
@@ -42,6 +51,7 @@
 	<p>
 		<img src="assets/message_detail_dialog.png" align="middle">
 	<p>
+	<a id="monitoring_messages"></a>
 	<h2>Monitoring Messages</h2>
 	<p>You can also use the iSphere message subsystem to monitor the
 		message queue of your user profile in the background. When a new
@@ -99,6 +109,148 @@
 		The message queue is not immediately unlocked when option <i>Monitor
 		message queue</i> is unchecked. It can take up to 5 seconds until the
 		lock has been removed.
+	<p>
+	<a id="send_messages"></a>
+	<h2>Send Message</h2>
+	<p>
+	   You can send messages from the context menu of the <i>iSphere Message Subsystem</i>.
+	   Open the context menu and select <i>Send Message</i> to open the <i>Send IBM i Message</i>
+	   dialog:
+	<p>
+		<img src="assets/send_message.png" align="middle">
+	<p>
+	Now enter the message text, tab forward to the <i>Recipients</i> field and enter the
+	user profile that will receive the message. Hit the [ENTER] key to send the message.
+	<p>
+		<img src="assets/send_message_dialog.png" align="middle">
+	<p>
+	The available options are:
+	<table border="0">
+		<tr>
+			<td valign="top" nowrap>Message type</td>
+			<td valign="top">-</td>
+			<td valign="top">
+				<table border="0">
+					<tr><td valign="top" width="80">*INFO</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">Informational. The message does not need a reply.</td>
+				    </tr>
+					<tr><td valign="top" width="80" nowrap>*INQ</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">Inquiry. The message needs a reply. If the message queue and 
+					                     library name parameter was specified, the reply is placed on 
+					                     that message queue; otherwise, the reply is placed on the 
+					                     message queue specified in the user profile of the sender.<p>
+					                     The user profile name of the person sending the reply is 
+					                     added to the beginning of the message text, allowing the 
+					                     person receiving the reply to determine which user it is 
+					                     from.</td>
+				    </tr>
+				</table>
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Delivery mode</td>
+			<td valign="top">-</td>
+			<td valign="top">
+				<table border="0">
+					<tr><td valign="top" width="80">*BREAK</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">Break message. If the user is signed on, the message goes to the 
+					                     work station message queues that the user is signed on to and 
+					                     temporarily interrupts the work that the user is doing. If the 
+					                     user is not signed on, the message goes to the user profile 
+					                     message queue and the sender is notified. If display station 
+					                     names are specified, the message goes to the message queues for 
+					                     the specified display stations.</td>
+				    </tr>
+					<tr><td valign="top" width="80" nowrap>*NORMAL</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The message goes to the user profile or display station message 
+					                     queue. If the message queue is in notify mode for that user, the 
+					                     message waiting light is turned on. If the message queue is in 
+					                     break mode, the message temporarily interrupts the work that 
+					                     the receiver is doing. If the message queue is in hold mode, the 
+					                     receiver is not notified.</td>
+				    </tr>
+				</table>
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Message text</td>
+			<td valign="top">-</td>
+			<td valign="top">
+				<table border="0">
+					<tr><td valign="top">The complete text of the message. The text you specify 
+					                     is displayed as the default on the Send a Message display.</td>
+				    </tr>
+				</table>
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Recipient type</td>
+			<td valign="top">:</td>
+			<td valign="top">
+				<table border="0">
+					<tr><td valign="top" width="80">*USR</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The list of names contains only user profile names.</td>
+				    </tr>
+					<tr><td valign="top" width="80" nowrap>*DSP</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The list of names contains only display station names.</td>
+				    </tr>
+				</table>
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Recipients</td>
+			<td valign="top">-</td>
+			<td valign="top">
+				<table border="0">
+					<tr><td valign="top" width="80"><i>name</i></td>
+					    <td valign="top" width="10" />
+					    <td valign="top">Name of a user profile or display station. Use this option to
+					                     send a message to a specific user profile or display station.</td>
+				    </tr>
+					<tr><td valign="top" width="80">*LIST</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The user profile or display station names are specified as a list.</td>
+				    </tr>
+					<tr><td valign="top" width="80">*ALL</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The message queues of all users. When you use this value, it 
+					                     must be the only item in the list. This value cannot be used if 
+					                     *DSP is specified for the name type indicator parameter.</td>
+				    </tr>
+					<tr><td valign="top" width="80" nowrap>*ALLACT</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The message queues of all active users or display stations. This 
+					                     value can be used in combination with specific user profile names 
+					                     or display station names and with *SYSOPR.</td>
+				    </tr>
+					<tr><td valign="top" width="80" nowrap>*SYSOPR</td>
+					    <td valign="top" width="10" />
+					    <td valign="top">The system operator's message queue, QSYSOPR. This value can be used 
+					                     in combination with specific user profile names and with *ALLACT. It 
+					                     cannot be used if *DSP is specified for the name type indicator 
+					                     parameter.</td>
+				    </tr>
+				</table>
+            </td>
+		</tr>
+	</table>
+	<p>
+	<a id="forward_messages"></a>
+	<h2>Forward Message</h2>
+	<p>
+	   You can forward messages from the context menu of an <i>IBM i Message</i>.
+	   Open the context menu and select <i>Forward Message</i> to open the <i>Send IBM i Message</i>
+	   dialog:
+	<p>
+		<img src="assets/forward_message.png" align="middle">
+	<p>
+	<a id="remove_messages"></a>
 	<h2>Remove Messages</h2>
 	<p>
 	   Messages can only be removed with option <i>Delete</i> of the context menu of
@@ -111,6 +263,7 @@
 	   until a message is really removed, although it disappears immediately
 	   after having executed the <i>Delete</i> option.
 	<p>
+	<a id="remove_messagesfrom_a_command_line"></a>
 	<h2>Remove Messages from an IBM i Command Line</h2>
 	<p>   
 	   Actually messages cannot be removed from a monitored message queue, because
@@ -124,6 +277,7 @@
 			<td class="code">SNDMSG MSG('*REMOVE_ALL') TOUSR(user_profile)</td>
 		</tr>
 	</table>
+	<a id="end_message_monitor"></a>
 	<h2>End Message Monitor</h2>
 	<p>Message monitoring ends, when the <i>Monitor message queue</i> checkbox is
 	   unchecked. That may take up to 5 seconds, because of the receive message
@@ -139,6 +293,7 @@
 	<p>You need to check the <i>Monitor message queue</i> checkbox again to
 	   start the message monitor again.
 	<p>
+	<a id="acknowledgement"></a>
 	<h2>Acknowledgement</h2>
 	<p>Over several  months,  many on the WDSC_L mailing list at
 		midrange.com have asked us to adopt the Message Subsystem feature from
