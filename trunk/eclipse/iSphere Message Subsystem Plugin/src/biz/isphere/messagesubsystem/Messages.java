@@ -202,6 +202,12 @@ public class Messages extends NLS {
     public static String Invalid_recipient;
     
     public static String Send_Message;
+
+    public static String A_must_be_the_only_item_in_the_list;
+    
+    public static String A_cannot_be_used_if_B_is_specified_for_the_C_parameter;
+    
+    public static String Recipient_type;
     
     static {
         // initialize resource bundle
