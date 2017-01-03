@@ -24,12 +24,14 @@
    
    <extension
          point="com.ibm.etools.systems.core.popupMenus">
+         
       <objectContribution
             subsystemfactoryid="biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory"
             subtypefilter="*"
             typecategoryfilter="*"
-            typefilter="*"
+            typefilter="*" 
             namefilter="*"
+            objectClass="biz.isphere.messagesubsystem.rse.internal.QueuedMessageResource"
             id="biz.isphere.messagesubsystem.queuedmessages.popupmenu">
          <action
                label="%Message_Details"
@@ -39,6 +41,24 @@
                id="biz.isphere.messagesubsystem.internal.QueuedMessageDetailsPopupMenuExtensionAction">
          </action>
       </objectContribution>
+      
+      <objectContribution
+            subsystemfactoryid="biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            objectClass="biz.isphere.messagesubsystem.rse.internal.QueuedMessageSubSystem"
+            id="biz.isphere.messagesubsystem.queuedmessagessubsystem.popupmenu">
+         <action
+               label="%Send_Message"
+               icon="icons/send_message.png"
+               class="biz.isphere.messagesubsystem.rse.internal.SendMessageAction"
+               enablesFor="1"
+               id="biz.isphere.messagesubsystem.rse.internal.SendMessageAction">
+         </action>
+      </objectContribution>
+      
    </extension>
    
    <extension
