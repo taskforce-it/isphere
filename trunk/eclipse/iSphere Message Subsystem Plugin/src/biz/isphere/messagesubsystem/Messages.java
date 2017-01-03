@@ -199,6 +199,9 @@ public class Messages extends NLS {
     
     public static String Recipients_are_missing;
     
+    public static String Invalid_recipient;
+    
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

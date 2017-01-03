@@ -11,12 +11,13 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -36,6 +37,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 import biz.isphere.messagesubsystem.Messages;
@@ -59,7 +61,7 @@ public class SendMessageDialog extends XDialog {
     private static final String RECIPIENT_LIST = "*LIST"; //$NON-NLS-1$
 
     private static final int BUTTON_RESET_ID = -1;
-    
+
     private Combo comboMessageType;
     private Combo comboDeliveryMode;
     private Text textMessageText;
@@ -120,8 +122,9 @@ public class SendMessageDialog extends XDialog {
         textMessageText.addKeyListener(new KeyListener() {
             public void keyReleased(KeyEvent e) {
             }
+
             public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR /* || e.keyCode == SWT.TAB */) {
+                if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
                     e.doit = false;
                 }
             }
@@ -129,7 +132,7 @@ public class SendMessageDialog extends XDialog {
         textMessageText.addTraverseListener(new TraverseListener() {
             public void keyTraversed(TraverseEvent e) {
                 if (e.keyCode == SWT.TAB) {
-                    e.doit=true;
+                    e.doit = true;
                 }
             }
         });
@@ -148,29 +151,30 @@ public class SendMessageDialog extends XDialog {
         labelRecipients.setText(Messages.Recipients_colon);
 
         comboRecipient = WidgetFactory.createCombo(mainPanel);
+        comboRecipient.setTextLimit(10);
         comboRecipient.setLayoutData(createInputFieldLayoutData());
         comboRecipient.setItems(new String[] { RECIPIENT_LIST, QEZSNDMG.RECIPIENT_ALL, QEZSNDMG.RECIPIENT_ALLACT, QEZSNDMG.RECIPIENT_SYSOPR });
         comboRecipient.select(DEFAULT_INDEX_RECIPIENT);
         comboRecipient.addVerifyListener(new UpperCaseOnlyVerifier());
         comboRecipient.addSelectionListener(new SelectionListener() {
-
             public void widgetSelected(SelectionEvent e) {
-                Combo recipients = (Combo)e.widget;
-                if (RECIPIENT_LIST.equals(recipients.getText())) {
-                    receipientsEditor.setEnabled(true);
-                } else {
-                    receipientsEditor.setEnabled(false);
-                }
+                setControlEnablement();
             }
-
             public void widgetDefaultSelected(SelectionEvent e) {
                 widgetSelected(e);
+            }
+        });
+        comboRecipient.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                setControlEnablement();
             }
         });
 
         new Label(mainPanel, SWT.NONE); // place holder
 
         receipientsEditor = new StringListEditor(mainPanel, SWT.NONE);
+        receipientsEditor.setTextLimit(10);
+        receipientsEditor.setEnableLowerCase(true);
 
         createStatusLine(mainPanel);
 
@@ -221,6 +225,11 @@ public class SendMessageDialog extends XDialog {
 
     private void setControlEnablement() {
 
+        if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
+            receipientsEditor.setEnabled(true);
+        } else {
+            receipientsEditor.setEnabled(false);
+        }
     }
 
     @Override
@@ -276,18 +285,46 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
-        if (comboRecipient.getText().trim().length() <= 0) {
-            setErrorMessage(Messages.Recipients_are_missing);
+        if (!validateRecipient(comboRecipient.getText().trim())) {
             comboRecipient.setFocus();
             return false;
         }
 
         if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
-            if (receipientsEditor.getItemCount() <= 0) {
+            String[] recipients = receipientsEditor.getItems();
+            if (recipients.length <= 0) {
                 setErrorMessage(Messages.Recipients_are_missing);
                 receipientsEditor.setFocus();
                 return false;
             }
+
+            for (int i = 0; i < recipients.length; i++) {
+                if (!validateRecipient(recipients[i])) {
+                    receipientsEditor.setFocus(i);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public boolean validateRecipient(String recipient) {
+
+        if (QEZSNDMG.RECIPIENT_ALL.equals(recipient) || QEZSNDMG.RECIPIENT_ALLACT.equals(recipient) || QEZSNDMG.RECIPIENT_SYSOPR.equals(recipient)
+            || RECIPIENT_LIST.equals(recipient)) {
+            return true;
+        }
+
+        if (recipient.length() <= 0) {
+            setErrorMessage(Messages.Recipients_are_missing);
+            return false;
+        }
+
+        Validator validator = Validator.getNameInstance();
+        if (!validator.validate(recipient)) {
+            setErrorMessage(Messages.Invalid_recipient);
+            return false;
         }
 
         return true;
@@ -302,7 +339,7 @@ public class SendMessageDialog extends XDialog {
         sendMessageOptions.setMessageText(textMessageText.getText());
         sendMessageOptions.setRecipientType(comboRecipientTypes.getText());
 
-        String recipient = comboRecipient.getText();
+        String recipient = comboRecipient.getText().trim();
         if (RECIPIENT_LIST.equals(recipient)) {
             String[] recipients = receipientsEditor.getItems();
             sendMessageOptions.setRecipients(recipients);
