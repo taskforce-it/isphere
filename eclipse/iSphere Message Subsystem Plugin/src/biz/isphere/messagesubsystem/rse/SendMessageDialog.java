@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.Size;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
@@ -263,7 +262,7 @@ public class SendMessageDialog extends XDialog {
         textMessageText.setText(""); //$NON-NLS-1$
         comboRecipientTypes.select(DEFAULT_INDEX_RECIPIENT_TYPES);
         comboRecipient.select(DEFAULT_INDEX_RECIPIENT);
-        comboRecipient.setText("");
+        comboRecipient.setText(""); //$NON-NLS-1$
 
         overWriteInitialValues();
 
@@ -303,6 +302,8 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
+        boolean isALL = false;
+        boolean isSysOpr = false;
         if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
             String[] recipients = receipientsEditor.getItems();
             if (recipients.length <= 0) {
@@ -316,7 +317,39 @@ public class SendMessageDialog extends XDialog {
                     receipientsEditor.setFocus(i);
                     return false;
                 }
+                if (QEZSNDMG.RECIPIENT_ALL.equals(recipients[i])) {
+                    isALL = true;
+                }
+                if (QEZSNDMG.RECIPIENT_SYSOPR.equals(recipients[i])) {
+                    isALL = true;
+                }
             }
+
+            if (isALL && recipients.length > 1) {
+                setErrorMessage(Messages.bind(Messages.A_must_be_the_only_item_in_the_list, QEZSNDMG.RECIPIENT_ALL));
+                receipientsEditor.setFocus();
+                return false;
+            }
+        } else {
+            if (QEZSNDMG.RECIPIENT_ALL.equals(comboRecipient.getText())) {
+                isALL = true;
+            }
+            if (QEZSNDMG.RECIPIENT_SYSOPR.equals(comboRecipient.getText())) {
+                isSysOpr = true;
+            }
+        }
+
+        if (isALL && QEZSNDMG.RECIPIENT_TYPE_DSP.equals(comboRecipientTypes.getText())) {
+            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_ALL,
+                QEZSNDMG.RECIPIENT_TYPE_DSP, Messages.Recipient_type }));
+            receipientsEditor.setFocus();
+            return false;
+        }
+        if (isSysOpr && QEZSNDMG.RECIPIENT_TYPE_DSP.equals(comboRecipientTypes.getText())) {
+            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_SYSOPR,
+                QEZSNDMG.RECIPIENT_TYPE_DSP, Messages.Recipient_type }));
+            receipientsEditor.setFocus();
+            return false;
         }
 
         return true;
@@ -389,7 +422,7 @@ public class SendMessageDialog extends XDialog {
         receipientsEditor.setItems(recipients);
 
         overWriteInitialValues();
-        
+
         validateInput();
     }
 
@@ -429,7 +462,7 @@ public class SendMessageDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(Size.getSize(450), SWT.DEFAULT, true);
+        return getShell().computeSize(SWT.DEFAULT, 600, true);
     }
 
     /**
