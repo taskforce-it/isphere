@@ -33,8 +33,12 @@ public class SendMessageAction extends ISeriesAbstractQSYSPopupMenuExtensionActi
     @Override
     public void run() {
         Object[] selection = getSelectedRemoteObjects();
-        if (selection != null && selection.length >= 1 && selection[0] instanceof QueuedMessageSubSystem) {
+        if (selection != null && selection.length >= 1 && (selection[0] instanceof QueuedMessageSubSystem || selection[0] instanceof QueuedMessageResource )) {
             SendMessageDialog dialog = new SendMessageDialog(getShell());
+            if (selection[0] instanceof QueuedMessageResource) {
+                QueuedMessageResource messageResource = (QueuedMessageResource)selection[0];
+                dialog.setMessageText(messageResource.getQueuedMessage().getText());
+            }
             if (dialog.open() == SendMessageDialog.OK) {
                 try {
                     SendMessageDelegate delegate = new SendMessageDelegate();
