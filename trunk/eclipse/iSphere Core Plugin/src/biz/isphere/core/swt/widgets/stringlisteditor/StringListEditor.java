@@ -54,20 +54,28 @@ public class StringListEditor extends Composite implements SelectionListener {
     private Button parentDefaultButton;
     private List<Item> itemsList;
 
+    private boolean enableLowerCase;
+
+    private UpperCaseOnlyVerifier upperCaseOnlyVerifier;
+
     private Table itemsTable;
     private TableViewer itemsViewer;
     private Text textItem;
     private Button addButton;
     private Button removeButton;
-    private Button removeButtonAll;
+    private Button removeAllButton;
     private Button moveUpButton;
     private Button moveDownButton;
+
+    private CellEditor[] cellEditors;
 
     public StringListEditor(Composite parent, int style) {
         super(parent, style);
 
         this.shell = parent.getShell();
         this.itemsList = new ArrayList<Item>();
+
+        this.upperCaseOnlyVerifier = new UpperCaseOnlyVerifier();
 
         int numColumns = 3;
         prepareComposite(numColumns);
@@ -76,6 +84,25 @@ public class StringListEditor extends Composite implements SelectionListener {
 
     public void setParentDefaultButton(Button button) {
         this.parentDefaultButton = button;
+    }
+
+    public void setTextLimit(int limit) {
+        textItem.setTextLimit(limit);
+        Text editorControl = (Text)cellEditors[0].getControl();
+        editorControl.setTextLimit(limit);
+    }
+
+    public void setEnableLowerCase(boolean enable) {
+        this.enableLowerCase = enable;
+
+        Text editorControl = (Text)cellEditors[0].getControl();
+        if (this.enableLowerCase) {
+            textItem.addVerifyListener(upperCaseOnlyVerifier);
+            editorControl.addVerifyListener(upperCaseOnlyVerifier);
+        } else {
+            textItem.removeVerifyListener(upperCaseOnlyVerifier);
+            editorControl.removeVerifyListener(upperCaseOnlyVerifier);
+        }
     }
 
     public void clearAll() {
@@ -91,7 +118,7 @@ public class StringListEditor extends Composite implements SelectionListener {
         }
 
         itemsViewer.setInput(itemsList);
-        
+
         setButtonEnablement();
     }
 
@@ -99,7 +126,7 @@ public class StringListEditor extends Composite implements SelectionListener {
 
         String[] items = new String[itemsList.size()];
         for (int i = 0; i < items.length; i++) {
-            items[i] = itemsList.get(i).getValue();
+            items[i] = itemsList.get(i).getValue().trim();
         }
 
         return items;
@@ -118,6 +145,15 @@ public class StringListEditor extends Composite implements SelectionListener {
         }
     }
 
+    public boolean setFocus(int index) {
+        if (index >= 0 && index < getItemCount()) {
+            itemsTable.setTopIndex(index);
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -127,7 +163,7 @@ public class StringListEditor extends Composite implements SelectionListener {
             itemsTable.setEnabled(false);
             addButton.setEnabled(false);
             removeButton.setEnabled(false);
-            removeButtonAll.setEnabled(false);
+            removeAllButton.setEnabled(false);
             moveUpButton.setEnabled(false);
             moveDownButton.setEnabled(false);
         } else {
@@ -147,10 +183,10 @@ public class StringListEditor extends Composite implements SelectionListener {
         }
 
         // Remove all-button
-        if (itemsTable.getItemCount()<=0){
-            removeButtonAll.setEnabled(false);
-        }else{
-            removeButtonAll.setEnabled(true);
+        if (itemsTable.getItemCount() <= 0 || !isEnabled()) {
+            removeAllButton.setEnabled(false);
+        } else {
+            removeAllButton.setEnabled(true);
         }
 
         // Other buttons
@@ -205,7 +241,7 @@ public class StringListEditor extends Composite implements SelectionListener {
         mainPanel.setLayout(new GridLayout(numColumns, false));
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        textItem = WidgetFactory.createNameText(mainPanel);
+        textItem = WidgetFactory.createText(mainPanel);
         textItem.addModifyListener(new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
@@ -256,12 +292,8 @@ public class StringListEditor extends Composite implements SelectionListener {
         itemsViewer.setColumnProperties(COLUMN_PROPERTIES);
         itemsViewer.setInput(null);
 
-        CellEditor[] cellEditors = new CellEditor[1];
-        TextCellEditor editor = new TextCellEditor(itemsTable);
-        Text editorControl = (Text)editor.getControl();
-        editorControl.setTextLimit(10);
-        editorControl.addVerifyListener(new UpperCaseOnlyVerifier());
-        cellEditors[0] = editor;
+        cellEditors = new CellEditor[1];
+        cellEditors[0] = new TextCellEditor(itemsTable);
         itemsViewer.setCellEditors(cellEditors);
 
         Composite buttonsPanel = new Composite(mainPanel, 0);
@@ -274,10 +306,10 @@ public class StringListEditor extends Composite implements SelectionListener {
         removeButton.setLayoutData(new GridData(256));
         removeButton.addSelectionListener(this);
 
-        removeButtonAll = WidgetFactory.createPushButton(buttonsPanel);
-        removeButtonAll.setText(Messages.Remove_all);
-        removeButtonAll.setLayoutData(new GridData(256));
-        removeButtonAll.addSelectionListener(this);
+        removeAllButton = WidgetFactory.createPushButton(buttonsPanel);
+        removeAllButton.setText(Messages.Remove_all);
+        removeAllButton.setLayoutData(new GridData(256));
+        removeAllButton.addSelectionListener(this);
 
         moveUpButton = WidgetFactory.createPushButton(buttonsPanel);
         moveUpButton.setText(Messages.Move_up);
@@ -321,7 +353,7 @@ public class StringListEditor extends Composite implements SelectionListener {
                 }
                 itemsViewer.refresh();
             }
-        } else if (e.widget == removeButtonAll) {
+        } else if (e.widget == removeAllButton) {
             itemsList.clear();
             itemsViewer.refresh();
         } else if (e.widget == moveUpButton) {
