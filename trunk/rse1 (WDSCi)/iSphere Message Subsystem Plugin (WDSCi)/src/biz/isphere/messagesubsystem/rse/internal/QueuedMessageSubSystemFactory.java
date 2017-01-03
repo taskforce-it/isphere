@@ -14,6 +14,7 @@ package biz.isphere.messagesubsystem.rse.internal;
 import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 
@@ -21,6 +22,7 @@ import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
+import com.ibm.etools.systems.core.ui.actions.SystemBaseSubMenuAction;
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterPool;
@@ -95,10 +97,18 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
     @Override
     protected IAction getChangeFilterAction(SystemFilter selectedFilter, Shell shell) {
         SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(selectedFilter, shell);
-        // String type = selectedFilter.getType();
         action.setDialogTitle(Messages.Change_Message_Filter);
         action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
         return action;
+    }
+
+    @Override
+    protected Vector getAdditionalSubSystemActions(SubSystem arg0, Shell arg1) {
+
+        Vector<IAction> actions = new Vector<IAction>();
+        actions.add(new SendMessageAction());
+
+        return actions;
     }
 
     @Override

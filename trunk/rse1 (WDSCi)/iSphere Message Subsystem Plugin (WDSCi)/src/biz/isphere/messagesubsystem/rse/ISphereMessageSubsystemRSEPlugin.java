@@ -37,6 +37,7 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
     public static final String IMAGE_MESSAGES = "messages.gif"; //$NON-NLS-1$
     public static final String IMAGE_MESSAGE_FILTER = "message_filter.gif"; //$NON-NLS-1$
     public static final String IMAGE_INQUIRY = "inquiry.gif"; //$NON-NLS-1$
+    public static final String SEND_MESSAGE = "send_message.png"; //$NON-NLS-1$
 
     private static final String PLUGIN_ID = "biz.isphere.messagesubsystem.rse";
 
@@ -76,7 +77,7 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    private ImageDescriptor getImageDescriptor(String name) {
+    public ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/"; //$NON-NLS-1$
         try {
             URL url = new URL(installURL, iconPath + name);
@@ -104,5 +105,6 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
         reg.put(IMAGE_MESSAGES_CONNECTED, getImageDescriptor(IMAGE_MESSAGES_CONNECTED));
         reg.put(IMAGE_MESSAGE_FILTER, getImageDescriptor(IMAGE_MESSAGE_FILTER));
         reg.put(IMAGE_INQUIRY, getImageDescriptor(IMAGE_INQUIRY));
+        reg.put(SEND_MESSAGE, getImageDescriptor(SEND_MESSAGE));
     }
 }
