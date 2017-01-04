@@ -14,7 +14,6 @@ import biz.isphere.messagesubsystem.rse.SendMessageOptions;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.data.PcmlException;
 
 public class QEZSNDMG {
@@ -52,7 +51,7 @@ public class QEZSNDMG {
             for (int i = 0; i < recipients.length; i++) {
                 pcml.setValue("QEZSNDMG.userList", new int[] { i }, recipients[i]); //$NON-NLS-1$
             }
-            
+
             if (options.isInquiryMessage()) {
                 pcml.setQualifiedObjectName("QEZSNDMG.queueName", options.getReplyMessageQueueLibrary(), options.getReplyMessageQueueName());
             }
@@ -70,12 +69,7 @@ public class QEZSNDMG {
             }
 
         } catch (PcmlException e) {
-
-            System.out.println(e.getLocalizedMessage());
-            e.printStackTrace();
-            System.out.println("*** Call to QEZSNDMG failed. ***");
-            // ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e);
-
+            ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e);
         }
     }
 
