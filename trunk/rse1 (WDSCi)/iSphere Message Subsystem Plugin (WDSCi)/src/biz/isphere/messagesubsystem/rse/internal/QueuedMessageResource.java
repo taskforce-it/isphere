@@ -12,13 +12,16 @@
 package biz.isphere.messagesubsystem.rse.internal;
 
 import biz.isphere.messagesubsystem.rse.IQueuedMessageResource;
+import biz.isphere.messagesubsystem.rse.InquiryMessageDelegate;
 
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.impl.AbstractResource;
 
 public class QueuedMessageResource extends AbstractResource implements IQueuedMessageResource {
+
     private QueuedMessage queuedMessage;
+    private InquiryMessageDelegate inquiryMessageDelegate;
 
     public QueuedMessageResource(SubSystem subSystem) {
         super(subSystem);
@@ -34,6 +37,23 @@ public class QueuedMessageResource extends AbstractResource implements IQueuedMe
 
     public void setQueuedMessage(QueuedMessage message) {
         queuedMessage = message;
+        inquiryMessageDelegate = new InquiryMessageDelegate(queuedMessage);
+    }
+
+    public String getDefaultReply() {
+        return inquiryMessageDelegate.getDefaultReply();
+    }
+
+    public boolean isInquiryMessage() {
+        return inquiryMessageDelegate.isInquiryMessage();
+    }
+
+    public String getReplyStatus() {
+        return inquiryMessageDelegate.getReplyStatus();
+    }
+
+    public boolean isPendingReply() {
+        return inquiryMessageDelegate.isPendingReply();
     }
 
 }
