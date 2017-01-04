@@ -38,11 +38,10 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
 
 import com.ibm.as400.access.MessageQueue;
-import com.ibm.as400.access.QueuedMessage;
 
 public class QueuedMessageDialog extends XDialog {
 
-    private ReceivedMessage queuedMessage;
+    private ReceivedMessage receivedMessage;
     private Text responseText;
     private boolean createCancelButton;
     private boolean createOKToAllButton;
@@ -58,7 +57,7 @@ public class QueuedMessageDialog extends XDialog {
 
     public QueuedMessageDialog(Shell shell, ReceivedMessage queuedMessage, boolean createCancelButton, boolean createOKToAllButton) {
         super(shell);
-        this.queuedMessage = queuedMessage;
+        this.receivedMessage = queuedMessage;
         this.createCancelButton = createCancelButton;
         this.createOKToAllButton = createOKToAllButton;
         this.messageFormatter = new BasicMessageFormatter();
@@ -86,8 +85,8 @@ public class QueuedMessageDialog extends XDialog {
         Text idText = WidgetFactory.createReadOnlyText(mainPanel);
         idText.setLayoutData(new GridData(200, SWT.DEFAULT));
         idText.setEnabled(false);
-        if (queuedMessage.getID() != null) {
-            idText.setText(queuedMessage.getID());
+        if (receivedMessage.getID() != null) {
+            idText.setText(receivedMessage.getID());
         }
 
         Label sevLabel = new Label(mainPanel, SWT.NONE);
@@ -96,7 +95,7 @@ public class QueuedMessageDialog extends XDialog {
         Text sevText = WidgetFactory.createReadOnlyText(mainPanel);
         sevText.setLayoutData(new GridData(200, SWT.DEFAULT));
         sevText.setEnabled(false);
-        sevText.setText(new Integer(queuedMessage.getSeverity()).toString());
+        sevText.setText(new Integer(receivedMessage.getSeverity()).toString());
 
         Label typeLabel = new Label(mainPanel, SWT.NONE);
         typeLabel.setText(Messages.Message_type_colon);
@@ -104,7 +103,7 @@ public class QueuedMessageDialog extends XDialog {
         Text typeText = WidgetFactory.createReadOnlyText(mainPanel);
         typeText.setLayoutData(new GridData(200, SWT.DEFAULT));
         typeText.setEnabled(false);
-        typeText.setText(queuedMessage.getMessageType());
+        typeText.setText(receivedMessage.getMessageType());
 
         Label dateLabel = new Label(mainPanel, SWT.NONE);
         dateLabel.setText(Messages.Date_sent_colon);
@@ -112,7 +111,7 @@ public class QueuedMessageDialog extends XDialog {
         Text dateText = WidgetFactory.createReadOnlyText(mainPanel);
         dateText.setLayoutData(new GridData(200, SWT.DEFAULT));
         dateText.setEnabled(false);
-        dateText.setText(queuedMessage.getDate().getTime().toString());
+        dateText.setText(receivedMessage.getDate().getTime().toString());
 
         Label userLabel = new Label(mainPanel, SWT.NONE);
         userLabel.setText(Messages.From_colon);
@@ -120,8 +119,8 @@ public class QueuedMessageDialog extends XDialog {
         Text userText = WidgetFactory.createReadOnlyText(mainPanel);
         userText.setLayoutData(new GridData(200, SWT.DEFAULT));
         userText.setEnabled(false);
-        if (queuedMessage.getUser() != null) {
-            userText.setText(queuedMessage.getUser());
+        if (receivedMessage.getUser() != null) {
+            userText.setText(receivedMessage.getUser());
         }
 
         Label msgTextLabel = new Label(mainPanel, SWT.NONE);
@@ -131,9 +130,9 @@ public class QueuedMessageDialog extends XDialog {
         Text msgText = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
         msgText.setLayoutData(new GridData(GridData.FILL_BOTH));
         msgText.setFont(FontHelper.getFixedSizeFont());
-        msgText.setText(queuedMessage.getText());
+        msgText.setText(receivedMessage.getText());
 
-        if (queuedMessage.getHelpFormatted() != null && !queuedMessage.getHelpFormatted().equals(queuedMessage.getText())) {
+        if (receivedMessage.getHelpFormatted() != null && !receivedMessage.getHelpFormatted().equals(receivedMessage.getText())) {
 
             // Place holder label for message help text box
             new Label(mainPanel, SWT.NONE);
@@ -141,10 +140,10 @@ public class QueuedMessageDialog extends XDialog {
             Text msgHelp = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
             msgHelp.setLayoutData(new GridData(GridData.FILL_BOTH));
             msgHelp.setFont(FontHelper.getFixedSizeFont());
-            msgHelp.setText(messageFormatter.formatHelpText(queuedMessage.getHelpFormatted()));
+            msgHelp.setText(messageFormatter.formatHelpText(receivedMessage.getHelpFormatted()));
         }
 
-        if (queuedMessage.getType() == QueuedMessage.INQUIRY) {
+        if (receivedMessage.isInquiryMessage() && receivedMessage.isPendingReply()) {
 
             Label replyLabel = new Label(mainPanel, SWT.NONE);
             replyLabel.setText(Messages.Reply_colon);
@@ -152,8 +151,8 @@ public class QueuedMessageDialog extends XDialog {
             responseText = WidgetFactory.createText(mainPanel);
             responseText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
             responseText.setTextLimit(132);
-            if (queuedMessage.getDefaultReply() != null) {
-                responseText.setText(queuedMessage.getDefaultReply());
+            if (receivedMessage.getDefaultReply() != null) {
+                responseText.setText(receivedMessage.getDefaultReply());
             } else {
                 responseText.setText("");
             }
@@ -193,11 +192,11 @@ public class QueuedMessageDialog extends XDialog {
 
     private void processInquiryMessage() {
 
-        if (queuedMessage.getType() == QueuedMessage.INQUIRY) {
+        if (receivedMessage.isInquiryMessage()) {
             if ((responseText.getText() != null) && (responseText.getText().trim().length() > 0)) {
-                MessageQueue messageQueue = queuedMessage.getQueue();
+                MessageQueue messageQueue = receivedMessage.getQueue();
                 try {
-                    messageQueue.reply(queuedMessage.getKey(), responseText.getText());
+                    messageQueue.reply(receivedMessage.getKey(), responseText.getText());
                 } catch (Exception e) {
                     String errorMessage = e.getMessage();
                     if (errorMessage == null) errorMessage = e.toString();

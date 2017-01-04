@@ -22,8 +22,6 @@ import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
 import biz.isphere.messagesubsystem.internal.QueuedMessageListDialog;
 
-import com.ibm.as400.access.QueuedMessage;
-
 /**
  * This class handles messages that have been received by the message monitor
  * thread.
@@ -117,7 +115,7 @@ public class MessageHandler implements IMessageHandler {
             return;
         }
 
-        if (monitoringAttributes.isRemoveInformationalMessages() && (message.getType() != QueuedMessage.INQUIRY)) {
+        if (monitoringAttributes.isRemoveInformationalMessages() && !message.isInquiryMessage()) {
             try {
                 message.getQueue().remove(message.getKey());
             } catch (Exception e) {
@@ -153,7 +151,7 @@ public class MessageHandler implements IMessageHandler {
                 if (!monitoringAttributes.isValid()) {
                     if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error,
                         Messages.Email_Notification_Error_Message)) {
-                        if (message.getType() == QueuedMessage.INQUIRY) {
+                        if (message.isInquiryMessage()) {
                             monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
                         } else {
                             monitoringAttributes.setInformationalMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
@@ -183,7 +181,7 @@ public class MessageHandler implements IMessageHandler {
                         errorMessage = errorMessage + Messages.Email_Notification_Properties_Error_message;
                         Display.getDefault().beep();
                         if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error, errorMessage)) {
-                            if (message.getType() == QueuedMessage.INQUIRY) {
+                            if (message.isInquiryMessage()) {
                                 monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
                             } else {
                                 monitoringAttributes.setInformationalMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
@@ -197,7 +195,7 @@ public class MessageHandler implements IMessageHandler {
 
                 Display.getDefault().beep();
                 QueuedMessageDialog dialog;
-                if (message.getType() == QueuedMessage.INQUIRY) {
+                if (message.isInquiryMessage()) {
                     dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, false);
                 } else {
                     dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, createOKToAllButton);

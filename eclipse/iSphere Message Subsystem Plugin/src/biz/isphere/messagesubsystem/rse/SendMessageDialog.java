@@ -51,31 +51,48 @@ public class SendMessageDialog extends XDialog {
     private static final String MESSAGE_RECIPIENT = "MESSAGE_RECIPIENT"; //$NON-NLS-1$
     private static final String MESSAGE_RECIPIENTS_COUNT = "MESSAGE_RECIPIENTS_COUNT"; //$NON-NLS-1$
     private static final String MESSAGE_RECIPIENT_ITEM = "MESSAGE_RECIPIENTS_ITEM_"; //$NON-NLS-1$
+    private static final String MESSAGE_REPLY_QUEUE_NAME = "MESSAGE_REPLY_QUEUE_NAME"; //$NON-NLS-1$
+    private static final String MESSAGE_REPLY_QUEUE_LIBRARY = "MESSAGE_REPLY_QUEUE_LIBRARY"; //$NON-NLS-1$
 
     private static final int DEFAULT_INDEX_MESSAGE_TYPE = 0;
     private static final int DEFAULT_INDEX_DELIVERY_MODE = 0;
     private static final int DEFAULT_INDEX_RECIPIENT_TYPES = 0;
     private static final int DEFAULT_INDEX_RECIPIENT = 0;
+    private static final int DEFAULT_REPLY_MESSAGE_QUEUE_NAME = 0;
+    private static final int DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY = 0;
 
     private static final String RECIPIENT_LIST = "*LIST"; //$NON-NLS-1$
-
+    private static final String REPLY_MSGQ_NAME_SENDER = "*SENDER"; //$NON-NLS-1$ 
+    private static final String REPLY_MSGQ_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$ 
+    private static final String REPLY_MSGQ_LIBRARY_CURLIB = "*CURLIB"; //$NON-NLS-1$ 
     private static final int BUTTON_RESET_ID = -1;
+
+    private static final String LIBRARY_CURLIB = "*CURLIB"; //$NON-NLS-1$
+    private static final String LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$
 
     private Combo comboMessageType;
     private Combo comboDeliveryMode;
     private Text textMessageText;
     private Combo comboRecipientTypes;
     private Combo comboRecipient;
+    private Label labelReplyMessageQueueName;
+    private Combo comboReplyMessageQueueName;
+    private Label labelReplyMessageQueueLibrary;
+    private Combo comboReplyMessageQueueLibrary;
 
     private SendMessageOptions sendMessageOptions;
     private StringListEditor receipientsEditor;
 
     private String overWriteMessageText;
+    private Validator nameValidator;
+    private Validator libraryValidator;
 
     public SendMessageDialog(Shell shell) {
         super(shell);
 
         this.sendMessageOptions = null;
+        this.nameValidator = Validator.getNameInstance();
+        this.libraryValidator = Validator.getLibraryNameInstance();
     }
 
     public void setMessageText(String text) {
@@ -105,6 +122,15 @@ public class SendMessageDialog extends XDialog {
         comboMessageType.setLayoutData(createInputFieldLayoutData());
         comboMessageType.setItems(new String[] { QEZSNDMG.TYPE_INFO, QEZSNDMG.TYPE_INQUERY });
         comboMessageType.select(DEFAULT_INDEX_MESSAGE_TYPE);
+        comboMessageType.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                setControlEnablement();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
 
         Label labelDeliveryMode = new Label(mainPanel, SWT.NONE);
         labelDeliveryMode.setLayoutData(createLabelLayoutData());
@@ -182,6 +208,28 @@ public class SendMessageDialog extends XDialog {
         receipientsEditor.setTextLimit(10);
         receipientsEditor.setEnableLowerCase(true);
 
+        labelReplyMessageQueueName = new Label(mainPanel, SWT.NONE);
+        labelReplyMessageQueueName.setLayoutData(createLabelLayoutData());
+        labelReplyMessageQueueName.setText("Reply message queue name:");
+
+        comboReplyMessageQueueName = WidgetFactory.createCombo(mainPanel);
+        comboReplyMessageQueueName.setTextLimit(10);
+        comboReplyMessageQueueName.setLayoutData(createInputFieldLayoutData());
+        comboReplyMessageQueueName.setItems(new String[] { REPLY_MSGQ_NAME_SENDER });
+        comboReplyMessageQueueName.select(DEFAULT_REPLY_MESSAGE_QUEUE_NAME);
+        comboReplyMessageQueueName.addVerifyListener(new UpperCaseOnlyVerifier());
+
+        labelReplyMessageQueueLibrary = new Label(mainPanel, SWT.NONE);
+        labelReplyMessageQueueLibrary.setLayoutData(createLabelLayoutData());
+        labelReplyMessageQueueLibrary.setText("Reply message queue library:");
+
+        comboReplyMessageQueueLibrary = WidgetFactory.createCombo(mainPanel);
+        comboReplyMessageQueueLibrary.setTextLimit(10);
+        comboReplyMessageQueueLibrary.setLayoutData(createInputFieldLayoutData());
+        comboReplyMessageQueueLibrary.setItems(new String[] { REPLY_MSGQ_LIBRARY_LIBL, REPLY_MSGQ_LIBRARY_CURLIB });
+        comboReplyMessageQueueLibrary.select(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY);
+        comboReplyMessageQueueLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
+
         createStatusLine(mainPanel);
 
         scrolledComposite.setContent(mainPanel);
@@ -236,6 +284,18 @@ public class SendMessageDialog extends XDialog {
         } else {
             receipientsEditor.setEnabled(false);
         }
+
+        if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
+            labelReplyMessageQueueName.setEnabled(true);
+            labelReplyMessageQueueLibrary.setEnabled(true);
+            comboReplyMessageQueueName.setEnabled(true);
+            comboReplyMessageQueueLibrary.setEnabled(true);
+        } else {
+            labelReplyMessageQueueName.setEnabled(false);
+            labelReplyMessageQueueLibrary.setEnabled(false);
+            comboReplyMessageQueueName.setEnabled(false);
+            comboReplyMessageQueueLibrary.setEnabled(false);
+        }
     }
 
     @Override
@@ -262,7 +322,6 @@ public class SendMessageDialog extends XDialog {
         textMessageText.setText(""); //$NON-NLS-1$
         comboRecipientTypes.select(DEFAULT_INDEX_RECIPIENT_TYPES);
         comboRecipient.select(DEFAULT_INDEX_RECIPIENT);
-        comboRecipient.setText(""); //$NON-NLS-1$
 
         overWriteInitialValues();
 
@@ -352,6 +411,19 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
+        if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
+            if (!validateMessageQueueName(comboReplyMessageQueueName.getText())) {
+                setErrorMessage("Invalid message queue name.");
+                comboReplyMessageQueueName.setFocus();
+                return false;
+            }
+            if (!validateMessageQueueLibrary(comboReplyMessageQueueLibrary.getText())) {
+                setErrorMessage("Invalid message queue library name.");
+                comboReplyMessageQueueLibrary.setFocus();
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -367,8 +439,7 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
-        Validator validator = Validator.getNameInstance();
-        if (!validator.validate(recipient)) {
+        if (!nameValidator.validate(recipient)) {
             setErrorMessage(Messages.Invalid_recipient);
             return false;
         }
@@ -376,7 +447,33 @@ public class SendMessageDialog extends XDialog {
         return true;
     }
 
-    public void storeInput() {
+    public boolean validateMessageQueueName(String messageQueueName) {
+
+        if (!nameValidator.validate(messageQueueName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean validateMessageQueueLibrary(String library) {
+
+        if (LIBRARY_LIBL.equals(library)) {
+            return true;
+        }
+
+        if (LIBRARY_CURLIB.equals(library)) {
+            return true;
+        }
+
+        if (!libraryValidator.validate(library)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void storeInput() {
 
         sendMessageOptions = new SendMessageOptions();
 
@@ -393,6 +490,10 @@ public class SendMessageDialog extends XDialog {
             sendMessageOptions.setRecipients(new String[] { comboRecipient.getText() });
         }
 
+        if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
+            sendMessageOptions.setReplyMessageQueueName(comboReplyMessageQueueName.getText());
+            sendMessageOptions.setReplyMessageQueueLibrary(comboReplyMessageQueueLibrary.getText());
+        }
     }
 
     public SendMessageOptions getInput() {
@@ -404,11 +505,11 @@ public class SendMessageDialog extends XDialog {
      */
     private void loadScreenValues() {
 
-        comboMessageType.setText(loadValue(MESSAGE_TYPE, comboMessageType.getItems()[0]));
-        comboDeliveryMode.setText(loadValue(DELIVERY_MODE, comboDeliveryMode.getItems()[0]));
+        comboMessageType.setText(loadValue(MESSAGE_TYPE, comboMessageType.getItems()[DEFAULT_INDEX_MESSAGE_TYPE]));
+        comboDeliveryMode.setText(loadValue(DELIVERY_MODE, comboDeliveryMode.getItems()[DEFAULT_INDEX_DELIVERY_MODE]));
         textMessageText.setText(loadValue(MESSAGE_TEXT, "")); //$NON-NLS-1$
-        comboRecipientTypes.setText(loadValue(MESSAGE_RECIPIENT_TYPES, comboRecipientTypes.getItem(0)));
-        comboRecipient.setText(loadValue(MESSAGE_RECIPIENT, "")); //$NON-NLS-1$
+        comboRecipientTypes.setText(loadValue(MESSAGE_RECIPIENT_TYPES, comboRecipientTypes.getItem(DEFAULT_INDEX_RECIPIENT_TYPES)));
+        comboRecipient.setText(loadValue(MESSAGE_RECIPIENT, comboRecipient.getItem(DEFAULT_INDEX_RECIPIENT))); //$NON-NLS-1$
 
         int count = loadIntValue(MESSAGE_RECIPIENTS_COUNT, 0);
         String[] recipients = new String[count];
@@ -420,6 +521,10 @@ public class SendMessageDialog extends XDialog {
         }
 
         receipientsEditor.setItems(recipients);
+
+        comboReplyMessageQueueName.setText(loadValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_NAME))); //$NON-NLS-1$
+        comboReplyMessageQueueLibrary.setText(loadValue(MESSAGE_REPLY_QUEUE_LIBRARY,
+            comboReplyMessageQueueLibrary.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY))); //$NON-NLS-1$
 
         overWriteInitialValues();
 
@@ -450,6 +555,8 @@ public class SendMessageDialog extends XDialog {
             storeValue(MESSAGE_RECIPIENT_ITEM + i, recipients[i]);
         }
 
+        storeValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getText());
+        storeValue(MESSAGE_REPLY_QUEUE_LIBRARY, comboReplyMessageQueueLibrary.getText());
     }
 
     @Override
@@ -462,7 +569,7 @@ public class SendMessageDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(SWT.DEFAULT, 600, true);
+        return getShell().computeSize(600, SWT.DEFAULT, true);
     }
 
     /**

@@ -24,9 +24,11 @@ import com.ibm.as400.access.QueuedMessage;
 public class ReceivedMessage {
 
     private QueuedMessage queuedMessage;
+    private InquiryMessageDelegate inquiryMessageDelegate;
 
     public ReceivedMessage(QueuedMessage message) {
         this.queuedMessage = message;
+        this.inquiryMessageDelegate=new InquiryMessageDelegate(this.queuedMessage);
     }
 
     public String getID() {
@@ -91,7 +93,19 @@ public class ReceivedMessage {
     }
 
     public String getDefaultReply() {
-        return queuedMessage.getDefaultReply();
+        return inquiryMessageDelegate.getDefaultReply();
+    }
+
+    public boolean isInquiryMessage() {
+        return inquiryMessageDelegate.isInquiryMessage();
+    }
+
+    public String getReplyStatus() {
+        return inquiryMessageDelegate.getReplyStatus();
+    }
+
+    public boolean isPendingReply() {
+        return inquiryMessageDelegate.isPendingReply();
     }
 
 }

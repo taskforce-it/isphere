@@ -15,4 +15,12 @@ public interface IQueuedMessageResource {
     public QueuedMessage getQueuedMessage();
 
     public void setQueuedMessage(QueuedMessage queuedMessage);
+
+    public String getDefaultReply();
+
+    public boolean isInquiryMessage();
+
+    public String getReplyStatus();
+
+    public boolean isPendingReply();
 }
