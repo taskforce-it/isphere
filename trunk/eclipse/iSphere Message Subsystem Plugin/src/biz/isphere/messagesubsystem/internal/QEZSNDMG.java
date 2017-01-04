@@ -52,6 +52,10 @@ public class QEZSNDMG {
             for (int i = 0; i < recipients.length; i++) {
                 pcml.setValue("QEZSNDMG.userList", new int[] { i }, recipients[i]); //$NON-NLS-1$
             }
+            
+            if (options.isInquiryMessage()) {
+                pcml.setQualifiedObjectName("QEZSNDMG.queueName", options.getReplyMessageQueueLibrary(), options.getReplyMessageQueueName());
+            }
 
             boolean rc = pcml.callProgram("QEZSNDMG"); //$NON-NLS-1$
 

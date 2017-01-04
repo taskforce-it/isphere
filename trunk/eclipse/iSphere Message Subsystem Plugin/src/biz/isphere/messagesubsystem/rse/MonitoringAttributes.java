@@ -18,8 +18,6 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.messagesubsystem.Messages;
 
-import com.ibm.as400.access.QueuedMessage;
-
 public class MonitoringAttributes {
 
     public final static String VENDOR_ID = "biz.isphere"; //$NON-NLS-1$
@@ -48,7 +46,7 @@ public class MonitoringAttributes {
     private static final String COLLECT_MESSAGES_ON_STARTUP_ENABLED = "true"; //$NON-NLS-1$
     private static final String COLLECT_MESSAGES_ON_STARTUP_DISABLED = "false"; //$NON-NLS-1$
     private static final boolean COLLECT_MESSAGES_ON_STARTUP_DEFAULT = Boolean.parseBoolean(COLLECT_MESSAGES_ON_STARTUP_ENABLED);
-    
+
     private static final String MONITORING_ENABLED = "true"; //$NON-NLS-1$
     private static final String MONITORING_DISABLED = "false"; //$NON-NLS-1$
     private static final boolean MONITORING_DEFAULT = Boolean.parseBoolean(MONITORING_DISABLED);
@@ -92,7 +90,7 @@ public class MonitoringAttributes {
         setSmtpLogin(SMTP_LOGIN_DEFAULT);
         setSmtpUser(SMTP_USER_DEFAULT);
         setSmtpPassword(SMTP_PASSWORD_DEFAULT);
-        
+
         setFilterString(null);
     }
 
@@ -109,7 +107,7 @@ public class MonitoringAttributes {
     }
 
     private String getMessageHandling(ReceivedMessage message) {
-        if (message.getType() == QueuedMessage.INQUIRY) {
+        if (message.isInquiryMessage()) {
             return getInqueryMessageNotificationType();
         } else {
             return getInformationalMessageNotificationType();
@@ -365,12 +363,12 @@ public class MonitoringAttributes {
     }
 
     public String getSmtpUser() {
-        
+
         String user = getSecureValue(SMTP_USER, SMTP_USER_DEFAULT);
         if (user == null) {
             user = SMTP_EXAMPLE_USER;
         }
-        
+
         return user;
     }
 
@@ -384,12 +382,12 @@ public class MonitoringAttributes {
     }
 
     public String getSmtpPassword() {
-        
+
         String password = getSecureValue(SMTP_PASSWORD, SMTP_PASSWORD_DEFAULT);
         if (password == null) {
             password = SMTP_EXAMPLE_PASSWORD;
         }
-        
+
         return password;
     }
 

@@ -17,6 +17,8 @@ public class SendMessageOptions {
     private String messageText;
     private String recipientType;
     private String[] recipients;
+    private String replyMessageQueueName;
+    private String replyMessageQueueLibrary;
 
     public SendMessageOptions() {
         this.messageType = QEZSNDMG.TYPE_INFO;
@@ -24,6 +26,8 @@ public class SendMessageOptions {
         this.messageText = "";
         this.recipientType = QEZSNDMG.RECIPIENT_TYPE_USER;
         this.recipients = new String[0];
+        this.replyMessageQueueName = null;
+        this.replyMessageQueueLibrary = "*LIBL"; //$NON-NLS-1$
     }
 
     public String getMessageType() {
@@ -66,4 +70,24 @@ public class SendMessageOptions {
         this.recipients = recipients;
     }
 
+    public String getReplyMessageQueueName() {
+        return this.replyMessageQueueName;
+    }
+
+    public void setReplyMessageQueueName(String messageQueue) {
+        this.replyMessageQueueName = messageQueue;
+    }
+
+    public String getReplyMessageQueueLibrary() {
+        return this.replyMessageQueueLibrary;
+    }
+
+    public void setReplyMessageQueueLibrary(String library) {
+        this.replyMessageQueueLibrary = library;
+    }
+
+    public boolean isInquiryMessage() {
+        return QEZSNDMG.TYPE_INQUERY.equals(this.messageType);
+    }
+    
 }
