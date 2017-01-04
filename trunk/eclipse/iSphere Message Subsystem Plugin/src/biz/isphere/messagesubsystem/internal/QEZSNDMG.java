@@ -73,19 +73,10 @@ public class QEZSNDMG {
 
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
-            System.out.println("*** Call to QSYRUSRI failed. ***");
-            // ISpherePlugin.logError("Failed calling the QSYRUSRI API.", e);
+            System.out.println("*** Call to QEZSNDMG failed. ***");
+            // ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e);
 
         }
-    }
-
-    public String getMessageQueuePath() throws PcmlException {
-
-        String name = pcml.getStringValue("QSYRUSRI.receiver.msgQ", 0); //$NON-NLS-1$
-        String library = pcml.getStringValue("QSYRUSRI.receiver.msgQLib", 0); //$NON-NLS-1$
-        QSYSObjectPathName pathName = new QSYSObjectPathName(library, name, "MSGQ"); //$NON-NLS-1$
-
-        return pathName.getPath();
     }
 
     public static void main(String[] args) {
