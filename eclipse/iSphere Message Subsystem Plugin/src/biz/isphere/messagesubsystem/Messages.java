@@ -58,6 +58,18 @@ public class Messages extends NLS {
     public static String Message_Type_Text_Request_with_prompting;
 
     public static String Message_Type_Text_Notify;
+    
+    public static String Message_Type_Escape;
+    
+    public static String Message_Type_Reply_Not_Validity_Checked;
+    
+    public static String Message_Type_Reply_Validity_Checked;
+    
+    public static String Message_Type_Reply_Message_Default_Used;
+    
+    public static String Message_Type_Reply_System_Default_Used;
+    
+    public static String Message_Reply_From_System_Reply_List;
 
     public static String iSeries_Message;
 
@@ -203,6 +215,8 @@ public class Messages extends NLS {
     
     public static String Send_Message;
 
+    public static String Forward_Message;
+    
     public static String A_must_be_the_only_item_in_the_list;
     
     public static String A_cannot_be_used_if_B_is_specified_for_the_C_parameter;

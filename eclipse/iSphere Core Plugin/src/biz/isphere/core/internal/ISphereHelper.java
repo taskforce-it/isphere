@@ -266,6 +266,10 @@ public class ISphereHelper {
         return true;
     }
 
+    public static boolean checkUserProfile(AS400 system, String userProfile) {
+        return checkObject(system, new QSYSObjectPathName("QSYS", userProfile, "USRPRF")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
     public static boolean checkLibrary(AS400 system, String library) {
         return checkObject(system, new QSYSObjectPathName("QSYS", library, "LIB")); //$NON-NLS-1$ //$NON-NLS-2$
     }

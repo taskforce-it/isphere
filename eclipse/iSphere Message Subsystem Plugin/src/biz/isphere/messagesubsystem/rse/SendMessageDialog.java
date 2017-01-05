@@ -36,13 +36,21 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QEZSNDMG;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.QueuedMessage;
+
 public class SendMessageDialog extends XDialog {
+
+    private static final int SEND = 1;
+    private static final int FORWARD = 2;
 
     private static final String MESSAGE_TYPE = "MESSAGE_TYPE"; //$NON-NLS-1$
     private static final String DELIVERY_MODE = "DELIVERY_MODE"; //$NON-NLS-1$
@@ -80,19 +88,55 @@ public class SendMessageDialog extends XDialog {
     private Label labelReplyMessageQueueLibrary;
     private Combo comboReplyMessageQueueLibrary;
 
+    private String titleText;
     private SendMessageOptions sendMessageOptions;
     private StringListEditor receipientsEditor;
 
+    private String overWriteMessageType;
     private String overWriteMessageText;
+    
     private Validator nameValidator;
     private Validator libraryValidator;
+    private AS400 system;
 
-    public SendMessageDialog(Shell shell) {
+    public static SendMessageDialog createSendDialog(Shell shell, AS400 system) {
+        return new SendMessageDialog(shell, system, SEND);
+    }
+
+    public static SendMessageDialog createForwardDialog(Shell shell, AS400 system) {
+        return new SendMessageDialog(shell, system, FORWARD);
+    }
+
+    private SendMessageDialog(Shell shell, AS400 system, int type) {
         super(shell);
+
+        switch (type) {
+        case SEND:
+            titleText = Messages.Send_Message;
+            break;
+        case FORWARD:
+            titleText = Messages.Forward_Message;
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal argumt for parameter 'type': " + type); //$NON-NLS-1$
+        }
 
         this.sendMessageOptions = null;
         this.nameValidator = Validator.getNameInstance();
         this.libraryValidator = Validator.getLibraryNameInstance();
+        this.system = system;
+        
+        this.overWriteMessageType = null;
+        this.overWriteMessageText = null;
+    }
+
+    public void setMessageType(int type) {
+        
+        if (type == QueuedMessage.INQUIRY){
+        this.overWriteMessageType = QEZSNDMG.TYPE_INQUERY;
+        }else{
+            this.overWriteMessageType = QEZSNDMG.TYPE_INFORMATIONAL;
+        }
     }
 
     public void setMessageText(String text) {
@@ -102,7 +146,7 @@ public class SendMessageDialog extends XDialog {
     @Override
     public Control createDialogArea(Composite parent) {
 
-        parent.getShell().setText(Messages.Send_Message);
+        parent.getShell().setText(titleText);
 
         ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
         scrolledComposite.setLayout(new GridLayout());
@@ -120,7 +164,7 @@ public class SendMessageDialog extends XDialog {
 
         comboMessageType = WidgetFactory.createReadOnlyCombo(mainPanel);
         comboMessageType.setLayoutData(createInputFieldLayoutData());
-        comboMessageType.setItems(new String[] { QEZSNDMG.TYPE_INFO, QEZSNDMG.TYPE_INQUERY });
+        comboMessageType.setItems(new String[] { QEZSNDMG.TYPE_INFORMATIONAL, QEZSNDMG.TYPE_INQUERY });
         comboMessageType.select(DEFAULT_INDEX_MESSAGE_TYPE);
         comboMessageType.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -174,7 +218,7 @@ public class SendMessageDialog extends XDialog {
 
         comboRecipientTypes = WidgetFactory.createReadOnlyCombo(mainPanel);
         comboRecipientTypes.setLayoutData(createInputFieldLayoutData());
-        comboRecipientTypes.setItems(new String[] { QEZSNDMG.RECIPIENT_TYPE_USER, QEZSNDMG.RECIPIENT_TYPE_DSP });
+        comboRecipientTypes.setItems(new String[] { QEZSNDMG.RECIPIENT_TYPE_USER, QEZSNDMG.RECIPIENT_TYPE_DISPLAY });
         comboRecipientTypes.select(DEFAULT_INDEX_RECIPIENT_TYPES);
 
         Label labelRecipients = new Label(mainPanel, SWT.NONE);
@@ -398,15 +442,15 @@ public class SendMessageDialog extends XDialog {
             }
         }
 
-        if (isALL && QEZSNDMG.RECIPIENT_TYPE_DSP.equals(comboRecipientTypes.getText())) {
+        if (isALL && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
             setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_ALL,
-                QEZSNDMG.RECIPIENT_TYPE_DSP, Messages.Recipient_type }));
+                QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
             receipientsEditor.setFocus();
             return false;
         }
-        if (isSysOpr && QEZSNDMG.RECIPIENT_TYPE_DSP.equals(comboRecipientTypes.getText())) {
+        if (isSysOpr && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
             setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_SYSOPR,
-                QEZSNDMG.RECIPIENT_TYPE_DSP, Messages.Recipient_type }));
+                QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
             receipientsEditor.setFocus();
             return false;
         }
@@ -444,12 +488,21 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
+        if (!ISphereHelper.checkUserProfile(system, recipient)) {
+            return false;
+        }
+
         return true;
     }
 
     public boolean validateMessageQueueName(String messageQueueName) {
 
         if (!nameValidator.validate(messageQueueName)) {
+            return false;
+        }
+
+        String library = comboReplyMessageQueueLibrary.getText();
+        if (!ISphereHelper.checkObject(system, library, messageQueueName, ISeries.MSGQ)) {
             return false;
         }
 
@@ -467,6 +520,10 @@ public class SendMessageDialog extends XDialog {
         }
 
         if (!libraryValidator.validate(library)) {
+            return false;
+        }
+
+        if (!ISphereHelper.checkLibrary(system, library)) {
             return false;
         }
 
@@ -532,6 +589,10 @@ public class SendMessageDialog extends XDialog {
     }
 
     private void overWriteInitialValues() {
+
+        if (overWriteMessageType != null) {
+            comboMessageType.setText(overWriteMessageType);
+        }
 
         if (overWriteMessageText != null) {
             textMessageText.setText(overWriteMessageText);

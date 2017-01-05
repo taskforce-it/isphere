@@ -93,6 +93,18 @@ public final class QueuedMessageHelper {
             return Messages.Message_Type_Text_Request_with_prompting;
         case QueuedMessage.NOTIFY:
             return Messages.Message_Type_Text_Notify;
+        case QueuedMessage.ESCAPE:
+            return Messages.Message_Type_Escape;
+        case QueuedMessage.REPLY_NOT_VALIDITY_CHECKED:
+            return Messages.Message_Type_Reply_Not_Validity_Checked;
+        case QueuedMessage.REPLY_VALIDITY_CHECKED:
+            return Messages.Message_Type_Reply_Validity_Checked;
+        case QueuedMessage.REPLY_MESSAGE_DEFAULT_USED:
+            return Messages.Message_Type_Reply_Message_Default_Used;
+        case QueuedMessage.REPLY_SYSTEM_DEFAULT_USED:
+            return Messages.Message_Type_Reply_System_Default_Used;
+        case QueuedMessage.REPLY_FROM_SYSTEM_REPLY_LIST:
+            return Messages.Message_Reply_From_System_Reply_List;
         default:
             return ""; //$NON-NLS-1$
         }

@@ -19,14 +19,14 @@ import com.ibm.as400.data.PcmlException;
 public class QEZSNDMG {
 
     public static final String TYPE_INQUERY = "*INQ";
-    public static final String TYPE_INFO = "*INFO";
+    public static final String TYPE_INFORMATIONAL = "*INFO";
     public static final String DELIVERY_NORMAL = "*NORMAL";
     public static final String DELIVERY_BREAK = "*BREAK";
     public static final String RECIPIENT_ALL = "*ALL";
     public static final String RECIPIENT_ALLACT = "*ALLACT";
     public static final String RECIPIENT_SYSOPR = "*SYSOPR";
     public static final String RECIPIENT_TYPE_USER = "*USR";
-    public static final String RECIPIENT_TYPE_DSP = "*DSP";
+    public static final String RECIPIENT_TYPE_DISPLAY = "*DSP";
 
     private PcmlProgramCallDocument pcml;
 
