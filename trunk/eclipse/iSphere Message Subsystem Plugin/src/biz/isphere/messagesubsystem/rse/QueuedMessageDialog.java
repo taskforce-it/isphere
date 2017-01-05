@@ -143,7 +143,7 @@ public class QueuedMessageDialog extends XDialog {
             msgHelp.setText(messageFormatter.formatHelpText(receivedMessage.getHelpFormatted()));
         }
 
-        if (receivedMessage.isInquiryMessage() && receivedMessage.isPendingReply()) {
+        if (receivedMessage.isInquiryMessage()) {
 
             Label replyLabel = new Label(mainPanel, SWT.NONE);
             replyLabel.setText(Messages.Reply_colon);
@@ -193,10 +193,10 @@ public class QueuedMessageDialog extends XDialog {
     private void processInquiryMessage() {
 
         if (receivedMessage.isInquiryMessage()) {
-            if ((responseText.getText() != null) && (responseText.getText().trim().length() > 0)) {
+            if (getTrimmedText(responseText).length() > 0) {
                 MessageQueue messageQueue = receivedMessage.getQueue();
                 try {
-                    messageQueue.reply(receivedMessage.getKey(), responseText.getText());
+                    messageQueue.reply(receivedMessage.getKey(), getTrimmedText(responseText));
                 } catch (Exception e) {
                     String errorMessage = e.getMessage();
                     if (errorMessage == null) errorMessage = e.toString();
@@ -205,6 +205,15 @@ public class QueuedMessageDialog extends XDialog {
                 }
             }
         }
+    }
+
+    private String getTrimmedText(Text text) {
+
+        if (text == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return text.getText().trim();
     }
 
     @Override

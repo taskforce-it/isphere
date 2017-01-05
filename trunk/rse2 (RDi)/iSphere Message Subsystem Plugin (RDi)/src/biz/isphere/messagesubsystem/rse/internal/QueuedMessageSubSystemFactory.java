@@ -9,6 +9,7 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
+
 package biz.isphere.messagesubsystem.rse.internal;
 
 import java.util.Vector;
@@ -55,8 +56,7 @@ public class QueuedMessageSubSystemFactory extends SubSystemConfiguration {
     protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr) {
         ISystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
-        QueuedMessageFilter messageFilter = new QueuedMessageFilter();
-        messageFilter.setMessageQueue(QueuedMessageFilter.MSGQ_CURRENT);
+        QueuedMessageFilter messageFilter = QueuedMessageFilter.getDefaultFilter();
         strings.add(messageFilter.getFilterString());
         try {
             ISystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_Messages, strings);

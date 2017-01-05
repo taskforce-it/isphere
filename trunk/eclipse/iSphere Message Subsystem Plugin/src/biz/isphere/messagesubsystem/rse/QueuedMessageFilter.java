@@ -24,6 +24,7 @@ import com.ibm.as400.data.PcmlException;
 public class QueuedMessageFilter {
 
     public static final String MSGQ_CURRENT = "*CURRENT"; //$NON-NLS-1$
+    private static final String ASTERISK = "*";
 
     private String description;
     private String messageQueue;
@@ -40,6 +41,9 @@ public class QueuedMessageFilter {
 
     public QueuedMessageFilter() {
         super();
+
+        setMessageQueue(QueuedMessageFilter.MSGQ_CURRENT);
+        setLibrary(ASTERISK);
     }
 
     public QueuedMessageFilter(String filterString) {
@@ -254,12 +258,12 @@ public class QueuedMessageFilter {
         return filterString.toString();
     }
 
+    public static QueuedMessageFilter getDefaultFilter() {
+        return new QueuedMessageFilter();
+    }
+
     public static String getDefaultFilterString() {
-
-        QueuedMessageFilter filter = new QueuedMessageFilter();
-        filter.setMessageQueue(MSGQ_CURRENT); //$NON-NLS-1$
-
-        return filter.getFilterString();
+        return getDefaultFilter().getFilterString();
     }
 
     public void setFilterString(String filterString) {
@@ -268,63 +272,63 @@ public class QueuedMessageFilter {
 
         index = filterString.indexOf("/"); //$NON-NLS-1$
         String temp = filterString.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setMessageQueue(temp);
         }
 
         String parseText = filterString.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setLibrary(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setUser(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setId(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setSeverity(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setMessageType(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setFromJobName(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setFromJobNumber(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setFromProgram(temp);
         }
 
@@ -336,7 +340,7 @@ public class QueuedMessageFilter {
             temp = parseText.substring(0, index);
         }
 
-        if (!temp.equals("*")) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
             setText(temp);
         }
     }

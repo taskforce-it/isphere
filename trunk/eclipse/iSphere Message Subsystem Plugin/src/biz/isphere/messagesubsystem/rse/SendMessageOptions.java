@@ -21,7 +21,7 @@ public class SendMessageOptions {
     private String replyMessageQueueLibrary;
 
     public SendMessageOptions() {
-        this.messageType = QEZSNDMG.TYPE_INFO;
+        this.messageType = QEZSNDMG.TYPE_INFORMATIONAL;
         this.deliveryMode = QEZSNDMG.DELIVERY_NORMAL;
         this.messageText = "";
         this.recipientType = QEZSNDMG.RECIPIENT_TYPE_USER;

@@ -66,12 +66,12 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         messageQueueText.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                setLibraryText();
+                setLibraryText(libraryText.getText());
             }
         });
         messageQueueText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
-                setLibraryText();
+                setLibraryText(libraryText.getText());
                 if (QueuedMessageFilter.MSGQ_CURRENT.equals(messageQueueText.getText())) {
                     libraryText.setEnabled(false);
                 } else {
@@ -277,7 +277,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     public void resetFields() {
 
         messageQueueText.select(0);
-        setLibraryText();
+        setLibraryText(ASTERISK);
 
         userText.setText(ASTERISK);
         idText.setText(ASTERISK);
@@ -345,23 +345,18 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         return filter.getFilterString();
     }
 
-    private void setLibraryText() {
-        setLibraryText(QUSRSYS);
-    }
-
-    private void setLibraryText(String defaultValue) {
+    private void setLibraryText(String library) {
 
         String newLibrary = null;
 
         if (MessageQueue.CURRENT.equals(messageQueueText.getText())) {
-            newLibrary = ASTERISK;
+            newLibrary = ASTERISK; // Set library to "current"
         } else {
-            if (ASTERISK.equals(libraryText.getText())) {
+
+            if (library == null || library.trim().length() == 0) {
                 newLibrary = QUSRSYS;
             } else {
-                if (libraryText.getText().trim().length() == 0) {
-                    newLibrary = defaultValue;
-                }
+                newLibrary = library;
             }
         }
 
