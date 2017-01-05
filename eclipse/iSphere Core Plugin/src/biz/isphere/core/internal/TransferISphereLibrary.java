@@ -174,7 +174,7 @@ public class TransferISphereLibrary extends Shell {
 
     private boolean libraryExists(String iSphereLibrary) {
 
-        if (executeCommand("CHKOBJ OBJ(QSYS/" + iSphereLibrary + ") OBJTYPE(*LIB)").equals("CPF9801")) {
+        if (!ISphereHelper.checkLibrary(as400, iSphereLibrary)) {
             return false;
         }
 
@@ -209,7 +209,7 @@ public class TransferISphereLibrary extends Shell {
 
     private boolean saveFileExists(String workLibrary, String saveFileName) {
 
-        if (executeCommand("CHKOBJ OBJ(" + workLibrary + "/" + saveFileName + ") OBJTYPE(*FILE)").equals("CPF9801")) {
+        if (!ISphereHelper.checkObject(as400, workLibrary, saveFileName, "*FILE")) {
             return false;
         }
 
@@ -243,10 +243,6 @@ public class TransferISphereLibrary extends Shell {
         }
 
         return true;
-    }
-
-    private String executeCommand(String command) {
-        return executeCommand(command, false);
     }
 
     private String executeCommand(String command, boolean logError) {

@@ -131,14 +131,7 @@ public class ISphereHelper {
 
     private static String readISphereDataArea(Shell shell, AS400 as400, String library) {
 
-        String messageId = null;
-        try {
-            messageId = executeCommand(as400, "CHKOBJ OBJ(QSYS/" + library + ") OBJTYPE(*LIB)");
-        } catch (Exception e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
-        }
-
-        if (messageId == null || !messageId.equals("")) {
+        if (!checkLibrary(as400, library)) {
 
             if (shell != null) {
                 String text = Messages.E_R_R_O_R;
@@ -273,9 +266,22 @@ public class ISphereHelper {
         return true;
     }
 
-    public static boolean checkObject(AS400 system, String path) {
+    public static boolean checkLibrary(AS400 system, String library) {
+        return checkObject(system, new QSYSObjectPathName("QSYS", library, "LIB")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-        QSYSObjectPathName pathName = new QSYSObjectPathName(path);
+    public static boolean checkObject(AS400 system, String library, String object, String type) {
+        if (type.startsWith("*")) { //$NON-NLS-1$
+            type = type.substring(1);
+        }
+        return checkObject(system, new QSYSObjectPathName(library, object, type));
+    }
+
+    public static boolean checkObject(AS400 system, String path) {
+        return checkObject(system, new QSYSObjectPathName(path));
+    }
+
+    public static boolean checkObject(AS400 system, QSYSObjectPathName pathName) {
 
         StringBuilder command = new StringBuilder();
         command.append("CHKOBJ OBJ("); //$NON-NLS-1$
@@ -293,7 +299,7 @@ public class ISphereHelper {
                 return true;
             }
         } catch (Exception e) {
-            // Ignore exceptions
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
         return false;
