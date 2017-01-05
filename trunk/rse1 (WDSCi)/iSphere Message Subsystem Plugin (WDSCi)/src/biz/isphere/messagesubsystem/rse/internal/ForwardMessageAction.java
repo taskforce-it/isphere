@@ -19,6 +19,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
+import com.ibm.etools.systems.subsystems.SubSystem;
 
 /**
  * This class adds a popup menu extension to queued message resources in order
@@ -34,29 +35,27 @@ public class ForwardMessageAction extends ISeriesAbstractQSYSPopupMenuExtensionA
 
     @Override
     public void run() {
-        Object[] selection = getSelectedRemoteObjects();
-        if (selection != null && selection.length >= 1
-            && (selection[0] instanceof QueuedMessageSubSystem || selection[0] instanceof QueuedMessageResource)) {
-            SendMessageDialog dialog = new SendMessageDialog(getShell());
-            if (selection[0] instanceof QueuedMessageResource) {
+        try {
+            Object[] selection = getSelectedRemoteObjects();
+            if (selection != null && selection.length >= 1 && (selection[0] instanceof QueuedMessageResource)) {
                 QueuedMessageResource messageResource = (QueuedMessageResource)selection[0];
+                SubSystem subSystem = messageResource.getSubSystem();
+                SendMessageDialog dialog = SendMessageDialog.createForwardDialog(getShell(), getAS400Toolbox(subSystem));
+                dialog.setMessageType(messageResource.getQueuedMessage().getType());
                 dialog.setMessageText(messageResource.getQueuedMessage().getText());
-            }
-            if (dialog.open() == SendMessageDialog.OK) {
-                try {
+                if (dialog.open() == SendMessageDialog.OK) {
                     SendMessageDelegate delegate = new SendMessageDelegate();
-                    QueuedMessageSubSystem subSystem = (QueuedMessageSubSystem)selection[0];
                     delegate.sendMessage(getAS400Toolbox(subSystem), dialog.getInput());
-                } catch (SystemMessageException e) {
-                    MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
                 }
             }
+        } catch (SystemMessageException e) {
+            MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
         }
     }
 
-    private AS400 getAS400Toolbox(QueuedMessageSubSystem subSystem) throws SystemMessageException {
+    private AS400 getAS400Toolbox(SubSystem subSystem) throws SystemMessageException {
 
-        String connectionName = subSystem.getHostName();
+        String connectionName = subSystem.getSystem().getHostName();
         return ISeriesConnection.getConnection(connectionName).getAS400ToolboxObject(null);
     }
 

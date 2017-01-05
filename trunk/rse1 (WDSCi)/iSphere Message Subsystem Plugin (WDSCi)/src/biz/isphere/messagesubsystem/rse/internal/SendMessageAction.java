@@ -16,7 +16,6 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import biz.isphere.core.internal.MessageDialogAsync;
-import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.SendMessageDelegate;
@@ -26,6 +25,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
+import com.ibm.etools.systems.subsystems.SubSystem;
 
 /**
  * This class adds a popup menu extension to queued message resources in order
@@ -34,39 +34,34 @@ import com.ibm.etools.systems.core.messages.SystemMessageException;
 public class SendMessageAction extends ISeriesSystemBaseAction {
 
     public static final String ID = "biz.isphere.messagesubsystem.rse.internal.SendMessageAction"; //$NON-NLS-1$
-    
+
     public SendMessageAction() {
         super(Messages.MessageSubsystem_Send_Message, null);
-        
+
         setId(ID);
         setImageDescriptor(ISphereMessageSubsystemRSEPlugin.getDefault().getImageDescriptor(ISphereMessageSubsystemRSEPlugin.SEND_MESSAGE));
     }
 
     @Override
     public void run() {
-        Object[] selection = getSelectedRemoteObjects();
-        if (selection != null && selection.length >= 1
-            && (selection[0] instanceof QueuedMessageSubSystem || selection[0] instanceof QueuedMessageResource)) {
-            SendMessageDialog dialog = new SendMessageDialog(getShell());
-            if (selection[0] instanceof QueuedMessageResource) {
-                QueuedMessageResource messageResource = (QueuedMessageResource)selection[0];
-                dialog.setMessageText(messageResource.getQueuedMessage().getText());
-            }
-            if (dialog.open() == SendMessageDialog.OK) {
-                try {
+        try {
+            Object[] selection = getSelectedRemoteObjects();
+            if (selection != null && selection.length >= 1 && selection[0] instanceof QueuedMessageSubSystem) {
+                QueuedMessageSubSystem subSystem = (QueuedMessageSubSystem)selection[0];
+                SendMessageDialog dialog = SendMessageDialog.createSendDialog(getShell(), getAS400Toolbox(subSystem));
+                if (dialog.open() == SendMessageDialog.OK) {
                     SendMessageDelegate delegate = new SendMessageDelegate();
-                    QueuedMessageSubSystem subSystem = (QueuedMessageSubSystem)selection[0];
                     delegate.sendMessage(getAS400Toolbox(subSystem), dialog.getInput());
-                } catch (SystemMessageException e) {
-                    MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
                 }
             }
+        } catch (SystemMessageException e) {
+            MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
         }
     }
 
-    private AS400 getAS400Toolbox(QueuedMessageSubSystem subSystem) throws SystemMessageException {
+    private AS400 getAS400Toolbox(SubSystem subSystem) throws SystemMessageException {
 
-        String connectionName = subSystem.getHostName();
+        String connectionName = subSystem.getSystem().getHostName();
         return ISeriesConnection.getConnection(connectionName).getAS400ToolboxObject(null);
     }
 
