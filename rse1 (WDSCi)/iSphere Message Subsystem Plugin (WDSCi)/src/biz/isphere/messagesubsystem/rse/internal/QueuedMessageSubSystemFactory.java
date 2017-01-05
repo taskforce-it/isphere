@@ -9,12 +9,12 @@
  *     SoftLanding - initial API and implementation
  *     iSphere Project Owners - Maintenance and enhancements
  *******************************************************************************/
+
 package biz.isphere.messagesubsystem.rse.internal;
 
 import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 
@@ -22,7 +22,6 @@ import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
-import com.ibm.etools.systems.core.ui.actions.SystemBaseSubMenuAction;
 import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterPool;
@@ -61,8 +60,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
     protected SystemFilterPool createDefaultFilterPool(SystemFilterPoolManager mgr) {
         SystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
         Vector<String> strings = new Vector<String>();
-        QueuedMessageFilter messageFilter = new QueuedMessageFilter();
-        messageFilter.setMessageQueue(QueuedMessageFilter.MSGQ_CURRENT);
+        QueuedMessageFilter messageFilter = QueuedMessageFilter.getDefaultFilter();
         strings.add(messageFilter.getFilterString());
         try {
             SystemFilter filter = mgr.createSystemFilter(defaultPool, Messages.My_Messages, strings);
