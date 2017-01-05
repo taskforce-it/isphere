@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,12 +101,19 @@ public final class WidgetFactory {
      * @return separator
      */
     public static Label createSeparator(Composite parent) {
+        return createSeparator(parent, 1);
+    }
 
-        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        separator.setLayoutData(gridData);
+    /**
+     * Produces a separator, spanning multiple columns.
+     * 
+     * @param parent - parent composite
+     * @param span - number of columns to span
+     * @return separator
+     */
+    public static Label createSeparator(Composite parent, int span) {
+
+        Label separator = WidgetFactory.getInstance().produceSeparator(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 
         return separator;
     }
@@ -719,6 +726,18 @@ public final class WidgetFactory {
         ITimeEdit timeEdit = getWidgetFactoryContributionsHandler().getTimeEdit(parent, SWT.BORDER);
 
         return timeEdit;
+    }
+
+    private Label produceSeparator(Composite parent, int span) {
+
+        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.horizontalSpan = span;
+        separator.setLayoutData(gridData);
+
+        return separator;
     }
 
     private WidgetFactoryContributionsHandler getWidgetFactoryContributionsHandler() {
