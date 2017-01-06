@@ -938,7 +938,7 @@
     * =====================================================================
     *   Updates the PDF file from 'iSphere.doc'.
     * ===================================================================== -->
-	<target name="updatePdfFile" unless="pdf.isUpToDate">
+	<target name="updatePdfFile" unless="pdf.isUpToDate" description="Update PDF file">
 		
 		<if>
 			<equals arg1="${build.files.enabled}" arg2="true" />
