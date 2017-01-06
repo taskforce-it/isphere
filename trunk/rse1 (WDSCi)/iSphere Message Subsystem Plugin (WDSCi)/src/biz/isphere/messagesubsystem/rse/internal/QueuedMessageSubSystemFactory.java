@@ -33,7 +33,7 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
-    public static final String ID = "biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory";
+    public static final String ID = "biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory"; //$NON-NLS-1$
 
     public QueuedMessageSubSystemFactory() {
         super();
