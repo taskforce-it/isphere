@@ -199,6 +199,8 @@ public class QueuedMessageDialog extends XDialog {
             responseText.setFocus();
 
             logDebugMessage("Debug --> Message reply field created."); //$NON-NLS-1$
+        } else {
+            logDebugMessage("Debug --> No reply message. Message type is: " + receivedMessage.getReplyStatusAsText()); //$NON-NLS-1$
         }
 
         return panel;

@@ -8,18 +8,11 @@
 
 package biz.isphere.messagesubsystem.rse;
 
+import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
+
 import com.ibm.as400.access.QueuedMessage;
 
 public class InquiryMessageDelegate {
-    
-    /*
-     * The following reply status values have been copied from
-     * com.ibm.as400.resource.RQueuedMessage, because RQueuedMessage has been
-     * marked as deprecated.
-     */
-    public static final String REPLY_STATUS_ACCEPTS_SENT = "A"; //$NON-NLS-1$
-    public static final String REPLY_STATUS_ACCEPTS_NOT_SENT = "W"; //$NON-NLS-1$
-    public static final String REPLY_STATUS_NOT_ACCEPT = "N"; //$NON-NLS-1$
 
     private QueuedMessage queuedMessage;
 
@@ -40,7 +33,7 @@ public class InquiryMessageDelegate {
     }
 
     public boolean isPendingReply() {
-        return isInquiryMessage() && REPLY_STATUS_ACCEPTS_NOT_SENT.equals(getReplyStatus());
+        return isInquiryMessage() && QueuedMessageHelper.REPLY_STATUS_ACCEPTS_NOT_SENT.equals(getReplyStatus());
     }
 
 }

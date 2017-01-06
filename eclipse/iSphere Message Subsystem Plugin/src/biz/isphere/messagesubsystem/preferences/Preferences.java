@@ -143,6 +143,12 @@ public final class Preferences {
         }
     }
 
+    // TODO: remove debug code
+    public void setDebugEnabled(boolean enabled) {
+        
+        preferenceStore.setValue("MESSAGE_MONOTOR_DEBUG", enabled); //$NON-NLS-1$
+    }
+    
     /*
      * Preferences: Default Initializer
      */
@@ -150,7 +156,7 @@ public final class Preferences {
     public void initializeDefaultPreferences() {
 
         // TODO: remove debug code
-        preferenceStore.setDefault("MESSAGE_MONOTOR_DEBUG", false); //$NON-NLS-1$
+        preferenceStore.setDefault("MESSAGE_MONOTOR_DEBUG", getDefaultDebugEnabled()); //$NON-NLS-1$
         
         preferenceStore.setDefault(POSITION_MESSAGE_REPLY_FIELD, getDefaultReplyFieldPositionInternally().value());
     }
@@ -163,6 +169,11 @@ public final class Preferences {
         return getDefaultReplyFieldPositionInternally().label();
     }
 
+    // TODO: remove debug code
+    public boolean getDefaultDebugEnabled() {
+        return false;
+    }
+    
     private ReplyPositions getDefaultReplyFieldPositionInternally() {
         return ReplyPositions.getDefault();
     }

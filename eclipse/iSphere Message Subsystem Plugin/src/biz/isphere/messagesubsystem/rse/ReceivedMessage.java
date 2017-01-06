@@ -103,6 +103,11 @@ public class ReceivedMessage {
     public String getReplyStatus() {
         return inquiryMessageDelegate.getReplyStatus();
     }
+    
+    public String getReplyStatusAsText() {
+        
+        return QueuedMessageHelper.getMessageReplyStatusAsText(queuedMessage);
+    }
 
     public boolean isPendingReply() {
         return inquiryMessageDelegate.isPendingReply();

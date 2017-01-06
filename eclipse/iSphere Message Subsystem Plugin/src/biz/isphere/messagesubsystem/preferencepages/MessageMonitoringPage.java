@@ -83,19 +83,13 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
     // TODO: remove debug code
     private void createSectionDebug(Composite parent) {
 
-        Label labelReplyFieldPosition = new Label(parent, SWT.NONE);
-        labelReplyFieldPosition.setLayoutData(createLabelLayoutData());
-        labelReplyFieldPosition.setText("Enable debug:"); //$NON-NLS-1$
+//        Label labelReplyFieldPosition = new Label(parent, SWT.NONE);
+//        labelReplyFieldPosition.setLayoutData(createLabelLayoutData());
+//        labelReplyFieldPosition.setText("Enable debug:"); //$NON-NLS-1$
 
         checkboxEnableDebug = WidgetFactory.createCheckbox(parent);
-        checkboxEnableDebug.setText("Enable &debug log (see: Eclipse error log view"); //$NON-NLS-1$
+        checkboxEnableDebug.setText("Enable &debug log (see: Eclipse error log view)"); //$NON-NLS-1$
         checkboxEnableDebug.setLayoutData(createLayoutData(2));
-        checkboxEnableDebug.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
-                getPreferenceStore().setDefault("MESSAGE_MONOTOR_DEBUG", false); //$NON-NLS-1$
-                getPreferenceStore().setValue("MESSAGE_MONOTOR_DEBUG", checkboxEnableDebug.getSelection()); //$NON-NLS-1$
-            }
-        });
     }
 
     private GridData createLabelLayoutData() {
@@ -125,6 +119,10 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
         Preferences preferences = Preferences.getInstance();
 
         preferences.setReplyFieldPosition(comboReplyFieldPosition.getText());
+        
+        // TODO: remove debug code
+        preferences.setDebugEnabled(checkboxEnableDebug.getSelection());
+
     }
 
     protected void setScreenToValues() {
@@ -135,6 +133,9 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
 
         comboReplyFieldPosition.select(comboReplyFieldPosition.indexOf(preferences.getReplyFieldPosition()));
 
+        // TODO: remove debug code
+        checkboxEnableDebug.setSelection(preferences.isDebugEnabled());
+        
         validateAll();
         setControlsEnablement();
     }
@@ -145,6 +146,9 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
 
         comboReplyFieldPosition.select(comboReplyFieldPosition.indexOf(preferences.getDefaultReplyFieldPosition()));
 
+        // TODO: remove debug code
+        checkboxEnableDebug.setSelection(preferences.getDefaultDebugEnabled());
+        
         validateAll();
         setControlsEnablement();
     }

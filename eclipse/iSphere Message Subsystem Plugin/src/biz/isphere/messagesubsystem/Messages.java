@@ -250,6 +250,12 @@ public class Messages extends NLS {
     public static String Column_Message_Text;
 
     public static String Informational_messages_are_removed_on_closing_the_dialog;
+
+    public static String Message_Reply_Status_Accepts_Send;
+
+    public static String Message_Reply_Status_Accepts_Not_Send;
+    
+    public static String Message_Reply_Status_Not_Accept;
     
     static {
         // initialize resource bundle
