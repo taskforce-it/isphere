@@ -14,6 +14,8 @@ package biz.isphere.messagesubsystem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.core.preferences.Preferences;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -53,6 +55,8 @@ public class ISphereMessageSubsystemBasePlugin extends AbstractUIPlugin {
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
+        
+        Preferences.dispose();
     }
 
     /**

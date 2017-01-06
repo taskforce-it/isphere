@@ -13,7 +13,7 @@
     <data name="errorCode"        type="int"  length="4"      usage="inputoutput" init="0"/>
     <!-- Optional Parameter Group 2 -->
     <data name="showSndMsgDsp"    type="char" length="1"      usage="input" init="N" />
-    <data name="queueName"        type="char" length="20"     usage="input" init="QSYSOPR   *LIBL     " />
+    <data name="queueName"        type="char" length="20"     usage="input" init="" />
     <data name="nameType"         type="char" length="4"      usage="input" init="*USR" />
     <!-- Optional Parameter Group 3 -->
     <data name="ccsidIdentifier"  type="int"  length="4"      usage="input" init="0" />

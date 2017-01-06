@@ -33,8 +33,8 @@ import com.ibm.as400.access.MessageQueue;
 
 public class QueuedMessageFilterStringEditPaneDelegate {
 
-    private static final String QUSRSYS = "QUSRSYS";
-    private static final String ASTERISK = "*";
+    private static final String QUSRSYS = "QUSRSYS"; //$NON-NLS-1$
+    private static final String ASTERISK = "*"; //$NON-NLS-1$
     private Combo messageQueueText;
     private Text libraryText;
     private Text userText;
@@ -101,7 +101,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         userText.setTextLimit(10);
 
         Label textUserGeneric = new Label(composite_prompts, SWT.NONE);
-        textUserGeneric.setText("*gen?ric*");
+        textUserGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // Message Id: *generic*
         Label idLabel = new Label(composite_prompts, SWT.NONE);
@@ -114,7 +114,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         idText.setTextLimit(7);
 
         Label textIdGeneric = new Label(composite_prompts, SWT.NONE);
-        textIdGeneric.setText("*gen?ric*");
+        textIdGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // Message severity: numeric value
         Label severityLabel = new Label(composite_prompts, SWT.NONE);
@@ -138,7 +138,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobText.setTextLimit(10);
 
         Label textFromJobGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromJobGeneric.setText("*gen?ric*");
+        textFromJobGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // From job number: *generic*
         Label fromJobNumberLabel = new Label(composite_prompts, SWT.NONE);
@@ -151,7 +151,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobNumberText.setTextLimit(6);
 
         Label textFromJobNumberGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromJobNumberGeneric.setText("*gen?ric*");
+        textFromJobNumberGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // From program: *generic*
         Label fromProgramLabel = new Label(composite_prompts, SWT.NONE);
@@ -164,7 +164,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromProgramText.setTextLimit(10);
 
         Label textFromProgramGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromProgramGeneric.setText("*gen?ric*");
+        textFromProgramGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // Message text: *generic*
         Label textLabel = new Label(composite_prompts, SWT.NONE);
@@ -177,7 +177,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         textText.setTextLimit(255);
 
         Label textTextGeneric = new Label(composite_prompts, SWT.NONE);
-        textTextGeneric.setText("*gen?ric*");
+        textTextGeneric.setText("*gen?ric*"); //$NON-NLS-1$
 
         // Message type: combo box
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
@@ -362,7 +362,6 @@ public class QueuedMessageFilterStringEditPaneDelegate {
 
         if (newLibrary != null && !newLibrary.equals(libraryText.getText())) {
             libraryText.setText(newLibrary);
-            System.out.println("Library changed to: " + libraryText.getText());
         }
     }
 }

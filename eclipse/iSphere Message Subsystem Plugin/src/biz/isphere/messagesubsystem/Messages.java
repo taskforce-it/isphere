@@ -20,7 +20,7 @@ public class Messages extends NLS {
     public static final String EMPTY = ""; //$NON-NLS-1$
 
     public static String E_R_R_O_R;
-    
+
     public static String Message_ID_colon;
 
     public static String From_job_colon;
@@ -58,17 +58,17 @@ public class Messages extends NLS {
     public static String Message_Type_Text_Request_with_prompting;
 
     public static String Message_Type_Text_Notify;
-    
+
     public static String Message_Type_Escape;
-    
+
     public static String Message_Type_Reply_Not_Validity_Checked;
-    
+
     public static String Message_Type_Reply_Validity_Checked;
-    
+
     public static String Message_Type_Reply_Message_Default_Used;
-    
+
     public static String Message_Type_Reply_System_Default_Used;
-    
+
     public static String Message_Reply_From_System_Reply_List;
 
     public static String iSeries_Message;
@@ -81,7 +81,7 @@ public class Messages extends NLS {
 
     public static String Message_colon;
 
-    public static String Reply_colon;
+    public static String Reply;
 
     public static String ISeries_Message_Reply_Error;
 
@@ -180,13 +180,13 @@ public class Messages extends NLS {
     public static String Monitor;
 
     public static String OK_To_All_LABEL;
-    
+
     public static String RESET_LABEL;
 
     public static String Collect_informational_messages_on_startup;
 
     public static String Collect_informational_messages_on_startup_tooltip;
-    
+
     public static String Queued_Messages_title;
 
     public static String Previous_request_is_still_pending;
@@ -200,28 +200,56 @@ public class Messages extends NLS {
     public static String Delivery_mode_colon;
 
     public static String Message_text_colon;
-    
+
     public static String Recipient_type_colon;
-    
+
     public static String Recipients_colon;
-    
+
     public static String Recipient;
-    
+
     public static String Message_text_is_missing;
-    
+
     public static String Recipients_are_missing;
-    
+
     public static String Invalid_recipient;
-    
+
     public static String Send_Message;
 
     public static String Forward_Message;
-    
+
     public static String A_must_be_the_only_item_in_the_list;
-    
+
     public static String A_cannot_be_used_if_B_is_specified_for_the_C_parameter;
-    
+
     public static String Recipient_type;
+
+    public static String Reply_Positions_beforeMessageText;
+
+    public static String Reply_Positions_afterMessageText;
+
+    public static String Reply_Field_Position_colon;
+
+    public static String Reply_Field_Position_tooltip;
+
+    public static String Reply_message_queue_name;
+
+    public static String Reply_message_queue_library;
+
+    public static String Invalid_message_queue_library_name;
+
+    public static String Invalid_message_queue_name;
+
+    public static String Column_Date;
+
+    public static String Column_Time;
+
+    public static String Column_Message_ID;
+
+    public static String Column_Message_Type;
+
+    public static String Column_Message_Text;
+
+    public static String Informational_messages_are_removed_on_closing_the_dialog;
     
     static {
         // initialize resource bundle
@@ -229,5 +257,9 @@ public class Messages extends NLS {
     }
 
     private Messages() {
+    }
+
+    public static String getLabel(String label) {
+        return label + ":"; //$NON-NLS-1$
     }
 }

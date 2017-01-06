@@ -54,7 +54,7 @@ public class MessageMonitorThread extends Thread {
     private final static int OBJECT_LOCK_WAIT_SECS = READ_TIMEOUT_SECS + 10;
 
     public MessageMonitorThread(MonitoredMessageQueue messageQueue) {
-        super("iSphere Message Monitor");
+        super("iSphere Message Monitor"); //$NON-NLS-1$
 
         this.messageQueue = messageQueue;
 
@@ -69,7 +69,7 @@ public class MessageMonitorThread extends Thread {
     @Override
     public void run() {
 
-        debugPrint("*** Thread started running: " + messageQueue.hashCode() + " ***");
+        debugPrint("*** Thread started running: " + messageQueue.hashCode() + " ***"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Workaround trying to catch the first message.
         // Sometimes the first one is lost.
@@ -80,7 +80,7 @@ public class MessageMonitorThread extends Thread {
 
         collectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
 
-        debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + collectMessagesAtStartUp);
+        debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + collectMessagesAtStartUp); //$NON-NLS-1$ //$NON-NLS-2$
 
         /*
          * Use a timeout for locking the message queue when starting the message
@@ -92,7 +92,7 @@ public class MessageMonitorThread extends Thread {
         long startTimeout = startTime.getTimeInMillis();
 
         QSYSObjectPathName path = new QSYSObjectPathName(messageQueue.getPath());
-        RemoteObject remoteMessageQueue = new RemoteObject(messageQueue.getSystem(), path.getObjectName(), path.getLibraryName(), "*MSGQ", "");
+        RemoteObject remoteMessageQueue = new RemoteObject(messageQueue.getSystem(), path.getObjectName(), path.getLibraryName(), "*MSGQ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
         ObjectLock exclusiveLock = null;
         ObjectLock sharedReadLock = null;
@@ -101,7 +101,7 @@ public class MessageMonitorThread extends Thread {
 
             // Check, whether the message queue exists
             if (!ISphereHelper.checkObject(messageQueue.getSystem(), messageQueue.getPath())) {
-                debugPrint("Thread " + messageQueue.hashCode() + ": Message queue does not exist");
+                debugPrint("Thread " + messageQueue.hashCode() + ": Message queue does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
                 Display.getDefault().syncExec(new Runnable() {
                     public void run() {
                         MessageDialog.openError(
@@ -115,24 +115,24 @@ public class MessageMonitorThread extends Thread {
             } else {
 
                 // First try to get an exclusive lock.
-                debugPrint("Thread " + messageQueue.hashCode() + ": Trying to get an *EXCL lock ...");
+                debugPrint("Thread " + messageQueue.hashCode() + ": Trying to get an *EXCL lock ..."); //$NON-NLS-1$ //$NON-NLS-2$
                 exclusiveLock = objectLockManager.setExclusiveLock(remoteMessageQueue);
                 if (exclusiveLock != null) {
-                    debugPrint("Thread " + messageQueue.hashCode() + ": Got *EXCL lock: " + exclusiveLock.hashCode());
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Got *EXCL lock: " + exclusiveLock.hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
                     // Then add a shared for read lock to allow other job to
                     // display messages and remove the exclusive lock
-                    debugPrint("Thread " + messageQueue.hashCode() + ": Adding *SHHRD lock ...");
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Adding *SHHRD lock ..."); //$NON-NLS-1$ //$NON-NLS-2$
                     sharedReadLock = objectLockManager.setSharedForReadLock(remoteMessageQueue);
                     if (sharedReadLock != null) {
-                        debugPrint("Thread " + messageQueue.hashCode() + ": Got *SHRRD lock: " + sharedReadLock.hashCode());
-                        debugPrint("Thread " + messageQueue.hashCode() + ": Removing *EXCL lock: " + exclusiveLock.hashCode());
+                        debugPrint("Thread " + messageQueue.hashCode() + ": Got *SHRRD lock: " + sharedReadLock.hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
+                        debugPrint("Thread " + messageQueue.hashCode() + ": Removing *EXCL lock: " + exclusiveLock.hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
                         objectLockManager.removeObjectLock(exclusiveLock);
                         exclusiveLock = null;
                     }
                 }
 
                 if (sharedReadLock == null) {
-                    debugPrint("Thread " + messageQueue.hashCode() + ": Could not allocate message queue");
+                    debugPrint("Thread " + messageQueue.hashCode() + ": Could not allocate message queue"); //$NON-NLS-1$ //$NON-NLS-2$
                     Display.getDefault().syncExec(new Runnable() {
                         public void run() {
                             MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error,
@@ -149,11 +149,11 @@ public class MessageMonitorThread extends Thread {
                 try {
                     QueuedMessage message;
                     if (collectMessagesAtStartUp) {
-                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (COLLECT) with object lock: "
+                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (COLLECT) with object lock: " //$NON-NLS-1$ //$NON-NLS-2$
                             + sharedReadLock.hashCode());
                         message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
                     } else {
-                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (DEFAULT) with object lock: "
+                        debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (DEFAULT) with object lock: " //$NON-NLS-1$ //$NON-NLS-2$
                             + sharedReadLock.hashCode());
                         message = messageQueue.receive(null, READ_TIMEOUT_SECS, MessageQueue.OLD, MessageQueue.ANY);
                     }
@@ -189,14 +189,14 @@ public class MessageMonitorThread extends Thread {
 
         } finally {
             if (sharedReadLock != null) {
-                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *SHRRD lock: " + sharedReadLock.hashCode());
+                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *SHRRD lock: " + sharedReadLock.hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
                 objectLockManager.removeObjectLock(sharedReadLock);
             }
             if (exclusiveLock != null) {
-                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *EXCL lock: " + exclusiveLock.hashCode());
+                debugPrint("Thread " + messageQueue.hashCode() + ": FINALLY: Removing *EXCL lock: " + exclusiveLock.hashCode()); //$NON-NLS-1$ //$NON-NLS-2$
                 objectLockManager.removeObjectLock(exclusiveLock);
             }
-            debugPrint("Thread " + messageQueue.hashCode() + ": About to leave thread.");
+            debugPrint("Thread " + messageQueue.hashCode() + ": About to leave thread."); //$NON-NLS-1$ //$NON-NLS-2$
             messageQueue.messageMonitorStopped(messageQueue);
         }
 
@@ -205,10 +205,10 @@ public class MessageMonitorThread extends Thread {
 
     public void stopMonitoring() {
 
-        debugPrint("Thread " + messageQueue.hashCode() + ": Received request to stop monitoring");
+        debugPrint("Thread " + messageQueue.hashCode() + ": Received request to stop monitoring"); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (!monitoring) {
-            debugPrint("Thread " + messageQueue.hashCode() + ": ... but I am not monitoring???");
+            debugPrint("Thread " + messageQueue.hashCode() + ": ... but I am not monitoring???"); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -227,7 +227,7 @@ public class MessageMonitorThread extends Thread {
                     queuedMessage.getQueue().remove(queuedMessage.getKey());
                 } catch (AS400Exception e) {
                     // Message key not found
-                    if (!"CPF2410".equals(e.getAS400Message().getID())) {
+                    if (!"CPF2410".equals(e.getAS400Message().getID())) { //$NON-NLS-1$
                         isError = true;
                     }
                 } catch (Throwable e) {

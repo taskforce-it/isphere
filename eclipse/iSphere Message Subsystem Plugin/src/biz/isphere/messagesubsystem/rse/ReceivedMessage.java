@@ -50,7 +50,7 @@ public class ReceivedMessage {
     public String getHelpFormatted() {
 
         try {
-            String messageFilePath = new QSYSObjectPathName(queuedMessage.getLibraryName(), queuedMessage.getFileName(), "MSGF").getPath();
+            String messageFilePath = new QSYSObjectPathName(queuedMessage.getLibraryName(), queuedMessage.getFileName(), "MSGF").getPath(); //$NON-NLS-1$
             MessageFile file = new MessageFile(queuedMessage.getQueue().getSystem(), messageFilePath);
             file.setHelpTextFormatting(MessageFile.RETURN_FORMATTING_CHARACTERS);
             AS400Message as400Message = file.getMessage(queuedMessage.getID(), queuedMessage.getSubstitutionData());

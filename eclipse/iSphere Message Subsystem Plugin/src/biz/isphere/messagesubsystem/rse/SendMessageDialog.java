@@ -94,7 +94,7 @@ public class SendMessageDialog extends XDialog {
 
     private String overWriteMessageType;
     private String overWriteMessageText;
-    
+
     private Validator nameValidator;
     private Validator libraryValidator;
     private AS400 system;
@@ -125,16 +125,16 @@ public class SendMessageDialog extends XDialog {
         this.nameValidator = Validator.getNameInstance();
         this.libraryValidator = Validator.getLibraryNameInstance();
         this.system = system;
-        
+
         this.overWriteMessageType = null;
         this.overWriteMessageText = null;
     }
 
     public void setMessageType(int type) {
-        
-        if (type == QueuedMessage.INQUIRY){
-        this.overWriteMessageType = QEZSNDMG.TYPE_INQUERY;
-        }else{
+
+        if (type == QueuedMessage.INQUIRY) {
+            this.overWriteMessageType = QEZSNDMG.TYPE_INQUERY;
+        } else {
             this.overWriteMessageType = QEZSNDMG.TYPE_INFORMATIONAL;
         }
     }
@@ -254,7 +254,7 @@ public class SendMessageDialog extends XDialog {
 
         labelReplyMessageQueueName = new Label(mainPanel, SWT.NONE);
         labelReplyMessageQueueName.setLayoutData(createLabelLayoutData());
-        labelReplyMessageQueueName.setText("Reply message queue name:");
+        labelReplyMessageQueueName.setText(Messages.getLabel(Messages.Reply_message_queue_name));
 
         comboReplyMessageQueueName = WidgetFactory.createCombo(mainPanel);
         comboReplyMessageQueueName.setTextLimit(10);
@@ -262,10 +262,24 @@ public class SendMessageDialog extends XDialog {
         comboReplyMessageQueueName.setItems(new String[] { REPLY_MSGQ_NAME_SENDER });
         comboReplyMessageQueueName.select(DEFAULT_REPLY_MESSAGE_QUEUE_NAME);
         comboReplyMessageQueueName.addVerifyListener(new UpperCaseOnlyVerifier());
+        comboReplyMessageQueueName.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                adjustReplyMessageQueueLibrary();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+        comboReplyMessageQueueName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent paramModifyEvent) {
+                adjustReplyMessageQueueLibrary();
+            }
+        });
 
         labelReplyMessageQueueLibrary = new Label(mainPanel, SWT.NONE);
         labelReplyMessageQueueLibrary.setLayoutData(createLabelLayoutData());
-        labelReplyMessageQueueLibrary.setText("Reply message queue library:");
+        labelReplyMessageQueueLibrary.setText(Messages.getLabel(Messages.Reply_message_queue_library));
 
         comboReplyMessageQueueLibrary = WidgetFactory.createCombo(mainPanel);
         comboReplyMessageQueueLibrary.setTextLimit(10);
@@ -273,6 +287,20 @@ public class SendMessageDialog extends XDialog {
         comboReplyMessageQueueLibrary.setItems(new String[] { REPLY_MSGQ_LIBRARY_LIBL, REPLY_MSGQ_LIBRARY_CURLIB });
         comboReplyMessageQueueLibrary.select(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY);
         comboReplyMessageQueueLibrary.addVerifyListener(new UpperCaseOnlyVerifier());
+        comboReplyMessageQueueLibrary.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                adjustReplyMessageQueueLibrary();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+        comboReplyMessageQueueLibrary.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent paramModifyEvent) {
+                adjustReplyMessageQueueLibrary();
+            }
+        });
 
         createStatusLine(mainPanel);
 
@@ -339,6 +367,26 @@ public class SendMessageDialog extends XDialog {
             labelReplyMessageQueueLibrary.setEnabled(false);
             comboReplyMessageQueueName.setEnabled(false);
             comboReplyMessageQueueLibrary.setEnabled(false);
+        }
+    }
+
+    private void adjustReplyMessageQueueLibrary() {
+
+        boolean isEmpty;
+        if (comboReplyMessageQueueLibrary.getText().trim().length() == 0) {
+            isEmpty = true;
+        } else {
+            isEmpty = false;
+        }
+
+        if (REPLY_MSGQ_NAME_SENDER.equals(comboReplyMessageQueueName.getText())) {
+            if (!isEmpty) {
+                comboReplyMessageQueueLibrary.setText(""); //$NON-NLS-1$
+            }
+        } else {
+            if (isEmpty) {
+                comboReplyMessageQueueLibrary.setText(LIBRARY_LIBL);
+            }
         }
     }
 
@@ -456,14 +504,14 @@ public class SendMessageDialog extends XDialog {
         }
 
         if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
-            if (!validateMessageQueueName(comboReplyMessageQueueName.getText())) {
-                setErrorMessage("Invalid message queue name.");
-                comboReplyMessageQueueName.setFocus();
+            if (!validateMessageQueueLibrary(comboReplyMessageQueueLibrary.getText())) {
+                setErrorMessage(Messages.Invalid_message_queue_library_name);
+                comboReplyMessageQueueLibrary.setFocus();
                 return false;
             }
-            if (!validateMessageQueueLibrary(comboReplyMessageQueueLibrary.getText())) {
-                setErrorMessage("Invalid message queue library name.");
-                comboReplyMessageQueueLibrary.setFocus();
+            if (!validateMessageQueueName(comboReplyMessageQueueName.getText())) {
+                setErrorMessage(Messages.Invalid_message_queue_name);
+                comboReplyMessageQueueName.setFocus();
                 return false;
             }
         }
@@ -473,8 +521,8 @@ public class SendMessageDialog extends XDialog {
 
     public boolean validateRecipient(String recipient) {
 
-        if (QEZSNDMG.RECIPIENT_ALL.equals(recipient) || QEZSNDMG.RECIPIENT_ALLACT.equals(recipient) || QEZSNDMG.RECIPIENT_SYSOPR.equals(recipient)
-            || RECIPIENT_LIST.equals(recipient)) {
+        if (REPLY_MSGQ_NAME_SENDER.equals(recipient) || QEZSNDMG.RECIPIENT_ALL.equals(recipient) || QEZSNDMG.RECIPIENT_ALLACT.equals(recipient)
+            || QEZSNDMG.RECIPIENT_SYSOPR.equals(recipient) || RECIPIENT_LIST.equals(recipient)) {
             return true;
         }
 
@@ -497,6 +545,10 @@ public class SendMessageDialog extends XDialog {
 
     public boolean validateMessageQueueName(String messageQueueName) {
 
+        if (REPLY_MSGQ_NAME_SENDER.equals(comboReplyMessageQueueName.getText())) {
+            return true;
+        }
+
         if (!nameValidator.validate(messageQueueName)) {
             return false;
         }
@@ -510,6 +562,10 @@ public class SendMessageDialog extends XDialog {
     }
 
     public boolean validateMessageQueueLibrary(String library) {
+
+        if (REPLY_MSGQ_NAME_SENDER.equals(comboReplyMessageQueueName.getText())) {
+            return true;
+        }
 
         if (LIBRARY_LIBL.equals(library)) {
             return true;
@@ -548,8 +604,13 @@ public class SendMessageDialog extends XDialog {
         }
 
         if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
-            sendMessageOptions.setReplyMessageQueueName(comboReplyMessageQueueName.getText());
-            sendMessageOptions.setReplyMessageQueueLibrary(comboReplyMessageQueueLibrary.getText());
+            if (REPLY_MSGQ_NAME_SENDER.equals(comboReplyMessageQueueName.getText())) {
+                sendMessageOptions.setReplyMessageQueueName(null);
+                sendMessageOptions.setReplyMessageQueueLibrary(null);
+            } else {
+                sendMessageOptions.setReplyMessageQueueName(comboReplyMessageQueueName.getText());
+                sendMessageOptions.setReplyMessageQueueLibrary(comboReplyMessageQueueLibrary.getText());
+            }
         }
     }
 
@@ -579,9 +640,9 @@ public class SendMessageDialog extends XDialog {
 
         receipientsEditor.setItems(recipients);
 
-        comboReplyMessageQueueName.setText(loadValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_NAME))); //$NON-NLS-1$
+        comboReplyMessageQueueName.setText(loadValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_NAME)));
         comboReplyMessageQueueLibrary.setText(loadValue(MESSAGE_REPLY_QUEUE_LIBRARY,
-            comboReplyMessageQueueLibrary.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY))); //$NON-NLS-1$
+            comboReplyMessageQueueLibrary.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY)));
 
         overWriteInitialValues();
 
