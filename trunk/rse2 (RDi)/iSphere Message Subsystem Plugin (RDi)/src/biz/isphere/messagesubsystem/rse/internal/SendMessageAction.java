@@ -28,7 +28,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
  */
 public class SendMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
 
-    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.SendMessageAction";
+    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.SendMessageAction"; //$NON-NLS-1$
 
     public SendMessageAction() {
         super();
