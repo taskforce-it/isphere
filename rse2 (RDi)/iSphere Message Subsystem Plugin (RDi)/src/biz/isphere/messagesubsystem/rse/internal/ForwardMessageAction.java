@@ -28,7 +28,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
  */
 public class ForwardMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
 
-    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.ForwardMessageAction";
+    public static final String ID = "biz.isphere.messagesubsystem.rse.internal.ForwardMessageAction"; //$NON-NLS-1$
 
     public ForwardMessageAction() {
         super();

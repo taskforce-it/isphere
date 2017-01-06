@@ -29,7 +29,7 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class QueuedMessageSubSystemFactory extends SubSystemConfiguration {
 
-    public static final String ID = "biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory";
+    public static final String ID = "biz.isphere.messagesubsystem.internal.QueuedMessageSubSystemFactory"; //$NON-NLS-1$
 
     public QueuedMessageSubSystemFactory() {
         super();

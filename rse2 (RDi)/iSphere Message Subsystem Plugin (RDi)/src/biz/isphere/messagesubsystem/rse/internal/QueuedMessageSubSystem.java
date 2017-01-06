@@ -111,7 +111,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     public boolean isMonitored(MessageQueue messageQueue) {
 
         if (messageQueue == null) {
-            ISpherePlugin.logError("Null value passed to QueuedMessageSubSystem.isMonitored()", null);
+            ISpherePlugin.logError("*** Null value passed to QueuedMessageSubSystem.isMonitored() ***", null); //$NON-NLS-1$
             return false;
         }
 
@@ -139,7 +139,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
         synchronized (syncObject) {
             if (messageQueue != pendingMonitoredMessageQueue) {
-                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                ISpherePlugin.logError("*** Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped() ***", null); //$NON-NLS-1$
                 return;
             }
 
@@ -147,14 +147,14 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             pendingMonitoredMessageQueue = null;
         }
 
-        debugPrint("==> Subsystem: Thread " + messageQueue.hashCode() + " started.");
+        debugPrint("==> Subsystem: Thread " + messageQueue.hashCode() + " started."); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void messageMonitorStopped(MonitoredMessageQueue messageQueue) {
 
         synchronized (syncObject) {
             if (messageQueue != currentMonitoredMessageQueue) {
-                ISpherePlugin.logError("Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped()", null);
+                ISpherePlugin.logError("*** Unexpected message queue passed to QueuedMessageSubSystem.messageMonitorStopped() ***", null); //$NON-NLS-1$
                 return;
             }
 
@@ -163,7 +163,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             currentMonitoredMessageQueue = null;
         }
 
-        debugPrint("<== Subsystem: Thread " + messageQueue.hashCode() + " stopped.");
+        debugPrint("<== Subsystem: Thread " + messageQueue.hashCode() + " stopped."); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private MonitoredMessageQueue getMonitoredMessageQueue() {
@@ -190,11 +190,11 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     public boolean hasPendingRequest() {
 
         if (pendingMonitoredMessageQueue != null) {
-            debugPrint("Subsystem: have pending requests.");
+            debugPrint("Subsystem: have pending requests."); //$NON-NLS-1$
             return true;
         }
 
-        debugPrint("Subsystem: OK - no pending requests.");
+        debugPrint("Subsystem: OK - no pending requests."); //$NON-NLS-1$
         return false;
     }
 
@@ -215,13 +215,13 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             synchronized (syncObject) {
                 
                 // Start new message monitor
-                debugPrint("Subsystem: Starting message monitor thread ...");
+                debugPrint("Subsystem: Starting message monitor thread ..."); //$NON-NLS-1$
                 pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
                 pendingMonitoredMessageQueue.startMonitoring();
 
                 // End running message monitor
                 if (currentMonitoredMessageQueue != null) {
-                    debugPrint("Subsystem: Stopping previous message monitor thread ...");
+                    debugPrint("Subsystem: Stopping previous message monitor thread ..."); //$NON-NLS-1$
                     currentMonitoredMessageQueue.stopMonitoring();
                 }
             }
@@ -244,7 +244,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             // pendingMonitoredMessageQueue.hashCode());
             // pendingMonitoredMessageQueue.stopMonitoring();
             // } else {
-            debugPrint("Subsystem: Stopping current queue: " + currentMonitoredMessageQueue.hashCode());
+            debugPrint("Subsystem: Stopping current queue: " + currentMonitoredMessageQueue.hashCode()); //$NON-NLS-1$
             currentMonitoredMessageQueue.stopMonitoring();
             // }
         }
@@ -294,7 +294,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
     private SystemMessageObject createErrorMessage(Throwable e) {
         
-        SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
+        SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012"); //$NON-NLS-1$
         msg.makeSubstitution(e.getMessage());
         SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
         
