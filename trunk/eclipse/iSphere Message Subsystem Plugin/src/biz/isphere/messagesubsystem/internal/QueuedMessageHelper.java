@@ -20,6 +20,15 @@ import com.ibm.as400.access.QueuedMessage;
 
 public final class QueuedMessageHelper {
 
+    /*
+     * The following reply status values have been copied from
+     * com.ibm.as400.resource.RQueuedMessage, because RQueuedMessage has been
+     * marked as deprecated.
+     */
+    public static final String REPLY_STATUS_ACCEPTS_SENT = "A"; //$NON-NLS-1$
+    public static final String REPLY_STATUS_ACCEPTS_NOT_SENT = "W"; //$NON-NLS-1$
+    public static final String REPLY_STATUS_NOT_ACCEPT = "N"; //$NON-NLS-1$
+
     public static String getMessageTypeAnyItem() {
 
         return Messages.Message_Type_Text_Any;
@@ -110,4 +119,24 @@ public final class QueuedMessageHelper {
         }
     }
 
+    public static String getMessageReplyStatusAsText(QueuedMessage queuedMessage) {
+        return getMessageReplyStatusAsText(queuedMessage.getReplyStatus());
+    }
+
+    public static String getMessageReplyStatusAsText(String replyStatus) {
+
+        if (REPLY_STATUS_ACCEPTS_SENT.equals(replyStatus)) {
+            return Messages.Message_Reply_Status_Accepts_Send;
+        } else if (REPLY_STATUS_ACCEPTS_NOT_SENT.equals(replyStatus)) {
+            return Messages.Message_Reply_Status_Accepts_Not_Send;
+        } else if (REPLY_STATUS_NOT_ACCEPT.equals(replyStatus)) {
+            return Messages.Message_Reply_Status_Not_Accept;
+        } else {
+            return "*ERROR"; //$NON-NLS-1$
+        }
+    }
+
+    public static boolean isPendingReply(QueuedMessage queuedMessage) {
+        return REPLY_STATUS_ACCEPTS_NOT_SENT.equals(queuedMessage.getReplyStatus());
+    }
 }
