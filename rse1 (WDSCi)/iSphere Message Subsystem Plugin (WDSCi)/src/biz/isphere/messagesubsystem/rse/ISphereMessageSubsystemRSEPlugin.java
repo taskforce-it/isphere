@@ -40,7 +40,7 @@ public class ISphereMessageSubsystemRSEPlugin extends AbstractUIPlugin {
     public static final String IMAGE_INQUIRY_ANSWERED = "inquiry_answered.gif"; //$NON-NLS-1$
     public static final String SEND_MESSAGE = "send_message.png"; //$NON-NLS-1$
 
-    private static final String PLUGIN_ID = "biz.isphere.messagesubsystem.rse";
+    private static final String PLUGIN_ID = "biz.isphere.messagesubsystem.rse"; //$NON-NLS-1$
 
     /**
      * The constructor.
