@@ -1,4 +1,16 @@
 
+Changelog: iSphere 3.0.0.b006
+-----------------------------
+ • Fixed a couple of issues with the iSphere Message Subsystem.
+ • Added preferences page for the iSphere Message Subsystem.
+ • Added (temorary) debug code to analyze why the reply message
+   field is not shown for at least one person.
+
+Changelog: iSphere 3.0.0.b005
+-----------------------------
+ • Fixed a couple of issues with the iSphere Message Subsystem.
+ • Added menu options for sending and forwarding messages
+
 Changelog: iSphere 3.0.0.b004
 -----------------------------
  • Fixed problem that the filter string was not reset, when restoring
