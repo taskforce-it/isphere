@@ -132,7 +132,7 @@ public final class QueuedMessageHelper {
         } else if (REPLY_STATUS_NOT_ACCEPT.equals(replyStatus)) {
             return Messages.Message_Reply_Status_Not_Accept;
         } else {
-            return "*ERROR"; //$NON-NLS-1$
+            return "*NOT_SPECIFIED"; //$NON-NLS-1$
         }
     }
 
