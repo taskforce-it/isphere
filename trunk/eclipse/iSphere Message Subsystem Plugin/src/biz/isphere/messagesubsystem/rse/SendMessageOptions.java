@@ -23,11 +23,11 @@ public class SendMessageOptions {
     public SendMessageOptions() {
         this.messageType = QEZSNDMG.TYPE_INFORMATIONAL;
         this.deliveryMode = QEZSNDMG.DELIVERY_NORMAL;
-        this.messageText = "";
+        this.messageText = ""; //$NON-NLS-1$
         this.recipientType = QEZSNDMG.RECIPIENT_TYPE_USER;
         this.recipients = new String[0];
         this.replyMessageQueueName = null;
-        this.replyMessageQueueLibrary = "*LIBL"; //$NON-NLS-1$
+        this.replyMessageQueueLibrary = null;
     }
 
     public String getMessageType() {
@@ -89,5 +89,5 @@ public class SendMessageOptions {
     public boolean isInquiryMessage() {
         return QEZSNDMG.TYPE_INQUERY.equals(this.messageType);
     }
-    
+
 }

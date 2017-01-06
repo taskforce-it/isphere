@@ -18,15 +18,15 @@ import com.ibm.as400.data.PcmlException;
 
 public class QEZSNDMG {
 
-    public static final String TYPE_INQUERY = "*INQ";
-    public static final String TYPE_INFORMATIONAL = "*INFO";
-    public static final String DELIVERY_NORMAL = "*NORMAL";
-    public static final String DELIVERY_BREAK = "*BREAK";
-    public static final String RECIPIENT_ALL = "*ALL";
-    public static final String RECIPIENT_ALLACT = "*ALLACT";
-    public static final String RECIPIENT_SYSOPR = "*SYSOPR";
-    public static final String RECIPIENT_TYPE_USER = "*USR";
-    public static final String RECIPIENT_TYPE_DISPLAY = "*DSP";
+    public static final String TYPE_INQUERY = "*INQ"; //$NON-NLS-1$
+    public static final String TYPE_INFORMATIONAL = "*INFO"; //$NON-NLS-1$
+    public static final String DELIVERY_NORMAL = "*NORMAL"; //$NON-NLS-1$
+    public static final String DELIVERY_BREAK = "*BREAK"; //$NON-NLS-1$
+    public static final String RECIPIENT_ALL = "*ALL"; //$NON-NLS-1$
+    public static final String RECIPIENT_ALLACT = "*ALLACT"; //$NON-NLS-1$
+    public static final String RECIPIENT_SYSOPR = "*SYSOPR"; //$NON-NLS-1$
+    public static final String RECIPIENT_TYPE_USER = "*USR"; //$NON-NLS-1$
+    public static final String RECIPIENT_TYPE_DISPLAY = "*DSP"; //$NON-NLS-1$
 
     private PcmlProgramCallDocument pcml;
 
@@ -40,7 +40,7 @@ public class QEZSNDMG {
 
             String[] recipients = options.getRecipients();
 
-            pcml = new PcmlProgramCallDocument(system, "biz.isphere.messagesubsystem.internal.QEZSNDMG", getClass().getClassLoader());
+            pcml = new PcmlProgramCallDocument(system, "biz.isphere.messagesubsystem.internal.QEZSNDMG", getClass().getClassLoader()); //$NON-NLS-1$
             pcml.setValue("QEZSNDMG.msgType", options.getMessageType()); //$NON-NLS-1$
             pcml.setValue("QEZSNDMG.deliveryMode", options.getDeliveryMode()); //$NON-NLS-1$
             pcml.setValue("QEZSNDMG.msgLen", new Integer(options.getMessageText().length())); //$NON-NLS-1$
@@ -53,7 +53,9 @@ public class QEZSNDMG {
             }
 
             if (options.isInquiryMessage()) {
-                pcml.setQualifiedObjectName("QEZSNDMG.queueName", options.getReplyMessageQueueLibrary(), options.getReplyMessageQueueName());
+                if (options.getReplyMessageQueueName() != null) {
+                    pcml.setQualifiedObjectName("QEZSNDMG.queueName", options.getReplyMessageQueueLibrary(), options.getReplyMessageQueueName()); //$NON-NLS-1$
+                }
             }
 
             boolean rc = pcml.callProgram("QEZSNDMG"); //$NON-NLS-1$
@@ -69,7 +71,7 @@ public class QEZSNDMG {
             }
 
         } catch (PcmlException e) {
-            ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e);
+            ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e); //$NON-NLS-1$
         }
     }
 
@@ -82,6 +84,8 @@ public class QEZSNDMG {
         AS400 system = new AS400(hostname, user, password);
 
         SendMessageOptions options = new SendMessageOptions();
+        options.setRecipients(new String[] { "RADDATZ" }); //$NON-NLS-1$
+        options.setMessageText("Test message sent by QEZSNDMSG"); //$NON-NLS-1$
 
         QEZSNDMG main = new QEZSNDMG();
         main.run(system, options);

@@ -36,6 +36,7 @@ import biz.isphere.core.internal.FontHelper;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
+import biz.isphere.messagesubsystem.preferences.Preferences;
 
 import com.ibm.as400.access.MessageQueue;
 
@@ -74,95 +75,152 @@ public class QueuedMessageDialog extends XDialog {
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
 
+        int numColumns = 2;
         Composite mainPanel = new Composite(scrolledComposite, SWT.NONE);
-        GridLayout headerLayout = new GridLayout(2, false);
+        GridLayout headerLayout = new GridLayout(numColumns, false);
         mainPanel.setLayout(headerLayout);
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        Label idLabel = new Label(mainPanel, SWT.NONE);
+        createMessagePanel(mainPanel, numColumns);
+        createSpacerPanel(mainPanel, numColumns);
+
+        scrolledComposite.setContent(mainPanel);
+        scrolledComposite.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+        return scrolledComposite;
+    }
+
+    private Composite createMessagePanel(Composite parent, int numColumns) {
+
+        Composite panel = parent;
+
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = numColumns;
+        panel.setLayoutData(gd);
+
+        Label idLabel = new Label(panel, SWT.NONE);
         idLabel.setText(Messages.Message_ID_colon);
 
-        Text idText = WidgetFactory.createReadOnlyText(mainPanel);
+        Text idText = WidgetFactory.createReadOnlyText(panel);
         idText.setLayoutData(new GridData(200, SWT.DEFAULT));
         idText.setEnabled(false);
         if (receivedMessage.getID() != null) {
             idText.setText(receivedMessage.getID());
         }
 
-        Label sevLabel = new Label(mainPanel, SWT.NONE);
+        Label sevLabel = new Label(panel, SWT.NONE);
         sevLabel.setText(Messages.Severity_colon);
 
-        Text sevText = WidgetFactory.createReadOnlyText(mainPanel);
+        Text sevText = WidgetFactory.createReadOnlyText(panel);
         sevText.setLayoutData(new GridData(200, SWT.DEFAULT));
         sevText.setEnabled(false);
         sevText.setText(new Integer(receivedMessage.getSeverity()).toString());
 
-        Label typeLabel = new Label(mainPanel, SWT.NONE);
+        Label typeLabel = new Label(panel, SWT.NONE);
         typeLabel.setText(Messages.Message_type_colon);
 
-        Text typeText = WidgetFactory.createReadOnlyText(mainPanel);
+        Text typeText = WidgetFactory.createReadOnlyText(panel);
         typeText.setLayoutData(new GridData(200, SWT.DEFAULT));
         typeText.setEnabled(false);
         typeText.setText(receivedMessage.getMessageType());
 
-        Label dateLabel = new Label(mainPanel, SWT.NONE);
+        Label dateLabel = new Label(panel, SWT.NONE);
         dateLabel.setText(Messages.Date_sent_colon);
 
-        Text dateText = WidgetFactory.createReadOnlyText(mainPanel);
+        Text dateText = WidgetFactory.createReadOnlyText(panel);
         dateText.setLayoutData(new GridData(200, SWT.DEFAULT));
         dateText.setEnabled(false);
         dateText.setText(receivedMessage.getDate().getTime().toString());
 
-        Label userLabel = new Label(mainPanel, SWT.NONE);
+        Label userLabel = new Label(panel, SWT.NONE);
         userLabel.setText(Messages.From_colon);
 
-        Text userText = WidgetFactory.createReadOnlyText(mainPanel);
+        Text userText = WidgetFactory.createReadOnlyText(panel);
         userText.setLayoutData(new GridData(200, SWT.DEFAULT));
         userText.setEnabled(false);
         if (receivedMessage.getUser() != null) {
             userText.setText(receivedMessage.getUser());
         }
 
-        Label msgTextLabel = new Label(mainPanel, SWT.NONE);
+        if (Preferences.getInstance().isReplyFieldBeforeMessageText()) {
+            createReplyPanel(panel, numColumns);
+        }
+
+        Label msgTextLabel = new Label(panel, SWT.NONE);
         msgTextLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         msgTextLabel.setText(Messages.Message_colon);
 
-        Text msgText = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
-        msgText.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Text msgText = WidgetFactory.createReadOnlyMultilineText(panel, true, false);
+        gd = new GridData(GridData.FILL_BOTH);
+        gd.widthHint = 0;
+        msgText.setLayoutData(gd);
         msgText.setFont(FontHelper.getFixedSizeFont());
         msgText.setText(receivedMessage.getText());
 
         if (receivedMessage.getHelpFormatted() != null && !receivedMessage.getHelpFormatted().equals(receivedMessage.getText())) {
 
             // Place holder label for message help text box
-            new Label(mainPanel, SWT.NONE);
+            new Label(panel, SWT.NONE);
 
-            Text msgHelp = WidgetFactory.createReadOnlyMultilineText(mainPanel, true, false);
+            Text msgHelp = WidgetFactory.createReadOnlyMultilineText(panel, true, false);
             msgHelp.setLayoutData(new GridData(GridData.FILL_BOTH));
             msgHelp.setFont(FontHelper.getFixedSizeFont());
             msgHelp.setText(messageFormatter.formatHelpText(receivedMessage.getHelpFormatted()));
         }
 
+        if (!Preferences.getInstance().isReplyFieldBeforeMessageText()) {
+            createReplyPanel(panel, numColumns);
+        }
+
+        return panel;
+    }
+
+    private Composite createReplyPanel(Composite parent, int numColumns) {
+
+        Composite panel = parent;
+
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = numColumns;
+        panel.setLayoutData(gd);
+
         if (receivedMessage.isInquiryMessage()) {
 
-            Label replyLabel = new Label(mainPanel, SWT.NONE);
-            replyLabel.setText(Messages.Reply_colon);
+            Label replyLabel = new Label(panel, SWT.NONE);
+            replyLabel.setText(Messages.Reply);
 
-            responseText = WidgetFactory.createText(mainPanel);
+            responseText = WidgetFactory.createText(panel);
             responseText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
             responseText.setTextLimit(132);
             if (receivedMessage.getDefaultReply() != null) {
                 responseText.setText(receivedMessage.getDefaultReply());
             } else {
-                responseText.setText("");
+                responseText.setText(""); //$NON-NLS-1$
             }
             responseText.setFocus();
+
+            logDebugMessage("Debug --> Message reply field created."); //$NON-NLS-1$
         }
 
-        scrolledComposite.setContent(mainPanel);
-        scrolledComposite.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        return panel;
+    }
 
-        return scrolledComposite;
+    // TODO: remove debug code
+    private void logDebugMessage(String message) {
+
+        if (Preferences.getInstance().isDebugEnabled()) {
+            ISpherePlugin.logError(message, null);
+        }
+    }
+
+    private Composite createSpacerPanel(Composite parent, int numColums) {
+
+        Composite spacer = new Composite(parent, SWT.NONE);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.heightHint = 0;
+        gd.horizontalSpan = numColums;
+        spacer.setLayoutData(gd);
+
+        return spacer;
     }
 
     @Override

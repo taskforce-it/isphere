@@ -90,11 +90,11 @@ public class QueuedMessageListDialog extends XDialog {
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
-        addTableColumn(tableViewer, "Date");
-        addTableColumn(tableViewer, "Time");
-        addTableColumn(tableViewer, "Message ID", 80);
-        addTableColumn(tableViewer, "Message Type", 100);
-        addTableColumn(tableViewer, "Message text", 250);
+        addTableColumn(tableViewer, Messages.Column_Date);
+        addTableColumn(tableViewer, Messages.Column_Time);
+        addTableColumn(tableViewer, Messages.Column_Message_ID, 80);
+        addTableColumn(tableViewer, Messages.Column_Message_Type, 100);
+        addTableColumn(tableViewer, Messages.Column_Message_Text, 250);
 
         tableViewer.setContentProvider(new ContentProviderMessageItems());
         tableViewer.setLabelProvider(new LabelProviderMessageItems());
@@ -124,7 +124,7 @@ public class QueuedMessageListDialog extends XDialog {
         tableViewer.setInput(queuedMessages);
 
         if (monitoringAttributes.isRemoveInformationalMessages()) {
-            setStatusMessage("Informational messages are removed on closing the dialog.");
+            setStatusMessage(Messages.Informational_messages_are_removed_on_closing_the_dialog);
         }
     }
 

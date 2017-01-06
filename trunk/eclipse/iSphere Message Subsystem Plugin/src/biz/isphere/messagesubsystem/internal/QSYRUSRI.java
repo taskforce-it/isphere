@@ -28,7 +28,7 @@ public class QSYRUSRI {
 
         try {
 
-            pcml = new PcmlProgramCallDocument(anAS400, "biz.isphere.messagesubsystem.internal.QSYRUSRI", getClass().getClassLoader());
+            pcml = new PcmlProgramCallDocument(anAS400, "biz.isphere.messagesubsystem.internal.QSYRUSRI", getClass().getClassLoader()); //$NON-NLS-1$
             pcml.setValue("QSYRUSRI.userProfile", aUserProfile); //$NON-NLS-1$
             pcml.setValue("QSYRUSRI.receiverLength", new Integer((pcml.getOutputsize("QSYRUSRI.receiver")))); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -45,12 +45,7 @@ public class QSYRUSRI {
             }
 
         } catch (PcmlException e) {
-
-            System.out.println(e.getLocalizedMessage());
-            e.printStackTrace();
-            System.out.println("*** Call to QSYRUSRI failed. ***");
-            // ISpherePlugin.logError("Failed calling the QSYRUSRI API.", e);
-
+            ISpherePlugin.logError("Failed calling the QSYRUSRI API.", e); //$NON-NLS-1$
         }
     }
 

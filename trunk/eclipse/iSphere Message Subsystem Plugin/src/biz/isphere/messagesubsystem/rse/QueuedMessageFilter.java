@@ -24,7 +24,7 @@ import com.ibm.as400.data.PcmlException;
 public class QueuedMessageFilter {
 
     public static final String MSGQ_CURRENT = "*CURRENT"; //$NON-NLS-1$
-    private static final String ASTERISK = "*";
+    private static final String ASTERISK = "*"; //$NON-NLS-1$
 
     private String description;
     private String messageQueue;

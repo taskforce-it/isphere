@@ -17,9 +17,9 @@ public class InquiryMessageDelegate {
      * com.ibm.as400.resource.RQueuedMessage, because RQueuedMessage has been
      * marked as deprecated.
      */
-    public static final String REPLY_STATUS_ACCEPTS_SENT = "A";
-    public static final String REPLY_STATUS_ACCEPTS_NOT_SENT = "W";
-    public static final String REPLY_STATUS_NOT_ACCEPT = "N";
+    public static final String REPLY_STATUS_ACCEPTS_SENT = "A"; //$NON-NLS-1$
+    public static final String REPLY_STATUS_ACCEPTS_NOT_SENT = "W"; //$NON-NLS-1$
+    public static final String REPLY_STATUS_NOT_ACCEPT = "N"; //$NON-NLS-1$
 
     private QueuedMessage queuedMessage;
 
