@@ -88,7 +88,6 @@
 	</tstamp>
 
 	<!-- Set regular expressions and replacement values -->
-	<property name="validate.execution.environment.regex" value="^(J2SE-1.5|JavaSE-1.6)$" />
 	<property name="validate.version.regex" value="^([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?)$" />
 	<property name="release.flag.regex" value="^(?:[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|(r)))?)$" />
 
@@ -185,7 +184,6 @@
 			<property name="target.ide.exclude.site.xml" value="" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
-			<property name="target.execution.environment" value="${build.execution.environment.RDi}" />
 		</then>
 		<else>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
@@ -194,7 +192,6 @@
 			<property name="target.ide.exclude.site.xml" value="" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
-			<property name="target.execution.environment" value="${build.execution.environment.WDSCi}" />
 		</else>
 	</if>
 
@@ -213,9 +210,6 @@
 			<property name="site.xml.property.url" value="${sf.root.master.url}/eclipse/${target.ide.sf.dir}" />
 		</else>
 	</if>
-
-	<property name="manifest.execution.environment.regex" value="(Bundle-RequiredExecutionEnvironment:\s)(J2SE-1.5|JavaSE-1.6)" />
-	<property name="manifest.execution.environment.replace" value="\1${target.execution.environment}" />
 
 	<property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
 	<property name="site.xml.property.url.replace" value="\1 url=&quot;${site.xml.property.url}&quot;\3" />
@@ -985,35 +979,6 @@
 
 	<!--
     * =====================================================================
-    *   Validates the specified execution environment.
-    * ===================================================================== -->
-	<target name="validateExecutionEnvironment">
-
-		<echo>Validating execution environment: ${target.execution.environment} ...</echo>
-
-		<propertyregex property="validated.execution.environment" input="${target.execution.environment}" regexp="${validate.execution.environment.regex}" select="\1" casesensitive="true" />
-
-		<if>
-			<equals arg1="${target.execution.environment}" arg2="${validated.execution.environment}" />
-			<then>
-				<echo>Version number validated: OK</echo>
-			</then>
-			<else>
-				<echo>+------------------------------------------------------+</echo>
-				<echo>| Invalid execution environment.                       |</echo>
-				<echo>|                                                      |</echo>
-				<echo>| The allowed execution environments are:              |</echo>
-				<echo>|    J2SE-1.5                                          |</echo>
-				<echo>|    JavaSE-1.6                                        |</echo>
-				<echo>+------------------------------------------------------+</echo>
-				<fail>*** ERROR: Invalid execution environment. ***</fail>
-			</else>
-		</if>
-
-	</target>
-
-	<!--
-    * =====================================================================
     *   Updates the version numbers of the following files:
     *     - MANIFEST.MF
     *     - feature.xml
@@ -1068,42 +1033,6 @@
 						<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
 						</replaceregexp>
-
-					</then>
-				</if>
-			</sequential>
-		</for>
-
-		<echo>Done.</echo>
-
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Updates the execution environment, specified in:
-    *     - MANIFEST.MF
-    * ===================================================================== -->
-	<target name="updateExecutionEnvironment" depends="validateExecutionEnvironment">
-
-		<echo>Updating execution environment to: ${target.execution.environment} ...</echo>
-
-		<for list="${build.projects}" delimiter="," param="project">
-			<sequential>
-
-				<if>
-					<available file="${workspace.home}\@{project}" type="dir"/>
-					<then>
-
-						<echo message="${workspace.home}\@{project}" />
-
-						<if>
-							<available file="${workspace.home}\@{project}/META-INF" />
-							<then>
-								<replaceregexp match="${manifest.execution.environment.regex}" replace="${manifest.execution.environment.replace}" byline="true">
-									<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
-								</replaceregexp>
-							</then>
-						</if>
 
 					</then>
 				</if>
