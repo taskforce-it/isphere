@@ -25,12 +25,14 @@
  *     - On the PC change version number in COPYRIGHT.RPGLE.
  *     - On the PC push changes of project's i Project to the AS/400.
  *     - On the AS/400 compile and execute the BUILD command.
- *     - On the PC update minimum server version number in iSpherePlugin.
+ *     - On the PC update minimum server version number in, e.g. class
+ *       'biz.isphere.core.ISpherePlugin'.
  *
  *     - On the PC search java sources for missing copyright header.
  *       Menu: Search -> File -> (?s)\A((?!copyright).)*\Z
  *             Check: Regular expression
- *     - On the PC update document iSphere.doc.
+ *     - On the PC update document the document specified at key 'build.project.doc'
+ *       in file 'build.properties'.
  *     - On the PC set version number (build.version) in build.properties and the
  *       propertes for selecting what to build according to your needs.
  *       (version number is automatically updated in MANIFEST.MF, feature.xml 
@@ -56,7 +58,8 @@
  *     - Open project's "Summary" page at SourceForge and select "Browse all files".
  *       Klick the "i" button (view details) nest to the RDi zip file and
  *       click "select all" for the "Download Button".
- *     - Set the version number in MANIFEST.MF in project "iSphere Notifier"
+ *     - Set the version number in MANIFEST.MF in the project specified at key
+ *       'build.notifier.project' in file 'build.properties'.
  *       and commit the change to the repository to notify the users about
  *       the new version.
  *
@@ -66,7 +69,7 @@
 	<!-- Include Ant Contrib tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
-			<pathelement location="${basedir}/../lib/ant-contrib-1.0b3.jar" />
+			<pathelement location="${basedir}/lib/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 
@@ -754,7 +757,7 @@
 		<echo>Deleting SourceForge: files (download area) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}/${beta.dir}/">
 			<Rmdir dir="." subDirs="false" >
 				<IgnoreFile pattern="${target.ide.exclude.download.files}.zip" ignoreCase="true" />
 			</Rmdir>
@@ -772,7 +775,7 @@
 		<echo>Deleting: web pages (update site) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}/${beta.dir}/eclipse/">
 			<copydir dir="${build.upload.dir.maintenance}" toDir="./${target.ide.sf.dir}" subDirs="true" />
 			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" >
 				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
@@ -791,7 +794,7 @@
 		<echo>Deleting SourceForge: web pages (help) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}/${beta.dir}/">
 			<copydir dir="${build.upload.dir.maintenance}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
 			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" >
 				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
@@ -811,13 +814,6 @@
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
 			host="${sf.ftp.server.home}" remoteDir="${sf.dir.updatesite.home.root}">
-			<!--
-			<copydir dir="${build.upload.dir.maintenance}" toDir="./${sf.dir.updatesite.home.dir}" subDirs="true" />
-			<Rmdir dir="./${sf.dir.updatesite.home.dir}" subDirs="false" >
-				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
-				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
-			</Rmdir>
-			-->
 		</SF>
 
 	</target>
@@ -831,7 +827,7 @@
 		<echo>Uploading SourceForge: files (download area) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}">
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}/${beta.dir}/">
 			<copydir dir="${build.upload.dir.files}" toDir="." subDirs="false" />
 			<copydir dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" toDir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
 		</SF>
@@ -848,7 +844,7 @@
 		<echo>Uploading: web pages (update site) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}/${beta.dir}/eclipse/">
 			<copydir dir="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
 			<Rmdir dir="./${target.ide.sf.dir}/maintenance-assets" subDirs="true" />
 		</SF>
@@ -864,7 +860,7 @@
 		<echo>Uploading SourceForge: web pages (help) ...</echo>
 
 		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
-			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}">
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}/${beta.dir}/">
 			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
 			<Rmdir dir="./${sf.dir.updatesite.help.dir}/maintenance-assets" subDirs="true" />
 		</SF>
