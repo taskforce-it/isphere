@@ -347,7 +347,7 @@
     *   It must be run, after the update site has been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
+	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in '${build.public.project.name} Build/upload/...'           |</echo>
@@ -521,7 +521,13 @@
 			<exclude name="${target.ide.exclude.site.xml}" />
 			<exclude name=".project" />
 		</zip>
-		<copy file="${project.pdf}" todir="${build.upload.dir.files}" />
+		
+		<if>
+			<equals arg1="${project.pdf.exists}" arg2="true" />
+			<then>
+				<copy file="${project.pdf}" todir="${build.upload.dir.files}" />
+			</then>
+		</if>
 
 		<echo>Deleting 'logs.zip' ...</echo>
 		<delete file="${workspace.home}\${build.updatesite}\logs.zip" />
@@ -901,9 +907,34 @@
 
 	<!--
     * =====================================================================
+    *   Checks whether the project has a project documentation file.
+    * ===================================================================== -->
+	<target name="checkProjectDocument">
+
+		<echo>Checking existance of file: ${project.doc}</echo>
+		
+		<condition property="project.doc.exists">
+			<available file="${project.doc}" type="file"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${project.doc.exists}" arg2="true" />
+			<then>
+				<echo>Project documentation file found!</echo>
+			</then>
+			<else>
+				<echo>No project documentation file found.</echo>
+				<property name="pdf.isUpToDate" value="true"/>
+			</else>
+		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
     *   Checks whether the PDF file is up to date.
     * ===================================================================== -->
-	<target name="checkPdfFile">
+	<target name="checkPdfFile" if ="project.doc.exists">
 
 		<if>
 			<equals arg1="${build.files.enabled}" arg2="true" />
