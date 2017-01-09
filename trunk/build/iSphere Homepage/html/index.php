@@ -19,7 +19,8 @@
                }
                return $manifest;
             }
-            $manifestFileContents = file_get_contents('http://sourceforge.net/p/isphere/code/HEAD/tree/trunk/build/iSphere%20Notifier/MANIFEST.MF?format=raw');
+            $notifier_url = str_replace( ' ' , '%20' , '@VERSION_MANIFEST@' );
+            $manifestFileContents = file_get_contents( $notifier_url );
             $manifest = parseJarManifest($manifestFileContents);
             $current_version = $manifest['Bundle-Version'];
         ?>
