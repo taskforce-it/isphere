@@ -76,8 +76,11 @@
 	<!-- Load project names and new version number -->
 	<property file="build.properties" />
 
-	<!-- Load ftp user name and password -->
+	<!-- Load ftp properties -->
 	<property file="ftp.properties" />
+
+	<!-- Load ftp user name and password -->
+	<property file="ftp-credentials.properties" />
 
 	<!-- Load properties for local update site -->
 	<property file="localUpdateSite.properties" />
