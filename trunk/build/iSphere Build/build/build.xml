@@ -325,7 +325,7 @@
     *   and creates the version tag file.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="build" depends="cleanUpdateSite, cleanUploadDir, updateVersionNumber, updateStylesheets, createTagFile, refreshProjects" description="Build SourceForge Update Site">
+	<target name="build" depends="checkBuildTarget,cleanUpdateSite, cleanUploadDir, updateVersionNumber, updateStylesheets, createTagFile, refreshProjects" description="Build SourceForge Update Site">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Finished ${build.public.project.name} build ${build.version}</echo>
@@ -347,7 +347,7 @@
     *   It must be run, after the update site has been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
+	<target name="createSourceForgeFiles" depends="checkBuildTarget,cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in '${build.public.project.name} Build/upload/...'           |</echo>
@@ -364,7 +364,7 @@
     *   This target must be run, after the SourceForge files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="uploadSourceForgeFiles" depends="ftpCredentialsSourceForge" description="Uploads the entire project to SourceForge">
+	<target name="uploadSourceForgeFiles" depends="checkBuildTarget,ftpCredentialsSourceForge" description="Uploads the entire project to SourceForge">
 
 		<echo>Uploading files to SourceForge ...</echo>
 
@@ -392,7 +392,7 @@
     *   This target must be run, after the SourceForge files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="uploadLocalUpdateSite" description="Copies the update site to a local directory" >
+	<target name="uploadLocalUpdateSite" depends="checkBuildTarget" description="Copies the update site to a local directory" >
 
 		<if>
 			<equals arg1="${local.updateSite.enabled}" arg2="true" />
@@ -464,6 +464,8 @@
 
 		<echo>Cleaning upload directory ...</echo>
 
+		<mkdir dir="${build.upload.dir.files}" />
+		
 		<delete includeemptydirs="true">
 			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
 		</delete>
@@ -1110,6 +1112,31 @@
 	<target name="ftpCredentialsSourceForge" unless="sf.ftp.password">
 
 		<input message="Please enter the SourceForge FTP password:" addproperty="sf.ftp.password" defaultvalue="" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Asks for FTP credentials: username and password.
+    *   Properties 'sf.ftp.user' is loaded from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="checkBuildTarget">
+
+		<echo>Checking build target: ${build.target}</echo>
+		
+		<condition property="build.updatesite.exists">
+			<available file="${workspace.home}\${build.updatesite}" type="dir"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${build.updatesite.exists}" arg2="true" />
+			<then>
+				<echo>*** Success ***</echo>
+			</then>
+			<else>
+				<fail>*** Error: Update site ${build.updatesite} not found! ***</fail>
+			</else>
+		</if>
 
 	</target>
 
