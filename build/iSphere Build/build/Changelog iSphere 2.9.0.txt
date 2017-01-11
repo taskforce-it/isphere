@@ -1,4 +1,8 @@
 
+Changelog: iSphere 2.9.4.r
+--------------------------
+ • Fixed CCSID problem when copying members between connections. 
+
 Changelog: iSphere 2.9.3.b002
 -----------------------------
  • Fixed problem that 5250 key bindings are applied to RSE items with 
