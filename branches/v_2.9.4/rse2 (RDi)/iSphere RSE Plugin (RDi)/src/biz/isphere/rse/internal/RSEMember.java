@@ -146,7 +146,7 @@ public class RSEMember extends Member {
     @Override
     public String[] getContents() throws Exception {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents(), "UTF-8")); //$NON-NLS-1$
         List<String> contents = new ArrayList<String>();
         String line = null;
         while ((line = br.readLine()) != null) {
