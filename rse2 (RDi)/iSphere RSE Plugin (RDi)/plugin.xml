@@ -338,6 +338,11 @@
 		            		</or>
 		            	</and>
 					</or>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect libraries   -->
+					<or>
+	            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*LIB"/>
+					</or>
 				</or>
          	</enablement>
             
