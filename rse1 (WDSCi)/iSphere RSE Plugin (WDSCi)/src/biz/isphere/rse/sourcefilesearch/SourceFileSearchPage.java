@@ -10,6 +10,7 @@ package biz.isphere.rse.sourcefilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,15 +18,22 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -43,8 +51,10 @@ import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
 
@@ -55,7 +65,10 @@ import com.ibm.etools.iseries.core.ui.widgets.IISeriesFilePromptTypes;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
+import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
+import com.ibm.etools.systems.filters.SystemFilter;
+import com.ibm.etools.systems.filters.SystemFilterPoolReference;
 import com.ibm.etools.systems.model.SystemConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
@@ -65,6 +78,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
     private static final String CONNECTION = "connection";
+    private static final String FILTER_POOL_NAME = "filterPoolName";
+    private static final String FILTER_NAME = "filterName";
     private static final String SOURCE_FILE = "sourceFile";
     private static final String SOURCE_MEMBER = "sourceMember";
     private static final String LIBRARY = "library";
@@ -77,8 +92,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private static int MAX_END_COLUMN = 228;
 
+    private static final String SEARCH_ALL_COLUMNS = "ALL"; //$NON-NLS-1$
+
     private ISearchPageContainer container;
     private ISeriesConnectionCombo connectionCombo;
+    private Combo filterPoolCombo;
+    private Combo filterCombo;
     private ISeriesMemberPrompt sourceFilePrompt;
     private Button allColumnsButton;
     private Button betweenColumnsButton;
@@ -87,8 +106,19 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private Button showAllRecordsButton;
     private SearchArgumentsListEditor searchArgumentsListEditor;
 
+    private LinkedHashMap<String, SystemFilterPoolReference> filterPoolsOfConnection;
+    private LinkedHashMap<String, SystemFilter> filtersOfFilterPool;
+
+    private Button filterRadioButton;
+    private Button sourceMemberRadioButton;
+    private TypedListener targetFocusListener;
+
     public SourceFileSearchPage() {
         super();
+
+        filterPoolsOfConnection = new LinkedHashMap<String, SystemFilterPoolReference>();
+        filtersOfFilterPool = new LinkedHashMap<String, SystemFilter>();
+        targetFocusListener = new TypedListener(new TargetFocusListener());
     }
 
     public void createControl(Composite aParent) {
@@ -102,7 +132,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         createSearchStringEditorGroup(tMainPanel);
         createConnectionGroup(tMainPanel);
-        createSourceMemberGroup(tMainPanel);
+        createSearchTargetGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
         createOptionsGroup(tMainPanel);
 
@@ -125,8 +155,43 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         connectionCombo.getPromptLabel().setText(Messages.Connection);
     }
 
-    private void createSourceMemberGroup(Composite aMainPanel) {
-        Group tTargetGroup = createGroup(aMainPanel, Messages.Target);
+    private void createSearchTargetGroup(Composite aMainPanel) {
+
+        Group tTargetGroup = createGroup(aMainPanel, Messages.Target, 2);
+
+        createFilterGroup(tTargetGroup);
+        createSourceMemberGroup(tTargetGroup);
+    }
+
+    private void createFilterGroup(Group parent) {
+
+        filterRadioButton = WidgetFactory.createRadioButton(parent);
+
+        Composite panel = new Composite(parent, SWT.BORDER);
+        panel.setLayout(new GridLayout(2, false));
+        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label profileLabel = new Label(panel, SWT.NONE);
+        profileLabel.setText(Messages.Filter_pool_colon);
+        filterPoolCombo = WidgetFactory.createReadOnlyCombo(panel);
+        filterPoolCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label filterLabel = new Label(panel, SWT.NONE);
+        filterLabel.setText(Messages.Filter_colon);
+        filterCombo = WidgetFactory.createReadOnlyCombo(panel);
+        filterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        filterCombo.addListener(SWT.FocusIn, targetFocusListener);
+    }
+
+    private void createSourceMemberGroup(Composite parent) {
+
+        sourceMemberRadioButton = WidgetFactory.createRadioButton(parent);
+
+        Composite panel = new Composite(parent, SWT.BORDER);
+        panel.setLayout(new GridLayout(2, false));
+        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Group tTargetGroup = createGroup(panel, Messages.Target);
         sourceFilePrompt = new ISeriesMemberPrompt(tTargetGroup, SWT.NONE, true, true, IISeriesFilePromptTypes.FILETYPE_SRC);
         sourceFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
@@ -200,15 +265,117 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         showAllRecordsButton.setLayoutData(tGridData);
     }
 
+    private void loadFilterPoolsOfConnection(String connectionName) {
+
+        debugPrint("Loading filter pools of connection ..."); //$NON-NLS-1$
+
+        filterPoolsOfConnection.clear();
+
+        SystemFilterPoolReference[] systemFilterPoolReferences = RSEFilterHelper.getConnectionFilterPools(connectionName);
+        for (SystemFilterPoolReference systemFilterPoolReference : systemFilterPoolReferences) {
+            filterPoolsOfConnection.put(systemFilterPoolReference.getName(), systemFilterPoolReference);
+        }
+
+        setFilterPools();
+    }
+
+    private void loadFiltersOfFilterPool(String systemFilterPoolName) {
+
+        debugPrint("Loading filters of filter pool ..."); //$NON-NLS-1$
+
+        filtersOfFilterPool.clear();
+
+        SystemFilterPoolReference systemFilterPoolReference = filterPoolsOfConnection.get(systemFilterPoolName);
+        if (systemFilterPoolReference != null) {
+
+            SystemFilter[] filters = systemFilterPoolReference.getReferencedFilterPool().getSystemFilters();
+            for (SystemFilter filter : filters) {
+                if (!filter.isPromptable()
+                    && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
+                    filtersOfFilterPool.put(filter.getName(), filter);
+                }
+            }
+        }
+
+        setFilters();
+    }
+
+    private void setFilterPools() {
+
+        debugPrint("Setting filter pools of connection ..."); //$NON-NLS-1$
+
+        String[] poolNames = filterPoolsOfConnection.keySet().toArray(new String[filterPoolsOfConnection.keySet().size()]);
+        // Arrays.sort(poolNames, new IgnoreCaseComparator());
+
+        filterPoolCombo.setItems(poolNames);
+        if (poolNames.length > 0) {
+            filterPoolCombo.setText(filterPoolCombo.getItem(0));
+        } else {
+            filterPoolCombo.setText(""); //$NON-NLS-1$
+        }
+
+        loadFiltersOfFilterPool(filterPoolCombo.getText());
+    }
+
+    private void setFilters() {
+
+        debugPrint("Setting filters of filter pool ..."); //$NON-NLS-1$
+
+        String[] filterNames = filtersOfFilterPool.keySet().toArray(new String[filtersOfFilterPool.keySet().size()]);
+        // Arrays.sort(filterNames, new IgnoreCaseComparator());
+
+        filterCombo.setItems(filterNames);
+        if (filterNames.length > 0) {
+            filterCombo.setText(filterCombo.getItem(0));
+        } else {
+            filterCombo.setText(""); //$NON-NLS-1$
+        }
+    }
+
     private Group createGroup(Composite aParent, String aText) {
+        return createGroup(aParent, aText, 1);
+    }
+
+    private Group createGroup(Composite aParent, String aText, int numColumns) {
         Group tGroup = new Group(aParent, SWT.SHADOW_ETCHED_IN);
         tGroup.setText(aText);
         GridLayout scopeLayout = new GridLayout();
+        scopeLayout.numColumns = numColumns;
         tGroup.setLayout(scopeLayout);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.grabExcessHorizontalSpace = true;
         tGroup.setLayoutData(gd);
         return tGroup;
+    }
+
+    private void setTargetRadioButtonsSelected(Widget widget) {
+
+        if (widget instanceof Label) {
+            setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
+        } else if (widget instanceof SystemHistoryCombo) {
+            setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
+        } else if (widget instanceof Combo) {
+            setTargetRadioButtonsSelected(((Combo)widget).getParent());
+        } else if (widget instanceof Button) {
+            setTargetRadioButtonsSelected(((Button)widget).getParent());
+        } else if (widget instanceof Composite) {
+            Composite parent = ((Composite)widget).getParent();
+            Control[] controls = parent.getChildren();
+            for (Control control : controls) {
+                if (control == filterRadioButton) {
+                    if (!filterRadioButton.getSelection()) {
+                        filterRadioButton.setSelection(true);
+                        sourceMemberRadioButton.setSelection(false);
+                    }
+                } else if (control == sourceFilePrompt) {
+                    if (!sourceMemberRadioButton.getSelection()) {
+                        sourceMemberRadioButton.setSelection(true);
+                        filterRadioButton.setSelection(false);
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -222,6 +389,32 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Add listeners to verify user input.
      */
     private void addListeners() {
+
+        connectionCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                debugPrint("Connection: -> SelectionListener"); //$NON-NLS-1$
+                loadFilterPoolsOfConnection(connectionCombo.getText());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        filterPoolCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                debugPrint("Filter Pool: -> SelectionListener"); //$NON-NLS-1$
+                loadFiltersOfFilterPool(filterPoolCombo.getText());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+        filterPoolCombo.addListener(SWT.FocusIn, targetFocusListener);
+
+        WidgetHelper.addListener(sourceFilePrompt, SWT.FocusIn, targetFocusListener);
+
         allColumnsButton.addListener(SWT.Selection, this);
         betweenColumnsButton.addListener(SWT.Selection, this);
         startColumnText.addListener(SWT.Modify, this);
@@ -240,24 +433,90 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         if (loadValue(CONNECTION, null) != null) {
             ISeriesConnection connection = ISeriesConnection.getConnection(loadValue(CONNECTION, null));
             if (connection != null) {
+                debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
                 connectionCombo.select(connection);
+            } else {
+                debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
+            }
+        } else {
+            debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
+        }
+
+        int i;
+        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, ""));
+        if (i >= 0) {
+            debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
+            filterPoolCombo.select(i);
+            loadFiltersOfFilterPool(filterPoolCombo.getText());
+        } else {
+            if (filterPoolsOfConnection.size() > 0) {
+                debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
+                filterPoolCombo.select(0);
+                loadFiltersOfFilterPool(filterPoolCombo.getText());
+            } else {
+                debugPrint("loadScreenValues(): setting filter pool - FAILED"); //$NON-NLS-1$
             }
         }
-        sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
-        sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, ""));
-        sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, ""));
+
+        i = findFilterIndex(loadValue(FILTER_NAME, ""));
+        if (i >= 0) {
+            debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
+            filterCombo.select(i);
+        } else {
+            if (filtersOfFilterPool.size() > 0) {
+                debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
+                filterCombo.select(0);
+            } else {
+                debugPrint("loadScreenValues(): setting filter - FAILED"); //$NON-NLS-1$
+            }
+        }
+
+        sourceFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, "")); //$NON-NLS-1$
+        sourceFilePrompt.getObjectCombo().setText(loadValue(SOURCE_FILE, "")); //$NON-NLS-1$
+        sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, "")); //$NON-NLS-1$
 
         loadColumnButtonsSelection();
+    }
+
+    private int findFilterPoolIndex(String filterPoolName) {
+
+        String[] filterPoolItems = filterPoolCombo.getItems();
+        for (int i = 0; i < filterPoolItems.length; i++) {
+            String filterPoolItem = filterPoolItems[i];
+            if (filterPoolItem.equals(filterPoolName)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int findFilterIndex(String filterName) {
+
+        String[] filterItems = filterCombo.getItems();
+        for (int i = 0; i < filterItems.length; i++) {
+            String filterPoolItem = filterItems[i];
+            if (filterPoolItem.equals(filterName)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /**
      * Stores the screen values that are preserved for the next search.
      */
     private void storeScreenValues() {
+
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
         storeValue(SHOW_RECORDS, isShowAllRecords());
         storeValue(CONNECTION, getConnectionName());
+
+        storeValue(FILTER_POOL_NAME, filterPoolCombo.getText());
+        storeValue(FILTER_NAME, filterCombo.getText());
+
         storeValue(LIBRARY, getSourceFileLibrary());
         storeValue(SOURCE_FILE, getSourceFile());
         storeValue(SOURCE_MEMBER, getSourceMember());
@@ -269,16 +528,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Restores the status of the "columns" buttons and text fields.
      */
     private void loadColumnButtonsSelection() {
-        String tColumnButtonsSelection = loadValue(COLUMN_BUTTONS_SELECTION, "ALL");
-        if ("ALL".equals(tColumnButtonsSelection)) {
+        String tColumnButtonsSelection = loadValue(COLUMN_BUTTONS_SELECTION, SEARCH_ALL_COLUMNS);
+        if (SEARCH_ALL_COLUMNS.equals(tColumnButtonsSelection)) {
             allColumnsButton.setSelection(true);
             processAllColumnsButtonSelected();
         } else {
             betweenColumnsButton.setSelection(true);
             processBetweenColumnsButtonSelected();
         }
-        startColumnText.setText(loadValue(START_COLUMN, "1"));
-        endColumnText.setText(loadValue(END_COLUMN, "100"));
+        startColumnText.setText(loadValue(START_COLUMN, "1")); //$NON-NLS-1$
+        endColumnText.setText(loadValue(END_COLUMN, "100")); //$NON-NLS-1$
     }
 
     /**
@@ -286,7 +545,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private void saveColumnButtonsSelection() {
         if (allColumnsButton.getSelection()) {
-            storeValue(COLUMN_BUTTONS_SELECTION, "ALL");
+            storeValue(COLUMN_BUTTONS_SELECTION, SEARCH_ALL_COLUMNS);
         } else {
             storeValue(COLUMN_BUTTONS_SELECTION, "BETWEEN");
             storeValue(START_COLUMN, getNumericFieldContent(startColumnText));
@@ -304,7 +563,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         for (SearchArgument tSearchArgument : searchArgumentsListEditor.getSearchArguments(0, 0)) {
             if (tSearchArgument.getString().trim().length() > 0) {
                 if (tBuffer.length() > 0) {
-                    tBuffer.append("/");
+                    tBuffer.append("/"); //$NON-NLS-1$
                 }
                 tBuffer.append(tSearchArgument.getString());
             }
@@ -412,7 +671,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 if (tMembers != null) {
                     for (Object tMember : tMembers) {
                         if (tMember instanceof ISeriesMember) {
-                            if ("SRC".equals(((ISeriesMember)tMember).getSubType())) {
+                            if ("SRC".equals(((ISeriesMember)tMember).getSubType())) { //$NON-NLS-1$
                                 addElement(searchElements, ((ISeriesMember)tMember).getDataElement());
                             }
                         }
@@ -424,7 +683,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             }
 
             if (searchElements.isEmpty()) {
-                MessageDialog.openInformation(getShell(), "Information", Messages.No_objects_found_that_match_the_selection_criteria);
+                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
                 return false;
             }
 
@@ -532,11 +791,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         endColumnText.setEnabled(true);
 
         if (StringHelper.isNullOrEmpty(startColumnText.getText())) {
-            startColumnText.setText("1");
+            startColumnText.setText("1"); //$NON-NLS-1$
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {
-            endColumnText.setText("" + MAX_END_COLUMN);
+            endColumnText.setText(Integer.toString(MAX_END_COLUMN));
         }
     }
 
@@ -639,5 +898,17 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private int getNumericFieldContent(Text textField) {
         return IntHelper.tryParseInt(textField.getText(), 0);
+    }
+
+    private void debugPrint(String message) {
+        // System.out.println(message);
+    }
+
+    private class TargetFocusListener extends FocusAdapter {
+        public void focusGained(FocusEvent event) {
+            super.focusGained(event);
+            debugPrint("Selecting target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
+            setTargetRadioButtonsSelected(event.widget);
+        }
     }
 }

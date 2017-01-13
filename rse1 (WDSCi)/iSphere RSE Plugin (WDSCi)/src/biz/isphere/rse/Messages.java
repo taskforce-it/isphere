@@ -152,6 +152,12 @@ public class Messages extends NLS {
     
     public static String Refer_to_help_for_details;
     
+    public static String Filter_pool_colon;
+    
+    public static String Filter_colon;
+
+    public static String Information;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
