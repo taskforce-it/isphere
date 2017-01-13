@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,13 +54,13 @@ public abstract class AbstractSearchArgumentEditor {
         cboCondition.add(Messages.Contains);
         cboCondition.add(Messages.Contains_not);
         cboCondition.setLayoutData(gd_cboCondition);
-        cboCondition.setSize(92, 21);
+        // cboCondition.setSize(92, 21);
         cboCondition.setText(Messages.Contains);
         cboCondition.setToolTipText(Messages.Specify_how_to_search_for_the_string);
 
         txtSearchString = createSearchStringCombo(container, SWT.NONE, TEXT_SEARCH_STRING_KEY, 10, false);
         txtSearchString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtSearchString.setSize(76, 19);
+        txtSearchString.setSize(76, 38);
 
         Composite searchOptions = new Composite(container, SWT.NONE);
         RowLayout searchOptionsLayout = new RowLayout(SWT.VERTICAL);
@@ -82,8 +82,8 @@ public abstract class AbstractSearchArgumentEditor {
         GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_btnAdd.widthHint = 40;
         btnAdd.setLayoutData(gd_btnAdd);
-        btnAdd.setSize(68, 23);
-        btnAdd.setText("+");
+        // btnAdd.setSize(68, 23);
+        btnAdd.setText("+"); //$NON-NLS-1$
         btnAdd.setToolTipText(Messages.Add_search_condition);
         btnAdd.setData(BUTTON_ADD);
 
@@ -92,8 +92,8 @@ public abstract class AbstractSearchArgumentEditor {
         gd_btnRemove.widthHint = 40;
         btnRemove.setLayoutData(gd_btnRemove);
         // btnRemove.setBounds(0, 0, 68, 23);
-        btnAdd.setSize(68, 23);
-        btnRemove.setText("-");
+        // btnAdd.setSize(68, 23);
+        btnRemove.setText("-"); //$NON-NLS-1$
         btnRemove.setToolTipText(Messages.Remove_search_condition);
         btnRemove.setData(BUTTON_REMOVE);
     }
