@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import biz.isphere.rse.ibm.helper.ISeriesRSEHelper;
 import com.ibm.etools.iseries.core.IISeriesFilterTypes;
 import com.ibm.etools.iseries.core.ISeriesSubSystemHelpers;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
-import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterPool;
 import com.ibm.etools.systems.filters.SystemFilterPoolManager;
@@ -34,7 +33,7 @@ import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class RSEFilterHelper {
 
-    public static final String OBJECT_SUBSYSTEM_ID = "com.ibm.etools.iseries.subsystems.qsys.objects"; //$NON-NLS-1$
+    public static final String OBJECT_SUBSYSTEM_ID = "ibm.files400"; //$NON-NLS-1$
 
     public static RSEProfile[] getProfiles() {
 
