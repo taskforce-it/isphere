@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                 as400 = _connection.getAS400ToolboxObject();
                 jdbcConnection = _connection.getJDBCConnection(null, false);
             } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not get JDBC connection ***", e);
+                ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
             }
 
             if (as400 != null && jdbcConnection != null) {
@@ -244,7 +244,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
         String file = ((IQSYSMember)element).getFile();
         String member = element.getName();
 
-        String key = library + "-" + file + "-" + member;
+        String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
 
         if (!_searchElements.containsKey(key)) {
 
@@ -264,8 +264,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
         ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
         _memberFilterString.setLibrary(library);
         _memberFilterString.setFile(sourceFile);
-        _memberFilterString.setMember("*");
-        _memberFilterString.setMemberType("*");
+        _memberFilterString.setMember("*"); //$NON-NLS-1$
+        _memberFilterString.setMemberType("*"); //$NON-NLS-1$
 
         addElementsFromFilterString(_memberFilterString.toString());
     }
@@ -274,9 +274,9 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
-            _objectFilterString.setObject("*");
+            _objectFilterString.setObject("*"); //$NON-NLS-1$
             _objectFilterString.setObjectType(ISeries.FILE);
-            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC";
+            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC"; //$NON-NLS-1$
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
 
