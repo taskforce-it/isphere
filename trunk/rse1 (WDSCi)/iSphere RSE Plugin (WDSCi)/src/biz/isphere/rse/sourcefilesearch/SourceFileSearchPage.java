@@ -78,6 +78,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String START_COLUMN = "startColumn";
     private static final String END_COLUMN = "endColumn";
     private static final String CONNECTION = "connection";
+    private static final String TARGET = "target";
     private static final String FILTER_POOL_NAME = "filterPoolName";
     private static final String FILTER_NAME = "filterName";
     private static final String SOURCE_FILE = "sourceFile";
@@ -85,6 +86,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String LIBRARY = "library";
     private static final String SHOW_RECORDS = "showRecords";
     private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
+
+    private static final String TARGET_FILTER_STRING = "target.filterString";
+    private static final String TARGET_SOURCE_MEMBER = "target.sourceMember";
 
     /**
      * The MAX_END_COLUMN value specified here must match the maximum line
@@ -191,8 +195,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         panel.setLayout(new GridLayout(2, false));
         panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        Group tTargetGroup = createGroup(panel, Messages.Target);
-        sourceFilePrompt = new ISeriesMemberPrompt(tTargetGroup, SWT.NONE, true, true, IISeriesFilePromptTypes.FILETYPE_SRC);
+        sourceFilePrompt = new ISeriesMemberPrompt(panel, SWT.NONE, true, true, IISeriesFilePromptTypes.FILETYPE_SRC);
         sourceFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
         sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
@@ -439,7 +442,18 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
             }
         } else {
-            debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
+            if (connectionCombo.getItems().length > 0) {
+                debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
+                connectionCombo.select(0);
+            } else {
+                debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
+            }
+        }
+
+        if (TARGET_SOURCE_MEMBER.equals(loadValue(TARGET, TARGET_SOURCE_MEMBER))) {
+            sourceMemberRadioButton.setSelection(true);
+        } else {
+            filterRadioButton.setSelection(true);
         }
 
         int i;
@@ -513,6 +527,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         storeValue(SHOW_RECORDS, isShowAllRecords());
         storeValue(CONNECTION, getConnectionName());
+        if (sourceMemberRadioButton.getSelection()) {
+            storeValue(TARGET, TARGET_SOURCE_MEMBER);
+        } else {
+            storeValue(TARGET, TARGET_FILTER_STRING);
+        }
 
         storeValue(FILTER_POOL_NAME, filterPoolCombo.getText());
         storeValue(FILTER_NAME, filterCombo.getText());
@@ -593,6 +612,10 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         return connectionCombo.getText();
     }
 
+    private SystemFilter getFilter() {
+        return filtersOfFilterPool.get(filterCombo.getText());
+    }
+
     /**
      * Returns the simple or generic name of the libraries that are searched for
      * the source files that contain the source members.
@@ -665,21 +688,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 return false;
             }
 
-            HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            try {
-                Object[] tMembers = tConnection.listMembers(getShell(), getSourceFileLibrary(), getSourceFile(), getSourceMember());
-                if (tMembers != null) {
-                    for (Object tMember : tMembers) {
-                        if (tMember instanceof ISeriesMember) {
-                            if ("SRC".equals(((ISeriesMember)tMember).getSubType())) { //$NON-NLS-1$
-                                addElement(searchElements, ((ISeriesMember)tMember).getDataElement());
-                            }
-                        }
-                    }
-                }
-            } catch (SystemMessageException e) {
-                // Library or file not found.
-                // Ignore errors.
+            HashMap<String, SearchElement> searchElements;
+            if (filterRadioButton.getSelection()) {
+                searchElements = loadFilterSearchElements(tConnection);
+            } else {
+                searchElements = loadSourceMemberSearchElements(tConnection);
             }
 
             if (searchElements.isEmpty()) {
@@ -720,6 +733,49 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         }
 
         return true;
+    }
+
+    private HashMap<String, SearchElement> loadSourceMemberSearchElements(ISeriesConnection connection) throws InterruptedException {
+
+        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+
+        try {
+            Object[] tMembers = connection.listMembers(getShell(), getSourceFileLibrary(), getSourceFile(), getSourceMember());
+            if (tMembers != null) {
+                for (Object tMember : tMembers) {
+                    if (tMember instanceof ISeriesMember) {
+                        if ("SRC".equals(((ISeriesMember)tMember).getSubType())) { //$NON-NLS-1$
+                            addElement(searchElements, ((ISeriesMember)tMember).getDataElement());
+                        }
+                    }
+                }
+            }
+        } catch (SystemMessageException e) {
+            // Library or file not found.
+            // Ignore errors.
+        }
+
+        return searchElements;
+    }
+
+    private HashMap<String, SearchElement> loadFilterSearchElements(ISeriesConnection connection) throws InterruptedException {
+
+        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+
+        try {
+
+            SystemFilter filter = getFilter();
+            String[] filterStrings = filter.getFilterStrings();
+
+            SourceFileSearchDelegate delegate = new SourceFileSearchDelegate(getShell(), connection);
+            delegate.addElementsFromFilterString(searchElements, filterStrings);
+
+        } catch (Exception e) {
+            // Library or file not found.
+            // Ignore errors.
+        }
+
+        return searchElements;
     }
 
     /**
