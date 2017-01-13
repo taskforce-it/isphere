@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.0.0.b007
+-----------------------------
+ • Added option to select a RSE filter, when using the global iSphere
+   Source File Search.
+
 Changelog: iSphere 3.0.0.b006
 -----------------------------
  • Fixed a couple of issues with the iSphere Message Subsystem.
