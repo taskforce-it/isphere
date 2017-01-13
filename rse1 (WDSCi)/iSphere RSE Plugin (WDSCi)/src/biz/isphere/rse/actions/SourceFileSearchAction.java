@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-20173 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,9 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,7 +42,6 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
-import com.ibm.etools.systems.as400filesubsys.impl.FileSubSystemImpl;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -53,7 +49,6 @@ import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.filters.SystemFilterStringReference;
-import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class SourceFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
@@ -66,24 +61,20 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
     private HashMap<String, SearchElement> _searchElements;
 
-    private FileSubSystemImpl _fileSubSystemImpl;
-
     public SourceFileSearchAction() {
-        super(Messages.iSphere_Source_File_Search, "", null);
-        setContextMenuGroup("additions");
+        super(Messages.iSphere_Source_File_Search, "", null); //$NON-NLS-1$
+        setContextMenuGroup("additions"); //$NON-NLS-1$
         allowOnMultipleSelection(true);
-        setHelp("");
+        setHelp(""); //$NON-NLS-1$
         setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
         setShell(shell);
-        menu.add("additions", this);
+        menu.add("additions", this); //$NON-NLS-1$
     }
 
     public boolean supportsSelection(IStructuredSelection selection) {
-
-        this._selectedElements.clear();
 
         _connection = null;
         _objectFilterString = null;
@@ -221,7 +212,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
             as400 = _connection.getAS400ToolboxObject(shell);
             jdbcConnection = _connection.getJDBCConnection(null, false);
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not get JDBC connection ***", e);
+            ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
         }
 
         if (as400 != null && jdbcConnection != null) {
@@ -274,7 +265,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
         String file = ISeriesDataElementHelpers.getFile(element);
         String member = ISeriesDataElementHelpers.getName(element);
 
-        String key = library + "-" + file + "-" + member;
+        String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
 
         if (!_searchElements.containsKey(key)) {
 
@@ -294,8 +285,8 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
         ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
         _memberFilterString.setLibrary(library);
         _memberFilterString.setFile(sourceFile);
-        _memberFilterString.setMember("*");
-        _memberFilterString.setMemberType("*");
+        _memberFilterString.setMember("*"); //$NON-NLS-1$
+        _memberFilterString.setMemberType("*"); //$NON-NLS-1$
 
         addElementsFromFilterString(_memberFilterString.toString());
     }
@@ -304,14 +295,14 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
-            _objectFilterString.setObject("*");
+            _objectFilterString.setObject("*"); //$NON-NLS-1$
             _objectFilterString.setObjectType(ISeries.FILE);
-            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC";
+            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC"; //$NON-NLS-1$
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
 
         _objectFilterString.setLibrary(element.getName());
-        
+
         return addElementsFromFilterString(_objectFilterString.toString());
     }
 
