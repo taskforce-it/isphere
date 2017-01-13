@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2017 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public class RSEMember extends Member {
     @Override
     public String[] getContents() throws Exception {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(getLocalResource().getContents(), "UTF-8")); //$NON-NLS-1$
         List<String> contents = new ArrayList<String>();
         String line = null;
         while ((line = br.readLine()) != null) {
