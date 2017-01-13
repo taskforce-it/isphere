@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core
-Export-Package: biz.isphere.base.internal,
+Export-Package: biz.isphere.base.comparators,
+ biz.isphere.base.internal,
  biz.isphere.base.jface.dialogs,
  biz.isphere.base.swt.events,
  biz.isphere.base.swt.widgets,

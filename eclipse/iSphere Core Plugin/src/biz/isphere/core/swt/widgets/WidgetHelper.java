@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Plum Canary Corporation.
+ * Copyright (c) 2004, 2017 Plum Canary Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,12 @@
 package biz.isphere.core.swt.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -104,6 +108,50 @@ public final class WidgetHelper {
 
         for (int i = 0; i < events.length; i++) {
             widget.removeListener(events[i], listener);
+        }
+    }
+
+    /**
+     * Adds a focus listener to a given composite and all its children.
+     * 
+     * @param composite composite, the listener is added
+     * @param listener listener that is added to the composite
+     */
+    public static void addFocusListener(Composite composite, FocusListener listener) {
+        addFocusListenerRecursively(composite.getChildren(), listener);
+    }
+
+    private static void addFocusListenerRecursively(Control[] children, FocusListener listener) {
+
+        for (Control child : children) {
+            child.addFocusListener(listener);
+            if (child instanceof Composite) {
+                Control[] grandChildren = ((Composite)child).getChildren();
+                addFocusListenerRecursively(grandChildren, listener);
+            }
+        }
+    }
+
+    /**
+     * Adds a typed listener to a given composite and all its children.
+     * 
+     * @param composite composite, the listener is added
+     * @param eventType the type of event to listen for
+     * @param listener the listener which should be notified when the event
+     *        occurs
+     */
+    public static void addListener(Composite composite, int eventType, TypedListener listener) {
+        addListenerRecursively(composite.getChildren(), eventType, listener);
+    }
+
+    private static void addListenerRecursively(Control[] children, int eventType, TypedListener listener) {
+
+        for (Control child : children) {
+            child.addListener(eventType, listener);
+            if (child instanceof Composite) {
+                Control[] grandChildren = ((Composite)child).getChildren();
+                addListenerRecursively(grandChildren, eventType, listener);
+            }
         }
     }
 
