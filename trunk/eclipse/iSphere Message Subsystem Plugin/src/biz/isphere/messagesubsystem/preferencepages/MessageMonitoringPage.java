@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import sun.misc.Perf.GetPerfAction;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -83,24 +81,16 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
     // TODO: remove debug code
     private void createSectionDebug(Composite parent) {
 
-//        Label labelReplyFieldPosition = new Label(parent, SWT.NONE);
-//        labelReplyFieldPosition.setLayoutData(createLabelLayoutData());
-//        labelReplyFieldPosition.setText("Enable debug:"); //$NON-NLS-1$
-
         checkboxEnableDebug = WidgetFactory.createCheckbox(parent);
         checkboxEnableDebug.setText("Enable &debug log (see: Eclipse error log view)"); //$NON-NLS-1$
         checkboxEnableDebug.setLayoutData(createLayoutData(2));
+
+        checkboxEnableDebug.setVisible(true);
     }
 
     private GridData createLabelLayoutData() {
         return new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
     }
-
-    // @Override
-    // protected void performApply() {
-    // setStoreToValues();
-    // super.performApply();
-    // }
 
     @Override
     protected void performDefaults() {
@@ -119,7 +109,7 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
         Preferences preferences = Preferences.getInstance();
 
         preferences.setReplyFieldPosition(comboReplyFieldPosition.getText());
-        
+
         // TODO: remove debug code
         preferences.setDebugEnabled(checkboxEnableDebug.getSelection());
 
@@ -135,7 +125,7 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
 
         // TODO: remove debug code
         checkboxEnableDebug.setSelection(preferences.isDebugEnabled());
-        
+
         validateAll();
         setControlsEnablement();
     }
@@ -148,7 +138,7 @@ public class MessageMonitoringPage extends PreferencePage implements IWorkbenchP
 
         // TODO: remove debug code
         checkboxEnableDebug.setSelection(preferences.getDefaultDebugEnabled());
-        
+
         validateAll();
         setControlsEnablement();
     }
