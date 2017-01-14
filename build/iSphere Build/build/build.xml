@@ -957,7 +957,7 @@
     * =====================================================================
     *   Updates the PDF file from 'project.doc'.
     * ===================================================================== -->
-	<target name="updatePdfFile" unless="pdf.isUpToDate">
+	<target name="updatePdfFile" unless="pdf.isUpToDate" description="Updates the PDF file">
 		
 		<if>
 			<equals arg1="${build.files.enabled}" arg2="true" />
