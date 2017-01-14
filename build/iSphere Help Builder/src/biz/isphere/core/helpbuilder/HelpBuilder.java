@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
@@ -44,8 +46,8 @@ public class HelpBuilder {
 
     private void run(String[] args) throws JobCanceledException {
 
-        if (args.length >= 1) {
-            Configuration.getInstance().setConfigurationFile(args[0]);
+        if (args.length >= 2) {
+            Configuration.getInstance().setConfigurationFile(args[0], args[1]);
         }
 
         File baseDir = Configuration.getInstance().getWorkspace();
@@ -54,7 +56,7 @@ public class HelpBuilder {
         Toc[] tocs = loadTocs(projects);
         resolveLinks(baseDir, tocs);
 
-        String html = generateHtml(tocs[0], "treemenu");
+        String html = generateHtml(tocs, "treemenu");
         writeTocToFile(Configuration.getInstance().getOutputFile(), html);
 
         copyHelpPages(projects, Configuration.getInstance().getOutputDirectory());
@@ -101,7 +103,7 @@ public class HelpBuilder {
 
     }
 
-    private String generateHtml(Toc toc, String menuName) {
+    private String generateHtml(Toc[] tocs, String menuName) {
 
         StringBuilder html = new StringBuilder();
 
@@ -111,7 +113,7 @@ public class HelpBuilder {
         html.append("document.write('\\");
         html.append("<ul id=\"" + menuName + "\" class=\"treeview\">");
         html.append(Configuration.NEW_LINE);
-        generateHtml(html, toc.getTopics(), "", 1);
+        generateHtml(html, tocs[0].getTopics(), "", 1);
         html.append("</ul>");
         html.append(Configuration.NEW_LINE);
         html.append("');");
@@ -186,7 +188,12 @@ public class HelpBuilder {
 
         String linkToFile = toc.getLinkToFile();
         if (linkToFile.startsWith("..")) {
+            linkToFile = linkToFile.substring(2);
+        }
+
+        if (linkToFile.startsWith(".")) {
             linkToFile = linkToFile.substring(1);
+            baseDir = new File(getProjectDir(baseDir, toc.getPluginTocPath()));
         }
 
         String linkToTocPath = FileUtil.resolvePath(baseDir, linkToFile);
@@ -201,6 +208,29 @@ public class HelpBuilder {
             if (linkToTocPath.equals(pluginTocPath)) {
                 return findAnchor(linkToReference, tocItem.getTopics());
             }
+        }
+
+        return null;
+    }
+
+    private String getProjectDir(File baseDir, String pluginTocPath) {
+
+        try {
+
+            String baseDirResolved = FileUtil.resolvePath(baseDir.getAbsolutePath());
+            if (!baseDirResolved.endsWith(Configuration.FORWARD_SLASH)) {
+                baseDirResolved += Configuration.FORWARD_SLASH;
+            }
+            String pluginTocPathResolved = FileUtil.resolvePath(pluginTocPath);
+
+            for (int i = baseDirResolved.length(); i < pluginTocPathResolved.length(); i++) {
+                if (Configuration.FORWARD_SLASH.equals(pluginTocPathResolved.substring(i, i + 1))) {
+                    return pluginTocPathResolved.substring(0, i);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -225,30 +255,43 @@ public class HelpBuilder {
 
     private Toc[] loadTocs(Project[] projects) {
 
-        Toc[] tocs = new Toc[projects.length];
+        List<Toc> tocs = new ArrayList<Toc>();
 
         for (int i = 0; i < projects.length; i++) {
-            tocs[i] = loadFromXml(projects[i]);
+            List<Toc> newTocs = loadFromXml(projects[i]);
+            if (newTocs != null && newTocs.size() > 0) {
+                tocs.addAll(newTocs);
+            }
         }
 
-        return tocs;
+        return tocs.toArray(new Toc[tocs.size()]);
     }
 
-    private Toc loadFromXml(Project project) {
+    private List<Toc> loadFromXml(Project project) {
+
+        List<Toc> tocs = new ArrayList<Toc>();
+
         try {
 
-            BufferedReader reader = new BufferedReader(new FileReader(new File(project.getToc())));
-            String line;
-            StringBuffer xml = new StringBuffer();
-            while ((line = reader.readLine()) != null) {
-                xml.append(line);
+            String[] tocPaths = project.getTocs();
+            for (int i = 0; i < tocPaths.length; i++) {
+
+                String tocPath = tocPaths[i];
+                BufferedReader reader = new BufferedReader(new FileReader(new File(tocPath)));
+                String line;
+                StringBuffer xml = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    xml.append(line);
+                }
+                reader.close();
+
+                Toc toc = (Toc)getXStream().fromXML(xml.toString());
+                toc.setPluginTocPath(generatePluginTocPath(project, i));
+
+                tocs.add(toc);
             }
-            reader.close();
 
-            Toc toc = (Toc)getXStream().fromXML(xml.toString());
-            toc.setPluginTocPath(generatePluginTocPath(project));
-
-            return toc;
+            return tocs;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -256,9 +299,10 @@ public class HelpBuilder {
         }
     }
 
-    private String generatePluginTocPath(Project project) {
+    private String generatePluginTocPath(Project project, int index) {
 
-        String[] parts = project.getToc().split(Configuration.FORWARD_SLASH);
+        String tocPath = project.getTocs()[index];
+        String[] parts = tocPath.split(Configuration.FORWARD_SLASH);
         for (int i = 0; i < parts.length; i++) {
             if (parts[i].equalsIgnoreCase(project.getName())) {
                 parts[i] = project.getId();

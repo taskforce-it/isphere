@@ -20,7 +20,7 @@ public class Project {
 
     private String name;
     private String id;
-    private String toc;
+    private String[] tocs;
     private Bundle bundle;
     private String helpDirectory;
 
@@ -29,7 +29,7 @@ public class Project {
         name = configString;
 
         String projectPath = Configuration.getInstance().getWorkspace().getPath() + File.separator + name;
-        toc = findToc(projectPath);
+        tocs = findTocs(projectPath);
         id = getProjectId(projectPath);
         helpDirectory = findHelpDirectory(projectPath);
     }
@@ -42,8 +42,8 @@ public class Project {
         return id;
     }
 
-    public String getToc() {
-        return toc;
+    public String[] getTocs() {
+        return tocs;
     }
 
     public String getHelpDirectory() {
@@ -54,7 +54,7 @@ public class Project {
         return getOrLoadBundle(projectPath).getSymbolicName();
     }
 
-    private String findToc(String path) throws JobCanceledException {
+    private String[] findTocs(String path) throws JobCanceledException {
 
         File tocDir = new File(path, "toc");
         String[] tocFiles = tocDir.list(new FilenameFilter() {
@@ -66,12 +66,18 @@ public class Project {
             }
         });
 
-        if (tocFiles.length != 1) {
+        if (tocFiles.length == 0) {
             throw new JobCanceledException("Table of content file not found.");
         }
 
         try {
-            return FileUtil.resolvePath(tocDir.getPath(), tocFiles[0]);
+
+            for (int i = 0; i < tocFiles.length; i++) {
+                tocFiles[i] = FileUtil.resolvePath(tocDir.getPath(), tocFiles[i]);
+            }
+
+            return tocFiles;
+
         } catch (IOException e) {
             throw new JobCanceledException("Table of content file not found.", e);
         }
@@ -117,5 +123,10 @@ public class Project {
         }
 
         return bundle;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " (" + getId() + ")";
     }
 }

@@ -93,4 +93,12 @@ public class Topic {
         return toc;
     }
 
+    @Override
+    public String toString() {
+        if (href != null) {
+            return label + ": " + href;
+        } else {
+            return label + ": " + anchor;
+        }
+    }
 }
