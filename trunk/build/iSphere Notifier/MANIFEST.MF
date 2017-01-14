@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 2.9.3.r
+Bundle-Version: 2.9.4.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
-X-Bundle-Info: Bugfixes of 5250 view. No changes to v2.9.3beta2. 
-X-Beta-Version: 3.0.0.b005
+X-Bundle-Info: Fixed CCSID problem, when copying members between connections. 
+X-Beta-Version: 3.0.0.b007
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Fixed issues with the iSphere Message Subsystem and added menu options for sendung and forwarding messages.
+X-Beta-Info: Added option to select a RSE filter to the iSphere Source File Search dialog (CTRL+H).
