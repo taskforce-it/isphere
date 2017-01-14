@@ -69,25 +69,29 @@ public class QueuedMessageDialog extends XDialog {
 
         parent.getShell().setText(Messages.iSeries_Message);
 
-        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
-        scrolledComposite.setLayout(new GridLayout());
-        scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        scrolledComposite.setExpandHorizontal(true);
-        scrolledComposite.setExpandVertical(true);
+        Composite scrollableContainer = new Composite(parent, SWT.NONE);
+        scrollableContainer.setLayout(new GridLayout(1, false));
+        scrollableContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        ScrolledComposite scrollable = new ScrolledComposite(scrollableContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
+        scrollable.setLayout(new GridLayout());
+        scrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrollable.setExpandHorizontal(true);
+        scrollable.setExpandVertical(true);
 
         int numColumns = 2;
-        Composite mainPanel = new Composite(scrolledComposite, SWT.NONE);
+        Composite mainPanel = new Composite(scrollable, SWT.NONE);
         GridLayout headerLayout = new GridLayout(numColumns, false);
         mainPanel.setLayout(headerLayout);
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrollable.setContent(mainPanel);
 
         createMessagePanel(mainPanel, numColumns);
         createSpacerPanel(mainPanel, numColumns);
 
-        scrolledComposite.setContent(mainPanel);
-        scrolledComposite.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        scrollable.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        return scrolledComposite;
+        return scrollable;
     }
 
     private Composite createMessagePanel(Composite parent, int numColumns) {
@@ -198,7 +202,15 @@ public class QueuedMessageDialog extends XDialog {
             }
             responseText.setFocus();
 
-            logDebugMessage("Debug --> Message reply field created."); //$NON-NLS-1$
+            // TODO: remove debug code
+            String position;
+            if (Preferences.getInstance().isReplyFieldBeforeMessageText()) {
+                position = "before"; //$NON-NLS-1$
+            } else {
+                position = "after"; //$NON-NLS-1$
+            }
+
+            logDebugMessage("Debug --> Message reply field created " + position + " message text field."); //$NON-NLS-1$
         } else {
             logDebugMessage("Debug --> No reply message. Message type is: " + receivedMessage.getReplyStatusAsText()); //$NON-NLS-1$
         }
