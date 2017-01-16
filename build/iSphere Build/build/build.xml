@@ -508,7 +508,7 @@
     *     build.web.enabled=false
     *     build.help.enabled=false
     * ===================================================================== -->
-	<target name="createSourceForgeDownloadFiles" unless="ignore.build.files">
+	<target name="createSourceForgeDownloadFiles" depends="addUrlPropertyTo_Site.xml" unless="ignore.build.files">
 
 		<echo>Creating SourceForge download folders ...</echo>
 
@@ -516,11 +516,6 @@
 		<mkdir dir="${build.upload.dir.files}" />
 		<mkdir dir="${build.upload.dir.files}/eclipse" />
 		<mkdir dir="${build.upload.dir.files}/eclipse/${target.ide.sf.dir}" />
-		
-		<echo>Adding 'url' property to 'site.xml' ...</echo>
-		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
-			<fileset dir="${zip.base.directory}" includes="site.xml" />
-		</replaceregexp>
 
 		<echo>Copying zip and pdf files ...</echo>
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
@@ -570,6 +565,32 @@
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the files of the download area on SourceForge.
+    *   This target creates the files, that go to the SourceForge
+    *   download area.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *   This target is intended to be called only from the 'build' target.
+    *
+    *   Set the build properties as shown below, if you want to update the
+    *   download area only:
+    * 
+    *     build.files.enabled=true
+    *     build.web.enabled=false
+    *     build.help.enabled=false
+    * ===================================================================== -->
+	<target name="addUrlPropertyTo_Site.xml">
+		
+		<echo>Adding 'url' property to 'site.xml' ...</echo>
+		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
+			<fileset dir="${zip.base.directory}" includes="site.xml" />
+		</replaceregexp>
+
+		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+		
 	</target>
 
 	<!--
