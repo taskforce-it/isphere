@@ -516,6 +516,11 @@
 		<mkdir dir="${build.upload.dir.files}" />
 		<mkdir dir="${build.upload.dir.files}/eclipse" />
 		<mkdir dir="${build.upload.dir.files}/eclipse/${target.ide.sf.dir}" />
+		
+		<echo>Adding 'url' property to 'site.xml' ...</echo>
+		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
+			<fileset dir="${zip.base.directory}" includes="site.xml" />
+		</replaceregexp>
 
 		<echo>Copying zip and pdf files ...</echo>
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
@@ -542,10 +547,6 @@
 				<exclude name=".project" />
 			</fileset>
 		</copy>
-		
-		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
-			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" includes="site.xml" />
-		</replaceregexp>
 
 		<echo>Copying release/beta version dependant files ...</echo>
 		<if>
