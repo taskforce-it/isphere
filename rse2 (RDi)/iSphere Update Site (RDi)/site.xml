@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site url="http://downloads.sourceforge.net/project/isphere/beta-version/eclipse/rdi8.0">
+<site>
    <feature url="features/biz.isphere.core_3.0.0.b007.jar" id="biz.isphere.core" version="3.0.0.b007">
       <category name="iSphere for RDi 8.0+"/>
    </feature>
