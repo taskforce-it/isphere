@@ -208,12 +208,12 @@
 		<then>
 			<property name="target.ide.root.update.site.url" value="${sf.root.url}/${beta.dir}/eclipse/${target.ide.sf.dir}/" />
 			<property name="target.ide.root.help.site.url" value="${sf.root.url}/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
-			<property name="site.xml.property.url" value="${sf.root.master.url}/${beta.dir}/eclipse/${target.ide.sf.dir}" />
+			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/${beta.dir}/eclipse/${target.ide.sf.dir}" />
 		</then>
 		<else>
 			<property name="target.ide.root.update.site.url" value="${sf.root.url}/eclipse/${target.ide.sf.dir}/" />
 			<property name="target.ide.root.help.site.url" value="${sf.root.url}/${sf.dir.updatesite.help.dir}/" />
-			<property name="site.xml.property.url" value="${sf.root.master.url}/eclipse/${target.ide.sf.dir}" />
+			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/eclipse/${target.ide.sf.dir}" />
 		</else>
 	</if>
 
@@ -350,7 +350,7 @@
 	<target name="createSourceForgeFiles" depends="checkBuildTarget,cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
-		<echo>|  Check files in '${build.public.project.name} Build/upload/...'           |</echo>
+		<echo>|  Check files in '${build.public.project.name} Build/upload/...'</echo>
 		<echo>|                                                      |</echo>
 		<echo>|  Then proceed with:   uploadSourceForgeFiles         |</echo>
 		<echo>+------------------------------------------------------+</echo>
@@ -508,7 +508,7 @@
     *     build.web.enabled=false
     *     build.help.enabled=false
     * ===================================================================== -->
-	<target name="createSourceForgeDownloadFiles" depends="addUrlPropertyTo_Site.xml" unless="ignore.build.files">
+	<target name="createSourceForgeDownloadFiles" unless="ignore.build.files">
 
 		<echo>Creating SourceForge download folders ...</echo>
 
@@ -542,6 +542,11 @@
 				<exclude name=".project" />
 			</fileset>
 		</copy>
+		
+		<echo>Adding 'url' property to 'site.xml' ...</echo>
+		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" includes="site.xml" />
+		</replaceregexp>
 
 		<echo>Copying release/beta version dependant files ...</echo>
 		<if>
@@ -565,32 +570,6 @@
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
-	</target>
-
-	<!--
-    * =====================================================================
-    *   Creates the files of the download area on SourceForge.
-    *   This target creates the files, that go to the SourceForge
-    *   download area.
-    *   This target is specific to RDi/WDSCi and controlled by build.target.
-    *   This target is intended to be called only from the 'build' target.
-    *
-    *   Set the build properties as shown below, if you want to update the
-    *   download area only:
-    * 
-    *     build.files.enabled=true
-    *     build.web.enabled=false
-    *     build.help.enabled=false
-    * ===================================================================== -->
-	<target name="addUrlPropertyTo_Site.xml">
-		
-		<echo>Adding 'url' property to 'site.xml' ...</echo>
-		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
-			<fileset dir="${zip.base.directory}" includes="site.xml" />
-		</replaceregexp>
-
-		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
-		
 	</target>
 
 	<!--
@@ -667,6 +646,11 @@
 
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BUILD_TARGET@" value="${target.ide.sf.dir}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BETA_VERSION@" value="${beta.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@VERSION_NUMBER@" value="${build.version}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_FTP_PROJECT@" value="${sf.ftp.project}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_MASTER_DL@" value="${sf.root.master.dl.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_DOWNLOADS@" value="${sf.root.downloads.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="/./" value="/" />
 
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_INFO@" value="${version.info}" />
@@ -679,8 +663,6 @@
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
 		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HELP@" value="${sf.help.url}" />
-
-		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_FTP_PROJECT@" value="${sf.ftp.project}" />
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
