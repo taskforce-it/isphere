@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 7/24/2015">
+<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 1/19/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1506,13 +1506,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     H COPYRIGHT('V1.2.1 - 23.07.2015 - mailto:thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.2.2 - 17.01.2017 - mailto:thomas.raddatz@tools400.de')
       /eof
       /endif
      D cEVF_VERSION...
-     D                 C                   '1.2.1'
+     D                 C                   '1.2.2'
      D cEVF_DATE...
-     D                 C                   '23.07.2015'
+     D                 C                   '17.01.2017'
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -1565,6 +1565,11 @@ STRPGMEXP PGMLVL(*CURRENT) SIGNATURE('Events_File_API')
   EXPORT SYMBOL('EVENTF1_Eventf_writeFileEnd')
   EXPORT SYMBOL('EVENTF1_Eventf_writeError')
   EXPORT SYMBOL('EVENTF1_Eventf_close')
+
+  /* New with 1.2.2 */
+  EXPORT SYMBOL('EVENTF1_Eventf_openAppend')
+  EXPORT SYMBOL('EVENTF1_Eventf_clear')
+  EXPORT SYMBOL('EVENTF1_Eventf_isEmpty')
 ENDPGMEXP
 ]]>  </copysrc>
 </mbr>
@@ -2992,6 +2997,9 @@ srccssid=  "00273">
       *  ----------  ------------  ---------------------------------------  *
       *  23.07.2015  Th.Raddatz    Fixed problem that an invalid error      *
       *                            was produced for blank messages IDs.     *
+      *  17.01.2017  Th.Raddatz    Changed parameter o_rtnLib of procedure  *
+      *                            Eventf_open() to *NOPASS/*OMIT.          *
+      *                            Added procedure Eventf_openAppend().     *
       *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
@@ -3186,6 +3194,7 @@ srccssid=  "00273">
       *   i_mbr         - Name of the member to use.
       *                   This parameter must be set to the name of the object
       *                   that is to be created.
+      *   o_rtnLib      - Rteurn the actual library that contains the event file.
       *
       *  Returns:
       *   done          - Returns cTrue on success, else cFalse.
@@ -3196,7 +3205,7 @@ srccssid=  "00273">
      D  i_lib                              const like(evf_objName_t)
      D  i_mbr                              const like(evf_objName_t)
      D  o_rtnLib                                 like(evf_objName_t)
-     D                                           options(*nopass)
+     D                                           options(*nopass: *omit)
       *
      D p_rtnLib        c                   3
       *
@@ -3230,6 +3239,162 @@ srccssid=  "00273">
          if (%parms() >= p_rtnLib and %addr(o_rtnLib) <> *null);
             o_rtnLib = rtnLib;
          endif;
+
+      /end-free
+     P                 e
+      *
+      *=====================================================================*
+      *  Clears an existing event file member.
+      *=========================================================================
+      *  Parameters:
+      *   i_lib         - Name of the library that contains the EVFEVENT file.
+      *                   This parameter must be set to the name of the library
+      *                   where the created object is to be stored.
+      *   i_mbr         - Name of the member to use.
+      *                   This parameter must be set to the name of the object
+      *                   that is to be created.
+      *
+      *  Returns:
+      *   void
+      *=====================================================================*
+     P Eventf_clear...
+     P                 b                   export
+     D                 pi
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
+      *
+     D msg             ds                  likeds(msg_t) inz
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /free
+
+         monitor;
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE'));
+               return;
+            endif;
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE': i_mbr));
+               return;
+            endif;
+
+            clearEventFileMember(i_lib: i_mbr);
+
+         on-error;
+            msg = f_rcvPgmMsgObj(cMsg_Escape);
+            f_sndPgmMsg(msg: cMsg_Prv);
+         endmon;
+
+      /end-free
+     P                 e
+      *
+      *=====================================================================*
+      *  Checks, whether a given event file member is empty.
+      *=========================================================================
+      *  Parameters:
+      *   i_lib         - Name of the library that contains the EVFEVENT file.
+      *                   This parameter must be set to the name of the library
+      *                   where the created object is to be stored.
+      *   i_mbr         - Name of the member to use.
+      *                   This parameter must be set to the name of the object
+      *                   that is to be created.
+      *
+      *  Returns:
+      *   isEmpty       - Returns cTrue, when the member is empty, else cFalse.
+      *=====================================================================*
+     P Eventf_isEmpty...
+     P                 b                   export
+     D                 pi              n
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
+      *
+     D isEmpty         s               n
+      *
+     D msg             ds                  likeds(msg_t) inz
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /free
+
+         monitor;
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE'));
+               return cTrue;
+            endif;
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE': i_mbr));
+               return cTrue;
+            endif;
+
+            openEventFile(i_lib: i_mbr);
+
+            setll 1 EVFEVENT;
+            isEmpty = not %found();
+
+            closeEventFile();
+
+            return isEmpty;
+
+         on-error;
+            msg = f_rcvPgmMsgObj(cMsg_Escape);
+            f_sndPgmMsg(msg: cMsg_Prv);
+         endmon;
+
+      /end-free
+     P                 e
+      *
+      *=====================================================================*
+      *  Opens an event file member for appending records. The event file
+      *  is created, if it does not yet exist.
+      *=========================================================================
+      *  Parameters:
+      *   i_lib         - Name of the library that contains the EVFEVENT file.
+      *                   This parameter must be set to the name of the library
+      *                   where the created object is to be stored.
+      *   i_mbr         - Name of the member to use.
+      *                   This parameter must be set to the name of the object
+      *                   that is to be created.
+      *   o_rtnLib      - Rteurn the actual library that contains the event file.
+      *
+      *  Returns:
+      *   done          - Returns cTrue on success, else cFalse.
+      *=====================================================================*
+     P Eventf_openAppend...
+     P                 b                   export
+     D                 pi              n
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
+     D  o_rtnLib                                 like(evf_objName_t)
+     D                                           options(*nopass: *omit)
+      *
+     D p_rtnLib        c                   3
+      *
+     D rtnLib          s                   like(o_rtnLib) inz
+     D msg             ds                  likeds(msg_t) inz
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /free
+
+         monitor;
+
+            rtnLib = '';
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE'));
+               return cFalse;
+            endif;
+
+            if (not f_exist(EVENT_FILE: i_lib: '*FILE': i_mbr));
+               return cFalse;
+            endif;
+
+            rtnLib = openEventFile(i_lib: i_mbr);
+
+         on-error;
+            msg = f_rcvPgmMsgObj(cMsg_Escape);
+            f_sndPgmMsg(msg: cMsg_Prv);
+         endmon;
+
+         if (%parms() >= p_rtnLib and %addr(o_rtnLib) <> *null);
+            o_rtnLib = rtnLib;
+         endif;
+
+         return cTrue;
 
       /end-free
      P                 e
@@ -3417,13 +3582,13 @@ srccssid=  "00273">
       *=========================================================================
       *  Parameters:
       *   i_source_id      - A file identifier expressed as an integer.
-      *   i_annot_class    - Indicates where in a listing of messages this
-      *                      message should be placed.
       *   i_stmt_line      - Line number containing the error.
       *   i_msg_id         - Message ID (for example, AMPX999).
-      *   i_sev_char       - Severity code letter (I, W, E, S, or T).
       *   i_sev_num        - Severity level number.
       *   i_msg_text       - The message text of the error message.
+      *   i_sev_char       - Severity code letter (I, W, E, S, or T).
+      *   i_annot_class    - Indicates where in a listing of messages this
+      *                      message should be placed.
       *   i_start_err_line - Line number containing the start of the error.
       *                      Default:        i_stmt_line
       *   i_end_err_line   - Line number containing the end of the error.
@@ -4178,6 +4343,12 @@ srccssid=  "00273">
       *
       *=====================================================================*
       *  Converts a given message type to the severity character.
+      *  Rules:
+      *    n >= 40    -->   Terminating
+      *    n >= 30    -->   Severe
+      *    n >= 20    -->   Error
+      *    n >= 10    -->   Warning
+      *    other      -->   Info
       *=====================================================================*
      P getSeverityChar...
      P                 b
@@ -4718,7 +4889,19 @@ srccssid=  "00273">
      D  i_lib                              const like(evf_objName_t)
      D  i_mbr                              const like(evf_objName_t)
      D  o_rtnLib                                 like(evf_objName_t)
-     D                                           options(*nopass)
+     D                                           options(*nopass: *omit)
+      *
+      *  Opens an event file member for appending records. The event file
+      *  is created, if it does not yet exist.
+     D Eventf_openAppend...
+     D                 pr              n
+     D                                     extproc('EVENTF1_+
+     D                                     Eventf_openAppend+
+     D                                     ')
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
+     D  o_rtnLib                                 like(evf_objName_t)
+     D                                           options(*nopass: *omit)
       *
       *  Appends a 'PROCESSOR' record to the event file.
      D Eventf_writeProcessor...
@@ -4782,6 +4965,24 @@ srccssid=  "00273">
      D  i_token_end...
      D                                     const like(evf_token_t)
      D                                           options(*nopass: *omit)
+      *
+      *  Clears an existing event file member.
+     D Eventf_clear...
+     D                 pr
+     D                                     extproc('EVENTF1_+
+     D                                     Eventf_clear+
+     D                                     ')
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
+      *
+      *  Checks, whether a given event file member is empty.
+     D Eventf_isEmpty...
+     D                 pr              n
+     D                                     extproc('EVENTF1_+
+     D                                     Eventf_isEmpty+
+     D                                     ')
+     D  i_lib                              const like(evf_objName_t)
+     D  i_mbr                              const like(evf_objName_t)
       *
       *  Closes an event file member.
      D Eventf_close...
@@ -4959,4 +5160,4 @@ DLTMOD MODULE(&tolib/EVENTFT4)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application EVENTF successfully installed.
 ]]>  </sendmsg>
-</upload>
+</upload> 
