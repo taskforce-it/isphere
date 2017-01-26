@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -122,7 +122,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         filterPoolsOfConnection = new LinkedHashMap<String, SystemFilterPoolReference>();
         filtersOfFilterPool = new LinkedHashMap<String, SystemFilter>();
-        targetFocusListener = new TypedListener(new TargetFocusListener());
+        targetFocusListener = new TypedListener(new TargetModifyListener());
     }
 
     public void createControl(Composite aParent) {
@@ -184,7 +184,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         filterLabel.setText(Messages.Filter_colon);
         filterCombo = WidgetFactory.createReadOnlyCombo(panel);
         filterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        filterCombo.addListener(SWT.FocusIn, targetFocusListener);
     }
 
     private void createSourceMemberGroup(Composite parent) {
@@ -353,28 +352,28 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
     private void setTargetRadioButtonsSelected(Widget widget) {
 
-        if (widget instanceof Label) {
-            setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
-        } else if (widget instanceof SystemHistoryCombo) {
+        if (!hasSourceMember()) {
+            filterRadioButton.setSelection(true);
+            sourceMemberRadioButton.setSelection(false);
+            return;
+        }
+
+        if (widget instanceof SystemHistoryCombo) {
             setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
         } else if (widget instanceof Combo) {
             setTargetRadioButtonsSelected(((Combo)widget).getParent());
-        } else if (widget instanceof Button) {
-            setTargetRadioButtonsSelected(((Button)widget).getParent());
         } else if (widget instanceof Composite) {
             Composite parent = ((Composite)widget).getParent();
             Control[] controls = parent.getChildren();
             for (Control control : controls) {
                 if (control == filterRadioButton) {
-                    if (!filterRadioButton.getSelection()) {
-                        filterRadioButton.setSelection(true);
-                        sourceMemberRadioButton.setSelection(false);
-                    }
+                    filterRadioButton.setSelection(true);
+                    sourceMemberRadioButton.setSelection(false);
+                    return;
                 } else if (control == sourceFilePrompt) {
-                    if (!sourceMemberRadioButton.getSelection()) {
-                        sourceMemberRadioButton.setSelection(true);
-                        filterRadioButton.setSelection(false);
-                    }
+                    filterRadioButton.setSelection(false);
+                    sourceMemberRadioButton.setSelection(true);
+                    return;
                 }
             }
         }
@@ -414,9 +413,10 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 widgetSelected(event);
             }
         });
-        filterPoolCombo.addListener(SWT.FocusIn, targetFocusListener);
 
-        WidgetHelper.addListener(sourceFilePrompt, SWT.FocusIn, targetFocusListener);
+        filterPoolCombo.addListener(SWT.Modify, targetFocusListener);
+        filterCombo.addListener(SWT.Modify, targetFocusListener);
+        WidgetHelper.addListener(sourceFilePrompt, SWT.Modify, targetFocusListener);
 
         allColumnsButton.addListener(SWT.Selection, this);
         betweenColumnsButton.addListener(SWT.Selection, this);
@@ -448,12 +448,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             } else {
                 debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
             }
-        }
-
-        if (TARGET_SOURCE_MEMBER.equals(loadValue(TARGET, TARGET_SOURCE_MEMBER))) {
-            sourceMemberRadioButton.setSelection(true);
-        } else {
-            filterRadioButton.setSelection(true);
         }
 
         int i;
@@ -490,6 +484,31 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         sourceFilePrompt.getMemberCombo().setText(loadValue(SOURCE_MEMBER, "")); //$NON-NLS-1$
 
         loadColumnButtonsSelection();
+
+        if (hasSourceMember() && TARGET_SOURCE_MEMBER.equals(loadValue(TARGET, TARGET_SOURCE_MEMBER))) {
+            filterRadioButton.setSelection(false);
+            sourceMemberRadioButton.setSelection(true);
+        } else {
+            filterRadioButton.setSelection(true);
+            sourceMemberRadioButton.setSelection(false);
+        }
+    }
+
+    private boolean hasSourceMember() {
+
+        if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getLibraryName())) {
+            return true;
+        }
+
+        if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getFileName())) {
+            return true;
+        }
+
+        if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getMemberName())) {
+            return true;
+        }
+
+        return false;
     }
 
     private int findFilterPoolIndex(String filterPoolName) {
@@ -960,11 +979,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         // System.out.println(message);
     }
 
-    private class TargetFocusListener extends FocusAdapter {
-        public void focusGained(FocusEvent event) {
-            super.focusGained(event);
+    private class TargetModifyListener implements ModifyListener {
+
+        public void modifyText(ModifyEvent event) {
             debugPrint("Selecting target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
             setTargetRadioButtonsSelected(event.widget);
         }
+
     }
 }
