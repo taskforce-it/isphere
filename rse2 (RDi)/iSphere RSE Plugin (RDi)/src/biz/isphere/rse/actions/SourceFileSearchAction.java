@@ -194,19 +194,20 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
             if (as400 != null && jdbcConnection != null) {
 
-                if (ISphereHelper.checkISphereLibrary(_shell, _connection.getConnectionName())) {
+                String connectionName = _connection.getConnectionName();
+                if (ISphereHelper.checkISphereLibrary(_shell, connectionName)) {
 
                     SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
                     if (dialog.open() == Dialog.OK) {
 
                         SearchPostRun postRun = new SearchPostRun();
                         postRun.setConnection(_connection);
-                        postRun.setConnectionName(_connection.getConnectionName());
+                        postRun.setConnectionName(connectionName);
                         postRun.setSearchString(dialog.getString());
                         postRun.setSearchElements(_searchElements);
                         postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                        new SearchExec().execute(_connection.getConnectionName(), jdbcConnection, dialog.getSearchOptions(),
+                        new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(),
                             new ArrayList<SearchElement>(_searchElements.values()), postRun);
 
                     }

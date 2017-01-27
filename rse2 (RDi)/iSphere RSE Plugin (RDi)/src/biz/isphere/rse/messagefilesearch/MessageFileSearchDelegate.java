@@ -6,25 +6,25 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.sourcefilesearch;
+package biz.isphere.rse.messagefilesearch;
 
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
+import biz.isphere.core.messagefilesearch.AbstractMessageFileSearchDelegate;
 
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
-public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
+public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate {
 
     private IBMiConnection connection;
 
-    public SourceFileSearchDelegate(Shell shell, IBMiConnection connection) {
+    public MessageFileSearchDelegate(Shell shell, IBMiConnection connection) {
         super(shell);
 
         this.connection = connection;
@@ -48,12 +48,8 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ResourceTypeUtil.isLibrary(object);
     }
 
-    protected boolean isSourceFile(Object object) {
-        return ResourceTypeUtil.isSourceFile(object);
-    }
-
-    protected boolean isMember(Object object) {
-        return ResourceTypeUtil.isMember(object);
+    protected boolean isMessageFile(Object object) {
+        return ResourceTypeUtil.isMessageFile(object);
     }
 
     protected String getResourceLibrary(Object resource) {
@@ -64,20 +60,7 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ((IQSYSResource)resource).getName();
     }
 
-    protected String getMemberResourceLibrary(Object resource) {
-        return ((IQSYSMember)resource).getLibrary();
+    protected String getResourceDescription(Object resource) {
+        return ((IQSYSMessageFile)resource).getDescription();
     }
-
-    protected String getMemberResourceFile(Object resource) {
-        return ((IQSYSMember)resource).getFile();
-    }
-
-    protected String getMemberResourceName(Object resource) {
-        return ((IQSYSMember)resource).getName();
-    }
-
-    protected String getMemberResourceDescription(Object resource) {
-        return ((IQSYSMember)resource).getDescription();
-    }
-
 }

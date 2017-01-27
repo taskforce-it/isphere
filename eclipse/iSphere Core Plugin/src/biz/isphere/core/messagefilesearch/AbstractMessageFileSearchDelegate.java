@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.sourcefilesearch;
+package biz.isphere.core.messagefilesearch;
 
 import java.util.HashMap;
 
@@ -14,28 +14,25 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.internal.ISeries;
 
-import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 
-public abstract class AbstractSourceFileSearchDelegate {
+public abstract class AbstractMessageFileSearchDelegate {
 
     private Shell shell;
 
-    public AbstractSourceFileSearchDelegate(Shell shell) {
+    public AbstractMessageFileSearchDelegate(Shell shell) {
         this.shell = shell;
     }
 
-    public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String sourceFile, String sourceMember)
+    public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String messageFile)
         throws Exception {
 
-        ISeriesMemberFilterString memberFilterString = new ISeriesMemberFilterString();
-        memberFilterString.setLibrary(library);
-        memberFilterString.setFile(sourceFile);
-        memberFilterString.setMember(sourceMember);
-        memberFilterString.setMemberType("*"); //$NON-NLS-1$
+        ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
+        objectFilterString.setLibrary(library);
+        objectFilterString.setObject(messageFile);
+        objectFilterString.setObjectType(ISeries.MSGF); //$NON-NLS-1$
 
-        return addElementsFromFilterString(searchElements, memberFilterString.toString());
+        return addElementsFromFilterString(searchElements, objectFilterString.toString());
     }
 
     public boolean addElementsFromFilterString(HashMap<String, SearchElement> searchElements, String... filterStrings) throws Exception {
@@ -58,9 +55,7 @@ public abstract class AbstractSourceFileSearchDelegate {
                         Object element = children[idx2];
                         if (isLibrary(element)) {
                             doContinue = addElementsFromLibrary(searchElements, element);
-                        } else if (isSourceFile(element)) {
-                            addElementsFromSourceFile(searchElements, getResourceLibrary(element), getResourceName(element));
-                        } else if (isMember(element)) {
+                        } else if (isMessageFile(element)) {
                             addElement(searchElements, element);
                         }
 
@@ -73,6 +68,7 @@ public abstract class AbstractSourceFileSearchDelegate {
         }
 
         return true;
+
     }
 
     protected abstract void displaySystemErrorMessage(Object object);
@@ -81,24 +77,21 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract boolean isLibrary(Object object);
 
-    protected abstract boolean isSourceFile(Object object);
-
-    protected abstract boolean isMember(Object object);
+    protected abstract boolean isMessageFile(Object object);
 
     private boolean addElementsFromLibrary(HashMap<String, SearchElement> searchElements, Object library) throws Exception {
 
-        Object[] sourceFiles = null;
+        Object[] messageFiles = null;
 
         ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
         objectFilterString.setObject("*"); //$NON-NLS-1$
-        objectFilterString.setObjectType(ISeries.FILE);
-        String attributes = "*FILE:PF-SRC *FILE:PF38-SRC"; //$NON-NLS-1$
-        objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
+        objectFilterString.setObjectType(ISeries.MSGF);
 
         objectFilterString.setLibrary(getResourceName(library));
+        String filterString = objectFilterString.toString();
 
         try {
-            sourceFiles = resolveFilterString(objectFilterString.toString());
+            messageFiles = resolveFilterString(filterString);
         } catch (InterruptedException localInterruptedException) {
             return false;
         } catch (Exception e) {
@@ -106,66 +99,49 @@ public abstract class AbstractSourceFileSearchDelegate {
             return false;
         }
 
-        if ((sourceFiles == null) || (sourceFiles.length == 0)) {
+        if ((messageFiles == null) || (messageFiles.length == 0)) {
             return true;
         }
 
-        Object firstObject = sourceFiles[0];
+        Object firstObject = messageFiles[0];
         if (isSystemMessageObject(firstObject)) {
             displaySystemErrorMessage(firstObject);
             return true;
         }
 
-        for (int idx2 = 0; idx2 < sourceFiles.length; idx2++) {
-            addElementsFromSourceFile(searchElements, getResourceLibrary(sourceFiles[idx2]), getResourceName(sourceFiles[idx2]));
+        for (int idx2 = 0; idx2 < messageFiles.length; idx2++) {
+            addElement(searchElements, messageFiles[idx2]);
         }
 
         return true;
+
     }
 
     protected abstract String getResourceLibrary(Object resource);
 
     protected abstract String getResourceName(Object resource);
 
-    protected abstract String getMemberResourceLibrary(Object resource);
-
-    protected abstract String getMemberResourceFile(Object resource);
-
-    protected abstract String getMemberResourceName(Object resource);
-
-    protected abstract String getMemberResourceDescription(Object resource);
-
-    private void addElementsFromSourceFile(HashMap<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
-
-        ISeriesMemberFilterString memberFilterString = new ISeriesMemberFilterString();
-        memberFilterString.setLibrary(library);
-        memberFilterString.setFile(sourceFile);
-        memberFilterString.setMember("*"); //$NON-NLS-1$
-        memberFilterString.setMemberType("*"); //$NON-NLS-1$
-
-        addElementsFromFilterString(searchElements, memberFilterString.toString());
-    }
+    protected abstract String getResourceDescription(Object resource);
 
     /**
      * Adds an element to the list of elements that are searched for a given
      * search string.
      * 
      * @param searchElements - list of elements that are searched
-     * @param sourceMember - message file that is added to the list
+     * @param messageFile - message file that is added to the list
      */
-    public void addElement(HashMap<String, SearchElement> searchElements, Object sourceMember) {
+    public void addElement(HashMap<String, SearchElement> searchElements, Object messageFile) {
 
-        String library = getMemberResourceLibrary(sourceMember);
-        String file = getMemberResourceFile(sourceMember);
-        String member = getMemberResourceName(sourceMember);
+        String library = getResourceLibrary(messageFile);
+        String file = getResourceName(messageFile);
+        String description = getResourceDescription(messageFile);
 
-        String tKey = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
+        String tKey = library + "-" + file; //$NON-NLS-1$
         if (!searchElements.containsKey(tKey)) {
             SearchElement aSearchElement = new SearchElement();
             aSearchElement.setLibrary(library);
-            aSearchElement.setFile(file);
-            aSearchElement.setMember(member);
-            aSearchElement.setDescription(getMemberResourceDescription(sourceMember));
+            aSearchElement.setMessageFile(file);
+            aSearchElement.setDescription(description);
             searchElements.put(tKey, aSearchElement);
         }
     }

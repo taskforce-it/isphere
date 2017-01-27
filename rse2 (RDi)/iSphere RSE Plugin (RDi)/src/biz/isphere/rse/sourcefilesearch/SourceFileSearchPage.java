@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,15 +18,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -34,7 +33,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -68,28 +66,26 @@ import biz.isphere.rse.search.SearchArgumentsListEditor;
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
-    public static final String ID = "biz.isphere.rse.sourcefilesearch.SourceFileSearchPage";
+    public static final String ID = "biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"; //$NON-NLS-1$
 
-    private static final String START_COLUMN = "startColumn";
-    private static final String END_COLUMN = "endColumn";
-    private static final String CONNECTION = "connection";
-    private static final String TARGET = "target";
-    private static final String FILTER_POOL_NAME = "filterPoolName";
-    private static final String FILTER_NAME = "filterName";
-    private static final String SOURCE_FILE = "sourceFile";
-    private static final String SOURCE_MEMBER = "sourceMember";
-    private static final String LIBRARY = "library";
-    private static final String SHOW_RECORDS = "showRecords";
-    private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
+    private static final String START_COLUMN = "startColumn"; //$NON-NLS-1$
+    private static final String END_COLUMN = "endColumn"; //$NON-NLS-1$
+    private static final String CONNECTION = "connection"; //$NON-NLS-1$
+    private static final String TARGET = "target"; //$NON-NLS-1$
+    private static final String FILTER_POOL_NAME = "filterPoolName"; //$NON-NLS-1$
+    private static final String FILTER_NAME = "filterName"; //$NON-NLS-1$
+    private static final String SOURCE_FILE = "sourceFile"; //$NON-NLS-1$
+    private static final String SOURCE_MEMBER = "sourceMember"; //$NON-NLS-1$
+    private static final String LIBRARY = "library"; //$NON-NLS-1$
+    private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
+    private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection"; //$NON-NLS-1$
 
-    private static final String TARGET_FILTER_STRING = "target.filterString";
-    private static final String TARGET_SOURCE_MEMBER = "target.sourceMember";
+    private static final String TARGET_FILTER_STRING = "target.filterString"; //$NON-NLS-1$
+    private static final String TARGET_SOURCE_MEMBER = "target.sourceMember"; //$NON-NLS-1$
 
     /**
      * The MAX_END_COLUMN value specified here must match the maximum line
@@ -97,7 +93,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     private static int MAX_END_COLUMN = 228;
 
+    private static int DEFAULT_START_COLUMN = 1;
+    private static int DEFAULT_END_COLUMN = 100;
+
     private static final String SEARCH_ALL_COLUMNS = "ALL"; //$NON-NLS-1$
+    private static final String SEARCH_BETWEEN_COLUMNS = "BETWEEN"; //$NON-NLS-1$
+
+    private static final String TARGET_RADIO_BUTTON = "BUTTON";
 
     private ISearchPageContainer container;
     private IBMiConnectionCombo connectionCombo;
@@ -114,9 +116,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private LinkedHashMap<String, ISystemFilterPoolReference> filterPoolsOfConnection;
     private LinkedHashMap<String, ISystemFilter> filtersOfFilterPool;
 
+    private Composite targetFilterComposite;
+    private Composite targetSourceMemberComposite;
     private Button filterRadioButton;
     private Button sourceMemberRadioButton;
     private TypedListener targetFocusListener;
+    private TypedListener targetMouseListener;
 
     public SourceFileSearchPage() {
         super();
@@ -124,6 +129,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         filterPoolsOfConnection = new LinkedHashMap<String, ISystemFilterPoolReference>();
         filtersOfFilterPool = new LinkedHashMap<String, ISystemFilter>();
         targetFocusListener = new TypedListener(new TargetModifyListener());
+        targetMouseListener = new TypedListener(new TargetMouseListener());
     }
 
     public void createControl(Composite aParent) {
@@ -172,18 +178,19 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         filterRadioButton = WidgetFactory.createRadioButton(parent);
 
-        Composite panel = new Composite(parent, SWT.BORDER);
-        panel.setLayout(new GridLayout(2, false));
-        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetFilterComposite = new Composite(parent, SWT.BORDER);
+        targetFilterComposite.setLayout(new GridLayout(2, false));
+        targetFilterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetFilterComposite.setData(TARGET_RADIO_BUTTON, filterRadioButton);
 
-        Label profileLabel = new Label(panel, SWT.NONE);
+        Label profileLabel = new Label(targetFilterComposite, SWT.NONE);
         profileLabel.setText(Messages.Filter_pool_colon);
-        filterPoolCombo = WidgetFactory.createReadOnlyCombo(panel);
+        filterPoolCombo = WidgetFactory.createReadOnlyCombo(targetFilterComposite);
         filterPoolCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        Label filterLabel = new Label(panel, SWT.NONE);
+        Label filterLabel = new Label(targetFilterComposite, SWT.NONE);
         filterLabel.setText(Messages.Filter_colon);
-        filterCombo = WidgetFactory.createReadOnlyCombo(panel);
+        filterCombo = WidgetFactory.createReadOnlyCombo(targetFilterComposite);
         filterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
@@ -191,14 +198,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         sourceMemberRadioButton = WidgetFactory.createRadioButton(parent);
 
-        Composite panel = new Composite(parent, SWT.BORDER);
-        panel.setLayout(new GridLayout(2, false));
-        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetSourceMemberComposite = new Composite(parent, SWT.BORDER);
+        targetSourceMemberComposite.setLayout(new GridLayout(2, false));
+        targetSourceMemberComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetSourceMemberComposite.setData(TARGET_RADIO_BUTTON, sourceMemberRadioButton);
 
-        sourceFilePrompt = new QSYSMemberPrompt(panel, SWT.NONE, true, true, QSYSFilePrompt.FILETYPE_SRC);
+        sourceFilePrompt = new QSYSMemberPrompt(targetSourceMemberComposite, SWT.NONE, true, true, QSYSFilePrompt.FILETYPE_SRC);
         sourceFilePrompt.setSystemConnection(connectionCombo.getHost());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
         sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
+        sourceFilePrompt.getMemberCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_member_name);
         sourceFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
         sourceFilePrompt.setObjectPromptLabel(Messages.Source_File);
         sourceFilePrompt.setMemberPromptLabel(Messages.Source_Member);
@@ -353,32 +362,24 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
     private void setTargetRadioButtonsSelected(Widget widget) {
 
-        if (!hasSourceMember()) {
-            filterRadioButton.setSelection(true);
-            sourceMemberRadioButton.setSelection(false);
-            return;
-        }
-        
         if (widget instanceof SystemHistoryCombo) {
             setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
         } else if (widget instanceof Combo) {
             setTargetRadioButtonsSelected(((Combo)widget).getParent());
+        } else if (widget instanceof Label) {
+            setTargetRadioButtonsSelected(((Label)widget).getParent());
         } else if (widget instanceof Composite) {
-            Composite parent = ((Composite)widget).getParent();
-            Control[] controls = parent.getChildren();
-            for (Control control : controls) {
-                if (control == filterRadioButton) {
-                    filterRadioButton.setSelection(true);
-                    sourceMemberRadioButton.setSelection(false);
-                    return;
-                } else if (control == sourceFilePrompt) {
-                    filterRadioButton.setSelection(false);
-                    sourceMemberRadioButton.setSelection(true);
-                    return;
-                }
+            Object data = widget.getData(TARGET_RADIO_BUTTON);
+            if (data == filterRadioButton) {
+                filterRadioButton.setSelection(true);
+                sourceMemberRadioButton.setSelection(false);
+            } else if (data == sourceMemberRadioButton) {
+                filterRadioButton.setSelection(false);
+                sourceMemberRadioButton.setSelection(true);
+            } else {
+                setTargetRadioButtonsSelected(((Composite)widget).getParent());
             }
         }
-
     }
 
     /**
@@ -419,6 +420,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         filterCombo.addListener(SWT.Modify, targetFocusListener);
         WidgetHelper.addListener(sourceFilePrompt, SWT.Modify, targetFocusListener);
 
+        WidgetHelper.addListener(targetFilterComposite, SWT.MouseUp, targetMouseListener);
+        WidgetHelper.addListener(targetSourceMemberComposite, SWT.MouseUp, targetMouseListener);
+
         allColumnsButton.addListener(SWT.Selection, this);
         betweenColumnsButton.addListener(SWT.Selection, this);
         startColumnText.addListener(SWT.Modify, this);
@@ -454,7 +458,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         }
 
         int i;
-        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, ""));
+        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, "")); //$NON-NLS-1$
         if (i >= 0) {
             debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
             filterPoolCombo.select(i);
@@ -469,7 +473,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             }
         }
 
-        i = findFilterIndex(loadValue(FILTER_NAME, ""));
+        i = findFilterIndex(loadValue(FILTER_NAME, "")); //$NON-NLS-1$
         if (i >= 0) {
             debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
             filterCombo.select(i);
@@ -498,19 +502,19 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private boolean hasSourceMember() {
-        
+
         if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getLibraryName())) {
             return true;
         }
-        
+
         if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getFileName())) {
             return true;
         }
-        
+
         if (!StringHelper.isNullOrEmpty(sourceFilePrompt.getMemberName())) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -577,8 +581,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             betweenColumnsButton.setSelection(true);
             processBetweenColumnsButtonSelected();
         }
-        startColumnText.setText(loadValue(START_COLUMN, "1")); //$NON-NLS-1$
-        endColumnText.setText(loadValue(END_COLUMN, "100")); //$NON-NLS-1$
+        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN))); //$NON-NLS-1$
+        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN))); //$NON-NLS-1$
     }
 
     /**
@@ -588,7 +592,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         if (allColumnsButton.getSelection()) {
             storeValue(COLUMN_BUTTONS_SELECTION, SEARCH_ALL_COLUMNS);
         } else {
-            storeValue(COLUMN_BUTTONS_SELECTION, "BETWEEN");
+            storeValue(COLUMN_BUTTONS_SELECTION, SEARCH_BETWEEN_COLUMNS);
             storeValue(START_COLUMN, getNumericFieldContent(startColumnText));
             storeValue(END_COLUMN, getNumericFieldContent(endColumnText));
         }
@@ -698,6 +702,27 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * Performs the actual search search task.
      */
     public boolean performAction() {
+
+        if (sourceMemberRadioButton.getSelection()) {
+            if (StringHelper.isNullOrEmpty(getSourceFileLibrary())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_library_name);
+                sourceFilePrompt.getLibraryCombo().setFocus();
+                return false;
+            }
+
+            if (StringHelper.isNullOrEmpty(getSourceFile())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_file_name);
+                sourceFilePrompt.getFileCombo().setFocus();
+                return false;
+            }
+
+            if (StringHelper.isNullOrEmpty(getSourceMember())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_name);
+                sourceFilePrompt.getMemberCombo().setFocus();
+                return false;
+            }
+        }
+
         storeScreenValues();
 
         try {
@@ -712,9 +737,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
             HashMap<String, SearchElement> searchElements;
             if (filterRadioButton.getSelection()) {
-                searchElements = loadFilterSearchElements(tConnection);
+                searchElements = loadFilterSearchElements(tConnection, getFilter());
             } else {
-                searchElements = loadSourceMemberSearchElements(tConnection);
+                searchElements = loadSourceMemberSearchElements(tConnection, getSourceFileLibrary(), getSourceFile(), getSourceMember());
             }
 
             if (searchElements.isEmpty()) {
@@ -757,67 +782,37 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         return true;
     }
 
-    private HashMap<String, SearchElement> loadSourceMemberSearchElements(IBMiConnection connection) throws InterruptedException {
+    private HashMap<String, SearchElement> loadSourceMemberSearchElements(IBMiConnection connection, String library, String sourceFile,
+        String sourceMember) throws InterruptedException {
 
         HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
 
         try {
-            Object[] tMembers = connection.listMembers(getSourceFileLibrary(), getSourceFile(), getSourceMember(), null);
-            if (tMembers != null) {
-                for (Object tMember : tMembers) {
-                    if (tMember instanceof IQSYSMember) {
-                        if ("SRC".equals(((IQSYSMember)tMember).getSubType())) { //$NON-NLS-1$
-                            addElement(searchElements, (IQSYSMember)tMember);
-                        }
-                    }
-                }
-            }
-        } catch (SystemMessageException e) {
-            // Library or file not found.
-            // Ignore errors.
-        }
-
-        return searchElements;
-    }
-
-    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection) throws InterruptedException {
-
-        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-
-        try {
-
-            ISystemFilter filter = getFilter();
-            String[] filterStrings = filter.getFilterStrings();
 
             SourceFileSearchDelegate delegate = new SourceFileSearchDelegate(getShell(), connection);
-            delegate.addElementsFromFilterString(searchElements, filterStrings);
+            delegate.addElements(searchElements, library, sourceFile, sourceMember);
 
-        } catch (Exception e) {
-            // Library or file not found.
-            // Ignore errors.
+        } catch (Throwable e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
 
         return searchElements;
     }
 
-    /**
-     * Adds an element to the list of elements that are searched for a given
-     * search string.
-     * 
-     * @param aSearchElements - list of elements that are searched
-     * @param aSourceMember - message file that is added to the list
-     */
-    private void addElement(HashMap<String, SearchElement> aSearchElements, IQSYSResource aSourceMember) {
+    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws InterruptedException {
 
-        String tKey = aSourceMember.getLibrary() + "-" + ((IQSYSMember)aSourceMember).getFile() + "-" + aSourceMember.getName();
-        if (!aSearchElements.containsKey(tKey)) {
-            SearchElement aSearchElement = new SearchElement();
-            aSearchElement.setLibrary(aSourceMember.getLibrary());
-            aSearchElement.setFile(((IQSYSMember)aSourceMember).getFile());
-            aSearchElement.setMember(aSourceMember.getName());
-            aSearchElement.setDescription(aSourceMember.getDescription());
-            aSearchElements.put(tKey, aSearchElement);
+        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+
+        try {
+
+            SourceFileSearchDelegate delegate = new SourceFileSearchDelegate(getShell(), connection);
+            delegate.addElementsFromFilterString(searchElements, filter.getFilterStrings());
+
+        } catch (Throwable e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
+
+        return searchElements;
     }
 
     /**
@@ -869,11 +864,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         endColumnText.setEnabled(true);
 
         if (StringHelper.isNullOrEmpty(startColumnText.getText())) {
-            startColumnText.setText("1"); //$NON-NLS-1$
+            startColumnText.setText(Integer.toString(DEFAULT_START_COLUMN)); //$NON-NLS-1$
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {
-            endColumnText.setText(Integer.toString(MAX_END_COLUMN));
+            endColumnText.setText(Integer.toString(DEFAULT_END_COLUMN));
         }
     }
 
@@ -986,6 +981,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         public void modifyText(ModifyEvent event) {
             debugPrint("Selecting target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
+            setTargetRadioButtonsSelected(event.widget);
+        }
+
+    }
+
+    private class TargetMouseListener extends MouseAdapter {
+
+        @Override
+        public void mouseUp(MouseEvent event) {
+            debugPrint("Clicking target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
             setTargetRadioButtonsSelected(event.widget);
         }
 
