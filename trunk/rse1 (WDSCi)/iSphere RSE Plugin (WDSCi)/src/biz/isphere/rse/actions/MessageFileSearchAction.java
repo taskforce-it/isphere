@@ -12,12 +12,9 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,6 +31,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 
 import com.ibm.as400.access.AS400;
@@ -43,7 +41,6 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
-import com.ibm.etools.systems.as400filesubsys.impl.FileSubSystemImpl;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -51,19 +48,17 @@ import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.filters.SystemFilterStringReference;
-import com.ibm.etools.systems.model.impl.SystemMessageObject;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class MessageFileSearchAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
     private ISeriesConnection _connection;
+    private ISeriesObjectFilterString _objectFilterString;
     private boolean _multipleConnection;
     protected ArrayList _selectedElements;
+    private MessageFileSearchDelegate _delegate;
+
     private HashMap<String, SearchElement> _searchElements;
-    private String _filterString;
-    private String[] _filterStrings;
-    private ISeriesObjectFilterString _objectFilterString;
-    private FileSubSystemImpl _fileSubSystemImpl;
 
     public MessageFileSearchAction() {
         super(Messages.iSphere_Message_File_Search, "", null);
@@ -81,10 +76,10 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
     public boolean supportsSelection(IStructuredSelection selection) {
 
-        this._selectedElements.clear();
-
         _connection = null;
+        _objectFilterString = null;
         _multipleConnection = false;
+        _selectedElements = new ArrayList();
 
         ArrayList<Object> _selectedElements = new ArrayList<Object>();
 
@@ -93,6 +88,10 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
             Object _object = iterSelection.next();
 
             if ((_object instanceof DataElement)) {
+
+                /*
+                 * Started for an object, such as a source file or source member
+                 */
 
                 DataElement element = (DataElement)_object;
 
@@ -107,16 +106,22 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
             } else if ((_object instanceof SystemFilterReference)) {
 
-                SystemFilterReference element = (SystemFilterReference)_object;
+                /*
+                 * Started for a filter node
+                 */
 
+                SystemFilterReference element = (SystemFilterReference)_object;
                 if (!SpooledFileSubSystemFactory.TYPE.equals(element.getReferencedFilter().getType())) {
                     _selectedElements.add(element);
 
                     checkIfMultipleConnections(ISeriesConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
                         .getSystemConnection().getAliasName()));
                 }
-
             } else if ((_object instanceof SystemFilterStringReference)) {
+
+                /*
+                 * Started from ???
+                 */
 
                 SystemFilterStringReference element = (SystemFilterStringReference)_object;
 
@@ -138,16 +143,6 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
     }
 
-    private void checkIfMultipleConnections(ISeriesConnection connection) {
-        if (!_multipleConnection) {
-            if (this._connection == null) {
-                this._connection = connection;
-            } else if (connection != this._connection) {
-                _multipleConnection = true;
-            }
-        }
-    }
-
     @Override
     public void run() {
 
@@ -166,8 +161,6 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
                 return;
             }
         }
-
-        _objectFilterString = null;
 
         _searchElements = new HashMap<String, SearchElement>();
 
@@ -193,7 +186,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
             } else if ((_object instanceof SystemFilterReference)) {
 
                 SystemFilterReference filterReference = (SystemFilterReference)_object;
-                _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
                 if (!addElementsFromFilterString(_filterStrings)) {
                     break;
                 }
@@ -201,7 +194,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
             } else if ((_object instanceof SystemFilterStringReference)) {
 
                 SystemFilterStringReference filterStringReference = (SystemFilterStringReference)_object;
-                _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
+                String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
                 if (!addElementsFromFilterString(_filterStrings)) {
                     break;
                 }
@@ -211,19 +204,16 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
         }
 
         AS400 as400 = null;
-        String connectionName = null;
         Connection jdbcConnection = null;
         try {
             as400 = _connection.getAS400ToolboxObject(shell);
-            connectionName = _connection.getSystemConnection().getAliasName();
             jdbcConnection = _connection.getJDBCConnection(null, false);
-        } catch (SystemMessageException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
         }
 
-        if (as400 != null && connectionName != null && jdbcConnection != null) {
+        String connectionName = _connection.getConnectionName();
+        if (as400 != null && jdbcConnection != null) {
 
             if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
 
@@ -232,13 +222,13 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
                     SearchPostRun postRun = new SearchPostRun();
                     postRun.setConnection(_connection);
-                    postRun.setConnectionName(_connection.getConnectionName());
+                    postRun.setConnectionName(connectionName);
                     postRun.setSearchString(dialog.getString());
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
-                        .values()), postRun);
+                    new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(
+                        _searchElements.values()), postRun);
 
                 }
 
@@ -246,6 +236,25 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
         }
 
+    }
+
+    private MessageFileSearchDelegate getMessageFileSearchDelegate() {
+
+        if (_delegate == null) {
+            _delegate = new MessageFileSearchDelegate(getShell(), _connection);
+        }
+
+        return _delegate;
+    }
+
+    private void checkIfMultipleConnections(ISeriesConnection connection) {
+        if (!_multipleConnection) {
+            if (this._connection == null) {
+                this._connection = connection;
+            } else if (connection != this._connection) {
+                _multipleConnection = true;
+            }
+        }
     }
 
     private void addElement(DataElement element) {
@@ -266,9 +275,6 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
     private boolean addElementsFromLibrary(DataElement element) {
 
-        Vector<DataElement> libElements = new Vector<DataElement>();
-        Object[] children = null;
-
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*");
@@ -278,92 +284,21 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
         }
 
         _objectFilterString.setLibrary(element.getName());
-        _filterString = _objectFilterString.toString();
 
-        _fileSubSystemImpl = _connection.getISeriesFileSubSystem();
-        try {
-            children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
-        } catch (InterruptedException localInterruptedException) {
-            return false;
-        } catch (Exception e) {
-            SystemMessageDialog.displayExceptionMessage(shell, e);
-            return false;
-        }
-
-        if ((children == null) || (children.length == 0)) {
-            return true;
-        }
-
-        Object firstObject = children[0];
-        if ((firstObject instanceof SystemMessageObject)) {
-            SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
-            return true;
-        }
-
-        for (int idx2 = 0; idx2 < children.length; idx2++) {
-            libElements.addElement((DataElement)children[idx2]);
-        }
-
-        for (Enumeration<DataElement> enumeration = libElements.elements(); enumeration.hasMoreElements();) {
-            element = enumeration.nextElement();
-            addElement(element);
-        }
-
-        return true;
+        return addElementsFromFilterString(_objectFilterString.toString());
 
     }
 
-    private boolean addElementsFromFilterString(String[] filterStrings) {
+    private boolean addElementsFromFilterString(String... filterStrings) {
 
-        boolean _continue = true;
-        Object[] children = null;
-
-        for (int idx = 0; idx < filterStrings.length; idx++) {
-
-            _filterString = filterStrings[idx];
-            _fileSubSystemImpl = _connection.getISeriesFileSubSystem();
-
-            try {
-                children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
-            } catch (InterruptedException localInterruptedException) {
-                return false;
-            } catch (Exception e) {
-                SystemMessageDialog.displayExceptionMessage(shell, e);
-                return false;
-            }
-
-            if ((children != null) && (children.length != 0)) {
-
-                Object firstObject = children[0];
-
-                if ((firstObject instanceof SystemMessageObject)) {
-
-                    SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
-
-                } else {
-
-                    for (int idx2 = 0; idx2 < children.length; idx2++) {
-
-                        DataElement element = (DataElement)children[idx2];
-
-                        if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isLibrary()) {
-                            _continue = addElementsFromLibrary(element);
-                        } else if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isMessageFile()) {
-                            addElement(element);
-                        }
-
-                        if (!_continue) break;
-
-                    }
-
-                }
-
-            }
-
+        try {
+            return getMessageFileSearchDelegate().addElementsFromFilterString(_searchElements, filterStrings);
+        } catch (InterruptedException localInterruptedException) {
+            return false;
+        } catch (Exception e) {
+            SystemMessageDialog.displayExceptionMessage(getShell(), e);
+            return false;
         }
-
-        return true;
-
     }
 
 }
