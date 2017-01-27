@@ -1,3 +1,7 @@
+Changelog: iSphere 3.0.0.b008
+-----------------------------
+ • Added option to select a RSE filter, when using the global iSphere
+   Message File Search.
 
 Changelog: iSphere 3.0.0.b007
 -----------------------------

@@ -141,6 +141,7 @@ public final class WidgetHelper {
      *        occurs
      */
     public static void addListener(Composite composite, int eventType, TypedListener listener) {
+        composite.addListener(eventType, listener);
         addListenerRecursively(composite.getChildren(), eventType, listener);
     }
 

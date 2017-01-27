@@ -405,9 +405,16 @@
              id="biz.isphere.core.menu.messagefilesearch.member">
             
             <enablement>
-            	<and>
-            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
-            	</and>
+            	<or>
+	            	<or>
+	            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MSGF"/>
+	            	</or>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect libraries   -->
+					<or>
+	            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*LIB"/>
+					</or>
+            	</or>
          	</enablement>
          	
 	         <action

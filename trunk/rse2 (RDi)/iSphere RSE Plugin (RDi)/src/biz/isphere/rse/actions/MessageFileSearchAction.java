@@ -9,12 +9,9 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -22,7 +19,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
-import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -33,6 +29,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchDialog;
@@ -40,35 +37,34 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class MessageFileSearchAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
-    protected Shell shell;
+    protected Shell _shell;
     private IBMiConnection _connection;
+    private ISeriesObjectFilterString _objectFilterString;
     private boolean _multipleConnection;
     private ArrayList<Object> _selectedElements;
+    private MessageFileSearchDelegate _delegate;
+
     private HashMap<String, SearchElement> _searchElements;
-    private String _filterString;
-    private String[] _filterStrings;
-    private ISeriesObjectFilterString _objectFilterString;
-    private QSYSObjectSubSystem _fileSubSystemImpl;
 
     public void run(IAction action) {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            _objectFilterString = null;
             _connection = null;
+            _objectFilterString = null;
             _multipleConnection = false;
             _selectedElements = new ArrayList<Object>();
 
@@ -79,6 +75,10 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                 Object _object = iterator.next();
 
                 if ((_object instanceof IQSYSResource)) {
+
+                    /*
+                     * Started for an object, such as a message file or library.
+                     */
 
                     IQSYSResource element = (IQSYSResource)_object;
 
@@ -93,6 +93,10 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                 } else if ((_object instanceof SystemFilterReference)) {
 
+                    /*
+                     * Started for a filter node
+                     */
+
                     SystemFilterReference element = (SystemFilterReference)_object;
 
                     _selectedElements.add(element);
@@ -101,6 +105,10 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                         .getHost()));
 
                 } else if ((_object instanceof ISystemFilterStringReference)) {
+
+                    /*
+                     * Started from ???
+                     */
 
                     ISystemFilterStringReference element = (ISystemFilterStringReference)_object;
 
@@ -114,7 +122,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
             }
 
             if (_multipleConnection) {
-                MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                MessageBox errorBox = new MessageBox(_shell, SWT.ICON_ERROR);
                 errorBox.setText(Messages.E_R_R_O_R);
                 errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
                 errorBox.open();
@@ -153,7 +161,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                 } else if ((_object instanceof SystemFilterReference)) {
 
                     SystemFilterReference filterReference = (SystemFilterReference)_object;
-                    _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                    String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
                     if (!addElementsFromFilterString(_filterStrings)) {
                         break;
                     }
@@ -161,7 +169,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
                     ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference)_object;
-                    _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
+                    String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
                     if (!addElementsFromFilterString(_filterStrings)) {
                         break;
                     }
@@ -171,28 +179,25 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
             }
 
             AS400 as400 = null;
-            String connectionName = null;
             Connection jdbcConnection = null;
             try {
                 as400 = _connection.getAS400ToolboxObject();
-                connectionName = _connection.getConnectionName();
                 jdbcConnection = _connection.getJDBCConnection(null, false);
-            } catch (SystemMessageException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not get JDBC connection ***", e);
             }
 
-            if (as400 != null && connectionName != null && jdbcConnection != null) {
+            if (as400 != null && jdbcConnection != null) {
 
-                if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
+                String connectionName = _connection.getConnectionName();
+                if (ISphereHelper.checkISphereLibrary(_shell, connectionName)) {
 
-                    SearchDialog dialog = new SearchDialog(shell, _searchElements, true);
+                    SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
                     if (dialog.open() == Dialog.OK) {
 
                         SearchPostRun postRun = new SearchPostRun();
                         postRun.setConnection(_connection);
-                        postRun.setConnectionName(_connection.getConnectionName());
+                        postRun.setConnectionName(connectionName);
                         postRun.setSearchString(dialog.getString());
                         postRun.setSearchElements(_searchElements);
                         postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
@@ -210,6 +215,15 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
     }
 
+    private MessageFileSearchDelegate getMessageFileSearchDelegate() {
+
+        if (_delegate == null) {
+            _delegate = new MessageFileSearchDelegate(_shell, _connection);
+        }
+
+        return _delegate;
+    }
+
     private void checkIfMultipleConnections(IBMiConnection connection) {
         if (!_multipleConnection) {
             if (this._connection == null) {
@@ -222,7 +236,10 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
     private void addElement(IQSYSResource element) {
 
-        String key = element.getLibrary() + "-" + element.getName();
+        String library = element.getLibrary();
+        String file = ((IQSYSMessageFile)element).getName();
+
+        String key = library + "-" + file;
 
         if (!_searchElements.containsKey(key)) {
 
@@ -238,104 +255,27 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
     private boolean addElementsFromLibrary(IQSYSResource element) {
 
-        Vector<IQSYSResource> libElements = new Vector<IQSYSResource>();
-        Object[] children = null;
-
         if (_objectFilterString == null) {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*");
             _objectFilterString.setObjectType(ISeries.MSGF);
-            String attributes = ISeries.MSGF + ":*";
-            _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
 
         _objectFilterString.setLibrary(element.getName());
-        _filterString = _objectFilterString.toString();
 
-        _fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
+        return addElementsFromFilterString(_objectFilterString.toString());
+    }
+
+    private boolean addElementsFromFilterString(String... filterStrings) {
+
         try {
-            children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
+            return getMessageFileSearchDelegate().addElementsFromFilterString(_searchElements, filterStrings);
         } catch (InterruptedException localInterruptedException) {
             return false;
         } catch (Exception e) {
-            SystemMessageDialog.displayExceptionMessage(shell, e);
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
             return false;
         }
-
-        if ((children == null) || (children.length == 0)) {
-            return true;
-        }
-
-        Object firstObject = children[0];
-        if ((firstObject instanceof SystemMessageObject)) {
-            SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
-            return true;
-        }
-
-        for (int idx2 = 0; idx2 < children.length; idx2++) {
-            libElements.addElement((IQSYSResource)children[idx2]);
-        }
-
-        for (Enumeration<IQSYSResource> enumeration = libElements.elements(); enumeration.hasMoreElements();) {
-            element = enumeration.nextElement();
-            addElement(element);
-        }
-
-        return true;
-
-    }
-
-    private boolean addElementsFromFilterString(String[] filterStrings) {
-
-        boolean _continue = true;
-        Object[] children = null;
-
-        for (int idx = 0; idx < filterStrings.length; idx++) {
-
-            _filterString = filterStrings[idx];
-            _fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
-
-            try {
-                children = _fileSubSystemImpl.resolveFilterString(_filterString, null);
-            } catch (InterruptedException localInterruptedException) {
-                return false;
-            } catch (Exception e) {
-                SystemMessageDialog.displayExceptionMessage(shell, e);
-                return false;
-            }
-
-            if ((children != null) && (children.length != 0)) {
-
-                Object firstObject = children[0];
-
-                if ((firstObject instanceof SystemMessageObject)) {
-
-                    SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
-
-                } else {
-
-                    for (int idx2 = 0; idx2 < children.length; idx2++) {
-
-                        IQSYSResource element = (IQSYSResource)children[idx2];
-
-                        if (ResourceTypeUtil.isLibrary(element)) {
-                            _continue = addElementsFromLibrary(element);
-                        } else if (ResourceTypeUtil.isMessageFile(element)) {
-                            addElement(element);
-                        }
-
-                        if (!_continue) break;
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        return true;
-
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
@@ -350,7 +290,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
 
-        shell = workbenchPart.getSite().getShell();
+        _shell = workbenchPart.getSite().getShell();
 
     }
 
