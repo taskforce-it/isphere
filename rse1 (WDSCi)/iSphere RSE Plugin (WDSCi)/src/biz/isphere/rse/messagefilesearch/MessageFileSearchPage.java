@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@ package biz.isphere.rse.messagefilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,11 +18,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -29,6 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -39,7 +47,6 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
@@ -48,33 +55,40 @@ import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
-import com.ibm.etools.iseries.core.api.ISeriesObject;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMsgFilePrompt;
-import com.ibm.etools.systems.core.messages.SystemMessageException;
-import com.ibm.etools.systems.dstore.core.model.DataElement;
+import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
+import com.ibm.etools.systems.filters.SystemFilter;
+import com.ibm.etools.systems.filters.SystemFilterPoolReference;
 import com.ibm.etools.systems.model.SystemConnection;
 
 public class MessageFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
-    public static final String ID = "biz.isphere.rse.messagefilesearch.MessageFileSearchPage";
+    public static final String ID = "biz.isphere.rse.messagefilesearch.MessageFileSearchPage"; //$NON-NLS-1$
 
-    private static final String START_COLUMN = "startColumn";
-    private static final String END_COLUMN = "endColumn";
-    private static final String CONNECTION = "connection";
-    private static final String MESSAGE_FILE = "messageFile";
-    private static final String LIBRARY = "library";
-    private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection";
-    private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
-    private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
-    private static final String INCLUDE_MESSAGE_ID = "includeMessageId";
+    private static final String START_COLUMN = "startColumn"; //$NON-NLS-1$
+    private static final String END_COLUMN = "endColumn"; //$NON-NLS-1$
+    private static final String CONNECTION = "connection"; //$NON-NLS-1$
+    private static final String TARGET = "target"; //$NON-NLS-1$
+    private static final String FILTER_POOL_NAME = "filterPoolName"; //$NON-NLS-1$
+    private static final String FILTER_NAME = "filterName"; //$NON-NLS-1$
+    private static final String MESSAGE_FILE = "messageFile"; //$NON-NLS-1$
+    private static final String LIBRARY = "library"; //$NON-NLS-1$
+    private static final String COLUMN_BUTTONS_SELECTION = "columnButtonsSelection"; //$NON-NLS-1$
+    private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText"; //$NON-NLS-1$
+    private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText"; //$NON-NLS-1$
+    private static final String INCLUDE_MESSAGE_ID = "includeMessageId"; //$NON-NLS-1$
+
+    private static final String TARGET_FILTER_STRING = "target.filterString"; //$NON-NLS-1$
+    private static final String TARGET_SOURCE_MEMBER = "target.sourceMember"; //$NON-NLS-1$
 
     /**
      * The MAX_END_COLUMN value specified here must match the maximum message
@@ -82,8 +96,18 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      */
     private static int MAX_END_COLUMN = 132;
 
+    private static int DEFAULT_START_COLUMN = 1;
+    private static int DEFAULT_END_COLUMN = MAX_END_COLUMN;
+
+    private static final String SEARCH_ALL_COLUMNS = "ALL"; //$NON-NLS-1$
+    private static final String SEARCH_BETWEEN_COLUMNS = "BETWEEN"; //$NON-NLS-1$
+
+    private static final String TARGET_RADIO_BUTTON = "BUTTON"; //$NON-NLS-1$
+
     private ISearchPageContainer container;
     private ISeriesConnectionCombo connectionCombo;
+    private Combo filterPoolCombo;
+    private Combo filterCombo;
     private ISeriesMsgFilePrompt messageFilePrompt;
     private Button allColumnsButton;
     private Button betweenColumnsButton;
@@ -94,8 +118,23 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private Button includeSecondLevelTextButton;
     private Button includeMessageIdButton;
 
+    private LinkedHashMap<String, SystemFilterPoolReference> filterPoolsOfConnection;
+    private LinkedHashMap<String, SystemFilter> filtersOfFilterPool;
+
+    private Composite targetFilterComposite;
+    private Composite targetMessageFileComposite;
+    private Button filterRadioButton;
+    private Button messageFileRadioButton;
+    private TypedListener targetFocusListener;
+    private TypedListener targetMouseListener;
+
     public MessageFileSearchPage() {
         super();
+
+        filterPoolsOfConnection = new LinkedHashMap<String, SystemFilterPoolReference>();
+        filtersOfFilterPool = new LinkedHashMap<String, SystemFilter>();
+        targetFocusListener = new TypedListener(new TargetModifyListener());
+        targetMouseListener = new TypedListener(new TargetMouseListener());
     }
 
     public void createControl(Composite aParent) {
@@ -109,7 +148,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         createSearchStringEditorGroup(tMainPanel);
         createConnectionGroup(tMainPanel);
-        createMessageFileGroup(tMainPanel);
+        createSearchTargetGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
         createOptionsGroup(tMainPanel);
 
@@ -122,7 +161,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, false, SearchOptionConfig
+            .getAdditionalMessageFileSearchOptions());
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(aMainPanel);
     }
@@ -132,9 +172,44 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         connectionCombo.getPromptLabel().setText(Messages.Connection);
     }
 
-    private void createMessageFileGroup(Composite aMainPanel) {
-        Group tTargetGroup = createGroup(aMainPanel, Messages.Target);
-        messageFilePrompt = new ISeriesMsgFilePrompt(tTargetGroup, SWT.NONE, true, true);
+    private void createSearchTargetGroup(Composite aMainPanel) {
+
+        Group tTargetGroup = createGroup(aMainPanel, Messages.Target, 2);
+
+        createFilterGroup(tTargetGroup);
+        createMessageFileGroup(tTargetGroup);
+    }
+
+    private void createFilterGroup(Group parent) {
+
+        filterRadioButton = WidgetFactory.createRadioButton(parent);
+
+        targetFilterComposite = new Composite(parent, SWT.BORDER);
+        targetFilterComposite.setLayout(new GridLayout(2, false));
+        targetFilterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetFilterComposite.setData(TARGET_RADIO_BUTTON, filterRadioButton);
+
+        Label profileLabel = new Label(targetFilterComposite, SWT.NONE);
+        profileLabel.setText(Messages.Filter_pool_colon);
+        filterPoolCombo = WidgetFactory.createReadOnlyCombo(targetFilterComposite);
+        filterPoolCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label filterLabel = new Label(targetFilterComposite, SWT.NONE);
+        filterLabel.setText(Messages.Filter_colon);
+        filterCombo = WidgetFactory.createReadOnlyCombo(targetFilterComposite);
+        filterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    }
+
+    private void createMessageFileGroup(Composite parent) {
+
+        messageFileRadioButton = WidgetFactory.createRadioButton(parent);
+
+        targetMessageFileComposite = new Composite(parent, SWT.BORDER);
+        targetMessageFileComposite.setLayout(new GridLayout(2, false));
+        targetMessageFileComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        targetMessageFileComposite.setData(TARGET_RADIO_BUTTON, messageFileRadioButton);
+
+        messageFilePrompt = new ISeriesMsgFilePrompt(targetMessageFileComposite, SWT.NONE, true, true);
         messageFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
         messageFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
         messageFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_message_file_name);
@@ -231,15 +306,109 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         });
     }
 
+    private void loadFilterPoolsOfConnection(String connectionName) {
+
+        debugPrint("Loading filter pools of connection ..."); //$NON-NLS-1$
+
+        filterPoolsOfConnection.clear();
+
+        SystemFilterPoolReference[] systemFilterPoolReferences = RSEFilterHelper.getConnectionFilterPools(connectionName);
+        for (SystemFilterPoolReference systemFilterPoolReference : systemFilterPoolReferences) {
+            filterPoolsOfConnection.put(systemFilterPoolReference.getName(), systemFilterPoolReference);
+        }
+
+        setFilterPools();
+    }
+
+    private void loadFiltersOfFilterPool(String systemFilterPoolName) {
+
+        debugPrint("Loading filters of filter pool ..."); //$NON-NLS-1$
+
+        filtersOfFilterPool.clear();
+
+        SystemFilterPoolReference systemFilterPoolReference = filterPoolsOfConnection.get(systemFilterPoolName);
+        if (systemFilterPoolReference != null) {
+
+            SystemFilter[] filters = systemFilterPoolReference.getReferencedFilterPool().getSystemFilters();
+            for (SystemFilter filter : filters) {
+                if (!filter.isPromptable()
+                    && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
+                    filtersOfFilterPool.put(filter.getName(), filter);
+                }
+            }
+        }
+
+        setFilters();
+    }
+
+    private void setFilterPools() {
+
+        debugPrint("Setting filter pools of connection ..."); //$NON-NLS-1$
+
+        String[] poolNames = filterPoolsOfConnection.keySet().toArray(new String[filterPoolsOfConnection.keySet().size()]);
+        // Arrays.sort(poolNames, new IgnoreCaseComparator());
+
+        filterPoolCombo.setItems(poolNames);
+        if (poolNames.length > 0) {
+            filterPoolCombo.setText(filterPoolCombo.getItem(0));
+        } else {
+            filterPoolCombo.setText(""); //$NON-NLS-1$
+        }
+
+        loadFiltersOfFilterPool(filterPoolCombo.getText());
+    }
+
+    private void setFilters() {
+
+        debugPrint("Setting filters of filter pool ..."); //$NON-NLS-1$
+
+        String[] filterNames = filtersOfFilterPool.keySet().toArray(new String[filtersOfFilterPool.keySet().size()]);
+        // Arrays.sort(filterNames, new IgnoreCaseComparator());
+
+        filterCombo.setItems(filterNames);
+        if (filterNames.length > 0) {
+            filterCombo.setText(filterCombo.getItem(0));
+        } else {
+            filterCombo.setText(""); //$NON-NLS-1$
+        }
+    }
+
     private Group createGroup(Composite aParent, String aText) {
+        return createGroup(aParent, aText, 1);
+    }
+
+    private Group createGroup(Composite aParent, String aText, int numColumns) {
         Group tGroup = new Group(aParent, SWT.SHADOW_ETCHED_IN);
         tGroup.setText(aText);
         GridLayout scopeLayout = new GridLayout();
+        scopeLayout.numColumns = numColumns;
         tGroup.setLayout(scopeLayout);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.grabExcessHorizontalSpace = true;
         tGroup.setLayoutData(gd);
         return tGroup;
+    }
+
+    private void setTargetRadioButtonsSelected(Widget widget) {
+
+        if (widget instanceof SystemHistoryCombo) {
+            setTargetRadioButtonsSelected(((SystemHistoryCombo)widget).getParent());
+        } else if (widget instanceof Combo) {
+            setTargetRadioButtonsSelected(((Combo)widget).getParent());
+        } else if (widget instanceof Label) {
+            setTargetRadioButtonsSelected(((Label)widget).getParent());
+        } else if (widget instanceof Composite) {
+            Object data = widget.getData(TARGET_RADIO_BUTTON);
+            if (data == filterRadioButton) {
+                filterRadioButton.setSelection(true);
+                messageFileRadioButton.setSelection(false);
+            } else if (data == messageFileRadioButton) {
+                filterRadioButton.setSelection(false);
+                messageFileRadioButton.setSelection(true);
+            } else {
+                setTargetRadioButtonsSelected(((Composite)widget).getParent());
+            }
+        }
     }
 
     /**
@@ -253,6 +422,36 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * Add listeners to verify user input.
      */
     private void addListeners() {
+
+        connectionCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                debugPrint("Connection: -> SelectionListener"); //$NON-NLS-1$
+                loadFilterPoolsOfConnection(connectionCombo.getText());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        filterPoolCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                debugPrint("Filter Pool: -> SelectionListener"); //$NON-NLS-1$
+                loadFiltersOfFilterPool(filterPoolCombo.getText());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        filterPoolCombo.addListener(SWT.Modify, targetFocusListener);
+        filterCombo.addListener(SWT.Modify, targetFocusListener);
+        WidgetHelper.addListener(messageFilePrompt, SWT.Modify, targetFocusListener);
+
+        WidgetHelper.addListener(targetFilterComposite, SWT.MouseUp, targetMouseListener);
+        WidgetHelper.addListener(targetMessageFileComposite, SWT.MouseUp, targetMouseListener);
+
         allColumnsButton.addListener(SWT.Selection, this);
         betweenColumnsButton.addListener(SWT.Selection, this);
         startColumnText.addListener(SWT.Modify, this);
@@ -268,37 +467,136 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * Restores the screen values of the last search search.
      */
     private void loadScreenValues() {
+
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
         includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
         includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
         includeMessageIdButton.setSelection(loadBooleanValue(INCLUDE_MESSAGE_ID, false));
+
         if (loadValue(CONNECTION, null) != null) {
             ISeriesConnection connection = ISeriesConnection.getConnection(loadValue(CONNECTION, null));
             if (connection != null) {
+                debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
                 connectionCombo.select(connection);
+            } else {
+                debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
+            }
+        } else {
+            if (connectionCombo.getItems().length > 0) {
+                debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
+                connectionCombo.select(0);
+            } else {
+                debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
             }
         }
-        messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, ""));
-        messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, ""));
+
+        int i;
+        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, "")); //$NON-NLS-1$
+        if (i >= 0) {
+            debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
+            filterPoolCombo.select(i);
+            loadFiltersOfFilterPool(filterPoolCombo.getText());
+        } else {
+            if (filterPoolsOfConnection.size() > 0) {
+                debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
+                filterPoolCombo.select(0);
+                loadFiltersOfFilterPool(filterPoolCombo.getText());
+            } else {
+                debugPrint("loadScreenValues(): setting filter pool - FAILED"); //$NON-NLS-1$
+            }
+        }
+
+        i = findFilterIndex(loadValue(FILTER_NAME, "")); //$NON-NLS-1$
+        if (i >= 0) {
+            debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
+            filterCombo.select(i);
+        } else {
+            if (filtersOfFilterPool.size() > 0) {
+                debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
+                filterCombo.select(0);
+            } else {
+                debugPrint("loadScreenValues(): setting filter - FAILED"); //$NON-NLS-1$
+            }
+        }
+
+        messageFilePrompt.getLibraryCombo().setText(loadValue(LIBRARY, "")); //$NON-NLS-1$
+        messageFilePrompt.getObjectCombo().setText(loadValue(MESSAGE_FILE, "")); //$NON-NLS-1$
 
         loadColumnButtonsSelection();
 
         if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText() && !isIncludeMessageId()) {
             includeFirstLevelTextButton.setSelection(true);
         }
+
+        if (hasMessageFile() && TARGET_SOURCE_MEMBER.equals(loadValue(TARGET, TARGET_SOURCE_MEMBER))) {
+            filterRadioButton.setSelection(false);
+            messageFileRadioButton.setSelection(true);
+        } else {
+            filterRadioButton.setSelection(true);
+            messageFileRadioButton.setSelection(false);
+        }
+    }
+
+    private boolean hasMessageFile() {
+
+        if (!StringHelper.isNullOrEmpty(messageFilePrompt.getLibraryName())) {
+            return true;
+        }
+
+        if (!StringHelper.isNullOrEmpty(messageFilePrompt.getObjectName())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private int findFilterPoolIndex(String filterPoolName) {
+
+        String[] filterPoolItems = filterPoolCombo.getItems();
+        for (int i = 0; i < filterPoolItems.length; i++) {
+            String filterPoolItem = filterPoolItems[i];
+            if (filterPoolItem.equals(filterPoolName)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int findFilterIndex(String filterName) {
+
+        String[] filterItems = filterCombo.getItems();
+        for (int i = 0; i < filterItems.length; i++) {
+            String filterPoolItem = filterItems[i];
+            if (filterPoolItem.equals(filterName)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /**
      * Stores the screen values that are preserved for the next search.
      */
     private void storeScreenValues() {
+
         searchArgumentsListEditor.storeScreenValues(getDialogSettings());
 
         storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
         storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
         storeValue(INCLUDE_MESSAGE_ID, isIncludeMessageId());
         storeValue(CONNECTION, getConnectionName());
+        if (messageFileRadioButton.getSelection()) {
+            storeValue(TARGET, TARGET_SOURCE_MEMBER);
+        } else {
+            storeValue(TARGET, TARGET_FILTER_STRING);
+        }
+
+        storeValue(FILTER_POOL_NAME, filterPoolCombo.getText());
+        storeValue(FILTER_NAME, filterCombo.getText());
+
         storeValue(LIBRARY, getMessageFileLibrary());
         storeValue(MESSAGE_FILE, getMessageFile());
 
@@ -309,16 +607,16 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * Restores the status of the "columns" buttons and text fields.
      */
     private void loadColumnButtonsSelection() {
-        String tColumnButtonsSelection = loadValue(COLUMN_BUTTONS_SELECTION, "ALL");
-        if ("ALL".equals(tColumnButtonsSelection)) {
+        String tColumnButtonsSelection = loadValue(COLUMN_BUTTONS_SELECTION, SEARCH_ALL_COLUMNS);
+        if (SEARCH_ALL_COLUMNS.equals(tColumnButtonsSelection)) {
             allColumnsButton.setSelection(true);
             processAllColumnsButtonSelected();
         } else {
             betweenColumnsButton.setSelection(true);
             processBetweenColumnsButtonSelected();
         }
-        startColumnText.setText(loadValue(START_COLUMN, "1"));
-        endColumnText.setText(loadValue(END_COLUMN, "" + MAX_END_COLUMN));
+        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN)));
+        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN)));
     }
 
     /**
@@ -326,9 +624,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      */
     private void saveColumnButtonsSelection() {
         if (allColumnsButton.getSelection()) {
-            storeValue(COLUMN_BUTTONS_SELECTION, "ALL");
+            storeValue(COLUMN_BUTTONS_SELECTION, SEARCH_ALL_COLUMNS);
         } else {
-            storeValue(COLUMN_BUTTONS_SELECTION, "BETWEEN");
+            storeValue(COLUMN_BUTTONS_SELECTION, SEARCH_BETWEEN_COLUMNS);
             storeValue(START_COLUMN, getNumericFieldContent(startColumnText));
             storeValue(END_COLUMN, getNumericFieldContent(endColumnText));
         }
@@ -344,7 +642,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         for (SearchArgument tSearchArgument : searchArgumentsListEditor.getSearchArguments(0, 0)) {
             if (tSearchArgument.getString().trim().length() > 0) {
                 if (tBuffer.length() > 0) {
-                    tBuffer.append("/");
+                    tBuffer.append("/"); //$NON-NLS-1$
                 }
                 tBuffer.append(tSearchArgument.getString());
             }
@@ -372,6 +670,10 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      */
     private String getConnectionName() {
         return connectionCombo.getText();
+    }
+
+    private SystemFilter getFilter() {
+        return filtersOfFilterPool.get(filterCombo.getText());
     }
 
     /**
@@ -451,6 +753,21 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * Performs the actual search search task.
      */
     public boolean performAction() {
+
+        if (messageFileRadioButton.getSelection()) {
+            if (StringHelper.isNullOrEmpty(getMessageFileLibrary())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_library_name);
+                messageFilePrompt.getLibraryCombo().setFocus();
+                return false;
+            }
+
+            if (StringHelper.isNullOrEmpty(getMessageFile())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_message_file_name);
+                messageFilePrompt.getFileCombo().setFocus();
+                return false;
+            }
+        }
+
         storeScreenValues();
 
         try {
@@ -463,23 +780,15 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                 return false;
             }
 
-            HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
-            try {
-                Object[] tMsgFiles = tConnection.listObjects(getShell(), getMessageFileLibrary(), getMessageFile(), new String[] { ISeries.MSGF });
-                if (tMsgFiles != null) {
-                    for (Object tMsgFile : tMsgFiles) {
-                        if (tMsgFile instanceof ISeriesObject) {
-                            addElement(searchElements, ((ISeriesObject)tMsgFile).getDataElement());
-                        }
-                    }
-                }
-            } catch (SystemMessageException e) {
-                // Library or file not found.
-                // Ignore errors.
+            HashMap<String, SearchElement> searchElements;
+            if (filterRadioButton.getSelection()) {
+                searchElements = loadFilterSearchElements(tConnection, getFilter());
+            } else {
+                searchElements = loadMessageFileSearchElements(tConnection, getMessageFileLibrary(), getMessageFile());
             }
 
             if (searchElements.isEmpty()) {
-                MessageDialog.openInformation(getShell(), "Information", Messages.No_objects_found_that_match_the_selection_criteria);
+                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
                 return false;
             }
 
@@ -521,22 +830,37 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         return true;
     }
 
-    /**
-     * Adds an element to the list of elements that are searched for a given
-     * search string.
-     * 
-     * @param aSearchElements - list of elements that are searched
-     * @param aMessageFile - message file that is added to the list
-     */
-    private void addElement(HashMap<String, SearchElement> aSearchElements, DataElement aMessageFile) {
-        String tKey = ISeriesDataElementHelpers.getLibrary(aMessageFile) + "-" + ISeriesDataElementHelpers.getName(aMessageFile);
-        if (!aSearchElements.containsKey(tKey)) {
-            SearchElement tSearchElement = new SearchElement();
-            tSearchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(aMessageFile));
-            tSearchElement.setMessageFile(ISeriesDataElementHelpers.getName(aMessageFile));
-            tSearchElement.setDescription(ISeriesDataElementHelpers.getDescription(aMessageFile));
-            aSearchElements.put(tKey, tSearchElement);
+    private HashMap<String, SearchElement> loadMessageFileSearchElements(ISeriesConnection connection, String library, String messageFile)
+        throws InterruptedException {
+
+        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+
+        try {
+
+            MessageFileSearchDelegate delegate = new MessageFileSearchDelegate(getShell(), connection);
+            delegate.addElements(searchElements, library, messageFile);
+
+        } catch (Throwable e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
+
+        return searchElements;
+    }
+
+    private HashMap<String, SearchElement> loadFilterSearchElements(ISeriesConnection connection, SystemFilter filter) throws InterruptedException {
+
+        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+
+        try {
+
+            MessageFileSearchDelegate delegate = new MessageFileSearchDelegate(getShell(), connection);
+            delegate.addElementsFromFilterString(searchElements, filter.getFilterStrings());
+
+        } catch (Throwable e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+
+        return searchElements;
     }
 
     /**
@@ -566,7 +890,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         } else {
             container.setPerformActionEnabled(checkAll());
         }
-        
+
         setSearchOptionsEnablement(anEvent);
     }
 
@@ -575,14 +899,14 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         if (!(anEvent.data instanceof SearchOptionConfig)) {
             return;
         }
-        
+
         SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
-        
+
         allColumnsButton.setEnabled(config.isColumnRangeEnabled());
         betweenColumnsButton.setEnabled(config.isColumnRangeEnabled());
         startColumnText.setEnabled(config.isColumnRangeEnabled());
         endColumnText.setEnabled(config.isColumnRangeEnabled());
-        
+
         includeFirstLevelTextButton.setEnabled(config.isIncludeFirstLevelTextEnabled());
         includeSecondLevelTextButton.setEnabled(config.isIncludeSecondLevelTextEnabled());
         includeMessageIdButton.setEnabled(config.isIncludeMessageIdEnabled());
@@ -608,11 +932,11 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         endColumnText.setEnabled(true);
 
         if (StringHelper.isNullOrEmpty(startColumnText.getText())) {
-            startColumnText.setText("1");
+            startColumnText.setText(Integer.toString(DEFAULT_START_COLUMN));
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {
-            endColumnText.setText("" + MAX_END_COLUMN);
+            endColumnText.setText(Integer.toString(DEFAULT_END_COLUMN));
         }
     }
 
@@ -715,5 +1039,28 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      */
     private int getNumericFieldContent(Text textField) {
         return IntHelper.tryParseInt(textField.getText(), 0);
+    }
+
+    private void debugPrint(String message) {
+        // System.out.println(message);
+    }
+
+    private class TargetModifyListener implements ModifyListener {
+
+        public void modifyText(ModifyEvent event) {
+            debugPrint("Selecting target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
+            setTargetRadioButtonsSelected(event.widget);
+        }
+
+    }
+
+    private class TargetMouseListener extends MouseAdapter {
+
+        @Override
+        public void mouseUp(MouseEvent event) {
+            debugPrint("Clicking target radio button: " + event.getSource().getClass().getSimpleName()); //$NON-NLS-1$
+            setTargetRadioButtonsSelected(event.widget);
+        }
+
     }
 }
