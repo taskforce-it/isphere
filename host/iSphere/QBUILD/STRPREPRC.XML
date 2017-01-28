@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/19/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/28/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -2847,14 +2847,14 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.11 - 18.01.2017 - mailto: thomas.raddatz@tools400.de')                         
+     h COPYRIGHT('V1.12 - 28.01.2017 - mailto: thomas.raddatz@tools400.de')                         
       /eof                                                                                          
       /endif                                                                                        
       *                                                                                             
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.11'                                                   
+     d                 C                   '1.12'                                                   
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '18.01.2017'                                             
+     d                 C                   '28.01.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -2910,8 +2910,8 @@ srccssid=  "00273">
      D                                     extproc('STRPREPRC4_+                                    
      D                                     isEmptyEventFile+                                        
      D                                     ')                                                       
-     D  i_obj                        10a   const                                                    
      D  i_lib                        10a   const                                                    
+     D  i_obj                        10a   const                                                    
                                                                                                     
      D clearEventFile...                                                                            
      D                 pr                                                                           
@@ -2934,13 +2934,13 @@ srccssid=  "00273">
      D                                     ')                                                       
      D  i_obj                        10a   const                                                    
      D  i_lib                        10a   const                                                    
-     D  i_forAppend                    n   const options(*nopass)                                   
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                            options(*nopass)                                  
                                                                                                     
      D writeEventFile...                                                                            
      D                 pr                  extproc('STRPREPRC4_+                                    
      D                                     writeEventFile+                                          
      D                                     ')                                                       
-     D  i_append                       n   const                                                    
      D  i_srcFile                    10a   const                                                    
      D  i_srcLib                     10a   const                                                    
      D  i_srcMbr                     10a   const                                                    
@@ -4329,6 +4329,98 @@ srccssid=  "00273">
       *                       CHAR(*)  Reserved                                                     
       /endif                                                                                        
       /ENDIF                                                                                        
+]]>  </copysrc>                                                                                     
+</mbr>                                                                                              
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[                                  
+Installing QUSRMBRD  type RPGLE - in progress.                                                      
+]]>  </sendmsg>                                                                                     
+<!-- START OF MEMBER  -->                                                                           
+<mbr                                                                                                
+mbrname =  "QUSRMBRD  "                                                                             
+mbrtype =  "RPGLE     "                                                                             
+mbrtext =  "Retrieve Member Description (QUSRMBRD) API        "                                     
+srcfile =  "QSTRPREPRC"                                                                             
+srclib  =  "selected  "                                                                             
+srclen  =  "00112"                                                                                  
+srccssid=  "00273">                                                                                 
+<copysrc><![CDATA[                                                                                  
+      /if not defined(QUSRMBRD)                                                                     
+      /define QUSRMBRD                                                                              
+      *                                                                                             
+      *  Retrieve Member Description (QUSRMBRD) API                                                 
+     d QUSRMBRD...                                                                                  
+     d                 pr                         extpgm('QUSRMBRD')                                
+     d  o_rcvVar                  65535a          options(*varsize)                                 
+     d  i_lenRcvVar                  10i 0 const                                                    
+     d  i_format                      8a   const                                                    
+     d  i_qFile                      20A   const                                                    
+     d  i_mbr                        10a   const                                                    
+     d  i_ovrPrc                      1a   const                                                    
+     d  io_errCode                65535a          options(*nopass: *varsize)    | OptGrp 1          
+     d  i_findMbrPrc                  1a   const  options(*nopass)              | OptGrp 2          
+      *                                                                                             
+      /if not defined(mbrd0100_t)                                                                   
+      /define mbrd0100_t                                                                            
+      *  MBRD0100 Format                                                                            
+     d mbrd0100_t...                                                                                
+     d                 ds                  qualified               based(pDummy)                    
+     d  bytRet                       10i 0                                                          
+     d  bytAvl                       10i 0                                                          
+     d  qFile                              likeds(qObj_t )                                          
+     d  mbr                          10a                                                            
+     d  attr                         10a                                                            
+     d  srcType                      10a                                                            
+     d  crtDatTim                    13A                                                            
+     d  srcChgDatTim                 13A                                                            
+     d  text                         50A                                                            
+     d  isSrcFile                      N                                                            
+      /endif                                                                                        
+      *                                                                                             
+      /if not defined(mbrd0200_t)                                                                   
+      /define mbrd0200_t                                                                            
+      *  MBRD0200 Format                                                                            
+     d mbrd0200_t...                                                                                
+     d                 ds                  qualified               based(pDummy)                    
+     d  bytRet                       10i 0                                                          
+     d  bytAvl                       10i 0                                                          
+     d  qFile                              likeds(qObj_t )                                          
+     d  mbr                          10a                                                            
+     d  attr                         10a                                                            
+     d  srcType                      10a                                                            
+     d  crtDatTim                    13A                                                            
+     d  srcChgDatTim                 13A                                                            
+     d  text                         50A                                                            
+     d  isSrcFile                      N                                                            
+     d  isRemoteFile                   N                                                            
+     d  isLogicalFile                  N                                                            
+     d  isODPShareAlw                  N                                                            
+     d  reserved_1                    2a                                                            
+     d  numTotRcds                   10i 0                                                          
+     d  numDltRcds                   10i 0                                                          
+     d  dtaSpcSize                   10i 0                                                          
+     d  accPathSize                  10i 0                                                          
+     d  numBasedMbr                  10i 0                                                          
+     d  chgDatTim                    13A                                                            
+     d  savDatTim                    13A                                                            
+     d  rstDatTim                    13A                                                            
+     d  expDate                       7a                                                            
+     d  reserved_2                    6a                                                            
+     d  numDaysUsed                  10i 0                                                          
+     d  dateLastUsed                  7a                                                            
+     d  useResetDate                  7a                                                            
+     d  reserved_3                    2a                                                            
+     d  dtaSpcSizeMlt                10i 0                                                          
+     d  accPathSizeMlt...                                                                           
+     d                               10i 0                                                          
+     d  textCcsid                    10i 0                                                          
+     d  ofsAddInf                    10i 0                                                          
+     d  lenAddInf                    10i 0                                                          
+     d  numTotRcdsU                  10u 0                                                          
+     d  numDltRcdsU                  10u 0                                                          
+     d  reserved_4                    6a                                                            
+      /endif                                                                                        
+      *                                                                                             
+      /endif                                                                                        
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[                                  
@@ -6477,6 +6569,7 @@ srccssid=  "00273">
       *                                                                     *                       
       *   >>COMPILE<<                                                       *                       
       *     >>PARM<< MAXMBRS(1);                                            *                       
+      *     >>PARM<< OPTION(*EVENTF);                                       *                       
       *   >>END-COMPILE<<                                                   *                       
       *                                                                     *                       
       *   >>EXECUTE<<                                                       *                       
@@ -6526,6 +6619,7 @@ srccssid=  "00273">
       *                                                                     *                       
       *   >>COMPILE<<                                                       *                       
       *     >>PARM<< MAXMBRS(1);                                            *                       
+      *     >>PARM<< OPTION(*EVENTF);                                       *                       
       *   >>END-COMPILE<<                                                   *                       
       *                                                                     *                       
       *   >>EXECUTE<<                                                       *                       
@@ -6957,6 +7051,11 @@ srccssid=  "00273">
       *                            job log to event files create by IBM     *                       
       *                            object creation commands.                *                       
       *                                                                     *                       
+      *  28.01.2017  Th.Raddatz    Fixed problem, that event file entries   *                       
+      *                            created by an IBM object creation command*                       
+      *                            were lost, when the object name was      *                       
+      *                            overridden in the STRPREPRC section.     *                       
+      *                                                                     *                       
       * =================================================================== *                       
       * >>PRE-COMPILER<<                                                    *                       
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *                       
@@ -7130,6 +7229,16 @@ srccssid=  "00273">
      D  lib                          10a                                                            
      D  mbr                          10a                                                            
       *                                                                                             
+     D g_crtCmds       ds                  qualified                                                
+     D  cmd                          10a                                                            
+     D  reserved_1                    2a                                                            
+     D  keyword                      10a                                                            
+     D  reserved_2                    2a                                                            
+     D  text                         50a                                                            
+      *                                                                                             
+     D g_crtCmdsDta    s             74a   dim(18) ctdata                                           
+     D g_pCrtCmds      s               *   inz(%addr(g_crtCmdsDta))                                 
+      *                                                                                             
       * -------------------------------------------------------------                               
       *  Importierte Prototypen                                                                     
       * -------------------------------------------------------------                               
@@ -7193,6 +7302,11 @@ srccssid=  "00273">
      D p_performCmd...                                                                              
      D                 PR                                                                           
      D                                     extproc('p_performCmd')                                  
+     D  i_cmd                              value  like(cmdLong_t)                                   
+      *                                                                                             
+     D f_retrieveEventFile...                                                                       
+     D                 pr                  likeds(qObj_t)                                           
+     D                                     extproc('f_retrieveEventFile')                           
      D  i_cmd                              value  like(cmdLong_t)                                   
       *                                                                                             
      D f_addData...                                                                                 
@@ -7282,12 +7396,20 @@ srccssid=  "00273">
      D p_endAbn...                                                                                  
      D                 PR                                                                           
      D                                     extproc('p_endAbn')                                      
-     D  i_haveEventFile...                                                                          
-     D                                 n   value  options(*nopass)                                  
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                     options(*nopass)                                         
       *                                                                                             
      D p_endOK...                                                                                   
      D                 PR                                                                           
      D                                     extproc('p_endOK')                                       
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                     options(*nopass)                                         
+      *                                                                                             
+     D p_writeJobLogToEventf...                                                                     
+     D                 PR                                                                           
+     D                                     extproc('p_writeJobLogToEventf')                         
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D  i_chgMsgs                      n   const                                                    
       *                                                                                             
      D p_replaceVar...                                                                              
      D                 PR                                                                           
@@ -7910,16 +8032,17 @@ srccssid=  "00273">
          endif;                                                                                     
                                                                                                     
          if (not f_executeCommand(cTrue: i_cmd));                                                   
-            if (%scan(cEVENTF_YES: i_cmd) > 0 and                                                   
-                not isEmptyEventFile(g_eventf.mbr: g_eventf.lib));                                  
-               p_endAbn(cTrue); // EVENT file created by command                                    
+            if (%scan(cEVENTF_YES: i_cmd) > 0);                                                     
+               p_endAbn(f_retrieveEventFile(i_cmd)); // EVENT file created by IBM command           
             else;                                                                                   
                p_endAbn();                                                                          
             endif;                                                                                  
          else;                                                                                      
-            // Write event file, but change messages greater or equal                               
-            // to "error" to "warning".                                                             
-            if (%scan(cEVENTF_YES: i_cmd) = 0);                                                     
+            // Write event file, but change messages greater or                                     
+            // equal to "error" to "warning".                                                       
+            if (%scan(cEVENTF_YES: i_cmd) > 0);                                                     
+               p_endOK(f_retrieveEventFile(i_cmd)); // EVENT file created by IBM command            
+            else;                                                                                   
                p_endOK();                                                                           
             endif;                                                                                  
          endif;                                                                                     
@@ -7958,13 +8081,88 @@ srccssid=  "00273">
          endif;                                                                                     
                                                                                                     
          if (not f_executeCommand(cTrue: i_cmd));                                                   
-            if (%scan(cEVENTF_YES: i_cmd) > 0 and                                                   
-                not Eventf_isEmpty(g_eventf.mbr: g_eventf.lib));                                    
-               p_endAbn(cTrue); // EVENT file created by command                                    
+            if (%scan(cEVENTF_YES: i_cmd) > 0);                                                     
+               p_endAbn(f_retrieveEventFile(i_cmd)); // EVENT file created by command               
             else;                                                                                   
                p_endAbn();                                                                          
             endif;                                                                                  
          endif;                                                                                     
+                                                                                                    
+      /end-free                                                                                     
+     P                 e                                                                            
+      *                                                                                             
+      * =============================================================                               
+      *  Retrieve the name of the event file (library & member)                                     
+      *  from the object creation command.                                                          
+      * =============================================================                               
+     P f_retrieveEventFile...                                                                       
+     P                 b                                                                            
+     D                 pi                  likeds(qObj_t)                                           
+     D  i_cmd                              value  like(cmdLong_t)                                   
+      *                                                                                             
+      *  Return value                                                                               
+     D qObj            ds                  likeds(qObj_t) inz                                       
+      *                                                                                             
+     D cmd             s                   like(i_cmd)                                              
+     D clCmd           s             10a   varying                                                  
+     D clKwd           s             10a   varying                                                  
+     D i               s             10i 0                                                          
+     D s               s             10i 0                                                          
+     D e               s             10i 0                                                          
+     D parmValue       s             30a   varying                                                  
+      *                                                                                             
+     D SPACE           c                   ' '                                                      
+      /free                                                                                         
+                                                                                                    
+         clear qObj;                                                                                
+                                                                                                    
+         cmd = f_fmtCmd(i_cmd);                                                                     
+         i = %scan(SPACE: cmd);                                                                     
+         if (i <= 1);                                                                               
+            return qObj;                                                                            
+         endif;                                                                                     
+                                                                                                    
+         clKwd = '';                                                                                
+         clCmd = %subst(cmd: 1: i-1);                                                               
+         for i = 1 to %len(g_crtCmds);                                                              
+            if (g_crtCmds.cmd = clCmd);                                                             
+               clKwd = %trim(g_crtCmds.keyword);                                                    
+               leave;                                                                               
+            endif;                                                                                  
+         endfor;                                                                                    
+                                                                                                    
+         if (clKwd = '');                                                                           
+            i = %scan(SPACE: cmd: 1); // Skip CL command                                            
+            s = %check(SPACE: cmd: i); // Skip spaces = Start of 1. keyword                         
+            e = %scan('(': cmd: s);   // Start of keyword value                                     
+            if ((e - s) <= 0);                                                                      
+               return qObj;                                                                         
+            endif;                                                                                  
+            clKwd = %subst(cmd: s: e-s);                                                            
+         endif;                                                                                     
+                                                                                                    
+         s = %scan(clKwd + '(': cmd); // Start of object parameter                                  
+         e = %scan(')': cmd); // End of object parameter                                            
+                                                                                                    
+         s = s + %len(clKwd) + 1;                                                                   
+         if ((e - s) <= 0);                                                                         
+            return qObj;                                                                            
+         endif;                                                                                     
+                                                                                                    
+         parmValue = %trim(%subst(cmd: s: e-s));                                                    
+         s = %scan('/': parmValue);                                                                 
+         if ((s - 1) > 0);                                                                          
+            if (s >= %len(parmValue));                                                              
+               return qObj;                                                                         
+            endif;                                                                                  
+            qObj.lib = %subst(parmValue: 1: s-1);                                                   
+            qObj.name = %subst(parmValue: s+1);                                                     
+         else;                                                                                      
+            qObj.lib = '*LIBL';                                                                     
+            qObj.name = parmValue;                                                                  
+         endif;                                                                                     
+                                                                                                    
+         return qObj;                                                                               
                                                                                                     
       /end-free                                                                                     
      P                 e                                                                            
@@ -8912,65 +9110,26 @@ srccssid=  "00273">
      P p_endAbn...                                                                                  
      P                 b                                                                            
      D                 pi                                                                           
-     D  i_haveEventFile...                                                                          
-     D                                 n   value  options(*nopass)                                  
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                     options(*nopass)                                         
       *                                                                                             
-     D p_isCmdEvtFile  c                   1                                                        
+     D p_qEventf       c                   1                                                        
       *                                                                                             
-     D haveEventFile   s                   like(i_haveEventFile)                                    
-     D doAppend        s               n                                                            
-     D lineNumber      s                   like(f1_line_number)                                     
+     D qEventf         ds                  likeds(i_qEventf)                                        
       *                                                                                             
       *  Nachrichten                                                                                
       *  ... Verarbeitung in Zeile &1 abgebrochen.                                                  
       /COPY QSTRPREPRC,PRZ0002                                                                      
-      *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet           
-      /COPY QSTRPREPRC,PRZ0025                                                                      
-      *                                                                                             
-      *  Arbeitsfelder                                                                              
       /free                                                                                         
                                                                                                     
-         if (%parms() >= p_isCmdEvtFile and %addr(i_haveEventFile) <> *null);                       
-            haveEventFile = i_haveEventFile;                                                        
+         if (%parms() >= p_qEventf and %addr(i_qEventf) <> *null);                                  
+            qEventf = i_qEventf;                                                                    
          else;                                                                                      
-            haveEventFile = cFalse;                                                                 
+            clear qEventf;                                                                          
          endif;                                                                                     
                                                                                                     
-         monitor;                                                                                   
-                                                                                                    
-            if (g_option.isEventf);                                                                 
-               if (not haveEventFile);                                                              
-                  // Create STRPREPRC event file                                                    
-                  g_eventf.isOpen =                                                                 
-                     openEventFile(g_eventf.mbr: g_eventf.lib: cFalse); // Create file              
-                  doAppend = cFalse;                                                                
-                  lineNumber = f1_line_number;                                                      
-               else;                                                                                
-                  // Append job log to existing event file.                                         
-                  if (g_option.doAppendJobLog);                                                     
-                     g_eventf.isOpen =                                                              
-                        openEventFile(g_eventf.mbr: g_eventf.lib: cTrue); // Open for append        
-                     doAppend = cTrue;                                                              
-                     lineNumber = 0;                                                                
-                  endif;                                                                            
-               endif;                                                                               
-            endif;                                                                                  
-                                                                                                    
-         on-error;                                                                                  
-            g_eventf.isOpen = cFalse;                                                               
-            clear PRZ0025;                                                                          
-            PRZ00251 = g_eventf.lib;                                                                
-            p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_DIAG));                                     
-            p_endAbn(cFalse);                                                                       
-         endmon;                                                                                    
-                                                                                                    
-                                                                                                    
-         if (g_eventf.isOpen);                                                                      
-            writeEventFile(doAppend                                                                 
-                           : g_srcFile.name: g_srcFile.lib: g_srcFile.mbr                           
-                           : lineNumber);                                                           
-            closeEventFile();                                                                       
-            g_eventf.isOpen = cFalse;                                                               
+         if (g_option.isEventf);                                                                    
+            p_writeJobLogToEventf(qEventf: cFalse);                                                 
          endif;                                                                                     
                                                                                                     
          if (%open(SRCFILE));                                                                       
@@ -8994,35 +9153,99 @@ srccssid=  "00273">
      P p_endOK...                                                                                   
      P                 b                                                                            
      D                 pi                                                                           
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                     options(*nopass)                                         
+      *                                                                                             
+     D p_qEventf       c                   1                                                        
+      *                                                                                             
+     D qEventf         ds                  likeds(i_qEventf)                                        
       *                                                                                             
       *  Nachrichten                                                                                
       *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet           
       /COPY QSTRPREPRC,PRZ0025                                                                      
-      *                                                                                             
-      *  Arbeitsfelder                                                                              
       /free                                                                                         
                                                                                                     
-         if (g_option.isEventf);                                                                    
-            monitor;                                                                                
-               g_eventf.isOpen =                                                                    
-                  openEventFile(g_eventf.mbr: g_eventf.lib);                                        
-            on-error;                                                                               
-               g_eventf.isOpen = cFalse;                                                            
-               clear PRZ0025;                                                                       
-               PRZ00251 = g_eventf.lib;                                                             
-               p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_DIAG));                                  
-               p_endAbn();                                                                          
-            endmon;                                                                                 
+         if (%parms() >= p_qEventf and %addr(i_qEventf) <> *null);                                  
+            qEventf = i_qEventf;                                                                    
+         else;                                                                                      
+            clear qEventf;                                                                          
          endif;                                                                                     
                                                                                                     
-         if (g_eventf.isOpen);                                                                      
-            writeEventFile(                                                                         
-               cFalse                                                                               
-               : g_srcFile.name: g_srcFile.lib: g_srcFile.mbr: f1_line_number                       
-               : EVF_MSG_SEVERITY_ERROR: EVF_MSG_SEVERITY_WARNING);                                 
-            closeEventFile();                                                                       
-            g_eventf.isOpen = cFalse;                                                               
+         if (g_option.isEventf);                                                                    
+            p_writeJobLogToEventf(qEventf: cTrue);                                                  
          endif;                                                                                     
+                                                                                                    
+      /end-free                                                                                     
+     P                 e                                                                            
+      *                                                                                             
+      * =============================================================                               
+      *  Write job log entries to the event file.                                                   
+      *                                                                                             
+      *  i_qEventf - Event file created by the object creation                                      
+      *              command. If the object name was overridden by                                  
+      *              a STRPREPRC >>PARM<< tag, the events ctreated by                               
+      *              the object creation command must be copied to                                  
+      *              the event file created by STRPREPRC.                                           
+      * =============================================================                               
+     P p_writeJobLogToEventf...                                                                     
+     P                 b                                                                            
+     D                 pi                                                                           
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D  i_chgMsgs                      n   const                                                    
+      *                                                                                             
+     D isEmpty         s               n                                                            
+      *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet           
+      /COPY QSTRPREPRC,PRZ0025                                                                      
+      /free                                                                                         
+                                                                                                    
+         monitor;                                                                                   
+                                                                                                    
+            // Event file of IBM object creation command                                            
+            if (i_qEventf.lib <> '' and i_qEventf.name <> '');                                      
+               isEmpty = isEmptyEventFile(i_qEventf.lib: i_qEventf.name);                           
+            else;                                                                                   
+               isEmpty = cTrue;                                                                     
+            endif;                                                                                  
+                                                                                                    
+            g_eventf.isOpen =                                                                       
+               openEventFile(g_eventf.mbr: g_eventf.lib: i_qEventf);                                
+                                                                                                    
+            if (g_eventf.isOpen);                                                                   
+                                                                                                    
+               if (isEmpty or g_option.doAppendJobLog);                                             
+                  if (i_chgMsgs);                                                                   
+                     writeEventFile(                                                                
+                        g_srcFile.name: g_srcFile.lib: g_srcFile.mbr                                
+                        : f1_line_number                                                            
+                        : EVF_MSG_SEVERITY_ERROR: EVF_MSG_SEVERITY_WARNING);                        
+                  else;                                                                             
+                     writeEventFile(                                                                
+                        g_srcFile.name: g_srcFile.lib: g_srcFile.mbr                                
+                        : f1_line_number);                                                          
+                  endif;                                                                            
+               endif;                                                                               
+                                                                                                    
+            endif;                                                                                  
+                                                                                                    
+         on-error;                                                                                  
+            g_eventf.isOpen = cFalse;                                                               
+            clear PRZ0025;                                                                          
+            PRZ00251 = g_eventf.lib;                                                                
+            p_sndMsg(f_newMsg('PRZ0025': PRZ0025: cTYPE_DIAG));                                     
+         endmon;                                                                                    
+                                                                                                    
+         // Allways try to close the event file.                                                    
+                                                                                                    
+         monitor;                                                                                   
+                                                                                                    
+            if (g_eventf.isOpen);                                                                   
+               closeEventFile();                                                                    
+               g_eventf.isOpen = cFalse;                                                            
+            endif;                                                                                  
+                                                                                                    
+         on-error;                                                                                  
+            // Ignore close errors.                                                                 
+         endmon;                                                                                    
                                                                                                     
       /end-free                                                                                     
      P                 e                                                                            
@@ -9053,6 +9276,25 @@ srccssid=  "00273">
       /end-free                                                                                     
      P                 E                                                                            
       *                                                                                             
+** CTDATA g_crtCmdsDta                                                                              
+CRTBNDCL    PBM         Create Bound CL Program                                                     
+CRTBNDRPG   PBM         Create Bound RPG Program                                                    
+CRTCBLMOD   MODULE      Create COBOL Module                                                         
+CRTCLMOD    MODULE      Create CL Module                                                            
+CRTCMOD     MODULE      Create C Module                                                             
+CRTCPPMOD   MODULE      Create C++ Module                                                           
+CRTDSPF     FILE        Create Display File                                                         
+CRTMNU      MENU        Create Menu                                                                 
+CRTPNLGRP   PNLGRP      Create Panel Group                                                          
+CRTPRTF     FILE        Create Printer File                                                         
+CRTRPGMOD   MODULE      Create RPG Module                                                           
+CRTSQLCBL   PGM         Create SQL COBOL Program                                                    
+CRTSQLCBLI  OBJ         Create SQL ILE COBOL Object                                                 
+CRTSQLCI    OBJ         Create SQL ILE C object                                                     
+CRTSQLCPPI  OBJ         Create SQL ILE C++ Object                                                   
+CRTSQLRPG   PGM         Create SQL RPG Program                                                      
+CRTSQLRPGI  OBJ         Create SQL ILE RPG Object                                                   
+XCRTSQLOBJ  SQLOBJ      Create SQL-Object                                                           
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[                                  
@@ -9371,8 +9613,9 @@ srccssid=  "00273">
      D T_UNSIGNED      C                   x'0A'                                                    
       *                                                                                             
       * -------------------------------------------------------------                               
-      *  Verwendete Dateien                                                                         
+      *  External prototypes                                                                        
       * -------------------------------------------------------------                               
+      /COPY QSTRPREPRC,QUSRMBRD                   Retrieve Member Description (QUSRMBRD) API        
       *                                                                                             
       * -------------------------------------------------------------                               
       *  Globale Referenzfelder                                                                     
@@ -9395,6 +9638,8 @@ srccssid=  "00273">
      D  isEnabled                      n   inz(cFalse)                                              
      D  haveEventFile                  n   inz(cFalse)                                              
      D  haveJobLog                     n   inz(cFalse)                                              
+     D  openForAppend                  n   inz(cFalse)                                              
+     D  copyEvents                     n   inz(cFalse)                                              
      D  msgKey                        4a   inz(*ALLx'FF')                                           
       *                                                                                             
      D g_LDA           ds                  dtaara(*LDA) qualified                                   
@@ -9408,6 +9653,12 @@ srccssid=  "00273">
       /copy QSTRPREPRC,QMHRTVM                     Retrieve Message (QMHRTVM) API                   
       /copy QEVENTF,PEVENTF                        EVFEVENT API - Public Interface                  
       /copy QJOBLOG,PJOBLOG                        EVFEVENT API - Job Log                           
+      *                                                                                             
+      *  Updated the *LDA with the name of the event file.                                          
+     D updateLDA...                                                                                 
+     D                 pr                  extproc('updateLDA')                                     
+     D  i_lib                        10a   const                                                    
+     D  i_obj                        10a   const                                                    
       *                                                                                             
       * =============================================================                               
       *  Enables this module.                                                                       
@@ -9428,11 +9679,30 @@ srccssid=  "00273">
      P isEmptyEventFile...                                                                          
      P                 b                   export                                                   
      D                 pi              n                                                            
-     D  i_obj                        10a   const                                                    
      D  i_lib                        10a   const                                                    
+     D  i_obj                        10a   const                                                    
+      *                                                                                             
+     D qFile           ds                  likeds(qObj_t) inz                                       
+     D mbrd0200        ds                  likeds(mbrd0200_t) inz                                   
+     D msg             ds                  likeds(msg_t) inz                                        
       /free                                                                                         
                                                                                                     
-         return Eventf_isEmpty(i_lib: i_obj);                                                       
+         monitor;                                                                                   
+                                                                                                    
+            if (not f_exist('EVFEVENT': i_lib: '*FILE': i_obj));                                    
+               return cTrue;                                                                        
+            endif;                                                                                  
+                                                                                                    
+            qFile.name = 'EVFEVENT';                                                                
+            qFile.lib = i_lib;                                                                      
+            QUSRMBRD(mbrd0200: %size(mbrd0200): 'MBRD0200': qFile: i_obj: '0');                     
+                                                                                                    
+            return mbrd0200.numTotRcds = 0;                                                         
+                                                                                                    
+         on-error;                                                                                  
+            msg = f_rcvPgmMsgObj(cMsg_Escape);                                                      
+            f_sndPgmMsg(msg: cMsg_Prv);                                                             
+         endmon;                                                                                    
                                                                                                     
       /end-free                                                                                     
      P                 e                                                                            
@@ -9478,6 +9748,9 @@ srccssid=  "00273">
             g_status.msgKey = *ALLx'FF';                                                            
          endif;                                                                                     
                                                                                                     
+         // Initialize *LDA. Reset event file name.                                                 
+         // updateLDA('': '');                                                                      
+                                                                                                    
       /end-free                                                                                     
      P                 e                                                                            
       *                                                                                             
@@ -9489,11 +9762,12 @@ srccssid=  "00273">
      D                 pi              n                                                            
      D  i_obj                        10a   const                                                    
      D  i_lib                        10a   const                                                    
-     D  i_forAppend                    n   const options(*nopass)                                   
+     D  i_qEventf                          const  likeds(qObj_t)                                    
+     D                                            options(*nopass)                                  
                                                                                                     
-     D p_forAppend     c                   3                                                        
+     D p_qEventf       c                   3                                                        
                                                                                                     
-     D forAppend       s                   like(i_forAppend)                                        
+     D qEventf         ds                  likeds(i_qEventf)                                        
      D msg             ds                  likeds(msg_t)                                            
      D rtnLib          s                   like(i_lib)                                              
       /free                                                                                         
@@ -9502,33 +9776,37 @@ srccssid=  "00273">
             return cFalse;                                                                          
          endif;                                                                                     
                                                                                                     
-         if (%parms() >= p_forAppend and %addr(i_forAppend) <> *null);                              
-            forAppend = i_forAppend;                                                                
+         if (%parms() >= p_qEventf and %addr(i_qEventf) <> *null);                                  
+            qEventf = i_qEventf;                                                                    
          else;                                                                                      
-            forAppend = cFalse;                                                                     
+            clear qEventf;                                                                          
          endif;                                                                                     
                                                                                                     
-         if (forAppend);                                                                            
+         g_status.copyEvents = cFalse;                                                              
+         g_status.openForAppend = cFalse;                                                           
+                                                                                                    
+         if (qEventf.name <> '' and qEventf.lib <> '');                                             
+            if (qEventf.name = i_obj and qEventf.lib = i_lib);                                      
+               g_status.openForAppend = cTrue;                                                      
+            else;                                                                                   
+               g_status.copyEvents = cTrue;                                                         
+            endif;                                                                                  
+         endif;                                                                                     
+                                                                                                    
+         if (g_status.openForAppend);                                                               
             Eventf_openAppend(i_lib: i_obj: rtnLib);                                                
          else;                                                                                      
             Eventf_open(i_lib: i_obj: rtnLib);                                                      
-            Eventf_writeProcessor();                                                                
+            if (g_status.copyEvents);                                                               
+               Eventf_copyFrom(qEventf.lib: qEventf.name);                                          
+            else;                                                                                   
+               Eventf_writeProcessor();                                                             
+            endif;                                                                                  
          endif;                                                                                     
                                                                                                     
          g_status.haveEventFile = cTrue;                                                            
                                                                                                     
-         monitor;                                                                                   
-            in g_LDA;                                                                               
-            if (rtnLib <> '');                                                                      
-               g_LDA.library = rtnLib;                                                              
-               g_LDA.object = i_obj;                                                                
-            else;                                                                                   
-               g_LDA.library = '';                                                                  
-               g_LDA.object = '';                                                                   
-            endif;                                                                                  
-            out g_LDA;                                                                              
-         on-error;                                                                                  
-         endmon;                                                                                    
+         updateLDA(rtnLib: i_obj);                                                                  
                                                                                                     
          if (rtnLib <> '');                                                                         
             return cTrue;                                                                           
@@ -9540,12 +9818,37 @@ srccssid=  "00273">
      P                 e                                                                            
       *                                                                                             
       * =============================================================                               
+      *  Update the *LDA with the name of the event file.                                           
+      * =============================================================                               
+     P updateLDA...                                                                                 
+     P                 b                   export                                                   
+     D                 pi                                                                           
+     D  i_lib                        10a   const                                                    
+     D  i_obj                        10a   const                                                    
+      /free                                                                                         
+                                                                                                    
+         monitor;                                                                                   
+            in g_LDA;                                                                               
+            if (i_lib <> '' and i_obj <> '');                                                       
+               g_LDA.library = i_lib;                                                               
+               g_LDA.object = i_obj;                                                                
+            else;                                                                                   
+               g_LDA.library = '';                                                                  
+               g_LDA.object = '';                                                                   
+            endif;                                                                                  
+            out g_LDA;                                                                              
+         on-error;                                                                                  
+         endmon;                                                                                    
+                                                                                                    
+      /end-free                                                                                     
+     P                 e                                                                            
+      *                                                                                             
+      * =============================================================                               
       *  Copies the job log messages to the event file.                                             
       * =============================================================                               
      P writeEventFile...                                                                            
      P                 b                   export                                                   
      D                 pi                                                                           
-     D  i_append                       n   const                                                    
      D  i_srcFile                    10a   const                                                    
      D  i_srcLib                     10a   const                                                    
      D  i_srcMbr                     10a   const                                                    
@@ -9553,7 +9856,7 @@ srccssid=  "00273">
      D  i_threshold                  10i 0 const options(*nopass)                                   
      D  i_ovrMsgSev                  10i 0 const options(*nopass)                                   
                                                                                                     
-     D p_ovrMsgSev     c                   7                                                        
+     D p_ovrMsgSev     c                   6                                                        
                                                                                                     
      D threshold       s                   like(i_threshold)                                        
      D ovrMsgSev       s                   like(i_ovrMsgSev)                                        
@@ -9587,7 +9890,7 @@ srccssid=  "00273">
            threshold = -1;                                                                          
         endif;                                                                                      
                                                                                                     
-        if (not i_append);                                                                          
+        if (not g_status.openForAppend);                                                            
            path = f_cvtQSYSObjNameToPath(i_srcFile: i_srcLib: i_srcMbr:'*FILE');                    
            sourceId = SOURCE_ID;                                                                    
            Eventf_writeFileID(                                                                      
@@ -9638,9 +9941,9 @@ srccssid=  "00273">
               Eventf_writeError(sourceId                                                            
                                 : lineNumber                                                        
                                 : jobLogEntry.msgID                                                 
-                                : 0                                                                 
+                                : jobLogEntry.msgSeverity                                           
                                 : jobLogEntry.msgText                                               
-                                : EVF_SEVERITY_INFO                                                 
+                                : EVF_SEVERITY_WARNING                                              
                                 : EVF_ANNOTATION_BOTTOM);                                           
            endif;                                                                                   
         enddo;                                                                                      
