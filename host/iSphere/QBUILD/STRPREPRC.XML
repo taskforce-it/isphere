@@ -7388,6 +7388,11 @@ srccssid=  "00273">
      D  i_monErr                           value  like(bool_t)                                      
      D  i_cmd                              value  like(cmdLong_t)                                   
       *                                                                                             
+     D p_logCommand...                                                                              
+     D                 PR                                                                           
+     D                                     extproc('p_logCommand')                                  
+     D  i_cmd                              value  like(cmdLong_t)                                   
+      *                                                                                             
      D f_fmtCmd...                                                                                  
      D                 PR                         like(cmdLong_t)                                   
      D                                     extproc('f_fmtCmd')                                      
@@ -9624,8 +9629,8 @@ srccssid=  "00273">
       * -------------------------------------------------------------                               
       *  Globale Konstanten                                                                         
       * -------------------------------------------------------------                               
-       /define COPYRIGHT_DSPEC                                                                      
-       /copy QSTRPREPRC,COPYRIGHT                                                                   
+      /DEFINE COPYRIGHT_DSPEC                                                                       
+      /COPY QSTRPREPRC,COPYRIGHT                                                                    
       *                                                                                             
      D SOURCE_ID       c                   1                                                        
      D JOBLOG_ID       c                   998                                                      
