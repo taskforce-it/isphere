@@ -81,6 +81,8 @@ public class Messages extends NLS {
 
     public static String Message_colon;
 
+    public static String Reply_colon;
+
     public static String Reply;
 
     public static String ISeries_Message_Reply_Error;
@@ -254,9 +256,9 @@ public class Messages extends NLS {
     public static String Message_Reply_Status_Accepts_Send;
 
     public static String Message_Reply_Status_Accepts_Not_Send;
-    
+
     public static String Message_Reply_Status_Not_Accept;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -81,12 +81,11 @@ public class QueuedMessageDialog extends XDialog {
 
         int numColumns = 2;
         Composite mainPanel = new Composite(scrollable, SWT.NONE);
-        GridLayout headerLayout = new GridLayout(numColumns, false);
-        mainPanel.setLayout(headerLayout);
+        mainPanel.setLayout(new GridLayout(numColumns, false));
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
         scrollable.setContent(mainPanel);
 
-        createMessagePanel(mainPanel, numColumns);
+        createMessagePanel(mainPanel);
         createSpacerPanel(mainPanel, numColumns);
 
         scrollable.setMinSize(mainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -94,19 +93,15 @@ public class QueuedMessageDialog extends XDialog {
         return scrollable;
     }
 
-    private Composite createMessagePanel(Composite parent, int numColumns) {
+    private Composite createMessagePanel(Composite parent) {
 
         Composite panel = parent;
-
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan = numColumns;
-        panel.setLayoutData(gd);
 
         Label idLabel = new Label(panel, SWT.NONE);
         idLabel.setText(Messages.Message_ID_colon);
 
         Text idText = WidgetFactory.createReadOnlyText(panel);
-        idText.setLayoutData(new GridData(200, SWT.DEFAULT));
+        idText.setLayoutData(createFieldLayoutData());
         idText.setEnabled(false);
         if (receivedMessage.getID() != null) {
             idText.setText(receivedMessage.getID());
@@ -116,7 +111,7 @@ public class QueuedMessageDialog extends XDialog {
         sevLabel.setText(Messages.Severity_colon);
 
         Text sevText = WidgetFactory.createReadOnlyText(panel);
-        sevText.setLayoutData(new GridData(200, SWT.DEFAULT));
+        sevText.setLayoutData(createFieldLayoutData());
         sevText.setEnabled(false);
         sevText.setText(new Integer(receivedMessage.getSeverity()).toString());
 
@@ -124,7 +119,7 @@ public class QueuedMessageDialog extends XDialog {
         typeLabel.setText(Messages.Message_type_colon);
 
         Text typeText = WidgetFactory.createReadOnlyText(panel);
-        typeText.setLayoutData(new GridData(200, SWT.DEFAULT));
+        typeText.setLayoutData(createFieldLayoutData());
         typeText.setEnabled(false);
         typeText.setText(receivedMessage.getMessageType());
 
@@ -132,7 +127,7 @@ public class QueuedMessageDialog extends XDialog {
         dateLabel.setText(Messages.Date_sent_colon);
 
         Text dateText = WidgetFactory.createReadOnlyText(panel);
-        dateText.setLayoutData(new GridData(200, SWT.DEFAULT));
+        dateText.setLayoutData(createFieldLayoutData());
         dateText.setEnabled(false);
         dateText.setText(receivedMessage.getDate().getTime().toString());
 
@@ -140,14 +135,14 @@ public class QueuedMessageDialog extends XDialog {
         userLabel.setText(Messages.From_colon);
 
         Text userText = WidgetFactory.createReadOnlyText(panel);
-        userText.setLayoutData(new GridData(200, SWT.DEFAULT));
+        userText.setLayoutData(createFieldLayoutData());
         userText.setEnabled(false);
         if (receivedMessage.getUser() != null) {
             userText.setText(receivedMessage.getUser());
         }
 
         if (Preferences.getInstance().isReplyFieldBeforeMessageText()) {
-            createReplyPanel(panel, numColumns);
+            createReplyPanel(panel);
         }
 
         Label msgTextLabel = new Label(panel, SWT.NONE);
@@ -155,9 +150,7 @@ public class QueuedMessageDialog extends XDialog {
         msgTextLabel.setText(Messages.Message_colon);
 
         Text msgText = WidgetFactory.createReadOnlyMultilineText(panel, true, false);
-        gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = 0;
-        msgText.setLayoutData(gd);
+        msgText.setLayoutData(createTextBoxLayoutData());
         msgText.setFont(FontHelper.getFixedSizeFont());
         msgText.setText(receivedMessage.getText());
 
@@ -167,33 +160,29 @@ public class QueuedMessageDialog extends XDialog {
             new Label(panel, SWT.NONE);
 
             Text msgHelp = WidgetFactory.createReadOnlyMultilineText(panel, true, false);
-            msgHelp.setLayoutData(new GridData(GridData.FILL_BOTH));
+            msgHelp.setLayoutData(createTextBoxLayoutData());
             msgHelp.setFont(FontHelper.getFixedSizeFont());
             msgHelp.setText(messageFormatter.formatHelpText(receivedMessage.getHelpFormatted()));
         }
 
         if (!Preferences.getInstance().isReplyFieldBeforeMessageText()) {
-            createReplyPanel(panel, numColumns);
+            createReplyPanel(panel);
         }
 
         return panel;
     }
 
-    private Composite createReplyPanel(Composite parent, int numColumns) {
+    private Composite createReplyPanel(Composite parent) {
 
         Composite panel = parent;
-
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan = numColumns;
-        panel.setLayoutData(gd);
 
         if (receivedMessage.isInquiryMessage()) {
 
             Label replyLabel = new Label(panel, SWT.NONE);
-            replyLabel.setText(Messages.Reply);
+            replyLabel.setText(Messages.Reply_colon);
 
             responseText = WidgetFactory.createText(panel);
-            responseText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+            responseText.setLayoutData(createFieldLayoutData());
             responseText.setTextLimit(132);
             if (receivedMessage.getDefaultReply() != null) {
                 responseText.setText(receivedMessage.getDefaultReply());
@@ -216,6 +205,21 @@ public class QueuedMessageDialog extends XDialog {
         }
 
         return panel;
+    }
+
+    private GridData createFieldLayoutData() {
+
+        GridData gd = new GridData(200, SWT.DEFAULT);
+
+        return gd;
+    }
+
+    private GridData createTextBoxLayoutData() {
+
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.widthHint = 0;
+
+        return gd;
     }
 
     // TODO: remove debug code
