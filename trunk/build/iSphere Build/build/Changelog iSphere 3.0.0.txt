@@ -1,5 +1,9 @@
+
 Changelog: iSphere 3.0.0.b008
 -----------------------------
+ • Fixed NullPointerException for sequential data queues.
+ • Fixed problem that the "reply" field disappeared, when resizing the 
+   "IBM i Message" dialog.
  • Added option to select a RSE filter, when using the global iSphere
    Message File Search.
 
