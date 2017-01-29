@@ -224,8 +224,10 @@ public class SendMessageDialog extends XDialog {
     @Override
     protected void okPressed() {
 
-        if (!validated(textKey, checkboxKeyHexMode.getSelection(), keyLen, true)) {
-            return;
+        if (displayKeyInputField) {
+            if (!validated(textKey, checkboxKeyHexMode.getSelection(), keyLen, true)) {
+                return;
+            }
         }
 
         if (!validated(textData, checkboxDataHexMode.getSelection(), maxDataLen, false)) {
@@ -336,13 +338,15 @@ public class SendMessageDialog extends XDialog {
 
     private void loadScreenValues() {
 
-        checkboxKeyHexMode.setSelection(loadBooleanValue(HEX_MODE_KEY, false));
+        if (displayKeyInputField) {
+            checkboxKeyHexMode.setSelection(loadBooleanValue(HEX_MODE_KEY, false));
+        }
+
         checkboxDataHexMode.setSelection(loadBooleanValue(HEX_MODE_DATA, false));
 
-        sashWeights[0] = loadIntValue(SASH_WEIGHTS_1, 2);
-        sashWeights[1] = loadIntValue(SASH_WEIGHTS_2, 4);
-
         if (displayKeyInputField) {
+            sashWeights[0] = loadIntValue(SASH_WEIGHTS_1, 2);
+            sashWeights[1] = loadIntValue(SASH_WEIGHTS_2, 4);
             sashForm.setWeights(sashWeights);
         }
 
@@ -353,12 +357,17 @@ public class SendMessageDialog extends XDialog {
 
     private void storeScreenValues() {
 
-        storeValue(HEX_MODE_KEY, checkboxKeyHexMode.getSelection());
+        if (displayKeyInputField) {
+            storeValue(HEX_MODE_KEY, checkboxKeyHexMode.getSelection());
+        }
+
         storeValue(HEX_MODE_DATA, checkboxDataHexMode.getSelection());
 
-        sashWeights = sashForm.getWeights();
-        storeValue(SASH_WEIGHTS_1, sashWeights[0]);
-        storeValue(SASH_WEIGHTS_2, sashWeights[1]);
+        if (displayKeyInputField) {
+            sashWeights = sashForm.getWeights();
+            storeValue(SASH_WEIGHTS_1, sashWeights[0]);
+            storeValue(SASH_WEIGHTS_2, sashWeights[1]);
+        }
     }
 
     /**
