@@ -769,7 +769,7 @@
 	     	
       	<!--
       	  ==========================================
-      	    Others
+      	    iSphere Spooled File Subsystem
       	  ==========================================
       	-->
 
@@ -901,6 +901,12 @@
             typefilter="*">
       </page>
 
+      	<!--
+      	  ==========================================
+      	    iSphere Connection Properties
+      	  ==========================================
+      	-->
+
       <page
             class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
             id="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
@@ -914,6 +920,12 @@
       </page>
       
    </extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere RSE Filter Manager
+      	  ==========================================
+      	-->
 
    <extension point="org.eclipse.ui.viewActions"> 
       <viewContribution 
