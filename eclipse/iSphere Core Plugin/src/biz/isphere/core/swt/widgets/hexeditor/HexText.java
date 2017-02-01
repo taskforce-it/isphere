@@ -1090,11 +1090,7 @@ public final class HexText extends Composite implements IGoToTarget {
     void doModifyKeyPressed(KeyEvent event) {
         char aChar = event.character;
 
-        if (aChar == SWT.BS || aChar == SWT.DEL) {
-            throw new IllegalAccessError("BACKSPACE and DEL should have been handled by verifyKey()");
-        }
-
-        if (aChar == '\0' || event.stateMask == SWT.CTRL || event.widget == hexEdit
+        if (aChar == '\0' || aChar == SWT.BS || aChar == SWT.DEL || event.stateMask == SWT.CTRL || event.widget == hexEdit
             && ((event.stateMask & SWT.MODIFIER_MASK) != 0 || aChar < '0' || aChar > '9' && aChar < 'A' || aChar > 'F' && aChar < 'a' || aChar > 'f')) {
             return;
         }
