@@ -321,6 +321,7 @@ public class HexDataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate 
         try {
             ByteBuffer buffer = ByteBuffer.allocate((int)dataAreaText.getContent().length());
             dataAreaText.getContent().get(buffer, 0);
+            getWrappedDataSpace().setBytes(buffer.array());
             handleSaveResult(aMonitor, null);
         } catch (Throwable e) {
             handleSaveResult(aMonitor, e);
