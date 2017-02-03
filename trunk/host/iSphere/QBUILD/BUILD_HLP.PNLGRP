@@ -111,10 +111,11 @@ objects during the build process. Usually that is QTEMP.
 Create preprocessor - Help
 :XH3.Create preprocessor (PREPRC)
 :P.
-Specifies whether or not to compile the STRPREPRC command. Usually
-it is sufficient to do it one, because the STRPREPRC complied into the
-development library. It is used by the build process to compile the
-iSphere objects.
+Specifies whether or not to compile the STRPREPRC command in
+the development library. Usually it is sufficient to do that once. You
+need to compile it again, when its source code has been changed.
+The STRPREPRC command is used by the build process to compile the iSphere
+objects.
 .*
 :IMHELP name='COM/OPTPARM'.
 .*
@@ -141,9 +142,9 @@ library.
 .*
 :PARML.
 :PT.:PK DEF.*YES:EPK.
-:PD.Compile the objects of the iSphere library.
+:PD.Compile the objects of the iSphere production library.
 :PT.:PV.*NO:EPV.
-:PD.The iSphere library objects are not created.
+:PD.The iSphere production library objects are not created.
 :EPARML.
 .*
 :EHELP.
