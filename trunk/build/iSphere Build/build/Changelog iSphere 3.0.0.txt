@@ -1,4 +1,3 @@
-
 Changelog: iSphere 3.0.0.b008
 -----------------------------
  • Fixed NullPointerException for sequential data queues.
@@ -8,6 +7,7 @@ Changelog: iSphere 3.0.0.b008
    Message File Search.
  • Fixed problem that the Hex Data Space Editor did not properly
    save the user space data. 
+ • Updated STRPREPRC to v1.12.2.
 
 Changelog: iSphere 3.0.0.b007
 -----------------------------

@@ -123,6 +123,10 @@
 
              ENDDO
 
+             CHGVAR     VAR(&CMD) +
+                        VALUE('CLRLIB LIB(' *CAT &PRDLIB *TCAT ')')
+             CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
+
              CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
                           TEXT('*BUILD_IN_PROGRESS')
 
