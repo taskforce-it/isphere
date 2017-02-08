@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 6/23/2015">
+<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/08/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -96,6 +96,12 @@
       * This program is free software, you can redistribute it and/or modify it
       * under the terms of the GNU General Public License as published by
       * the Free Software Foundation.  See GNU General Public License for details
+      *---------------------------------------------------------------------------------------
+      * >>PRE-COMPILER<<
+      *   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(*PGM) +
+      *                           DBGVIEW(*LIST) OPTION(*EVENTF);
+      *   >>EXECUTE<<
+      * >>END-PRE-COMPILER<<
       *---------------------------------------------------------------------------------------
      H DFTACTGRP(*NO) ACTGRP(*CALLER) BNDDIR('QC2LE')
       *---------------------------------------------------------------------------------------
@@ -432,6 +438,12 @@
       * Set variable &TOLIB
      C                   callp     setVariable('tolib': ParseSrcLib)
       *
+      * Set variable &TGTRLS
+     C                   callp     setVariable('tgtrls': TgtRls)
+      *
+      * Set variable &SRCFILE
+     C                   callp     setVariable('srcfile': ParseSrcFile)
+      *
       * Override Input file to uploaded text file
      C                   eval      bldexc = 'OVRDBF FILE(XMLINPUT) TOFILE(' +
      C                             %trimr(ParseSrcLib)+'/'+
@@ -515,15 +527,12 @@
      C                   eval      write_flag = *on
       *--------------------------------------------------------------------
       * Compile statement.  Read next record and execute it.
-      * The subroutine TolibToken will replace &tolib with the
-      * library the user has selected at run time.
       *--------------------------------------------------------------------
      C                   when      xmltag1 = '<compile '
      C                   eval      condList= getAttrData('condition':xmlcode:'')
      C                   read      xmlinput
      C                   eval      bldexc = readElement('compile')
      C                   if        isCondition(condList)
-     C                   exsr      TolibToken
      C                   exsr      RplVars
      C                   exsr      SetTgtRls
      C                   callp     qcmdexc(bldexc:%len(%trimr(bldexc)))
@@ -543,7 +552,6 @@
      C                   eval      bldexc = readElement('qcmdexc')
      C                   if        isCondition(condList) and
      C                             isRelease(tgtRls: release)
-     C                   exsr      TolibToken
      C                   exsr      RplVars
      C                   exsr      SetTgtRls
      C                   if        %subst(bldexc: 1: 3) = 'DLT'
@@ -571,7 +579,6 @@
      C                   read      xmlinput
      C                   eval      bldexc = readElement('execsql')
      C                   if        isCondition(condList)
-     C                   exsr      TolibToken
      C                   exsr      RplVars
      C                   exsr      srSQLExecute
      C                   endif
@@ -630,30 +637,6 @@
      C                   exsr      srSQLEnd
      C                   eval      *inlr=*on
      C                   return
-      *--------------------------------------------------------------------
-      * Replace &tolib (no matter how many times it is in the string)
-      * with whatever library the user has selected at run time.
-      *--------------------------------------------------------------------
-     C     TolibToken    begsr
-     C                   eval      aa=%scan('&tolib':bldexc)
-     C                   dow       aa>0
-     C                   eval      bldexc=%replace(%trimr(ParseSrcLib):bldexc:
-     C                             aa:6)
-     C                   eval      aa=%scan('&tolib':bldexc)
-     C                   enddo
-      *  user has selected to override source, reset SRCFILE parm in bldexcs.
-     C                   if        OvrSrcFile <> ''                             xmlpreview override
-     C                   eval      aa=%scan('SRCFILE(':bldexc)
-     C                   if        aa>0
-     C                   eval      aa=%scan('/':bldexc:aa)
-     C                   if        aa>0
-     C                   eval      ll=%scan(')':bldexc:aa)
-     C                   eval      bldexc=%replace(
-     C                               %trimr(OvrSrcFile):bldexc:aa+1:ll-(aa+1))
-     C                   endif
-     C                   endif
-     C                   endif
-     C                   endsr
       *--------------------------------------------------------------------
       * Replace variable names with their associated values.
       *--------------------------------------------------------------------
@@ -1208,6 +1191,7 @@
      D  i_pos                        10i 0 value
      D name            s             11a   varying inz
      D CHARS           c                   '&ABCDEFGHIJKLMNOPQRSTUVWXYZ+
+     D                                      abcdefghijklmnopqrstuvwxyz+
      D                                      1234567890_'
       *-------------------------------------------------------------------*
       /FREE
@@ -1231,7 +1215,7 @@
      D                 PI            64a          varying
      D  i_name                       11a   value  varying
      D i               s             10i 0 inz
-     D value           s             64a   varying inz
+     D value           s             64a   varying inz('?')
       *-------------------------------------------------------------------*
       /FREE
          for i=1 to fld_x;
@@ -1270,18 +1254,148 @@
 ]]>  </install_program>
 <qrycond  msg="'Create sample programs? (YES, NO)'" values="YES        NO"><![CDATA[
 ]]>  </qrycond>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTMOD MODULE(&tolib/JOBLOG1)
-]]>  </qcmdexc>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTSRVPGM SRVPGM(&tolib/JOBLOG)
-]]>  </qcmdexc>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTMOD MODULE(&tolib/JOBLOGT1)
-]]>  </qcmdexc>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTPGM PGM(&tolib/JOBLOGT1)
-]]>  </qcmdexc>
+<chgvar   condition="*NONE" var="SRCFILE" value="QJOBLOG">
+<![CDATA[
+]]>  </chgvar>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing A_INSTALL  type CLLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "A_INSTALL "
+mbrtype =  "CLLE      "
+mbrtext =  "JOBLOG - Installer                                "
+srcfile =  "QJOBLOG   "
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+     /* =================================================================== */
+     /*                                                                     */
+     /*  Documentation:                                                     */
+     /*                                                                     */
+     /*  Utility . . . : JOBLOG                                             */
+     /*  Object  . . . : A_INSTALL  (PGM)                                   */
+     /*  Source member : A_INSTALL                                          */
+     /*  Source type . : CLLE                                               */
+     /*  Description   : JOBLOG - Installer                                 */
+     /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
+     /*                                                                     */
+     /* =================================================================== */
+     /*                                                                     */
+     /*  This software is free software, you can redistribute it and/or     */
+     /*  modify it under the terms of the GNU General Public License (GPL)  */
+     /*  as published by the Free Software Foundation.                      */
+     /*                                                                     */
+     /*  See GNU General Public License for details.                        */
+     /*          http://www.opensource.org                                  */
+     /*          http://www.opensource.org/licenses/gpl-license.html        */
+     /*                                                                     */
+     /* =================================================================== */
+     /*  History:                                                           */
+     /*                                                                     */
+     /*  Datum       Name          Änderung                                 */
+     /*  ----------  ------------  ---------------------------------------  */
+     /*                                                                     */
+     /* =================================================================== */
+     /*   >>PRE-COMPILER<<                                                  */
+     /*     >>CRTCMD<<    CRTBNDCL  PGM(QTEMP/&OB) +                        */
+     /*                             SRCFILE(&SL/&SF) SRCMBR(&SM);           */
+     /*     >>IMPORTANT<<                                                   */
+     /*       >>PARM<<    OPTION(*EVENTF);                                  */
+     /*     >>END-IMPORTANT<<                                               */
+     /*     >>EXECUTE<<                                                     */
+     /*     >>CMD<<       CALL   PGM(QTEMP/A_INSTALL) +                     */
+     /*                          PARM('*CURRENT' '&SF' '&LI' 'NO');         */
+     /*     >>CMD<<       DLTPGM PGM(QTEMP/A_INSTALL);                      */
+     /*   >>END-PRE-COMPILER<<                                              */
+     /* =================================================================== */
+             PGM        PARM(&TGTRLS &SRCFILE &TOLIB &CRTTSTPGM)
+
+             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCFILE  ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TOLIB    ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&CRTTSTPGM) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&SRCLIB   ) TYPE(*CHAR) LEN(10)
+
+             CHGVAR     VAR(&SRCLIB) VALUE(&TOLIB   )
+
+     /* -------------------------------- */
+     /*  Delete old objects              */
+     /* -------------------------------- */
+             DLTMOD     MODULE(&TOLIB/JOBLOG1)
+             MONMSG     MSGID(CPF2105)
+
+             DLTSRVPGM  SRVPGM(&TOLIB/JOBLOG)
+             MONMSG     MSGID(CPF2105)
+
+             DLTMOD     MODULE(&TOLIB/JOBLOGT1)
+             MONMSG     MSGID(CPF2105)
+
+             DLTPGM     PGM(&TOLIB/JOBLOGT1)
+             MONMSG     MSGID(CPF2105)
+
+     /* -------------------------------- */
+     /*  Create modules                  */
+     /* -------------------------------- */
+             CRTRPGMOD  MODULE(&TOLIB/JOBLOG1) +
+                          SRCFILE(&SRCLIB/&SRCFILE) SRCMBR(*MODULE) +
+                          DBGVIEW(*LIST) TRUNCNBR(*NO) +
+                          TGTRLS(&TGTRLS)
+             DLTSPLF    FILE(JOBLOG1 ) JOB(*) SPLNBR(*LAST)
+             MONMSG     MSGID(CPF0000)
+
+     /* -------------------------------- */
+     /*  Create service programs         */
+     /* -------------------------------- */
+             CRTSRVPGM  SRVPGM(&TOLIB/JOBLOG) +
+                          MODULE(&TOLIB/JOBLOG1) +
+                          EXPORT(*SRCFILE) +
+                          SRCFILE(&SRCLIB/&SRCFILE) +
+                          SRCMBR(JOBLOG) +
+                          ACTGRP(*CALLER) +
+                          BNDSRVPGM(&TOLIB/BASICS1) +
+                          DETAIL(*BASIC) +
+                          TEXT('Tools/400: Job Log API') +
+                          TGTRLS(&TGTRLS)
+             DLTSPLF    FILE(JOBLOG) JOB(*) SPLNBR(*LAST)
+             MONMSG     MSGID(CPF0000)
+
+     /* -------------------------------- */
+     /*  Create test programs            */
+     /* -------------------------------- */
+             IF         COND(&CRTTSTPGM *EQ 'YES') THEN(DO)
+                CRTRPGMOD  MODULE(&TOLIB/JOBLOGT1) +
+                             SRCFILE(&SRCLIB/&SRCFILE) +
+                             SRCMBR(*MODULE) +
+                             DBGVIEW(*LIST) +
+                             TRUNCNBR(*NO) +
+                             TGTRLS(&TGTRLS)
+                DLTSPLF    FILE(JOBLOGT1) JOB(*) SPLNBR(*LAST)
+                MONMSG     MSGID(CPF0000)
+
+                CRTPGM     PGM(&TOLIB/JOBLOGT1) +
+                             MODULE(*PGM) +
+                             BNDSRVPGM(&TOLIB/JOBLOG &TOLIB/BASICS1) +
+                             ACTGRP(*NEW) +
+                             DETAIL(*BASIC) +
+                             TGTRLS(&TGTRLS)
+                DLTSPLF    FILE(JOBLOGT1) JOB(*) SPLNBR(*LAST)
+                MONMSG     MSGID(CPF0000)
+
+                DLTMOD    MODULE(&TOLIB/JOBLOGT1)
+
+             ENDDO
+
+     /* -------------------------------- */
+     /*  Delete obsolete objects         */
+     /* -------------------------------- */
+             DLTMOD     MODULE(&TOLIB/JOBLOG1)
+
+             ENDPGM
+]]>  </copysrc>
+</mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing CLIB  type RPGLE - in progress.
 ]]>  </sendmsg>
@@ -2313,9 +2427,9 @@ srccssid=  "00273">
      H COPYRIGHT('V1.0.0 - 15.05.2015 - mailto:thomas.raddatz@tools400.de')
       /eof
       /endif
-     D cJOBLOG_VERSION...
+     D JOBLOG_VERSION...
      D                 C                   '1.0.0'
-     D cJOBLOG_DATE...
+     D JOBLOG_DATE...
      D                 C                   '15.05.2015'
 ]]>  </copysrc>
 </mbr>
@@ -4180,30 +4294,20 @@ srccssid=  "00273">
       /ENDIF
 ]]>  </copysrc>
 </mbr>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="JOBLOG1"><![CDATA[
-CRTRPGMOD MODULE(&tolib/JOBLOG1) SRCFILE(&tolib/QJOBLOG) SRCMBR(*MODULE) DBGVIEW(*LIST) TRUNCNBR(*NO
-)
+<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="A_INSTALL"><![CDATA[
+CRTBNDCL PGM(&tolib/A_INSTALL) SRCFILE(&tolib/QJOBLOG) SRCMBR(*PGM) DFTACTGRP(*NO) ACTGRP(*NEW) DBGV
+IEW(*LIST)
 ]]>  </qcmdexc>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="JOBLOG"><![CDATA[
-CRTSRVPGM SRVPGM(&tolib/JOBLOG) MODULE(&tolib/JOBLOG1) EXPORT(*SRCFILE) SRCFILE(&tolib/QJOBLOG) SRCM
-BR(JOBLOG) TEXT('Job Log API') BNDSRVPGM((BASICS1)) ACTGRP(*CALLER) DETAIL(*BASIC) ALWUPD(*YES) ALWL
-IBUPD(*YES)
+<qcmdexc condition="NO" release="*CURRENT" dltsplf="*NONE"><![CDATA[
+CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' 'NO')
 ]]>  </qcmdexc>
-<qcmdexc condition="YES" release="*CURRENT" dltsplf="JOBLOGT1"><![CDATA[
-CRTRPGMOD MODULE(&tolib/JOBLOGT1) SRCFILE(&tolib/QJOBLOG) SRCMBR(*MODULE) DBGVIEW(*LIST) TRUNCNBR(*N
-O)
-]]>  </qcmdexc>
-<qcmdexc condition="YES" release="*CURRENT" dltsplf="JOBLOGT1"><![CDATA[
-CRTPGM PGM(&tolib/JOBLOGT1) MODULE(*PGM) BNDSRVPGM((&tolib/BASICS1) (&tolib/JOBLOG)) ACTGRP(*NEW) DE
-TAIL(*BASIC)
+<qcmdexc condition="YES" release="*CURRENT" dltsplf="*NONE"><![CDATA[
+CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' 'YES')
 ]]>  </qcmdexc>
 <qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTMOD MODULE(&tolib/JOBLOG1)
-]]>  </qcmdexc>
-<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-DLTMOD MODULE(&tolib/JOBLOGT1)
+DLTPGM PGM(&tolib/A_INSTALL)
 ]]>  </qcmdexc>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application JOBLOG successfully installed.
 ]]>  </sendmsg>
-</upload>
+</upload> 

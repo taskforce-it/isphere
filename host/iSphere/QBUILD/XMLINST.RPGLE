@@ -21,6 +21,12 @@
       * under the terms of the GNU General Public License as published by
       * the Free Software Foundation.  See GNU General Public License for details
       *---------------------------------------------------------------------------------------
+      * >>PRE-COMPILER<<
+      *   >>CRTCMD<< CRTBNDRPG    PGM(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(*PGM) +
+      *                           DBGVIEW(*LIST) OPTION(*EVENTF);
+      *   >>EXECUTE<<
+      * >>END-PRE-COMPILER<<
+      *---------------------------------------------------------------------------------------
      H DFTACTGRP(*NO) ACTGRP(*CALLER) BNDDIR('QC2LE')
       *---------------------------------------------------------------------------------------
      Fxmlinput  if   f  112        disk    usropn                               uploaded text
@@ -189,8 +195,12 @@
      D                 PR                  dim(32) like(condition)
      D  i_conditions                128A   value
       *--------------------------------------------------------------------
+     D getCurrentRelease...
+     D                 PR            10A
+      *--------------------------------------------------------------------
      D isRelease...
      D                 PR              n
+     D  i_os_release                  6A   value
      D  i_release                    10A   value
       *--------------------------------------------------------------------
      D setTargetRelease...
@@ -217,7 +227,6 @@
      D                 PR          2000A          varying
      D  i_string                   2000A   value  varying
       *--------------------------------------------------------------------
-     D rmvSrcLib       s               N   inz(*OFF)
      D vrcvar          s            145
      D qm_msgid        s              7
      D qm_msgtxt       s            500
@@ -318,7 +327,7 @@
       *
       *  get optional parameter: Conditions
      C                   if        %parms() >= 5
-     C                   if        i_Conditions <> ''
+     C                   if        %subst(i_Conditions:1:32) <> ''
      C                   eval      cnd_array = loadConditions(i_Conditions)
      C                   eval      isPreDefCond = *on
      C                   else
@@ -330,7 +339,7 @@
      C                   if        %parms() >= 6
      C                   eval      TgtRls = i_TgtRls
      C                   else
-     C                   eval      TgtRls = ''
+     C                   eval      TgtRls = getCurrentRelease()
      C                   endif
       *
      C                   exsr      srValidate                                   make sure exist
@@ -339,9 +348,6 @@
      C                   eval      bldexc = 'RMVLIBLE LIB('+
      C                             %trimr(ParseSrcLib) + ')'
      C                   callp(e)  qcmdexc(bldexc:%len(%trimr(bldexc)))
-     C                   if        %error
-     C                   eval      rmvSrcLib = *ON
-     C                   endif
       *
      C                   eval      bldexc = 'ADDLIBLE LIB('+
      C                             %trimr(ParseSrcLib) + ') POSITION(*FIRST)'
@@ -355,6 +361,9 @@
       *
       * Set variable &TOLIB
      C                   callp     setVariable('tolib': ParseSrcLib)
+      *
+      * Set variable &TGTRLS
+     C                   callp     setVariable('tgtrls': TgtRls)
       *
       * Override Input file to uploaded text file
      C                   eval      bldexc = 'OVRDBF FILE(XMLINPUT) TOFILE(' +
@@ -439,15 +448,12 @@
      C                   eval      write_flag = *on
       *--------------------------------------------------------------------
       * Compile statement.  Read next record and execute it.
-      * The subroutine TolibToken will replace &tolib with the
-      * library the user has selected at run time.
       *--------------------------------------------------------------------
      C                   when      xmltag1 = '<compile '
      C                   eval      condList= getAttrData('condition':xmlcode:'')
      C                   read      xmlinput
      C                   eval      bldexc = readElement('compile')
      C                   if        isCondition(condList)
-     C                   exsr      TolibToken
      C                   exsr      RplVars
      C                   exsr      SetTgtRls
      C                   callp     qcmdexc(bldexc:%len(%trimr(bldexc)))
@@ -465,8 +471,8 @@
      C                                                    :xmlcode:'*NONE')
      C                   read      xmlinput
      C                   eval      bldexc = readElement('qcmdexc')
-     C                   if        isCondition(condList) and isRelease(release)
-     C                   exsr      TolibToken
+     C                   if        isCondition(condList) and
+     C                             isRelease(tgtRls: release)
      C                   exsr      RplVars
      C                   exsr      SetTgtRls
      C                   if        %subst(bldexc: 1: 3) = 'DLT'
@@ -494,7 +500,6 @@
      C                   read      xmlinput
      C                   eval      bldexc = readElement('execsql')
      C                   if        isCondition(condList)
-     C                   exsr      TolibToken
      C                   exsr      RplVars
      C                   exsr      srSQLExecute
      C                   endif
@@ -551,38 +556,8 @@
      C                   enddo
       *
      C                   exsr      srSQLEnd
-     C                   if        rmvSrcLib
-     C                   eval      rmvSrcLib = *OFF
-     C                   eval      bldexc = 'RMVLIBLE LIB('+
-     C                             %trimr(ParseSrcLib) + ')'
-     C                   callp(e)  qcmdexc(bldexc:%len(%trimr(bldexc)))
-     C                   endif
      C                   eval      *inlr=*on
      C                   return
-      *--------------------------------------------------------------------
-      * Replace &tolib (no matter how many times it is in the string)
-      * with whatever library the user has selected at run time.
-      *--------------------------------------------------------------------
-     C     TolibToken    begsr
-     C                   eval      aa=%scan('&tolib':bldexc)
-     C                   dow       aa>0
-     C                   eval      bldexc=%replace(%trimr(ParseSrcLib):bldexc:
-     C                             aa:6)
-     C                   eval      aa=%scan('&tolib':bldexc)
-     C                   enddo
-      *  user has selected to override source, reset SRCFILE parm in bldexcs.
-     C                   if        OvrSrcFile <> ''                             xmlpreview override
-     C                   eval      aa=%scan('SRCFILE(':bldexc)
-     C                   if        aa>0
-     C                   eval      aa=%scan('/':bldexc:aa)
-     C                   if        aa>0
-     C                   eval      ll=%scan(')':bldexc:aa)
-     C                   eval      bldexc=%replace(
-     C                               %trimr(OvrSrcFile):bldexc:aa+1:ll-(aa+1))
-     C                   endif
-     C                   endif
-     C                   endif
-     C                   endsr
       *--------------------------------------------------------------------
       * Replace variable names with their associated values.
       *--------------------------------------------------------------------
@@ -601,7 +576,7 @@
       * i_TgtRls.
       *--------------------------------------------------------------------
      C     SetTgtRls     begsr
-     C                   if        TgtRls = ''
+     C                   if        TgtRls = getCurrentRelease()
      C                   leavesr
      C                   endif
      C                   eval      bldexc =
@@ -942,17 +917,13 @@
      P isCondition...
      P                 E
       *---------------------------------------------------------------------------------------------
-      *  Check the release level
+      *  Get the current release level of the operation system
       *---------------------------------------------------------------------------------------------
-     P isRelease...
+     P getCurrentRelease...
      P                 B
       *
-     D isRelease...
-     D                 PI              n
-     D  i_release                    10A   value
-      *
-      *  return value
-     D isRelease       S               n   inz(*off)
+     D getCurrentRelease...
+     D                 PI            10A
       *
       *  QSZRTVPR API
      D QSZRTVPR...
@@ -979,6 +950,25 @@
      D errCode         DS
      D  bytPrv                       10i 0 inz(0)
      D  bytAvl                       10i 0 inz(0)
+      *-------------------------------------------------------------------*
+     C                   Callp     QSZRTVPR(prdr0100: %size(prdr0100):
+     C                                      'PRDR0100': prdi0100: errCode)
+     C                   Return    prdr0100.releaseLvl
+     P getCurrentRelease...
+     P                 E
+      *---------------------------------------------------------------------------------------------
+      *  Check the release level
+      *---------------------------------------------------------------------------------------------
+     P isRelease...
+     P                 B
+      *
+     D isRelease...
+     D                 PI              n
+     D  i_os_release                  6A   value
+     D  i_release                    10A   value
+      *
+      *  return value
+     D isRelease       S               n   inz(*off)
       *  Release
      D release         DS
      D  r_operator             1      3a
@@ -989,23 +979,21 @@
      C                   Eval      isRelease = *on
      C                   Else
      C                   Eval      release = i_release
-     C                   Callp     QSZRTVPR(prdr0100: %size(prdr0100):
-     C                                      'PRDR0100': prdi0100: errCode)
      C                   Select
      C                   When      r_operator = '*LT' and
-     C                             prdr0100.releaseLvl < i_release
+     C                             i_os_release < r_level
      C                   Eval      isRelease = *on
      C                   When      r_operator = '*EQ' and
-     C                             prdr0100.releaseLvl = i_release
+     C                             i_os_release = r_level
      C                   Eval      isRelease = *on
      C                   When      r_operator = '*GT' and
-     C                             prdr0100.releaseLvl > i_release
+     C                             i_os_release > r_level
      C                   Eval      isRelease = *on
      C                   When      r_operator = '*LE' and
-     C                             prdr0100.releaseLvl <= i_release
+     C                             i_os_release <= r_level
      C                   Eval      isRelease = *on
      C                   When      r_operator = '*GE' and
-     C                             prdr0100.releaseLvl >= i_release
+     C                             i_os_release >= r_level
      C                   Eval      isRelease = *on
      C                   Other
      C                   Eval      isRelease = *off
@@ -1124,6 +1112,7 @@
      D  i_pos                        10i 0 value
      D name            s             11a   varying inz
      D CHARS           c                   '&ABCDEFGHIJKLMNOPQRSTUVWXYZ+
+     D                                      abcdefghijklmnopqrstuvwxyz+
      D                                      1234567890_'
       *-------------------------------------------------------------------*
       /FREE
@@ -1147,7 +1136,7 @@
      D                 PI            64a          varying
      D  i_name                       11a   value  varying
      D i               s             10i 0 inz
-     D value           s             64a   varying inz
+     D value           s             64a   varying inz('?')
       *-------------------------------------------------------------------*
       /FREE
          for i=1 to fld_x;
@@ -1181,4 +1170,3 @@
       *
      P uCase...
      P                 E
-
