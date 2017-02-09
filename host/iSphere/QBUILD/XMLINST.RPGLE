@@ -249,6 +249,7 @@
      D errFLag         s              1    inz(*off)
      D cnd_msg         s             42
      D cnd_values      s            110
+     D cnd_var         s             10
      D cnd_rtnVal      s             10
      D cnd_array       s                   dim(32) inz like(condition)
      D cnd_ptr         s             10i 0 inz
@@ -547,8 +548,9 @@
       *--------------------------------------------------------------------
      C                   when      xmltag1 = '<qrycond '
      C                   eval      bldexc = readElement('qrycond')
-     C                   eval      cnd_msg    = getAttrData('msg'   : bldexc:'')
+     C                   eval      cnd_msg = getAttrData('msg'   : bldexc: '')
      C                   eval      cnd_values = getAttrData('values': bldexc:'')
+     C                   eval      cnd_var = getAttrData('var': bldexc: '*NONE')
      C                   exsr      srQueryCond
      C                   endsl
       *
@@ -702,6 +704,9 @@
      C                   enddo
      C                   eval      cnd_ptr = cnd_ptr + 1
      C                   eval      cnd_array(cnd_ptr) = cnd_rtnVal
+     C                   endif
+     C                   if        (cnd_var <> '*NONE')
+     C                   callp     setVariable(cnd_var: cnd_rtnval)
      C                   endif
      C                   endsr
       *--------------------------------------------------------------------
