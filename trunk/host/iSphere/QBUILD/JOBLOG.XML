@@ -50,7 +50,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/08/2017">
+<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/09/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -325,6 +325,7 @@
      D errFLag         s              1    inz(*off)
      D cnd_msg         s             42
      D cnd_values      s            110
+     D cnd_var         s             10
      D cnd_rtnVal      s             10
      D cnd_array       s                   dim(32) inz like(condition)
      D cnd_ptr         s             10i 0 inz
@@ -440,9 +441,6 @@
       *
       * Set variable &TGTRLS
      C                   callp     setVariable('tgtrls': TgtRls)
-      *
-      * Set variable &SRCFILE
-     C                   callp     setVariable('srcfile': ParseSrcFile)
       *
       * Override Input file to uploaded text file
      C                   eval      bldexc = 'OVRDBF FILE(XMLINPUT) TOFILE(' +
@@ -626,8 +624,9 @@
       *--------------------------------------------------------------------
      C                   when      xmltag1 = '<qrycond '
      C                   eval      bldexc = readElement('qrycond')
-     C                   eval      cnd_msg    = getAttrData('msg'   : bldexc:'')
+     C                   eval      cnd_msg = getAttrData('msg'   : bldexc: '')
      C                   eval      cnd_values = getAttrData('values': bldexc:'')
+     C                   eval      cnd_var = getAttrData('var': bldexc: '*NONE')
      C                   exsr      srQueryCond
      C                   endsl
       *
@@ -781,6 +780,9 @@
      C                   enddo
      C                   eval      cnd_ptr = cnd_ptr + 1
      C                   eval      cnd_array(cnd_ptr) = cnd_rtnVal
+     C                   endif
+     C                   if        (cnd_var <> '*NONE')
+     C                   callp     setVariable(cnd_var: cnd_rtnval)
      C                   endif
      C                   endsr
       *--------------------------------------------------------------------
@@ -1252,7 +1254,7 @@
       * /// END   OF INSTALL PGM HERE   ****************************************** ///
       * /// do not copy past this point ///
 ]]>  </install_program>
-<qrycond  msg="'Create sample programs? (YES, NO)'" values="YES        NO"><![CDATA[
+<qrycond  msg="'Create sample programs? (YES, NO)'" values="YES        NO" var="CRTTSTPGM"><![CDATA[
 ]]>  </qrycond>
 <chgvar   condition="*NONE" var="SRCFILE" value="QJOBLOG">
 <![CDATA[
@@ -2424,13 +2426,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     H COPYRIGHT('V1.0.0 - 15.05.2015 - mailto:thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.0.0 - 09.02.2017 - mailto:thomas.raddatz@tools400.de')
       /eof
       /endif
      D JOBLOG_VERSION...
      D                 C                   '1.0.0'
      D JOBLOG_DATE...
-     D                 C                   '15.05.2015'
+     D                 C                   '09.02.2017'
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -4298,11 +4300,8 @@ srccssid=  "00273">
 CRTBNDCL PGM(&tolib/A_INSTALL) SRCFILE(&tolib/QJOBLOG) SRCMBR(*PGM) DFTACTGRP(*NO) ACTGRP(*NEW) DBGV
 IEW(*LIST)
 ]]>  </qcmdexc>
-<qcmdexc condition="NO" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' 'NO')
-]]>  </qcmdexc>
-<qcmdexc condition="YES" release="*CURRENT" dltsplf="*NONE"><![CDATA[
-CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' 'YES')
+<qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
+CALL PGM(&tolib/A_INSTALL) PARM('&TGTRLS' '&SRCFILE' '&tolib' '&CRTTSTPGM')
 ]]>  </qcmdexc>
 <qcmdexc condition="*NONE" release="*CURRENT" dltsplf="*NONE"><![CDATA[
 DLTPGM PGM(&tolib/A_INSTALL)
@@ -4310,4 +4309,4 @@ DLTPGM PGM(&tolib/A_INSTALL)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application JOBLOG successfully installed.
 ]]>  </sendmsg>
-</upload> 
+</upload>
