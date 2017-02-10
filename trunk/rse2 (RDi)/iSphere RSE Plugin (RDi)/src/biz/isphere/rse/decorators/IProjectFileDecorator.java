@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 import biz.isphere.core.ISpherePlugin;
 
+import com.ibm.etools.iseries.perspective.internal.model.impl.ISeriesNativeObject;
 import com.ibm.etools.iseries.perspective.model.AbstractISeriesNativeMember;
 import com.ibm.etools.iseries.projects.core.IIBMiPropertyKeyConstants;
 
@@ -40,19 +41,23 @@ public class IProjectFileDecorator implements ILightweightLabelDecorator {
 
             String description = "";
 
-            if ((object instanceof AbstractISeriesNativeMember)) {
+            if ((object instanceof ISeriesNativeObject)) {
+                ISeriesNativeObject iSeriesNativeObject = (ISeriesNativeObject)object;
+                if (iSeriesNativeObject.isSourceFile()) {
+                    description = iSeriesNativeObject.getPropertiesModel().getProperty(IIBMiPropertyKeyConstants.TEXT_DESCRIPTION);
+                }
+            } else if ((object instanceof AbstractISeriesNativeMember)) {
                 AbstractISeriesNativeMember iSeriesNativeMember = (AbstractISeriesNativeMember)object;
                 if (iSeriesNativeMember.getIsLocal()) {
                     description = iSeriesNativeMember.getPropertiesModel().getProperty(IIBMiPropertyKeyConstants.TEXT_DESCRIPTION);
                 }
-                // IISeriesHostObjectBrief as400Member =
-                // iSeriesNativeMember.getBaseISeriesMember();
-                // as400Member.getDescription();
             } else {
                 return;
             }
 
-            decoration.addSuffix(" - \"" + description.trim() + "\"");
+            if (description != null) {
+                decoration.addSuffix(" - \"" + description.trim() + "\"");
+            }
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Could not decorate object ***", e);
