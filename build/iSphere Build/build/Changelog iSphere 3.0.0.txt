@@ -1,5 +1,6 @@
 Changelog: iSphere 3.0.0.b008
 -----------------------------
+ • Added text decoration of source files of i Projects.
  • Fixed NullPointerException for sequential data queues.
  • Fixed problem that the "reply" field disappeared, when resizing the 
    "IBM i Message" dialog.
