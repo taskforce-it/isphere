@@ -697,9 +697,12 @@
            %iSphere_i_Project_Decorator_Description
          </description>
          <enablement>
-            <objectClass
-                  name="com.ibm.etools.iseries.perspective.model.AbstractISeriesNativeMember">
-            </objectClass>
+         	<or>
+	            <objectClass 
+	            	name="com.ibm.etools.iseries.perspective.internal.model.impl.ISeriesNativeObject" />
+	            <objectClass 
+	            	name="com.ibm.etools.iseries.perspective.model.AbstractISeriesNativeMember" />
+            </or>
          </enablement>
       </decorator>
    </extension>
