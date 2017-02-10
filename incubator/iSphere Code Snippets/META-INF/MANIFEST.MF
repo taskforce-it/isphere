@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Code Snippets
+Bundle-SymbolicName: biz.isphere.snippets
+Bundle-Version: 1.0.0.r001
+Bundle-Activator: biz.isphere.snippets.ISphereCodeSnippetsPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ibm.etools.iseries.toolbox,
+ biz.isphere.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

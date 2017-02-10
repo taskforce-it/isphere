@@ -1,0 +1,31 @@
+<pcml version="1.0">
+
+  <!-- PCML source for calling "Retrieve Object Description (QUSROBJD) API" -->
+
+  <struct name="objd0200">
+    <data name="bytesReturned"             type="int"    length="4"          usage="output" />
+    <data name="bytesAvailable"            type="int"    length="4"          usage="output" />
+    <data name="objectName"                type="char"   length="10"         usage="output" />
+    <data name="libraryName"               type="char"   length="10"         usage="output" />
+    <data name="objectType"                type="char"   length="10"         usage="output" />
+    <data name="libraryReturned"           type="char"   length="10"         usage="output" />
+  </struct>
+
+  <struct name="aspControl">
+    <data name="length"                    type="int"    length="4"          usage="input"  init="24" />
+    <data name="deviceName"                type="char"   length="10"         usage="input"  init="*"  />
+    <data name="searchType"                type="char"   length="10"         usage="input"  init=""   />
+  </struct>
+
+  <program name="QUSROBJD" path="/QSYS.lib/QUSROBJD.pgm">
+    <data name="receiver"                  type="struct" struct="objd0200"   usage="output" outputsize="receiverLength" />
+    <data name="receiverLength"            type="int"    length="4"          usage="input"  init="180"      />
+    <data name="format"                    type="char"   length="8"          usage="input"  init="OBJD0200" />
+    <data name="objectName"                type="char"   length="20"         usage="input"                  />
+    <data name="objectType"                type="char"   length="10"         usage="input"                  />
+    <!-- Optional Parameter Group 1 -->
+    <data name="errorCode"                 type="int"    length="4"          usage="inputoutput" init="0"   />
+    <!-- Optional Parameter Group 2 -->
+    <data name="aspControl"                type="struct" struct="aspControl" usage="input"  />
+  </program>
+</pcml>
