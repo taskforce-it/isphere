@@ -3,7 +3,7 @@ Bundle-Version: 2.9.4.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
 X-Bundle-Info: Fixed CCSID problem, when copying members between connections. 
-X-Beta-Version: 3.0.0.b007
+X-Beta-Version: 3.0.0.b008
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added option to select a RSE filter to the iSphere Source File Search dialog (CTRL+H).
+X-Beta-Info: Added option to select a RSE filter for the iSphere Search dialogs (CTRL+H).\nText decoration of source files of i Projects.\nBugfixes.
