@@ -28,6 +28,7 @@
      <!ATTLIST qrycond
       msg CDATA #REQUIRED
       values CDATA #REQUIRED
+      var CDATA #REQUIRED
      >
      <!ELEMENT sendmsg (#PCDATA)>
      <!ATTLIST sendmsg
@@ -43,14 +44,14 @@
       rtnlib CDATA #IMPLIED
      >
      <!ELEMENT upload (install_instructions | install_program | qrycond |
-                       qcmdexc | sendmsg | mbr | compile | rtvobjd)+>
+                       qcmdexc | sendmsg | mbr | compile | rtvobjd | chgvar)+>
      <!ATTLIST upload
       appname CDATA #REQUIRED
       appauthor CDATA #REQUIRED
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 2/09/2017">
+<upload  appname="EVENTF"  appauthor="Thomas Raddatz"  appblddate=" 2/13/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1254,7 +1255,11 @@
       * /// END   OF INSTALL PGM HERE   ****************************************** ///
       * /// do not copy past this point ///
 ]]>  </install_program>
-<qrycond  msg="'Create sample programs? (YES, NO)'" values="YES        NO" var="CRTTSTPGM"><![CDATA[
+<qrycond
+  msg="'Create sample programs? (YES, NO)'"
+  values="YES        NO"
+  var="CRTTSTPGM">
+<![CDATA[
 ]]>  </qrycond>
 <chgvar   condition="*NONE" var="SRCFILE" value="QEVENTF">
 <![CDATA[
@@ -1379,7 +1384,7 @@ srccssid=  "00273">
                           ACTGRP(*CALLER) +
                           DETAIL(*BASIC) +
                           BNDSRVPGM(&TOLIB/BASICS1) +
-                          TEXT('Tools/400: Event File API') +
+                          TEXT('Event File API') +
                           TGTRLS(&TGTRLS)
              DLTSPLF    FILE(EVENTF   ) JOB(*) SPLNBR(*LAST)
              MONMSG     MSGID(CPF0000)

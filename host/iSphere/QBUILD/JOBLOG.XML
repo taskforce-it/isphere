@@ -28,6 +28,7 @@
      <!ATTLIST qrycond
       msg CDATA #REQUIRED
       values CDATA #REQUIRED
+      var CDATA #REQUIRED
      >
      <!ELEMENT sendmsg (#PCDATA)>
      <!ATTLIST sendmsg
@@ -43,14 +44,14 @@
       rtnlib CDATA #IMPLIED
      >
      <!ELEMENT upload (install_instructions | install_program | qrycond |
-                       qcmdexc | sendmsg | mbr | compile | rtvobjd)+>
+                       qcmdexc | sendmsg | mbr | compile | rtvobjd | chgvar)+>
      <!ATTLIST upload
       appname CDATA #REQUIRED
       appauthor CDATA #REQUIRED
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/09/2017">
+<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/13/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1254,7 +1255,11 @@
       * /// END   OF INSTALL PGM HERE   ****************************************** ///
       * /// do not copy past this point ///
 ]]>  </install_program>
-<qrycond  msg="'Create sample programs? (YES, NO)'" values="YES        NO" var="CRTTSTPGM"><![CDATA[
+<qrycond
+  msg="'Create sample programs? (YES, NO)'"
+  values="YES        NO"
+  var="CRTTSTPGM">
+<![CDATA[
 ]]>  </qrycond>
 <chgvar   condition="*NONE" var="SRCFILE" value="QJOBLOG">
 <![CDATA[
@@ -1359,7 +1364,7 @@ srccssid=  "00273">
                           ACTGRP(*CALLER) +
                           BNDSRVPGM(&TOLIB/BASICS1) +
                           DETAIL(*BASIC) +
-                          TEXT('Tools/400: Job Log API') +
+                          TEXT('Job Log API') +
                           TGTRLS(&TGTRLS)
              DLTSPLF    FILE(JOBLOG) JOB(*) SPLNBR(*LAST)
              MONMSG     MSGID(CPF0000)
@@ -2890,7 +2895,7 @@ srccssid=  "00273">
       *     >>EXECUTE<<                                                     *
       *   >>END-PRE-COMPILER<<                                              *
       *=====================================================================*
- CPY H NOMAIN BNDDIR('QC2LE')
+     H NOMAIN BNDDIR('QC2LE')
       /COPY QJOBLOG,H_SPEC
       /COPY QJOBLOG,COPYRIGHT
       *=====================================================================*
@@ -3979,7 +3984,7 @@ Installing PJOBLOG  type RPGLE - in progress.
 <mbr
 mbrname =  "PJOBLOG   "
 mbrtype =  "RPGLE     "
-mbrtext =  "Job Log API                                       "
+mbrtext =  "Job Log API - Public Interface                    "
 srcfile =  "QJOBLOG   "
 srclib  =  "selected  "
 srclen  =  "00112"
