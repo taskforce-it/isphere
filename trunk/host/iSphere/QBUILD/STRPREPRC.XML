@@ -28,6 +28,7 @@
      <!ATTLIST qrycond
       msg CDATA #REQUIRED
       values CDATA #REQUIRED
+      var CDATA #REQUIRED
      >
      <!ELEMENT sendmsg (#PCDATA)>
      <!ATTLIST sendmsg
@@ -43,14 +44,14 @@
       rtnlib CDATA #IMPLIED
      >
      <!ELEMENT upload (install_instructions | install_program | qrycond |
-                       qcmdexc | sendmsg | mbr | compile | rtvobjd)+>
+                       qcmdexc | sendmsg | mbr | compile | rtvobjd | chgvar)+>
      <!ATTLIST upload
       appname CDATA #REQUIRED
       appauthor CDATA #REQUIRED
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 2/09/2017">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 2/13/2017">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1254,7 +1255,11 @@
       * /// END   OF INSTALL PGM HERE   ****************************************** ///
       * /// do not copy past this point ///
 ]]>  </install_program>
-<qrycond  msg="'Select language (GER, ENG)'" values="GER        ENG" var="LANG"><![CDATA[
+<qrycond
+  msg="'Select language (GER, ENG)'"
+  values="GER        ENG"
+  var="LANG">
+<![CDATA[
 ]]>  </qrycond>
 <chgvar   condition="*NONE" var="SRCFILE" value="QSTRPREPRC">
 <![CDATA[
@@ -3815,7 +3820,7 @@ Installing PRZ0029  type RPGLE - in progress.
 <mbr
 mbrname =  "PRZ0029   "
 mbrtype =  "RPGLE     "
-mbrtext =  " 1                                                "
+mbrtext =  "1                                                 "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -4595,7 +4600,7 @@ Installing STRPREPRCP  type PNLGRP - in progress.
 <mbr
 mbrname =  "STRPREPRCP"
 mbrtype =  "PNLGRP    "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) PnlGrp Ger "
+mbrtext =  "Start Pre-Processor - Ger                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -4607,7 +4612,7 @@ srccssid=  "00273">
 .*                                                                     *
 .*  Bereich . . . : STRPREPRC                                          *
 .*  Objekt  . . . : STRPREPRCP                                         *
-.*  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) PnlGrp Ger  *
+.*  Beschreibung  : Start Pre-Processor - Ger                          *
 .*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      *
 .*  Datum . . . . : 21.11.2000                                         *
 .*                                                                     *
@@ -5750,7 +5755,7 @@ Installing STRPREPRCQ  type PNLGRP - in progress.
 <mbr
 mbrname =  "STRPREPRCQ"
 mbrtype =  "PNLGRP    "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) PnlGrp Eng "
+mbrtext =  "Start Pre-Processor - Eng                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -5762,7 +5767,7 @@ srccssid=  "00273">
 .*                                                                     *
 .*  Bereich . . . : STRPREPRC                                          *
 .*  Objekt  . . . : STRPREPRCQ                                         *
-.*  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) PnlGrp Eng  *
+.*  Beschreibung  : Start Pre-Processor - Eng                          *
 .*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      *
 .*  Datum . . . . : 21.11.2000                                         *
 .*                                                                     *
@@ -6815,7 +6820,7 @@ Installing STRPREPRC1  type CLLE - in progress.
 <mbr
 mbrname =  "STRPREPRC1"
 mbrtype =  "CLLE      "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) PEP-Modul  "
+mbrtext =  "Start Pre-Processor - CPP                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -6827,7 +6832,7 @@ srccssid=  "00273">
      /*                                                                     */
      /*  Bereich . . . : STRPREPRC                                          */
      /*  Objekt  . . . : STRPREPRC1                                         */
-     /*  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) PEP-Modul   */
+     /*  Beschreibung  : Start Pre-Processor - CPP                          */
      /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
      /*  Datum . . . . : 21.11.2000                                         */
      /*                                                                     */
@@ -7142,7 +7147,7 @@ Installing STRPREPRC2  type RPGLE - in progress.
 <mbr
 mbrname =  "STRPREPRC2"
 mbrtype =  "RPGLE     "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) Srv-Modul  "
+mbrtext =  "Start Pre-Processor - Services                    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -7154,7 +7159,7 @@ srccssid=  "00273">
       *                                                                     *
       *  Bereich . . . : STRPREPRC                                          *
       *  Objekt  . . . : STRPREPRC2                                         *
-      *  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) Srv-Modul   *
+      *  Beschreibung  : Start Pre-Processor - Services                     *
       *  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      *
       *  Datum . . . . : 21.11.2000                                         *
       *                                                                     *
@@ -9475,7 +9480,7 @@ Installing STRPREPRC3  type RPGLE - in progress.
 <mbr
 mbrname =  "STRPREPRC3"
 mbrtype =  "RPGLE     "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) Ini-Modul  "
+mbrtext =  "Start Pre-Processor - Init                        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -9487,7 +9492,7 @@ srccssid=  "00273">
       *                                                                     *
       *  Bereich . . . : STRPREPRC                                          *
       *  Objekt  . . . : STRPREPRC3                                         *
-      *  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) Ini-Modul   *
+      *  Beschreibung  : Start Pre-Processor - Init                         *
       *  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      *
       *  Datum . . . . : 21.11.2000                                         *
       *                                                                     *
@@ -9689,7 +9694,7 @@ Installing STRPREPRC4  type RPGLE - in progress.
 <mbr
 mbrname =  "STRPREPRC4"
 mbrtype =  "RPGLE     "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) EVF-Modul  "
+mbrtext =  "Start Pre-Processor - Event File                  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -9701,7 +9706,7 @@ srccssid=  "00273">
       *                                                                     *
       *  Bereich . . . : STRPREPRC                                          *
       *  Objekt  . . . : STRPREPRC4                                         *
-      *  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) EVF-Modul   *
+      *  Beschreibung  : Start Pre-Processor - Event File                   *
       *  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      *
       *  Datum . . . . : 15.05.2015                                         *
       *                                                                     *
@@ -10349,7 +10354,7 @@ Installing STRPREPRCG  type CMD - in progress.
 <mbr
 mbrname =  "STRPREPRCG"
 mbrtype =  "CMD       "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) CMD    Ger "
+mbrtext =  "Start Pre-Processor - Ger                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -10361,7 +10366,7 @@ srccssid=  "00273">
 /*                                                                     */
 /*  Bereich . . . : STRPREPRC                                          */
 /*  Objekt  . . . : STRPREPRC                                          */
-/*  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) CMD    Ger  */
+/*  Beschreibung  : Start Pre-Processor - Ger                          */
 /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
 /*  Datum . . . . : 21.11.2000                                         */
 /*                                                                     */
@@ -10762,7 +10767,7 @@ Installing STRPREPRCE  type CMD - in progress.
 <mbr
 mbrname =  "STRPREPRCE"
 mbrtype =  "CMD       "
-mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) CMD    Eng "
+mbrtext =  "Start Pre-Processor - Eng                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
@@ -10774,7 +10779,7 @@ srccssid=  "00273">
 /*                                                                     */
 /*  Bereich . . . : STRPREPRC                                          */
 /*  Objekt  . . . : STRPREPRC                                          */
-/*  Beschreibung  : Tool: STRPREPRC  (Starten Pre-Proz.  ) CMD    Eng  */
+/*  Beschreibung  : Start Pre-Processor - Eng                          */
 /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
 /*  Datum . . . . : 21.11.2000                                         */
 /*                                                                     */
