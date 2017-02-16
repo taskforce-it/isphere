@@ -13,6 +13,8 @@ import java.io.File;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.tn5250j.core.DialogActionTypes;
 import biz.isphere.tn5250j.core.Messages;
@@ -38,6 +41,7 @@ public class SessionDetail {
     private Text textDevice;
     private Text textPort;
     private CCombo comboCodePage;
+    private CCombo comboSSLType;
     private Button buttonScreenSize24_80;
     private Button buttonScreenSize27_132;
     // private Button buttonEnhancedMode;
@@ -133,6 +137,38 @@ public class SessionDetail {
         if (textName.getText().equals(ISession.DESIGNER) || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             textDevice.setEnabled(false);
         }
+
+        // SSL
+
+        final Label labelSSLType = new Label(compositeGeneral, SWT.NONE);
+        labelSSLType.setText("SSL Type");
+
+        comboSSLType = new CCombo(compositeGeneral, SWT.BORDER | SWT.READ_ONLY);
+        comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        comboSSLType.setTextLimit(10);
+        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
+            comboSSLType.add(TN5250jConstants.SSL_TYPES[idx]);
+        }
+        if (actionType == DialogActionTypes.CREATE) {
+            comboSSLType.setText(preferences.getSSLType());
+        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            comboSSLType.setText(session.getSSLType());
+        }
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            comboSSLType.setEnabled(false);
+        }
+        comboSSLType.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
+                    textPort.setText("23");
+                } else {
+                    textPort.setText("992");
+                }
+            }
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
 
         // General : Port
 
@@ -432,6 +468,7 @@ public class SessionDetail {
         textDevice.setText(textDevice.getText().toUpperCase().trim());
         textPort.setText(textPort.getText().toUpperCase().trim());
         comboCodePage.setText(comboCodePage.getText().trim());
+        comboSSLType.setText(comboSSLType.getText().trim());
         textUser.setText(textUser.getText().trim());
         textPassWord.setText(textPassWord.getText().trim());
         textProgram.setText(textProgram.getText().toUpperCase().trim());
@@ -511,6 +548,20 @@ public class SessionDetail {
             return false;
         }
 
+        // The value in field 'SSL Type' is not valid.
+        error = true;
+        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
+            if (TN5250jConstants.SSL_TYPES[idx].equals(comboSSLType.getText())) {
+                error = false;
+                break;
+            }
+        }
+        if (error) {
+            setErrorMessage("The_value_in_field_SSL_type_is_not_valid");
+            comboSSLType.setFocus();
+            return false;
+        }
+
         // The value in field 'User' is not valid.
 
         if (textName.getText().equals(ISession.DESIGNER) && textUser.getText().equals("")) {
@@ -569,6 +620,7 @@ public class SessionDetail {
         session.setDevice(textDevice.getText());
         session.setPort(textPort.getText());
         session.setCodePage(comboCodePage.getText());
+        session.setSSLType(comboSSLType.getText());
         if (buttonScreenSize27_132.getSelection()) {
             session.setScreenSize(ISession.SIZE_132);
         } else {

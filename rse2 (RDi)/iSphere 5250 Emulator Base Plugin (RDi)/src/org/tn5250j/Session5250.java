@@ -129,8 +129,8 @@ public class Session5250 implements SessionInterface {
      * @see {@link #isSslSocket()}
      */
     public boolean isSslConfigured() {
-        if (sesProps.get(TN5250jConstants.SSL_TYPE) != null) {
-            final String sslType = (String)sesProps.get(TN5250jConstants.SSL_TYPE);
+        if (sesProps.get(TN5250jConstants.SESSION_SSL_TYPE) != null) {
+            final String sslType = (String)sesProps.get(TN5250jConstants.SESSION_SSL_TYPE);
             if (!TN5250jConstants.SSL_TYPE_NONE.equals(sslType)) {
                 return true;
             }
@@ -224,8 +224,8 @@ public class Session5250 implements SessionInterface {
             vt.setProxy(sesProps.getProperty(TN5250jConstants.SESSION_PROXY_HOST), proxyPort);
 
         final String sslType;
-        if (sesProps.containsKey(TN5250jConstants.SSL_TYPE)) {
-            sslType = sesProps.getProperty(TN5250jConstants.SSL_TYPE);
+        if (sesProps.containsKey(TN5250jConstants.SESSION_SSL_TYPE)) {
+            sslType = sesProps.getProperty(TN5250jConstants.SESSION_SSL_TYPE);
         } else {
             // set default to none
             sslType = TN5250jConstants.SSL_TYPE_NONE;

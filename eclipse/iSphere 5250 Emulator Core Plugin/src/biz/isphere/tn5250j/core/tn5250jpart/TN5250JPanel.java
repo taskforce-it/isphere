@@ -73,22 +73,40 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         if (isSpecified("-p")) {
             sesProps.put(SESSION_HOST_PORT, getParameter("-p"));
         }
-        if (isSpecified("-cp")) sesProps.put(SESSION_CODE_PAGE, getParameter("-cp"));
 
-        if (isSpecified("-gui")) sesProps.put(SESSION_USE_GUI, "1");
+        if (isSpecified("-cp")) {
+            sesProps.put(SESSION_CODE_PAGE, getParameter("-cp"));
+        }
 
-        if (isSpecified("-132"))
+        if (isSpecified("-sslType")) {
+            sesProps.put(SESSION_SSL_TYPE, getParameter("-sslType"));
+        }
+
+        if (isSpecified("-gui")) {
+            sesProps.put(SESSION_USE_GUI, "1");
+        }
+
+        if (isSpecified("-132")) {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
-        else
+        } else {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
+        }
 
         if (isSpecified("-sph")) {
             sesProps.put(SESSION_PROXY_HOST, getParameter("-sph"));
         }
 
-        if (isSpecified("-spp")) sesProps.put(SESSION_PROXY_PORT, getParameter("-spp"));
+        if (isSpecified("-spp")) {
+            sesProps.put(SESSION_PROXY_PORT, getParameter("-spp"));
+        }
 
-        if (isSpecified("-dn")) sesProps.put(SESSION_DEVICE_NAME, getParameter("-dn"));
+        if (isSpecified("-dn")) {
+            sesProps.put(SESSION_DEVICE_NAME, getParameter("-dn"));
+        }
+
+        if (isSpecified("-sslType")) {
+            sesProps.put(SESSION_SSL_TYPE, getParameter("-sslType"));
+        }
 
         loadSystemProperty("SESSION_CONNECT_USER");
         loadSystemProperty("SESSION_CONNECT_PASSWORD");
@@ -137,6 +155,8 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             return true;
         } else if (parameter.equals("-cp")) {
             return true;
+        } else if (parameter.equals("-sslType")) {
+            return true;
         } else if (parameter.equals("-gui")) {
             return false;
         } else if (parameter.equals("-132")) {
@@ -179,6 +199,8 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             return session.getPort();
         } else if (parameter.equals("-cp")) {
             return session.getCodePage();
+        } else if (parameter.equals("-sslType")) {
+            return session.getSSLType();
         } else if (parameter.equals("-sph")) {
             return "";
         } else if (parameter.equals("-spp")) {

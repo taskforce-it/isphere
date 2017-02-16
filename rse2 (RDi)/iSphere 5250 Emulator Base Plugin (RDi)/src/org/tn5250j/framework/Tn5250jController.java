@@ -315,8 +315,7 @@ public class Tn5250jController extends Thread {
 
         // are we to use a ssl and if we are what type
         if (isSpecified("-sslType", args)) {
-
-            sesProps.put(TN5250jConstants.SSL_TYPE, getParm("-sslType", args));
+            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParm("-sslType", args));
         }
 
         // check if device name is specified

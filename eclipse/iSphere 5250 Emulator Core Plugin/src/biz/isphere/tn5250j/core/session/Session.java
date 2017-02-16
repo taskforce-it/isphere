@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.tn5250j.TN5250jConstants;
+
 import biz.isphere.tn5250j.core.preferences.Preferences;
 
 public class Session {
@@ -35,6 +37,7 @@ public class Session {
     private String program;
     private String library;
     private String menu;
+    private String sslType; // Added with 3.0.0beta9
 
     public Session(String sessionDirectory) {
         this.sessionDirectory = sessionDirectory;
@@ -172,6 +175,17 @@ public class Session {
         this.menu = menu;
     }
 
+    public String getSSLType() {
+        if (sslType == null) {
+            return TN5250jConstants.SSL_TYPE_NONE;
+        }
+        return sslType;
+    }
+
+    public void setSSLType(String sslType) {
+        this.sslType = sslType;
+    }
+
     public static boolean exists(String sessionDirectory, String connection, String name) {
 
         File file = getSessionSettingsFile(sessionDirectory, name);
@@ -223,6 +237,9 @@ public class Session {
         if (properties.getProperty("CodePage") != null) {
             session.setCodePage(properties.getProperty("CodePage"));
         }
+        if (properties.getProperty("SSLType") != null) {
+            session.setSSLType(properties.getProperty("SSLType"));
+        }
         if (properties.getProperty("ScreenSize") != null) {
             session.setScreenSize(properties.getProperty("ScreenSize"));
         }
@@ -272,7 +289,9 @@ public class Session {
     }
 
     private boolean store() {
+
         boolean ok = false;
+
         Properties properties = new Properties();
         properties.put("Device", device);
         properties.put("Port", port);
@@ -287,6 +306,8 @@ public class Session {
         properties.put("Program", program);
         properties.put("Library", library);
         properties.put("Menu", menu);
+        properties.put("SSLType", getSSLType());
+
         try {
             FileOutputStream fos = new FileOutputStream(getSessionSettingsFile(sessionDirectory, name));
             properties.store(fos, name);
