@@ -107,8 +107,7 @@ public class My5250Applet extends JApplet {
         // are we to use a ssl and if we are what type
 
         if (isSpecified("-sslType")) {
-
-            sesProps.put(TN5250jConstants.SSL_TYPE, getParameter("-sslType"));
+            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParameter("-sslType"));
         }
 
         loadSystemProperty("SESSION_CONNECT_USER");

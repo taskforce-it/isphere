@@ -50,6 +50,7 @@ public interface TN5250jConstants {
     public static final String SESSION_TERM_NAME = "SESSION_TERM_NAME";
     public static final String SESSION_IS_APPLET = "SESSION_IS_APPLET";
     public static final String SESSION_HEART_BEAT = "SESSION_KEEP_ALIVE_ENABLED";
+    public static final String SESSION_SSL_TYPE = "SESSION_SSL_TYPE";
 
     // public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
     public static final String GUI_FRAME_WIDTH = "GUI_FRAME_WIDTH";
@@ -59,13 +60,14 @@ public interface TN5250jConstants {
     public static final String START_MONITOR_THREAD = "START_MONITOR_THREAD";
 
     // public static final String SSL_TYPE = "TN5250J_SSL_TYPE";
-    public static final String SSL_TYPE = "-sslType";
     public static final String SSL_TYPE_NONE = "NONE";
     public static final String SSL_TYPE_SSLv2 = "SSLv2";
     public static final String SSL_TYPE_SSLv3 = "SSLv3";
     public static final String SSL_TYPE_TLS = "TLS";
+    public static final String SSL_TYPE_TLS_1_1 = "TLSv1.1";
+    public static final String SSL_TYPE_TLS_1_2 = "TLSv1.2";
 
-    public static final String[] SSL_TYPES = { SSL_TYPE_NONE, SSL_TYPE_SSLv2, SSL_TYPE_SSLv3, SSL_TYPE_TLS };
+    public static final String[] SSL_TYPES = { SSL_TYPE_NONE, SSL_TYPE_SSLv2, SSL_TYPE_SSLv3, SSL_TYPE_TLS, SSL_TYPE_TLS_1_1, SSL_TYPE_TLS_1_2 };
 
     // Session JUMP Directions
     static final int JUMP_PREVIOUS = 0;

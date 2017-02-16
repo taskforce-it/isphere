@@ -11,6 +11,7 @@ package biz.isphere.tn5250j.core.preferences;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
@@ -77,6 +78,8 @@ public final class Preferences {
     private static final String BIZ_ISPHERE_TN5250J_MSVSIZE = "BIZ.ISPHERE.TN5250J.MSVSIZE"; //$NON-NLS-1$
 
     private static final String BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP = "BIZ.ISPHERE.TN5250J.ACTIVATE.VIEWS.ON.STARTUP"; //$NON-NLS-1$
+
+    private static final String BIZ_ISPHERE_TN5250J_SSL_TYPE = "BIZ.ISPHERE.TN5250J.SSL_TYPE"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -169,6 +172,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP);
     }
 
+    public String getSSLType() {
+        return preferenceStore.getString(BIZ_ISPHERE_TN5250J_SSL_TYPE);
+    }
+    
     /*
      * Preferences: SETTER
      */
@@ -225,6 +232,10 @@ public final class Preferences {
         preferenceStore.setValue(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, enable);
     }
 
+    public void setSSLType(String sslType) {
+        preferenceStore.setValue(BIZ_ISPHERE_TN5250J_SSL_TYPE, sslType);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -247,6 +258,7 @@ public final class Preferences {
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSHSIZE, getDefaultMinimalSessionHorizontalSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSVSIZE, getDefaultMinimalSessionVerticalSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, getDefaultActivateViewsOnStartup());
+        preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_SSL_TYPE, getDefaultSSLType());
     }
 
     /*
@@ -305,5 +317,9 @@ public final class Preferences {
         }
 
         return groupByLabels;
+    }
+
+    public String getDefaultSSLType() {
+        return TN5250jConstants.SSL_TYPE_NONE;
     }
 }

@@ -83,6 +83,9 @@ import java.util.concurrent.BlockingQueue;
 import javax.net.ssl.SSLSocket;
 import javax.swing.SwingUtilities;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.tn5250j.Session5250;
 import org.tn5250j.TN5250jConstants;
 import org.tn5250j.encoding.CharMappings;
@@ -291,7 +294,10 @@ public final class tnvt implements Runnable {
             // sock = new Socket(s, port);
             // smk - For SSL compability
             SocketConnector sc = new SocketConnector();
-            if (sslType != null) sc.setSSLType(sslType);
+            if (sslType != null) {
+                sc.setSSLType(sslType);
+            }
+
             sock = sc.createSocket(s, port);
 
             if (sock == null) {
@@ -343,12 +349,29 @@ public final class tnvt implements Runnable {
             me.start();
 
         } catch (Exception exception) {
-            if (exception.getMessage() == null) exception.printStackTrace();
+
+            if (exception.getMessage() == null) {
+                exception.printStackTrace();
+            }
+
             log.warn("connect() " + exception.getMessage());
 
-            if (sock == null) log.warn("I did not get a socket");
+            if (sock == null) {
+                log.warn("I did not get a socket");
+            }
 
             disconnect();
+
+            final String message = exception.getLocalizedMessage();
+
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+                public void run() {
+                    final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+                    MessageDialog.openError(shell, "Error", message);
+                }
+            });
+
             return false;
         }
         return true;
