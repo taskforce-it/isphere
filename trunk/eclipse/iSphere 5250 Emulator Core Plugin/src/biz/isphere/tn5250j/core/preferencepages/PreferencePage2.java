@@ -25,6 +25,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
@@ -42,6 +43,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     private Preferences preferences;
     private Text textPort;
     private CCombo comboCodePage;
+    private CCombo comboSSLType;
     private Button buttonScreenSize24_80;
     private Button buttonScreenSize27_132;
     // private Button buttonEnhancedMode;
@@ -70,6 +72,30 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         final GridLayout gridLayoutx = new GridLayout();
         gridLayoutx.numColumns = 2;
         container.setLayout(gridLayoutx);
+
+        // SSL Type
+
+        final Label labelSSLType = new Label(container, SWT.NONE);
+        labelSSLType.setText("SSL Type");
+
+        comboSSLType = new CCombo(container, SWT.BORDER | SWT.READ_ONLY);
+        comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        comboSSLType.setTextLimit(10);
+        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
+            comboSSLType.add(TN5250jConstants.SSL_TYPES[idx]);
+        }
+        comboSSLType.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
+                    textPort.setText("23");
+                } else {
+                    textPort.setText("992");
+                }
+            }
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
 
         // Port
 
@@ -225,6 +251,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     protected void setStoreToValues() {
 
         preferences.setSessionPortNumber(IntHelper.tryParseInt(textPort.getText(), preferences.getDefaultSessionPortNumber()));
+        preferences.setSSLType(comboSSLType.getText());
         preferences.setSessionCodepage(comboCodePage.getText());
 
         if (buttonScreenSize27_132.getSelection()) {
@@ -257,6 +284,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     protected void setScreenToDefaultValues() {
 
         textPort.setText(Integer.toString(preferences.getDefaultSessionPortNumber()));
+        comboSSLType.setText(preferences.getDefaultSSLType());
         comboCodePage.setText(preferences.getDefaultSessionCodepage());
         if (ISession.SIZE_132.equals(preferences.getDefaultSessionScreenSize())) {
             buttonScreenSize27_132.setSelection(true);
@@ -284,6 +312,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
     protected void setScreenToValues() {
 
         textPort.setText(Integer.toString(preferences.getSessionPortNumber()));
+        comboSSLType.setText(preferences.getSSLType());
         comboCodePage.setText(preferences.getSessionCodepage());
 
         if (ISession.SIZE_132.equals(preferences.getSessionScreenSize())) {
