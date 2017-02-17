@@ -53,8 +53,8 @@ public class My5250Applet extends JApplet {
     private void jbInit() throws Exception {
         this.setSize(new Dimension(400, 300));
 
-        if (isSpecified("-L"))
-            LangTool.init(parseLocale(getParameter("-L")));
+        if (isSpecified(TN5250jConstants.ARG_LOCALE))
+            LangTool.init(parseLocale(getParameter(TN5250jConstants.ARG_LOCALE)));
         else
             LangTool.init();
 
@@ -74,40 +74,53 @@ public class My5250Applet extends JApplet {
         // Start loading properties - Host must exist
         sesProps.put(TN5250jConstants.SESSION_HOST, getParameter("host"));
 
-        if (isSpecified("-e")) sesProps.put(TN5250jConstants.SESSION_TN_ENHANCED, "1");
-
-        if (isSpecified("-p")) {
-            sesProps.put(TN5250jConstants.SESSION_HOST_PORT, getParameter("-p"));
+        if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED)) {
+            sesProps.put(TN5250jConstants.SESSION_TN_ENHANCED, "1");
         }
 
-        // if (isSpecified("-f",args))
-        // propFileName = getParm("-f",args);
+        if (isSpecified(TN5250jConstants.ARG_HOST_PORT)) {
+            sesProps.put(TN5250jConstants.SESSION_HOST_PORT, getParameter(TN5250jConstants.ARG_HOST_PORT));
+        }
 
-        if (isSpecified("-cp")) sesProps.put(TN5250jConstants.SESSION_CODE_PAGE, getParameter("-cp"));
+        // if (isSpecified(TN5250jConstants.ARG_FILENAME,args))
+        // propFileName = getParm(TN5250jConstants.ARG_FILENAME,args);
 
-        if (isSpecified("-gui")) sesProps.put(TN5250jConstants.SESSION_USE_GUI, "1");
+        if (isSpecified(TN5250jConstants.ARG_CODE_PAGE)) {
+            sesProps.put(TN5250jConstants.SESSION_CODE_PAGE, getParameter(TN5250jConstants.ARG_CODE_PAGE));
+        }
 
-        if (isSpecified("-t")) sesProps.put(TN5250jConstants.SESSION_TERM_NAME_SYSTEM, "1");
+        if (isSpecified(TN5250jConstants.ARG_USE_GUI)) {
+            sesProps.put(TN5250jConstants.SESSION_USE_GUI, "1");
+        }
 
-        if (isSpecified("-132"))
+        if (isSpecified(TN5250jConstants.ARG_TERM_NAME_SYSTEM)) {
+            sesProps.put(TN5250jConstants.SESSION_TERM_NAME_SYSTEM, "1");
+        }
+
+        if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132)) {
             sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_27X132_STR);
-        else
+        } else {
             sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_24X80_STR);
+        }
 
         // socks proxy host argument
-        if (isSpecified("-sph")) {
-            sesProps.put(TN5250jConstants.SESSION_PROXY_HOST, getParameter("-sph"));
+        if (isSpecified(TN5250jConstants.ARG_PROXY_HOST)) {
+            sesProps.put(TN5250jConstants.SESSION_PROXY_HOST, getParameter(TN5250jConstants.ARG_PROXY_HOST));
         }
 
         // socks proxy port argument
-        if (isSpecified("-spp")) sesProps.put(TN5250jConstants.SESSION_PROXY_PORT, getParameter("-spp"));
+        if (isSpecified(TN5250jConstants.ARG_PROXY_PORT)) {
+            sesProps.put(TN5250jConstants.SESSION_PROXY_PORT, getParameter(TN5250jConstants.ARG_PROXY_PORT));
+        }
 
         // check if device name is specified
-        if (isSpecified("-dn")) sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, getParameter("-dn"));
-        // are we to use a ssl and if we are what type
+        if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME)) {
+            sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, getParameter(TN5250jConstants.ARG_DEVICE_NAME));
+        }
 
-        if (isSpecified("-sslType")) {
-            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParameter("-sslType"));
+        // are we to use a ssl and if we are what type
+        if (isSpecified(TN5250jConstants.ARG_SSL_TYPE)) {
+            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
         loadSystemProperty("SESSION_CONNECT_USER");

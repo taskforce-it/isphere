@@ -50,8 +50,8 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
 
     private void jbInit() throws Exception {
 
-        if (isSpecified("-L"))
-            LangTool.init(parseLocale(getParameter("-L")));
+        if (isSpecified(TN5250jConstants.ARG_LOCALE))
+            LangTool.init(parseLocale(getParameter(TN5250jConstants.ARG_LOCALE)));
         else
             LangTool.init();
 
@@ -67,45 +67,45 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
 
         sesProps.put(SESSION_HOST, getParameter("host"));
 
-        // if (isSpecified("-e"))
+        // if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED))
         // sesProps.put(SESSION_TN_ENHANCED, "1");
 
-        if (isSpecified("-p")) {
-            sesProps.put(SESSION_HOST_PORT, getParameter("-p"));
+        if (isSpecified(TN5250jConstants.ARG_HOST_PORT)) {
+            sesProps.put(SESSION_HOST_PORT, getParameter(TN5250jConstants.ARG_HOST_PORT));
         }
 
-        if (isSpecified("-cp")) {
-            sesProps.put(SESSION_CODE_PAGE, getParameter("-cp"));
+        if (isSpecified(TN5250jConstants.ARG_CODE_PAGE)) {
+            sesProps.put(SESSION_CODE_PAGE, getParameter(TN5250jConstants.ARG_CODE_PAGE));
         }
 
-        if (isSpecified("-sslType")) {
-            sesProps.put(SESSION_SSL_TYPE, getParameter("-sslType"));
+        if (isSpecified(TN5250jConstants.ARG_SSL_TYPE)) {
+            sesProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
-        if (isSpecified("-gui")) {
+        if (isSpecified(TN5250jConstants.ARG_USE_GUI)) {
             sesProps.put(SESSION_USE_GUI, "1");
         }
 
-        if (isSpecified("-132")) {
+        if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132)) {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
         } else {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
         }
 
-        if (isSpecified("-sph")) {
-            sesProps.put(SESSION_PROXY_HOST, getParameter("-sph"));
+        if (isSpecified(TN5250jConstants.ARG_PROXY_HOST)) {
+            sesProps.put(SESSION_PROXY_HOST, getParameter(TN5250jConstants.ARG_PROXY_HOST));
         }
 
-        if (isSpecified("-spp")) {
-            sesProps.put(SESSION_PROXY_PORT, getParameter("-spp"));
+        if (isSpecified(TN5250jConstants.ARG_PROXY_PORT)) {
+            sesProps.put(SESSION_PROXY_PORT, getParameter(TN5250jConstants.ARG_PROXY_PORT));
         }
 
-        if (isSpecified("-dn")) {
-            sesProps.put(SESSION_DEVICE_NAME, getParameter("-dn"));
+        if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME)) {
+            sesProps.put(SESSION_DEVICE_NAME, getParameter(TN5250jConstants.ARG_DEVICE_NAME));
         }
 
-        if (isSpecified("-sslType")) {
-            sesProps.put(SESSION_SSL_TYPE, getParameter("-sslType"));
+        if (isSpecified(TN5250jConstants.ARG_SSL_TYPE)) {
+            sesProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
         loadSystemProperty("SESSION_CONNECT_USER");
@@ -140,10 +140,10 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
     }
 
     private boolean isSpecified(String parameter) {
-        if (parameter.equals("-L")) {
+        if (parameter.equals(TN5250jConstants.ARG_LOCALE)) {
             return false;
         }
-        // else if (parameter.equals("-e")) {
+        // else if (parameter.equals(TN5250jConstants.ARG_TN_ENHANCED)) {
         // if (session.getEnhancedMode().equals("Y")) {
         // return true;
         // }
@@ -151,25 +151,25 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         // return false;
         // }
         // }
-        else if (parameter.equals("-p")) {
+        else if (parameter.equals(TN5250jConstants.ARG_HOST_PORT)) {
             return true;
-        } else if (parameter.equals("-cp")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_CODE_PAGE)) {
             return true;
-        } else if (parameter.equals("-sslType")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_SSL_TYPE)) {
             return true;
-        } else if (parameter.equals("-gui")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_USE_GUI)) {
             return false;
-        } else if (parameter.equals("-132")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_SCREEN_SIZE_132)) {
             if (session.getScreenSize().equals(ISession.SIZE_132)) {
                 return true;
             } else {
                 return false;
             }
-        } else if (parameter.equals("-sph")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_PROXY_HOST)) {
             return false;
-        } else if (parameter.equals("-spp")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_PROXY_PORT)) {
             return false;
-        } else if (parameter.equals("-dn")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_DEVICE_NAME)) {
             if (session.getDevice().equals("")) {
                 return false;
             } else {
@@ -191,21 +191,21 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
     }
 
     private String getParameter(String parameter) {
-        if (parameter.equals("-L")) {
+        if (parameter.equals(TN5250jConstants.ARG_LOCALE)) {
             return "";
         } else if (parameter.equals("host")) {
             return getHost();
-        } else if (parameter.equals("-p")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_HOST_PORT)) {
             return session.getPort();
-        } else if (parameter.equals("-cp")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_CODE_PAGE)) {
             return session.getCodePage();
-        } else if (parameter.equals("-sslType")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_SSL_TYPE)) {
             return session.getSSLType();
-        } else if (parameter.equals("-sph")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_PROXY_HOST)) {
             return "";
-        } else if (parameter.equals("-spp")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_PROXY_PORT)) {
             return "";
-        } else if (parameter.equals("-dn")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_DEVICE_NAME)) {
             return session.getDevice();
         } else if (parameter.equals("SESSION_CONNECT_USER")) {
             return session.getUser();

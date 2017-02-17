@@ -270,7 +270,7 @@ public final class Preferences {
      */
 
     public int getDefaultSessionPortNumber() {
-        return 23;
+        return Integer.parseInt(TN5250jConstants.PORT_NUMBER);
     }
 
     public String getDefaultSessionCodepage() {

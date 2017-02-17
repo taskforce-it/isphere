@@ -103,11 +103,11 @@ public class Session5250 implements SessionInterface {
         if (!isConnected()) {
             return false;
         }
-        
+
         if (getGUI().isOnSignOnScreen()) {
             return false;
         }
-        
+
         return true;
 
     }
@@ -203,10 +203,14 @@ public class Session5250 implements SessionInterface {
 
     public void connect() {
 
-        String proxyPort = "1080"; // default socks proxy port
+        // default socks proxy port
+        String proxyPort = TN5250jConstants.PROXY_PORT_NUMBER;
+
         boolean enhanced = false;
         boolean support132 = false;
-        int port = 23; // default telnet port
+
+        // default Telnet port
+        int port = Integer.parseInt(TN5250jConstants.PORT_NUMBER);
 
         enhanced = sesProps.containsKey(TN5250jConstants.SESSION_TN_ENHANCED);
 
@@ -240,7 +244,7 @@ public class Session5250 implements SessionInterface {
             port = Integer.parseInt(sesProps.getProperty(TN5250jConstants.SESSION_HOST_PORT));
         } else {
             // set to default 23 of telnet
-            port = 23;
+            port = Integer.parseInt(TN5250jConstants.PORT_NUMBER);
         }
 
         final String ses = sesProps.getProperty(TN5250jConstants.SESSION_HOST);
