@@ -1,3 +1,10 @@
+
+Changelog: iSphere 3.0.0.b009
+-----------------------------
+ • Fixed NullPointerException when closing the workbench with an active 
+   5250 session.
+ • Added option to use a SSL connection for the 5250 emulator. 
+
 Changelog: iSphere 3.0.0.b008
 -----------------------------
  • Added text decoration of source files of i Projects.
