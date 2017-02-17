@@ -76,9 +76,7 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
         logger = TN5250jLogFactory.getLogger(getClass());
     }
 
-    public void init(String sslType) {
-
-        try {
+    public void init(String sslType) throws Exception {
 
             logger.debug("Initializing User KeyStore");
             userKsPath = System.getProperty("user.home") + File.separator + GlobalConfigure.TN5250J_FOLDER + File.separator + "keystore";
@@ -102,11 +100,6 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
                 sslContext = SSLContext.getInstance(sslType);
             }
             sslContext.init(userkmf.getKeyManagers(), new TrustManager[] { this }, null);
-
-        } catch (Exception ex) {
-            logger.error("Error initializing SSL [" + ex.getMessage() + "]");
-        }
-
     }
 
     public Socket createSSLSocket(String destination, int port) {

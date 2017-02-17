@@ -132,11 +132,11 @@ public class Configure implements TN5250jConstants {
         if (propKey == null) {
             systemName = new JTextField(20);
             systemId = new JTextField(20);
-            port = new JTextField(TN5250jConstants.PORT_NUMBER, 5);
+            port = new JTextField(PORT_NUMBER, 5);
             deviceName = new JTextField(20);
             fpn = new JTextField(20);
             proxyHost = new JTextField(20);
-            proxyPort = new JTextField(TN5250jConstants.PROXY_PORT_NUMBER, 5);
+            proxyPort = new JTextField(PROXY_PORT_NUMBER, 5);
 
             ec.setSelected(true);
             tc.setSelected(true);
@@ -159,30 +159,30 @@ public class Configure implements TN5250jConstants {
 
             systemId = new JTextField(args[0], 20);
 
-            if (isSpecified(TN5250jConstants.ARG_HOST_PORT, args)) {
-                port = new JTextField(getParm(TN5250jConstants.ARG_HOST_PORT, args), 5);
+            if (isSpecified(ARG_HOST_PORT, args)) {
+                port = new JTextField(getParm(ARG_HOST_PORT, args), 5);
             } else {
-                port = new JTextField(TN5250jConstants.PORT_NUMBER, 5);
+                port = new JTextField(PORT_NUMBER, 5);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_SSL_TYPE, args)) {
-                sslType.setSelectedItem(getParm(TN5250jConstants.ARG_SSL_TYPE, args));
+            if (isSpecified(ARG_SSL_TYPE, args)) {
+                sslType.setSelectedItem(getParm(ARG_SSL_TYPE, args));
             }
 
-            if (isSpecified(TN5250jConstants.ARG_PROXY_HOST, args)) {
-                proxyHost = new JTextField(getParm(TN5250jConstants.ARG_PROXY_HOST, args), 20);
+            if (isSpecified(ARG_PROXY_HOST, args)) {
+                proxyHost = new JTextField(getParm(ARG_PROXY_HOST, args), 20);
             } else {
                 proxyHost = new JTextField(20);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_FILENAME, args)) {
-                fpn = new JTextField(getParm(TN5250jConstants.ARG_FILENAME, args), 20);
+            if (isSpecified(ARG_FILENAME, args)) {
+                fpn = new JTextField(getParm(ARG_FILENAME, args), 20);
             } else {
                 fpn = new JTextField(20);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_CODE_PAGE, args)) {
-                String codepage = getParm(TN5250jConstants.ARG_CODE_PAGE, args);
+            if (isSpecified(ARG_CODE_PAGE, args)) {
+                String codepage = getParm(ARG_CODE_PAGE, args);
                 String[] acps = CharMappings.getAvailableCodePages();
                 jtb.setSelected(true);
                 for (int x = 0; x < acps.length; x++) {
@@ -193,31 +193,31 @@ public class Configure implements TN5250jConstants {
                 cpb.setSelectedItem(codepage);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED, args)) {
+            if (isSpecified(ARG_TN_ENHANCED, args)) {
                 ec.setSelected(true);
             } else {
                 ec.setSelected(false);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_TERM_NAME_SYSTEM, args)) {
+            if (isSpecified(ARG_TERM_NAME_SYSTEM, args)) {
                 tc.setSelected(true);
             } else {
                 tc.setSelected(false);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132, args)) {
+            if (isSpecified(ARG_SCREEN_SIZE_132, args)) {
                 sdBig.setSelected(true);
             } else {
                 sdNormal.setSelected(true);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME, args)) {
-                deviceName = new JTextField(getParm(TN5250jConstants.ARG_DEVICE_NAME, args), 20);
+            if (isSpecified(ARG_DEVICE_NAME, args)) {
+                deviceName = new JTextField(getParm(ARG_DEVICE_NAME, args), 20);
             } else {
                 deviceName = new JTextField(20);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
+            if (isSpecified(ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
                 sdn.setSelected(true);
                 deviceName.setEnabled(false);
             } else {
@@ -225,36 +225,41 @@ public class Configure implements TN5250jConstants {
                 deviceName.setEnabled(true);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_PROXY_PORT, args)) {
-                proxyPort = new JTextField(getParm(TN5250jConstants.ARG_PROXY_PORT, args), 5);
+            if (isSpecified(ARG_PROXY_PORT, args)) {
+                proxyPort = new JTextField(getParm(ARG_PROXY_PORT, args), 5);
             } else {
-                proxyPort = new JTextField(TN5250jConstants.PROXY_PORT_NUMBER, 5);
+                proxyPort = new JTextField(PROXY_PORT_NUMBER, 5);
             }
 
-            if (isSpecified(TN5250jConstants.ARG_USE_SOCKET_PROXY, args))
+            if (isSpecified(ARG_USE_SOCKET_PROXY, args)) {
                 useProxy.setSelected(true);
-            else
+            } else {
                 useProxy.setSelected(false);
+            }
 
-            if (isSpecified(TN5250jConstants.ARG_NO_EMBED, args))
+            if (isSpecified(ARG_NO_EMBED, args)) {
                 noEmbed.setSelected(true);
-            else
+            } else {
                 noEmbed.setSelected(false);
+            }
 
-            if (isSpecified(TN5250jConstants.ARG_START_DAEMON, args))
+            if (isSpecified(ARG_START_DAEMON, args)) {
                 deamon.setSelected(true);
-            else
+            } else {
                 deamon.setSelected(false);
+            }
 
-            if (isSpecified(TN5250jConstants.ARG_NO_CHECK, args))
+            if (isSpecified(ARG_NO_CHECK, args)) {
                 newJVM.setSelected(true);
-            else
+            } else {
                 newJVM.setSelected(false);
+            }
 
-            if (isSpecified(TN5250jConstants.ARG_HEART_BEAT, args))
+            if (isSpecified(ARG_HEART_BEAT, args)) {
                 heartBeat.setSelected(true);
-            else
+            } else {
                 heartBeat.setSelected(false);
+            }
 
         }
 
@@ -438,8 +443,7 @@ public class Configure implements TN5250jConstants {
         Component parentComponent = parent;
         pane.setInitialValue(options[0]);
         pane.setComponentOrientation(parentComponent.getComponentOrientation());
-        dialog = pane.createDialog(parentComponent, title); // ,
-                                                            // JRootPane.PLAIN_DIALOG);
+        dialog = pane.createDialog(parentComponent, title);
 
         dialog.setVisible(true);
 
@@ -565,42 +569,81 @@ public class Configure implements TN5250jConstants {
         sb.append(systemId.getText());
 
         // port
-        if (port.getText() != null) if (port.getText().trim().length() > 0) sb.append(" " + ARG_HOST_PORT + " " + port.getText().trim());
+        if (port.getText() != null) {
+            if (port.getText().trim().length() > 0) {
+                sb.append(" " + ARG_HOST_PORT + " " + port.getText().trim());
+            }
+        }
 
-        if (fpn.getText() != null) if (fpn.getText().length() > 0) sb.append(" " + ARG_FILENAME + " " + fpn.getText());
+        if (fpn.getText() != null) {
+            if (fpn.getText().length() > 0) {
+                sb.append(" " + ARG_FILENAME + " " + fpn.getText());
+            }
+        }
+
         if (!LangTool.getString("conf.labelDefault").equals(cpb.getSelectedItem()))
             sb.append(" " + ARG_CODE_PAGE + " " + (String)cpb.getSelectedItem());
 
-        if (!TN5250jConstants.SSL_TYPE_NONE.equals(sslType.getSelectedItem()))
+        if (!SSL_TYPE_NONE.equals(sslType.getSelectedItem())) {
             sb.append(" " + ARG_SSL_TYPE + " " + (String)sslType.getSelectedItem());
+        }
 
-        if (ec.isSelected()) sb.append(" " + ARG_TN_ENHANCED + " ");
+        if (ec.isSelected()) {
+            sb.append(" " + ARG_TN_ENHANCED + " ");
+        }
 
-        if (tc.isSelected()) sb.append(" " + ARG_TERM_NAME_SYSTEM + " ");
+        if (tc.isSelected()) {
+            sb.append(" " + ARG_TERM_NAME_SYSTEM + " ");
+        }
 
-        if (!sdNormal.isSelected()) sb.append(" " + ARG_SCREEN_SIZE_132 + " ");
+        if (!sdNormal.isSelected()) {
+            sb.append(" " + ARG_SCREEN_SIZE_132 + " ");
+        }
 
-        if (deviceName.getText() != null && !sdn.isSelected())
-            if (deviceName.getText().trim().length() > 0) if (deviceName.getText().trim().length() > 10)
-                sb.append(" " + ARG_DEVICE_NAME + " " + deviceName.getText().trim().substring(0, 10).toUpperCase());
-            else
-                sb.append(" " + ARG_DEVICE_NAME + " " + deviceName.getText().trim().toUpperCase());
+        if (deviceName.getText() != null && !sdn.isSelected()) {
+            if (deviceName.getText().trim().length() > 0) {
+                if (deviceName.getText().trim().length() > 10)
+                    sb.append(" " + ARG_DEVICE_NAME + " " + deviceName.getText().trim().substring(0, 10).toUpperCase());
+                else
+                    sb.append(" " + ARG_DEVICE_NAME + " " + deviceName.getText().trim().toUpperCase());
+            }
+        }
 
-        if (sdn.isSelected()) sb.append(" " + ARG_USE_HOSTNAME_AS_DEVICE_NAME + "");
+        if (sdn.isSelected()) {
+            sb.append(" " + ARG_USE_HOSTNAME_AS_DEVICE_NAME + "");
+        }
 
-        if (useProxy.isSelected()) sb.append(" " + ARG_USE_SOCKET_PROXY + "");
+        if (useProxy.isSelected()) {
+            sb.append(" " + ARG_USE_SOCKET_PROXY + "");
+        }
 
-        if (proxyHost.getText() != null) if (proxyHost.getText().length() > 0) sb.append(" " + ARG_PROXY_HOST + " " + proxyHost.getText());
+        if (proxyHost.getText() != null) {
+            if (proxyHost.getText().length() > 0) {
+                sb.append(" " + ARG_PROXY_HOST + " " + proxyHost.getText());
+            }
+        }
 
-        if (proxyPort.getText() != null) if (proxyPort.getText().length() > 0) sb.append(" " + ARG_PROXY_PORT + " " + proxyPort.getText());
+        if (proxyPort.getText() != null) {
+            if (proxyPort.getText().length() > 0) {
+                sb.append(" " + ARG_PROXY_PORT + " " + proxyPort.getText());
+            }
+        }
 
-        if (noEmbed.isSelected()) sb.append(" " + ARG_NO_EMBED + " ");
+        if (noEmbed.isSelected()) {
+            sb.append(" " + ARG_NO_EMBED + " ");
+        }
 
-        if (deamon.isSelected()) sb.append(" " + ARG_START_DAEMON + " ");
+        if (deamon.isSelected()) {
+            sb.append(" " + ARG_START_DAEMON + " ");
+        }
 
-        if (newJVM.isSelected()) sb.append(" " + ARG_NO_CHECK + " ");
+        if (newJVM.isSelected()) {
+            sb.append(" " + ARG_NO_CHECK + " ");
+        }
 
-        if (heartBeat.isSelected()) sb.append(" " + ARG_HEART_BEAT + " ");
+        if (heartBeat.isSelected()) {
+            sb.append(" " + ARG_HEART_BEAT + " ");
+        }
 
         return sb.toString();
     }
