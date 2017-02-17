@@ -139,7 +139,7 @@ public final class tnvt implements Runnable {
     private Session5250 controller;
     private boolean cursorOn = false;
     private String session = "";
-    private int port = 23;
+    private int port = Integer.parseInt(TN5250jConstants.PORT_NUMBER);
     private boolean connected = false;
     private boolean support132 = true;
     private ByteArrayOutputStream baosp = null;

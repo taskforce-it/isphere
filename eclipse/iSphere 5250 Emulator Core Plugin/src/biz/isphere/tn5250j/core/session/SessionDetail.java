@@ -162,9 +162,9 @@ public class SessionDetail {
         comboSSLType.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
-                    textPort.setText("23");
+                    textPort.setText(TN5250jConstants.PORT_NUMBER);
                 } else {
-                    textPort.setText("992");
+                    textPort.setText(TN5250jConstants.SSL_PORT_NUMBER);
                 }
             }
 
@@ -481,8 +481,8 @@ public class SessionDetail {
 
     protected boolean checkData() {
 
-        boolean error; 
-        
+        boolean error;
+
         if (actionType == DialogActionTypes.CREATE) {
 
             // The value in field 'Name' is not valid.
@@ -541,7 +541,7 @@ public class SessionDetail {
                 }
             }
         }
-        
+
         if (error) {
             setErrorMessage(Messages.The_value_in_field_SSL_type_is_not_valid);
             comboSSLType.setFocus();

@@ -85,9 +85,9 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         comboSSLType.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
-                    textPort.setText("23");
+                    textPort.setText(TN5250jConstants.PORT_NUMBER);
                 } else {
-                    textPort.setText("992");
+                    textPort.setText(TN5250jConstants.SSL_PORT_NUMBER);
                 }
             }
 
