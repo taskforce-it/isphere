@@ -142,7 +142,7 @@ public class SessionDetail {
         // SSL
 
         final Label labelSSLType = new Label(compositeGeneral, SWT.NONE);
-        labelSSLType.setText("SSL Type");
+        labelSSLType.setText(Messages.SSL_type_colon);
 
         comboSSLType = new CCombo(compositeGeneral, SWT.BORDER | SWT.READ_ONLY);
         comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -543,7 +543,7 @@ public class SessionDetail {
         }
         
         if (error) {
-            setErrorMessage("The_value_in_field_SSL_type_is_not_valid");
+            setErrorMessage(Messages.The_value_in_field_SSL_type_is_not_valid);
             comboSSLType.setFocus();
             return false;
         }

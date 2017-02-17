@@ -62,6 +62,7 @@ public class Messages extends NLS {
     public static String Name_colon;
     public static String OK;
     public static String Password_colon;
+    public static String SSL_type_colon;
     public static String Port_colon;
     public static String Program_colon;
     public static String Remove_session;
@@ -86,6 +87,7 @@ public class Messages extends NLS {
     public static String The_value_in_field_Menu_is_not_valid;
     public static String The_value_in_field_Name_is_not_valid;
     public static String The_value_in_field_Password_is_not_valid;
+    public static String The_value_in_field_SSL_type_is_not_valid;
     public static String The_value_in_field_Port_is_not_valid;
     public static String The_value_in_field_Program_is_not_valid;
     public static String The_value_in_field_User_is_not_valid;

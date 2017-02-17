@@ -76,7 +76,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         // SSL Type
 
         final Label labelSSLType = new Label(container, SWT.NONE);
-        labelSSLType.setText("SSL Type");
+        labelSSLType.setText(Messages.SSL_type_colon);
 
         comboSSLType = new CCombo(container, SWT.BORDER | SWT.READ_ONLY);
         comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
