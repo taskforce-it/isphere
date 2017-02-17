@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.framework.transport.SocketConnector;
 
 import biz.isphere.tn5250j.core.DialogActionTypes;
 import biz.isphere.tn5250j.core.Messages;
@@ -146,17 +147,18 @@ public class SessionDetail {
         comboSSLType = new CCombo(compositeGeneral, SWT.BORDER | SWT.READ_ONLY);
         comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboSSLType.setTextLimit(10);
-        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
-            comboSSLType.add(TN5250jConstants.SSL_TYPES[idx]);
-        }
+        comboSSLType.setItems(preferences.getSSLTypeOptions());
+
         if (actionType == DialogActionTypes.CREATE) {
             comboSSLType.setText(preferences.getSSLType());
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             comboSSLType.setText(session.getSSLType());
         }
+
         if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
             comboSSLType.setEnabled(false);
         }
+
         comboSSLType.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
@@ -165,6 +167,7 @@ public class SessionDetail {
                     textPort.setText("992");
                 }
             }
+
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }
@@ -477,6 +480,9 @@ public class SessionDetail {
     }
 
     protected boolean checkData() {
+
+        boolean error; 
+        
         if (actionType == DialogActionTypes.CREATE) {
 
             // The value in field 'Name' is not valid.
@@ -514,8 +520,37 @@ public class SessionDetail {
             }
         }
 
+        // The value in field 'SSL Type' is not valid.
+
+        String sslType = comboSSLType.getText();
+
+        String[] sslProtocols;
+        if (TN5250jConstants.SSL_TYPE_NONE.equals(sslType) || TN5250jConstants.SSL_TYPE_DEFAULT.equals(sslType)) {
+            sslProtocols = null;
+            error = false;
+        } else {
+            sslProtocols = SocketConnector.getSupportedSSLProtocols();
+            error = true;
+        }
+
+        if (sslProtocols != null) {
+            for (int idx = 0; idx < sslProtocols.length; idx++) {
+                if (sslProtocols[idx].equals(sslType)) {
+                    error = false;
+                    break;
+                }
+            }
+        }
+        
+        if (error) {
+            setErrorMessage("The_value_in_field_SSL_type_is_not_valid");
+            comboSSLType.setFocus();
+            return false;
+        }
+
         // The value in field 'Port' is not valid.
-        boolean error = false;
+
+        error = false;
         if (textPort.getText().equals("")) {
             error = true;
         } else {
@@ -535,6 +570,7 @@ public class SessionDetail {
         }
 
         // The value in field 'Codepage' is not valid.
+
         error = true;
         for (int idx = 0; idx < codePages.length; idx++) {
             if (codePages[idx].equals(comboCodePage.getText())) {
@@ -545,20 +581,6 @@ public class SessionDetail {
         if (error) {
             setErrorMessage(Messages.The_value_in_field_Codepage_is_not_valid);
             comboCodePage.setFocus();
-            return false;
-        }
-
-        // The value in field 'SSL Type' is not valid.
-        error = true;
-        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
-            if (TN5250jConstants.SSL_TYPES[idx].equals(comboSSLType.getText())) {
-                error = false;
-                break;
-            }
-        }
-        if (error) {
-            setErrorMessage("The_value_in_field_SSL_type_is_not_valid");
-            comboSSLType.setFocus();
             return false;
         }
 

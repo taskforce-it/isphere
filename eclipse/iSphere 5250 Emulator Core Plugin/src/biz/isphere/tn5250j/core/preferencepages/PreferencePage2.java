@@ -81,9 +81,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
         comboSSLType = new CCombo(container, SWT.BORDER | SWT.READ_ONLY);
         comboSSLType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboSSLType.setTextLimit(10);
-        for (int idx = 0; idx < TN5250jConstants.SSL_TYPES.length; idx++) {
-            comboSSLType.add(TN5250jConstants.SSL_TYPES[idx]);
-        }
+        comboSSLType.setItems(preferences.getSSLTypeOptions());
         comboSSLType.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (TN5250jConstants.SSL_TYPE_NONE.equals(comboSSLType.getText())) {
@@ -92,6 +90,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
                     textPort.setText("992");
                 }
             }
+
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }

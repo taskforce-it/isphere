@@ -40,7 +40,9 @@ import javax.net.ssl.X509TrustManager;
 import javax.swing.JOptionPane;
 
 import org.tn5250j.GlobalConfigure;
+import org.tn5250j.TN5250jConstants;
 import org.tn5250j.framework.transport.SSLInterface;
+import org.tn5250j.framework.transport.SocketConnector;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
 
@@ -75,22 +77,32 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
     }
 
     public void init(String sslType) {
+
         try {
+
             logger.debug("Initializing User KeyStore");
             userKsPath = System.getProperty("user.home") + File.separator + GlobalConfigure.TN5250J_FOLDER + File.separator + "keystore";
             File userKsFile = new File(userKsPath);
             userks = KeyStore.getInstance(KeyStore.getDefaultType());
             userks.load(userKsFile.exists() ? new FileInputStream(userKsFile) : null, userksPassword);
+
             logger.debug("Initializing User Key Manager Factory");
             userkmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             userkmf.init(userks, userksPassword);
+
             logger.debug("Initializing User Trust Manager Factory");
             usertmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             usertmf.init(userks);
             userTrustManagers = usertmf.getTrustManagers();
+
             logger.debug("Initializing SSL Context");
-            sslContext = SSLContext.getInstance(sslType);
+            if (TN5250jConstants.SSL_TYPE_DEFAULT.equalsIgnoreCase(sslType)) {
+                sslContext = SSLContext.getInstance(SocketConnector.getDefaultSSLProtocol());
+            } else {
+                sslContext = SSLContext.getInstance(sslType);
+            }
             sslContext.init(userkmf.getKeyManagers(), new TrustManager[] { this }, null);
+
         } catch (Exception ex) {
             logger.error("Error initializing SSL [" + ex.getMessage() + "]");
         }
@@ -98,13 +110,19 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
     }
 
     public Socket createSSLSocket(String destination, int port) {
-        if (sslContext == null) throw new IllegalStateException("SSL Context Not Initialized");
+
+        if (sslContext == null) {
+            throw new IllegalStateException("SSL Context Not Initialized");
+        }
+
         SSLSocket socket = null;
+
         try {
             socket = (SSLSocket)sslContext.getSocketFactory().createSocket(destination, port);
         } catch (Exception e) {
             logger.error("Error creating ssl socket [" + e.getMessage() + "]");
         }
+
         return socket;
     }
 
@@ -116,6 +134,17 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
      */
     public X509Certificate[] getAcceptedIssuers() {
         return acceptedIssuers;
+    }
+
+    public String[] getSupportedProtocols() {
+
+        try {
+            return SSLContext.getDefault().getSupportedSSLParameters().getProtocols();
+        } catch (Exception ex) {
+            logger.error("Error initializing SSL [" + ex.getMessage() + "]");
+        }
+
+        return null;
     }
 
     /*
