@@ -15,7 +15,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -95,9 +98,9 @@ public class ProcessSessionFocus {
                 TN5250JGUI tn5250jGUI = (TN5250JGUI)event.getSource();
                 ITN5250JPart workbenchPart = tn5250jGUI.getTN5250JInfo().getTN5250JPart();
                 if (workbenchPart instanceof TN5250JView || workbenchPart instanceof TN5250JEditor) {
-                    IWorkbenchPart activePart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 
-                    if (workbenchPart == activePart) {
+                    IWorkbenchPart activePart = getActivePart();
+                    if (activePart == null || workbenchPart == activePart) {
                         /*
                          * View is already active. So we do not need to activate
                          * it again.
@@ -122,6 +125,28 @@ public class ProcessSessionFocus {
                      */
                     tabFolderSessions.forceFocus();
                 }
+            }
+
+            private IWorkbenchPart getActivePart() {
+                
+                IWorkbench workbench = PlatformUI.getWorkbench();
+                if (workbench == null) {
+                    return null;
+                }
+                
+                IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
+                if (activeWorkbenchWindow == null) {
+                    return null;
+                }
+                
+                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+                if (activePage == null) {
+                    return null;
+                }
+                
+                IWorkbenchPart activePart = activePage.getActivePart();
+                
+                return activePart;
             }
         });
     }
