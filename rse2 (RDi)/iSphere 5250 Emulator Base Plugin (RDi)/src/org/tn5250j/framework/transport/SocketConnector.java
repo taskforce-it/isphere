@@ -64,19 +64,15 @@ public class SocketConnector {
      * @param port
      * @return a new client socket, or null if
      */
-    public Socket createSocket(String destination, int port) {
+    public Socket createSocket(String destination, int port) throws Exception {
 
         Socket socket = null;
-        Exception ex = null;
 
         if (sslType == null || sslType.trim().length() == 0 || sslType.toUpperCase().equals(TN5250jConstants.SSL_TYPE_NONE)) {
             logger.info("Creating Plain Socket");
-            try {
-                // Use Socket Constructor!!! SocketFactory for jdk 1.4
-                socket = new Socket(destination, port);
-            } catch (Exception e) {
-                ex = e;
-            }
+
+            // Use Socket Constructor!!! SocketFactory for jdk 1.4
+            socket = new Socket(destination, port);
         } else {
 
             // SSL SOCKET
@@ -85,20 +81,11 @@ public class SocketConnector {
 
             SSLInterface sslIf = null;
 
-            try {
-                sslIf = createSocketInterface();
-            } catch (Exception e) {
-                ex = new Exception("Failed to create SSLInterface Instance. " + "Message is [" + e.getMessage() + "]");
-            }
-
+            sslIf = createSocketInterface();
             if (sslIf != null) {
                 sslIf.init(sslType);
                 socket = sslIf.createSSLSocket(destination, port);
             }
-        }
-
-        if (ex != null) {
-            logger.error(ex);
         }
 
         if (socket == null) {

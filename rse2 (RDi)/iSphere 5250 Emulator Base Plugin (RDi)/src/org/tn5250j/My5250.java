@@ -60,7 +60,7 @@ import org.tn5250j.tools.LangTool;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
 
-public class My5250 implements BootListener, SessionListener, EmulatorActionListener {
+public class My5250 implements BootListener, TN5250jConstants, SessionListener, EmulatorActionListener {
 
     private static final String PARAM_START_SESSION = "-s";
 
@@ -172,7 +172,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         // boot options
         if (!bootEvent.getNewSessionOptions().equals("null")) {
             // check if a session parameter is specified on the command line
-            String[] args = new String[TN5250jConstants.NUM_PARMS];
+            String[] args = new String[NUM_PARMS];
             parseArgs(bootEvent.getNewSessionOptions(), args);
 
             if (isSpecified(PARAM_START_SESSION, args)) {
@@ -221,14 +221,14 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
 
     static public void main(String[] args) {
 
-        if (!isSpecified(TN5250jConstants.ARG_NO_CHECK, args)) {
+        if (!isSpecified(ARG_NO_CHECK, args)) {
 
             if (!checkBootStrapper(args)) {
 
                 // if we did not find a running instance and the -d options is
                 // specified start up the bootstrap daemon to allow checking
                 // for running instances
-                if (isSpecified(TN5250jConstants.ARG_START_DAEMON, args)) {
+                if (isSpecified(ARG_START_DAEMON, args)) {
                     strapper = new BootStrapper();
 
                     strapper.start();
@@ -279,8 +279,8 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
                 }
 
                 // check if a locale parameter is specified on the command line
-                if (isSpecified(TN5250jConstants.ARG_LOCALE, args)) {
-                    Locale.setDefault(parseLocal(getParm(TN5250jConstants.ARG_LOCALE, args)));
+                if (isSpecified(ARG_LOCALE, args)) {
+                    Locale.setDefault(parseLocal(getParm(ARG_LOCALE, args)));
                 }
                 LangTool.init();
             } else {
@@ -317,7 +317,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
                 m.frame1.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
 
-            m.sessionArgs = new String[TN5250jConstants.NUM_PARMS];
+            m.sessionArgs = new String[NUM_PARMS];
             My5250.parseArgs(sessions.getProperty(viewName), m.sessionArgs);
             m.newSession(viewName, m.sessionArgs);
         }
@@ -436,7 +436,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         Sessions sess = manager.getSessions();
 
         if (sel != null && sess.getCount() == 0 && sessions.containsKey(sel)) {
-            sessionArgs = new String[TN5250jConstants.NUM_PARMS];
+            sessionArgs = new String[NUM_PARMS];
             parseArgs(sessions.getProperty(sel), sessionArgs);
         }
 
@@ -452,7 +452,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         Sessions sess = manager.getSessions();
         if (sel != null) {
             String selArgs = sessions.getProperty(sel);
-            sessionArgs = new String[TN5250jConstants.NUM_PARMS];
+            sessionArgs = new String[NUM_PARMS];
             parseArgs(selArgs, sessionArgs);
 
             newSession(sel, sessionArgs);
@@ -477,7 +477,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         }
 
         String selArgs = sessions.getProperty(ses.getSessionName());
-        sessionArgs = new String[TN5250jConstants.NUM_PARMS];
+        sessionArgs = new String[NUM_PARMS];
         parseArgs(selArgs, sessionArgs);
 
         newSession(ses.getSessionName(), sessionArgs);
@@ -501,56 +501,58 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         String session = args[0];
 
         // Start loading properties
-        sesProps.put(TN5250jConstants.SESSION_HOST, session);
+        sesProps.put(SESSION_HOST, session);
 
-        if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED, args)) sesProps.put(TN5250jConstants.SESSION_TN_ENHANCED, "1");
-
-        if (isSpecified(TN5250jConstants.ARG_HOST_PORT, args)) {
-            sesProps.put(TN5250jConstants.SESSION_HOST_PORT, getParm(TN5250jConstants.ARG_HOST_PORT, args));
+        if (isSpecified(ARG_TN_ENHANCED, args)) {
+            sesProps.put(SESSION_TN_ENHANCED, "1");
         }
 
-        if (isSpecified(TN5250jConstants.ARG_FILENAME, args)) {
-            propFileName = getParm(TN5250jConstants.ARG_FILENAME, args);
+        if (isSpecified(ARG_HOST_PORT, args)) {
+            sesProps.put(SESSION_HOST_PORT, getParm(ARG_HOST_PORT, args));
         }
 
-        if (isSpecified(TN5250jConstants.ARG_CODE_PAGE, args)) {
-            sesProps.put(TN5250jConstants.SESSION_CODE_PAGE, getParm(TN5250jConstants.ARG_CODE_PAGE, args));
+        if (isSpecified(ARG_FILENAME, args)) {
+            propFileName = getParm(ARG_FILENAME, args);
         }
 
-        if (isSpecified(TN5250jConstants.ARG_USE_GUI, args)) {
-            sesProps.put(TN5250jConstants.SESSION_USE_GUI, "1");
+        if (isSpecified(ARG_CODE_PAGE, args)) {
+            sesProps.put(SESSION_CODE_PAGE, getParm(ARG_CODE_PAGE, args));
         }
 
-        if (isSpecified(TN5250jConstants.ARG_TERM_NAME_SYSTEM, args)) {
-            sesProps.put(TN5250jConstants.SESSION_TERM_NAME_SYSTEM, "1");
+        if (isSpecified(ARG_USE_GUI, args)) {
+            sesProps.put(SESSION_USE_GUI, "1");
         }
 
-        if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132, args)) {
-            sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_27X132_STR);
+        if (isSpecified(ARG_TERM_NAME_SYSTEM, args)) {
+            sesProps.put(SESSION_TERM_NAME_SYSTEM, "1");
+        }
+
+        if (isSpecified(ARG_SCREEN_SIZE_132, args)) {
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
         } else {
-            sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_24X80_STR);
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
         }
 
         // are we to use a socks proxy
-        if (isSpecified(TN5250jConstants.ARG_USE_SOCKET_PROXY, args)) {
+        if (isSpecified(ARG_USE_SOCKET_PROXY, args)) {
 
             // socks proxy host argument
-            if (isSpecified(TN5250jConstants.ARG_PROXY_HOST, args)) {
-                sesProps.put(TN5250jConstants.SESSION_PROXY_HOST, getParm(TN5250jConstants.ARG_PROXY_HOST, args));
+            if (isSpecified(ARG_PROXY_HOST, args)) {
+                sesProps.put(SESSION_PROXY_HOST, getParm(ARG_PROXY_HOST, args));
             }
 
             // socks proxy port argument
-            if (isSpecified(TN5250jConstants.ARG_PROXY_PORT, args))
-                sesProps.put(TN5250jConstants.SESSION_PROXY_PORT, getParm(TN5250jConstants.ARG_PROXY_PORT, args));
+            if (isSpecified(ARG_PROXY_PORT, args))
+                sesProps.put(SESSION_PROXY_PORT, getParm(ARG_PROXY_PORT, args));
         }
 
         // are we to use a ssl and if we are what type
-        if (isSpecified(TN5250jConstants.ARG_SSL_TYPE, args)) {
-            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParm(TN5250jConstants.ARG_SSL_TYPE, args));
+        if (isSpecified(ARG_SSL_TYPE, args)) {
+            sesProps.put(SESSION_SSL_TYPE, getParm(ARG_SSL_TYPE, args));
         }
 
         // check if device name is specified
-        if (isSpecified(TN5250jConstants.ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
+        if (isSpecified(ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
             String dnParam;
 
             // use IP address as device name
@@ -560,13 +562,13 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
                 dnParam = "UNKNOWN_HOST";
             }
 
-            sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, dnParam);
-        } else if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME, args)) {
-            sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, getParm(TN5250jConstants.ARG_DEVICE_NAME, args));
+            sesProps.put(SESSION_DEVICE_NAME, dnParam);
+        } else if (isSpecified(ARG_DEVICE_NAME, args)) {
+            sesProps.put(SESSION_DEVICE_NAME, getParm(ARG_DEVICE_NAME, args));
         }
 
-        if (isSpecified(TN5250jConstants.ARG_HEART_BEAT, args)) {
-            sesProps.put(TN5250jConstants.SESSION_HEART_BEAT, "1");
+        if (isSpecified(ARG_HEART_BEAT, args)) {
+            sesProps.put(SESSION_HEART_BEAT, "1");
         }
 
         int sessionCount = manager.getSessions().getCount();
@@ -584,14 +586,14 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
             // use the frame that is created and skip the part of creating a new
             // view which would increment the count and leave us with an unused
             // frame.
-            if (isSpecified(TN5250jConstants.ARG_NO_EMBED, args) && sessionCount > 0) {
+            if (isSpecified(ARG_NO_EMBED, args) && sessionCount > 0) {
                 newView();
             }
             splash.setVisible(false);
             frame1.setVisible(true);
             frame1.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         } else {
-            if (isSpecified(TN5250jConstants.ARG_NO_EMBED, args)) {
+            if (isSpecified(ARG_NO_EMBED, args)) {
                 splash.updateProgress(++step);
                 newView();
                 splash.setVisible(false);
@@ -601,7 +603,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
             }
         }
 
-        if (isSpecified(TN5250jConstants.ARG_TERM_NAME_SYSTEM, args))
+        if (isSpecified(ARG_TERM_NAME_SYSTEM, args))
             frame1.addSessionView(sel, s);
         else
             frame1.addSessionView(session, s);
@@ -752,7 +754,7 @@ public class My5250 implements BootListener, SessionListener, EmulatorActionList
         SessionPanel ses = ses5250.getGUI();
 
         switch (changeEvent.getState()) {
-        case TN5250jConstants.STATE_REMOVE:
+        case STATE_REMOVE:
             closeSessionInternal(ses);
             break;
         }

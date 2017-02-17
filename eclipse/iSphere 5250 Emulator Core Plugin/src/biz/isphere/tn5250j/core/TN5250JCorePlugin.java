@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.tn5250j.GlobalConfigure;
 
 import biz.isphere.tn5250j.core.tn5250jpart.HandleBindingService;
 
@@ -92,7 +93,7 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
     }
 
     public static String getTN5250JHomeDirectory() {
-        return System.getProperty("user.home") + File.separator + ".tn5250j";
+        return System.getProperty("user.home") + File.separator + GlobalConfigure.TN5250J_FOLDER;
     }
 
     public static String getTN5250JPluginDirectory() {

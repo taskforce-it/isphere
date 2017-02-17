@@ -49,7 +49,7 @@ import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
 
-public class Tn5250jController extends Thread {
+public class Tn5250jController extends Thread implements TN5250jConstants {
     private File extensionDir;
     private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
     // private URLClassLoader loader = new URLClassLoader(null,
@@ -278,58 +278,59 @@ public class Tn5250jController extends Thread {
         String session = args[0];
 
         // Start loading properties
-        sesProps.put(TN5250jConstants.SESSION_HOST, session);
+        sesProps.put(SESSION_HOST, session);
 
-        if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED, args)) {
-            sesProps.put(TN5250jConstants.SESSION_TN_ENHANCED, "1");
+        if (isSpecified(ARG_TN_ENHANCED, args)) {
+            sesProps.put(SESSION_TN_ENHANCED, "1");
         }
 
-        if (isSpecified(TN5250jConstants.ARG_HOST_PORT, args)) {
-            sesProps.put(TN5250jConstants.SESSION_HOST_PORT, getParm(TN5250jConstants.ARG_HOST_PORT, args));
+        if (isSpecified(ARG_HOST_PORT, args)) {
+            sesProps.put(SESSION_HOST_PORT, getParm(ARG_HOST_PORT, args));
         }
 
-        // if (isSpecified(TN5250jConstants.ARG_FILENAME, args)) {
-        // String propFileName = getParm(TN5250jConstants.ARG_FILENAME, args);
+        // if (isSpecified(ARG_FILENAME, args)) {
+        // String propFileName = getParm(ARG_FILENAME, args);
         // }
 
-        if (isSpecified(TN5250jConstants.ARG_CODE_PAGE, args)) {
-            sesProps.put(TN5250jConstants.SESSION_CODE_PAGE, getParm(TN5250jConstants.ARG_CODE_PAGE, args));
+        if (isSpecified(ARG_CODE_PAGE, args)) {
+            sesProps.put(SESSION_CODE_PAGE, getParm(ARG_CODE_PAGE, args));
         }
 
-        if (isSpecified(TN5250jConstants.ARG_USE_GUI, args)) {
-            sesProps.put(TN5250jConstants.SESSION_USE_GUI, "1");
+        if (isSpecified(ARG_USE_GUI, args)) {
+            sesProps.put(SESSION_USE_GUI, "1");
         }
 
-        if (isSpecified(TN5250jConstants.ARG_TERM_NAME_SYSTEM, args)) {
-            sesProps.put(TN5250jConstants.SESSION_TERM_NAME_SYSTEM, "1");
+        if (isSpecified(ARG_TERM_NAME_SYSTEM, args)) {
+            sesProps.put(SESSION_TERM_NAME_SYSTEM, "1");
         }
 
-        if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132, args)) {
-            sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_27X132_STR);
+        if (isSpecified(ARG_SCREEN_SIZE_132, args)) {
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
         } else {
-            sesProps.put(TN5250jConstants.SESSION_SCREEN_SIZE, TN5250jConstants.SCREEN_SIZE_24X80_STR);
+            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
         }
 
         // are we to use a socks proxy
-        if (isSpecified(TN5250jConstants.ARG_USE_SOCKET_PROXY, args)) {
+        if (isSpecified(ARG_USE_SOCKET_PROXY, args)) {
 
             // socks proxy host argument
-            if (isSpecified(TN5250jConstants.ARG_PROXY_HOST, args)) {
-                sesProps.put(TN5250jConstants.SESSION_PROXY_HOST, getParm(TN5250jConstants.ARG_PROXY_HOST, args));
+            if (isSpecified(ARG_PROXY_HOST, args)) {
+                sesProps.put(SESSION_PROXY_HOST, getParm(ARG_PROXY_HOST, args));
             }
 
             // socks proxy port argument
-            if (isSpecified(TN5250jConstants.ARG_PROXY_PORT, args))
-                sesProps.put(TN5250jConstants.SESSION_PROXY_PORT, getParm(TN5250jConstants.ARG_PROXY_PORT, args));
+            if (isSpecified(ARG_PROXY_PORT, args)) {
+                sesProps.put(SESSION_PROXY_PORT, getParm(ARG_PROXY_PORT, args));
+            }
         }
 
         // are we to use a ssl and if we are what type
-        if (isSpecified(TN5250jConstants.ARG_SSL_TYPE, args)) {
-            sesProps.put(TN5250jConstants.SESSION_SSL_TYPE, getParm(TN5250jConstants.ARG_SSL_TYPE, args));
+        if (isSpecified(ARG_SSL_TYPE, args)) {
+            sesProps.put(SESSION_SSL_TYPE, getParm(ARG_SSL_TYPE, args));
         }
 
         // check if device name is specified
-        if (isSpecified(TN5250jConstants.ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
+        if (isSpecified(ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
             String dnParam;
 
             // use IP address as device name
@@ -339,13 +340,13 @@ public class Tn5250jController extends Thread {
                 dnParam = "UNKNOWN_HOST";
             }
 
-            sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, dnParam);
-        } else if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME, args)) {
-            sesProps.put(TN5250jConstants.SESSION_DEVICE_NAME, getParm(TN5250jConstants.ARG_DEVICE_NAME, args));
+            sesProps.put(SESSION_DEVICE_NAME, dnParam);
+        } else if (isSpecified(ARG_DEVICE_NAME, args)) {
+            sesProps.put(SESSION_DEVICE_NAME, getParm(ARG_DEVICE_NAME, args));
         }
 
-        if (isSpecified(TN5250jConstants.ARG_HEART_BEAT, args)) {
-            sesProps.put(TN5250jConstants.SESSION_HEART_BEAT, "1");
+        if (isSpecified(ARG_HEART_BEAT, args)) {
+            sesProps.put(SESSION_HEART_BEAT, "1");
         }
 
         return sesProps;
