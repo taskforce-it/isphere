@@ -348,7 +348,7 @@ public final class tnvt implements Runnable {
             me = new Thread(this);
             me.start();
 
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
 
             if (exception.getMessage() == null) {
                 exception.printStackTrace();
