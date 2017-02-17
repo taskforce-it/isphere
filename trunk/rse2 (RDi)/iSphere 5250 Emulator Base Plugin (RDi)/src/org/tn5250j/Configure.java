@@ -53,6 +53,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import org.tn5250j.encoding.CharMappings;
+import org.tn5250j.framework.transport.SocketConnector;
 import org.tn5250j.tools.AlignLayout;
 import org.tn5250j.tools.LangTool;
 
@@ -123,8 +124,9 @@ public class Configure {
 
         sslType = new JComboBox();
 
-        for (int x = 0; x < TN5250jConstants.SSL_TYPES.length; x++) {
-            sslType.addItem(TN5250jConstants.SSL_TYPES[x]);
+        String[] sslProtocols = SocketConnector.getSupportedSSLProtocols();
+        for (int x = 0; x < sslProtocols.length; x++) {
+            sslType.addItem(sslProtocols[x]);
         }
 
         if (propKey == null) {
@@ -163,17 +165,22 @@ public class Configure {
                 port = new JTextField("23", 5);
             }
 
-            if (isSpecified("-sslType", args)) sslType.setSelectedItem(getParm("-sslType", args));
+            if (isSpecified("-sslType", args)) {
+                sslType.setSelectedItem(getParm("-sslType", args));
+            }
 
-            if (isSpecified("-sph", args))
+            if (isSpecified("-sph", args)) {
                 proxyHost = new JTextField(getParm("-sph", args), 20);
-            else
+            } else {
                 proxyHost = new JTextField(20);
+            }
 
-            if (isSpecified("-f", args))
+            if (isSpecified("-f", args)) {
                 fpn = new JTextField(getParm("-f", args), 20);
-            else
+            } else {
                 fpn = new JTextField(20);
+            }
+
             if (isSpecified("-cp", args)) {
                 String codepage = getParm("-cp", args);
                 String[] acps = CharMappings.getAvailableCodePages();
@@ -184,27 +191,31 @@ public class Configure {
 
                 }
                 cpb.setSelectedItem(codepage);
-
             }
 
-            if (isSpecified("-e", args))
+            if (isSpecified("-e", args)) {
                 ec.setSelected(true);
-            else
+            } else {
                 ec.setSelected(false);
-            if (isSpecified("-t", args))
+            }
+
+            if (isSpecified("-t", args)) {
                 tc.setSelected(true);
-            else
+            } else {
                 tc.setSelected(false);
+            }
 
-            if (isSpecified("-132", args))
+            if (isSpecified("-132", args)) {
                 sdBig.setSelected(true);
-            else
+            } else {
                 sdNormal.setSelected(true);
+            }
 
-            if (isSpecified("-dn", args))
+            if (isSpecified("-dn", args)) {
                 deviceName = new JTextField(getParm("-dn", args), 20);
-            else
+            } else {
                 deviceName = new JTextField(20);
+            }
 
             if (isSpecified("-dn=hostname", args)) {
                 sdn.setSelected(true);

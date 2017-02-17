@@ -23,6 +23,9 @@
 package org.tn5250j.framework.transport;
 
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.tn5250j.TN5250jConstants;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
@@ -30,15 +33,14 @@ import org.tn5250j.tools.logging.TN5250jLogger;
 
 public class SocketConnector {
 
-    String sslType = null;
+    private String sslType = null;
 
-    TN5250jLogger logger;
+    private static TN5250jLogger logger = TN5250jLogFactory.getLogger(SocketConnector.class);
 
     /**
      * Creates a new instance that creates a plain socket by default.
      */
     public SocketConnector() {
-        logger = TN5250jLogFactory.getLogger(getClass());
     }
 
     /**
@@ -75,16 +77,16 @@ public class SocketConnector {
             } catch (Exception e) {
                 ex = e;
             }
-        } else { // SSL SOCKET
+        } else {
+
+            // SSL SOCKET
 
             logger.info("Creating SSL [" + sslType + "] Socket");
 
             SSLInterface sslIf = null;
 
-            String sslImplClassName = "org.tn5250j.framework.transport.SSL.SSLImplementation";
             try {
-                Class<?> c = Class.forName(sslImplClassName);
-                sslIf = (SSLInterface)c.newInstance();
+                sslIf = createSocketInterface();
             } catch (Exception e) {
                 ex = new Exception("Failed to create SSLInterface Instance. " + "Message is [" + e.getMessage() + "]");
             }
@@ -98,10 +100,49 @@ public class SocketConnector {
         if (ex != null) {
             logger.error(ex);
         }
+
         if (socket == null) {
             logger.warn("No socket was created");
         }
+
         return socket;
+    }
+
+    public static String getDefaultSSLProtocol() {
+
+        Set<String> sslProtocols = new HashSet<String>();
+        sslProtocols.addAll(Arrays.asList(getSupportedSSLProtocols()));
+
+        for (String sslProtocol : TN5250jConstants.SSL_PROTOCOL_HIERARCHY) {
+            if (sslProtocols.contains(sslProtocol)) {
+                return sslProtocol;
+            }
+        }
+
+        return null;
+    }
+
+    public static String[] getSupportedSSLProtocols() {
+
+        try {
+
+            SSLInterface sslIf = createSocketInterface();
+            return sslIf.getSupportedProtocols();
+
+        } catch (Exception e) {
+            logger.error("Failed to retrieve supported SSL protocols. " + "Message is [" + e.getMessage() + "]");
+        }
+
+        return null;
+    }
+
+    private static SSLInterface createSocketInterface() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        String sslImplClassName = "org.tn5250j.framework.transport.SSL.SSLImplementation";
+        Class<?> c = Class.forName(sslImplClassName);
+        SSLInterface sslIf = (SSLInterface)c.newInstance();
+
+        return sslIf;
     }
 
 }

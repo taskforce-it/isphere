@@ -61,13 +61,9 @@ public interface TN5250jConstants {
 
     // public static final String SSL_TYPE = "TN5250J_SSL_TYPE";
     public static final String SSL_TYPE_NONE = "NONE";
-    public static final String SSL_TYPE_SSLv2 = "SSLv2";
-    public static final String SSL_TYPE_SSLv3 = "SSLv3";
-    public static final String SSL_TYPE_TLS = "TLS";
-    public static final String SSL_TYPE_TLS_1_1 = "TLSv1.1";
-    public static final String SSL_TYPE_TLS_1_2 = "TLSv1.2";
+    public static final String SSL_TYPE_DEFAULT = "Default";
 
-    public static final String[] SSL_TYPES = { SSL_TYPE_NONE, SSL_TYPE_SSLv2, SSL_TYPE_SSLv3, SSL_TYPE_TLS, SSL_TYPE_TLS_1_1, SSL_TYPE_TLS_1_2 };
+    public static String[] SSL_PROTOCOL_HIERARCHY = new String[] {"TLSv1.3", "TLSv1.2", "TLSv1.1", "SSLv3", "SSLv2"};
 
     // Session JUMP Directions
     static final int JUMP_PREVIOUS = 0;

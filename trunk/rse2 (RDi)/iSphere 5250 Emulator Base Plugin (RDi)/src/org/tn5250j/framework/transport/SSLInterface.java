@@ -43,4 +43,10 @@ public interface SSLInterface {
      */
     public abstract Socket createSSLSocket(String destination, int port);
 
+    /**
+     * Returns the supported SSL types of the SSL interface.
+     * 
+     * @return list of supported SSL types
+     */
+    public abstract String[] getSupportedProtocols();
 }

@@ -8,10 +8,14 @@
 
 package biz.isphere.tn5250j.core.preferences;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.framework.transport.SocketConnector;
 
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
@@ -175,7 +179,7 @@ public final class Preferences {
     public String getSSLType() {
         return preferenceStore.getString(BIZ_ISPHERE_TN5250J_SSL_TYPE);
     }
-    
+
     /*
      * Preferences: SETTER
      */
@@ -321,5 +325,20 @@ public final class Preferences {
 
     public String getDefaultSSLType() {
         return TN5250jConstants.SSL_TYPE_NONE;
+    }
+
+    /*
+     * Preferences: Others
+     */
+
+    public String[] getSSLTypeOptions() {
+
+        List<String> sslProtocols = new ArrayList<String>();
+
+        sslProtocols.add(TN5250jConstants.SSL_TYPE_NONE);
+        sslProtocols.add(TN5250jConstants.SSL_TYPE_DEFAULT);
+        sslProtocols.addAll(Arrays.asList(SocketConnector.getSupportedSSLProtocols()));
+
+        return sslProtocols.toArray(new String[sslProtocols.size()]);
     }
 }
