@@ -42,7 +42,6 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
     protected Properties sesProps;
     private Vector listeners;
     private SessionChangeEvent sce;
-    private String sslType;
     private boolean heartBeat;
     String propFileName;
     protected SessionConfig sesConfig;
@@ -88,11 +87,10 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
     }
 
     public boolean isConnected() {
-
-        if (vt == null)
+        if (vt == null) {
             return false;
-        else
-            return vt.isConnected();
+        }
+        return vt.isConnected();
 
     }
 
@@ -100,11 +98,11 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
         if (!isConnected()) {
             return false;
         }
-        
+
         if (getGUI().isOnSignOnScreen()) {
             return false;
         }
-        
+
         return true;
 
     }
@@ -130,10 +128,10 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
     }
 
     public String getAllocDeviceName() {
-        if (vt != null)
+        if (vt != null) {
             return vt.getAllocatedDeviceName();
-        else
-            return null;
+        }
+        return null;
     }
 
     public int getSessionType() {
@@ -154,10 +152,14 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
     public void connect() {
 
-        String proxyPort = "1080"; // default socks proxy port
+        // default socks proxy port
+        String proxyPort = PROXY_PORT_NUMBER;
+
         boolean enhanced = false;
         boolean support132 = false;
-        int port = 23; // default telnet port
+
+        // default telnet port
+        int port = Integer.parseInt(PORT_NUMBER);
 
         enhanced = sesProps.containsKey(SESSION_TN_ENHANCED);
 
@@ -169,28 +171,37 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
         // vt.setController(this);
 
-        if (sesProps.containsKey(SESSION_PROXY_PORT)) proxyPort = sesProps.getProperty(SESSION_PROXY_PORT);
+        if (sesProps.containsKey(SESSION_PROXY_PORT)) {
+            proxyPort = sesProps.getProperty(SESSION_PROXY_PORT);
+        }
 
-        if (sesProps.containsKey(SESSION_PROXY_HOST)) vt.setProxy(sesProps.getProperty(SESSION_PROXY_HOST), proxyPort);
+        if (sesProps.containsKey(SESSION_PROXY_HOST)) {
+            vt.setProxy(sesProps.getProperty(SESSION_PROXY_HOST), proxyPort);
+        }
 
-        if (sesProps.containsKey(TN5250jConstants.SSL_TYPE)) {
-            sslType = sesProps.getProperty(TN5250jConstants.SSL_TYPE);
+        final String sslType;
+        if (sesProps.containsKey(SESSION_SSL_TYPE)) {
+            sslType = sesProps.getProperty(SESSION_SSL_TYPE);
         } else {
             // set default to none
-            sslType = TN5250jConstants.SSL_TYPE_NONE;
+            sslType = SSL_TYPE_NONE;
         }
 
         vt.setSSLType(sslType);
 
-        if (sesProps.containsKey(SESSION_CODE_PAGE)) vt.setCodePage(sesProps.getProperty(SESSION_CODE_PAGE));
+        if (sesProps.containsKey(SESSION_CODE_PAGE)) {
+            vt.setCodePage(sesProps.getProperty(SESSION_CODE_PAGE));
+        }
 
-        if (sesProps.containsKey(SESSION_DEVICE_NAME)) vt.setDeviceName(sesProps.getProperty(SESSION_DEVICE_NAME));
+        if (sesProps.containsKey(SESSION_DEVICE_NAME)) {
+            vt.setDeviceName(sesProps.getProperty(SESSION_DEVICE_NAME));
+        }
 
         if (sesProps.containsKey(SESSION_HOST_PORT)) {
             port = Integer.parseInt(sesProps.getProperty(SESSION_HOST_PORT));
         } else {
             // set to default 23 of telnet
-            port = 23;
+            port = Integer.parseInt(PORT_NUMBER);
         }
 
         final String ses = sesProps.getProperty(SESSION_HOST);
@@ -198,6 +209,7 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
         // lets set this puppy up to connect within its own thread
         Runnable connectIt = new Runnable() {
+            
             public void run() {
                 vt.connect(ses, portp);
             }

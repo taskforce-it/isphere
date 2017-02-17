@@ -28,6 +28,32 @@ public interface TN5250jConstants {
     public static final String tn5250jVersion = ".6";
     public static final String tn5250jSubVer = ".0";
 
+    // Startup parameters
+    public static final String ARG_HOST_PORT = "-p";
+    public static final String ARG_TN_ENHANCED = "-e"; // equals "-gui"
+    public static final String ARG_SCREEN_SIZE_80 = "-80";
+    public static final String ARG_SCREEN_SIZE_132 = "-132";
+    public static final String ARG_CODE_PAGE = "-cp";
+    public static final String ARG_USE_SOCKET_PROXY = "-usp";
+    public static final String ARG_PROXY_HOST = "-sph";
+    public static final String ARG_PROXY_PORT = "-spp";
+    public static final String ARG_USE_GUI = "-gui";
+    public static final String ARG_DEVICE_NAME = "-dn";
+    public static final String ARG_USE_HOSTNAME_AS_DEVICE_NAME = "-dn=hostname";
+    public static final String ARG_TERM_NAME_SYSTEM = "-t";
+    public static final String ARG_HEART_BEAT = "-hb";
+    public static final String ARG_SSL_TYPE = "-sslType";
+    public static final String ARG_NO_EMBED = "-noembed";
+    public static final String ARG_START_DAEMON = "-d";
+    public static final String ARG_NO_CHECK = "-nc";
+    public static final String ARG_LOCALE = "-L";
+    public static final String ARG_FILENAME = "-f";
+
+    // Port numbers
+    public static final String PORT_NUMBER = "23";
+    public static final String SSL_PORT_NUMBER = "992";
+    public static final String PROXY_PORT_NUMBER = "1080";
+
     // STATE
     static final int STATE_DISCONNECTED = 0;
     static final int STATE_CONNECTED = 1;
@@ -52,8 +78,9 @@ public interface TN5250jConstants {
     public static final String SESSION_TERM_NAME = "SESSION_TERM_NAME";
     public static final String SESSION_IS_APPLET = "SESSION_IS_APPLET";
     public static final String SESSION_HEART_BEAT = "SESSION_KEEP_ALIVE_ENABLED";
+    public static final String SESSION_SSL_TYPE = "SESSION_SSL_TYPE";
 
-    public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
+    // public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
     public static final String GUI_FRAME_WIDTH = "GUI_FRAME_WIDTH";
     public static final String GUI_FRAME_HEIGHT = "GUI_FRAME_HEIGHT";
     public static final String GUI_NO_TAB = "GUI_NO_TAB";
@@ -61,13 +88,10 @@ public interface TN5250jConstants {
     public static final String START_MONITOR_THREAD = "START_MONITOR_THREAD";
 
     // public static final String SSL_TYPE = "TN5250J_SSL_TYPE";
-    public static final String SSL_TYPE = "-sslType";
     public static final String SSL_TYPE_NONE = "NONE";
-    public static final String SSL_TYPE_SSLv2 = "SSLv2";
-    public static final String SSL_TYPE_SSLv3 = "SSLv3";
-    public static final String SSL_TYPE_TLS = "TLS";
+    public static final String SSL_TYPE_DEFAULT = "Default";
 
-    public static final String[] SSL_TYPES = { SSL_TYPE_NONE, SSL_TYPE_SSLv2, SSL_TYPE_SSLv3, SSL_TYPE_TLS };
+    public static String[] SSL_PROTOCOL_HIERARCHY = new String[] { "TLSv1.3", "TLSv1.2", "TLSv1.1", "SSLv3", "SSLv2" };
 
     // Session JUMP Directions
     static final int JUMP_PREVIOUS = 0;
