@@ -38,16 +38,16 @@ import java.util.jar.JarFile;
 import javax.swing.JFrame;
 
 import org.tn5250j.GlobalConfigure;
-import org.tn5250j.framework.tn5250.Screen5250;
-import org.tn5250j.SessionGUI;
 import org.tn5250j.Session5250;
-import org.tn5250j.framework.common.SessionManager;
+import org.tn5250j.SessionGUI;
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.framework.common.SessionManager;
+import org.tn5250j.framework.common.Sessions;
+import org.tn5250j.framework.tn5250.Screen5250;
 import org.tn5250j.framework.tn5250.tnvt;
 import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
-import org.tn5250j.framework.common.Sessions;
 
 public class Tn5250jController extends Thread implements TN5250jConstants {
     private File extensionDir;
@@ -56,7 +56,6 @@ public class Tn5250jController extends Thread implements TN5250jConstants {
     // this.getClass().getClassLoader());
     private List eventList;
     private List listeners;
-    private List sessions;
     private SessionManager manager;
     Properties sesprops;
     private static Tn5250jController current;
@@ -66,7 +65,7 @@ public class Tn5250jController extends Thread implements TN5250jConstants {
         extensionDir = new File(maindir + File.separatorChar + "ext");
         log.info("plugin directory is: " + extensionDir.getAbsolutePath());
         if (!extensionDir.exists()) {
-            extensionDir.mkdir();
+            log.warn("Plugin path '" + extensionDir.getAbsolutePath() + "' does not exist. No plugins will be loaded.");
         }
         this.setDaemon(true);
         eventList = new ArrayList();
@@ -82,16 +81,18 @@ public class Tn5250jController extends Thread implements TN5250jConstants {
     }
 
     private void loadExt() {
-        File[] exts = extensionDir.listFiles();
-        for (int x = 0; x < exts.length; x++) {
-            if (exts[x].isDirectory()) {
-                String jarName = exts[x].getAbsolutePath() + File.separatorChar + exts[x].getName() + ".jar";
-                File jarFile = new File(jarName);
-                if (jarFile.exists()) {
-                    Properties config = loadConfig(jarFile);
-                    load(jarFile, config.getProperty("mainentry"), config);
-                } else {
-                    log.warn("extension could not be loaded as the jar was not found: " + jarName);
+        if (this.extensionDir.exists()) {
+            File[] exts = extensionDir.listFiles();
+            for (int x = 0; x < exts.length; x++) {
+                if (exts[x].isDirectory()) {
+                    String jarName = exts[x].getAbsolutePath() + File.separatorChar + exts[x].getName() + ".jar";
+                    File jarFile = new File(jarName);
+                    if (jarFile.exists()) {
+                        Properties config = loadConfig(jarFile);
+                        load(jarFile, config.getProperty("mainentry"), config);
+                    } else {
+                        log.warn("extension could not be loaded as the jar was not found: " + jarName);
+                    }
                 }
             }
         }
@@ -275,49 +276,62 @@ public class Tn5250jController extends Thread implements TN5250jConstants {
     protected Properties convertToProps(String args[]) {
         Properties sesProps = new Properties();
 
-        String propFileName = null;
         String session = args[0];
 
         // Start loading properties
         sesProps.put(SESSION_HOST, session);
 
-        if (isSpecified("-e", args)) sesProps.put(SESSION_TN_ENHANCED, "1");
-
-        if (isSpecified("-p", args)) {
-            sesProps.put(SESSION_HOST_PORT, getParm("-p", args));
+        if (isSpecified(ARG_TN_ENHANCED, args)) {
+            sesProps.put(SESSION_TN_ENHANCED, "1");
         }
 
-        if (isSpecified("-f", args)) propFileName = getParm("-f", args);
+        if (isSpecified(ARG_HOST_PORT, args)) {
+            sesProps.put(SESSION_HOST_PORT, getParm(ARG_HOST_PORT, args));
+        }
 
-        if (isSpecified("-cp", args)) sesProps.put(SESSION_CODE_PAGE, getParm("-cp", args));
+        // if (isSpecified(ARG_FILENAME, args)) {
+        // String propFileName = getParm(ARG_FILENAME, args);
+        // }
 
-        if (isSpecified("-gui", args)) sesProps.put(SESSION_USE_GUI, "1");
+        if (isSpecified(ARG_CODE_PAGE, args)) {
+            sesProps.put(SESSION_CODE_PAGE, getParm(ARG_CODE_PAGE, args));
+        }
 
-        if (isSpecified("-132", args))
+        if (isSpecified(ARG_USE_GUI, args)) {
+            sesProps.put(SESSION_USE_GUI, "1");
+        }
+
+        if (isSpecified(ARG_TERM_NAME_SYSTEM, args)) {
+            sesProps.put(SESSION_TERM_NAME_SYSTEM, "1");
+        }
+
+        if (isSpecified(ARG_SCREEN_SIZE_132, args)) {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
-        else
+        } else {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
+        }
 
         // are we to use a socks proxy
-        if (isSpecified("-usp", args)) {
+        if (isSpecified(ARG_USE_SOCKET_PROXY, args)) {
 
             // socks proxy host argument
-            if (isSpecified("-sph", args)) {
-                sesProps.put(SESSION_PROXY_HOST, getParm("-sph", args));
+            if (isSpecified(ARG_PROXY_HOST, args)) {
+                sesProps.put(SESSION_PROXY_HOST, getParm(ARG_PROXY_HOST, args));
             }
 
             // socks proxy port argument
-            if (isSpecified("-spp", args)) sesProps.put(SESSION_PROXY_PORT, getParm("-spp", args));
+            if (isSpecified(ARG_PROXY_PORT, args)) {
+                sesProps.put(SESSION_PROXY_PORT, getParm(ARG_PROXY_PORT, args));
+            }
         }
 
         // are we to use a ssl and if we are what type
-        if (isSpecified("-sslType", args)) {
-
-            sesProps.put(SSL_TYPE, getParm("-sslType", args));
+        if (isSpecified(ARG_SSL_TYPE, args)) {
+            sesProps.put(SESSION_SSL_TYPE, getParm(ARG_SSL_TYPE, args));
         }
 
         // check if device name is specified
-        if (isSpecified("-dn=hostname", args)) {
+        if (isSpecified(ARG_USE_HOSTNAME_AS_DEVICE_NAME, args)) {
             String dnParam;
 
             // use IP address as device name
@@ -328,12 +342,13 @@ public class Tn5250jController extends Thread implements TN5250jConstants {
             }
 
             sesProps.put(SESSION_DEVICE_NAME, dnParam);
-        } else if (isSpecified("-dn", args)) {
-
-            sesProps.put(SESSION_DEVICE_NAME, getParm("-dn", args));
+        } else if (isSpecified(ARG_DEVICE_NAME, args)) {
+            sesProps.put(SESSION_DEVICE_NAME, getParm(ARG_DEVICE_NAME, args));
         }
 
-        if (isSpecified("-hb", args)) sesProps.put(SESSION_HEART_BEAT, "1");
+        if (isSpecified(ARG_HEART_BEAT, args)) {
+            sesProps.put(SESSION_HEART_BEAT, "1");
+        }
 
         return sesProps;
     }

@@ -27,14 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.Socket;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.swing.JOptionPane;
-
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -42,8 +34,18 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.tn5250j.framework.transport.SSLInterface;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import javax.swing.JOptionPane;
 
+import org.tn5250j.GlobalConfigure;
+import org.tn5250j.TN5250jConstants;
+import org.tn5250j.framework.transport.SSLInterface;
+import org.tn5250j.framework.transport.SocketConnector;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
 
@@ -57,8 +59,6 @@ import org.tn5250j.tools.logging.TN5250jLogger;
  * 
  */
 public class SSLImplementation implements SSLInterface, X509TrustManager {
-
-    SecureRandom prng = null;
 
     SSLContext sslContext = null;
 
@@ -80,45 +80,46 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
         logger = TN5250jLogFactory.getLogger(getClass());
     }
 
-    public void init(String sslType) {
-        try {
-            logger.debug("Initializing User KeyStore");
-            userKsPath = System.getProperty("user.home") + File.separator + ".tn5250j" + File.separator + "keystore";
-            File userKsFile = new File(userKsPath);
-            userks = KeyStore.getInstance(KeyStore.getDefaultType());
-            userks.load(userKsFile.exists() ? new FileInputStream(userKsFile) : null, userksPassword);
-            logger.debug("Initializing User Key Manager Factory");
-            userkmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            userkmf.init(userks, userksPassword);
-            logger.debug("Initializing User Trust Manager Factory");
-            usertmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            usertmf.init(userks);
-            userTrustManagers = usertmf.getTrustManagers();
-            ArrayList issuersList = new ArrayList();
-            for (int i = 0; i < userTrustManagers.length; i++) {
-                if (userTrustManagers[i] instanceof X509TrustManager)
-                    issuersList.addAll(Arrays.asList(((X509TrustManager)userTrustManagers[i]).getAcceptedIssuers()));
-            }
-            X509Certificate[] acceptedIssuers = new X509Certificate[issuersList.size()];
-            acceptedIssuers = (X509Certificate[])issuersList.toArray(acceptedIssuers);
+    public void init(String sslType) throws Exception {
 
-            logger.debug("Initializing SSL Context");
+        logger.debug("Initializing User KeyStore");
+        userKsPath = System.getProperty("user.home") + File.separator + GlobalConfigure.TN5250J_FOLDER + File.separator + "keystore";
+        File userKsFile = new File(userKsPath);
+        userks = KeyStore.getInstance(KeyStore.getDefaultType());
+        userks.load(userKsFile.exists() ? new FileInputStream(userKsFile) : null, userksPassword);
+
+        logger.debug("Initializing User Key Manager Factory");
+        userkmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        userkmf.init(userks, userksPassword);
+
+        logger.debug("Initializing User Trust Manager Factory");
+        usertmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        usertmf.init(userks);
+        userTrustManagers = usertmf.getTrustManagers();
+
+        logger.debug("Initializing SSL Context");
+        if (TN5250jConstants.SSL_TYPE_DEFAULT.equalsIgnoreCase(sslType)) {
+            sslContext = SSLContext.getInstance(SocketConnector.getDefaultSSLProtocol());
+        } else {
             sslContext = SSLContext.getInstance(sslType);
-            sslContext.init(userkmf.getKeyManagers(), new TrustManager[] { this }, prng);
-        } catch (Exception ex) {
-            logger.error("Error initializing SSL [" + ex.getMessage() + "]");
         }
-
+        sslContext.init(userkmf.getKeyManagers(), new TrustManager[] { this }, null);
     }
 
     public Socket createSSLSocket(String destination, int port) {
-        if (sslContext == null) throw new IllegalStateException("SSL Context Not Initialized");
+
+        if (sslContext == null) {
+            throw new IllegalStateException("SSL Context Not Initialized");
+        }
+
         SSLSocket socket = null;
+
         try {
             socket = (SSLSocket)sslContext.getSocketFactory().createSocket(destination, port);
         } catch (Exception e) {
             logger.error("Error creating ssl socket [" + e.getMessage() + "]");
         }
+        
         return socket;
     }
 
@@ -131,6 +132,17 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
      */
     public X509Certificate[] getAcceptedIssuers() {
         return acceptedIssuers;
+    }
+
+    public String[] getSupportedProtocols() {
+
+        try {
+            return TN5250jConstants.SSL_PROTOCOL_HIERARCHY;
+        } catch (Exception ex) {
+            logger.error("Error initializing SSL [" + ex.getMessage() + "]");
+        }
+
+        return null;
     }
 
     /*
@@ -153,7 +165,15 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
     public void checkServerTrusted(X509Certificate[] chain, String type) throws CertificateException {
         try {
             for (int i = 0; i < userTrustManagers.length; i++) {
-                if (userTrustManagers[i] instanceof X509TrustManager) ((X509TrustManager)userTrustManagers[i]).checkServerTrusted(chain, type);
+                if (userTrustManagers[i] instanceof X509TrustManager) {
+                    X509TrustManager trustManager = (X509TrustManager)userTrustManagers[i];
+                    X509Certificate[] calist = trustManager.getAcceptedIssuers();
+                    if (calist.length > 0) {
+                        trustManager.checkServerTrusted(chain, type);
+                    } else {
+                        throw new CertificateException("Empty list of accepted issuers (a.k.a. root CA list).");
+                    }
+                }
             }
             return;
         } catch (CertificateException ce) {
@@ -167,22 +187,21 @@ public class SSLImplementation implements SSLInterface, X509TrustManager {
             certInfo = certInfo.concat("Subject DN: " + cert.getSubjectDN().getName() + "\n");
             certInfo = certInfo.concat("Public Key: " + cert.getPublicKey().getFormat() + "\n");
 
-            int accept = JOptionPane.showConfirmDialog(null, certInfo, "Unknown Certificate", javax.swing.JOptionPane.YES_NO_OPTION);
+            int accept = JOptionPane.showConfirmDialog(null, certInfo, "Unknown Certificate - Do you accept it?",
+                javax.swing.JOptionPane.YES_NO_OPTION);
             if (accept != JOptionPane.YES_OPTION) {
                 throw new java.security.cert.CertificateException("Certificate Rejected");
-            } else {
+            }
 
-                int save = JOptionPane.showConfirmDialog(null, "Remember this certificate?", "Save Certificate",
-                    javax.swing.JOptionPane.YES_NO_OPTION);
+            int save = JOptionPane.showConfirmDialog(null, "Remember this certificate?", "Save Certificate", javax.swing.JOptionPane.YES_NO_OPTION);
 
-                if (save == JOptionPane.YES_OPTION) {
-                    try {
-                        userks.setCertificateEntry(cert.getSubjectDN().getName(), cert);
-                        userks.store(new FileOutputStream(userKsPath), userksPassword);
-                    } catch (Exception e) {
-                        logger.error("Error saving certificate [" + e.getMessage() + "]");
-                        e.printStackTrace();
-                    }
+            if (save == JOptionPane.YES_OPTION) {
+                try {
+                    userks.setCertificateEntry(cert.getSubjectDN().getName(), cert);
+                    userks.store(new FileOutputStream(userKsPath), userksPassword);
+                } catch (Exception e) {
+                    logger.error("Error saving certificate [" + e.getMessage() + "]");
+                    e.printStackTrace();
                 }
             }
         }

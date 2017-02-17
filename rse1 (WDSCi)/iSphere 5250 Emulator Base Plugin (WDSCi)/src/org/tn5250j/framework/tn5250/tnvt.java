@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 
+import javax.mail.Session;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,13 +45,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.tn5250j.Session5250;
+import org.tn5250j.TN5250jConstants;
 import org.tn5250j.encoding.CharMappings;
 import org.tn5250j.encoding.CodePage;
+import org.tn5250j.framework.transport.SocketConnector;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
-import org.tn5250j.framework.transport.SocketConnector;
-import org.tn5250j.TN5250jConstants;
-import org.tn5250j.Session5250;
 
 public final class tnvt implements Runnable, TN5250jConstants {
 
@@ -220,7 +224,10 @@ public final class tnvt implements Runnable, TN5250jConstants {
             // sock = new Socket(s, port);
             // smk - For SSL compability
             SocketConnector sc = new SocketConnector();
-            if (sslType != null) sc.setSSLType(sslType);
+            if (sslType != null) {
+                sc.setSSLType(sslType);
+            }
+
             sock = sc.createSocket(s, port);
 
             if (sock == null) {
@@ -275,12 +282,29 @@ public final class tnvt implements Runnable, TN5250jConstants {
             me.start();
 
         } catch (Exception exception) {
-            if (exception.getMessage() == null) exception.printStackTrace();
+
+            if (exception.getMessage() == null) {
+                exception.printStackTrace();
+            }
+
             log.warn("connect() " + exception.getMessage());
 
-            if (sock == null) log.warn("I did not get a socket");
+            if (sock == null) {
+                log.warn("I did not get a socket");
+            }
 
             disconnect();
+
+            final String message = exception.getLocalizedMessage();
+
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+                public void run() {
+                    final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+                    MessageDialog.openError(shell, "Error", message);
+                }
+            });
+
             return false;
         }
         return true;
@@ -522,7 +546,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
         // row - first ##
         // column - second ##
         // F3 - Help Aid Key
-        // System.out.println("Help request sent");
         baosp.write(screen52.getCurrentRow());
         baosp.write(screen52.getCurrentCol());
         baosp.write(AID_HELP);
@@ -554,8 +577,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
         // bit 5 - SRQ system request
         // bit 6 - TRQ Test request key
         // bit 7 - HLP
-
-        // System.out.println("Attention key sent");
 
         try {
             writeGDS(0x40, 0, null);
@@ -955,8 +976,7 @@ public final class tnvt implements Runnable, TN5250jConstants {
                 // for (; (i < screen.length) && (screen[i] == ' '); i++);
 
                 String remainder = new String(screen, i + 1, screen.length - (i + 1));
-                // System.out.println("Sensing action command in the input! = "
-                // + command);
+                
                 controller.scanned(command, remainder);
                 break;
             }
@@ -986,7 +1006,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
 
             screen52.setCursorActive(false);
 
-            // System.out.println("operation code: " + bk.getOpCode());
             if (bk == null) continue;
 
             switch (bk.getOpCode()) {
@@ -1004,7 +1023,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
             case 2:
                 log.debug("Output Only");
                 parseIncoming();
-                // System.out.println(screen52.dirty);
                 screen52.updateDirty();
 
                 // invited = true;
@@ -1275,10 +1293,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
 
                     byte[] guiSeg = sfParser.getSegmentAtPos(y);
                     if (guiSeg != null) {
-                        // log.info(" gui saved at " + y + " - " +
-                        // screen52.getRow(y) + "," +
-                        // screen52.getCol(y));
-
                         byte[] gsa = new byte[sa.length + guiSeg.length + 2];
                         System.arraycopy(sa, 0, gsa, 0, sa.length);
                         System.arraycopy(guiSeg, 0, gsa, sac + 2, guiSeg.length);
@@ -1287,8 +1301,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
                         sa[sac++] = (byte)0x04;
                         sa[sac++] = (byte)0x11;
                         sac += guiSeg.length;
-                        // y--;
-                        // continue;
                     }
                 }
                 if (planes.isAttributePlace(y)) {
@@ -1983,10 +1995,8 @@ public final class tnvt implements Runnable, TN5250jConstants {
         }
 
         catch (Exception e) {
-            log.warn("write to display " + e.getMessage());
-            e.printStackTrace();
+            log.warn("write to display " + e.getMessage(), e);
         }
-        ;
 
         processCC1(control1);
 
@@ -2263,7 +2273,7 @@ public final class tnvt implements Runnable, TN5250jConstants {
         int fromCol = bk.getNextByte() & 0xff; // from column
         int toCol = bk.getNextByte() & 0xff; // to column
         screen52.setCursor(screen52.getErrorLine(), fromCol); // Skip the
-                                                                // control
+        // control
         // byte
         screen52.setStatus(Screen5250.STATUS_ERROR_CODE, Screen5250.STATUS_VALUE_ON, null);
         screen52.saveErrorLine();
@@ -2445,9 +2455,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
                             break;
 
                         case TIMING_MARK: // 6 rfc860
-                            // System.out.println("Timing Mark Received and
-                            // notifying " +
-                            // "the server that we will not do it");
                             baosp.write(IAC);
                             baosp.write(WONT);
                             baosp.write(TIMING_MARK);
@@ -2475,7 +2482,7 @@ public final class tnvt implements Runnable, TN5250jConstants {
                             break;
 
                         default: // every thing else we will not do at this
-                                    // time
+                            // time
                             baosp.write(IAC);
                             baosp.write(WONT);
                             baosp.write(abyte0[i]); // either
@@ -2633,7 +2640,6 @@ public final class tnvt implements Runnable, TN5250jConstants {
      * @return String
      */
     private String negDeviceName() {
-
         if (devSeq++ == -1) {
             devNameUsed = devName;
             return devName;

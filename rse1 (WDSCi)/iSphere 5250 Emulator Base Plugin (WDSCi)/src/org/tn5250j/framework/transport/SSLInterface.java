@@ -32,7 +32,7 @@ public interface SSLInterface {
      * @param type The ssl socket type (SSLv2, SSLv3, TLS)
      * @see org.tn5250j.framework.transport.SSLConstants
      */
-    public abstract void init(String sslType);
+    public abstract void init(String sslType) throws Exception;
 
     /**
      * Create a new socket
@@ -43,4 +43,10 @@ public interface SSLInterface {
      */
     public abstract Socket createSSLSocket(String destination, int port);
 
+    /**
+     * Returns the supported SSL types of the SSL interface.
+     * 
+     * @return list of supported SSL types
+     */
+    public abstract String[] getSupportedProtocols();
 }

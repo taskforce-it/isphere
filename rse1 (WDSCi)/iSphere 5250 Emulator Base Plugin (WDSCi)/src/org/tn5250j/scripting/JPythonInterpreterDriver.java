@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.python.util.PythonInterpreter;
 import org.python.core.*;
+import org.tn5250j.GlobalConfigure;
 import org.tn5250j.SessionGUI;
 
 import javax.swing.JOptionPane;
@@ -31,7 +32,7 @@ public class JPythonInterpreterDriver implements InterpreterDriver {
         // props.setProperty("python.path", ".;jt400.jar");
         // PythonInterpreter.initialize(System.getProperties(), props,
         // new String[] {""});
-        System.setProperty("python.cachedir", System.getProperty("user.home") + File.separator + ".tn5250j" + File.separator);
+        System.setProperty("python.cachedir", System.getProperty("user.home") + File.separator + GlobalConfigure.TN5250J_FOLDER + File.separator);
 
         try {
             _instance = new JPythonInterpreterDriver();

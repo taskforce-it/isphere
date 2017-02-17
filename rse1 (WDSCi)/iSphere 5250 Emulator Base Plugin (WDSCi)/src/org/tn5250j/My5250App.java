@@ -45,8 +45,8 @@ public class My5250App extends JApplet implements TN5250jConstants {
     private void jbInit() throws Exception {
         this.setSize(new Dimension(400, 300));
 
-        if (isSpecified("-L"))
-            LangTool.init(parseLocale(getParameter("-L")));
+        if (isSpecified(ARG_LOCALE))
+            LangTool.init(parseLocale(getParameter(ARG_LOCALE)));
         else
             LangTool.init();
 
@@ -66,34 +66,54 @@ public class My5250App extends JApplet implements TN5250jConstants {
         // Start loading properties - Host must exist
         sesProps.put(SESSION_HOST, getParameter("host"));
 
-        if (isSpecified("-e")) sesProps.put(SESSION_TN_ENHANCED, "1");
-
-        if (isSpecified("-p")) {
-            sesProps.put(SESSION_HOST_PORT, getParameter("-p"));
+        if (isSpecified(ARG_TN_ENHANCED)) {
+            sesProps.put(SESSION_TN_ENHANCED, "1");
         }
 
-        // if (isSpecified("-f",args))
-        // propFileName = getParm("-f",args);
+        if (isSpecified(ARG_HOST_PORT)) {
+            sesProps.put(SESSION_HOST_PORT, getParameter(ARG_HOST_PORT));
+        }
 
-        if (isSpecified("-cp")) sesProps.put(SESSION_CODE_PAGE, getParameter("-cp"));
+        // if (isSpecified(ARG_FILENAME,args))
+        // propFileName = getParm(ARG_FILENAME,args);
 
-        if (isSpecified("-gui")) sesProps.put(SESSION_USE_GUI, "1");
+        if (isSpecified(ARG_CODE_PAGE)) {
+            sesProps.put(SESSION_CODE_PAGE, getParameter(ARG_CODE_PAGE));
+        }
 
-        if (isSpecified("-132"))
+        if (isSpecified(ARG_USE_GUI)) {
+            sesProps.put(SESSION_USE_GUI, "1");
+        }
+
+        if (isSpecified(ARG_TERM_NAME_SYSTEM)) {
+            sesProps.put(SESSION_TERM_NAME_SYSTEM, "1");
+        }
+
+        if (isSpecified(ARG_SCREEN_SIZE_132)) {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
-        else
+        } else {
             sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
+        }
 
         // socks proxy host argument
-        if (isSpecified("-sph")) {
-            sesProps.put(SESSION_PROXY_HOST, getParameter("-sph"));
+        if (isSpecified(ARG_PROXY_HOST)) {
+            sesProps.put(SESSION_PROXY_HOST, getParameter(ARG_PROXY_HOST));
         }
 
         // socks proxy port argument
-        if (isSpecified("-spp")) sesProps.put(SESSION_PROXY_PORT, getParameter("-spp"));
+        if (isSpecified(ARG_PROXY_PORT)) {
+            sesProps.put(SESSION_PROXY_PORT, getParameter(ARG_PROXY_PORT));
+        }
 
         // check if device name is specified
-        if (isSpecified("-dn")) sesProps.put(SESSION_DEVICE_NAME, getParameter("-dn"));
+        if (isSpecified(ARG_DEVICE_NAME)) {
+            sesProps.put(SESSION_DEVICE_NAME, getParameter(ARG_DEVICE_NAME));
+        }
+
+        // are we to use a ssl and if we are what type
+        if (isSpecified(ARG_SSL_TYPE)) {
+            sesProps.put(SESSION_SSL_TYPE, getParameter(ARG_SSL_TYPE));
+        }
 
         loadSystemProperty("SESSION_CONNECT_USER");
         loadSystemProperty("SESSION_CONNECT_PASSWORD");
