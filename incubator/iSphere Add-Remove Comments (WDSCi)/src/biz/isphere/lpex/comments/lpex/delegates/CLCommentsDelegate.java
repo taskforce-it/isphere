@@ -104,10 +104,50 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
      * @parm startPos - start position of the selected text
      * @parm endPos - end position of the selected text
      */
-    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException {
+    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException {
 
         startPos--;
         endPos--;
+
+        boolean hasStartComment = false;
+        boolean hasEndComment = false;
+
+        // Check start comment
+        int p = startPos + (endPos - startPos) / 2;
+        int i = p;
+        while (i >= 0 && !hasStartComment) {
+            if (i + START_COMMENT.trim().length() < text.length()) {
+                if (START_COMMENT.trim().equals(text.substring(i, i + START_COMMENT.trim().length()))) {
+                    hasStartComment = true;
+                }
+            }
+            if (i < startPos && i + END_COMMENT.trim().length() < text.length()) {
+                if (END_COMMENT.trim().equals(text.substring(i, i + END_COMMENT.trim().length()))) {
+                    break;
+                }
+            }
+            i--;
+        }
+
+        // Check end comment
+        i = p;
+        while (i < text.length() && !hasEndComment) {
+            if (i + END_COMMENT.trim().length() < text.length()) {
+                if (END_COMMENT.trim().equals(text.substring(i, i + END_COMMENT.trim().length()))) {
+                    hasEndComment = true;
+                }
+            }
+            if (i > endPos && i + START_COMMENT.trim().length() < text.length()) {
+                if (START_COMMENT.trim().equals(text.substring(i, i + START_COMMENT.trim().length()))) {
+                    break;
+                }
+            }
+            i++;
+        }
+
+        if (hasStartComment || hasEndComment) {
+            throw new CommentExistsException();
+        }
 
         StringBuilder buffer = new StringBuilder(text);
         buffer.insert(startPos, START_COMMENT.trim());

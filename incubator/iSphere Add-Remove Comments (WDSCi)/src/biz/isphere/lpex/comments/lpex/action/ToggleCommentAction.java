@@ -12,6 +12,7 @@ import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
@@ -24,25 +25,20 @@ public class ToggleCommentAction extends AbstractLpexAction {
         return getLPEXMenuAction(Messages.Menu_Toggle_Comment_Lines, ToggleCommentAction.ID);
     }
 
-    @Override
-    protected ICommentDelegate getDelegate(LpexView view) {
-        return new CLCommentsDelegate(view);
-    }
-
     protected void doLines(LpexView view, int firstLine, int lastLine) {
 
         int element = 0;
 
-        ICommentDelegate delegate = getDelegate(view);
-        boolean isAllCommented = true;
-        for (element = firstLine; element <= lastLine; element++) {
-            if (!delegate.isLineComment(view.elementText(element))) {
-                isAllCommented = false;
-                break;
-            }
-        }
-
         try {
+
+            ICommentDelegate delegate = getDelegate(view);
+            boolean isAllCommented = true;
+            for (element = firstLine; element <= lastLine; element++) {
+                if (!delegate.isLineComment(view.elementText(element))) {
+                    isAllCommented = false;
+                    break;
+                }
+            }
 
             for (element = firstLine; element <= lastLine; element++) {
                 if (isAllCommented) {
@@ -52,6 +48,9 @@ public class ToggleCommentAction extends AbstractLpexAction {
                 }
             }
 
+        } catch (MemberTypeNotSupportedException e) {
+            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            displayMessage(view, message);
         } catch (CommentExistsException e) {
             String message = Messages.bind(Messages.Line_A_has_already_been_commented_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
@@ -65,9 +64,8 @@ public class ToggleCommentAction extends AbstractLpexAction {
     }
 
     protected void doSelection(LpexView view, int line, int startColumn, int endColumn) {
-
-        ICommentDelegate delegate = getDelegate(view);
-        view.setElementText(line, delegate.uncomment(view.elementText(line), startColumn, endColumn));
+        // Selection is not supported.
+        // Silently ignore it.
     }
 
 }

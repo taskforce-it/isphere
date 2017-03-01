@@ -8,7 +8,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
+import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.internal.Position;
 
 import com.ibm.lpex.core.LpexAction;
@@ -57,8 +59,6 @@ public abstract class AbstractLpexAction implements LpexAction {
         }
     }
 
-    protected abstract ICommentDelegate getDelegate(LpexView view);
-
     protected abstract void doLines(LpexView view, int firstLine, int lastLine);
 
     protected abstract void doSelection(LpexView view, int line, int startColumn, int endColumn);
@@ -73,6 +73,18 @@ public abstract class AbstractLpexAction implements LpexAction {
 
     protected boolean anythingSelected(LpexView view) {
         return view.queryOn("block.anythingSelected");
+    }
+
+    protected ICommentDelegate getDelegate(LpexView view) throws MemberTypeNotSupportedException {
+        
+        String type = getMemberType();
+        if ("CLP".equalsIgnoreCase(type)) {
+            return new CLCommentsDelegate(view);
+        } else if ("CLLE".equalsIgnoreCase(type)) {
+            return new CLCommentsDelegate(view);
+        }
+        
+        throw new MemberTypeNotSupportedException();
     }
 
     protected String getMemberType() {

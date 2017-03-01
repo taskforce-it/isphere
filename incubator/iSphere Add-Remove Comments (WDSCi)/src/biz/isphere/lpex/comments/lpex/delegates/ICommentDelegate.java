@@ -19,7 +19,7 @@ public interface ICommentDelegate {
     
     public String comment(String text) throws TextLimitExceededException, CommentExistsException;
 
-    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException;
+    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException;
 
     public String uncomment(String text);
 

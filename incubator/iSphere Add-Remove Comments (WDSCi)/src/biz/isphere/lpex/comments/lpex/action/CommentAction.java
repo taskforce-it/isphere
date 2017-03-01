@@ -12,6 +12,7 @@ import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
@@ -22,11 +23,6 @@ public class CommentAction extends AbstractLpexAction {
 
     public static String getLPEXMenuAction() {
         return getLPEXMenuAction(Messages.Menu_Comment_Lines, CommentAction.ID);
-    }
-
-    @Override
-    protected ICommentDelegate getDelegate(LpexView view) {
-        return new CLCommentsDelegate(view);
     }
 
     protected void doLines(LpexView view, int firstLine, int lastLine) {
@@ -49,6 +45,9 @@ public class CommentAction extends AbstractLpexAction {
                 }
             }
 
+        } catch (MemberTypeNotSupportedException e) {
+            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            displayMessage(view, message);
         } catch (CommentExistsException e) {
             String message = Messages.bind(Messages.Line_A_has_already_been_commented_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
@@ -62,7 +61,22 @@ public class CommentAction extends AbstractLpexAction {
     }
 
     protected void doSelection(final LpexView view, final int element, final int startColumn, final int endColumn) {
-        // Selection is not supported.
-        // Silently ignore it.
+
+        try {
+            
+            ICommentDelegate delegate = getDelegate(view);
+            view.setElementText(element, delegate.comment(view.elementText(element), startColumn, endColumn));
+
+        } catch (MemberTypeNotSupportedException e) {
+            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            displayMessage(view, message);
+        } catch (CommentExistsException e) {
+            String message = Messages.Selection_has_already_been_commented_The_operation_has_been_canceled;
+            displayMessage(view, message);
+        } catch (TextLimitExceededException e) {
+            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled, Integer
+                .toString(element));
+            displayMessage(view, message);
+        }
     }
 }
