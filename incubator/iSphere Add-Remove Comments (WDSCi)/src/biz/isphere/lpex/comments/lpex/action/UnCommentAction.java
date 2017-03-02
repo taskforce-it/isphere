@@ -23,13 +23,14 @@ public class UnCommentAction extends AbstractLpexAction {
         return getLPEXMenuAction(Messages.Menu_Uncomment_Lines, UnCommentAction.ID);
     }
 
+    @Override
     protected void doLines(LpexView view, int firstLine, int lastLine) {
 
         try {
 
             ICommentDelegate delegate = getDelegate(view);
-            for (int i = firstLine; i <= lastLine; i++) {
-                view.setElementText(i, delegate.uncomment(view.elementText(i)));
+            for (int element = firstLine; element <= lastLine; element++) {
+                view.setElementText(element, delegate.uncomment(getElementText(view, element)));
             }
 
         } catch (OperationNotSupportedException e) {
@@ -41,6 +42,7 @@ public class UnCommentAction extends AbstractLpexAction {
         }
     }
 
+    @Override
     protected void doSelection(LpexView view, int line, int startColumn, int endColumn) {
 
         try {

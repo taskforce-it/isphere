@@ -25,6 +25,7 @@ public class CommentAction extends AbstractLpexAction {
         return getLPEXMenuAction(Messages.Menu_Comment_Lines, CommentAction.ID);
     }
 
+    @Override
     protected void doLines(LpexView view, int firstLine, int lastLine) {
 
         int element = 0;
@@ -40,7 +41,7 @@ public class CommentAction extends AbstractLpexAction {
                 }
                 for (element = firstLine; element <= lastLine; element++) {
                     if (isTextLine(view, element)) {
-                        view.setElementText(element, delegate.comment(view.elementText(element)));
+                        view.setElementText(element, delegate.comment(getElementText(view, element)));
                     }
                 }
             }
@@ -52,20 +53,31 @@ public class CommentAction extends AbstractLpexAction {
             String message = Messages.bind(Messages.Line_A_has_already_been_commented_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
         } catch (TextLimitExceededException e) {
-            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled, Integer
-                .toString(element));
+            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled,
+                Integer.toString(element));
             displayMessage(view, message);
         } catch (Throwable e) {
             displayMessage(view, e.getLocalizedMessage());
         }
     }
 
-    protected void doSelection(final LpexView view, final int element, final int startColumn, final int endColumn) {
+    @Override
+    protected void doSelection(LpexView view, int element, int startColumn, int endColumn) {
 
         try {
-            
+
+            String text = getElementText(view, element);
+            if (endColumn > text.length()) {
+                endColumn = text.length();
+            }
+
+            if (startColumn > endColumn) {
+                displayMessage(view, Messages.Selection_is_out_of_range_The_operation_has_been_canceled);
+                return;
+            }
+
             ICommentDelegate delegate = getDelegate(view);
-            view.setElementText(element, delegate.comment(view.elementText(element), startColumn, endColumn));
+            view.setElementText(element, delegate.comment(text, startColumn, endColumn));
 
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
@@ -77,8 +89,8 @@ public class CommentAction extends AbstractLpexAction {
             String message = Messages.Selection_has_already_been_commented_The_operation_has_been_canceled;
             displayMessage(view, message);
         } catch (TextLimitExceededException e) {
-            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled, Integer
-                .toString(element));
+            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled,
+                Integer.toString(element));
             displayMessage(view, message);
         }
     }

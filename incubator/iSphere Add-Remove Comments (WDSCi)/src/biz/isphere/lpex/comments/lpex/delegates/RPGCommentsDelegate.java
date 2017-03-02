@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
@@ -29,10 +28,10 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
     private static final String FREE_FORMAT_COMMENT = "// "; //$NON-NLS-1$
     private static final String FULLY_FREE_FORMAT_COMMENT = "// "; //$NON-NLS-1$
 
-    private static final int FIX_FORMAT_SPEC_POS = 6; //$NON-NLS-1$
-    private static final int FIX_FORMAT_COMMENT_POS = 7; //$NON-NLS-1$
-    private static final int FREE_FORMAT_COMMENT_POS = 8; //$NON-NLS-1$
-    private static final int FULLY_FREE_FORMAT_COMMENT_POS = 1; //$NON-NLS-1$
+    private static final int FIX_FORMAT_SPEC_POS = 6;
+    private static final int FIX_FORMAT_COMMENT_POS = 7;
+    private static final int FREE_FORMAT_COMMENT_POS = 8;
+    private static final int FULLY_FREE_FORMAT_COMMENT_POS = 1;
 
     private static final String SPEC_CONTROL = "H"; //$NON-NLS-1$
     private static final String SPEC_FILE = "F"; //$NON-NLS-1$
@@ -88,8 +87,6 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @throws TextLimitExceededException
      */
     public String comment(String text) throws TextLimitExceededException, CommentExistsException {
-
-        text = StringHelper.trimR(text);
 
         if (isLineComment(text)) {
             throw new CommentExistsException();
@@ -160,8 +157,6 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @parm text - line to uncomment
      */
     public String uncomment(String text) throws OperationNotSupportedException {
-
-        text = StringHelper.trimR(text);
 
         if (!isLineComment(text)) {
             return uncomment(text, getCursorPosition(), getCursorPosition());
@@ -235,7 +230,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
             length = FREE_FORMAT_COMMENT.trim().length();
             rLength = FREE_FORMAT_COMMENT.length() - length;
         }
-        
+
         buffer.replace(i, i + length, NOTHING);
 
         if (rLength > 0) {

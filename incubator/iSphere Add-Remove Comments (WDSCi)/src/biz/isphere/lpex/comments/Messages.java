@@ -16,15 +16,16 @@ public class Messages extends NLS {
 
     public static String Menu_Source;
     public static String Menu_Comment_Lines;
-    public static String Menu_Uncomment_Lines; 
+    public static String Menu_Uncomment_Lines;
     public static String Menu_Toggle_Comment_Lines;
 
     public static String Line_A_has_already_been_commented_The_operation_has_been_canceled;
     public static String Selection_has_already_been_commented_The_operation_has_been_canceled;
     public static String Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled;
-    public static String Member_type_A_not_supported; 
+    public static String Selection_is_out_of_range_The_operation_has_been_canceled;
+    public static String Member_type_A_not_supported;
     public static String Operation_not_supported_for_member_type_A;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

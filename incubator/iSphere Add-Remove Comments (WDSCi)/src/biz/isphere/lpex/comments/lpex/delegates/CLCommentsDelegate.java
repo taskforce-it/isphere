@@ -8,7 +8,6 @@
 
 package biz.isphere.lpex.comments.lpex.delegates;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
@@ -38,13 +37,10 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
      * Comments a complete line.
      * 
      * @parm text - line to comment
-     * 
      * @throws TextLimitExceededException
      */
     public String comment(String text) throws TextLimitExceededException, CommentExistsException {
 
-        text = StringHelper.trimR(text);
-        
         int s = text.indexOf(START_COMMENT.trim());
         if (s >= 0) {
             s = s + START_COMMENT.trim().length();
@@ -58,10 +54,8 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
         }
 
         StringBuilder buffer = new StringBuilder(START_COMMENT);
-        // buffer.append(StringHelper.trimR(text));
         buffer.append(text);
 
-        // s = StringHelper.trimR(START_COMMENT).length();
         if (startsWithComment(text)) {
             s = START_COMMENT.length();
         } else {
@@ -76,14 +70,12 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
             buffer.append(END_COMMENT);
         }
 
-        // s = buffer.length() - StringHelper.trimL(END_COMMENT).length() - 1;
         s = buffer.length() - END_COMMENT.trim().length() - 1;
         while (buffer.length() > s && buffer.length() > getLineLength() && SPACE.equals(buffer.substring(s, s + 1))) {
             buffer.replace(s, s + 1, NOTHING);
             s--;
         }
 
-        // s = StringHelper.trimR(START_COMMENT).length();
         s = START_COMMENT.trim().length();
         while (buffer.length() > s && buffer.length() > getLineLength() && SPACE.equals(buffer.substring(s, s + 1))) {
             buffer.replace(s, s + 1, NOTHING);
@@ -108,8 +100,6 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
      * @parm endPos - end position of the selected text
      */
     public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException {
-
-        text = StringHelper.trimR(text);
 
         startPos--;
         endPos--;

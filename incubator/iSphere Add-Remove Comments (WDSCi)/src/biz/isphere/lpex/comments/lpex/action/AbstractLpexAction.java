@@ -75,7 +75,7 @@ public abstract class AbstractLpexAction implements LpexAction {
     }
 
     protected ICommentDelegate getDelegate(LpexView view) throws MemberTypeNotSupportedException {
-        
+
         String type = getMemberType();
         if ("CLP".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new CLCommentsDelegate(view);
@@ -90,7 +90,7 @@ public abstract class AbstractLpexAction implements LpexAction {
         } else if ("SQLRPGLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new RPGCommentsDelegate(view);
         }
-        
+
         throw new MemberTypeNotSupportedException();
     }
 
@@ -103,6 +103,11 @@ public abstract class AbstractLpexAction implements LpexAction {
         }
 
         return null;
+    }
+
+    protected String getElementText(LpexView view, int element) {
+        // return the r-trimmed text
+        return view.elementText(element).replaceAll("\\s+$", "");
     }
 
     protected int getLineLength(LpexView view) {

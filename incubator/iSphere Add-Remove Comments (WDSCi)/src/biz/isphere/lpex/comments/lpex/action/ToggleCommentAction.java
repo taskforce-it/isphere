@@ -24,6 +24,7 @@ public class ToggleCommentAction extends AbstractLpexAction {
         return getLPEXMenuAction(Messages.Menu_Toggle_Comment_Lines, ToggleCommentAction.ID);
     }
 
+    @Override
     protected void doLines(LpexView view, int firstLine, int lastLine) {
 
         int element = 0;
@@ -33,7 +34,7 @@ public class ToggleCommentAction extends AbstractLpexAction {
             ICommentDelegate delegate = getDelegate(view);
             boolean isAllCommented = true;
             for (element = firstLine; element <= lastLine; element++) {
-                if (!delegate.isLineComment(view.elementText(element))) {
+                if (!delegate.isLineComment(getElementText(view, element))) {
                     isAllCommented = false;
                     break;
                 }
@@ -41,9 +42,9 @@ public class ToggleCommentAction extends AbstractLpexAction {
 
             for (element = firstLine; element <= lastLine; element++) {
                 if (isAllCommented) {
-                    view.setElementText(element, delegate.uncomment(view.elementText(element)));
+                    view.setElementText(element, delegate.uncomment(getElementText(view, element)));
                 } else {
-                    view.setElementText(element, delegate.comment(view.elementText(element)));
+                    view.setElementText(element, delegate.comment(getElementText(view, element)));
                 }
             }
 
@@ -62,6 +63,7 @@ public class ToggleCommentAction extends AbstractLpexAction {
         }
     }
 
+    @Override
     protected void doSelection(LpexView view, int line, int startColumn, int endColumn) {
         String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
         displayMessage(view, message);
