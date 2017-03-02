@@ -85,6 +85,10 @@ public abstract class AbstractLpexAction implements LpexAction {
             return new RPGCommentsDelegate(view);
         } else if ("RPGLE".equalsIgnoreCase(type)) {
             return new RPGCommentsDelegate(view);
+        } else if ("SQLRPG".equalsIgnoreCase(type)) {
+            return new RPGCommentsDelegate(view);
+        } else if ("SQLRPGLE".equalsIgnoreCase(type)) {
+            return new RPGCommentsDelegate(view);
         }
         
         throw new MemberTypeNotSupportedException();
