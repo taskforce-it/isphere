@@ -24,6 +24,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     private static final String SEPARATOR = "separator"; //$NON-NLS-1$
     private static final String DOUBLE_QUOTES = "\""; //$NON-NLS-1$
     private static final String SPACE_CHAR = " "; //$NON-NLS-1$
+    private static final String NOTHING = ""; //$NON-NLS-1$
 
     private Map<String, String> userActions;
     private Map<String, String> userKeyActions;
@@ -41,11 +42,11 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         userActions = new HashMap<String, String>();
         userKeyActions = new HashMap<String, String>();
 
-        LpexView.doGlobalCommand("set default.updateProfile.userActions "
-            + getLPEXEditorUserActions(LpexView.globalQuery("current.updateProfile.userActions")));
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions "
-            + getLPEXEditorUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions")));
-        LpexView.doGlobalCommand("set default.popup " + getLPEXEditorPopupMenu(LpexView.globalQuery("current.popup")));
+        LpexView.doGlobalCommand("set default.updateProfile.userActions " //$NON-NLS-1$
+            + getLPEXEditorUserActions(LpexView.globalQuery("current.updateProfile.userActions"))); //$NON-NLS-1$
+        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " //$NON-NLS-1$
+            + getLPEXEditorUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions"))); //$NON-NLS-1$
+        LpexView.doGlobalCommand("set default.popup " + getLPEXEditorPopupMenu(LpexView.globalQuery("current.popup"))); //$NON-NLS-1$ //$NON-NLS-2$
         // LpexView.doGlobalCommand("set default.popup install");
     }
 
@@ -58,18 +59,18 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     private void removeUserActions() {
 
-        String existingUserActions = LpexView.globalQuery("current.updateProfile.userActions");
+        String existingUserActions = LpexView.globalQuery("current.updateProfile.userActions"); //$NON-NLS-1$
         String newUserActions = removeActions(existingUserActions, userActions);
 
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + newUserActions);
+        LpexView.doGlobalCommand("set default.updateProfile.userActions " + newUserActions); //$NON-NLS-1$
     }
 
     private void removeUserKeyActions() {
 
-        String existingUserKeyActions = LpexView.globalQuery("current.updateProfile.userKeyActions");
+        String existingUserKeyActions = LpexView.globalQuery("current.updateProfile.userKeyActions"); //$NON-NLS-1$
         String newUserKeyActions = removeActions(existingUserKeyActions, userKeyActions);
 
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + newUserKeyActions);
+        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + newUserKeyActions); //$NON-NLS-1$
     }
 
     private String removeActions(String existingActions, Map<String, String> actions) {
@@ -80,7 +81,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         for (String action : actions.values()) {
             if ((start = buffer.indexOf(action)) >= 0) {
                 int end = start + action.length();
-                buffer.replace(start, end, "");
+                buffer.replace(start, end, NOTHING);
             }
         }
 
@@ -89,10 +90,10 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     private void removePopupMenu() {
 
-        String popupMenu = LpexView.globalQuery("current.popup");
+        String popupMenu = LpexView.globalQuery("current.popup"); //$NON-NLS-1$
         popupMenu = removeMenuItems(popupMenu, getMarkStart(), getMarkEnd());
 
-        LpexView.doGlobalCommand("set default.popup " + popupMenu.trim());
+        LpexView.doGlobalCommand("set default.popup " + popupMenu.trim()); //$NON-NLS-1$
     }
 
     private String getLPEXEditorUserActions(String existingUserActions) {
@@ -108,7 +109,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     protected void checkAndAddUserAction(Map<String, String> actions, String actionId, String className) {
 
-        String existingActions = LpexView.globalQuery("current.updateProfile.userActions");
+        String existingActions = LpexView.globalQuery("current.updateProfile.userActions"); //$NON-NLS-1$
 
         String userAction = actionId + SPACE_CHAR + className;
 
@@ -144,7 +145,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     }
 
     private boolean isNullOrEmpty(String actions) {
-        return actions == null || "null".equalsIgnoreCase(actions) || actions.trim().length() == 0;
+        return actions == null || "null".equalsIgnoreCase(actions) || actions.trim().length() == 0; //$NON-NLS-1$
     }
 
     protected abstract Map<String, String> getUserKeyActions();
@@ -164,7 +165,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     protected void checkAndAddUserKeyAction(Map<String, String> actions, String shortcut, String actionId) {
 
-        String existingActions = LpexView.globalQuery("current.updateProfile.userKeyActions");
+        String existingActions = LpexView.globalQuery("current.updateProfile.userKeyActions"); //$NON-NLS-1$
 
         String userKeyAction = shortcut + SPACE_CHAR + actionId;
 

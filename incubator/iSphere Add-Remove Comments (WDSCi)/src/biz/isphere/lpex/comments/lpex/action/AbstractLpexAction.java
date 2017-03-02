@@ -33,10 +33,10 @@ public abstract class AbstractLpexAction implements LpexAction {
             Position start;
             Position end;
             if (anythingSelected(view)) {
-                start = new Position(view.queryInt("block.topElement"), view.queryInt("block.topPosition"));
-                end = new Position(view.queryInt("block.bottomElement"), view.queryInt("block.bottomPosition"));
+                start = new Position(view.queryInt("block.topElement"), view.queryInt("block.topPosition")); //$NON-NLS-1$ //$NON-NLS-2$
+                end = new Position(view.queryInt("block.bottomElement"), view.queryInt("block.bottomPosition")); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-                start = new Position(view.queryInt("element"), view.queryInt("position"));
+                start = new Position(view.queryInt("element"), view.queryInt("position")); //$NON-NLS-1$ //$NON-NLS-2$
                 end = start;
             }
 
@@ -63,7 +63,7 @@ public abstract class AbstractLpexAction implements LpexAction {
     protected abstract void doSelection(LpexView view, int line, int startColumn, int endColumn);
 
     protected boolean isEditMode(LpexView view) {
-        return !view.queryOn("readonly");
+        return !view.queryOn("readonly"); //$NON-NLS-1$
     }
 
     protected boolean isTextLine(LpexView view, int element) {
@@ -71,23 +71,23 @@ public abstract class AbstractLpexAction implements LpexAction {
     }
 
     protected boolean anythingSelected(LpexView view) {
-        return view.queryOn("block.anythingSelected");
+        return view.queryOn("block.anythingSelected"); //$NON-NLS-1$
     }
 
     protected ICommentDelegate getDelegate(LpexView view) throws MemberTypeNotSupportedException {
         
         String type = getMemberType();
-        if ("CLP".equalsIgnoreCase(type)) {
+        if ("CLP".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new CLCommentsDelegate(view);
-        } else if ("CLLE".equalsIgnoreCase(type)) {
+        } else if ("CLLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new CLCommentsDelegate(view);
-        } else if ("RPG".equalsIgnoreCase(type)) {
+        } else if ("RPG".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new RPGCommentsDelegate(view);
-        } else if ("RPGLE".equalsIgnoreCase(type)) {
+        } else if ("RPGLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new RPGCommentsDelegate(view);
-        } else if ("SQLRPG".equalsIgnoreCase(type)) {
+        } else if ("SQLRPG".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new RPGCommentsDelegate(view);
-        } else if ("SQLRPGLE".equalsIgnoreCase(type)) {
+        } else if ("SQLRPGLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new RPGCommentsDelegate(view);
         }
         
@@ -106,7 +106,7 @@ public abstract class AbstractLpexAction implements LpexAction {
     }
 
     protected int getLineLength(LpexView view) {
-        return view.queryInt("length");
+        return view.queryInt("length"); //$NON-NLS-1$
     }
 
     protected Shell getShell() {
@@ -135,11 +135,11 @@ public abstract class AbstractLpexAction implements LpexAction {
     }
 
     private void saveCursorPosition(LpexView view) {
-        cursorPosition = new Position(view.queryInt("cursorRow"), view.queryInt("displayPosition"));
+        cursorPosition = new Position(view.queryInt("cursorRow"), view.queryInt("displayPosition")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void restoreCursorPosition(LpexView view) {
-        view.doCommand("set cursorRow " + cursorPosition.getLine());
-        view.doCommand("set position " + cursorPosition.getColumn());
+        view.doCommand("set cursorRow " + cursorPosition.getLine()); //$NON-NLS-1$
+        view.doCommand("set position " + cursorPosition.getColumn()); //$NON-NLS-1$
     }
 }

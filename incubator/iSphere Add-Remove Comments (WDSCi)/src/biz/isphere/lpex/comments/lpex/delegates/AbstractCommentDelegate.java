@@ -25,7 +25,7 @@ public abstract class AbstractCommentDelegate {
     public int getLineLength() {
 
         if (lineLength < 0) {
-            lineLength = view.queryInt("save.textLimit") - SEQUENCE_LENGTH;
+            lineLength = view.queryInt("save.textLimit") - SEQUENCE_LENGTH; //$NON-NLS-1$
         }
 
         return lineLength;
@@ -36,7 +36,7 @@ public abstract class AbstractCommentDelegate {
     }
 
     public int getCursorPosition() {
-        return view.queryInt("displayPosition");
+        return view.queryInt("displayPosition"); //$NON-NLS-1$
     }
 
     protected int countLeftSpaces(String text) {

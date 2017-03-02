@@ -230,7 +230,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
             rLength = FULLY_FREE_FORMAT_COMMENT.length() - length;
         } else if (isFixFormat(text)) {
             // not supported (see above)
-            throw new RuntimeException("Should never have been reached.");
+            throw new RuntimeException("Should never have been reached."); //$NON-NLS-1$
         } else {
             length = FREE_FORMAT_COMMENT.trim().length();
             rLength = FREE_FORMAT_COMMENT.length() - length;
@@ -264,7 +264,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
     private boolean isFullyFree() {
 
         LpexView view = getView();
-        if (view.queryInt("lines") >= 1) {
+        if (view.queryInt("lines") >= 1) { //$NON-NLS-1$
             String text = view.elementText(1).toUpperCase();
             if (text.indexOf(FULLY_FREE) >= 0) {
                 return true;

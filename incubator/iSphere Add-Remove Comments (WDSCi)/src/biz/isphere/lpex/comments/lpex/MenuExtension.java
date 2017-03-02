@@ -20,8 +20,8 @@ import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
 public class MenuExtension extends AbstractLpexMenuExtension {
 
     private static final String MENU_NAME = Messages.Menu_Source;
-    private static final String MARK_END = "MARK-" + MENU_NAME + ".End"; //$NON-NLS-1$
-    private static final String MARK_START = "MARK-" + MENU_NAME + ".Start"; //$NON-NLS-1$
+    private static final String MARK_END = "MARK-" + MENU_NAME + ".End"; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String MARK_START = "MARK-" + MENU_NAME + ".Start"; //$NON-NLS-1$ //$NON-NLS-2$
 
     protected Map<String, String> getUserActions() {
 
