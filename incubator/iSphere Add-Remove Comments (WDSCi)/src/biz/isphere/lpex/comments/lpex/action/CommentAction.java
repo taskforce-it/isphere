@@ -9,7 +9,6 @@
 package biz.isphere.lpex.comments.lpex.action;
 
 import biz.isphere.lpex.comments.Messages;
-import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;

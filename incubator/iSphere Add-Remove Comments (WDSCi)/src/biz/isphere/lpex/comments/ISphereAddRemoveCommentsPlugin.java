@@ -3,7 +3,7 @@ package biz.isphere.lpex.comments;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.lpex.comments.lpex.MenuExtension;
+import biz.isphere.lpex.comments.lpex.ILpexMenuExtension;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -17,7 +17,7 @@ public class ISphereAddRemoveCommentsPlugin extends Plugin {
 	private static ISphereAddRemoveCommentsPlugin plugin;
 
     // The Lpex menu extension
-    private MenuExtension menuExtension;
+    private ILpexMenuExtension menuExtension;
 
 	/**
 	 * The constructor
@@ -48,7 +48,7 @@ public class ISphereAddRemoveCommentsPlugin extends Plugin {
 		super.stop(context);
 	}
 
-    public void setLpexMenuExtension(MenuExtension menuExtension) {
+    public void setLpexMenuExtension(ILpexMenuExtension menuExtension) {
         this.menuExtension = menuExtension;
     }
 

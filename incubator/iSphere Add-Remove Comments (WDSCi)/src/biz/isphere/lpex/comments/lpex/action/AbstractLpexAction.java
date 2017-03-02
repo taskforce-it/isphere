@@ -10,6 +10,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
+import biz.isphere.lpex.comments.lpex.delegates.RPGCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.internal.Position;
 
@@ -26,8 +27,6 @@ public abstract class AbstractLpexAction implements LpexAction {
 
     public void doAction(LpexView view) {
 
-        System.out.println("Auto check: " + view.queryOn("query autoCheck"));
-
         try {
             saveCursorPosition(view);
 
@@ -37,7 +36,7 @@ public abstract class AbstractLpexAction implements LpexAction {
                 start = new Position(view.queryInt("block.topElement"), view.queryInt("block.topPosition"));
                 end = new Position(view.queryInt("block.bottomElement"), view.queryInt("block.bottomPosition"));
             } else {
-                start = new Position(view.queryInt("line"), view.queryInt("position"));
+                start = new Position(view.queryInt("element"), view.queryInt("position"));
                 end = start;
             }
 
@@ -82,6 +81,10 @@ public abstract class AbstractLpexAction implements LpexAction {
             return new CLCommentsDelegate(view);
         } else if ("CLLE".equalsIgnoreCase(type)) {
             return new CLCommentsDelegate(view);
+        } else if ("RPG".equalsIgnoreCase(type)) {
+            return new RPGCommentsDelegate(view);
+        } else if ("RPGLE".equalsIgnoreCase(type)) {
+            return new RPGCommentsDelegate(view);
         }
         
         throw new MemberTypeNotSupportedException();

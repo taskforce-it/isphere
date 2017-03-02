@@ -31,6 +31,10 @@ public abstract class AbstractCommentDelegate {
         return lineLength;
     }
 
+    protected LpexView getView() {
+        return view;
+    }
+
     public int getCursorPosition() {
         return view.queryInt("displayPosition");
     }
