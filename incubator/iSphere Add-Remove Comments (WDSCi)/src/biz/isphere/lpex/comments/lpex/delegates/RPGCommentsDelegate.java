@@ -12,7 +12,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
@@ -70,14 +72,24 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
         }
     }
 
+    public boolean isComment(String text, int index) {
+
+        if (findCommentBackWard(text, index) >= 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Comments a complete line.
      * 
      * @parm text - line to comment
-     * 
      * @throws TextLimitExceededException
      */
     public String comment(String text) throws TextLimitExceededException, CommentExistsException {
+
+        text = StringHelper.trimR(text);
 
         if (isLineComment(text)) {
             throw new CommentExistsException();
@@ -111,8 +123,35 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @parm startPos - start position of the selected text
      * @parm endPos - end position of the selected text
      */
-    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException {
-        return text;
+    public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException,
+        OperationNotSupportedException {
+
+        startPos--;
+        endPos--;
+
+        if (isFixFormat(text)) {
+            throw new OperationNotSupportedException();
+        }
+
+        if (isComment(text, startPos)) {
+            throw new CommentExistsException();
+        }
+
+        if (validate) {
+            return text;
+        }
+
+        StringBuilder buffer = new StringBuilder(text);
+
+        if (isFullyFree()) {
+            buffer.insert(startPos, FULLY_FREE_FORMAT_COMMENT);
+        } else if (isFixFormat(text)) {
+            // not supported (see above)
+        } else {
+            buffer.insert(startPos, FREE_FORMAT_COMMENT);
+        }
+
+        return buffer.toString();
     }
 
     /**
@@ -120,10 +159,12 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * 
      * @parm text - line to uncomment
      */
-    public String uncomment(String text) {
+    public String uncomment(String text) throws OperationNotSupportedException {
+
+        text = StringHelper.trimR(text);
 
         if (!isLineComment(text)) {
-            return text;
+            return uncomment(text, getCursorPosition(), getCursorPosition());
         }
 
         int i;
@@ -138,7 +179,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
             length = FIX_FORMAT_COMMENT.trim().length();
             rLength = FIX_FORMAT_COMMENT.length() - length;
         } else {
-            i = FREE_FORMAT_COMMENT_POS - 1;
+            i = text.indexOf(FREE_FORMAT_COMMENT.trim());
             length = FREE_FORMAT_COMMENT.length();
             rLength = 0;
         }
@@ -162,8 +203,62 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @parm startPos - start position of the selected text
      * @parm endPos - end position of the selected text
      */
-    public String uncomment(String text, int startPos, int endPos) {
-        return text;
+    public String uncomment(String text, int startPos, int endPos) throws OperationNotSupportedException {
+
+        startPos--;
+        endPos--;
+
+        if (isFixFormat(text)) {
+            throw new OperationNotSupportedException();
+        }
+
+        if (validate) {
+            return text;
+        }
+
+        int i = findCommentBackWard(text, startPos);
+        if (i < 0) {
+            return text;
+        }
+
+        StringBuilder buffer = new StringBuilder(text);
+
+        int length;
+        int rLength;
+        if (isFullyFree()) {
+            length = FULLY_FREE_FORMAT_COMMENT.trim().length();
+            rLength = FULLY_FREE_FORMAT_COMMENT.length() - length;
+        } else if (isFixFormat(text)) {
+            // not supported (see above)
+            throw new RuntimeException("Should never have been reached.");
+        } else {
+            length = FREE_FORMAT_COMMENT.trim().length();
+            rLength = FREE_FORMAT_COMMENT.length() - length;
+        }
+        
+        buffer.replace(i, i + length, NOTHING);
+
+        if (rLength > 0) {
+            if (buffer.substring(i, i + rLength).trim().length() == 0) {
+                buffer.replace(i, i + rLength, NOTHING);
+            }
+        }
+
+        return buffer.toString();
+    }
+
+    private int findCommentBackWard(String text, int index) {
+
+        int i = -1;
+        if (isFullyFree()) {
+            i = text.lastIndexOf(FULLY_FREE_FORMAT_COMMENT.trim(), index + 1);
+        } else if (isFixFormat(text)) {
+            throw new RuntimeException("Illegal operation call."); //$NON-NLS-1$
+        } else {
+            i = text.lastIndexOf(FREE_FORMAT_COMMENT.trim(), index + 1);
+        }
+
+        return i;
     }
 
     private boolean isFullyFree() {

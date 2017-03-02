@@ -8,7 +8,7 @@
 
 package biz.isphere.lpex.comments.lpex.exceptions;
 
-public class MemberTypeNotSupportedException extends Exception {
+public class OperationNotSupportedException extends Exception {
 
-    private static final long serialVersionUID = -1470582536409776165L;
+    private static final long serialVersionUID = -4366750769179460232L;
 }

@@ -8,6 +8,7 @@
 
 package biz.isphere.lpex.comments.lpex.delegates;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
@@ -42,6 +43,8 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
      */
     public String comment(String text) throws TextLimitExceededException, CommentExistsException {
 
+        text = StringHelper.trimR(text);
+        
         int s = text.indexOf(START_COMMENT.trim());
         if (s >= 0) {
             s = s + START_COMMENT.trim().length();
@@ -105,6 +108,8 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
      * @parm endPos - end position of the selected text
      */
     public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException {
+
+        text = StringHelper.trimR(text);
 
         startPos--;
         endPos--;

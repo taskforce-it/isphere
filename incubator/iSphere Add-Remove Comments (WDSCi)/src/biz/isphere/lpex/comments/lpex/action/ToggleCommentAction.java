@@ -48,14 +48,14 @@ public class ToggleCommentAction extends AbstractLpexAction {
             }
 
         } catch (MemberTypeNotSupportedException e) {
-            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            String message = Messages.bind(Messages.Member_type_A_not_supported, getMemberType());
             displayMessage(view, message);
         } catch (CommentExistsException e) {
             String message = Messages.bind(Messages.Line_A_has_already_been_commented_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
         } catch (TextLimitExceededException e) {
-            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled, Integer
-                .toString(element));
+            String message = Messages.bind(Messages.Text_limit_would_have_been_exceeded_on_line_A_The_operation_has_been_canceled,
+                Integer.toString(element));
             displayMessage(view, message);
         } catch (Throwable e) {
             displayMessage(view, e.getLocalizedMessage());
@@ -63,8 +63,8 @@ public class ToggleCommentAction extends AbstractLpexAction {
     }
 
     protected void doSelection(LpexView view, int line, int startColumn, int endColumn) {
-        // Selection is not supported.
-        // Silently ignore it.
+        String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
+        displayMessage(view, message);
     }
 
 }

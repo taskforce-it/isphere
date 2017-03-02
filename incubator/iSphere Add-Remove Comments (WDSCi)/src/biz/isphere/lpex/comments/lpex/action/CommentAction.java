@@ -12,6 +12,7 @@ import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
+import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
@@ -45,7 +46,7 @@ public class CommentAction extends AbstractLpexAction {
             }
 
         } catch (MemberTypeNotSupportedException e) {
-            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            String message = Messages.bind(Messages.Member_type_A_not_supported, getMemberType());
             displayMessage(view, message);
         } catch (CommentExistsException e) {
             String message = Messages.bind(Messages.Line_A_has_already_been_commented_The_operation_has_been_canceled, Integer.toString(element));
@@ -66,8 +67,11 @@ public class CommentAction extends AbstractLpexAction {
             ICommentDelegate delegate = getDelegate(view);
             view.setElementText(element, delegate.comment(view.elementText(element), startColumn, endColumn));
 
+        } catch (OperationNotSupportedException e) {
+            String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
+            displayMessage(view, message);
         } catch (MemberTypeNotSupportedException e) {
-            String message = Messages.bind("Membery type {0} not supported.", getMemberType());
+            String message = Messages.bind(Messages.Member_type_A_not_supported, getMemberType());
             displayMessage(view, message);
         } catch (CommentExistsException e) {
             String message = Messages.Selection_has_already_been_commented_The_operation_has_been_canceled;
