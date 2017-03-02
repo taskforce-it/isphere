@@ -14,6 +14,7 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.lpex.comments.messages"; //$NON-NLS-1$
 
+    public static String Menu_Source;
     public static String Menu_Comment_Lines;
     public static String Menu_Uncomment_Lines; 
     public static String Menu_Toggle_Comment_Lines;

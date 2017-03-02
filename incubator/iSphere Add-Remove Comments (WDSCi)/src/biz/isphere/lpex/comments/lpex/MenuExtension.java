@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
 import biz.isphere.lpex.comments.lpex.action.ToggleCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
@@ -18,7 +19,7 @@ import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
  */
 public class MenuExtension extends AbstractLpexMenuExtension {
 
-    private static final String MENU_NAME = "iSphere"; //$NON-NLS-1$
+    private static final String MENU_NAME = Messages.Menu_Source;
     private static final String MARK_END = "MARK-" + MENU_NAME + ".End"; //$NON-NLS-1$
     private static final String MARK_START = "MARK-" + MENU_NAME + ".Start"; //$NON-NLS-1$
 

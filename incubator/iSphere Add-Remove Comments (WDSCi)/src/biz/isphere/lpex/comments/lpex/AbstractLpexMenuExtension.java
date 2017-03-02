@@ -81,7 +81,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             if ((start = buffer.indexOf(action)) >= 0) {
                 int end = start + action.length();
                 buffer.replace(start, end, "");
-                System.out.println("Removed action: " + action);
             }
         }
 
@@ -139,7 +138,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             String action = actions.get(shortcut);
             newUserKeyActions.append(action + SPACE_CHAR);
             addedActions.put(shortcut, action);
-            System.out.println("Added action: " + action);
         }
 
         return newUserKeyActions.toString();
@@ -179,7 +177,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
         ArrayList<String> menuActions = getMenuActions();
 
-        popupMenu = removeMenuItems(popupMenu, getMarkStart(), getMarkEnd());
         String newPopupMenu = addMenuItems(popupMenu, menuActions);
 
         return newPopupMenu;
