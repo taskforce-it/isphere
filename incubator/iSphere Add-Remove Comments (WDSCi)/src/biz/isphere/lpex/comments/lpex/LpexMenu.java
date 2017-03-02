@@ -9,6 +9,6 @@
 package biz.isphere.lpex.comments.lpex;
 
 public interface LpexMenu {
-    
+
     public static final String SOURCE = "popup.sourceMenu"; //$NON-NLS-1$
 }

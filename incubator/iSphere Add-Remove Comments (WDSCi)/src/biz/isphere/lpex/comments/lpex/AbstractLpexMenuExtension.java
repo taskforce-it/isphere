@@ -127,7 +127,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         return newUserKeyActions;
     }
 
-    private String addActions(String existingActions, Map<String, String> actions, Map<String,String> addedActions) {
+    private String addActions(String existingActions, Map<String, String> actions, Map<String, String> addedActions) {
 
         StringBuilder newUserKeyActions = new StringBuilder();
 

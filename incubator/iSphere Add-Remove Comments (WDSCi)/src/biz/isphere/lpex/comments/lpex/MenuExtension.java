@@ -23,6 +23,7 @@ public class MenuExtension extends AbstractLpexMenuExtension {
     private static final String MARK_END = "MARK-" + MENU_NAME + ".End"; //$NON-NLS-1$ //$NON-NLS-2$
     private static final String MARK_START = "MARK-" + MENU_NAME + ".Start"; //$NON-NLS-1$ //$NON-NLS-2$
 
+    @Override
     protected Map<String, String> getUserActions() {
 
         Map<String, String> actions = new HashMap<String, String>();
@@ -33,18 +34,22 @@ public class MenuExtension extends AbstractLpexMenuExtension {
         return actions;
     }
 
+    @Override
     protected String getMenuName() {
         return MENU_NAME;
     }
 
+    @Override
     protected String getMarkStart() {
         return MARK_START;
     }
 
+    @Override
     protected String getMarkEnd() {
         return MARK_END;
     }
 
+    @Override
     protected Map<String, String> getUserKeyActions() {
 
         Map<String, String> actions = new HashMap<String, String>();
@@ -55,6 +60,7 @@ public class MenuExtension extends AbstractLpexMenuExtension {
         return actions;
     }
 
+    @Override
     protected ArrayList<String> getMenuActions() {
 
         ArrayList<String> menuActions = new ArrayList<String>();
@@ -67,6 +73,7 @@ public class MenuExtension extends AbstractLpexMenuExtension {
         return menuActions;
     }
 
+    @Override
     protected int findStartOfLpexSubMenu(String menu) {
 
         int i = menu.indexOf(LpexMenu.SOURCE);

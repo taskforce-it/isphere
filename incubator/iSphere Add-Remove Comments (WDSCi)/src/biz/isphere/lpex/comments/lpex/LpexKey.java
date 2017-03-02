@@ -14,7 +14,7 @@ public interface LpexKey {
     public static final String CTRL = "c"; //$NON-NLS-1$
     public static final String SHIFT = "s"; //$NON-NLS-1$
     public static final String ALT = "a"; //$NON-NLS-1$
-    
+
     /* command keys */
     public static final String F1 = "f1"; //$NON-NLS-1$
     public static final String F2 = "f2"; //$NON-NLS-1$
@@ -31,7 +31,7 @@ public interface LpexKey {
     public static final String F13 = "f13"; //$NON-NLS-1$
     public static final String F14 = "f14"; //$NON-NLS-1$
     public static final String F15 = "f15"; //$NON-NLS-1$
-    
+
     /* numpad keys */
     public static final String NUMPAD_0 = "numpad0"; //$NON-NLS-1$
     public static final String NUMPAD_1 = "numpad1"; //$NON-NLS-1$
@@ -49,7 +49,7 @@ public interface LpexKey {
     public static final String DIVIDE = "divide"; //$NON-NLS-1$
     public static final String NUM_LOCK = "numLock"; //$NON-NLS-1$
     public static final String NUMPAD_ENTER = "numpadEnter"; //$NON-NLS-1$
-    
+
     /* standard keys */
     public static final String AMPERSAND = "ampersand"; //$NON-NLS-1$
     public static final String ASTERISK = "asterisk"; //$NON-NLS-1$
