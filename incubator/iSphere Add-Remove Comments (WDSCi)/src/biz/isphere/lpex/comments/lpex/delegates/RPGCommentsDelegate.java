@@ -99,7 +99,12 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
         } else if (isFixFormat(text)) {
             buffer.insert(FIX_FORMAT_COMMENT_POS - 1, FIX_FORMAT_COMMENT);
         } else {
-            buffer.insert(FREE_FORMAT_COMMENT_POS - 1, FREE_FORMAT_COMMENT);
+            int i = findStartOfText(buffer.toString());
+            if (i >= FREE_FORMAT_COMMENT_POS - 1) {
+                buffer.insert(FREE_FORMAT_COMMENT_POS - 1, FREE_FORMAT_COMMENT);
+            } else {
+                buffer.insert(i, FREE_FORMAT_COMMENT);
+            }
         }
 
         if (buffer.length() > getLineLength()) {
@@ -282,6 +287,9 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
         }
 
         if (DIRECTIVE.equals(comment)) {
+            if (text.length() > FIX_FORMAT_COMMENT_POS && text.substring(FIX_FORMAT_COMMENT_POS - 1).startsWith(FREE_FORMAT_COMMENT.trim())) {
+                return false;
+            }
             return true;
         }
 
@@ -303,5 +311,15 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
         }
 
         return NOTHING;
+    }
+
+    private int findStartOfText(String text) {
+
+        int i = 0;
+        while (i < text.length() && SPACE.equals(text.substring(i, i + 1))) {
+            i++;
+        }
+
+        return i;
     }
 }
