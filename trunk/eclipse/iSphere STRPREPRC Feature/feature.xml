@@ -14,7 +14,7 @@ Feature regarding to RDi.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
-      Copyright (c) 2012-2016 iSphere Project Team. All rights reserved.
+      Copyright (c) 2012-2017 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">
@@ -30,7 +30,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="3.0.0.b009" match="greaterOrEqual"/>
+      <import feature="biz.isphere.core" version="3.0.0.b009" match="perfect"/>
    </requires>
 
    <plugin
