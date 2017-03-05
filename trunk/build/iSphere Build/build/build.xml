@@ -105,6 +105,9 @@
 
 	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(&quot;\s*)(match.*)?(/&gt;)" />
 	<property name="feature.2.version.replace" value="\1${build.version}\3\4\5" />
+	
+	<property name="feature.copyright.1.date.regex" value="^([ ]*Copyright.*[0-9]{4})-([0-9]{4})(.*)$" />
+	<property name="feature.copyright.1.date.replace" value="\1-2017\3" />
 
 	<property name="site.1.version.regex" value="(&lt;feature.*_)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r))?)(\.jar)" />
 	<property name="site.1.version.replace" value="\1${build.version}\3" />
@@ -1061,6 +1064,10 @@
 						</replaceregexp>
 		
 						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+						</replaceregexp>
+						
+						<replaceregexp match="${feature.copyright.1.date.regex}" replace="${feature.copyright.1.date.replace}" flags="g" byline="true">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 		
