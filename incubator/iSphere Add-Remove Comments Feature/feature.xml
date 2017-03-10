@@ -7,7 +7,13 @@
       plugin="biz.isphere.core">
 
    <description url="https://sourceforge.net/projects/isphere/">
-      The &quot;iSphere Add-Remove Comments&quot; feature adds options for commenting and uncommenting source lines to the Lpex editor. It is mainly meant to be used with WDSCi but you can also install it for RDi, if you want to get the same actions and behavior for both development environments.
+      The &quot;iSphere Add-Remove Comments&quot; feature adds options for commenting
+and uncommenting source lines to the Lpex editor. It is mainly
+intended to be used with WDSCi but you can also install it for
+RDi, if you want to get the same actions and behavior for both
+development environments. RDi 8.0+ uses Ctrl+/ and Ctrl+\ for
+commenting and uncommenting source lines whereas WDSCi 7.0 lacks
+these options.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
