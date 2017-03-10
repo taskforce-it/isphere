@@ -7,7 +7,7 @@
       plugin="biz.isphere.core">
 
    <description url="https://sourceforge.net/projects/isphere/">
-      iSphere Add-Remove Comments.
+      The &quot;iSphere Add-Remove Comments&quot; feature adds options for commenting and uncommenting source lines to the Lpex editor. It is mainly meant to be used with WDSCi but you can also install it for RDi, if you want to get the same actions and behavior for both development environments.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
@@ -15,7 +15,9 @@
    </copyright>
 
    <license url="http://www.example.com/license">
-      [Enter License Description here.]
+      This program and the accompanying materials are made available
+under the terms of the Common Public License v1.0 which accompanies
+this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
    </license>
 
    <url>
@@ -25,7 +27,7 @@
    </url>
 
    <requires>
-      <import plugin="biz.isphere.core" version="3.0.0.b009" match="perfect"/>
+      <import feature="biz.isphere.core" version="3.0.0.b009" match="perfect"/>
    </requires>
 
    <plugin
