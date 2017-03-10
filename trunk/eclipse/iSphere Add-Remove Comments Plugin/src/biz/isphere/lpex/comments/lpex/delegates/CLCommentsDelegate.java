@@ -17,7 +17,6 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
 
     private static final String START_COMMENT = "/* "; //$NON-NLS-1$ 
     private static final String END_COMMENT = " */"; //$NON-NLS-1$
-    private static final String NOTHING = ""; //$NON-NLS-1$
 
     private boolean validate;
 

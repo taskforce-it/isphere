@@ -9,6 +9,7 @@
 package biz.isphere.lpex.comments.lpex.delegates;
 
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.CommentNotFoundException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
@@ -23,7 +24,7 @@ public interface ICommentDelegate {
     public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException,
         OperationNotSupportedException;
 
-    public String uncomment(String text) throws OperationNotSupportedException;
+    public String uncomment(String text) throws OperationNotSupportedException, CommentNotFoundException;
 
     public String uncomment(String text, int startPos, int endPos) throws OperationNotSupportedException;
 
