@@ -30,6 +30,9 @@
    <feature url="features/biz.isphere.joblogexplorer.rse_3.0.0.b009.jar" id="biz.isphere.joblogexplorer.rse" version="3.0.0.b009">
       <category name="iSphere Job Log Explorer for WDSCi 7.0"/>
    </feature>
+   <feature url="features/biz.isphere.lpex.comments_3.0.0.b009.jar" id="biz.isphere.lpex.comments" version="3.0.0.b009">
+      <category name="iSphere Additions for WDSCi 7.0"/>
+   </feature>
    <category-def name="iSphere for WDSCi 7.0" label="iSphere for WDSCi 7.0">
       <description>
          iSphere for WDSCi 7.0
@@ -48,6 +51,11 @@
    <category-def name="iSphere Job Log Explorer for WDSCi 7.0" label="iSphere Job Log Explorer for WDSCi 7.0">
       <description>
          Plug-in that adds an editor for exploring job log spooled files.
+      </description>
+   </category-def>
+   <category-def name="iSphere Additions for WDSCi 7.0" label="iSphere Additions for WDSCi 7.0">
+      <description>
+         Optional additions for WDSCi 7.0.
       </description>
    </category-def>
 </site>
