@@ -15,7 +15,7 @@ public class Messages extends NLS {
     private static final String BUNDLE_NAME = "biz.isphere.lpex.comments.messages"; //$NON-NLS-1$
 
     public static String E_R_R_O_R;
-    
+
     public static String Menu_Source;
     public static String Menu_Comment_Lines;
     public static String Menu_Uncomment_Lines;
@@ -27,6 +27,7 @@ public class Messages extends NLS {
     public static String Selection_is_out_of_range_The_operation_has_been_canceled;
     public static String Member_type_A_not_supported;
     public static String Operation_not_supported_for_member_type_A;
+    public static String Comment_not_found;
 
     static {
         // initialize resource bundle

@@ -20,7 +20,6 @@ import com.ibm.lpex.core.LpexView;
 
 public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICommentDelegate {
 
-    private static final String NOTHING = ""; //$NON-NLS-1$
     private static final String FULLY_FREE = "**FREE"; //$NON-NLS-1$ 
     private static final String DIRECTIVE = "/"; //$NON-NLS-1$
 
@@ -71,7 +70,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
         }
     }
 
-    public boolean isComment(String text, int index) {
+    private boolean isComment(String text, int index) {
 
         if (findCommentBackWard(text, index) >= 0) {
             return true;

@@ -12,7 +12,8 @@ import com.ibm.lpex.core.LpexView;
 
 public abstract class AbstractCommentDelegate {
 
-    public static final String SPACE = " "; //$NON-NLS-1$
+    protected static final String SPACE = " "; //$NON-NLS-1$
+    protected static final String NOTHING = ""; //$NON-NLS-1$
     private static int SEQUENCE_LENGTH = 12;
 
     private LpexView view;

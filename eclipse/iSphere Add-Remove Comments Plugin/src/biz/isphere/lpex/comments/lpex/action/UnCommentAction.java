@@ -10,6 +10,7 @@ package biz.isphere.lpex.comments.lpex.action;
 
 import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
+import biz.isphere.lpex.comments.lpex.exceptions.CommentNotFoundException;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 
@@ -33,6 +34,9 @@ public class UnCommentAction extends AbstractLpexAction {
                 view.setElementText(element, delegate.uncomment(getElementText(view, element)));
             }
 
+        } catch (CommentNotFoundException e) {
+            String message = Messages.bind(Messages.Comment_not_found, getMemberType());
+            displayMessage(view, message);
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
             displayMessage(view, message);
