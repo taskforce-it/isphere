@@ -27,15 +27,17 @@ public class UnCommentAction extends AbstractLpexAction {
     @Override
     protected void doLines(LpexView view, int firstLine, int lastLine) {
 
+        int element = 0;
+
         try {
 
             ICommentDelegate delegate = getDelegate(view);
-            for (int element = firstLine; element <= lastLine; element++) {
+            for (element = firstLine; element <= lastLine; element++) {
                 view.setElementText(element, delegate.uncomment(getElementText(view, element)));
             }
 
         } catch (CommentNotFoundException e) {
-            String message = Messages.bind(Messages.Comment_not_found, getMemberType());
+            String message = Messages.bind(Messages.Line_A_is_not_a_comment_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());

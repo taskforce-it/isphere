@@ -15,18 +15,15 @@ import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
 
-public class DDSCommentsDelegate extends AbstractCommentDelegate implements ICommentDelegate {
+public class PNLGRPCommentsDelegate extends AbstractCommentDelegate implements ICommentDelegate {
 
-    private static final String COMMENT = "*"; //$NON-NLS-1$ 
+    private static final String COMMENT = ".*"; //$NON-NLS-1$ 
 
-    private static final int SPEC_POS = 6;
-    private static final int COMMENT_POS = 7;
-
-    private static final String SPEC = "A"; //$NON-NLS-1$
+    private static final int COMMENT_POS = 1;
 
     private boolean validate;
 
-    public DDSCommentsDelegate(LpexView view) {
+    public PNLGRPCommentsDelegate(LpexView view) {
         super(view);
     }
 
@@ -62,7 +59,7 @@ public class DDSCommentsDelegate extends AbstractCommentDelegate implements ICom
         while (offset >= buffer.length()) {
             buffer.append(SPACE);
         }
-        buffer.replace(offset, offset + COMMENT.length(), COMMENT);
+        buffer.insert(offset, COMMENT);
 
         if (validate) {
             return text;
@@ -101,11 +98,8 @@ public class DDSCommentsDelegate extends AbstractCommentDelegate implements ICom
         int offset;
         StringBuilder buffer = new StringBuilder(text);
 
-        offset = SPEC_POS - 1;
-        buffer.replace(offset, offset + SPEC.length(), SPEC);
-
         offset = COMMENT_POS - 1;
-        buffer.replace(offset, offset + COMMENT.length(), SPACE);
+        buffer.replace(offset, offset + COMMENT.length(), NOTHING);
 
         return buffer.toString();
     }

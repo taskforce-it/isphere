@@ -11,6 +11,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.DDSCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
+import biz.isphere.lpex.comments.lpex.delegates.PNLGRPCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.RPGCommentsDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.internal.Position;
@@ -98,6 +99,8 @@ public abstract class AbstractLpexAction implements LpexAction {
             return new DDSCommentsDelegate(view);
         } else if ("PF".equalsIgnoreCase(type)) { //$NON-NLS-1$
             return new DDSCommentsDelegate(view);
+        } else if ("PNLGRP".equalsIgnoreCase(type)) { //$NON-NLS-1$
+            return new PNLGRPCommentsDelegate(view);
         }
 
         throw new MemberTypeNotSupportedException();
