@@ -18,5 +18,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator RSE Plugin (RDi)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer (RDi)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Add-Remove Comments Plugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
