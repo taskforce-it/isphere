@@ -59,6 +59,7 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.tn5250j.core.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.tn5250j.rse.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.adapter.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.lpex.comments.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.base.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.core.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.lpex.tasktags.Messages.class, "messages");
