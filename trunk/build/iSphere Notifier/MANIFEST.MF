@@ -6,4 +6,4 @@ X-Bundle-Info: Fixed CCSID problem, when copying members between connections.
 X-Beta-Version: 3.0.0.b008
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added option to select a RSE filter for the iSphere Search dialogs (CTRL+H).\nText decoration of source files of i Projects.\nBugfixes.
+X-Beta-Info: Added "iSphere Add-Remove Comments" plug-in that is mainly intended to be used with WDSCi 7.0 but can also be installed with RDi.
