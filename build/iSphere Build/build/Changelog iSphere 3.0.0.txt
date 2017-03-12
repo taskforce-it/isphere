@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.0.0.b010 and 3.0.0.b011 
+--------------------------------------------
+ • Added "iSphere Add-Remove Comments" feature mainly intended to be used 
+   with WDSCi 7.0. (See help text for details.)
+
 Changelog: iSphere 3.0.0.b009
 -----------------------------
  • Fixed NullPointerException when closing the workbench with an active 
