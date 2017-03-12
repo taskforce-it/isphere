@@ -12,7 +12,7 @@ and uncommenting source lines to the Lpex editor. It is mainly
 intended to be used with WDSCi but you can also install it for
 RDi, if you want to get the same actions and behavior for both
 development environments. RDi 8.0+ uses Ctrl+/ and Ctrl+\ for
-commenting and uncommenting source lines whereas WDSCi 7.0 lacks
+commenting and uncommenting source lines, whereas WDSCi 7.0 lacks
 these options.
    </description>
 
