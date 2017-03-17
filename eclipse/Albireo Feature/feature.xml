@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.albireo"
-      label="iSphere TN5250J for WDSCi 7.0 (Albireo)"
+      label="iSphere TN5250J (Albireo)"
       version="0.0.3.v20081031">
 
    <description url="http://wiki.eclipse.org/Albireo_Project">
