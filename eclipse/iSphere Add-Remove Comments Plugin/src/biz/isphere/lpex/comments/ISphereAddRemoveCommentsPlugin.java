@@ -1,6 +1,6 @@
 package biz.isphere.lpex.comments;
 
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.lpex.comments.lpex.ILpexMenuExtension;
@@ -8,7 +8,7 @@ import biz.isphere.lpex.comments.lpex.ILpexMenuExtension;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereAddRemoveCommentsPlugin extends Plugin {
+public class ISphereAddRemoveCommentsPlugin extends AbstractUIPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.lpex.comments";
@@ -52,6 +52,15 @@ public class ISphereAddRemoveCommentsPlugin extends Plugin {
         super.stop(context);
     }
 
+    public boolean isEnabled() {
+        
+        if (menuExtension != null) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     public void setLpexMenuExtension(ILpexMenuExtension menuExtension) {
         this.menuExtension = menuExtension;
     }
