@@ -8,6 +8,8 @@
 
 package biz.isphere.lpex.comments.lpex;
 
+import biz.isphere.lpex.comments.preferences.Preferences;
+
 import com.ibm.lpex.alef.LpexPreload;
 
 /**
@@ -24,6 +26,10 @@ public class Preload implements LpexPreload {
 
     public void preload() {
 
+        if (!Preferences.getInstance().isEnabled()) {
+            return;
+        }
+        
         MenuExtension menuExtension = new MenuExtension();
         menuExtension.initializeLpexEditor();
 

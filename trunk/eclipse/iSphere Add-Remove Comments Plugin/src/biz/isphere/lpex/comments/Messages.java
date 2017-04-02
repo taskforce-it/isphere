@@ -28,7 +28,11 @@ public class Messages extends NLS {
     public static String Member_type_A_not_supported;
     public static String Operation_not_supported_for_member_type_A;
     public static String Line_A_is_not_a_comment_The_operation_has_been_canceled;
+    public static String You_need_to_restart_the_IDE_to_activate_your_changes;
 
+    public static String Enabled_colon;
+    public static String Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

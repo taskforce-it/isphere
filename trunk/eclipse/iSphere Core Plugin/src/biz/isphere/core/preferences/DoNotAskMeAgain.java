@@ -23,6 +23,7 @@ public interface DoNotAskMeAgain {
     public static final String TOO_MANY_SPOOLED_FILES_WARNING = "TOO_MANY_SPOOLED_FILES_WARNING"; //$NON-NLS-1$
     public static final String TN5250_SESSION_GROUPING_CHANGED = "TN5250_SESSION_GROUPING_CHANGED"; //$NON-NLS-1$
     public static final String INFORMATION_USAGE_JOB_LOG_EXPLORER = "INFORMATION_USAGE_JOB_LOG_EXPLORER"; //$NON-NLS-1$
+    public static final String LPEX_COMMENT_RESTART_INFORMATION = "LPEX_COMMENT_RESTART_INFORMATION"; //$NON-NLS-1$
 
     /*
      * Confirmation message keys
