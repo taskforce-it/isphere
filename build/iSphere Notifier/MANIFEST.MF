@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 2.9.4.r
+Bundle-Version: 3.0.0.r
 X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: (Updating the library is required when upgrading from 2.8.)
-X-Bundle-Info: Fixed CCSID problem, when copying members between connections. 
-X-Beta-Version: 3.0.0.b008
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: New features: iSphere Job Log Explorer and comment/uncomment options for WDSCi.\nNew option to use filters for the iSphere source file and message file search.\nBugfixes. 
+X-Beta-Version: 3.0.0.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added "iSphere Add-Remove Comments" plug-in that is mainly intended to be used with WDSCi 7.0 but can also be installed with RDi.
+X-Beta-Info: .
