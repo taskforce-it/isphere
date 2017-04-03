@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="biz.isphere.base.StartUp"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.base.preferencepages.General"
+            name="iSphere"
+            id="biz.isphere.base.preferencepages.General"/>
+      <page
+            class="biz.isphere.base.preferencepages.Contributors"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Contributors"
+            id="biz.isphere.base.preferencepages.Contributors"/>
+   </extension>
+
+</plugin>
