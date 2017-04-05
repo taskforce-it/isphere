@@ -16,7 +16,7 @@
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
    <feature url="features/biz.isphere.comparefilters_3.0.0.r.jar" id="biz.isphere.comparefilters" version="3.0.0.r">
-      <category name="iSphere Additions for RDi 9.5+"/>
+      <category name="iSphere Additions for RDi 9.5+ (recommended)"/>
    </feature>
    <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
       <category name="iSphere TN5250J for RDi 8.0+"/>
@@ -34,14 +34,14 @@
       <category name="iSphere Job Log Explorer for RDi 8.0+"/>
    </feature>
    <feature url="features/biz.isphere.lpex.comments_3.0.0.r.jar" id="biz.isphere.lpex.comments" version="3.0.0.r">
-      <category name="iSphere Additions for RDi 8.0+"/>
+      <category name="iSphere Additions for RDi 8.0+ (optional, see description)"/>
    </feature>
    <category-def name="iSphere for RDi 8.0+ (Base Component)" label="iSphere for RDi 8.0+ (Base Component)">
       <description>
          iSphere for RDi 8.0+. Base component of the iSphere plug-in. This component is required for all RDi versions.
       </description>
    </category-def>
-   <category-def name="iSphere Additions for RDi 9.5+" label="iSphere Additions for RDi 9.5+">
+   <category-def name="iSphere Additions for RDi 9.5+ (recommended)" label="iSphere Additions for RDi 9.5+ (recommended)">
       <description>
          Optional additions for RDi 9.5+. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;.
       </description>
@@ -61,9 +61,9 @@
          Plug-in that adds an editor for exploring job log spooled files. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;.
       </description>
    </category-def>
-   <category-def name="iSphere Additions for RDi 8.0+" label="iSphere Additions for RDi 8.0+">
+   <category-def name="iSphere Additions for RDi 8.0+ (optional, see description)" label="iSphere Additions for RDi 8.0+ (optional, see description)">
       <description>
-         Optional additions for RDi 8.0+. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;.
+         Optional additions for RDi 8.0+. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;. This component contains features that actually have been developed for WDSCi. Users who use WDSCi and RDi may install this component to use the same functions and keyboard shortcuts as with WDSCi.
       </description>
    </category-def>
 </site>
