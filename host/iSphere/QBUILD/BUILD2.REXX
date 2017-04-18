@@ -29,24 +29,24 @@ ARG DEVLIB TGTRLS;
 /* C-Compiler available:   C_NO */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('BASICS1' 'QBUILD' &DEVLIB '' 'NO;C_NO' &TGTRLS)";
+"PARM('BASICS1' 'QBUILD' &DEVLIB '' '&CRTTSTPGM=NO;&C_COMP=C_NO;' &TGTRLS)";
 
 /* Create the Job Log API */
 /* Create sample programs: NO   */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('JOBLOG' 'QBUILD' &DEVLIB '' 'NO' &TGTRLS)";
+"PARM('JOBLOG' 'QBUILD' &DEVLIB '' '&CRTTSTPGM=NO;' &TGTRLS)";
 
 /* Create the Event File API */
 /* Create sample programs: NO   */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('EVENTF' 'QBUILD' &DEVLIB '' 'NO' &TGTRLS)";
+"PARM('EVENTF' 'QBUILD' &DEVLIB '' '&CRTTSTPGM=NO;' &TGTRLS)";
 
 /* Create Preprocessor */
 "CALL ",
 "PGM(XMLINST) ",
-"PARM('STRPREPRC' 'QBUILD' &DEVLIB '' 'ENG;NO' &TGTRLS)";
+"PARM('STRPREPRC' 'QBUILD' &DEVLIB '' '&LANG=ENG;&TAGSREQ=NO;' &TGTRLS)";
 
 "SNDPGMMSG ",
 "MSGID(CPF9897) ",
