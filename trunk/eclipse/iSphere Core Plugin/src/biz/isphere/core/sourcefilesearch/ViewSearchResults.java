@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionExportToMemberFilter.setToolTipText(Messages.Export_to_Member_Filter);
-        actionExportToMemberFilter.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MEMBER_FILTER));
+        actionExportToMemberFilter.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MEMBER_FILTER));
         actionExportToMemberFilter.setEnabled(false);
 
         actionExportToExcel = new Action("") { //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionExportToExcel.setToolTipText(Messages.Export_to_Excel);
-        actionExportToExcel.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXCEL));
+        actionExportToExcel.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EXCEL));
         actionExportToExcel.setEnabled(false);
 
         actionRemoveTabItem = new Action("") { //$NON-NLS-1$
@@ -133,7 +133,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
-        actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MINUS));
+        actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS));
         actionRemoveTabItem.setEnabled(false);
 
         actionRemoveSelectedItems = new Action("") { //$NON-NLS-1$
@@ -143,7 +143,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionRemoveSelectedItems.setToolTipText(Messages.Tooltip_Remove);
-        actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REMOVE));
+        actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_REMOVE));
         actionRemoveSelectedItems.setEnabled(false);
 
         actionInvertSelectedItems = new Action("") { //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionInvertSelectedItems.setToolTipText(Messages.Tooltip_Invert_selection);
-        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
+        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
         actionDisableEdit = new DisableEditAction();
@@ -174,7 +174,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 saveSearchResult();
             };
         };
-        actionSaveSearchResult.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SAVE));
+        actionSaveSearchResult.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SAVE));
         actionSaveSearchResult.setEnabled(false);
 
         actionSaveAllSearchResults = new Action(Messages.Save_all) {
@@ -183,7 +183,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 saveAllSearchResults();
             };
         };
-        actionSaveAllSearchResults.setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SAVE_ALL));
+        actionSaveAllSearchResults.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SAVE_ALL));
         actionSaveAllSearchResults.setEnabled(false);
 
         actionEnableAutoSave = new EnableAutoSaveAction();
@@ -627,7 +627,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             super(Messages.Disable_edit_action, SWT.CHECK);
 
             setToolTipText(Messages.Tooltip_Disable_edit_action);
-            setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EDIT_DISABLED));
+            setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EDIT_DISABLED));
         }
 
         @Override

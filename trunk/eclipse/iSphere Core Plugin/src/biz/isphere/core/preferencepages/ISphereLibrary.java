@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textISphereLibraryVersion.setLayoutData(createTextLayoutData(1));
 
         buttonUpdateISphereLibraryVersion = WidgetFactory.createPushButton(container);
-        buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_REFRESH).createImage());
+        buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REFRESH));
         buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 updateISphereLibraryVersion = true;

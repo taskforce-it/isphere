@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public final class StatusLine {
             numItemsWidthHint = getWidthHint(numItemsLabel);
             numItemsLabel.setAlignment(SWT.CENTER);
             numItemsLabel.setText("55");
-            addImageLabel(parent, ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_FILTERED_ITEMS).createImage());
+            addImageLabel(parent, ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_FILTERED_ITEMS));
         }
 
         if (showMessage) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import biz.isphere.core.preferences.Preferences;
 public class SpooledFileBaseResourceAdapter {
 
     public ImageDescriptor getImageDescriptor(SpooledFile splf) {
-        return ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE);
+        return ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE);
     }
 
     public boolean handleDoubleClick(SpooledFile splf) {

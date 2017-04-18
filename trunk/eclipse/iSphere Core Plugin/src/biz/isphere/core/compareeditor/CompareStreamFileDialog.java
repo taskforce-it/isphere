@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@ package biz.isphere.core.compareeditor;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -111,18 +109,6 @@ public abstract class CompareStreamFileDialog extends XDialog {
             hasAncestor = true;
             threeWay = true;
         }
-
-        addImageDisposeListener(parentShell);
-    }
-
-    private void addImageDisposeListener(Shell parentShell) {
-        parentShell.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent arg0) {
-                if (switchImage != null) {
-                    switchImage.dispose();
-                }
-            }
-        });
     }
 
     @Override
@@ -429,7 +415,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
     private Image getSwitchImage() {
         if (switchImage == null) {
-            switchImage = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SWITCH_MEMBER).createImage();
+            switchImage = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SWITCH_MEMBER);
         }
         return switchImage;
     }
