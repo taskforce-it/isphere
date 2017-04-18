@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class SendMessageAction extends Action {
         this.shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         setToolTipText(Messages.Send_message_tooltip);
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SEND_MESSAGE));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SEND_MESSAGE));
 
         setActionEnablement();
     }

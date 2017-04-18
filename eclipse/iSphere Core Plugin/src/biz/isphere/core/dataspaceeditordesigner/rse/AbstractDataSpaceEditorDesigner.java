@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -373,7 +373,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         ToolBar toolBar = new ToolBar(toolbarArea, SWT.FLAT | SWT.RIGHT);
 
         ToolItem newEditorItem = new ToolItem(toolBar, SWT.NONE);
-        newEditorItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_NEW_DIALOG).createImage());
+        newEditorItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_NEW_DIALOG));
         newEditorItem.setToolTipText(Messages.New_Editor);
         new ToolItem(toolBar, SWT.SEPARATOR);
 
@@ -382,11 +382,11 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
         ToolItem expandAllItem = new ToolItem(toolBar, SWT.NONE);
         expandAllItem.setToolTipText(Messages.Expand_all);
-        expandAllItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_EXPAND_ALL).createImage());
+        expandAllItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_EXPAND_ALL));
 
         ToolItem collapseAllItem = new ToolItem(toolBar, SWT.NONE);
         collapseAllItem.setToolTipText(Messages.Collapse_all);
-        collapseAllItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COLLAPSE_ALL).createImage());
+        collapseAllItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COLLAPSE_ALL));
 
         /*
          * Viewer
@@ -437,7 +437,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     private void createAssignDataSpaceToolItem(ToolBar parent, String tooltip, String image, String objectType) {
 
         ToolItem toolItem = new ToolItem(parent, SWT.NONE);
-        toolItem.setImage(ISpherePlugin.getImageDescriptor(image).createImage());
+        toolItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(image));
         toolItem.setToolTipText(tooltip);
         toolItem.setEnabled(false);
         toolItem.addSelectionListener(new AddReferencedObjectListener(getShell(), this, objectType));
@@ -486,7 +486,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         toolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
 
         ToolItem helpItem = new ToolItem(toolBar, SWT.NONE);
-        helpItem.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SYSTEM_HELP).createImage());
+        helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
         helpItem.addSelectionListener(new DisplayHelpListener());
 
         Label separator = new Label(mainArea, SWT.SEPARATOR | SWT.HORIZONTAL);

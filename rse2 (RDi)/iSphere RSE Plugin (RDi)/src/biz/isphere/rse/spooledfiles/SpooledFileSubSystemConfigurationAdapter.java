@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class SpooledFileSubSystemConfigurationAdapter extends SubSystemConfigura
 
     @Override
     public ImageDescriptor getSystemFilterImage(ISystemFilter filter) {
-        return ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE_FILTER);
+        return ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE_FILTER);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,10 +38,10 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
     public AbstractTableLabelProvider(TableViewer tableViewer, int columnIndex) {
 
-        this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
-        this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
-        this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
-        this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
+        this.copyToLeft = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_LEFT);
+        this.copyToRight = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_RIGHT);
+        this.copyNotEqual = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_NOT_EQUAL);
+        this.copyEqual = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_EQUAL);
 
         if (useCompareStatusImagePainter()) {
             tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
