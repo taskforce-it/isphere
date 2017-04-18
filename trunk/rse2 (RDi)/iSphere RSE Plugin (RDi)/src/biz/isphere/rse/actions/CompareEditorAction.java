@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,10 +121,13 @@ public class CompareEditorAction implements IObjectActionDelegate {
 
     public void selectionChanged(IAction action, ISelection selection) {
 
-        selectedMembers = getMembersFromSelection((IStructuredSelection)selection);
-
-        if (selectedMembers.length >= 1) {
-            action.setEnabled(true);
+        if (selection instanceof IStructuredSelection) {
+            selectedMembers = getMembersFromSelection((IStructuredSelection)selection);
+            if (selectedMembers.length >= 1) {
+                action.setEnabled(true);
+            } else {
+                action.setEnabled(false);
+            }
         } else {
             action.setEnabled(false);
         }
