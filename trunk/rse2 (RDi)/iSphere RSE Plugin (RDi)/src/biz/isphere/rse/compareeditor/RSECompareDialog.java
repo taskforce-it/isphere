@@ -48,24 +48,55 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorFile;
     private String ancestorMember;
 
+    /**
+     * Creates a three-way compare dialog.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     * @param ancestorMember - the ancestor member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember) {
         super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
         this.rseLeftMember = leftMember;
         initializeRightMember(rightMember);
     }
 
+    /**
+     * Creates the compare dialog, for 3 and more selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param selectedMembers - the selected members that go to the left side of the compare dialog
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember[] selectedMembers) {
         super(parentShell, selectEditable, selectedMembers);
         this.rseLeftMember = selectedMembers[0];
         initializeRightMember(selectedMembers[0]);
     }
 
+    /**
+     * Creates the compare dialog, for 2 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
         this.rseLeftMember = leftMember;
         initializeRightMember(rightMember);
     }
 
+    /**
+     * Creates the compare dialog, for 1 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember) {
         super(parentShell, selectEditable, leftMember);
         this.rseLeftMember = leftMember;

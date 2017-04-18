@@ -78,6 +78,13 @@ public abstract class CompareDialog extends XDialog {
     private Text rightFileText;
     private Text rightMemberText;
 
+    /**
+     * Creates the compare dialog, for 1 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     */
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, null, null);
@@ -86,6 +93,14 @@ public abstract class CompareDialog extends XDialog {
         checkCompareFilters();
     }
 
+    /**
+     * Creates the compare dialog, for 2 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     */
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, null);
@@ -94,14 +109,30 @@ public abstract class CompareDialog extends XDialog {
         checkCompareFilters();
     }
 
-    public CompareDialog(Shell parentShell, boolean selectEditable, Member[] rightMembers) {
+    /**
+     * Creates the compare dialog, for 3 and more selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param selectedMembers - the selected members that go to the right side of the compare dialog
+     */
+    public CompareDialog(Shell parentShell, boolean selectEditable, Member[] selectedMembers) {
         super(parentShell);
-        initialize(parentShell, selectEditable, rightMembers[0], rightMembers[0], null);
+        initialize(parentShell, selectEditable, selectedMembers[0], selectedMembers[0], null);
         hasMultipleRightMembers = true;
 
         checkCompareFilters();
     }
 
+    /**
+     * Creates a three-way compare dialog.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     * @param ancestorMember - the ancestor member
+     */
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
