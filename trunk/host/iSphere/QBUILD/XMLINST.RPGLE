@@ -764,8 +764,7 @@
       *--------------------------------------------------------------------
      P readElement...
      P                 B
-      *
-     D readElement     PI                        like(bldexc)
+     D                 PI                        like(bldexc)
      D  i_element                     9A   value varying
       *
      D i               S             10I 0 inz
@@ -782,15 +781,13 @@
       *
      C                   Return    value
       *
-     P readElement...
      P                 E
       *--------------------------------------------------------------------
       * Double quotes
       *--------------------------------------------------------------------
      P dblQuotes...
      P                 B
-      *
-     D dblQuotes       PI          2048A         varying
+     D                 PI          2048A         varying
      D  i_string                   2048A   value varying
       *
      D x               S             10I 0         inz
@@ -805,15 +802,12 @@
       *
      C                   Return    string
       *
-     P dblQuotes...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Get Attribute Data from String
       *---------------------------------------------------------------------------------------------
      P getAttrData...
      P                 B
-      *
-     D getAttrData...
      D                 PI          2000A          varying                       like(string_t)
      D  i_attr                       10a   value
      D  i_string                   2000A   value  varying                       like(string_t)
@@ -849,15 +843,12 @@
       *
      C                   Return    attrData
       *
-     P getAttrData...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Load condition array
       *---------------------------------------------------------------------------------------------
      P loadConditions...
      P                 B
-      *
-     D loadConditions...
      D                 PI                  dim(32) like(condition)
      D  i_conditions                128A   value
       *
@@ -865,26 +856,42 @@
      D cnd_array       s                   dim(32) inz like(condition)
      D pValue          s               *   inz
      D x               s             10i 0 inz
+     D i               s             10i 0 inz
+     D cnd_value       s            128a   varying
+     D var_name        s             64a   varying
+     D var_value       s             64a   varying
       *-------------------------------------------------------------------*
-     C                   eval      i_conditions = uCase(i_conditions)
-      *
-     C                   eval      pValue = strtok(i_conditions: ';')
-     C                   dow       pValue <> *null
-     C                   eval      x = x + 1
-     C                   eval      cnd_array(x) = %str(pValue)
-     C                   eval      pValue = strtok(*null: ';')
-     C                   enddo
-      *
-     C                   Return    cnd_array
-     P loadConditions...
+      /FREE
+
+         i_conditions = uCase(i_conditions);
+
+         pValue = strtok(i_conditions: ';');
+         dow (pValue <> *null);
+            x = x + 1;
+            cnd_value = %str(pValue);
+            i = %scan('=': cnd_value);
+            if (i = 0);
+               cnd_array(x) = cnd_value;
+            else;
+               var_name = %subst(cnd_value: 1: i-1);
+               if (%subst(var_name: 1: 1) = '&');
+                  var_name = %subst(var_name: 2);
+               endif;
+               var_value = %subst(cnd_value: i+1);
+               setVariable(var_name: var_value);
+               cnd_array(x) = var_value;
+            endif;
+            pValue = strtok(*null: ';');
+         enddo;
+
+         return cnd_array;
+      /END-FREE
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Check for a condition
       *---------------------------------------------------------------------------------------------
      P isCondition...
      P                 B
-      *
-     D isCondition...
      D                 PI              n
      D  i_condList                 2000A   value
       *
@@ -893,6 +900,7 @@
      D pValue          S               *   inz
      D aCondition      S             10a   inz
       *-------------------------------------------------------------------*
+      *
      C                   eval      i_condList = uCase(i_condList)
       *
      C                   if        (i_condList = '*NONE')  or
@@ -919,15 +927,12 @@
      C                   endif
       *
      C                   Return    isCondition
-     P isCondition...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Get the current release level of the operation system
       *---------------------------------------------------------------------------------------------
      P getCurrentRelease...
      P                 B
-      *
-     D getCurrentRelease...
      D                 PI            10A
       *
       *  QSZRTVPR API
@@ -956,18 +961,17 @@
      D  bytPrv                       10i 0 inz(0)
      D  bytAvl                       10i 0 inz(0)
       *-------------------------------------------------------------------*
+      *
      C                   Callp     QSZRTVPR(prdr0100: %size(prdr0100):
      C                                      'PRDR0100': prdi0100: errCode)
      C                   Return    prdr0100.releaseLvl
-     P getCurrentRelease...
+      *
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Check the release level
       *---------------------------------------------------------------------------------------------
      P isRelease...
      P                 B
-      *
-     D isRelease...
      D                 PI              n
      D  i_os_release                  6A   value
      D  i_release                    10A   value
@@ -980,6 +984,7 @@
      D  r_space                4      4a
      D  r_level                5     10a
       *-------------------------------------------------------------------*
+      *
      C                   If        i_release = '*CURRENT'
      C                   Eval      isRelease = *on
      C                   Else
@@ -1006,15 +1011,13 @@
      C                   Endif
       *
      C                   Return    isRelease
-     P isRelease...
+      *
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Replaces the value of a given keyword.
       *---------------------------------------------------------------------------------------------
      P setTargetRelease...
      P                 B
-      *
-     D setTargetRelease...
      D                 PI          2000A          varying
      D  i_keyword                    10A   value  varying
      D  i_string                   2000A   value  varying
@@ -1031,6 +1034,7 @@
      D tmpCmd          S             10A   inz
       *-------------------------------------------------------------------*
       /FREE
+
          tmpKeyword = uCase(%trimR(i_keyword));
          tmpString  = uCase(%trimR(i_string ));
          x = %scan(' ': tmpString);
@@ -1069,49 +1073,47 @@
          string = %replace(tmpKeyword + '(' + %trimR(i_value) + ')'
                            : i_string: x: l);
          Return string;
-      /END-FREE
       *
-     P setTargetRelease...
+      /END-FREE
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Store field value.
       *---------------------------------------------------------------------------------------------
      P setVariable...
      P                 B
-      *
-     D setVariable...
      D                 PI
      D  i_fldName                    10A   value  varying
      D  i_value                      64A   value  varying
      D i               s             10I 0 inz
       *-------------------------------------------------------------------*
       /FREE
+
          if (i_fldName = '');
             return;
          endif;
+
          for i = 1 to fld_x;
             if (uCase('&' + %trim(i_fldName)) = uCase(fld_name(fld_x)));
                fld_value(fld_x) = i_value;
                leave;
             endif;
          endfor;
+
          if (fld_x >= %elem(fld_name));
             return;
          endif;
+
          fld_x = fld_x + 1;
          fld_name(fld_x)  = uCase('&' + %trim(i_fldName));
          fld_value(fld_x) = i_value;
+
       /END-FREE
-      *
-     P setVariable...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  get variable name from statement.
       *---------------------------------------------------------------------------------------------
      P getVarName...
      P                 B
-      *
-     D getVarName...
      D                 PI            11a          varying
      D  i_bldexc                           value  like(bldexc)
      D  i_pos                        10i 0 value
@@ -1121,47 +1123,47 @@
      D                                      1234567890_'
       *-------------------------------------------------------------------*
       /FREE
+
          dow (i_pos<=%len(i_bldexc) and
               %check(CHARS:%subst(i_bldexc:i_pos:1))=0);
             name = name+%subst(i_bldexc:i_pos:1);
             i_pos=i_pos+1;
          enddo;
+
          return name;
+
       /END-FREE
       *
-     P getVarName...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  get variable value.
       *---------------------------------------------------------------------------------------------
      P getVarValue...
      P                 B
-      *
-     D getVarValue...
      D                 PI            64a          varying
      D  i_name                       11a   value  varying
      D i               s             10i 0 inz
      D value           s             64a   varying inz('?')
       *-------------------------------------------------------------------*
       /FREE
+
          for i=1 to fld_x;
             if (ucase(fld_name(i))=uCase(i_name));
                value=%trimR(fld_value(i));
                leave;
             endif;
          endfor;
+
          return value;
+
       /END-FREE
       *
-     P getVarValue...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  convert to upper case
       *---------------------------------------------------------------------------------------------
      P uCase...
      P                 B
-      *
-     D uCase...
      D                 PI          2000A          varying
      D  i_string                   2000A   value  varying
      D uCase           s           2000A   inz varying
@@ -1169,9 +1171,10 @@
      D UC              C                   CONST('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
       *-------------------------------------------------------------------*
       /FREE
+
          uCase = %xlate(LC:UC:i_string);
+
          return uCase;
+
       /END-FREE
-      *
-     P uCase...
      P                 E
