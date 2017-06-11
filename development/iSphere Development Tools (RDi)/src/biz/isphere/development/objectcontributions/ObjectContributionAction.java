@@ -8,12 +8,10 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class ObjectContributionAction implements IObjectActionDelegate {
 
-    @Override
     public void run(IAction action) {
         System.out.println("run: " + action.getId());
     }
 
-    @Override
     public void selectionChanged(IAction action, ISelection selection) {
         System.out.println("selectionChanged: " + action.getId());
         if (selection instanceof StructuredSelection) {
@@ -27,7 +25,6 @@ public class ObjectContributionAction implements IObjectActionDelegate {
         }
     }
 
-    @Override
     public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         System.out.println("setActivePart: " + action.getId());
     }
