@@ -55,8 +55,6 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     private CompareNode fRight;
     private Object fRoot;
 
-    // private boolean isSaveNeeded = false;
-
     public CompareInput(CompareEditorConfiguration config, Member ancestorMember, Member leftMember, Member rightMember) {
         super(config);
         this.editable = config.isLeftEditable();
@@ -127,7 +125,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             monitor.done();
         }
     }
-
+    
     public void cleanup() {
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);
@@ -163,7 +161,6 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     @Override
     public void saveChanges(IProgressMonitor pm) throws CoreException {
-        // isSaveNeeded = false;
         super.saveChanges(pm);
         try {
             fLeft.commit(pm);
