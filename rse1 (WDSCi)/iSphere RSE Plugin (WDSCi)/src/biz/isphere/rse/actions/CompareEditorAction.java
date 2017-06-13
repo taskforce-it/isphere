@@ -43,7 +43,7 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COMPARE));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_COMPARE));
         selectedMembersList = new ArrayList<RSEMember>();
     }
 
@@ -85,6 +85,10 @@ public class CompareEditorAction extends ISeriesSystemBaseAction implements ISys
                     cc.setConsiderDate(considerDate);
                     cc.setIgnoreCase(ignoreCase);
                     cc.setThreeWay(threeWay);
+                    // Disables the "save" option of the context menu of the
+                    // compare/merge editor, because this option does not save
+                    // changes for unknown reasons.
+                    cc.setProperty("org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY", false);
 
                     if (selectedMembers.length > 2) {
                         for (RSEMember rseSelectedMember : selectedMembers) {
