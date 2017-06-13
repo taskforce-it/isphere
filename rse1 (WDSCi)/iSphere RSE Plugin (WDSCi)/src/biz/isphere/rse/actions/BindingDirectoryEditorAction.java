@@ -47,7 +47,7 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_BINDING_DIRECTORY));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_BINDING_DIRECTORY));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {

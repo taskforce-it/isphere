@@ -66,7 +66,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
         setContextMenuGroup("additions"); //$NON-NLS-1$
         allowOnMultipleSelection(true);
         setHelp(""); //$NON-NLS-1$
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {

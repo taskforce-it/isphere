@@ -58,7 +58,7 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
 
     protected void createControlDecorator(Control control) {
         IControlDecoration decorator = new RSEControlDecoration(control, SWT.LEFT);
-        decorator.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_WATCHING).createImage());
+        decorator.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_WATCHING));
         decorator.hide();
         decorator.setMarginWidth(5);
         setDecorator(control, decorator);

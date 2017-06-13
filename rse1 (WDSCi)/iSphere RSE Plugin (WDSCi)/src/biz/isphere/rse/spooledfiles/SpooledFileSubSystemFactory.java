@@ -120,7 +120,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     @Override
     public ImageDescriptor getSystemFilterImage(SystemFilter filter) {
-        return ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE_FILTER);
+        return ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE_FILTER);
     }
 
     @Override
