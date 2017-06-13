@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.1.0.b001 
+--------------------------------------------
+ • Added menu option "Compare Source Members" to the iSphere main menu.
+ • Fixed "save" action of WDSCi compare/merge editor.
+
 Changelog: iSphere 3.0.0.b010 and 3.0.0.b011 
 --------------------------------------------
  • Added "iSphere Add-Remove Comments" feature mainly intended to be used 
