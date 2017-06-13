@@ -66,7 +66,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_MESSAGE_FILE_SEARCH));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MESSAGE_FILE_SEARCH));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {

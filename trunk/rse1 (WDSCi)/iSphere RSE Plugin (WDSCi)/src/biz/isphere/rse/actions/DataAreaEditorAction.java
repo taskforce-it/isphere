@@ -44,7 +44,7 @@ public class DataAreaEditorAction extends ISeriesSystemBaseAction implements ISy
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_DATA_AREA));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_DATA_AREA));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {

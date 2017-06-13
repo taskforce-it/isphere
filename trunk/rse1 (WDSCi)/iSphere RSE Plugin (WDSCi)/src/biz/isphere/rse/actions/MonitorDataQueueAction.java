@@ -47,7 +47,7 @@ public class MonitorDataQueueAction extends ISeriesSystemBaseAction implements I
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_DATA_QUEUE_MONITOR));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_DATA_QUEUE_MONITOR));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
