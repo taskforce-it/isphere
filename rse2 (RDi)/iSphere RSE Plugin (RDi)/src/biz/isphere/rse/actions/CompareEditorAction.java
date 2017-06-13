@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,14 +21,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.compareeditor.CompareAction;
-import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
-import biz.isphere.rse.compareeditor.RSECompareDialog;
+import biz.isphere.rse.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.internal.RSEMember;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
 public class CompareEditorAction implements IObjectActionDelegate {
@@ -52,70 +48,13 @@ public class CompareEditorAction implements IObjectActionDelegate {
         try {
 
             if (selectedMembers.length > 0) {
-
-                RSECompareDialog dialog;
-                if (selectedMembers.length > 2) {
-                    dialog = new RSECompareDialog(shell, true, selectedMembers);
-                } else if (selectedMembers.length == 2) {
-                    dialog = new RSECompareDialog(shell, true, selectedMembers[0], selectedMembers[1]);
-                } else {
-                    dialog = new RSECompareDialog(shell, true, selectedMembers[0]);
-                }
-
-                if (dialog.open() == Dialog.OK) {
-
-                    boolean editable = dialog.isEditable();
-                    boolean considerDate = dialog.isConsiderDate();
-                    boolean ignoreCase = dialog.isIgnoreCase();
-                    boolean threeWay = dialog.isThreeWay();
-
-                    RSEMember rseAncestorMember = null;
-                    if (threeWay) {
-                        rseAncestorMember = dialog.getAncestorRSEMember();
-                    }
-
-                    CompareEditorConfiguration cc = new CompareEditorConfiguration();
-                    cc.setLeftEditable(editable);
-                    cc.setRightEditable(false);
-                    cc.setConsiderDate(considerDate);
-                    cc.setIgnoreCase(ignoreCase);
-                    cc.setThreeWay(threeWay);
-
-                    if (selectedMembers.length > 2) {
-                        for (RSEMember rseSelectedMember : selectedMembers) {
-                            RSEMember rseRightMember = getRightRSEMember(dialog.getRightConnection(), dialog.getRightLibrary(),
-                                dialog.getRightFile(), rseSelectedMember.getMember());
-                            if (!rseRightMember.exists()) {
-                                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
-                                    new Object[] { dialog.getRightLibrary(), dialog.getRightFile(), rseSelectedMember.getMember() });
-                                MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
-
-                            } else {
-                                CompareAction action = new CompareAction(cc, rseAncestorMember, rseSelectedMember, rseRightMember, null);
-                                action.run();
-                            }
-                        }
-                    } else {
-                        RSEMember rseLeftMember = dialog.getLeftRSEMember();
-                        RSEMember rseRightMember = dialog.getRightRSEMember();
-                        CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
-                        action.run();
-                    }
-                }
+                CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
+                handler.handleSourceCompare(selectedMembers);
             }
 
         } catch (Exception e) {
             ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
             MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
-    }
-
-    private RSEMember getRightRSEMember(IBMiConnection connection, String libraryName, String sourceFileName, String memberName) {
-        try {
-            return new RSEMember(connection.getMember(libraryName, sourceFileName, memberName, null));
-        } catch (Exception e) {
-            MessageDialog.openError(shell, biz.isphere.core.Messages.Error, e.getMessage());
-            return null;
         }
     }
 
