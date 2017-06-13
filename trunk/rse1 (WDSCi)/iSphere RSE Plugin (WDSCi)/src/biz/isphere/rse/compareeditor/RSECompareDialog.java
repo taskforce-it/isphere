@@ -1,17 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2014 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     Task Force IT-Consulting GmbH - initial API and implementation
  *******************************************************************************/
 
 package biz.isphere.rse.compareeditor;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -23,10 +19,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.internal.Member;
-import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.internal.RSEMember;
 
@@ -39,7 +34,13 @@ import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
 public class RSECompareDialog extends CompareDialog {
 
     private Group ancestorGroup;
-    private RSEMember rseLeftMember;
+
+    private ISeriesConnectionCombo leftConnectionCombo;
+    private ISeriesMemberPrompt leftMemberPrompt;
+    private ISeriesConnection leftConnection;
+    private String leftLibrary;
+    private String leftFile;
+    private String leftMember;
 
     private ISeriesConnectionCombo rightConnectionCombo;
     private ISeriesMemberPrompt rightMemberPrompt;
@@ -55,27 +56,81 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorFile;
     private String ancestorMember;
 
+    /**
+     * Creates a three-way compare dialog.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     * @param ancestorMember - the ancestor member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember) {
         super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
-        this.rseLeftMember = leftMember;
+        initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
     }
 
+    /**
+     * Creates the compare dialog, for 3 and more selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param selectedMembers - the selected members that go to the left side of
+     *        the compare dialog
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember[] selectedMembers) {
         super(parentShell, selectEditable, selectedMembers);
-        this.rseLeftMember = selectedMembers[0];
+        initializeLeftMember(selectedMembers[0]);
         initializeRightMember(selectedMembers[0]);
     }
 
+    /**
+     * Creates the compare dialog, for 2 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
-        this.rseLeftMember = leftMember;
+        initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
     }
 
+    /**
+     * Creates the compare dialog, for 1 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param leftMember - the left selected member
+     */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember) {
         super(parentShell, selectEditable, leftMember);
-        this.rseLeftMember = leftMember;
+        initializeLeftMember(leftMember);
+    }
+
+    /**
+     * Creates the compare dialog, for 0 selected members.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     */
+    public RSECompareDialog(Shell parentShell, boolean selectEditable) {
+        super(parentShell, selectEditable);
+    }
+
+    private void initializeLeftMember(RSEMember leftMember) {
+        this.leftConnection = leftMember.getRSEConnection();
+        this.leftLibrary = leftMember.getLibrary();
+        this.leftFile = leftMember.getSourceFile();
+        this.leftMember = leftMember.getMember();
     }
 
     private void initializeRightMember(RSEMember rightMember) {
@@ -83,6 +138,53 @@ public class RSECompareDialog extends CompareDialog {
         this.rightLibrary = rightMember.getLibrary();
         this.rightFile = rightMember.getSourceFile();
         this.rightMember = rightMember.getMember();
+    }
+
+    @Override
+    public void createLeftArea(Composite parent) {
+
+        Group leftGroup = new Group(parent, SWT.NONE);
+        leftGroup.setText(Messages.Right);
+        GridLayout rightLayout = new GridLayout();
+        rightLayout.numColumns = 1;
+        leftGroup.setLayout(rightLayout);
+        leftGroup.setLayoutData(getGridData());
+
+        leftConnectionCombo = new ISeriesConnectionCombo(leftGroup, getLeftConnection(), false);
+        leftConnectionCombo.setLayoutData(getGridData());
+        leftConnectionCombo.getCombo().setLayoutData(getGridData());
+
+        leftConnectionCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                getOkButton().setEnabled(canFinish());
+                leftMemberPrompt.setSystemConnection(leftConnectionCombo.getSystemConnection());
+            }
+        });
+
+        leftMemberPrompt = new ISeriesMemberPrompt(leftGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
+        if (hasLeftMember()) {
+            leftMemberPrompt.setSystemConnection(getLeftConnection().getSystemConnection());
+            leftMemberPrompt.setLibraryName(getLeftLibrary());
+            leftMemberPrompt.setFileName(getLeftFile());
+            leftMemberPrompt.setMemberName(getLeftMember());
+        } else {
+            leftMemberPrompt.setSystemConnection(null);
+            leftMemberPrompt.setLibraryName("");
+            leftMemberPrompt.setFileName("");
+            leftMemberPrompt.setMemberName("");
+        }
+
+        ModifyListener modifyListener = new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                getOkButton().setEnabled(canFinish());
+            }
+        };
+
+        leftMemberPrompt.getMemberCombo().addModifyListener(modifyListener);
+        leftMemberPrompt.getFileCombo().addModifyListener(modifyListener);
+        leftMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+        leftMemberPrompt.getLibraryCombo().setFocus();
     }
 
     @Override
@@ -95,7 +197,7 @@ public class RSECompareDialog extends CompareDialog {
         rightGroup.setLayout(rightLayout);
         rightGroup.setLayoutData(getGridData());
 
-        rightConnectionCombo = new ISeriesConnectionCombo(rightGroup, rseLeftMember.getRSEConnection(), false);
+        rightConnectionCombo = new ISeriesConnectionCombo(rightGroup, getLeftConnection(), false);
         rightConnectionCombo.setLayoutData(getGridData());
         rightConnectionCombo.getCombo().setLayoutData(getGridData());
 
@@ -109,13 +211,13 @@ public class RSECompareDialog extends CompareDialog {
 
         rightMemberPrompt = new ISeriesMemberPrompt(rightGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
         rightMemberPrompt.setSystemConnection(rightConnectionCombo.getSystemConnection());
-        rightMemberPrompt.setLibraryName(rseLeftMember.getLibrary());
-        rightMemberPrompt.setFileName(rseLeftMember.getSourceFile());
+        rightMemberPrompt.setLibraryName(getLeftLibrary());
+        rightMemberPrompt.setFileName(getLeftFile());
 
         if (hasMultipleRightMembers()) {
             rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
         } else {
-            rightMemberPrompt.setMemberName(rseLeftMember.getMember());
+            rightMemberPrompt.setMemberName(getLeftMember());
         }
 
         ModifyListener modifyListener = new ModifyListener() {
@@ -142,7 +244,7 @@ public class RSECompareDialog extends CompareDialog {
         ancestorGroup.setLayout(ancestorLayout);
         ancestorGroup.setLayoutData(getGridData());
 
-        ancestorConnectionCombo = new ISeriesConnectionCombo(ancestorGroup, rseLeftMember.getRSEConnection(), false);
+        ancestorConnectionCombo = new ISeriesConnectionCombo(ancestorGroup, getLeftConnection(), false);
         ancestorConnectionCombo.setLayoutData(getGridData());
         ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
 
@@ -156,9 +258,9 @@ public class RSECompareDialog extends CompareDialog {
 
         ancestorMemberPrompt = new ISeriesMemberPrompt(ancestorGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
         ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getSystemConnection());
-        ancestorMemberPrompt.setLibraryName(rseLeftMember.getLibrary());
-        ancestorMemberPrompt.setFileName(rseLeftMember.getSourceFile());
-        ancestorMemberPrompt.setMemberName(rseLeftMember.getMember());
+        ancestorMemberPrompt.setLibraryName(getLeftLibrary());
+        ancestorMemberPrompt.setFileName(getLeftFile());
+        ancestorMemberPrompt.setMemberName(getLeftMember());
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -175,21 +277,70 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void setAncestorVisible(boolean visible) {
         ancestorGroup.setVisible(visible);
-        if (visible) {
-            ancestorMemberPrompt.getLibraryCombo().setFocus();
-        } else {
-            rightMemberPrompt.getLibraryCombo().setFocus();
+        setFocus();
+    }
+
+    @Override
+    public void setFocus() {
+
+        if (leftMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentLeftLibraryName())) {
+            leftMemberPrompt.getLibraryCombo().setFocus();
+            return;
         }
+        if (leftMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentLeftFileName())) {
+            leftMemberPrompt.getFileCombo().setFocus();
+            return;
+        }
+        if (leftMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentLeftMemberName())) {
+            leftMemberPrompt.getMemberCombo().setFocus();
+            return;
+        }
+
+        if (rightMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentRightLibraryName())) {
+            rightMemberPrompt.getLibraryCombo().setFocus();
+            return;
+        }
+        if (rightMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentRightFileName())) {
+            rightMemberPrompt.getFileCombo().setFocus();
+            return;
+        }
+        if (rightMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentRightMemberName())) {
+            rightMemberPrompt.getMemberCombo().setFocus();
+            return;
+        }
+
+        if (ancestorMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentAncestorLibraryName())) {
+            ancestorMemberPrompt.getLibraryCombo().setFocus();
+            return;
+        }
+        if (ancestorMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentAncestorFileName())) {
+            ancestorMemberPrompt.getFileCombo().setFocus();
+            return;
+        }
+        if (ancestorMemberPrompt != null && StringHelper.isNullOrEmpty(getCurrentAncestorMemberName())) {
+            ancestorMemberPrompt.getMemberCombo().setFocus();
+            return;
+        }
+
     }
 
     @Override
     protected void okPressed() {
 
+        if (!hasLeftMember()) {
+
+            leftConnection = ISeriesConnection.getConnection(leftConnectionCombo.getSystemConnection());
+            leftLibrary = getCurrentLeftLibraryName();
+            leftFile = getCurrentLeftFileName();
+            leftMember = getCurrentLeftMemberName();
+
+        }
+
         if (hasMultipleRightMembers()) {
 
             rightConnection = ISeriesConnection.getConnection(rightConnectionCombo.getSystemConnection());
-            rightLibrary = getRightLibraryName();
-            rightFile = getRightFileName();
+            rightLibrary = getCurrentRightLibraryName();
+            rightFile = getCurrentRightFileName();
             rightMember = null;
 
             ISeriesLibrary qsysLibrary = null;
@@ -219,9 +370,9 @@ public class RSECompareDialog extends CompareDialog {
         } else if (!hasRightMember()) {
 
             rightConnection = ISeriesConnection.getConnection(rightConnectionCombo.getSystemConnection());
-            rightLibrary = rightMemberPrompt.getLibraryName();
-            rightFile = rightMemberPrompt.getFileName();
-            rightMember = rightMemberPrompt.getMemberName();
+            rightLibrary = getCurrentRightLibraryName();
+            rightFile = getCurrentRightFileName();
+            rightMember = getCurrentRightMemberName();
 
             RSEMember _rightMember = getRightRSEMember();
             if (_rightMember == null) {
@@ -236,18 +387,19 @@ public class RSECompareDialog extends CompareDialog {
             }
 
             if (isThreeWay()) {
+
                 ancestorConnection = ISeriesConnection.getConnection(ancestorConnectionCombo.getSystemConnection());
-                ancestorLibrary = ancestorMemberPrompt.getLibraryName();
-                ancestorFile = ancestorMemberPrompt.getFileName();
-                ancestorMember = ancestorMemberPrompt.getMemberName();
+                ancestorLibrary = getCurrentAncestorLibraryName();
+                ancestorFile = getCurrentAncestorFileName();
+                ancestorMember = getCurrentAncestorMemberName();
 
                 RSEMember _ancestorMember = getAncestorRSEMember();
                 if (_ancestorMember == null) {
                     ancestorMemberPrompt.getMemberCombo().setFocus();
                     return;
                 } else if (!_ancestorMember.exists()) {
-                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
-                        ancestorLibrary, ancestorFile, ancestorMember });
+                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
+                        new Object[] { ancestorLibrary, ancestorFile, ancestorMember });
                     MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
                     ancestorMemberPrompt.getMemberCombo().setFocus();
                     return;
@@ -263,42 +415,92 @@ public class RSECompareDialog extends CompareDialog {
 
     @Override
     public boolean canFinish() {
+
+        if (getCurrentLeftConnectionName() == null || getCurrentLeftLibraryName() == null || getCurrentLeftFileName() == null || getCurrentLeftMemberName() == null) {
+            return false;
+        }
+
         if (isThreeWay()) {
-            if (getRightMemberName() == null || getRightMemberName().length() == 0 || getRightFileName() == null || getRightFileName().length() == 0
-                || getRightLibraryName() == null || getRightLibraryName().length() == 0 || getAncestorMemberName() == null
-                || getAncestorMemberName().length() == 0 || getAncestorFileName() == null || getAncestorFileName().length() == 0
-                || getAncestorLibraryName() == null || getAncestorLibraryName().length() == 0) {
+            if (getCurrentRightMemberName() == null || getCurrentRightMemberName().length() == 0 || getCurrentRightFileName() == null || getCurrentRightFileName().length() == 0
+                || getCurrentRightLibraryName() == null || getCurrentRightLibraryName().length() == 0 || getCurrentAncestorMemberName() == null
+                || getCurrentAncestorMemberName().length() == 0 || getCurrentAncestorFileName() == null || getCurrentAncestorFileName().length() == 0
+                || getCurrentAncestorLibraryName() == null || getCurrentAncestorLibraryName().length() == 0) {
                 return false;
             }
-            if (getRightMemberName().equalsIgnoreCase(getAncestorMemberName()) && getRightFileName().equalsIgnoreCase(getAncestorFileName())
-                && getRightLibraryName().equalsIgnoreCase(getAncestorLibraryName())
-                && rightConnectionCombo.getSystemConnection().getHostName().equals(ancestorConnectionCombo.getSystemConnection().getHostName())) {
+            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentAncestorMemberName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentAncestorFileName())
+                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentAncestorLibraryName()) && getCurrentRightConnectionName().equals(getCurrentAncestorConnectionName())) {
                 return false;
             }
-            if (getRightLibraryName().equalsIgnoreCase(rseLeftMember.getLibrary())
-                && getRightFileName().equalsIgnoreCase(rseLeftMember.getSourceFile())
-                && getRightMemberName().equalsIgnoreCase(rseLeftMember.getMember())
-                && rightConnectionCombo.getSystemConnection().getHostName().equals(rseLeftMember.getRSEConnection().getHostName())) {
+            if (getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentRightConnectionName().equals(getCurrentLeftConnectionName())) {
                 return false;
             }
-            if (getAncestorLibraryName().equalsIgnoreCase(rseLeftMember.getLibrary())
-                && getAncestorFileName().equalsIgnoreCase(rseLeftMember.getSourceFile())
-                && getAncestorMemberName().equalsIgnoreCase(rseLeftMember.getMember())
-                && ancestorConnectionCombo.getSystemConnection().getHostName().equals(rseLeftMember.getRSEConnection().getHostName())) {
+            if (getCurrentAncestorLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentAncestorFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentAncestorMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentAncestorConnectionName().equals(getCurrentLeftConnectionName())) {
                 return false;
             }
         } else {
-            String rightMember = getRightMemberName();
+
+            String rightMember = getCurrentRightMemberName();
             if (rightMember == null || rightMember.length() == 0) {
                 return false;
             }
-            if (rightMember.equalsIgnoreCase(rseLeftMember.getMember()) && getRightFileName().equalsIgnoreCase(rseLeftMember.getSourceFile())
-                && getRightLibraryName().equalsIgnoreCase(rseLeftMember.getLibrary())
-                && rightConnectionCombo.getSystemConnection().getHostName().equalsIgnoreCase(rseLeftMember.getRSEConnection().getHostName())) {
+
+            String leftMember = getCurrentLeftMemberName();
+            if (leftMember == null || leftMember.length() == 0) {
+                return false;
+            }
+
+            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentRightConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())) {
                 return false;
             }
         }
         return true;
+    }
+
+    private String getCurrentLeftConnectionName() {
+        if (leftConnectionCombo == null) {
+            // return value for read-only left member
+            return getLeftConnection().getHostName();
+        }
+        if (leftConnectionCombo.getSystemConnection().getHostName().trim().length() == 0) {
+            return null;
+        }
+        return leftConnectionCombo.getSystemConnection().getHostName().trim();
+    }
+
+    private String getCurrentLeftLibraryName() {
+        if (leftMemberPrompt == null) {
+            // return value for read-only left member
+            return getLeftLibrary();
+        }
+        if (leftMemberPrompt.getLibraryName() == null) {
+            return null;
+        }
+        return leftMemberPrompt.getLibraryName().trim();
+    }
+
+    private String getCurrentLeftFileName() {
+        if (leftMemberPrompt == null) {
+            // return value for read-only left member
+            return getLeftFile();
+        }
+        if (leftMemberPrompt.getFileName() == null) {
+            return null;
+        }
+        return leftMemberPrompt.getFileName().trim();
+    }
+
+    private String getCurrentLeftMemberName() {
+        if (leftMemberPrompt == null) {
+            // return value for read-only left member
+            return getLeftMember();
+        }
+        if (leftMemberPrompt.getMemberName() == null) {
+            return null;
+        }
+        return leftMemberPrompt.getMemberName().trim();
     }
 
     private void setRightMemberPromptEnablement(boolean enabled) {
@@ -306,62 +508,70 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.getMemberBrowseButton().setEnabled(enabled);
     }
 
-    private String getRightLibraryName() {
+    private String getCurrentRightConnectionName() {
+        if (rightConnectionCombo.getSystemConnection().getHostName().trim().length() == 0) {
+            return null;
+        }
+        return rightConnectionCombo.getSystemConnection().getHostName().trim();
+    }
+
+    private String getCurrentRightLibraryName() {
         if (rightMemberPrompt.getLibraryName() == null) {
             return null;
         }
         return rightMemberPrompt.getLibraryName().trim();
     }
 
-    private String getRightFileName() {
+    private String getCurrentRightFileName() {
         if (rightMemberPrompt.getFileName() == null) {
             return null;
         }
         return rightMemberPrompt.getFileName().trim();
     }
 
-    private String getRightMemberName() {
+    private String getCurrentRightMemberName() {
         if (rightMemberPrompt.getMemberName() == null) {
             return null;
         }
         String memberName = rightMemberPrompt.getMemberName().trim();
         if (SPECIAL_MEMBER_NAME_LEFT.equalsIgnoreCase(memberName)) {
-            memberName = rseLeftMember.getMember();
+            memberName = getLeftMember();
         }
         return memberName;
     }
 
-    private String getAncestorLibraryName() {
+    private String getCurrentAncestorConnectionName() {
+        return ancestorConnectionCombo.getSystemConnection().getHostName();
+    }
+
+    private String getCurrentAncestorLibraryName() {
+        if (ancestorMemberPrompt == null) {
+            return null;
+        }
         if (ancestorMemberPrompt.getLibraryName() == null) {
             return null;
         }
         return ancestorMemberPrompt.getLibraryName().trim();
     }
 
-    private String getAncestorFileName() {
+    private String getCurrentAncestorFileName() {
+        if (ancestorMemberPrompt == null) {
+            return null;
+        }
         if (ancestorMemberPrompt.getFileName() == null) {
             return null;
         }
         return ancestorMemberPrompt.getFileName().trim();
     }
 
-    private String getAncestorMemberName() {
+    private String getCurrentAncestorMemberName() {
+        if (ancestorMemberPrompt == null) {
+            return null;
+        }
         if (ancestorMemberPrompt.getMemberName() == null) {
             return null;
         }
         return ancestorMemberPrompt.getMemberName().trim();
-    }
-
-    public RSEMember getLeftRSEMember() {
-        return rseLeftMember;
-    }
-
-    public RSEMember getRightRSEMember() {
-        try {
-            return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public ISeriesConnection getRightConnection() {
@@ -378,6 +588,50 @@ public class RSECompareDialog extends CompareDialog {
 
     public String getRightMember() {
         return rightMember;
+    }
+
+    public RSEMember getRightRSEMember() {
+        try {
+            return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
+            return null;
+        }
+    }
+
+    public ISeriesConnection getLeftConnection() {
+        return leftConnection;
+    }
+
+    public String getLeftLibrary() {
+        if (leftLibrary == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftLibrary;
+    }
+
+    public String getLeftFile() {
+        if (leftFile == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftFile;
+    }
+
+    public String getLeftMember() {
+        if (leftMember == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftMember;
+    }
+
+    public RSEMember getLeftRSEMember() {
+        // return rseLeftMember;
+        try {
+            return new RSEMember(leftConnection.getISeriesMember(getShell(), leftLibrary, leftFile, leftMember));
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
+            return null;
+        }
     }
 
     public ISeriesConnection getAncestorConnection() {
@@ -409,16 +663,7 @@ public class RSECompareDialog extends CompareDialog {
     protected void switchLeftAndRightMember(Member leftMember, Member rightMember) {
         super.switchLeftAndRightMember(leftMember, rightMember);
         initializeRightMember((RSEMember)leftMember);
-        this.rseLeftMember = (RSEMember)rightMember;
-    }
-
-    /**
-     * Overriden to let {@link XDialog} store the state of this dialog in a
-     * separate section of the dialog settings file.
-     */
-    @Override
-    protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(ISphereRSEPlugin.getDefault().getDialogSettings());
+        initializeLeftMember((RSEMember)rightMember);
     }
 
 }

@@ -490,10 +490,20 @@
                id="biz.isphere.core.menu.isphere"
                label="%menu_iSphere">
 	         <separator name="group0" visible="true" />
-	         <separator name="transferlibrary" visible="true" />
 	         <separator name="additions" visible="true" />
+	         <separator name="transferlibrary" visible="true" />
 	         <separator name="help" visible="true" />
          </menu>
+         
+         <action
+               class="biz.isphere.rse.actions.CompareEditorMenuAction"
+               id="biz.isphere.rse.actions.CompareEditorMenuAction"
+               definitionId="biz.isphere.core.command.SourceMemberCompare.open"
+               label="%menu_Compare_Source_Members"
+               icon="icons/compare.gif"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
+               tooltip="%menu_Tooltip_Compare_Source_Members">
+         </action>
          
          <action
                class="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
@@ -600,6 +610,12 @@
         commandId="biz.isphere.core.command.MessageFileSearchPage.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
+   
+      <key 
+        sequence="Ctrl+I C"
+        commandId="biz.isphere.core.command.SourceMemberCompare.open"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
             
    </extension>
 
@@ -650,6 +666,13 @@
             id="biz.isphere.core.command.SourceFileSearchPage.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Open_iSphere_Source_File_Search_Page">
+      </command>
+      
+      <command
+      		defaultHandler="biz.isphere.rse.handler.CompareSourceMembersHandler"
+            id="biz.isphere.core.command.SourceMemberCompare.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Compare_Source_Members">
       </command>
       
    </extension>
