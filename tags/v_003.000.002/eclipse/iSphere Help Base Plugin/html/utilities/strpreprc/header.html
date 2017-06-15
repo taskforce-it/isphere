@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>STRPREPRC Source Member Header</title>
+</head>
+
+<body>
+<h1>STRPREPRC Source Member Header</h1>
+<p>
+<h2>Header Marker Tags</h2>
+<p>
+The object creation command or creation parameters are stored in a STRPREPRC source header. The
+header consists of a series of tags, similar to HTML or XML. The tags and their meanings are:
+<p>
+<table border="0" width="90%">
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;PRE-COMPILER&lt;&lt;    </td><td width="5%" align="center" valign="top">-</td><td valign="top">Start of the header.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;END-PRE-COMPILER&lt;&lt;</td><td width="5%" align="center" valign="top">-</td><td valign="top">End of the header.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;CRTCMD&lt;&lt;          </td><td width="5%" align="center" valign="top">-</td><td valign="top">Base object creation command. Can be overridden with the <i>Creation command</i> (CMD) parameter of the STRPREPRC command.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;IMPORTANT&lt;&lt;       </td><td width="5%" align="center" valign="top">-</td><td valign="top">Start of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;END-IMPORTANT&lt;&lt;   </td><td width="5%" align="center" valign="top">-</td><td valign="top">End of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;COMPILE&lt;&lt;         </td><td width="5%" align="center" valign="top">-</td><td valign="top">Start of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;END-COMPILE&lt;&lt;     </td><td width="5%" align="center" valign="top">-</td><td valign="top">End of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;LINK&lt;&lt;            </td><td width="5%" align="center" valign="top">-</td><td valign="top">Start of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;END-LINK&lt;&lt;        </td><td width="5%" align="center" valign="top">-</td><td valign="top">End of parameter section.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;PARM&lt;&lt;            </td><td width="5%" align="center" valign="top">-</td><td valign="top">Parameter and value.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;EXECUTE&lt;&lt;         </td><td width="5%" align="center" valign="top">-</td><td valign="top">Execution of the object creation command.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;CMD&lt;&lt;             </td><td width="5%" align="center" valign="top">-</td><td valign="top">Pre- or post command, that is executed before/after the &gt;&gt;EXECUTE&lt;&lt; tag.</td></tr>
+</table>
+<p>
+There are no differences between the three parameter sections. Each section works the same way. It
+is up to you to use the section(s) that you like most. Some people may decide to use the <i>&gt;&gt;COMPILE&lt;&lt;</i>
+section for compile commands and the <i>&gt;&gt;LINK&lt;&lt;</i> for commands such as CRTPGM or CRTSRVPGM. Other
+developers may prefer to use the <i>&gt;&gt;IMPORTANT&lt;&lt;</i> section for all their commands in order to indicate
+that these parameters are important for a certain object.
+<p>
+<h2>Replacement Variables</h2>
+<p>
+The parameters specified at the command prompt are available as replacement variables and can be added
+to the STRPREPRC header. The following variables are available:
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">&SF</td><td width="5%" align="center" valign="top">-</td><td valign="top">Source file name</td></tr>
+<tr><td width="10%" valign="top">&SL</td><td width="5%" align="center" valign="top">-</td><td valign="top">Source file library name</td></tr>
+<tr><td width="10%" valign="top">&SM</td><td width="5%" align="center" valign="top">-</td><td valign="top">Source member name</td></tr>
+<tr><td width="10%" valign="top">&OB</td><td width="5%" align="center" valign="top">-</td><td valign="top">Object name</td></tr>
+<tr><td width="10%" valign="top">&LI</td><td width="5%" align="center" valign="top">-</td><td valign="top">Object library name</td></tr>
+<tr><td width="10%" valign="top">&TR</td><td width="5%" align="center" valign="top">-</td><td valign="top">Target release</td></tr>
+</table>
+<p>
+Parameters/variables, related to Software Change Management systems:
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">&TY</td><td width="5%" align="center" valign="top">-</td><td valign="top">Type code</td></tr>
+<tr><td width="10%" valign="top">&TL</td><td width="5%" align="center" valign="top">-</td><td valign="top">Name of the test library</td></tr>
+<tr><td width="10%" valign="top">&TO</td><td width="5%" align="center" valign="top">-</td><td valign="top">Name of the test object</td></tr>
+<tr><td width="10%" valign="top">&FF</td><td width="5%" align="center" valign="top">-</td><td valign="top">From source file name</td></tr>
+<tr><td width="10%" valign="top">&FL</td><td width="5%" align="center" valign="top">-</td><td valign="top">From source file library name</td></tr>
+<tr><td width="10%" valign="top">&FM</td><td width="5%" align="center" valign="top">-</td><td valign="top">From source member name</td></tr>
+</table>
+<p>
+General purpose parameters/variables:
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">&U0</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #0</td></tr>
+<tr><td width="10%" valign="top">&U1</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #1</td></tr>
+<tr><td width="10%" valign="top">&U2</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #2</td></tr>
+<tr><td width="10%" valign="top">&U3</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #3</td></tr>
+<tr><td width="10%" valign="top">&U4</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #4</td></tr>
+<tr><td width="10%" valign="top">&U5</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #5</td></tr>
+<tr><td width="10%" valign="top">&U6</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #6</td></tr>
+<tr><td width="10%" valign="top">&U7</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #7</td></tr>
+<tr><td width="10%" valign="top">&U8</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #8</td></tr>
+<tr><td width="10%" valign="top">&U9</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #9</td></tr>
+</table>
+<p>
+The STRPREPRC utility does not distinguish between the variables. All variables are handled the same as string 
+values.
+<p>
+<h2>Example Header</h2>
+<pre class="code">
+      //* >>PRE-COMPILER<<                                                       (1)
+      //*   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +             (2)
+      //*                 SRCMBR(&SM);
+      //*   >>IMPORTANT<<                                                        (3)
+      //*     >>PARM<<  TRUNCNBR(*NO);                                           (4.1)
+      //*     >>PARM<<  DBGVIEW(*LIST);                                          (4.2)
+      //*     >>PARM<<  OPTION(*EVENTF);                                         (4.3)
+      //*   >>END-IMPORTANT<<                                                    (5)
+      //*   >>CMD<<     CRTDUPOBJ OBJ(QRPGLESRC) FROMLIB(QGPL) +                 (6)
+      //*                 OBJTYPE(*FILE) TOLIB(QTEMP);
+      //*   >>EXECUTE<<                                                          (7)
+      //*   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                              (8)
+      //* >>END-PRE-COMPILER<<                                                   (9)
+</pre>
+<p>
+<u>Comments:</u>
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">(1)</td><td valign="top">Start of the STRPREPRC header.</td></tr>
+<tr><td width="10%" valign="top">(2)</td><td valign="top">Base object creation command. Can be overridden with the <i>Creation command</i> (CMD) 
+                                                          parameter of the STRPREPRC command.</td></tr>
+<tr><td width="10%" valign="top">(3)</td><td valign="top">Start of the parameter section.</td></tr>
+<tr><td width="10%" valign="top">(4.1)</td><td valign="top">First overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(4.2)</td><td valign="top">Second overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(4.3)</td><td valign="top">Third overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(5)</td><td valign="top">End of the parameter section.</td></tr>
+<tr><td width="10%" valign="top">(6)</td><td valign="top">Pre-command that is execute before the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(7)</td><td valign="top">Execution of the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(8)</td><td valign="top">Post-command that is execute after the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(9)</td><td valign="top">End of the STRPREPRC header.</td></tr>
+</table>
+<p>
+<h2>Assign Values Automatically</h2>
+<p>
+<table>
+<tr><td class="info" >Feel free to change the command defaults of the STRPREPRC command from '*NONE' to 
+'*DFT' to automatically assign the required source file and source member parameters to their related
+replacement variables.</td></tr>
+</table>
+<p>
+You can easily change the command default values with the CHGDFTCMD likes this:
+<p class="code">
+<div class="codeCommand">CHGCMDDFT CMD(ISPHEREDVP/STRPREPRC) NEWDFT('OBJ(*DFT)')</div>
+<div class="codeCommand">CHGCMDDFT CMD(ISPHEREDVP/STRPREPRC) NEWDFT('SRCLIB(*DFT)')</div>
+<div class="codeCommand">CHGCMDDFT CMD(ISPHEREDVP/STRPREPRC) NEWDFT('SRCFILE(*DFT)')</div>
+<div class="codeCommand">CHGCMDDFT CMD(ISPHEREDVP/STRPREPRC) NEWDFT('SRCMBR(*DFT)')</div>
+<p>
+This way the parameter values of <i>USESRCFILE</i> and <i>USESRCMBR</i> are automatically 
+assigned to replacement variables <i>&OB</i>, <i>&SL</i>, <i>&SF</i> and <i>&SM</i>.
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

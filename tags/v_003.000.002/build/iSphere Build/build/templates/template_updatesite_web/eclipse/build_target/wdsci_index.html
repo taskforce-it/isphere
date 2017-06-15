@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta name="description" content="iSphere Plug-in Update Site">
+        <meta name="author" content="iSphere Project Team">
+        <meta name="keywords" content="iSphere, Plugin, RDP, RDI, WDSCI, Eclipse, AS400">
+        <link href="assets/stylesheet.css" rel="stylesheet" type="text/css" />
+        <title>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
+    </head>
+    <body>
+    	<a href="@PROJECT_HOME@"><img src="assets/project-logo.gif" alt="iSphere - Eclipse Update Site for WDSCi" border="0" align="left" style="padding-right:10px;"/></a>
+        <h1>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
+        <p>Hi, this is the <a href="@PROJECT_HOME@">iSphere</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
+        <p>Visit the <a href="@HELP_SITE_URL@">iSphere help</a> site to find out more about the plug-in.</p>
+        <br>
+        <br>
+        @VERSION_INFO@
+        <br>
+        <h2>Installing the Plug-In</h2>
+        <h3>Using the iSphere Update Site</h3>
+        <p>From the main menu, select "Help > Software Updates > Find and Install..." to enter the "Install/Update" dialog.<br><br>
+        Select "Search for new features to install" and press the [Next] button:<br><br></p>
+        <img class="indent" src="./assets/wdsci_install_new_software.gif" alt="WDSCi: Install new software">
+        <p>
+        Now click the [New Remote Site...] button to enter the URL of the iSphere update site <a href="@UPDATE_SITE_URL@">@UPDATE_SITE_URL@</a>:
+        <p>
+        <img class="indent" src="./assets/wdsci_remote_update_site.gif" alt="WDSCi: iSphere Update Site">
+        <p>
+        Then click the [Finish] button and follow the instructions given on the following pages.
+        <h3>Using a Local Update Directory</h3>
+        <p>
+        Go to the iSphere <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        <p>
+        The follow these steps to create your local update site:
+        <p>
+        <ul>
+        <li>Unpack the zip file to a directory of your choice. This directory will be your local update site.</li>
+        <li>From the main menu, select "Help > Software Updates > Find and Install..." to enter the "Install/Update" dialog.</li>
+        <li>Press the [New Local Site...] button to add your directory to the list of available update sites.</li>
+        </ul>
+        <br>
+        <h3>Using a Local Update Archive</h3>
+        <p>
+        Go to the iSphere <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        <p>
+        The follow these steps to create your local update site:
+        <p>
+        <ul>
+        <li>Download the zip file to a directory of your choice. This zip file will be your local update archive.</li>
+        <li>Consider removing the version number from the name of the zip file to keep the name stable for further updates.</li>
+        <li>From the main menu, select "Help > Software Updates > Find and Install..." to enter the "Install/Update" dialog.</li>
+        <li>Press the [New Archived Site...] button to add the zip file to the list of available update sites.</li>
+        </ul>
+        <br>
+        <p>
+		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
+		<ul>
+		<li>@IDE_PRODUCT_NAME_LONG@</li>
+		</ul>        
+        <br>
+        <hr>
+        <table border="0" class="copyright">
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @YEAR@, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        </table>
+        <br>
+    </body>
+</html>
