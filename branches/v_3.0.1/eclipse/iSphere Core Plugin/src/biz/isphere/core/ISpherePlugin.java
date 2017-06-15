@@ -120,6 +120,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
 
+    private static boolean saveNeededHandling = false;
+    
     public ISpherePlugin() {
         super();
         plugin = this;
@@ -385,4 +387,13 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         return "V0R0M0";
     }
+
+    public static boolean isSaveNeededHandling() {
+        return saveNeededHandling;
+    }
+
+    public static void setSaveNeededHandling(boolean _saveNeededHandling) {
+        saveNeededHandling = _saveNeededHandling;
+    }
+
 }
