@@ -170,7 +170,13 @@ public class CompareAction {
                     cc.setRightLabel(rightMember.getLibrary() + "/" + rightMember.getSourceFile() + "(" + rightMember.getMember() + ")");
                 }
 
-                fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
+                if (ISpherePlugin.isSaveNeededHandling()) {
+                    fInput = new CompareInputWithSaveNeededHandling(cc, ancestorMember, leftMember, rightMember);
+                }
+                else {
+                    fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
+                }
+                
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {

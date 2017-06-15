@@ -60,6 +60,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         installURL = context.getBundle().getEntry("/");
+        ISpherePlugin.setSaveNeededHandling(true);
         ISpherePlugin.setEditor(new Editor());
         ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
         ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
