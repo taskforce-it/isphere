@@ -125,7 +125,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             monitor.done();
         }
     }
-    
+
     public void cleanup() {
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);

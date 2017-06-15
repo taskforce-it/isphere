@@ -172,11 +172,10 @@ public class CompareAction {
 
                 if (ISpherePlugin.isSaveNeededHandling()) {
                     fInput = new CompareInputWithSaveNeededHandling(cc, ancestorMember, leftMember, rightMember);
-                }
-                else {
+                } else {
                     fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
                 }
-                
+
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {

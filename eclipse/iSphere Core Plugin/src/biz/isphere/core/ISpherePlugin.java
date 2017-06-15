@@ -121,7 +121,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
 
     private static boolean saveNeededHandling = false;
-    
+
     public ISpherePlugin() {
         super();
         plugin = this;
