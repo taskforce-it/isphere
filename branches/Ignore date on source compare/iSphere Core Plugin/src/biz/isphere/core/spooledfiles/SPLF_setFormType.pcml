@@ -1,5 +1,0 @@
-<pcml version="4.0">
-   <program name="SPLF_setFormType" path="/QSYS.LIB/%LIBL%.LIB/W003006.PGM">
-      <data name="formType" type="char" length="10" usage="input" />
-   </program>
-</pcml>
