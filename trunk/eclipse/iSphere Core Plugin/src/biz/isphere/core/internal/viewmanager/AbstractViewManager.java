@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,9 @@
 
 package biz.isphere.core.internal.viewmanager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,7 +52,7 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private static final String VIEW_PIN_PROPERTY = "view.";
 
-    private List<IPinnableView> monitorViews;
+    private Set<IPinnableView> monitorViews;
 
     private String name;
 
@@ -78,7 +77,7 @@ public abstract class AbstractViewManager implements IViewManager {
     protected AbstractViewManager(String name) {
 
         this.name = name;
-        this.monitorViews = new ArrayList<IPinnableView>();
+        this.monitorViews = new HashSet<IPinnableView>();
         this.pageService = (IPageService)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
         this.perspectiveListener = new PerspectiveAdapter() {
@@ -230,6 +229,9 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param view - view, that is added to the manager
      */
     public void add(IPinnableView view) {
+        if (monitorViews.contains(view)) {
+            throw new RuntimeException("View already exists. Do not try to add a view twice."); //$NON-NLS-1$
+        }
         monitorViews.add(view);
     }
 
