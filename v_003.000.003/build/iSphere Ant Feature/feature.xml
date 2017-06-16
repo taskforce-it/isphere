@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="biz.isphere.antcontrib"
+      label="iSphere Ant Contribution"
+      version="1.0.0.b018"
+      provider-name="iSphere Project Team">
+
+   <description url="https://sourceforge.net/projects/isphere/">
+      iSphere Ant contributions that are required to build the iSphere project.
+   </description>
+
+   <copyright url="https://sourceforge.net/projects/isphere/">
+      Copyright (c) 2012-2016 iSphere Project Team. All rights reserved.
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/cpl-v10.html">
+      This program and the accompanying materials are made available
+under the terms of the Common Public License v1.0 which accompanies
+this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
+   </license>
+
+   <plugin
+         id="biz.isphere.antcontrib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
