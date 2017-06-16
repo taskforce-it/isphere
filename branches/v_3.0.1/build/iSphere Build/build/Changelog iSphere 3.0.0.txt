@@ -9,8 +9,6 @@ Changelog: iSphere 3.0.2.r
  • Fixed "save" action of WDSCi compare/merge editor.
  • Fixed broken STRPREPRC installer.
 
-org.eclipse.swt.SWTException: Widget is disposed
-
 Changelog: iSphere 3.0.0.b010 and 3.0.0.b011 
 --------------------------------------------
  • Added "iSphere Add-Remove Comments" feature mainly intended to be used 
