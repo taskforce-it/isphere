@@ -2,7 +2,19 @@
 Changelog: iSphere 3.1.0.b001 
 --------------------------------------------
  • Added menu option "Compare Source Members" to the iSphere main menu.
+ • Added wait time between two connections, because some systems 
+   (e.g. PUB400.COM) seem to reject connections coming too close 
+   after each other.
+
+Changelog: iSphere 3.0.3.r
+--------------------------------------------
+ • Fixed "org.eclipse.swt.SWTException: Widget is disposed" error
+   in WDSCi, when trying to reopen a previously closed 5250 view.
+
+Changelog: iSphere 3.0.2.r
+--------------------------------------------
  • Fixed "save" action of WDSCi compare/merge editor.
+ • Fixed broken STRPREPRC installer.
 
 Changelog: iSphere 3.0.0.b010 and 3.0.0.b011 
 --------------------------------------------

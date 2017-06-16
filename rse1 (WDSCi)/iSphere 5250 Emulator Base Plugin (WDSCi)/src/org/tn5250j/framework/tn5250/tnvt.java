@@ -58,6 +58,15 @@ import org.tn5250j.tools.logging.TN5250jLogger;
 
 public final class tnvt implements Runnable, TN5250jConstants {
 
+    /*
+     * Delay in milliseconds between two connections. Some system (e.g.
+     * PUB400.COM) seem to reject connections that come to close after each
+     * other.
+     */
+    private static Long waitForNextConnection = 0L;
+    private static boolean isConnecting = false;
+    private static final long WAIT_FOR_NEXT_CONNECTION_DELAY = 250;
+
     Socket sock;
     BufferedInputStream bin;
     BufferedOutputStream bout;
@@ -191,122 +200,144 @@ public final class tnvt implements Runnable, TN5250jConstants {
 
     public final boolean connect(String s, int port) {
 
-        // We will now see if there are any bypass signon parameters to be
-        // processed. The system properties override these parameters so
-        // have precidence if specified.
-        Properties props = controller.getConnectionProperties();
-        if (user == null && props.containsKey("SESSION_CONNECT_USER")) {
-            user = props.getProperty("SESSION_CONNECT_USER");
-            log.info(" user -> " + user + " " + controller.getSessionName());
-            if (props.containsKey("SESSION_CONNECT_PASSWORD")) password = props.getProperty("SESSION_CONNECT_PASSWORD");
-            if (props.containsKey("SESSION_CONNECT_LIBRARY")) library = props.getProperty("SESSION_CONNECT_LIBRARY");
-            if (props.containsKey("SESSION_CONNECT_MENU")) initialMenu = props.getProperty("SESSION_CONNECT_MENU");
-            if (props.containsKey("SESSION_CONNECT_PROGRAM")) program = props.getProperty("SESSION_CONNECT_PROGRAM");
-        }
-
         try {
-            session = s;
-            this.port = port;
+
+            synchronized (waitForNextConnection) {
+                if (WAIT_FOR_NEXT_CONNECTION_DELAY > 0) {
+                    while (System.currentTimeMillis() < waitForNextConnection || isConnecting) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                    isConnecting = true;
+                }
+            }
+
+            // We will now see if there are any bypass signon parameters to be
+            // processed. The system properties override these parameters so
+            // have precidence if specified.
+            Properties props = controller.getConnectionProperties();
+            if (user == null && props.containsKey("SESSION_CONNECT_USER")) {
+                user = props.getProperty("SESSION_CONNECT_USER");
+                log.info(" user -> " + user + " " + controller.getSessionName());
+                if (props.containsKey("SESSION_CONNECT_PASSWORD")) password = props.getProperty("SESSION_CONNECT_PASSWORD");
+                if (props.containsKey("SESSION_CONNECT_LIBRARY")) library = props.getProperty("SESSION_CONNECT_LIBRARY");
+                if (props.containsKey("SESSION_CONNECT_MENU")) initialMenu = props.getProperty("SESSION_CONNECT_MENU");
+                if (props.containsKey("SESSION_CONNECT_PROGRAM")) program = props.getProperty("SESSION_CONNECT_PROGRAM");
+            }
 
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
+                session = s;
+                this.port = port;
+
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        public void run() {
+                            screen52.getOIA().setInputInhibited(ScreenOIA.INPUTINHIBITED_SYSTEM_WAIT, ScreenOIA.OIA_LEVEL_INPUT_INHIBITED,
+                                "X - Connecting");
+                        }
+                    });
+
+                } catch (Exception exc) {
+                    log.warn("setStatus(ON) " + exc.getMessage());
+
+                }
+
+                // sock = new Socket(s, port);
+                // smk - For SSL compability
+                SocketConnector sc = new SocketConnector();
+                if (sslType != null) {
+                    sc.setSSLType(sslType);
+                }
+
+                sock = sc.createSocket(s, port);
+
+                if (sock == null) {
+                    log.warn("I did not get a socket");
+                    disconnect();
+                    return false;
+                }
+
+                connected = true;
+                // used for JDK1.3
+                sock.setKeepAlive(true);
+                sock.setTcpNoDelay(true);
+                sock.setSoLinger(false, 0);
+                InputStream in = sock.getInputStream();
+                OutputStream out = sock.getOutputStream();
+
+                bin = new BufferedInputStream(in, 8192);
+                bout = new BufferedOutputStream(out);
+
+                byte abyte0[];
+                while (negotiate(abyte0 = readNegotiations()))
+                    ;
+                negotiated = true;
+                try {
+                    screen52.setCursorActive(false);
+                } catch (Exception excc) {
+                    log.warn("setCursorOff " + excc.getMessage());
+
+                }
+                ;
+
+                dsq = new DataStreamQueue();
+                producer = new DataStreamProducer(this, bin, dsq, abyte0);
+                pthread = new Thread(producer);
+                // pthread.setPriority(pthread.MIN_PRIORITY);
+                pthread.setPriority(Thread.NORM_PRIORITY / 2);
+                pthread.start();
+
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        public void run() {
+                            screen52.getOIA().setInputInhibited(ScreenOIA.INPUTINHIBITED_NOTINHIBITED, ScreenOIA.OIA_LEVEL_INPUT_INHIBITED);
+                        }
+                    });
+
+                } catch (Exception exc) {
+                    log.warn("setStatus(OFF) " + exc.getMessage());
+                }
+
+                keepTrucking = true;
+                me = new Thread(this);
+                me.start();
+
+            } catch (Throwable exception) {
+
+                if (exception.getMessage() == null) {
+                    exception.printStackTrace();
+                }
+
+                log.warn("connect() " + exception.getMessage());
+
+                if (sock == null) {
+                    log.warn("I did not get a socket");
+                }
+
+                disconnect();
+
+                final String message = exception.getLocalizedMessage();
+
+                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
                     public void run() {
-                        screen52.getOIA().setInputInhibited(ScreenOIA.INPUTINHIBITED_SYSTEM_WAIT, ScreenOIA.OIA_LEVEL_INPUT_INHIBITED,
-                            "X - Connecting");
+                        final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+                        MessageDialog.openError(shell, "Error", message);
                     }
                 });
 
-            } catch (Exception exc) {
-                log.warn("setStatus(ON) " + exc.getMessage());
-
-            }
-
-            // sock = new Socket(s, port);
-            // smk - For SSL compability
-            SocketConnector sc = new SocketConnector();
-            if (sslType != null) {
-                sc.setSSLType(sslType);
-            }
-
-            sock = sc.createSocket(s, port);
-
-            if (sock == null) {
-                log.warn("I did not get a socket");
-                disconnect();
                 return false;
             }
 
-            connected = true;
-            // used for JDK1.3
-            sock.setKeepAlive(true);
-            sock.setTcpNoDelay(true);
-            sock.setSoLinger(false, 0);
-            InputStream in = sock.getInputStream();
-            OutputStream out = sock.getOutputStream();
-
-            bin = new BufferedInputStream(in, 8192);
-            bout = new BufferedOutputStream(out);
-
-            byte abyte0[];
-            while (negotiate(abyte0 = readNegotiations()))
-                ;
-            negotiated = true;
-            try {
-                screen52.setCursorActive(false);
-            } catch (Exception excc) {
-                log.warn("setCursorOff " + excc.getMessage());
-
+        } finally {
+            if (isConnecting) {
+                waitForNextConnection = System.currentTimeMillis() + WAIT_FOR_NEXT_CONNECTION_DELAY;
+                isConnecting = false;
             }
-            ;
-
-            dsq = new DataStreamQueue();
-            producer = new DataStreamProducer(this, bin, dsq, abyte0);
-            pthread = new Thread(producer);
-            // pthread.setPriority(pthread.MIN_PRIORITY);
-            pthread.setPriority(Thread.NORM_PRIORITY / 2);
-            pthread.start();
-
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    public void run() {
-                        screen52.getOIA().setInputInhibited(ScreenOIA.INPUTINHIBITED_NOTINHIBITED, ScreenOIA.OIA_LEVEL_INPUT_INHIBITED);
-                    }
-                });
-
-            } catch (Exception exc) {
-                log.warn("setStatus(OFF) " + exc.getMessage());
-            }
-
-            keepTrucking = true;
-            me = new Thread(this);
-            me.start();
-
-        } catch (Throwable exception) {
-
-            if (exception.getMessage() == null) {
-                exception.printStackTrace();
-            }
-
-            log.warn("connect() " + exception.getMessage());
-
-            if (sock == null) {
-                log.warn("I did not get a socket");
-            }
-
-            disconnect();
-
-            final String message = exception.getLocalizedMessage();
-
-            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-                public void run() {
-                    final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-                    MessageDialog.openError(shell, "Error", message);
-                }
-            });
-
-            return false;
         }
+
         return true;
 
     }
@@ -976,7 +1007,7 @@ public final class tnvt implements Runnable, TN5250jConstants {
                 // for (; (i < screen.length) && (screen[i] == ' '); i++);
 
                 String remainder = new String(screen, i + 1, screen.length - (i + 1));
-                
+
                 controller.scanned(command, remainder);
                 break;
             }
