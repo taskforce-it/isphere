@@ -84,6 +84,12 @@ e) Preferences - Java -> Editor -> Save Actions:
 
    Disable: Additional actions
 
+f) For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
+
+   Preferences - Java - Build path - Classpath variables
+   
+   IBM_SHARED_PLUGINS:   c:/Program Files (x86)/IBM/SDP_Shared/plugins
+
 
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
