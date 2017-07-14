@@ -109,10 +109,9 @@ public class RSEMember extends Member {
 
         try {
 
-            ISeriesHostObjectLock lock = _editableMember.queryLocks();
+            ISeriesHostObjectLock lock = queryLocks();
             if (lock != null) {
-                return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
-                    getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
+                return getMemberLockedMessages(lock);
             }
             if (monitor != null) {
                 monitor.beginTask(NLS.bind(QSYSResources.MSG_UPLOAD_PROGRESS, _editableMember.getMember().getAbsoluteName()), -1);
@@ -128,6 +127,20 @@ public class RSEMember extends Member {
 
         } finally {
             QSYSRemoteMemberTransfer.releaseLock(localPath);
+        }
+
+        return null;
+    }
+
+    public ISeriesHostObjectLock queryLocks() throws Exception {
+        return _editableMember.queryLocks();
+    }
+
+    public String getMemberLockedMessages(ISeriesHostObjectLock lock) {
+
+        if (lock != null) {
+            return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
+                getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
         }
 
         return null;

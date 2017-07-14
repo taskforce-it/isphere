@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -27,10 +28,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.Member;
+
+import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
 public class CompareAction {
 
@@ -72,15 +76,26 @@ public class CompareAction {
         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
             public void run() {
 
+                if (cc.isLeftEditable()) {
+                    ISeriesHostObjectLock lock;
+                    try {
+                        lock = leftMember.queryLocks();
+                        if (lock != null) {
+                            throw new Exception(leftMember.getMemberLockedMessages(lock));
+                        }
+                    } catch (Exception e) {
+                        MessageDialog.openError(getShell(), Messages.Compare_source_members, ExceptionHelper.getLocalizedMessage(e));
+                        return;
+                    }
+                }
+
                 if (cc.isThreeWay() && (ancestorMember == null || !ancestorMember.exists())) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                        Messages.Member_not_found_colon_ANCESTOR);
+                    MessageDialog.openError(getShell(), Messages.Compare_source_members, Messages.Member_not_found_colon_ANCESTOR);
                     return;
                 }
 
                 if (leftMember == null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                        Messages.Member_not_found_colon_LEFT);
+                    MessageDialog.openError(getShell(), Messages.Compare_source_members, Messages.Member_not_found_colon_LEFT);
                     return;
                 } else {
                     // Retrieve name parts before exist(), because the file name
@@ -95,8 +110,7 @@ public class CompareAction {
                 }
 
                 if (rightMember == null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
-                        Messages.Member_not_found_colon_RIGHT);
+                    MessageDialog.openError(getShell(), Messages.Compare_source_members, Messages.Member_not_found_colon_RIGHT);
                     return;
                 } else {
                     // Retrieve name parts before exist(), because the file name
@@ -113,7 +127,7 @@ public class CompareAction {
                 if (cc.isLeftEditable()) {
                     IEditorPart editor = findMemberInEditor(leftMember);
                     if (editor != null) {
-                        MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members,
+                        MessageDialog.openError(getShell(), Messages.Compare_source_members,
                             Messages.bind(Messages.Member_is_already_open_in_an_editor, leftMember.getMember()));
                         return;
                     }
@@ -211,6 +225,10 @@ public class CompareAction {
 
             }
 
+            private Shell getShell() {
+                return Display.getCurrent().getActiveShell();
+            }
+
             private String getQualifiedMemberName(Member member) {
 
                 StringBuilder buffer = new StringBuilder();
@@ -228,7 +246,7 @@ public class CompareAction {
             private void displayMemberNotFoundMessage(String library, String file, String member) {
                 String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
                     library, file, member });
-                MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_source_members, message);
+                MessageDialog.openError(getShell(), Messages.Compare_source_members, message);
             }
         });
     }

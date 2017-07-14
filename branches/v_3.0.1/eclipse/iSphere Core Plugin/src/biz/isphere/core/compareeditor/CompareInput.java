@@ -22,12 +22,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.MessageDialogAsync;
+
+import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
 public class CompareInput extends CompareEditorInput implements IFileEditorInput {
 
@@ -70,7 +74,17 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     @Override
     protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         try {
+
+            if (editable) {
+                ISeriesHostObjectLock lock = leftMember.queryLocks();
+                if (lock != null) {
+                    MessageDialogAsync.displayError(leftMember.getMemberLockedMessages(lock));
+                    editable = false;
+                }
+            }
+
             monitor.beginTask(Messages.Downloading_source_members, IProgressMonitor.UNKNOWN);
+
             if (threeWay) {
                 ancestorMember.download(monitor);
                 IResource fAncestorResource = ancestorMember.getLocalResource();
@@ -162,16 +176,26 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     @Override
     public void saveChanges(IProgressMonitor pm) throws CoreException {
         super.saveChanges(pm);
+
         try {
             fLeft.commit(pm);
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not commit changes of left file ***", e); //$NON-NLS-1$
+            ISpherePlugin.logError("*** Could not commit changes of left file: (" + ExceptionHelper.getLocalizedMessage(e) + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            setDirty(true);
+            throw new CoreException(new Status(Status.ERROR, ISpherePlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e));
         }
+
         try {
-            leftMember.upload(pm);
+            String error = leftMember.upload(pm);
+            if (error != null) {
+                throw new Exception(error);
+            }
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not upload left file ***", e); //$NON-NLS-1$
+            ISpherePlugin.logError("*** Could not upload left file: (" + ExceptionHelper.getLocalizedMessage(e) + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            setDirty(true);
+            throw new CoreException(new Status(Status.ERROR, ISpherePlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e));
         }
+
         fLeft.refreshTempFile();
         ((MyDiffNode)fRoot).fireChange();
     }
