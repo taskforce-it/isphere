@@ -7,21 +7,24 @@ Changelog: iSphere 3.1.0.b001
    after each other.
 
 Changelog: iSphere 3.0.4.r
---------------------------------------------
+--------------------------
  • Fixed problem that non-source files have been searched when the
    iSphere Source File Search was started for a member filter.
  • Fixed problem that the iSphere Source Compare editor did not
    check member locks when comparing members in edit mode.
  • Fixed problem that the right source member was always editable 
    when comparing source members with WDSCi.
+ • Added wait time between two connections, because some systems
+   (e.g. PUB400.COM) seem to reject connections when they come
+   too close after each other.
 
 Changelog: iSphere 3.0.3.r
---------------------------------------------
+--------------------------
  • Fixed "org.eclipse.swt.SWTException: Widget is disposed" error
    in WDSCi, when trying to reopen a previously closed 5250 view.
 
 Changelog: iSphere 3.0.2.r
---------------------------------------------
+--------------------------
  • Fixed "save" action of WDSCi compare/merge editor.
  • Fixed broken STRPREPRC installer.
 
