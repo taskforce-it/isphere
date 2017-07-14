@@ -12,6 +12,8 @@ Changelog: iSphere 3.0.4.r
    iSphere Source File Search was started for a member filter.
  • Fixed problem that the iSphere Source Compare editor did not
    check member locks when comparing members in edit mode.
+ • Fixed problem that the right source member was always editable 
+   when comparing source members with WDSCi.
 
 Changelog: iSphere 3.0.3.r
 --------------------------------------------
