@@ -7,6 +7,9 @@ Changelog: iSphere 3.0.4.r
    check member locks when comparing members in edit mode.
  • Fixed problem that the right source member was always editable 
    when comparing source members with WDSCi.
+ • Added wait time between two connections, because some systems
+   (e.g. PUB400.COM) seem to reject connections when they come
+   too close after each other.
 
 Changelog: iSphere 3.0.3.r
 --------------------------
