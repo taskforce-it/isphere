@@ -10,6 +10,8 @@ Changelog: iSphere 3.0.4.r
 --------------------------------------------
  • Fixed problem that non-source files have been searched when the
    iSphere Source File Search was started for a member filter.
+ • Fixed problem that the iSphere Source Compare editor did not
+   check member locks when comparing members in edit mode.
 
 Changelog: iSphere 3.0.3.r
 --------------------------------------------
