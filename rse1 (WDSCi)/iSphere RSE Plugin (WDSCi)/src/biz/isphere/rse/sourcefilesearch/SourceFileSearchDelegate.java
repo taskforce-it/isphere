@@ -64,6 +64,14 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ((DataElement)resource).getName();
     }
 
+    protected Object getResourceParent(Object resource) throws Exception {
+        DataElement parent = ((DataElement)resource).getParent();
+        while (parent.isOfType("iseries.structuredNode")) { //$NON-NLS-1$
+            parent = parent.getParent();
+        }
+        return parent;
+    }
+
     protected String getMemberResourceLibrary(Object resource) {
         return ISeriesDataElementHelpers.getLibrary(resource);
     }
