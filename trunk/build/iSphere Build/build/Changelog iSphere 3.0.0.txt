@@ -6,6 +6,11 @@ Changelog: iSphere 3.1.0.b001
    (e.g. PUB400.COM) seem to reject connections coming too close 
    after each other.
 
+Changelog: iSphere 3.0.4.r
+--------------------------------------------
+ • Fixed problem that non-source files have been searched when the
+   iSphere Source File Search was started for a member filter.
+
 Changelog: iSphere 3.0.3.r
 --------------------------------------------
  • Fixed "org.eclipse.swt.SWTException: Widget is disposed" error
