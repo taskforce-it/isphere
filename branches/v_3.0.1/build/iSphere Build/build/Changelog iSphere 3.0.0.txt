@@ -1,11 +1,16 @@
 
+Changelog: iSphere 3.0.4.r
+--------------------------
+ • Fixed problem that non-source files have been searched when the
+   iSphere Source File Search was started for a member filter.
+
 Changelog: iSphere 3.0.3.r
---------------------------------------------
+--------------------------
  • Fixed "org.eclipse.swt.SWTException: Widget is disposed" error
    in WDSCi, when trying to reopen a previously closed 5250 view.
 
 Changelog: iSphere 3.0.2.r
---------------------------------------------
+--------------------------
  • Fixed "save" action of WDSCi compare/merge editor.
  • Fixed broken STRPREPRC installer.
 
