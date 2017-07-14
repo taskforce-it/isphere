@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.0.3.r
+Bundle-Version: 3.0.4.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Bugfix: Excluded non-source files from iSphere Source File Search.\nFixed lock handling in iSphere Compare Editor.\nWDSCi: Fixed editable right member in iSphere Compare Editor.
-X-Beta-Version: 3.0.4.r
-X-Beta-Update-Library: false
+X-Beta-Version: 3.0.0.r
+X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
 X-Beta-Info: .
