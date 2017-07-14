@@ -64,6 +64,10 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ((IQSYSResource)resource).getName();
     }
 
+    protected Object getResourceParent(Object resource) throws Exception {
+        return ((IQSYSResource)resource).getParent();
+    }
+
     protected String getMemberResourceLibrary(Object resource) {
         return ((IQSYSMember)resource).getLibrary();
     }

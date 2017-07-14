@@ -61,7 +61,9 @@ public abstract class AbstractSourceFileSearchDelegate {
                         } else if (isSourceFile(element)) {
                             addElementsFromSourceFile(searchElements, getResourceLibrary(element), getResourceName(element));
                         } else if (isMember(element)) {
-                            addElement(searchElements, element);
+                            if (isSourceFile(getResourceParent(element))) {
+                                addElement(searchElements, element);
+                            }
                         }
 
                         if (!doContinue) {
@@ -117,7 +119,10 @@ public abstract class AbstractSourceFileSearchDelegate {
         }
 
         for (int idx2 = 0; idx2 < sourceFiles.length; idx2++) {
-            addElementsFromSourceFile(searchElements, getResourceLibrary(sourceFiles[idx2]), getResourceName(sourceFiles[idx2]));
+            Object element = sourceFiles[idx2];
+            if (isSourceFile(element)) {
+                addElementsFromSourceFile(searchElements, getResourceLibrary(element), getResourceName(element));
+            }
         }
 
         return true;
@@ -134,6 +139,8 @@ public abstract class AbstractSourceFileSearchDelegate {
     protected abstract String getMemberResourceName(Object resource);
 
     protected abstract String getMemberResourceDescription(Object resource);
+
+    protected abstract Object getResourceParent(Object resource) throws Exception;
 
     private void addElementsFromSourceFile(HashMap<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
 
