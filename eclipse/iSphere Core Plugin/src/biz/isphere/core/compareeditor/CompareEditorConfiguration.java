@@ -30,6 +30,8 @@ public class CompareEditorConfiguration extends CompareConfiguration {
         setIgnoreCase(false);
         setConsiderDate(false);
         setThreeWay(false);
+        setLeftEditable(false);
+        setRightEditable(false);
 
         setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
 
