@@ -1,4 +1,12 @@
 
+Changelog: iSphere 3.0.5.r
+--------------------------
+ • Enabled the "Delete" key to delete spooled files of the iSphere 
+   Spooled Files subsystem.
+ • Fixed performance issue that has been introduced with bug fix 
+   of ticket #42.
+ • Updated Dutch translation.
+
 Changelog: iSphere 3.0.4.r
 --------------------------
  • Fixed problem that non-source files have been searched when the
