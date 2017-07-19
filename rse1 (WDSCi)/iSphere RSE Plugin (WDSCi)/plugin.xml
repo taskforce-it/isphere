@@ -282,24 +282,6 @@
             name="%command_CopyMembersTo_Name">
       </command>
 	</extension>	 
-	
-    <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="biz.isphere.rse.handler.CopyToCommandHandler"
-            id="biz.isphere.rse.handler.CopyToCommandHandler"
-            commandId="biz.isphere.core.command.SourceMember.copyTo">
-        <activeWhen>
-          <with variable="selection">
-            <count value="*" />
-            <iterate operator="and">
-              <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
-            </iterate>
-          </with>
-        </activeWhen>
-      </handler>
-	</extension>	 
-
 	     	
       	<!--
       	  ==========================================
@@ -419,24 +401,6 @@
          </action>
       </objectContribution>
    </extension>
-
-   <!-- Enables the Delete key to delete spooled files -->
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="biz.isphere.rse.handler.DeleteSpooledFileHandler"
-            id="biz.isphere.rse.handler.DeleteSpooledFileHandler"
-            commandId="org.eclipse.ui.edit.delete">
-         <activeWhen>
-            <with variable="selection">
-               <count value="*" />
-               <iterate operator="and">
-                  <adapt type="biz.isphere.rse.spooledfiles.SpooledFileResource" />
-               </iterate>
-            </with>
-         </activeWhen>
-      </handler>
-   </extension>	 
 
       	<!--
       	  ==========================================
