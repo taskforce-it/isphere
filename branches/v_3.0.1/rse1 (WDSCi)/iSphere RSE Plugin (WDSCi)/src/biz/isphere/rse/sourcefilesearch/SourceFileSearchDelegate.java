@@ -52,8 +52,8 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ISeriesDataElementUtil.getDescriptorTypeObject(object).isSourceFile();
     }
 
-    protected boolean isMember(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isMember();
+    protected boolean isSourceMember(Object object) {
+        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isSourceMember();
     }
 
     protected String getResourceLibrary(Object resource) {
@@ -62,14 +62,6 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
     protected String getResourceName(Object resource) {
         return ((DataElement)resource).getName();
-    }
-
-    protected Object getResourceParent(Object resource) throws Exception {
-        DataElement parent = ((DataElement)resource).getParent();
-        while (parent.isOfType("iseries.structuredNode")) { //$NON-NLS-1$
-            parent = parent.getParent();
-        }
-        return parent;
     }
 
     protected String getMemberResourceLibrary(Object resource) {
