@@ -60,10 +60,8 @@ public abstract class AbstractSourceFileSearchDelegate {
                             doContinue = addElementsFromLibrary(searchElements, element);
                         } else if (isSourceFile(element)) {
                             addElementsFromSourceFile(searchElements, getResourceLibrary(element), getResourceName(element));
-                        } else if (isMember(element)) {
-                            if (isSourceFile(getResourceParent(element))) {
-                                addElement(searchElements, element);
-                            }
+                        } else if (isSourceMember(element)) {
+                            addElement(searchElements, element);
                         }
 
                         if (!doContinue) {
@@ -85,7 +83,7 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract boolean isSourceFile(Object object);
 
-    protected abstract boolean isMember(Object object);
+    protected abstract boolean isSourceMember(Object object);
 
     private boolean addElementsFromLibrary(HashMap<String, SearchElement> searchElements, Object library) throws Exception {
 
@@ -139,8 +137,6 @@ public abstract class AbstractSourceFileSearchDelegate {
     protected abstract String getMemberResourceName(Object resource);
 
     protected abstract String getMemberResourceDescription(Object resource);
-
-    protected abstract Object getResourceParent(Object resource) throws Exception;
 
     private void addElementsFromSourceFile(HashMap<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
 

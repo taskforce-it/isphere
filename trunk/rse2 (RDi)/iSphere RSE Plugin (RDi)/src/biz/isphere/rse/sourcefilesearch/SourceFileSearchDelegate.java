@@ -52,8 +52,8 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ResourceTypeUtil.isSourceFile(object);
     }
 
-    protected boolean isMember(Object object) {
-        return ResourceTypeUtil.isMember(object);
+    protected boolean isSourceMember(Object object) {
+        return ResourceTypeUtil.isSrcMember(object);
     }
 
     protected String getResourceLibrary(Object resource) {
@@ -62,10 +62,6 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
     protected String getResourceName(Object resource) {
         return ((IQSYSResource)resource).getName();
-    }
-
-    protected Object getResourceParent(Object resource) throws Exception {
-        return ((IQSYSResource)resource).getParent();
     }
 
     protected String getMemberResourceLibrary(Object resource) {
