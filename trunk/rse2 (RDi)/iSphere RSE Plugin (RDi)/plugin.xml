@@ -885,7 +885,7 @@
          </action>
       </objectContribution>
    </extension>
-   
+	      	
    <extension
          point="org.eclipse.ui.propertyPages">
          
@@ -1101,7 +1101,7 @@
         commandId="biz.isphere.core.command.SourceMemberCompare.open"
         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
         contextId="org.eclipse.ui.contexts.window"/>
-            
+   
    </extension>
    
       	<!--
@@ -1141,6 +1141,7 @@
       
       <command
             defaultHandler="biz.isphere.rse.handler.OpenMessageFileSearchPageHandler"
+            id="biz.isphere.core.command.MessageFileSearchPage.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Open_iSphere_Message_File_Search_Page">
       </command>
