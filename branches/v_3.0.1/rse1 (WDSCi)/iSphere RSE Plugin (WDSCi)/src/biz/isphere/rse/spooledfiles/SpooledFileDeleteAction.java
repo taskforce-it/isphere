@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2017 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,7 @@ package biz.isphere.rse.spooledfiles;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.ui.PlatformUI;
-
-import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
-import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.rse.handler.DeleteSpooledFileHandler;
 
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
 
@@ -42,19 +38,8 @@ public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
     @Override
     public String finish() {
 
-        ArrayList<SpooledFile> spooledFiles = new ArrayList<SpooledFile>();
-        for (SpooledFileResource resource : spooledFileResources) {
-            spooledFiles.add(resource.getSpooledFile());
-        }
-
-        ConfirmDeletionSpooledFiles dialog = new ConfirmDeletionSpooledFiles(getShell(), spooledFiles.toArray(new SpooledFile[spooledFiles.size()]));
-        if (dialog.open() == Dialog.OK) {
-
-            DeletePostRun postRun = new DeletePostRun();
-            postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-
-            new DeleteExec().execute(spooledFileResources, postRun);
-        }
+        DeleteSpooledFileHandler handler = new DeleteSpooledFileHandler(getShell());
+        handler.deleteSpooledFiles(spooledFileResources);
 
         return null;
     }
