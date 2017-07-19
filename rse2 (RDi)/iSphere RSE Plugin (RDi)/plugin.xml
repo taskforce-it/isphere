@@ -885,7 +885,33 @@
          </action>
       </objectContribution>
    </extension>
-	      	
+   
+   <!-- Enables the Delete key to delete spooled files -->
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="biz.isphere.rse.handler.DeleteSpooledFileHandler"
+            id="biz.isphere.rse.handler.DeleteSpooledFileHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>
+            <with variable="selection">
+               <count value="*" />
+               <iterate operator="and">
+                  <or>
+                     <adapt type="biz.isphere.rse.spooledfiles.SpooledFileResource" />
+                  </or>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+   </extension>	 
+
+      	<!--
+      	  ==========================================
+      	    iSphere Properties Pages
+      	  ==========================================
+      	-->
+   
    <extension
          point="org.eclipse.ui.propertyPages">
          
@@ -900,12 +926,6 @@
             typecategoryfilter="*"
             typefilter="*">
       </page>
-
-      	<!--
-      	  ==========================================
-      	    iSphere Connection Properties
-      	  ==========================================
-      	-->
 
       <page
             class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
@@ -1173,7 +1193,6 @@
             categoryId="biz.isphere.category.Commands"
             name="%command_Compare_Source_Members">
       </command>
-      
    </extension>
   
       	<!--
