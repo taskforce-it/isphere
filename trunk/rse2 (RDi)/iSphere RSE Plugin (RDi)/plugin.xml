@@ -914,7 +914,9 @@
    
    <extension
          point="org.eclipse.ui.propertyPages">
-         
+      	<!--
+      	    Spooled File Filter
+      	-->
       <page
             class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
             id="biz.isphere.rse.spooledfiles.SpooledFileProperties"
@@ -926,17 +928,17 @@
             typecategoryfilter="*"
             typefilter="*">
       </page>
-
+      	<!--
+      	    Remote System Connection
+      	-->
       <page
             class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
             id="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
             name="%ConnectionProperties_iSphere"
             objectClass="org.eclipse.rse.core.model.IHost">
-            
          <enabledWhen>
             <test property="biz.isphere.adapter.propertytester.ihost.id" value="org.eclipse.rse.systemtype.iseries" forcePluginActivation="true" />
          </enabledWhen>
-         
       </page>
       
    </extension>
