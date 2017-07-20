@@ -404,7 +404,8 @@
 
       	<!--
       	  ==========================================
-      	    iSphere Properties Pages
+      	    iSphere Properties Page: 
+      	    Spooled File Filter
       	  ==========================================
       	-->
 
@@ -421,15 +422,23 @@
             typecategoryfilter="*"
             typefilter="*">
       </page>
+   </extension>
 
+      	<!--
+      	  ==========================================
+      	    iSphere Properties Page: 
+      	    Remote System Connection
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.propertyPages">
       <page
             class="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
             id="biz.isphere.rse.connection.ISphereConnectionPropertyPage"
             name="%ConnectionProperties_iSphere"
             objectClass="com.ibm.etools.systems.model.SystemConnection">
-         
       </page>
-      
    </extension>
 
    <extension point="org.eclipse.ui.viewActions"> 
