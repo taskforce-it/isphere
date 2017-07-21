@@ -17,6 +17,7 @@
    <topic label="Reference">
      <anchor id="reference" />
    </topic>
+   <topic label="Local Update Site" href="html/localupdatesite/localupdatesite.html" />
    <topic label="Contribution" href="html/contributions/contributions.html" >
       <topic label="Setting up RDP and SVN" href="html/contributions/setup/setup_rdp_svn.html" />
       <topic label="Setting up iSphere" href="html/contributions/setup/setup_isphere.html" />
