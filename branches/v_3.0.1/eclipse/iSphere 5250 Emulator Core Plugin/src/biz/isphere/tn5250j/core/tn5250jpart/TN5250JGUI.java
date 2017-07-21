@@ -27,6 +27,7 @@ public abstract class TN5250JGUI extends SessionPanel {
 
     @Override
     public void processKeyEvent(KeyEvent keyEvent) {
+
         if (keyEvent.isControlDown()
             && keyEvent.isAltDown()
             && (keyEvent.getKeyCode() == KeyEvent.VK_UP || keyEvent.getKeyCode() == KeyEvent.VK_DOWN || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent
