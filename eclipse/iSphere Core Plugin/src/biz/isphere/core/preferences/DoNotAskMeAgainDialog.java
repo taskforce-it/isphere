@@ -58,11 +58,11 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
     public static boolean getDefaultShowWarning() {
         return true;
     }
-    
+
     public static String[] getKeys() {
-        
+
         List<String> keys = new ArrayList<String>();
-        
+
         keys.add(WARNING_COMPARE_FILTERS_NOT_INSTALLED);
         keys.add(WARNING_REMOVE_STRPREPRC_SECTIONS);
         keys.add(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION);
@@ -70,10 +70,11 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         keys.add(TOO_MANY_SPOOLED_FILES_WARNING);
         keys.add(TN5250_SESSION_GROUPING_CHANGED);
         keys.add(INFORMATION_USAGE_JOB_LOG_EXPLORER);
-        
+        keys.add(TN5250_FAST_CURSOR_MAPPING_CONFLICT);
+
         return keys.toArray(new String[keys.size()]);
     }
-    
+
     public static void resetAllMessages() {
         Preferences preferences = Preferences.getInstance();
         preferences.setShowWarningMessage(WARNING_COMPARE_FILTERS_NOT_INSTALLED, true);
@@ -83,6 +84,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         preferences.setShowWarningMessage(TOO_MANY_SPOOLED_FILES_WARNING, true);
         preferences.setShowWarningMessage(TN5250_SESSION_GROUPING_CHANGED, true);
         preferences.setShowWarningMessage(INFORMATION_USAGE_JOB_LOG_EXPLORER, true);
+        preferences.setShowWarningMessage(TN5250_FAST_CURSOR_MAPPING_CONFLICT, true);
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, int style, String showWarningKey) {
