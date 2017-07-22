@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 
 import org.tn5250j.Session5250;
 import org.tn5250j.SessionPanel;
+import org.tn5250j.keyboard.KeyMapper;
 
 public abstract class TN5250JGUI extends SessionPanel {
 
@@ -28,37 +29,55 @@ public abstract class TN5250JGUI extends SessionPanel {
     @Override
     public void processKeyEvent(KeyEvent keyEvent) {
 
-        if (keyEvent.isControlDown()
-            && keyEvent.isAltDown()
-            && (keyEvent.getKeyCode() == KeyEvent.VK_UP || keyEvent.getKeyCode() == KeyEvent.VK_DOWN || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent
-                .getKeyCode() == KeyEvent.VK_RIGHT)) {
-            new ScrollSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart().getTabFolderSessions(),
-                keyEvent).start();
-        } else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_UP) {
-            if (keyEvent.getID() == KeyEvent.KEY_RELEASED) {
+        if (KeyMapper.isNextMajorSessionKeyStroke(keyEvent)) {
+            if (isKeyReleased(keyEvent)) {
                 new SetMajorSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart()
                     .getTabFolderSessions(), "*NEXT", tn5250jInfo.getTN5250JPart()).start();
+                keyEvent.consume();
             }
-        } else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (keyEvent.getID() == KeyEvent.KEY_RELEASED) {
-                new SetMajorSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart()
-                    .getTabFolderSessions(), "*PREVIOUS", tn5250jInfo.getTN5250JPart()).start();
-            }
+            return;
         }
 
-        else if (keyEvent.isAltDown() && keyEvent.getKeyCode() == KeyEvent.VK_UP) {
-            if (keyEvent.getID() == KeyEvent.KEY_RELEASED) {
+        if (KeyMapper.isPreviousMajorSessionKeyStroke(keyEvent)) {
+            if (isKeyReleased(keyEvent)) {
+                new SetMajorSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart()
+                    .getTabFolderSessions(), "*PREVIOUS", tn5250jInfo.getTN5250JPart()).start();
+                keyEvent.consume();
+            }
+            return;
+        }
+
+        if (KeyMapper.isNextMinorSessionKeyStroke(keyEvent)) {
+            if (isKeyReleased(keyEvent)) {
                 new SetMinorSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart()
                     .getTabFolderSessions(), "*NEXT", tn5250jInfo.getTN5250JPart()).start();
+                keyEvent.consume();
             }
-        } else if (keyEvent.isAltDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (keyEvent.getID() == KeyEvent.KEY_RELEASED) {
+            return;
+        }
+
+        if (KeyMapper.isPreviousMinorSessionKeyStroke(keyEvent)) {
+            if (isKeyReleased(keyEvent)) {
                 new SetMinorSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart()
                     .getTabFolderSessions(), "*PREVIOUS", tn5250jInfo.getTN5250JPart()).start();
+                keyEvent.consume();
             }
-        } else {
-            super.processKeyEvent(keyEvent);
+            return;
         }
+
+        if (KeyMapper.isScrollSessionUpKeyStroke(keyEvent) || KeyMapper.isScrollSessionDownKeyStroke(keyEvent)
+            || KeyMapper.isScrollSessionLeftKeyStroke(keyEvent) || KeyMapper.isScrollSessionRightKeyStroke(keyEvent)) {
+            new ScrollSession(tn5250jInfo.getTN5250JPart().getTabFolderSessions().getDisplay(), tn5250jInfo.getTN5250JPart().getTabFolderSessions(),
+                keyEvent).start();
+            keyEvent.consume();
+            return;
+        }
+
+        super.processKeyEvent(keyEvent);
+    }
+
+    private boolean isKeyReleased(KeyEvent keyEvent) {
+        return keyEvent.getID() == KeyEvent.KEY_RELEASED;
     }
 
     public TN5250JInfo getTN5250JInfo() {
