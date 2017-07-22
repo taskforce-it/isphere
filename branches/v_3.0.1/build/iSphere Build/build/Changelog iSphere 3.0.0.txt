@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.0.6.r
+--------------------------
+ • Added the iSphere specific keys to "KeyMapper" to fix the issue of the 
+   hidden fast cursor up/down keys.
+ • Updated iSphere help with instructions how to enable SSL sessions.
+
 Changelog: iSphere 3.0.5.r
 --------------------------
  • Enabled the "Delete" key to delete spooled files of the iSphere 
