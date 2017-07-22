@@ -212,13 +212,14 @@ public interface TN5250jConstants {
         "[paste]", "[attn]", "[markup]", "[markdown]", "[markleft]", "[markright]", "[dupfield]", "[newline]", "[jumpnext]", "[jumpprev]",
         "[opennew]", "[togcon]", "[hotspots]", "[gui]", "[dspmsgs]", "[dspattr]", "[print]", "[cursor]", "[debug]", "[close]", "[transfer]",
         "[e-mail]", "[runscript]", "[spoolfile]", "[quick-mail]", "[open-same]", "[fastcursordown]", "[fastcursorup]", "[fastcursorright]",
-        "[fastcursorleft]" };
+        "[fastcursorleft]", "[nextsession]", "[prevsession]", "[nextmultiplesession]", "[prevmultiplesession]", "[scrollsessionup]",
+        "[scrollsessiondown]", "[scrollsessionleft]", "[scrollsessionright]" };
 
     public static final int mnemonicValue[] = { 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017,
         1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 0xF1, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
         0x3A, 0x3B, 0x3C, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xF3, 0xF4, 0xF5, 0xD9, 0xDA, 0xF6, 0x6C,
         0x6E, 0x6B, 1031, 1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 5000, 5001, 5002, 5003, 5004, 5005, 5006, 5007,
-        5008, 5009, 5010, 5011, 5012, 5013, 5014, 5015, 5016, 5017, 5018, 5019, 5020, 5021 };
+        5008, 5009, 5010, 5011, 5012, 5013, 5014, 5015, 5016, 5017, 5018, 5019, 5020, 5021, -1, -1, -1, -1, -1, -1, -1, -1 };
 
     public static final String MNEMONIC_CLEAR = "[clear]";
     public static final String MNEMONIC_ENTER = "[enter]";
@@ -319,6 +320,16 @@ public interface TN5250jConstants {
     public static final String MNEMONIC_FAST_CURSOR_RIGHT = "[fastcursorright]";
     public static final String MNEMONIC_FAST_CURSOR_LEFT = "[fastcursorleft]";
 
+    // iSphere special keys
+    public static final String MNEMONIC_NEXT_SESSION = "[nextsession]";
+    public static final String MNEMONIC_PREVIOUS_SESSION = "[prevsession]";
+    public static final String MNEMONIC_NEXT_MULTIPLE_SESSION = "[nextmultiplesession]";
+    public static final String MNEMONIC_PREVIOUS_MULTIPLE_SESSION = "[prevmultiplesession]";
+    public static final String MNEMONIC_SCROLL_SESSION_UP = "[scrollsessionup]";
+    public static final String MNEMONIC_SCROLL_SESSION_DOWN = "[scrollsessiondown]";
+    public static final String MNEMONIC_SCROLL_SESSION_LEFT = "[scrollsessionleft]";
+    public static final String MNEMONIC_SCROLL_SESSION_RIGHT = "[scrollsessionright]";
+
     // AID-Generating Keys
     public static final int AID_CLEAR = 0xBD;
     public static final int AID_ENTER = 0xF1;
@@ -372,7 +383,7 @@ public interface TN5250jConstants {
     // public static final byte CMD_READ_IMMEDIATE = 0x72; // 114
     public static final byte CMD_READ_SCREEN_IMMEDIATE = 0x62; // 98
     public static final byte CMD_WRITE_STRUCTURED_FIELD = (byte)243; // (byte)0xF3
-                                                                        // -13
+    // -13
     public static final byte CMD_SAVE_SCREEN = 0x02; // 02
     public static final byte CMD_RESTORE_SCREEN = 0x12; // 18
     public static final byte CMD_WRITE_ERROR_CODE = 0x21; // 33

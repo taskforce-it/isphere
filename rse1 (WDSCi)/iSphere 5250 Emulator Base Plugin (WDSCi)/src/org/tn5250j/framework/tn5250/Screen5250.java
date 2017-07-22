@@ -1063,7 +1063,13 @@ public class Screen5250 implements TN5250jConstants {
                         } else {
 
                             if (s != null) {
-                                simulateMnemonic(getMnemonicValue(s));
+                                int v = getMnemonicValue(s);
+                                if (v != -1) {
+                                    simulateMnemonic(v);
+                                } else {
+                                    System.err
+                                        .println("Could not get mnemonic value for: " + s + ". Check iSphere special keys in TN5250jConstants.");
+                                }
                                 // if (!cursorActive && !keysBuffered) {
                                 // System.out.println(" m one");
                                 // setCursorOn();
