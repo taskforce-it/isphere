@@ -6,6 +6,12 @@ Changelog: iSphere 3.1.0.b001
    (e.g. PUB400.COM) seem to reject connections coming too close 
    after each other.
 
+Changelog: iSphere 3.0.6.r
+--------------------------
+ • Added the iSphere specific keys to "KeyMapper" to fix the issue of the 
+   hidden fast cursor up/down keys.
+ • Updated iSphere help with instructions how to enable SSL sessions.
+
 Changelog: iSphere 3.0.5.r
 --------------------------
  • Enabled the "Delete" key to delete spooled files of the iSphere 
