@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.KeyStroke;
 
+import org.tn5250j.TN5250jConstants;
 import org.tn5250j.event.KeyChangeListener;
 import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.interfaces.OptionAccessFactory;
@@ -143,13 +144,134 @@ public class KeyMapper {
             mappedKeys.put(new KeyStroker(34, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[jumpnext]");
             mappedKeys.put(new KeyStroker(33, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[jumpprev]");
 
+            initISphereSpecialKeys();
+
             saveKeyMap();
         } else {
 
             setKeyMap(keys);
+            boolean isDirty = initISphereSpecialKeys();
+            if (isDirty) {
+                saveKeyMap();
+            }
 
         }
 
+    }
+
+    private static boolean initISphereSpecialKeys() {
+
+        boolean isDirty = false;
+
+        // Add iSphere special key strokes for:
+        // a) Moving between main sessions: Ctrl+Up and Ctrl+Down
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_SESSION)) {
+            mappedKeys.put(new KeyStroker(38, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD), TN5250jConstants.MNEMONIC_NEXT_SESSION);
+            isDirty = true;
+        }
+
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_SESSION)) {
+            mappedKeys.put(new KeyStroker(40, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_PREVIOUS_SESSION);
+            isDirty = true;
+        }
+
+        // b) Moving between minor (multiple) sessions: Alt+Up and Alt+Down
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION)) {
+            mappedKeys.put(new KeyStroker(38, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION);
+            isDirty = true;
+        }
+
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION)) {
+            mappedKeys.put(new KeyStroker(40, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION);
+            isDirty = true;
+        }
+
+        // c) Scrolling sessions: Ctrl+Alt+Up, Ctrl+Alt+Down, Ctrl+Alt+Left and
+        // Ctrl+Alt+Right
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_SCROLL_SESSION_UP)) {
+            mappedKeys.put(new KeyStroker(38, false, true, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_SCROLL_SESSION_UP);
+            isDirty = true;
+        }
+
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_SCROLL_SESSION_DOWN)) {
+            mappedKeys.put(new KeyStroker(40, false, true, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_SCROLL_SESSION_DOWN);
+            isDirty = true;
+        }
+
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_SCROLL_SESSION_LEFT)) {
+            mappedKeys.put(new KeyStroker(37, false, true, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_SCROLL_SESSION_LEFT);
+            isDirty = true;
+        }
+
+        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_SCROLL_SESSION_RIGHT)) {
+            mappedKeys.put(new KeyStroker(39, false, true, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                TN5250jConstants.MNEMONIC_SCROLL_SESSION_RIGHT);
+            isDirty = true;
+        }
+
+        return isDirty;
+    }
+
+    public static boolean isNextMajorSessionKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_NEXT_SESSION.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isPreviousMajorSessionKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_PREVIOUS_SESSION.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNextMinorSessionKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isPreviousMinorSessionKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isScrollSessionUpKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_SCROLL_SESSION_UP.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isScrollSessionDownKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_SCROLL_SESSION_DOWN.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isScrollSessionLeftKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_SCROLL_SESSION_LEFT.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isScrollSessionRightKeyStroke(KeyEvent ke) {
+        if (TN5250jConstants.MNEMONIC_SCROLL_SESSION_RIGHT.equals(getKeyStrokeText(ke))) {
+            return true;
+        }
+        return false;
     }
 
     private static boolean loadKeyStrokes(Properties keystrokes) {
@@ -390,28 +512,20 @@ public class KeyMapper {
     public final static void setKeyStroke(String which, KeyEvent ke) {
 
         if (ke == null) return;
-        Collection<String> v = mappedKeys.values();
-        Set<KeyStroker> o = mappedKeys.keySet();
-        Iterator<KeyStroker> k = o.iterator();
-        Iterator<String> i = v.iterator();
-        while (k.hasNext()) {
-            KeyStroker ks = k.next();
-            String keyVal = i.next();
-            if (keyVal.equals(which)) {
-                mappedKeys.remove(ks);
-                mappedKeys.put(new KeyStroker(ke), keyVal);
-                return;
-            }
-        }
-
-        // if we got here it was a dead key and we need to add it.
-        mappedKeys.put(new KeyStroker(ke), which);
+        setKeyStroker(which, new KeyStroker(ke));
 
     }
 
     public final static void setKeyStroke(String which, KeyEvent ke, boolean isAltGr) {
 
         if (ke == null) return;
+        setKeyStroker(which, new KeyStroker(ke, isAltGr));
+
+    }
+
+    public final static void setKeyStroker(String which, KeyStroker keyStroker) {
+
+        if (keyStroker == null) return;
         Collection<String> v = mappedKeys.values();
         Set<KeyStroker> o = mappedKeys.keySet();
         Iterator<KeyStroker> k = o.iterator();
@@ -421,13 +535,13 @@ public class KeyMapper {
             String keyVal = i.next();
             if (keyVal.equals(which)) {
                 mappedKeys.remove(ks);
-                mappedKeys.put(new KeyStroker(ke, isAltGr), keyVal);
+                mappedKeys.put(keyStroker, keyVal);
                 return;
             }
         }
 
         // if we got here it was a dead key and we need to add it.
-        mappedKeys.put(new KeyStroker(ke, isAltGr), which);
+        mappedKeys.put(keyStroker, which);
 
     }
 
@@ -476,4 +590,45 @@ public class KeyMapper {
         }
     }
 
+    public static boolean hasFastCursorMappingConflicts() {
+
+        init();
+
+        KeyStroker fastCursorUpKeyStroker = getKeyStroker(TN5250jConstants.MNEMONIC_FAST_CURSOR_UP);
+        KeyStroker nextMultipleSessionKeyStroker = getKeyStroker(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION);
+
+        if (fastCursorUpKeyStroker == null && "Alt + Up".equals(nextMultipleSessionKeyStroker.getKeyStrokeDesc())) { //$NON-NLS-1$
+            return true;
+        }
+
+        KeyStroker fastCursorDownKeyStroker = getKeyStroker(TN5250jConstants.MNEMONIC_FAST_CURSOR_DOWN);
+        KeyStroker previousMultipleSessionKeyStroker = getKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION);
+
+        if (fastCursorDownKeyStroker == null && "Alt + Down".equals(previousMultipleSessionKeyStroker.getKeyStrokeDesc())) { //$NON-NLS-1$
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void resolveFastCursorMappingConflicts() {
+
+        // Remove mappings for: next/previous multiple session
+        removeKeyStroke(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION);
+        removeKeyStroke(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION);
+
+        // Add mappings for: next/previous multiple session
+        setKeyStroker(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION,
+            new KeyStroker(39, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD));
+        setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION, new KeyStroker(37, false, true, false, false,
+            KeyStroker.KEY_LOCATION_STANDARD));
+
+        // Add mappings for: fast cursor up/down
+        setKeyStroker(TN5250jConstants.MNEMONIC_FAST_CURSOR_UP, new KeyStroker(38, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD));
+        setKeyStroker(TN5250jConstants.MNEMONIC_FAST_CURSOR_DOWN, new KeyStroker(40, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD));
+
+        saveKeyMap();
+
+        fireKeyChangeEvent();
+    }
 }
