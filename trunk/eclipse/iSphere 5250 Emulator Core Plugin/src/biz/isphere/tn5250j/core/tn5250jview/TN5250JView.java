@@ -9,11 +9,17 @@
 package biz.isphere.tn5250j.core.tn5250jview;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
+import org.tn5250j.keyboard.KeyMapper;
 
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
@@ -30,6 +36,8 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
     @Override
     public void createPartControl(Composite parent) {
 
+        checkFastCursorMappings();
+
         tn5250jPart = new TN5250JPart(this, getViewSite().getActionBars().getToolBarManager(), this, isMultiSession());
 
         tn5250jPart.createPartControl(parent);
@@ -37,6 +45,28 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
         if (isMultiSession()) {
             setAddSession(false);
             setRemoveSession(false);
+        }
+    }
+
+    private void checkFastCursorMappings() {
+
+        if (KeyMapper.hasFastCursorMappingConflicts()) {
+            UIJob job = new UIJob("") {
+
+                @Override
+                public IStatus runInUIThread(IProgressMonitor arg0) {
+                    if (DoNotAskMeAgainDialog
+                        .openConfirm(
+                            getViewSite().getShell(),
+                            DoNotAskMeAgain.TN5250_FAST_CURSOR_MAPPING_CONFLICT,
+                            "The 'Fast cursor up'/'Fast cursor down' keyboard mappings are in conflict with the 'Next multiple session'/'Previous multiple session' keyboard mappings. Do you want to change the 'multiple session' keyboard mappings from Alt+Up/Alt+Down to Ctrl+Right/Ctrl+Left?")) {
+                        KeyMapper.resolveFastCursorMappingConflicts();
+                        return Status.OK_STATUS;
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
+            job.schedule();
         }
     }
 
