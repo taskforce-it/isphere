@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 
@@ -53,6 +54,7 @@ public class SearchResultViewer {
     private String connectionName;
     private String searchString;
     private SearchResult[] _searchResults;
+    private SearchOptions _searchOptions;
     private TableViewer tableViewerMembers;
     private Table tableMembers;
     private Object[] selectedItemsMembers;
@@ -331,10 +333,11 @@ public class SearchResultViewer {
         }
     }
 
-    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults) {
+    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults, SearchOptions _searchOptions) {
         this.connectionName = connectionName;
         this.searchString = searchString;
         this._searchResults = _searchResults;
+        this._searchOptions = _searchOptions;
     }
 
     /**
@@ -651,6 +654,10 @@ public class SearchResultViewer {
 
     public SearchResult[] getSearchResults() {
         return _searchResults;
+    }
+
+    public SearchOptions getSearchOptions() {
+        return _searchOptions;
     }
 
     public boolean hasItems() {

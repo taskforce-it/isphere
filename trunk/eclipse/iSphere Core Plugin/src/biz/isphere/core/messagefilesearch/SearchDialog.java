@@ -15,7 +15,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -24,28 +23,26 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
+import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class SearchDialog extends AbstractSearchDialog {
 
+    private static final String EXTERNAL_INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
+    private static final String EXTERNAL_INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
+    private static final String EXTERNAL_INCLUDE_MESSAGE_ID = "includeMessageId";
+
     private HashMap<String, SearchElement> searchElements;
     private Button includeFirstLevelTextButton;
     private Button includeSecondLevelTextButton;
     private Button includeMessageIdButton;
-
-    // iSphere settings
-    private static final String INCLUDE_FIRST_LEVEL_TEXT = "includeFirstLevelText";
-    private static final String INCLUDE_SECOND_LEVEL_TEXT = "includeSecondLevelText";
-    private static final String INCLUDE_MESSAGE_ID = "includeMessageId";
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, 132, false, false);
@@ -157,9 +154,9 @@ public class SearchDialog extends AbstractSearchDialog {
 
     @Override
     public void loadElementValues() {
-        includeFirstLevelTextButton.setSelection(loadBooleanValue(INCLUDE_FIRST_LEVEL_TEXT, true));
-        includeSecondLevelTextButton.setSelection(loadBooleanValue(INCLUDE_SECOND_LEVEL_TEXT, false));
-        includeMessageIdButton.setSelection(loadBooleanValue(INCLUDE_MESSAGE_ID, false));
+        includeFirstLevelTextButton.setSelection(loadBooleanValue(EXTERNAL_INCLUDE_FIRST_LEVEL_TEXT, true));
+        includeSecondLevelTextButton.setSelection(loadBooleanValue(EXTERNAL_INCLUDE_SECOND_LEVEL_TEXT, false));
+        includeMessageIdButton.setSelection(loadBooleanValue(EXTERNAL_INCLUDE_MESSAGE_ID, false));
         if (!isIncludeFirstLevelText() && !isIncludeSecondLevelText() && !isIncludeMessageId()) {
             includeFirstLevelTextButton.setSelection(true);
         }
@@ -167,9 +164,9 @@ public class SearchDialog extends AbstractSearchDialog {
 
     @Override
     public void saveElementValues() {
-        storeValue(INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
-        storeValue(INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-        storeValue(INCLUDE_MESSAGE_ID, isIncludeMessageId());
+        storeValue(EXTERNAL_INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
+        storeValue(EXTERNAL_INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+        storeValue(EXTERNAL_INCLUDE_MESSAGE_ID, isIncludeMessageId());
     };
 
     @Override
@@ -179,9 +176,9 @@ public class SearchDialog extends AbstractSearchDialog {
 
     @Override
     public void setElementsSearchOptions(SearchOptions _searchOptions) {
-        _searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
-        _searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-        _searchOptions.setOption(SearchExec.INCLUDE_MESSAGE_ID, isIncludeMessageId());
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, isIncludeMessageId());
     };
 
     protected void setSearchOptionsEnablement(Event anEvent) {

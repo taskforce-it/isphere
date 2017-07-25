@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.search.SearchOptions;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -72,6 +73,7 @@ public class SearchResultManager {
         xstream.autodetectAnnotations(true);
         xstream.alias("sourceFileSearch", SearchResultTabFolder.class); //$NON-NLS-1$
         xstream.alias("tabItem", SearchResultTab.class); //$NON-NLS-1$
+        xstream.alias("searchOptions", SearchOptions.class); //$NON-NLS-1$
         xstream.alias("member", SearchResult.class); //$NON-NLS-1$
         xstream.alias("statement", SearchResultStatement.class); //$NON-NLS-1$
         return xstream;

@@ -38,6 +38,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
@@ -52,6 +54,8 @@ import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.search.DisplaySearchOptionsDialog;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
@@ -94,6 +98,42 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 }
             }
         });
+
+        tabFolderSearchResults.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setActionEnablement();
+            }
+        });
+
+        tabFolderSearchResults.addFocusListener(new FocusListener() {
+
+            public void focusLost(FocusEvent arg0) {
+                setActionEnablement();
+            }
+
+            public void focusGained(FocusEvent arg0) {
+                setActionEnablement();
+            }
+        });
+
+        Menu popUpMenu = new Menu(tabFolderSearchResults);
+        MenuItem menuItem = new MenuItem(popUpMenu, SWT.PUSH);
+        menuItem.setText(Messages.MenuItem_Display_Search_Options);
+        menuItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                SearchResultTab searchResultTab = (SearchResultTab)getSelectedTab().getData(TAB_PERSISTENCE_DATA);
+                if (searchResultTab.hasSearchOptions()) {
+                    DisplaySearchOptionsDialog dialog = new DisplaySearchOptionsDialog(shell);
+                    dialog.setInput(searchResultTab);
+                    dialog.open();
+                } else {
+                    MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Error_No_Search_Options_available);
+                }
+            }
+        });
+
+        tabFolderSearchResults.setMenu(popUpMenu);
 
         createActions();
         initializeToolBar();
@@ -153,7 +193,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionInvertSelectedItems.setToolTipText(Messages.Tooltip_Invert_selection);
-        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
+        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry()
+            .getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
         actionLoadSearchResult = new Action(Messages.Load) {
@@ -222,14 +263,14 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     public void setFocus() {
     }
 
-    public void addTabItem(String connectionName, String searchString, SearchResult[] searchResults) {
+    public void addTabItem(String connectionName, String searchString, SearchResult[] searchResults, SearchOptions searchOptions) {
         Composite compositeSearchResult = new Composite(tabFolderSearchResults, SWT.NONE);
         compositeSearchResult.setLayout(new FillLayout());
 
         CTabItem tabItemSearchResult = new CTabItem(tabFolderSearchResults, SWT.CLOSE);
         tabItemSearchResult.setText(connectionName + "/" + searchString);
 
-        SearchResultViewer _searchResultViewer = new SearchResultViewer(connectionName, searchString, searchResults);
+        SearchResultViewer _searchResultViewer = new SearchResultViewer(connectionName, searchString, searchResults, searchOptions);
         _searchResultViewer.createContents(compositeSearchResult);
         _searchResultViewer.addSelectionChangedListener(this);
 
@@ -244,27 +285,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         setActionEnablement();
 
-        tabFolderSearchResults.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setActionEnablement();
-            }
-        });
-
-        tabFolderSearchResults.addFocusListener(new FocusListener() {
-
-            public void focusLost(FocusEvent arg0) {
-                setActionEnablement();
-            }
-
-            public void focusGained(FocusEvent arg0) {
-                setActionEnablement();
-            }
-        });
-
-        SearchResultTab searchResultTab = new SearchResultTab(connectionName, searchString, searchResults);
+        SearchResultTab searchResultTab = new SearchResultTab(connectionName, searchString, searchResults, searchOptions);
         searchResultTabFolder.addTab(searchResultTab);
         tabItemSearchResult.setData(TAB_PERSISTENCE_DATA, searchResultTab);
+        tabItemSearchResult.setToolTipText(searchResultTab.toText());
     }
 
     public void exportToObjectFilter() {
@@ -286,10 +310,11 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                         if (!creator.createObjectFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
                             _searchResultViewer.getSearchResults())) {
 
-//                            MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
-//                            errorBox.setText(Messages.E_R_R_O_R);
-//                            errorBox.setMessage(Messages.The_filter_could_not_be_created);
-//                            errorBox.open();
+                            // MessageBox errorBox = new MessageBox(shell,
+                            // SWT.ICON_ERROR);
+                            // errorBox.setText(Messages.E_R_R_O_R);
+                            // errorBox.setMessage(Messages.The_filter_could_not_be_created);
+                            // errorBox.open();
 
                         }
                     }
@@ -450,7 +475,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         SearchResultViewer viewer = getSelectedViewer();
         if (viewer != null) {
             SearchResultTabFolder searchResults = new SearchResultTabFolder();
-            searchResults.addTab(new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults()));
+            searchResults.addTab(new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer
+                .getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
             } catch (SaveFileException e) {
@@ -510,7 +536,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 String connectionName = tab.getConnectionName();
                 String searchString = tab.getSearchString();
                 SearchResult[] searchResult = tab.getSearchResult();
-                addTabItem(connectionName, searchString, searchResult);
+                SearchOptions searchOptions = tab.getSearchOptions();
+                addTabItem(connectionName, searchString, searchResult, searchOptions);
             }
 
         } catch (LoadFileException e) {
