@@ -452,7 +452,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     private void saveAllSearchResults() {
 
-        String file = selectFile(SWT.SAVE);
+        String file = selectFile(SWT.SAVE, false);
         if (file == null) {
             return;
         }
@@ -493,7 +493,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 if (MessageDialog.openQuestion(shell, Messages.Question,
                     Messages.bind(Messages.Question_replace_search_results, searchResults.getNumTabs()))) {
                     removeAllTabItems();
-                    ;
                 }
             }
 
@@ -512,6 +511,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     }
 
     private String selectFile(int style) {
+        return selectFile(style, false);
+    }
+
+    private String selectFile(int style, boolean promptOverwrite) {
 
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(shell, style);
@@ -524,7 +527,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         dialog.setFilterNames(filterNames);
         dialog.setFilterExtensions(filterExtensions);
         dialog.setFileName(filename);
-        dialog.setOverwrite(true);
+        dialog.setOverwrite(promptOverwrite);
 
         String selectedFileName = dialog.open();
         if (!StringHelper.isNullOrEmpty(selectedFileName) && !filename.equals(selectedFileName)) {
