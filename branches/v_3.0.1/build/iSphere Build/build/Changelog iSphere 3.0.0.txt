@@ -1,6 +1,10 @@
 
-Changelog: iSphere 3.0.6.r
---------------------------
+Changelog: iSphere 3.0.6.b002
+-----------------------------
+ • Fixed NullPointerException because of a not initialized KeyMapper.
+
+Changelog: iSphere 3.0.6.b001
+-----------------------------
  • Added the iSphere specific keys to "KeyMapper" to fix the issue of the 
    hidden fast cursor up/down keys.
  • Updated iSphere help with instructions how to enable SSL sessions.
