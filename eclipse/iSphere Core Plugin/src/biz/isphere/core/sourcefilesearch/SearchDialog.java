@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,18 +19,19 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
+import biz.isphere.core.search.SearchArgument;
 
 public class SearchDialog extends AbstractSearchDialog {
 
     private HashMap<String, SearchElement> searchElements;
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
-        super(parentShell, 228, false, false);
+        super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, false, false);
         this.searchElements = searchElements;
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, 228, searchArgumentsListEditor, true);
+        super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true);
         this.searchElements = searchElements;
     }
 

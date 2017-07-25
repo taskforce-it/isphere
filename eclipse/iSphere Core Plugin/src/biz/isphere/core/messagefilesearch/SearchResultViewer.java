@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,14 @@ import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.search.SearchOptions;
 
 public class SearchResultViewer {
 
     private String connectionName;
     private String searchString;
     private SearchResult[] _searchResults;
+    private SearchOptions _searchOptions;
     private TableViewer tableViewerMessageFiles;
     private Table tableMessageFiles;
     private Object[] selectedItemsMessageFiles;
@@ -140,10 +142,11 @@ public class SearchResultViewer {
 
     }
 
-    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults) {
+    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults, SearchOptions _searchOptions) {
         this.connectionName = connectionName;
         this.searchString = searchString;
         this._searchResults = _searchResults;
+        this._searchOptions = _searchOptions;
     }
 
     /**
@@ -528,6 +531,10 @@ public class SearchResultViewer {
 
     public SearchResult[] getSearchResults() {
         return _searchResults;
+    }
+
+    public SearchOptions getSearchOptions() {
+        return _searchOptions;
     }
 
     public boolean hasItems() {

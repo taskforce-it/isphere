@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ import java.util.HashMap;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 
+import biz.isphere.core.search.SearchOptions;
+
 public class SearchPostRun implements ISearchPostRun {
 
     private class ShowView extends Thread {
@@ -21,14 +23,16 @@ public class SearchPostRun implements ISearchPostRun {
         private String _connectionName;
         private String _searchString;
         private SearchResult[] _searchResults;
+        private SearchOptions _searchOptions;
 
         public ShowView(IWorkbenchWindow _workbenchWindow, String _connectionName, String _searchString,
-            SearchResult[] _searchResults) {
+            SearchResult[] _searchResults, SearchOptions _searchOptions) {
 
             this._workbenchWindow = _workbenchWindow;
             this._connectionName = _connectionName;
             this._searchString = _searchString;
             this._searchResults = _searchResults;
+            this._searchOptions = _searchOptions;
 
         }
 
@@ -39,7 +43,7 @@ public class SearchPostRun implements ISearchPostRun {
                     try {
                         ViewSearchResults viewSearchResults = (ViewSearchResults)(_workbenchWindow.getActivePage()
                             .showView("biz.isphere.core.messagefilesearch.ViewSearchResults"));
-                        viewSearchResults.addTabItem(_connectionName, _searchString, _searchResults);
+                        viewSearchResults.addTabItem(_connectionName, _searchString, _searchResults, _searchOptions);
                     } catch (PartInitException e) {
                         e.printStackTrace();
                     }
@@ -94,7 +98,7 @@ public class SearchPostRun implements ISearchPostRun {
         this._workbenchWindow = _workbenchWindow;
     }
 
-    public void run(SearchResult[] _searchResults) {
+    public void run(SearchResult[] _searchResults, SearchOptions _searchOptions) {
 
         if (_searchResults != null) {
 
@@ -108,7 +112,7 @@ public class SearchPostRun implements ISearchPostRun {
 
             }
 
-            new ShowView(_workbenchWindow, _connectionName, _searchString, _searchResults).start();
+            new ShowView(_workbenchWindow, _connectionName, _searchString, _searchResults, _searchOptions).start();
 
         }
 

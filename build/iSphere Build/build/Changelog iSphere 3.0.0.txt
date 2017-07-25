@@ -2,9 +2,12 @@
 Changelog: iSphere 3.1.0.b001 
 --------------------------------------------
  • Added menu option "Compare Source Members" to the iSphere main menu.
- • Added wait time between two connections, because some systems 
+ • Added wait time (250ms) between two connections, because some systems 
    (e.g. PUB400.COM) seem to reject connections coming too close 
    after each other.
+ • Added tooltip showing the search options to search result tabs.
+ • Added context menu with option "Display Search Options" to search  
+   result tabs. 
 
 Changelog: iSphere 3.0.6.r
 --------------------------

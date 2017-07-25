@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.sourcefilesearch;
+package biz.isphere.core.search;
 
-import biz.isphere.core.search.SearchOptions;
+public interface ISearchResultTab {
 
-public interface ISearchPostRun {
-
-    public void run(SearchResult[] _searchResults, SearchOptions searchOptions);
-
+    public String getConnectionName();
+    public SearchOptions getSearchOptions();
+    public boolean hasSearchOptions();
+    
 }

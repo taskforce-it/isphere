@@ -9,6 +9,7 @@
 package biz.isphere.core.messagefilesearch;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 
@@ -63,19 +64,19 @@ public class XFNDSTR_search {
             // }
             pcml.setValue("XFNDSTR_search.matchOption", _searchOptions.getMatchOption());
 
-            if (_searchOptions.isOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "0");
             }
 
-            if (_searchOptions.isOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.secLvlText", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.secLvlText", "0");
             }
 
-            if (_searchOptions.isOption(SearchExec.INCLUDE_MESSAGE_ID)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID)) {
                 pcml.setValue("XFNDSTR_search.messageId", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.messageId", "0");

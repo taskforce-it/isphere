@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -747,7 +747,7 @@ public class Messages extends NLS {
     public static String Restoring_view;
 
     public static String Remove;
-    
+
     public static String Remove_all;
 
     public static String Tooltip_Remove;
@@ -1303,9 +1303,9 @@ public class Messages extends NLS {
     public static String Label_Editor;
 
     public static String Label_Viewer;
-    
+
     public static String Show_substitution_variables;
-    
+
     public static String Hide_substitution_variables;
 
     public static String IncludeMessageId;
@@ -1315,6 +1315,32 @@ public class Messages extends NLS {
     public static String Add;
 
     public static String Item;
+
+    public static String Conditions_to_match_colon;
+
+    public static String Show_all_matches_colon;
+
+    public static String Search_arguments_colon;
+
+    public static String Condition;
+
+    public static String Argument;
+
+    public static String From_column;
+
+    public static String To_column;
+
+    public static String Search_Options;
+
+    public static String MenuItem_Display_Search_Options;
+
+    public static String GenericSearchOption_MsgF_IncludeMessageId;
+
+    public static String GenericSearchOption_MsgF_IncludeFirstLevelText;
+
+    public static String GenericSearchOption_MsgF_IncludeSecondLevelText;
+
+    public static String Error_No_Search_Options_available;
     
     /*
      * Warning messages

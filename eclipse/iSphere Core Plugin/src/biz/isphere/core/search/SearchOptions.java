@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,23 @@
 
 package biz.isphere.core.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SearchOptions {
+import biz.isphere.core.Messages;
+
+@SuppressWarnings("serial")
+public class SearchOptions implements Serializable {
+
+    private static String SPACE = " "; //$NON-NLS-1$
+    private static final String NEW_LINE = "\n";
 
     public static int ARGUMENTS_SIZE = 16;
     public static int MAX_STRING_SIZE = 40;
@@ -24,7 +35,7 @@ public class SearchOptions {
     public static final String MATCH_ALL = "*ALL";
     public static final String MATCH_ANY = "*ANY";
     public static final String MATCH_MESSAGE_ID = "*MSGID";
-    
+
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
 
@@ -34,7 +45,7 @@ public class SearchOptions {
     private String matchOption;
     private boolean showAllItems;
     private List<SearchArgument> searchArguments;
-    private Map<String, Object> genericOptions;
+    private Map<String, GenericSearchOption> genericOptions;
 
     public SearchOptions() {
         this(MATCH_ALL, true);
@@ -69,25 +80,67 @@ public class SearchOptions {
         searchArguments = aSearchArguments;
     }
 
-    public void setOption(String anOption, Boolean aValue) {
-        getOptions().put(anOption, aValue);
+    public void setGenericOption(String anOption, Boolean aValue) {
+        getOrCreateGenericOptions().put(anOption, new GenericSearchOption(anOption, aValue));
     }
 
-    public boolean isOption(String anOption) {
-        if (!getOptions().containsKey(anOption)) {
+    public boolean isGenericOption(String anOption) {
+        if (!getOrCreateGenericOptions().containsKey(anOption)) {
             return false;
         }
-        Object tValue = getOptions().get(anOption);
-        if (!(tValue instanceof Boolean)) {
+        GenericSearchOption tValue = getOrCreateGenericOptions().get(anOption);
+        if (!(tValue.getValue() instanceof Boolean)) {
             throw new IllegalArgumentException("Invalid object type assigned to boolean option: " + tValue);
         }
-        return ((Boolean)tValue).booleanValue();
+        return ((Boolean)tValue.getValue()).booleanValue();
     }
 
-    private Map<String, Object> getOptions() {
+    public boolean hasGenericOptions() {
+
+        if (getOrCreateGenericOptions().size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public GenericSearchOption[] getGenericOptions() {
+        
+        List<GenericSearchOption> list = new LinkedList<GenericSearchOption>();
+        
+        Collection<GenericSearchOption> values = genericOptions.values();
+        for (GenericSearchOption genericSearchOption : values) {
+            list.add(genericSearchOption);
+        }
+        
+        return list.toArray(new GenericSearchOption[list.size()]);
+    }
+
+    private Map<String, GenericSearchOption> getOrCreateGenericOptions() {
         if (genericOptions == null) {
-            genericOptions = new HashMap<String, Object>();
+            genericOptions = new HashMap<String, GenericSearchOption>();
         }
         return genericOptions;
+    }
+
+    public String toText() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(Messages.Conditions_to_match_colon + SPACE + getMatchOption());
+        buffer.append(NEW_LINE);
+        buffer.append(Messages.Show_all_matches_colon + SPACE + isShowAllItems());
+        buffer.append("\n\n");
+        buffer.append(Messages.Search_arguments_colon);
+        buffer.append(NEW_LINE);
+
+        int c = 0;
+        for (SearchArgument searchArgument : searchArguments) {
+            c++;
+            buffer.append("#" + c + ": " + searchArgument.toText()); //$NON-NLS-#1$ //$NON-NLS-2$
+            buffer.append(NEW_LINE);
+        }
+
+        return buffer.toString();
     }
 }
