@@ -87,12 +87,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private static final String TARGET_FILTER_STRING = "target.filterString";
     private static final String TARGET_SOURCE_MEMBER = "target.sourceMember";
 
-    /**
-     * The MAX_END_COLUMN value specified here must match the maximum line
-     * length in FNDSTR (see: LILINE).
-     */
-    private static int MAX_END_COLUMN = 228;
-
     private static int DEFAULT_START_COLUMN = 1;
     private static int DEFAULT_END_COLUMN = 100;
 
@@ -755,8 +749,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             int startColumn;
             int endColumn;
             if (allColumnsButton.getSelection()) {
-                startColumn = -1;
-                endColumn = -1;
+                startColumn = 1;
+                endColumn = SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN;
             } else {
                 startColumn = getNumericFieldContent(startColumnText);
                 endColumn = getNumericFieldContent(endColumnText);
@@ -923,7 +917,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (queryNumericFieldContent(endColumnText) != 0) {
                 return false;
             }
-            if (getNumericFieldContent(endColumnText) <= MAX_END_COLUMN) {
+            if (getNumericFieldContent(endColumnText) <= SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN) {
                 return true;
             }
         }
