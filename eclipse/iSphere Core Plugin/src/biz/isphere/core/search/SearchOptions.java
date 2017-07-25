@@ -10,9 +10,7 @@ package biz.isphere.core.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,16 +101,16 @@ public class SearchOptions implements Serializable {
 
         return false;
     }
-    
+
     public GenericSearchOption[] getGenericOptions() {
-        
+
         List<GenericSearchOption> list = new LinkedList<GenericSearchOption>();
-        
+
         Collection<GenericSearchOption> values = genericOptions.values();
         for (GenericSearchOption genericSearchOption : values) {
             list.add(genericSearchOption);
         }
-        
+
         return list.toArray(new GenericSearchOption[list.size()]);
     }
 
@@ -130,15 +128,26 @@ public class SearchOptions implements Serializable {
         buffer.append(Messages.Conditions_to_match_colon + SPACE + getMatchOption());
         buffer.append(NEW_LINE);
         buffer.append(Messages.Show_all_matches_colon + SPACE + isShowAllItems());
-        buffer.append("\n\n");
-        buffer.append(Messages.Search_arguments_colon);
         buffer.append(NEW_LINE);
+        buffer.append(NEW_LINE);
+        buffer.append(Messages.Search_arguments_colon);
 
         int c = 0;
         for (SearchArgument searchArgument : searchArguments) {
             c++;
-            buffer.append("#" + c + ": " + searchArgument.toText()); //$NON-NLS-#1$ //$NON-NLS-2$
             buffer.append(NEW_LINE);
+            buffer.append("#" + c + ": " + searchArgument.toText()); //$NON-NLS-#1$ //$NON-NLS-2$
+        }
+
+        if (hasGenericOptions()) {
+            buffer.append(NEW_LINE);
+            buffer.append(NEW_LINE);
+            buffer.append(Messages.Additional_Options_colon);
+            for (GenericSearchOption genericOption : genericOptions.values()) {
+                c++;
+                buffer.append(NEW_LINE);
+                buffer.append(genericOption.toText());
+            }
         }
 
         return buffer.toString();

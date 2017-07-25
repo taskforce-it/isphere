@@ -1341,6 +1341,8 @@ public class Messages extends NLS {
     public static String GenericSearchOption_MsgF_IncludeSecondLevelText;
 
     public static String Error_No_Search_Options_available;
+
+    public static String Additional_Options_colon;
     
     /*
      * Warning messages
