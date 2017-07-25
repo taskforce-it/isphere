@@ -99,17 +99,14 @@ public class DisplaySearchOptionsDialog extends Dialog {
 
     private void createHeader(Composite parent) {
 
-        textConnection = createText(parent, Messages.Connection_colon);
-        textMatch = createText(parent, Messages.Conditions_to_match_colon);
+        textConnection = createTextWithLabel(parent, Messages.Connection_colon);
+        textMatch = createTextWithLabel(parent, Messages.Conditions_to_match_colon);
         cbShowAllMatches = createCheckbox(parent, Messages.Show_all_matches_colon);
-
-        new Label(parent, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
-        Label labelHeadline = new Label(parent, SWT.NONE);
-        labelHeadline.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
-        labelHeadline.setText(Messages.Search_arguments_colon);
     }
 
     private TableViewer createTableViewerSearchArguments(Composite parent) {
+
+        createLabel(parent, Messages.Search_arguments_colon);
 
         TableViewer tableViewerSearchArguments = new TableViewer(parent, SWT.BORDER | SWT.SINGLE);
         tableViewerSearchArguments.setLabelProvider(new LabelProviderSearchArguments());
@@ -151,6 +148,8 @@ public class DisplaySearchOptionsDialog extends Dialog {
 
     private TableViewer createTableViewerGenericSearchOptions(Composite parent) {
 
+        createLabel(parent, Messages.Additional_Options_colon);
+
         TableViewer tableViewerGenericSearchOptions = new TableViewer(parent, SWT.BORDER | SWT.SINGLE);
         tableViewerGenericSearchOptions.setLabelProvider(new LabelProviderGenericSearchOptions());
         tableViewerGenericSearchOptions.setContentProvider(new ContentProviderGenericSearchOptions());
@@ -173,13 +172,20 @@ public class DisplaySearchOptionsDialog extends Dialog {
         return tableViewerGenericSearchOptions;
     }
 
-    private Text createText(Composite parent, String label) {
+    private Text createTextWithLabel(Composite parent, String label) {
 
         new Label(parent, SWT.NONE).setText(label);
         Text text = WidgetFactory.createReadOnlyText(parent);
         text.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         return text;
+    }
+
+    private void createLabel(Composite parent, String label) {
+
+        Label labelHeadline = new Label(parent, SWT.NONE);
+        labelHeadline.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        labelHeadline.setText(label);
     }
 
     private Button createCheckbox(Composite parent, String label) {
@@ -266,9 +272,9 @@ public class DisplaySearchOptionsDialog extends Dialog {
 
             switch (columnIndex) {
             case COLUMN_KEY:
-                return genericSearchOption.toString();
+                return genericSearchOption.getKeyAsText();
             case COLUMN_VALUE:
-                return genericSearchOption.getValue().toString();
+                return genericSearchOption.getValueAsText();
             }
 
             return UNKNOWN;

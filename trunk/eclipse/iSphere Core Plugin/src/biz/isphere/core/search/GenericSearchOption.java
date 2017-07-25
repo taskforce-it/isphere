@@ -31,18 +31,7 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
         return key;
     }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public Object setValue(Object value) {
-        Object oldValue = this.value;
-        this.value = value;
-        return oldValue;
-    }
-
-    @Override
-    public String toString() {
+    public String getKeyAsText() {
 
         if (GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT.equals(key)) {
             return Messages.GenericSearchOption_MsgF_IncludeFirstLevelText;
@@ -53,5 +42,30 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
         } else {
             return "*ERROR"; //$NON-NLS-1$
         }
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public String getValueAsText() {
+
+        if (value instanceof Boolean) {
+            return ((Boolean)value).toString();
+        } else if (value instanceof String) {
+            return (String)value;
+        } else {
+            return "*ERROR"; //$NON-NLS-1$
+        }
+    }
+
+    public Object setValue(Object value) {
+        Object oldValue = this.value;
+        this.value = value;
+        return oldValue;
+    }
+    
+    public String toText() {
+        return getKeyAsText() + ": " + getValueAsText(); //$NON-NLS-1$        
     }
 }
