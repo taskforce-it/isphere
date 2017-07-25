@@ -73,7 +73,7 @@ public abstract class CompareDialog extends XDialog {
     private Text leftConnectionText;
     private Text leftLibraryText;
     private Text leftFileText;
-    private Text leftMemberText;                
+    private Text leftMemberText;
     private Text rightConnectionText;
     private Text rightLibraryText;
     private Text rightFileText;
@@ -209,6 +209,9 @@ public abstract class CompareDialog extends XDialog {
         modeGroup.setLayout(modeLayout);
         modeGroup.setLayoutData(getGridData());
 
+        /*
+         * ---------------- Create options area ----------------
+         */
         if (selectEditable) {
 
             Composite editableGroup = new Composite(modeGroup, SWT.NONE);
@@ -327,12 +330,18 @@ public abstract class CompareDialog extends XDialog {
 
         }
 
-        if (!hasLeftMember()) {
+        /*
+         * ---------------- Create left area ----------------
+         */
+        if (!hasLeftMember) {
             createLeftArea(rtnGroup);
         } else {
             createReadOnlyLeftArea(rtnGroup);
         }
 
+        /*
+         * -------- Create right and ancestor areas --------
+         */
         if (hasMultipleRightMembers) {
             createRightArea(rtnGroup);
         } else if (!hasRightMember) {
@@ -360,7 +369,7 @@ public abstract class CompareDialog extends XDialog {
         }
 
         setFocus();
-        
+
         return rtnGroup;
     }
 
