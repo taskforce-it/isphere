@@ -190,6 +190,17 @@ public class IBMiHostContributionsHandler {
         return factory.getMember(connectionName, libraryName, fileName, memberName);
     }
 
+    public static void compareSourceMembers(String connectionName, List<Member> members) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return;
+        }
+
+        factory.compareSourceMembers(connectionName, members);
+    }
+
     /**
      * Returns the RDi contributions if there is a registered extension for
      * that.

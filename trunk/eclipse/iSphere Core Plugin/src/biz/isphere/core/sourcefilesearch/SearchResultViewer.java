@@ -10,8 +10,10 @@ package biz.isphere.core.sourcefilesearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,10 +43,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.Member;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
@@ -155,6 +159,7 @@ public class SearchResultViewer {
         private MenuItem menuItemRemove;
         private MenuItem menuItemSeparator;
         private MenuItem menuCopySelectedMembers;
+        private MenuItem menuCompareSelectedMembers;
 
         public TableMembersMenuAdapter(Menu menuTableMembers) {
             this.menuTableMembers = menuTableMembers;
@@ -177,6 +182,7 @@ public class SearchResultViewer {
             dispose(menuItemRemove);
             dispose(menuItemSeparator);
             dispose(menuCopySelectedMembers);
+            dispose(menuCompareSelectedMembers);
         }
 
         private void dispose(MenuItem menuItem) {
@@ -267,12 +273,22 @@ public class SearchResultViewer {
                     menuItemSeparator = new MenuItem(menuTableMembers, SWT.SEPARATOR);
 
                     menuCopySelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
-                    menuCopySelectedMembers.setText("Copy members");
+                    menuCopySelectedMembers.setText("Copy members"); // TODO: fix NLS string
                     menuCopySelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_MEMBERS_TO));
                     menuCopySelectedMembers.addSelectionListener(new SelectionAdapter() {
                         @Override
                         public void widgetSelected(SelectionEvent e) {
                             executeMenuItemCopySelectedMembers();
+                        }
+                    });
+                    
+                    menuCompareSelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
+                    menuCompareSelectedMembers.setText("Compare members"); // TODO: fix NLS string
+                    menuCompareSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE));
+                    menuCompareSelectedMembers.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            executeMenuItemCompareSelectedMembers();
                         }
                     });
                 }
@@ -611,6 +627,25 @@ public class SearchResultViewer {
         CopyMemberDialog dialog = new CopyMemberDialog(getShell());
         dialog.setContent(jobDescription);
         dialog.open();
+    }
+
+    private void executeMenuItemCompareSelectedMembers() {
+        
+        try {
+            
+            List<Member> members = new LinkedList<Member>();
+            
+            for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
+                SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
+                Member member = IBMiHostContributionsHandler.getMember(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember());
+                members.add(member);
+            }            
+            
+            IBMiHostContributionsHandler.compareSourceMembers(connectionName, members);
+            
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
     }
 
     private void executeMenuItemRemoveSelectedItems() {
