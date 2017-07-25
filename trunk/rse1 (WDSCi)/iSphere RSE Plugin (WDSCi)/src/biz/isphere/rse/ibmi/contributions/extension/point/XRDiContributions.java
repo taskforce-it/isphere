@@ -11,6 +11,7 @@ package biz.isphere.rse.ibmi.contributions.extension.point;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -28,6 +29,7 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.connection.ConnectionManager;
+import biz.isphere.rse.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.as400.access.AS400;
@@ -401,5 +403,19 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return new RSEMember(member);
+    }
+
+    public void compareSourceMembers(String connectionName, List<Member> members) throws Exception {
+
+        List<RSEMember> rseMembers = new LinkedList<RSEMember>();
+
+        for (Member member : members) {
+            if (member instanceof RSEMember) {
+                rseMembers.add((RSEMember)member);
+            }
+        }
+
+        CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
+        handler.handleSourceCompare(rseMembers.toArray(new RSEMember[rseMembers.size()]));
     }
 }
