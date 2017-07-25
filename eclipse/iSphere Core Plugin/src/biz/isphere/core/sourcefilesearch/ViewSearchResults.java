@@ -432,7 +432,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     private void saveSearchResult() {
 
-        String file = selectFile(SWT.SAVE);
+        String file = selectFile(SWT.SAVE, true);
         if (file == null) {
             return;
         }
@@ -452,7 +452,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     private void saveAllSearchResults() {
 
-        String file = selectFile(SWT.SAVE, false);
+        String file = selectFile(SWT.SAVE, true);
         if (file == null) {
             return;
         }
