@@ -157,4 +157,13 @@ public interface IIBMiHostContributions {
      * @throws Exception
      */
     public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception;
+
+    /**
+     * Opens the iSphere Compare&Merge editor for the selected members.
+     * 
+     * @param connectionName - Connection used to locate the member.
+     * @param members - members that are compared
+     * @throws Exception
+     */
+    public void compareSourceMembers(String connectionName, List<Member> members) throws Exception;
 }
