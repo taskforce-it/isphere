@@ -90,6 +90,7 @@ public class PreferencePage4 extends PreferencePage implements IWorkbenchPrefere
     }
 
     private String getKeyMappingInfo(String messageId, String keyMnemonic) {
+        KeyMapper.init();
         return Messages.bind(messageId, KeyMapper.getKeyStrokeDesc(keyMnemonic));
     }
 
