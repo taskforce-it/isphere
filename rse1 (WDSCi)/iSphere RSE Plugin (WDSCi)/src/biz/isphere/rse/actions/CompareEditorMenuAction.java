@@ -8,12 +8,17 @@
 
 package biz.isphere.rse.actions;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.common.ui.action.WorkbenchWindowActionDelegate;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.CompareSourceMembersHandler;
+import biz.isphere.rse.internal.RSEMember;
 
 public class CompareEditorMenuAction extends WorkbenchWindowActionDelegate {
 
@@ -24,12 +29,15 @@ public class CompareEditorMenuAction extends WorkbenchWindowActionDelegate {
         try {
 
             CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
-            ExecutionEvent event = new ExecutionEvent();
-            handler.execute(event);
+            handler.handleSourceCompare(new RSEMember[0]);
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
+    private Shell getShell() {
+        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+    }
 }
