@@ -51,6 +51,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
+import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
@@ -90,14 +91,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     private static final String TARGET_FILTER_STRING = "target.filterString"; //$NON-NLS-1$
     private static final String TARGET_SOURCE_MEMBER = "target.sourceMember"; //$NON-NLS-1$
 
-    /**
-     * The MAX_END_COLUMN value specified here must match the maximum message
-     * text length in XFNDSTR (see: LITXT).
-     */
-    private static int MAX_END_COLUMN = 132;
-
     private static int DEFAULT_START_COLUMN = 1;
-    private static int DEFAULT_END_COLUMN = MAX_END_COLUMN;
+    private static int DEFAULT_END_COLUMN = SearchArgument.MAX_MESSAGE_FILE_SEARCH_COLUMN;
 
     private static final String SEARCH_ALL_COLUMNS = "ALL"; //$NON-NLS-1$
     private static final String SEARCH_BETWEEN_COLUMNS = "BETWEEN"; //$NON-NLS-1$
@@ -815,9 +810,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
                     searchOptions.addSearchArgument(searchArgument);
                 }
             }
-            searchOptions.setOption(SearchExec.INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
-            searchOptions.setOption(SearchExec.INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
-            searchOptions.setOption(SearchExec.INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
 
             new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), tConnection.getJDBCConnection(null,
                 false), searchOptions, new ArrayList<SearchElement>(searchElements.values()), postRun);
@@ -989,7 +984,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             if (queryNumericFieldContent(endColumnText) != 0) {
                 return false;
             }
-            if (getNumericFieldContent(endColumnText) > MAX_END_COLUMN) {
+            if (getNumericFieldContent(endColumnText) > SearchArgument.MAX_MESSAGE_FILE_SEARCH_COLUMN) {
                 return false;
             }
         }
