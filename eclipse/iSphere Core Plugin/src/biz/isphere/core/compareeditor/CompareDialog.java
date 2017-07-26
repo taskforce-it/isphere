@@ -63,15 +63,15 @@ public abstract class CompareDialog extends XDialog {
     private Button considerDateButton;
     private Button twoWayButton;
     private Button threeWayButton;
+    private Button okButton;
     private boolean editable;
     private boolean considerDate;
     private boolean ignoreCase;
     private boolean threeWay;
-    private Button okButton;
     private boolean hasLeftMember;
     private boolean hasRightMember;
     private boolean hasMultipleRightMembers;
-    private boolean hasAncestor;
+    private boolean hasAncestorMember;
     private Image switchImage;
     private Text leftConnectionText;
     private Text leftLibraryText;
@@ -186,16 +186,16 @@ public abstract class CompareDialog extends XDialog {
         }
 
         if (this.ancestorMember == null) {
-            hasAncestor = false;
+            hasAncestorMember = false;
             threeWay = false;
         } else {
-            hasAncestor = true;
+            hasAncestorMember = true;
             threeWay = true;
         }
     }
 
     @Override
-    public Control createDialogArea(Composite parent) {
+    protected Control createDialogArea(Composite parent) {
 
         Composite rtnGroup = (Composite)super.createDialogArea(parent);
         parent.getShell().setText(Messages.Compare_Source_Members);
@@ -352,13 +352,13 @@ public abstract class CompareDialog extends XDialog {
             createAncestorArea(rtnGroup);
         } else {
             if (hasRightMember) {
-                if (!hasAncestor) {
+                if (!hasAncestorMember()) {
                     createSwitchMemberButton(rtnGroup);
                 }
                 createReadOnlyRightArea(rtnGroup);
             }
 
-            if (hasAncestor) {
+            if (hasAncestorMember()) {
                 createReadOnlyAncestorArea(rtnGroup);
             }
         }
@@ -405,7 +405,7 @@ public abstract class CompareDialog extends XDialog {
     }
 
     @Override
-    public Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
         Button button = super.createButton(parent, id, label, defaultButton);
         if (id == OK) {
             okButton = button;
@@ -437,7 +437,7 @@ public abstract class CompareDialog extends XDialog {
         super.okPressed();
     }
 
-    public Button getOkButton() {
+    protected Button getOkButton() {
         return okButton;
     }
 
@@ -644,18 +644,6 @@ public abstract class CompareDialog extends XDialog {
         return true;
     }
 
-    public boolean hasLeftMember() {
-        return hasLeftMember;
-    }
-
-    public boolean hasRightMember() {
-        return hasRightMember;
-    }
-
-    public boolean hasMultipleRightMembers() {
-        return hasMultipleRightMembers;
-    }
-
     public boolean isEditable() {
         return editable;
     }
@@ -670,6 +658,22 @@ public abstract class CompareDialog extends XDialog {
 
     public boolean isThreeWay() {
         return threeWay;
+    }
+
+    protected boolean hasLeftMember() {
+        return hasLeftMember;
+    }
+
+    protected boolean hasRightMember() {
+        return hasRightMember;
+    }
+
+    protected boolean hasMultipleRightMembers() {
+        return hasMultipleRightMembers;
+    }
+
+    protected boolean hasAncestorMember() {
+        return hasAncestorMember;
     }
 
     private void loadScreenValues() {

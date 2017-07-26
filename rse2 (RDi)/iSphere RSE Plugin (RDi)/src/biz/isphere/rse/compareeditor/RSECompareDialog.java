@@ -141,7 +141,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    public void createLeftArea(Composite parent) {
+    protected void createLeftArea(Composite parent) {
 
         Group leftGroup = new Group(parent, SWT.NONE);
         leftGroup.setText(Messages.Right);
@@ -188,7 +188,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    public void createRightArea(Composite parent) {
+    protected void createRightArea(Composite parent) {
 
         Group rightGroup = new Group(parent, SWT.NONE);
         rightGroup.setText(Messages.Right);
@@ -235,7 +235,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    public void createAncestorArea(Composite parent) {
+    protected void createAncestorArea(Composite parent) {
 
         ancestorGroup = new Group(parent, SWT.NONE);
         ancestorGroup.setText(Messages.Ancestor);
@@ -414,7 +414,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    public boolean canFinish() {
+    protected boolean canFinish() {
 
         if (getCurrentLeftConnectionName() == null || getCurrentLeftLibraryName() == null || getCurrentLeftFileName() == null
             || getCurrentLeftMemberName() == null) {
