@@ -416,27 +416,35 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     public boolean canFinish() {
 
-        if (getCurrentLeftConnectionName() == null || getCurrentLeftLibraryName() == null || getCurrentLeftFileName() == null || getCurrentLeftMemberName() == null) {
+        if (getCurrentLeftConnectionName() == null || getCurrentLeftLibraryName() == null || getCurrentLeftFileName() == null
+            || getCurrentLeftMemberName() == null) {
             return false;
         }
 
         if (isThreeWay()) {
-            if (getCurrentRightMemberName() == null || getCurrentRightMemberName().length() == 0 || getCurrentRightFileName() == null || getCurrentRightFileName().length() == 0
-                || getCurrentRightLibraryName() == null || getCurrentRightLibraryName().length() == 0 || getCurrentAncestorMemberName() == null
-                || getCurrentAncestorMemberName().length() == 0 || getCurrentAncestorFileName() == null || getCurrentAncestorFileName().length() == 0
-                || getCurrentAncestorLibraryName() == null || getCurrentAncestorLibraryName().length() == 0) {
+            if (getCurrentRightMemberName() == null || getCurrentRightMemberName().length() == 0 || getCurrentRightFileName() == null
+                || getCurrentRightFileName().length() == 0 || getCurrentRightLibraryName() == null || getCurrentRightLibraryName().length() == 0
+                || getCurrentAncestorMemberName() == null || getCurrentAncestorMemberName().length() == 0 || getCurrentAncestorFileName() == null
+                || getCurrentAncestorFileName().length() == 0 || getCurrentAncestorLibraryName() == null
+                || getCurrentAncestorLibraryName().length() == 0) {
                 return false;
             }
-            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentAncestorMemberName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentAncestorFileName())
-                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentAncestorLibraryName()) && getCurrentRightConnectionName().equals(getCurrentAncestorConnectionName())) {
+            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentAncestorMemberName())
+                && getCurrentRightFileName().equalsIgnoreCase(getCurrentAncestorFileName())
+                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentAncestorLibraryName())
+                && getCurrentRightConnectionName().equals(getCurrentAncestorConnectionName())) {
                 return false;
             }
-            if (getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
-                && getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentRightConnectionName().equals(getCurrentLeftConnectionName())) {
+            if (getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName())
+                && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName())
+                && getCurrentRightConnectionName().equals(getCurrentLeftConnectionName())) {
                 return false;
             }
-            if (getCurrentAncestorLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentAncestorFileName().equalsIgnoreCase(getCurrentLeftFileName())
-                && getCurrentAncestorMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentAncestorConnectionName().equals(getCurrentLeftConnectionName())) {
+            if (getCurrentAncestorLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName())
+                && getCurrentAncestorFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentAncestorMemberName().equalsIgnoreCase(getCurrentLeftMemberName())
+                && getCurrentAncestorConnectionName().equals(getCurrentLeftConnectionName())) {
                 return false;
             }
         } else {
@@ -451,8 +459,10 @@ public class RSECompareDialog extends CompareDialog {
                 return false;
             }
 
-            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName()) && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
-                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName()) && getCurrentRightConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())) {
+            if (getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName())
+                && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
+                && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName())
+                && getCurrentRightConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())) {
                 return false;
             }
         }
@@ -574,23 +584,8 @@ public class RSECompareDialog extends CompareDialog {
         return ancestorMemberPrompt.getMemberName().trim();
     }
 
-    public ISeriesConnection getRightConnection() {
-        return rightConnection;
-    }
-
-    public String getRightLibrary() {
-        return rightLibrary;
-    }
-
-    public String getRightFile() {
-        return rightFile;
-    }
-
-    public String getRightMember() {
-        return rightMember;
-    }
-
     public RSEMember getRightRSEMember() {
+        
         try {
             return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
         } catch (Exception e) {
@@ -599,58 +594,18 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    public ISeriesConnection getLeftConnection() {
-        return leftConnection;
-    }
-
-    public String getLeftLibrary() {
-        if (leftLibrary == null) {
-            return ""; //$NON-NLS-1$
-        }
-        return leftLibrary;
-    }
-
-    public String getLeftFile() {
-        if (leftFile == null) {
-            return ""; //$NON-NLS-1$
-        }
-        return leftFile;
-    }
-
-    public String getLeftMember() {
-        if (leftMember == null) {
-            return ""; //$NON-NLS-1$
-        }
-        return leftMember;
-    }
-
     public RSEMember getLeftRSEMember() {
-        // return rseLeftMember;
+
         try {
-            return new RSEMember(leftConnection.getISeriesMember(getShell(), leftLibrary, leftFile, leftMember));
+            return new RSEMember(getLeftConnection().getISeriesMember(getShell(), leftLibrary, leftFile, leftMember));
         } catch (Exception e) {
             MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
             return null;
         }
     }
 
-    public ISeriesConnection getAncestorConnection() {
-        return ancestorConnection;
-    }
-
-    public String getAncestorLibrary() {
-        return ancestorLibrary;
-    }
-
-    public String getAncestorFile() {
-        return ancestorFile;
-    }
-
-    public String getAncestorMember() {
-        return ancestorMember;
-    }
-
     public RSEMember getAncestorRSEMember() {
+        
         try {
             return new RSEMember(ancestorConnection.getISeriesMember(getShell(), ancestorLibrary, ancestorFile, ancestorMember));
         } catch (Exception e) {
@@ -666,4 +621,28 @@ public class RSECompareDialog extends CompareDialog {
         initializeLeftMember((RSEMember)rightMember);
     }
 
+    private ISeriesConnection getLeftConnection() {
+        return leftConnection;
+    }
+
+    private String getLeftLibrary() {
+        if (leftLibrary == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftLibrary;
+    }
+
+    private String getLeftFile() {
+        if (leftFile == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftFile;
+    }
+
+    private String getLeftMember() {
+        if (leftMember == null) {
+            return ""; //$NON-NLS-1$
+        }
+        return leftMember;
+    }
 }

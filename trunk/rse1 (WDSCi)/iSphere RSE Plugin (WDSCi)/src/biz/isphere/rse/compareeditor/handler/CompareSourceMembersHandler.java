@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.handler;
+package biz.isphere.rse.compareeditor.handler;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -75,12 +75,16 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
             cc.setThreeWay(threeWay);
 
             if (selectedMembers.length > 2) {
+                RSEMember dialogRightMember = dialog.getRightRSEMember();
+                String rightConnection = dialogRightMember.getConnection();
+                String rightLibrary = dialogRightMember.getLibrary();
+                String rightSourceFile = dialogRightMember.getSourceFile();
                 for (RSEMember rseSelectedMember : selectedMembers) {
-                    RSEMember rseRightMember = getRightRSEMember(dialog.getRightConnection(), dialog.getRightLibrary(), dialog.getRightFile(),
-                        rseSelectedMember.getMember());
+                    String rightMember = rseSelectedMember.getMember();
+                    RSEMember rseRightMember = getMember(rightConnection, rightLibrary, rightSourceFile, rightMember);
                     if (!rseRightMember.exists()) {
                         String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
-                            new Object[] { dialog.getRightLibrary(), dialog.getRightFile(), rseSelectedMember.getMember() });
+                            new Object[] { rightLibrary, rightSourceFile, rightMember });
                         MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 
                     } else {
@@ -97,8 +101,9 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
         }
     }
 
-    private RSEMember getRightRSEMember(ISeriesConnection connection, String libraryName, String sourceFileName, String memberName) {
+    private RSEMember getMember(String connectionName, String libraryName, String sourceFileName, String memberName) {
         try {
+            ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
             return new RSEMember((ISeriesMember)connection.getISeriesMember(libraryName, sourceFileName, memberName));
         } catch (Exception e) {
             MessageDialog.openError(shell, biz.isphere.core.Messages.Error, e.getMessage());

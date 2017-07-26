@@ -17,7 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
-import biz.isphere.rse.handler.CompareSourceMembersHandler;
+import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.internal.RSEMember;
 
 public class CompareEditorMenuAction extends WorkbenchWindowActionDelegate {
