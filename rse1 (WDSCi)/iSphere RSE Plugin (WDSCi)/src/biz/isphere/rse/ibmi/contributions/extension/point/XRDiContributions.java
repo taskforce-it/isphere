@@ -28,8 +28,8 @@ import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.clcommands.ICLPrompterImpl;
+import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.connection.ConnectionManager;
-import biz.isphere.rse.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.as400.access.AS400;
