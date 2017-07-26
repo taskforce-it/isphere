@@ -8,11 +8,9 @@
 
 package biz.isphere.tn5250j.rse.sessionspart.handler;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.compareeditor.CompareAction;
-import biz.isphere.rse.compareeditor.RSECompareDialog;
+import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.internal.RSEMember;
 import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
@@ -39,33 +37,11 @@ public class OpenCompareAsync extends AbstractAsyncHandler {
             IQSYSMember _member = getConnection().getMember(library, sourceFile, member, null);
             if (_member != null) {
 
-                RSEMember rseLeftMember = new RSEMember(_member);
-                RSECompareDialog dialog = new RSECompareDialog(getShell(), true, rseLeftMember);
-
-                if (dialog.open() == Dialog.OK) {
-
-                    boolean editable = dialog.isEditable();
-                    boolean considerDate = dialog.isConsiderDate();
-                    boolean threeWay = dialog.isThreeWay();
-
-                    RSEMember rseAncestorMember = null;
-                    if (threeWay) {
-                        IQSYSMember ancestorMember = dialog.getAncestorConnection().getMember(dialog.getAncestorLibrary(), dialog.getAncestorFile(),
-                            dialog.getAncestorMember(), null);
-                        if (ancestorMember != null) {
-                            rseAncestorMember = new RSEMember(ancestorMember);
-                        }
-                    }
-
-                    RSEMember rseRightMember = null;
-                    IQSYSMember rightMember = dialog.getRightConnection().getMember(dialog.getRightLibrary(), dialog.getRightFile(),
-                        dialog.getRightMember(), null);
-                    if (rightMember != null) {
-                        rseRightMember = new RSEMember(rightMember);
-                    }
-
-                    CompareAction action = new CompareAction(editable, considerDate, threeWay, rseAncestorMember, rseLeftMember, rseRightMember, null);
-                    action.run();
+                RSEMember[] selectedMembers = new RSEMember[1];
+                selectedMembers[0] = new RSEMember(_member);
+                if (selectedMembers.length > 0) {
+                    CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
+                    handler.handleSourceCompare(selectedMembers);
                 }
             }
         } catch (Throwable e) {

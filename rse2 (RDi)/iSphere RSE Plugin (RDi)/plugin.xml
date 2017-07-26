@@ -1190,7 +1190,7 @@
       </command>
       
       <command
-      		defaultHandler="biz.isphere.rse.handler.CompareSourceMembersHandler"
+      		defaultHandler="biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler"
             id="biz.isphere.core.command.SourceMemberCompare.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Compare_Source_Members">
