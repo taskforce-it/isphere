@@ -41,6 +41,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
 
+    // Must match the qualified name of class RSECompareDialog.
+    public static final String DIALOG_SETTINGS = "biz.isphere.rse.compareeditor.RSECompareDialog"; //$NON-NLS-1$
+
     protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT"; //$NON-NLS-1$
     protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED"; //$NON-NLS-1$
 

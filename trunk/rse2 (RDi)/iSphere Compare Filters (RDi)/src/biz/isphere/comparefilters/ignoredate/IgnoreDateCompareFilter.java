@@ -19,7 +19,6 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.comparefilters.preferences.Preferences;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.compareeditor.CompareDialog;
-import biz.isphere.rse.compareeditor.RSECompareDialog;
 
 public class IgnoreDateCompareFilter implements ICompareFilter {
 
@@ -47,7 +46,7 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
 
     public boolean isEnabledInitially() {
 
-        IDialogSettings dialogSettings = ISpherePlugin.getDefault().getDialogSettings().getSection(RSECompareDialog.class.getName());
+        IDialogSettings dialogSettings = ISpherePlugin.getDefault().getDialogSettings().getSection(CompareDialog.DIALOG_SETTINGS);
         if (dialogSettings == null) {
             return false;
         }
