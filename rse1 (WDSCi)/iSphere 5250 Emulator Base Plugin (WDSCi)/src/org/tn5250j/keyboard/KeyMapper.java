@@ -221,13 +221,13 @@ public class KeyMapper {
             mappedKeys.put(newKeyStroker(34, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[jumpnext]");
             mappedKeys.put(newKeyStroker(33, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[jumpprev]");
 
-            initISphereSpecialKeys();
+            initISphereSpecialKeys(true);
 
             saveKeyMap();
         } else {
 
             setKeyMap(keys);
-            boolean isDirty = initISphereSpecialKeys();
+            boolean isDirty = initISphereSpecialKeys(false);
             if (isDirty) {
                 saveKeyMap();
             }
@@ -236,7 +236,7 @@ public class KeyMapper {
 
     }
 
-    private static boolean initISphereSpecialKeys() {
+    private static boolean initISphereSpecialKeys(boolean createNewMapping) {
 
         boolean isDirty = false;
 
@@ -253,17 +253,31 @@ public class KeyMapper {
             isDirty = true;
         }
 
-        // b) Moving between minor (multiple) sessions: Alt+Up and Alt+Down
-        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION)) {
-            mappedKeys.put(new KeyStroker(38, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
-                TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION);
-            isDirty = true;
-        }
-
-        if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION)) {
-            mappedKeys.put(new KeyStroker(40, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
-                TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION);
-            isDirty = true;
+        // b) Moving between minor (multiple) sessions ... 
+        if (createNewMapping) {
+            // ... using the new mapping: Ctrl+Right and Ctrl+Left
+            if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION)) {
+                setKeyStroker(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION,
+                    new KeyStroker(39, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD));
+                isDirty = true;
+            }
+            if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION)) {
+                setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION, new KeyStroker(37, false, true, false, false,
+                    KeyStroker.KEY_LOCATION_STANDARD));
+                isDirty = true;
+            }
+        } else {
+            // ... using the old mapping: Alt+Up and Alt+Down
+            if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION)) {
+                mappedKeys.put(new KeyStroker(38, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                    TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION);
+                isDirty = true;
+            }
+            if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION)) {
+                mappedKeys.put(new KeyStroker(40, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD),
+                    TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION);
+                isDirty = true;
+            }
         }
 
         // c) Scrolling sessions: Ctrl+Alt+Up, Ctrl+Alt+Down, Ctrl+Alt+Left and
