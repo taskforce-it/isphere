@@ -676,7 +676,7 @@ public abstract class CompareDialog extends XDialog {
         return hasAncestorMember;
     }
 
-    private void loadScreenValues() {
+    protected void loadScreenValues() {
         if (selectEditable) {
             editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
         } else {
@@ -686,7 +686,7 @@ public abstract class CompareDialog extends XDialog {
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
     }
 
-    private void storeScreenValues() {
+    protected void storeScreenValues() {
         if (selectEditable) {
             getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
         }
