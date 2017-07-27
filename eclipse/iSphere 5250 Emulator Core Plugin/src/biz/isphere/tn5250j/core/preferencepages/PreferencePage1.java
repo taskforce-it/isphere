@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.tn5250j.TN5250JPlugin;
 
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
@@ -56,6 +57,11 @@ public class PreferencePage1 extends PreferencePage implements IWorkbenchPrefere
                 Program.launch("http://tn5250j.sourceforge.net"); //$NON-NLS-1$
             }
         });
+
+        final Label labelVersionInfo = new Label(container, SWT.NONE);
+        final GridData gd_labelVersionInfo = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+        labelVersionInfo.setLayoutData(gd_labelVersionInfo);
+        labelVersionInfo.setText(TN5250JPlugin.getDefault().getVersionInfo());
 
         return container;
 

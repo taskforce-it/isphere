@@ -29,6 +29,10 @@ public class TN5250JPlugin extends Plugin {
         return plugin;
     }
 
+    public String getVersionInfo() {
+        return "Version: " + TN5250jConstants.VERSION_INFO;
+    }
+    
 }
 
 // ISPHERE - NEW - END
