@@ -336,31 +336,25 @@ public abstract class CompareDialog extends XDialog {
         /*
          * ---------------- Create left area ----------------
          */
-        if (!hasLeftMember) {
-            createLeftArea(rtnGroup);
-        } else {
+        if (hasLeftMember) {
             createReadOnlyLeftArea(rtnGroup);
+        } else {
+            createEditableLeftArea(rtnGroup);
         }
 
         /*
          * -------- Create right and ancestor areas --------
          */
-        if (hasMultipleRightMembers) {
-            createRightArea(rtnGroup);
-        } else if (!hasRightMember) {
-            createRightArea(rtnGroup);
-            createAncestorArea(rtnGroup);
-        } else {
-            if (hasRightMember) {
-                if (!hasAncestorMember()) {
-                    createSwitchMemberButton(rtnGroup);
-                }
+        if (hasRightMember) {
+            if (!hasMultipleRightMembers) {
+                createSwitchMemberButton(rtnGroup);
                 createReadOnlyRightArea(rtnGroup);
+            } else {
+                createEditableRightArea(rtnGroup);
             }
-
-            if (hasAncestorMember()) {
-                createReadOnlyAncestorArea(rtnGroup);
-            }
+        } else {
+            createEditableRightArea(rtnGroup);
+            createEditableAncestorArea(rtnGroup);
         }
 
         if (!hasRightMember) {
@@ -441,13 +435,13 @@ public abstract class CompareDialog extends XDialog {
         return okButton;
     }
 
-    protected void createLeftArea(Composite parent) {
+    protected void createEditableLeftArea(Composite parent) {
     }
 
-    protected void createRightArea(Composite parent) {
+    protected void createEditableRightArea(Composite parent) {
     }
 
-    protected void createAncestorArea(Composite parent) {
+    protected void createEditableAncestorArea(Composite parent) {
     }
 
     protected void setAncestorVisible(boolean visible) {
@@ -565,60 +559,6 @@ public abstract class CompareDialog extends XDialog {
             Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
             rightTimeText.setLayoutData(getGridData());
             rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime()); //$NON-NLS-1$
-        }
-    }
-
-    private void createReadOnlyAncestorArea(Composite parent) {
-
-        Group ancestorGroup = new Group(parent, SWT.NONE);
-        ancestorGroup.setText(Messages.Ancestor);
-        GridLayout ancestorLayout = new GridLayout(2, false);
-        ancestorGroup.setLayout(ancestorLayout);
-        ancestorGroup.setLayoutData(getGridData());
-
-        Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
-        ancestorConnectionLabel.setText(Messages.Connection_colon);
-
-        Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
-        ancestorConnectionText.setLayoutData(getGridData());
-        ancestorConnectionText.setText(ancestorMember.getConnection());
-
-        Label ancestorLibraryLabel = new Label(ancestorGroup, SWT.NONE);
-        ancestorLibraryLabel.setText(Messages.Library_colon);
-        Text ancestorLibraryText = WidgetFactory.createReadOnlyText(ancestorGroup);
-        ancestorLibraryText.setLayoutData(getGridData());
-        if (ancestorMember.isArchive()) {
-            ancestorLibraryText.setText(ancestorMember.getArchiveLibrary());
-        } else {
-            ancestorLibraryText.setText(ancestorMember.getLibrary());
-        }
-
-        Label ancestorFileLabel = new Label(ancestorGroup, SWT.NONE);
-        ancestorFileLabel.setText(Messages.File_colon);
-        Text ancestorFileText = WidgetFactory.createReadOnlyText(ancestorGroup);
-        ancestorFileText.setLayoutData(getGridData());
-        if (ancestorMember.isArchive()) {
-            ancestorFileText.setText(ancestorMember.getArchiveFile());
-        } else {
-            ancestorFileText.setText(ancestorMember.getSourceFile());
-        }
-
-        Label ancestorMemberLabel = new Label(ancestorGroup, SWT.NONE);
-        ancestorMemberLabel.setText(Messages.Member_colon);
-        Text ancestorMemberText = WidgetFactory.createReadOnlyText(ancestorGroup);
-        ancestorMemberText.setLayoutData(getGridData());
-        if (ancestorMember.isArchive()) {
-            ancestorMemberText.setText(ancestorMember.getArchiveMember());
-        } else {
-            ancestorMemberText.setText(ancestorMember.getMember());
-        }
-
-        if (ancestorMember.isArchive()) {
-            Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
-            ancestorTimeLabel.setText(Messages.Archive_colon);
-            Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
-            ancestorTimeText.setLayoutData(getGridData());
-            ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime()); //$NON-NLS-1$
         }
     }
 
