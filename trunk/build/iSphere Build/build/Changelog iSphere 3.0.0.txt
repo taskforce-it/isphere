@@ -11,6 +11,11 @@ Changelog: iSphere 3.1.0.b001
  • Added context menu with option "Display Search Options" to search  
    result tabs. 
 
+Changelog: iSphere 3.0.6.r
+--------------------------
+ • Fixed NullPointerException because of KeyMapper not have 
+   been initialized.
+
 Changelog: iSphere 3.0.6.b002
 -----------------------------
  • Fixed NullPointerException because of a not initialized KeyMapper.
