@@ -197,6 +197,7 @@ public class RSECompareDialog extends CompareDialog {
         rightGroup.setLayout(rightLayout);
         rightGroup.setLayoutData(getGridData());
 
+        // Initialize right connection with left connection
         rightConnectionCombo = new ISeriesConnectionCombo(rightGroup, getLeftConnection(), false);
         rightConnectionCombo.setLayoutData(getGridData());
         rightConnectionCombo.getCombo().setLayoutData(getGridData());
@@ -245,6 +246,7 @@ public class RSECompareDialog extends CompareDialog {
         ancestorGroup.setLayout(ancestorLayout);
         ancestorGroup.setLayoutData(getGridData());
 
+        // Initialize ancestor connection with left connection
         ancestorConnectionCombo = new ISeriesConnectionCombo(ancestorGroup, getLeftConnection(), false);
         ancestorConnectionCombo.setLayoutData(getGridData());
         ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
