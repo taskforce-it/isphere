@@ -334,6 +334,10 @@ public class RSECompareDialog extends CompareDialog {
             leftFile = getCurrentLeftFileName();
             leftMember = getCurrentLeftMemberName();
 
+            if (!validateMember(leftConnection, leftLibrary, leftFile, leftMember, leftMemberPrompt)) {
+                return;
+            }
+
         }
 
         if (hasMultipleRightMembers()) {
@@ -343,27 +347,7 @@ public class RSECompareDialog extends CompareDialog {
             rightFile = getCurrentRightFileName();
             rightMember = null;
 
-            ISeriesLibrary qsysLibrary = null;
-            try {
-                qsysLibrary = rightConnection.getISeriesLibrary(getShell(), rightLibrary);
-            } catch (Exception e) {
-            }
-            if (qsysLibrary == null) {
-                String message = biz.isphere.core.Messages.bind(Messages.Library_A_not_found, new Object[] { rightLibrary });
-                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                rightMemberPrompt.getLibraryCombo().setFocus();
-                return;
-            }
-
-            ISeriesFile qsysFile = null;
-            try {
-                qsysFile = rightConnection.getISeriesFile(getShell(), rightLibrary, rightFile);
-            } catch (Exception e) {
-            }
-            if (qsysFile == null) {
-                String message = biz.isphere.core.Messages.bind(Messages.File_A_in_library_B_not_found, new Object[] { rightFile, rightLibrary });
-                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                rightMemberPrompt.getFileCombo().setFocus();
+            if (!validateMember(rightConnection, rightLibrary, rightFile, null, rightMemberPrompt)) {
                 return;
             }
 
@@ -374,15 +358,7 @@ public class RSECompareDialog extends CompareDialog {
             rightFile = getCurrentRightFileName();
             rightMember = getCurrentRightMemberName();
 
-            RSEMember _rightMember = getRightRSEMember();
-            if (_rightMember == null) {
-                rightMemberPrompt.getMemberCombo().setFocus();
-                return;
-            } else if (!_rightMember.exists()) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
-                    rightLibrary, rightFile, rightMember });
-                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                rightMemberPrompt.getMemberCombo().setFocus();
+            if (!validateMember(rightConnection, rightLibrary, rightFile, rightMember, rightMemberPrompt)) {
                 return;
             }
 
@@ -393,15 +369,7 @@ public class RSECompareDialog extends CompareDialog {
                 ancestorFile = getCurrentAncestorFileName();
                 ancestorMember = getCurrentAncestorMemberName();
 
-                RSEMember _ancestorMember = getAncestorRSEMember();
-                if (_ancestorMember == null) {
-                    ancestorMemberPrompt.getMemberCombo().setFocus();
-                    return;
-                } else if (!_ancestorMember.exists()) {
-                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
-                        new Object[] { ancestorLibrary, ancestorFile, ancestorMember });
-                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                    ancestorMemberPrompt.getMemberCombo().setFocus();
+                if (!validateMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember, ancestorMemberPrompt)) {
                     return;
                 }
 
@@ -411,6 +379,93 @@ public class RSECompareDialog extends CompareDialog {
 
         // Close dialog
         super.okPressed();
+    }
+
+    private boolean validateMember(ISeriesConnection connection, String library, String file, String member, ISeriesMemberPrompt memberPrompt) {
+
+        if (!checkLibrary(connection, library)) {
+            displayLibraryNotFoundMessage(library, memberPrompt);
+            return false;
+        }
+
+        if (!checkFile(connection, library, file)) {
+            displayFileNotFoundMessage(library, file, memberPrompt);
+            return false;
+        }
+
+        if (member != null && !checkMember(connection, library, file, member)) {
+            displayMemberNotFoundMessage(library, file, member, memberPrompt);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkLibrary(ISeriesConnection connection, String libraryName) {
+
+        ISeriesLibrary qsysLibrary = null;
+        try {
+            qsysLibrary = connection.getISeriesLibrary(getShell(), libraryName);
+        } catch (Exception e) {
+        }
+
+        if (qsysLibrary != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void displayLibraryNotFoundMessage(String libraryName, ISeriesMemberPrompt qsysMemberPrompt) {
+
+        String message = biz.isphere.core.Messages.bind(Messages.Library_A_not_found, new Object[] { libraryName });
+        MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+        qsysMemberPrompt.getLibraryCombo().setFocus();
+    }
+
+    private boolean checkFile(ISeriesConnection connection, String libraryName, String fileName) {
+
+        ISeriesFile qsysFile = null;
+        try {
+            qsysFile = connection.getISeriesFile(getShell(), libraryName, fileName);
+        } catch (Exception e) {
+        }
+
+        if (qsysFile != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void displayFileNotFoundMessage(String libraryName, String fileName, ISeriesMemberPrompt qsysMemberPrompt) {
+
+        String message = biz.isphere.core.Messages.bind(Messages.File_A_in_library_B_not_found, new Object[] { fileName, libraryName });
+        MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+        qsysMemberPrompt.getFileCombo().setFocus();
+    }
+
+    private boolean checkMember(ISeriesConnection connection, String libraryName, String fileName, String memberName) {
+
+        RSEMember _rightMember = getRightRSEMember();
+        if (_rightMember == null) {
+            return false;
+        }
+
+        if (_rightMember.exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void displayMemberNotFoundMessage(String libraryName, String fileName, String memberName, ISeriesMemberPrompt qsysMemberPrompt) {
+
+        String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
+            libraryName, fileName, memberName });
+        MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
+        qsysMemberPrompt.getMemberCombo().setFocus();
+
     }
 
     @Override
@@ -585,29 +640,21 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     public RSEMember getRightRSEMember() {
-        
-        try {
-            return new RSEMember(rightConnection.getISeriesMember(getShell(), rightLibrary, rightFile, rightMember));
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
-            return null;
-        }
+        return getRSEMember(rightConnection, rightLibrary, rightFile, rightMember);
     }
 
     public RSEMember getLeftRSEMember() {
-
-        try {
-            return new RSEMember(getLeftConnection().getISeriesMember(getShell(), leftLibrary, leftFile, leftMember));
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
-            return null;
-        }
+        return getRSEMember(leftConnection, leftLibrary, leftFile, leftMember);
     }
 
     public RSEMember getAncestorRSEMember() {
-        
+        return getRSEMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember);
+    }
+
+    private RSEMember getRSEMember(ISeriesConnection connection, String library, String file, String member) {
+
         try {
-            return new RSEMember(ancestorConnection.getISeriesMember(getShell(), ancestorLibrary, ancestorFile, ancestorMember));
+            return new RSEMember(connection.getISeriesMember(getShell(), library, file, member));
         } catch (Exception e) {
             MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, e.getMessage());
             return null;
