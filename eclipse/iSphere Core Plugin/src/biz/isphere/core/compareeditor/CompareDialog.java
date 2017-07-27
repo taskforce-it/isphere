@@ -365,8 +365,6 @@ public abstract class CompareDialog extends XDialog {
             }
         }
 
-        setFocus();
-
         return rtnGroup;
     }
 
