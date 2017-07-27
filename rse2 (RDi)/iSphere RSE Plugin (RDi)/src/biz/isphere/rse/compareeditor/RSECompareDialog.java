@@ -141,7 +141,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    protected void createLeftArea(Composite parent) {
+    protected void createEditableLeftArea(Composite parent) {
 
         Group leftGroup = new Group(parent, SWT.NONE);
         leftGroup.setText(Messages.Right);
@@ -163,17 +163,10 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         leftMemberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
-        if (hasLeftMember()) {
-            leftMemberPrompt.setSystemConnection(getLeftConnection().getHost());
-            leftMemberPrompt.setLibraryName(getLeftLibrary());
-            leftMemberPrompt.setFileName(getLeftFile());
-            leftMemberPrompt.setMemberName(getLeftMember());
-        } else {
-            leftMemberPrompt.setSystemConnection(null);
-            leftMemberPrompt.setLibraryName("");
-            leftMemberPrompt.setFileName("");
-            leftMemberPrompt.setMemberName("");
-        }
+        leftMemberPrompt.setSystemConnection(getLeftConnection().getHost());
+        leftMemberPrompt.setLibraryName(getLeftLibrary());
+        leftMemberPrompt.setFileName(getLeftFile());
+        leftMemberPrompt.setMemberName(getLeftMember());
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -188,7 +181,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    protected void createRightArea(Composite parent) {
+    protected void createEditableRightArea(Composite parent) {
 
         Group rightGroup = new Group(parent, SWT.NONE);
         rightGroup.setText(Messages.Right);
@@ -235,7 +228,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     @Override
-    protected void createAncestorArea(Composite parent) {
+    protected void createEditableAncestorArea(Composite parent) {
 
         ancestorGroup = new Group(parent, SWT.NONE);
         ancestorGroup.setText(Messages.Ancestor);
@@ -340,39 +333,33 @@ public class RSECompareDialog extends CompareDialog {
 
         }
 
-        if (hasMultipleRightMembers()) {
+        if (!hasRightMember() || hasMultipleRightMembers()) {
 
             rightConnection = IBMiConnection.getConnection(rightConnectionCombo.getHost());
             rightLibrary = getCurrentRightLibraryName();
             rightFile = getCurrentRightFileName();
-            rightMember = null;
 
-            if (!validateMember(rightConnection, rightLibrary, rightFile, null, rightMemberPrompt)) {
-                return;
+            if (hasMultipleRightMembers()) {
+                rightMember = null;
+            } else {
+                rightMember = getCurrentRightMemberName();
             }
-
-        } else if (!hasRightMember()) {
-
-            rightConnection = IBMiConnection.getConnection(rightConnectionCombo.getHost());
-            rightLibrary = getCurrentRightLibraryName();
-            rightFile = getCurrentRightFileName();
-            rightMember = getCurrentRightMemberName();
 
             if (!validateMember(rightConnection, rightLibrary, rightFile, rightMember, rightMemberPrompt)) {
                 return;
             }
 
-            if (isThreeWay()) {
+        }
 
-                ancestorConnection = IBMiConnection.getConnection(ancestorConnectionCombo.getHost());
-                ancestorLibrary = getCurrentAncestorLibraryName();
-                ancestorFile = getCurrentAncestorFileName();
-                ancestorMember = getCurrentAncestorMemberName();
+        if (isThreeWay()) {
 
-                if (!validateMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember, ancestorMemberPrompt)) {
-                    return;
-                }
+            ancestorConnection = IBMiConnection.getConnection(ancestorConnectionCombo.getHost());
+            ancestorLibrary = getCurrentAncestorLibraryName();
+            ancestorFile = getCurrentAncestorFileName();
+            ancestorMember = getCurrentAncestorMemberName();
 
+            if (!validateMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember, ancestorMemberPrompt)) {
+                return;
             }
 
         }
