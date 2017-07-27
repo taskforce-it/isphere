@@ -1,7 +1,8 @@
 
-Changelog: iSphere 3.0.6.b002
------------------------------
- • Fixed NullPointerException because of a not initialized KeyMapper.
+Changelog: iSphere 3.0.6.r
+--------------------------
+ • Fixed NullPointerException because of KeyMapper not have 
+   been initialized.
 
 Changelog: iSphere 3.0.6.b001
 -----------------------------
