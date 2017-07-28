@@ -25,22 +25,59 @@
  */
 package org.tn5250j.keyboard.configure;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
-import java.text.*;
-import java.lang.reflect.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.text.CollationKey;
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.Vector;
 
-import org.tn5250j.encoding.CodePage;
-import org.tn5250j.scripting.InterpreterDriverManager;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.encoding.CharMappings;
+import org.tn5250j.encoding.CodePage;
 import org.tn5250j.keyboard.KeyMapper;
 import org.tn5250j.keyboard.KeyStroker;
-import org.tn5250j.tools.LangTool;
+import org.tn5250j.scripting.InterpreterDriverManager;
 import org.tn5250j.tools.AlignLayout;
+import org.tn5250j.tools.LangTool;
 import org.tn5250j.tools.system.OperatingSystem;
 
 public class KeyConfigure extends JDialog implements ActionListener, TN5250jConstants {
@@ -53,6 +90,7 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
     JLabel strokeLocation = new JLabel();
     JLabel strokeLocationAlt = new JLabel();
     JList functions;
+    JPanel ccsidInfo;
     KeyMapper mapper;
     JFrame jf = null;
     JDialog dialog;
@@ -62,14 +100,39 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
     private boolean macros;
     private boolean special;
     private CodePage codePage;
+    private String codePageStr;
     private boolean isLinux;
     private boolean isAltGr;
     private boolean altKey;
+
+    public KeyConfigure(Frame parent, String[] macros, String strCp) {
+
+        super(parent);
+
+        codePageStr = CharMappings.DFT_ENC;
+
+        if (strCp != null) {
+            String[] codePages = CharMappings.getAvailableCodePages();
+            for (String codePage : codePages) {
+                if (strCp.equalsIgnoreCase(codePage)) {
+                    codePageStr = codePage;
+                    break;
+                }
+            }
+        }
+
+        initialize(macros, CharMappings.getCodePage(codePageStr));
+    }
 
     public KeyConfigure(Frame parent, String[] macros, CodePage cp) {
 
         super(parent);
 
+        codePageStr = null;
+        initialize(macros, cp);
+    }
+
+    private void initialize(String[] macros, CodePage cp) {
         codePage = cp;
         macrosList = macros;
 
@@ -131,7 +194,10 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
         functions.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent lse) {
                 if (!lse.getValueIsAdjusting()) {
-                    setKeyDescription(functions.getSelectedIndex());
+                    int index = functions.getSelectedIndex();
+                    if (index >= 0) {
+                        setKeyDescription(index);
+                    }
                 }
             }
         });
@@ -144,6 +210,7 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
         JPanel fp = new JPanel();
 
         JComboBox whichKeys = new JComboBox();
+        whichKeys.setMaximumSize(new Dimension(Short.MAX_VALUE, whichKeys.getPreferredSize().height));
         whichKeys.addItem(LangTool.getString("key.labelKeys"));
         whichKeys.addItem(LangTool.getString("key.labelMacros"));
         whichKeys.addItem(LangTool.getString("key.labelSpecial"));
@@ -153,6 +220,7 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
 
                 JComboBox cb = (JComboBox)e.getSource();
                 loadList((String)cb.getSelectedItem());
+                setCcsidInfoVisibility((String)cb.getSelectedItem());
             }
         });
 
@@ -161,6 +229,17 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
 
         fp.add(whichKeys);
         fp.add(functionsScroll);
+
+        if (codePageStr != null) {
+            ccsidInfo = new JPanel();
+            JLabel ci = new JLabel();
+            ci.setText(LangTool.getString("key.labelCcsid") + ": " + codePageStr);
+            ci.setHorizontalAlignment(SwingConstants.RIGHT);
+            ci.setHorizontalTextPosition(SwingConstants.CENTER);
+            ccsidInfo.add(ci);
+            fp.add(ccsidInfo);
+            setCcsidInfoVisibility((String)whichKeys.getSelectedItem());
+        }
 
         return fp;
 
@@ -182,6 +261,10 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
         dp.setBorder(BorderFactory.createTitledBorder(LangTool.getString("key.labelMapTo")));
 
         dp.setLayout(new BoxLayout(dp, BoxLayout.Y_AXIS));
+
+        // create key map panel
+        JPanel keyMapPanel = new JPanel();
+        keyMapPanel.setLayout(new BorderLayout());
 
         // create primary map panel
         JPanel primeKeyMapPanel = new JPanel();
@@ -329,6 +412,17 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
         }
 
         return "";
+    }
+
+    private void setCcsidInfoVisibility(String which) {
+
+        if (codePageStr != null) {
+            if (which.equals(LangTool.getString("key.labelSpecial"))) {
+                ccsidInfo.setVisible(true);
+            } else {
+                ccsidInfo.setVisible(false);
+            }
+        }
     }
 
     private void loadList(String which) {
@@ -505,7 +599,7 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
         options[0] = LangTool.getString("key.labelClose");
 
         JOptionPane opain = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, // option
-                                                                                                            // type
+            // type
             null, options, options[0]);
 
         dialog = opain.createDialog(this, getTitle());
