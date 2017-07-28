@@ -106,7 +106,6 @@ public class KeyConfigure extends JDialog implements ActionListener {
 
     private static final SortedMap<Integer, String> colorMap = new TreeMap<Integer, String>();
 
-
     static {
         colorMap.put(0x20, "Green");
         colorMap.put(0x21, "Green RI");
@@ -667,6 +666,7 @@ public class KeyConfigure extends JDialog implements ActionListener {
 
             public void windowClosed(WindowEvent we) {
                 if (isAvailable(kg.keyevent)) setNewKeyStrokes(kg.keyevent);
+                dialog.removeWindowListener(this);
             }
 
             public void windowActivated(WindowEvent we) {
