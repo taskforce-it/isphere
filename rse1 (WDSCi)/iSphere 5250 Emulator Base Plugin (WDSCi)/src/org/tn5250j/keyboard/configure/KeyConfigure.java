@@ -615,6 +615,7 @@ public class KeyConfigure extends JDialog implements ActionListener, TN5250jCons
             @Override
             public void windowClosed(WindowEvent we) {
                 if (isAvailable(kg.keyevent)) setNewKeyStrokes(kg.keyevent);
+                dialog.removeWindowListener(this);
             }
 
             @Override
