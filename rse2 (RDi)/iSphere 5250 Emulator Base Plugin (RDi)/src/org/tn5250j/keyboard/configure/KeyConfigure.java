@@ -66,10 +66,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.encoding.CharMappings;
 import org.tn5250j.encoding.ICodePage;
 import org.tn5250j.keyboard.KeyMapper;
 import org.tn5250j.keyboard.KeyStroker;
@@ -89,6 +91,7 @@ public class KeyConfigure extends JDialog implements ActionListener {
     private JLabel strokeLocation = new JLabel();
     private JLabel strokeLocationAlt = new JLabel();
     private JList functions;
+    private JPanel ccsidInfo;
     private JDialog dialog;
     private boolean mods;
     private String[] macrosList;
@@ -96,11 +99,13 @@ public class KeyConfigure extends JDialog implements ActionListener {
     private boolean macros;
     private boolean special;
     private ICodePage codePage;
+    private String codePageStr;
     private boolean isLinux;
     private boolean isAltGr;
     private boolean altKey;
 
     private static final SortedMap<Integer, String> colorMap = new TreeMap<Integer, String>();
+
 
     static {
         colorMap.put(0x20, "Green");
@@ -134,10 +139,34 @@ public class KeyConfigure extends JDialog implements ActionListener {
         colorMap.put(0x3E, "Blue UL");
     }
 
+    public KeyConfigure(Frame parent, String[] macros, String strCp) {
+
+        super(parent);
+
+        codePageStr = CharMappings.DFT_ENC;
+
+        if (strCp != null) {
+            String[] codePages = CharMappings.getAvailableCodePages();
+            for (String codePage : codePages) {
+                if (strCp.equalsIgnoreCase(codePage)) {
+                    codePageStr = codePage;
+                    break;
+                }
+            }
+        }
+
+        initialize(macros, CharMappings.getCodePage(codePageStr));
+    }
+
     public KeyConfigure(Frame parent, String[] macros, ICodePage cp) {
 
         super(parent);
 
+        codePageStr = null;
+        initialize(macros, cp);
+    }
+
+    private void initialize(String[] macros, ICodePage cp) {
         codePage = cp;
         macrosList = macros;
 
@@ -198,7 +227,10 @@ public class KeyConfigure extends JDialog implements ActionListener {
         functions.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent lse) {
                 if (!lse.getValueIsAdjusting()) {
-                    setKeyDescription(functions.getSelectedIndex());
+                    int index = functions.getSelectedIndex();
+                    if (index >= 0) {
+                        setKeyDescription(index);
+                    }
                 }
             }
         });
@@ -221,6 +253,7 @@ public class KeyConfigure extends JDialog implements ActionListener {
 
                 JComboBox cb = (JComboBox)e.getSource();
                 loadList((String)cb.getSelectedItem());
+                setCcsidInfoVisibility((String)cb.getSelectedItem());
             }
         });
 
@@ -229,6 +262,17 @@ public class KeyConfigure extends JDialog implements ActionListener {
 
         fp.add(whichKeys);
         fp.add(functionsScroll);
+
+        if (codePageStr != null) {
+            ccsidInfo = new JPanel();
+            JLabel ci = new JLabel();
+            ci.setText(LangTool.getString("key.labelCcsid") + ": " + codePageStr);
+            ci.setHorizontalAlignment(SwingConstants.RIGHT);
+            ci.setHorizontalTextPosition(SwingConstants.CENTER);
+            ccsidInfo.add(ci);
+            fp.add(ccsidInfo);
+            setCcsidInfoVisibility((String)whichKeys.getSelectedItem());
+        }
 
         return fp;
 
@@ -403,6 +447,17 @@ public class KeyConfigure extends JDialog implements ActionListener {
         }
 
         return "";
+    }
+
+    private void setCcsidInfoVisibility(String which) {
+
+        if (codePageStr != null) {
+            if (which.equals(LangTool.getString("key.labelSpecial"))) {
+                ccsidInfo.setVisible(true);
+            } else {
+                ccsidInfo.setVisible(false);
+            }
+        }
     }
 
     private void loadList(String which) {

@@ -8,19 +8,32 @@
 
 package biz.isphere.tn5250j.core.preferencepages;
 
+import java.awt.Frame;
+
+import org.eclipse.albireo.core.AwtEnvironment;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.tn5250j.TN5250jConstants;
+import org.tn5250j.encoding.CharMappings;
+import org.tn5250j.encoding.ICodePage;
 import org.tn5250j.keyboard.KeyMapper;
+import org.tn5250j.keyboard.configure.KeyConfigure;
+import org.tn5250j.tools.LangTool;
+import org.tn5250j.tools.Macronizer;
 
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.tn5250j.core.Messages;
+import biz.isphere.tn5250j.core.preferences.Preferences;
 
 /**
  * 5250 preferences page: Key bindings information screen
@@ -86,6 +99,38 @@ public class PreferencePage4 extends PreferencePage implements IWorkbenchPrefere
         labelKey9.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         labelKey9.setText(getKeyMappingInfo(Messages.Session_previous_multiple, TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION));
 
+//        final Label labelSeparator4 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+//        final GridData gd_labelSeparator4 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+//        labelSeparator4.setLayoutData(gd_labelSeparator4);
+
+        final Button buttonKeyConfigure = WidgetFactory.createPushButton(container);
+        buttonKeyConfigure.setText(Messages.Map_Keys);
+        buttonKeyConfigure.addSelectionListener(new SelectionAdapter() {
+            
+            public void widgetSelected(SelectionEvent event) {
+                
+                final AwtEnvironment awtEnv = AwtEnvironment.getInstance(getShell().getDisplay());
+                final Frame parent = awtEnv.createDialogParentFrame();
+                awtEnv.invokeAndBlockSwt(new Runnable() {
+                    
+                    public void run() {
+                        String dftCodePage = Preferences.getInstance().getSessionCodepage();
+                        if (Macronizer.isMacrosExist()) {
+                            String[] macrosList = Macronizer.getMacroList();
+                            new KeyConfigure(parent, macrosList, dftCodePage);
+                        } else {
+                            new KeyConfigure(parent, null, dftCodePage);
+                        }
+                    }
+                });  
+                
+            }
+            
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+        
         return container;
     }
 
