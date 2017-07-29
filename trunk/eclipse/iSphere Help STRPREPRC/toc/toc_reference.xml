@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="SPRPREPRC Plug-in" link_to="../biz.isphere.base.help/toc/toc.xml#reference"> 
-  <topic label="SPRPREPRC Plug-in"  href="html/strpreprc/strpreprc.html"> 
+<toc label="STRPREPRC Plug-in" link_to="../biz.isphere.base.help/toc/toc.xml#strpreprc_plugin"> 
+  <topic label="Plug-in"  href="html/strpreprc/strpreprc.html" link_to="../biz.isphere.base.help/toc/toc.xml#strpreprc_plugin"> 
   	<!--
   	Add sub topics here:
     <topic label="..." href="html/strpreprc/..." />
