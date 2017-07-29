@@ -3,7 +3,7 @@ Bundle-Version: 3.0.6.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Enabled the "Delete" key to delete spooled files of the iSphere Spooled Files subsystem.\nAdded the iSphere specific keys to "KeyMapper" to fix the issue of the hidden fast cursor up/down keys.
-X-Beta-Version: 3.1.0.b001
-X-Beta-Update-Library: false
-X-Beta-Update-Library-Info: .
-X-Beta-Info: Added menu option "Compare Source Members" to main menu and search result view.\nAdded tooltip showing the search options to search result tabs.\nAdded context menu with option "Display Search Options" to search result tabs.
+X-Beta-Version: 3.1.0.b002
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: Updating the library is not required but recommended if you use the STRPREPRC or BUILD (build iSphere) command.
+X-Beta-Info: Added "Map Keys" button to 5250 preferences page.\nAdded menu option "Compare Source Members" to main menu and search result view.\nAdded tooltip showing the search options to search result tabs.\nAdded context menu with option "Display Search Options" to search result tabs.
