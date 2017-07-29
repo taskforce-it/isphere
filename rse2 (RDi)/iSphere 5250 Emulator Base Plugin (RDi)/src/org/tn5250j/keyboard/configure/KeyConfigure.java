@@ -183,6 +183,8 @@ public class KeyConfigure extends JDialog implements ActionListener {
 
     void jbInit() throws Exception {
 
+        LangTool.init();
+
         // create some reusable borders and layouts
         BorderLayout borderLayout = new BorderLayout();
 
