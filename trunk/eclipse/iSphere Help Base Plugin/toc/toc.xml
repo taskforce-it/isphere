@@ -35,9 +35,9 @@
             <topic label="Create Data Area" href="html/utilities/strpreprc/example_crtdtaara.html" />
             <topic label="Create SQL Table" href="html/utilities/strpreprc/example_runsqlstm.html" />
          </topic> 
-         <topic label="Plug-in">
+         <!-- <topic label="Plug-in"> -->
             <anchor id="strpreprc_plugin" />
-         </topic>
+         <!-- </topic> -->
          <topic label="History" href="html/utilities/strpreprc/history.html" />
       </topic>
    </topic>
