@@ -144,7 +144,7 @@ public class RSECompareDialog extends CompareDialog {
     protected void createEditableLeftArea(Composite parent) {
 
         Group leftGroup = new Group(parent, SWT.NONE);
-        leftGroup.setText(Messages.Right);
+        leftGroup.setText(Messages.Left);
         GridLayout rightLayout = new GridLayout();
         rightLayout.numColumns = 1;
         leftGroup.setLayout(rightLayout);
