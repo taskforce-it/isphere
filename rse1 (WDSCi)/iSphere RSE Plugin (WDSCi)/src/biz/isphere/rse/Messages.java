@@ -34,6 +34,8 @@ public class Messages extends NLS {
 
     public static String Right;
 
+    public static String Left;
+
     public static String Ancestor;
 
     public static String iSphere_Binding_Directory_Editor;
