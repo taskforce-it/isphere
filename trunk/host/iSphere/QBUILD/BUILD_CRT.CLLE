@@ -123,12 +123,14 @@
 
              ENDDO
 
-             CHGVAR     VAR(&CMD) +
-                        VALUE('CLRLIB LIB(' *CAT &PRDLIB *TCAT ')')
-             CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
+             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+                CHGVAR     VAR(&CMD) +
+                             VALUE('CLRLIB LIB(' *CAT &PRDLIB *TCAT ')')
+                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
 
-             CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
-                          TEXT('*BUILD_IN_PROGRESS')
+                CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
+                             TEXT('*BUILD_IN_PROGRESS')
+             ENDDO
 
              /* ----------------------------------------------- */
              /* Set up library list                             */
@@ -661,7 +663,9 @@
              /* ----------------------------------------------- */
              /* Change description of library ISPHERE           */
              /* ----------------------------------------------- */
-             CHGLIB     LIB(&PRDLIB) TEXT(&PRDTEXT)
+             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+                CHGLIB     LIB(&PRDLIB) TEXT(&PRDTEXT)
+             ENDDO
 
              /* ----------------------------------------------- */
              /* Delete temporary objects                        */
