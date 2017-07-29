@@ -2,6 +2,8 @@
 Changelog: iSphere 3.1.0.b002 
 --------------------------------------------
  • Added button "Map Keys..." to TN5250j preferences page.
+ • Fixed bug in BUILD_CRT that cleared the ISPHERE library, when the 
+   production and development library names were equal.
 
 Changelog: iSphere 3.1.0.b001 
 --------------------------------------------
