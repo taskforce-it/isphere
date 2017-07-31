@@ -67,7 +67,7 @@ public abstract class CompareDialog extends XDialog {
     private boolean editable;
     private boolean considerDate;
     private boolean ignoreCase;
-    private boolean threeWay;
+    private boolean isThreeWay;
     private boolean hasLeftMember;
     private boolean hasRightMember;
     private boolean hasMultipleRightMembers;
@@ -171,8 +171,6 @@ public abstract class CompareDialog extends XDialog {
         this.rightMember = rightMember;
         this.ancestorMember = ancestorMember;
 
-        loadScreenValues();
-
         if (this.leftMember == null) {
             hasLeftMember = false;
         } else {
@@ -187,11 +185,20 @@ public abstract class CompareDialog extends XDialog {
 
         if (this.ancestorMember == null) {
             hasAncestorMember = false;
-            threeWay = false;
+            isThreeWay = false;
         } else {
             hasAncestorMember = true;
-            threeWay = true;
+            isThreeWay = true;
         }
+    }
+
+    @Override
+    protected Control createContents(Composite parent) {
+        Control control = super.createContents(parent);
+
+        loadScreenValues();
+
+        return control;
     }
 
     @Override
@@ -225,9 +232,9 @@ public abstract class CompareDialog extends XDialog {
             browseButton = WidgetFactory.createRadioButton(editableGroup);
             browseButton.setText(Messages.Open_for_browse);
             browseButton.setLayoutData(getGridData());
-            if (!editable || ignoreCase) {
-                browseButton.setSelection(true);
-            }
+            // if (!editable || ignoreCase) {
+            // browseButton.setSelection(true);
+            // }
 
             editButton = WidgetFactory.createRadioButton(editableGroup);
             editButton.setText(Messages.Open_for_edit);
@@ -240,9 +247,9 @@ public abstract class CompareDialog extends XDialog {
                     }
                 }
             });
-            if (editable && !ignoreCase) {
-                editButton.setSelection(true);
-            }
+            // if (editable && !ignoreCase) {
+            // editButton.setSelection(true);
+            // }
 
         }
 
@@ -254,16 +261,16 @@ public abstract class CompareDialog extends XDialog {
         dontConsiderDateButton = WidgetFactory.createRadioButton(considerDateGroup);
         dontConsiderDateButton.setText(Messages.Don_t_consider_date);
         dontConsiderDateButton.setLayoutData(getGridData());
-        if (!considerDate) {
-            dontConsiderDateButton.setSelection(true);
-        }
+        // if (!considerDate) {
+        // dontConsiderDateButton.setSelection(true);
+        // }
 
         considerDateButton = WidgetFactory.createRadioButton(considerDateGroup);
         considerDateButton.setText(Messages.Consider_date);
         considerDateButton.setLayoutData(getGridData());
-        if (considerDate) {
-            considerDateButton.setSelection(true);
-        }
+        // if (considerDate) {
+        // considerDateButton.setSelection(true);
+        // }
 
         Composite ignoreCaseGroup = new Composite(modeGroup, SWT.NONE);
         GridLayout ignoreCaseLayout = new GridLayout(2, true);
@@ -273,9 +280,9 @@ public abstract class CompareDialog extends XDialog {
         dontIgnoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         dontIgnoreCaseButton.setText(Messages.Don_t_ignore_case);
         dontIgnoreCaseButton.setLayoutData(getGridData());
-        if (!ignoreCase) {
-            dontIgnoreCaseButton.setSelection(true);
-        }
+        // if (!ignoreCase) {
+        // dontIgnoreCaseButton.setSelection(true);
+        // }
 
         ignoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         ignoreCaseButton.setText(Messages.Ignore_case);
@@ -290,11 +297,11 @@ public abstract class CompareDialog extends XDialog {
                 }
             }
         });
-        if (ignoreCase) {
-            ignoreCaseButton.setSelection(true);
-        }
+        // if (ignoreCase) {
+        // ignoreCaseButton.setSelection(true);
+        // }
 
-        if (!hasRightMember) {
+        if (!hasRightMember()) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
             GridLayout threeWayLayout = new GridLayout(2, true);
@@ -304,13 +311,13 @@ public abstract class CompareDialog extends XDialog {
             twoWayButton = WidgetFactory.createRadioButton(threeWayGroup);
             twoWayButton.setText(Messages.Two_way_compare);
             twoWayButton.setLayoutData(getGridData());
-            if (!threeWay) {
+            if (!isThreeWay()) {
                 twoWayButton.setSelection(true);
             }
             twoWayButton.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    threeWay = false;
+                    isThreeWay = false;
                     setAncestorVisible(false);
                     okButton.setEnabled(canFinish());
                 }
@@ -319,13 +326,13 @@ public abstract class CompareDialog extends XDialog {
             threeWayButton = WidgetFactory.createRadioButton(threeWayGroup);
             threeWayButton.setText(Messages.Three_way_compare);
             threeWayButton.setLayoutData(getGridData());
-            if (threeWay) {
+            if (isThreeWay()) {
                 threeWayButton.setSelection(true);
             }
             threeWayButton.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    threeWay = true;
+                    isThreeWay = true;
                     setAncestorVisible(true);
                     okButton.setEnabled(canFinish());
                 }
@@ -336,7 +343,7 @@ public abstract class CompareDialog extends XDialog {
         /*
          * ---------------- Create left area ----------------
          */
-        if (hasLeftMember) {
+        if (hasLeftMember()) {
             createReadOnlyLeftArea(rtnGroup);
         } else {
             createEditableLeftArea(rtnGroup);
@@ -345,8 +352,8 @@ public abstract class CompareDialog extends XDialog {
         /*
          * -------- Create right and ancestor areas --------
          */
-        if (hasRightMember) {
-            if (!hasMultipleRightMembers) {
+        if (hasRightMember()) {
+            if (!hasMultipleRightMembers()) {
                 createSwitchMemberButton(rtnGroup);
                 createReadOnlyRightArea(rtnGroup);
             } else {
@@ -355,13 +362,10 @@ public abstract class CompareDialog extends XDialog {
         } else {
             createEditableRightArea(rtnGroup);
             createEditableAncestorArea(rtnGroup);
-        }
-
-        if (!hasRightMember) {
-            if (!threeWay) {
-                setAncestorVisible(false);
-            } else {
+            if (isThreeWay()) {
                 setAncestorVisible(true);
+            } else {
+                setAncestorVisible(false);
             }
         }
 
@@ -401,7 +405,7 @@ public abstract class CompareDialog extends XDialog {
         Button button = super.createButton(parent, id, label, defaultButton);
         if (id == OK) {
             okButton = button;
-            if (hasRightMember && !hasMultipleRightMembers) {
+            if (hasRightMember() && !hasMultipleRightMembers()) {
                 okButton.setEnabled(true);
             } else {
                 okButton.setEnabled(false);
@@ -419,8 +423,8 @@ public abstract class CompareDialog extends XDialog {
         }
         considerDate = considerDateButton.getSelection();
         ignoreCase = ignoreCaseButton.getSelection();
-        if (!hasRightMember) {
-            threeWay = threeWayButton.getSelection();
+        if (!hasRightMember()) {
+            isThreeWay = threeWayButton.getSelection();
         }
 
         storeScreenValues();
@@ -595,7 +599,7 @@ public abstract class CompareDialog extends XDialog {
     }
 
     public boolean isThreeWay() {
-        return threeWay;
+        return isThreeWay;
     }
 
     protected boolean hasLeftMember() {
@@ -615,13 +619,44 @@ public abstract class CompareDialog extends XDialog {
     }
 
     protected void loadScreenValues() {
+
         if (selectEditable) {
             editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
         } else {
             editable = false;
         }
+
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
+
+        if (!isEditable() || isIgnoreCase()) {
+            browseButton.setSelection(true);
+        } else {
+            browseButton.setSelection(false);
+        }
+
+        if (isEditable() && !isIgnoreCase()) {
+            editButton.setSelection(true);
+        } else {
+            editButton.setSelection(false);
+        }
+
+        if (!isConsiderDate()) {
+            dontConsiderDateButton.setSelection(true);
+            considerDateButton.setSelection(false);
+        } else {
+            dontConsiderDateButton.setSelection(false);
+            considerDateButton.setSelection(true);
+        }
+
+        if (!isIgnoreCase()) {
+            dontIgnoreCaseButton.setSelection(true);
+            ignoreCaseButton.setSelection(false);
+        } else {
+            dontIgnoreCaseButton.setSelection(false);
+            ignoreCaseButton.setSelection(true);
+        }
+
     }
 
     protected void storeScreenValues() {

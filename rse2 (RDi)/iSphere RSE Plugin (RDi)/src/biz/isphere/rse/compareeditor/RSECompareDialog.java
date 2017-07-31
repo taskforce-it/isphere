@@ -56,6 +56,8 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorFile;
     private String ancestorMember;
 
+    private boolean hasNoMembers;
+
     /**
      * Creates a three-way compare dialog.
      * 
@@ -124,6 +126,13 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell, selectEditable);
+
+        /*
+         * Controls whether or not to store/load member values. For now members
+         * are stored and loaded when the editor has been opened from the
+         * iSphere main menu, so that no initial members has been passed to it.
+         */
+        hasNoMembers = true;
     }
 
     private void initializeLeftMember(RSEMember leftMember) {
@@ -153,7 +162,6 @@ public class RSECompareDialog extends CompareDialog {
         leftConnectionCombo = new IBMiConnectionCombo(leftGroup, getLeftConnection(), false);
         leftConnectionCombo.setLayoutData(getGridData());
         leftConnectionCombo.getCombo().setLayoutData(getGridData());
-
         leftConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -163,17 +171,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         leftMemberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
-        if (hasLeftMember()) {
-            leftMemberPrompt.setSystemConnection(getLeftConnection().getHost());
-            leftMemberPrompt.setLibraryName(getLeftLibrary());
-            leftMemberPrompt.setFileName(getLeftFile());
-            leftMemberPrompt.setMemberName(getLeftMember());
-        } else {
-            leftMemberPrompt.setSystemConnection(null);
-            leftMemberPrompt.setLibraryName("");
-            leftMemberPrompt.setFileName("");
-            leftMemberPrompt.setMemberName("");
-        }
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -201,7 +198,6 @@ public class RSECompareDialog extends CompareDialog {
         rightConnectionCombo = new IBMiConnectionCombo(rightGroup, getLeftConnection(), false);
         rightConnectionCombo.setLayoutData(getGridData());
         rightConnectionCombo.getCombo().setLayoutData(getGridData());
-
         rightConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -211,16 +207,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         rightMemberPrompt = new QSYSMemberPrompt(rightGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
-        rightMemberPrompt.setSystemConnection(rightConnectionCombo.getHost());
-        // Initialize right member with left member
-        rightMemberPrompt.setLibraryName(getLeftLibrary());
-        rightMemberPrompt.setFileName(getLeftFile());
-
-        if (hasMultipleRightMembers()) {
-            rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
-        } else {
-            rightMemberPrompt.setMemberName(getLeftMember());
-        }
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -250,7 +236,6 @@ public class RSECompareDialog extends CompareDialog {
         ancestorConnectionCombo = new IBMiConnectionCombo(ancestorGroup, getLeftConnection(), false);
         ancestorConnectionCombo.setLayoutData(getGridData());
         ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
-
         ancestorConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -260,11 +245,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         ancestorMemberPrompt = new QSYSMemberPrompt(ancestorGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
-        ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getHost());
-        // Initialize ancestor member with left member
-        ancestorMemberPrompt.setLibraryName(getLeftLibrary());
-        ancestorMemberPrompt.setFileName(getLeftFile());
-        ancestorMemberPrompt.setMemberName(getLeftMember());
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -654,5 +634,133 @@ public class RSECompareDialog extends CompareDialog {
             return ""; //$NON-NLS-1$
         }
         return leftMember;
+    }
+
+    @Override
+    protected void loadScreenValues() {
+        super.loadScreenValues();
+
+        if (hasLeftMember()) {
+            // Member is read-only. Do nothing.
+        } else {
+            if (hasNoMembers) {
+                loadMemberValues("LEFT", leftConnectionCombo, leftMemberPrompt);
+            }
+        }
+
+        if (hasRightMember()) {
+            // Member is read-only, overwrite member in case we have more than 2
+            // left members.
+            if (hasMultipleRightMembers()) {
+                rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
+            }
+        } else {
+            if (hasNoMembers) {
+                loadMemberValues("RIGHT", rightConnectionCombo, rightMemberPrompt);
+            } else {
+                // Initialize right member with left member
+                setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                    getCurrentLeftFileName(), getCurrentLeftMemberName());
+            }
+        }
+
+        if (hasAncestorMember()) {
+            // Member is read-only. Do nothing.
+        } else {
+            if (hasNoMembers) {
+                loadMemberValues("ANCESTOR", ancestorConnectionCombo, ancestorMemberPrompt);
+            } else {
+                // Initialize ancestor member with left member
+                if (ancestorConnectionCombo != null) {
+                    setMemberValues(ancestorConnectionCombo, ancestorMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                        getCurrentLeftFileName(), getCurrentLeftMemberName());
+                }
+            }
+        }
+    }
+
+    private void loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
+
+        String connection = loadValue(prefix + "_CONNECTION", null);
+        String library = loadValue(prefix + "_LIBRARY", null);
+        String file = loadValue(prefix + "_FILE", null);
+        String member = loadValue(prefix + "_MEMBER", null);
+
+        setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
+    }
+
+    private void setMemberValues(IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt, String connection, String library, String file,
+        String member) {
+
+        if (haveMemberValues(connection, library, file, member)) {
+            String[] connections = connectionCombo.getItems();
+            for (int i = 0; i < connections.length; i++) {
+                String connectionItem = connections[i];
+                if (connectionItem.equals(connection)) {
+                    connectionCombo.setSelectionIndex(i);
+                    memberPrompt.getLibraryCombo().setText(library);
+                    memberPrompt.getFileCombo().setText(file);
+                    memberPrompt.getMemberCombo().setText(member);
+                    memberPrompt.setSystemConnection(connectionCombo.getHost());
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void storeScreenValues() {
+        super.storeScreenValues();
+
+        if (!hasNoMembers) {
+            return;
+        }
+
+        if (hasLeftMember()) {
+            // Member is read-only. Do nothing.
+        } else {
+            if (hasNoMembers) {
+                storeMemberValues("LEFT", leftConnectionCombo, leftMemberPrompt);
+            }
+        }
+
+        if (hasRightMember()) {
+            // Member is read-only. Do nothing.
+        } else {
+            if (hasNoMembers) {
+                storeMemberValues("RIGHT", rightConnectionCombo, rightMemberPrompt);
+            }
+        }
+
+        if (hasAncestorMember()) {
+            // Member is read-only. Do nothing.
+        } else {
+            if (hasNoMembers) {
+                storeMemberValues("ANCESTOR", ancestorConnectionCombo, ancestorMemberPrompt);
+            }
+        }
+    }
+
+    private void storeMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
+
+        String connection = connectionCombo.getText();
+        String library = memberPrompt.getLibraryName();
+        String file = memberPrompt.getFileName();
+        String member = memberPrompt.getMemberName();
+
+        if (haveMemberValues(connection, library, file, member)) {
+            storeValue(prefix + "_CONNECTION", connection);
+            storeValue(prefix + "_LIBRARY", library);
+            storeValue(prefix + "_FILE", file);
+            storeValue(prefix + "_MEMBER", member);
+        }
+    }
+
+    private boolean haveMemberValues(String connection, String library, String file, String member) {
+
+        if (connection != null && library != null & file != null && member != null) {
+            return true;
+        }
+
+        return false;
     }
 }
