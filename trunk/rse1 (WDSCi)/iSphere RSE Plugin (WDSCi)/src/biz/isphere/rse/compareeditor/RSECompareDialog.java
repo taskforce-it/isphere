@@ -33,6 +33,14 @@ import com.ibm.etools.iseries.core.ui.widgets.ISeriesMemberPrompt;
 
 public class RSECompareDialog extends CompareDialog {
 
+    private static final String PREFIX_LEFT = "LEFT";
+    private static final String PREFIX_RIGHT = "RIGHT";
+    private static final String PREFIX_ANCESTOR = "ANCESTOR";
+    private static final String CONNECTION = "_CONNECTION";
+    private static final String LIBRARY = "_LIBRARY";
+    private static final String FILE = "_FILE";
+    private static final String MEMBER = "_MEMBER";
+
     private Group ancestorGroup;
 
     private ISeriesConnectionCombo leftConnectionCombo;
@@ -55,6 +63,8 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorLibrary;
     private String ancestorFile;
     private String ancestorMember;
+
+    private boolean rememberScreenValues;
 
     /**
      * Creates a three-way compare dialog.
@@ -124,6 +134,13 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell, selectEditable);
+
+        /*
+         * Controls whether or not to store/load member values. For now members
+         * are stored and loaded when the editor has been opened from the
+         * iSphere main menu, so that no initial members has been passed to it.
+         */
+        rememberScreenValues = true;
     }
 
     private void initializeLeftMember(RSEMember leftMember) {
@@ -153,7 +170,6 @@ public class RSECompareDialog extends CompareDialog {
         leftConnectionCombo = new ISeriesConnectionCombo(leftGroup, getLeftConnection(), false);
         leftConnectionCombo.setLayoutData(getGridData());
         leftConnectionCombo.getCombo().setLayoutData(getGridData());
-
         leftConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -163,17 +179,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         leftMemberPrompt = new ISeriesMemberPrompt(leftGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
-        if (hasLeftMember()) {
-            leftMemberPrompt.setSystemConnection(getLeftConnection().getSystemConnection());
-            leftMemberPrompt.setLibraryName(getLeftLibrary());
-            leftMemberPrompt.setFileName(getLeftFile());
-            leftMemberPrompt.setMemberName(getLeftMember());
-        } else {
-            leftMemberPrompt.setSystemConnection(null);
-            leftMemberPrompt.setLibraryName("");
-            leftMemberPrompt.setFileName("");
-            leftMemberPrompt.setMemberName("");
-        }
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -201,7 +206,6 @@ public class RSECompareDialog extends CompareDialog {
         rightConnectionCombo = new ISeriesConnectionCombo(rightGroup, getLeftConnection(), false);
         rightConnectionCombo.setLayoutData(getGridData());
         rightConnectionCombo.getCombo().setLayoutData(getGridData());
-
         rightConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -211,16 +215,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         rightMemberPrompt = new ISeriesMemberPrompt(rightGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
-        // Initialize right member with left member
-        rightMemberPrompt.setSystemConnection(rightConnectionCombo.getSystemConnection());
-        rightMemberPrompt.setLibraryName(getLeftLibrary());
-        rightMemberPrompt.setFileName(getLeftFile());
-
-        if (hasMultipleRightMembers()) {
-            rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
-        } else {
-            rightMemberPrompt.setMemberName(getLeftMember());
-        }
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -233,7 +227,8 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
         rightMemberPrompt.getLibraryCombo().setFocus();
 
-        setRightMemberPromptEnablement(!hasMultipleRightMembers());
+        rightMemberPrompt.getMemberCombo().setEnabled(!hasMultipleRightMembers());
+        rightMemberPrompt.getMemberBrowseButton().setEnabled(!hasMultipleRightMembers());
     }
 
     @Override
@@ -250,7 +245,6 @@ public class RSECompareDialog extends CompareDialog {
         ancestorConnectionCombo = new ISeriesConnectionCombo(ancestorGroup, getLeftConnection(), false);
         ancestorConnectionCombo.setLayoutData(getGridData());
         ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
-
         ancestorConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -260,11 +254,6 @@ public class RSECompareDialog extends CompareDialog {
         });
 
         ancestorMemberPrompt = new ISeriesMemberPrompt(ancestorGroup, SWT.NONE, false, true, ISeriesMemberPrompt.FILETYPE_SRC);
-        ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getSystemConnection());
-        // Initialize ancestor member with left member
-        ancestorMemberPrompt.setLibraryName(getLeftLibrary());
-        ancestorMemberPrompt.setFileName(getLeftFile());
-        ancestorMemberPrompt.setMemberName(getLeftMember());
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -331,7 +320,7 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void okPressed() {
 
-        if (!hasLeftMember()) {
+        if (hasEditableLeftMember()) {
 
             leftConnection = getCurrentLeftConnection();
             leftLibrary = getCurrentLeftLibraryName();
@@ -344,7 +333,7 @@ public class RSECompareDialog extends CompareDialog {
 
         }
 
-        if (!hasRightMember() || hasMultipleRightMembers()) {
+        if (hasEditableRightMember()) {
 
             rightConnection = getCurrentRightConnection();
             rightLibrary = getCurrentRightLibraryName();
@@ -557,11 +546,6 @@ public class RSECompareDialog extends CompareDialog {
         return leftMemberPrompt.getMemberName();
     }
 
-    private void setRightMemberPromptEnablement(boolean enabled) {
-        rightMemberPrompt.getMemberCombo().setEnabled(enabled);
-        rightMemberPrompt.getMemberBrowseButton().setEnabled(enabled);
-    }
-
     private ISeriesConnection getCurrentRightConnection() {
         return ISeriesConnection.getConnection(getCurrentRightConnectionName());
     }
@@ -654,5 +638,132 @@ public class RSECompareDialog extends CompareDialog {
             return ""; //$NON-NLS-1$
         }
         return leftMember;
+    }
+
+    @Override
+    protected void loadScreenValues() {
+        super.loadScreenValues();
+
+        if (hasEditableLeftMember()) {
+            if (rememberScreenValues) {
+                loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
+            }
+        }
+
+        if (hasEditableRightMember()) {
+            if (hasMultipleRightMembers()) {
+                rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
+            } else if (rememberScreenValues) {
+                loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
+            } else {
+                // Initialize right member with left member
+                setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                    getCurrentLeftFileName(), getCurrentLeftMemberName());
+            }
+        }
+
+        if (hasEditableAncestorMember()) {
+            if (rememberScreenValues) {
+                loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
+            } else {
+                // Initialize ancestor member with left member
+                setMemberValues(ancestorConnectionCombo, ancestorMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                    getCurrentLeftFileName(), getCurrentLeftMemberName());
+            }
+        }
+    }
+
+    private void loadMemberValues(String prefix, ISeriesConnectionCombo connectionCombo, ISeriesMemberPrompt memberPrompt) {
+
+        memberPrompt.setSystemConnection(null);
+        memberPrompt.setLibraryName(""); //$NON-NLS-1$
+        memberPrompt.setFileName(""); //$NON-NLS-1$
+        memberPrompt.setMemberName(""); //$NON-NLS-1$
+
+        String connection = loadValue(prefix + CONNECTION, null);
+        String library = loadValue(prefix + LIBRARY, null);
+        String file = loadValue(prefix + FILE, null);
+        String member = loadValue(prefix + MEMBER, null);
+
+        setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
+    }
+
+    private void setMemberValues(ISeriesConnectionCombo connectionCombo, ISeriesMemberPrompt memberPrompt, String connection, String library,
+        String file, String member) {
+
+        if (haveMemberValues(connection, library, file, member)) {
+            String[] connections = connectionCombo.getItems();
+            for (int i = 0; i < connections.length; i++) {
+                String connectionItem = connections[i];
+                if (connectionItem.equals(connection)) {
+                    connectionCombo.setSelectionIndex(i);
+                    memberPrompt.getLibraryCombo().setText(library);
+                    memberPrompt.getFileCombo().setText(file);
+                    memberPrompt.getMemberCombo().setText(member);
+                    memberPrompt.setSystemConnection(connectionCombo.getSystemConnection());
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void storeScreenValues() {
+        super.storeScreenValues();
+
+        if (hasEditableLeftMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
+            }
+        }
+
+        if (hasMultipleRightMembers()) {
+            // do not store special value *LEFT.
+        } else if (hasEditableRightMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
+            }
+        }
+
+        if (hasEditableAncestorMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
+            }
+        }
+    }
+
+    private void storeMemberValues(String prefix, ISeriesConnectionCombo connectionCombo, ISeriesMemberPrompt memberPrompt) {
+
+        String connection = connectionCombo.getText();
+        String library = memberPrompt.getLibraryName();
+        String file = memberPrompt.getFileName();
+        String member = memberPrompt.getMemberName();
+
+        if (haveMemberValues(connection, library, file, member)) {
+            storeValue(prefix + CONNECTION, connection);
+            storeValue(prefix + LIBRARY, library);
+            storeValue(prefix + FILE, file);
+            storeValue(prefix + MEMBER, member);
+        }
+    }
+
+    private boolean haveMemberValues(String connection, String library, String file, String member) {
+
+        if (connection != null && library != null & file != null && member != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasEditableLeftMember() {
+        return leftMemberPrompt != null;
+    }
+
+    private boolean hasEditableRightMember() {
+        return rightMemberPrompt != null;
+    }
+
+    private boolean hasEditableAncestorMember() {
+        return ancestorMemberPrompt != null;
     }
 }
