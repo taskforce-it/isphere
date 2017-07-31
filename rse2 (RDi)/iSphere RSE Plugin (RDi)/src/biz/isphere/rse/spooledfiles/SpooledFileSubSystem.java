@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.PropertySet;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
