@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.1.0.b004 
+--------------------------------------------
+ • Change iSphere compare dialog to load/store member values when called 
+   from the iSphere main menu (no members passed to compare dialog).
+ • Fixed OK button enablement of RSECompareDialog.
+
 Changelog: iSphere 3.1.0.b003 
 --------------------------------------------
  • Fixed NullPointerException in LangTool.
