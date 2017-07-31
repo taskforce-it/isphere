@@ -33,6 +33,14 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSECompareDialog extends CompareDialog {
 
+    private static final String PREFIX_LEFT = "LEFT";
+    private static final String PREFIX_RIGHT = "RIGHT";
+    private static final String PREFIX_ANCESTOR = "ANCESTOR";
+    private static final String CONNECTION = "_CONNECTION";
+    private static final String LIBRARY = "_LIBRARY";
+    private static final String FILE = "_FILE";
+    private static final String MEMBER = "_MEMBER";
+
     private Group ancestorGroup;
 
     private IBMiConnectionCombo leftConnectionCombo;
@@ -56,7 +64,7 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorFile;
     private String ancestorMember;
 
-    private boolean hasNoMembers;
+    private boolean rememberScreenValues;
 
     /**
      * Creates a three-way compare dialog.
@@ -132,7 +140,7 @@ public class RSECompareDialog extends CompareDialog {
          * are stored and loaded when the editor has been opened from the
          * iSphere main menu, so that no initial members has been passed to it.
          */
-        hasNoMembers = true;
+        rememberScreenValues = true;
     }
 
     private void initializeLeftMember(RSEMember leftMember) {
@@ -219,7 +227,8 @@ public class RSECompareDialog extends CompareDialog {
         rightMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
         rightMemberPrompt.getLibraryCombo().setFocus();
 
-        setRightMemberPromptEnablement(!hasMultipleRightMembers());
+        rightMemberPrompt.getMemberCombo().setEnabled(!hasMultipleRightMembers());
+        rightMemberPrompt.getMemberBrowseButton().setEnabled(!hasMultipleRightMembers());
     }
 
     @Override
@@ -311,7 +320,7 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void okPressed() {
 
-        if (!hasLeftMember()) {
+        if (hasEditableLeftMember()) {
 
             leftConnection = getCurrentLeftConnection();
             leftLibrary = getCurrentLeftLibraryName();
@@ -324,7 +333,7 @@ public class RSECompareDialog extends CompareDialog {
 
         }
 
-        if (!hasRightMember() || hasMultipleRightMembers()) {
+        if (hasEditableRightMember()) {
 
             rightConnection = getCurrentRightConnection();
             rightLibrary = getCurrentRightLibraryName();
@@ -537,11 +546,6 @@ public class RSECompareDialog extends CompareDialog {
         return leftMemberPrompt.getMemberName();
     }
 
-    private void setRightMemberPromptEnablement(boolean enabled) {
-        rightMemberPrompt.getMemberCombo().setEnabled(enabled);
-        rightMemberPrompt.getMemberBrowseButton().setEnabled(enabled);
-    }
-
     private IBMiConnection getCurrentRightConnection() {
         return IBMiConnection.getConnection(getCurrentRightConnectionName());
     }
@@ -640,23 +644,17 @@ public class RSECompareDialog extends CompareDialog {
     protected void loadScreenValues() {
         super.loadScreenValues();
 
-        if (hasLeftMember()) {
-            // Member is read-only. Do nothing.
-        } else {
-            if (hasNoMembers) {
-                loadMemberValues("LEFT", leftConnectionCombo, leftMemberPrompt);
+        if (hasEditableLeftMember()) {
+            if (rememberScreenValues) {
+                loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
 
-        if (hasRightMember()) {
-            // Member is read-only, overwrite member in case we have more than 2
-            // left members.
+        if (hasEditableRightMember()) {
             if (hasMultipleRightMembers()) {
                 rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
-            }
-        } else {
-            if (hasNoMembers) {
-                loadMemberValues("RIGHT", rightConnectionCombo, rightMemberPrompt);
+            } else if (rememberScreenValues) {
+                loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             } else {
                 // Initialize right member with left member
                 setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
@@ -664,27 +662,28 @@ public class RSECompareDialog extends CompareDialog {
             }
         }
 
-        if (hasAncestorMember()) {
-            // Member is read-only. Do nothing.
-        } else {
-            if (hasNoMembers) {
-                loadMemberValues("ANCESTOR", ancestorConnectionCombo, ancestorMemberPrompt);
+        if (hasEditableAncestorMember()) {
+            if (rememberScreenValues) {
+                loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             } else {
                 // Initialize ancestor member with left member
-                if (ancestorConnectionCombo != null) {
-                    setMemberValues(ancestorConnectionCombo, ancestorMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
-                        getCurrentLeftFileName(), getCurrentLeftMemberName());
-                }
+                setMemberValues(ancestorConnectionCombo, ancestorMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                    getCurrentLeftFileName(), getCurrentLeftMemberName());
             }
         }
     }
 
     private void loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
 
-        String connection = loadValue(prefix + "_CONNECTION", null);
-        String library = loadValue(prefix + "_LIBRARY", null);
-        String file = loadValue(prefix + "_FILE", null);
-        String member = loadValue(prefix + "_MEMBER", null);
+        memberPrompt.setSystemConnection(null);
+        memberPrompt.setLibraryName(""); //$NON-NLS-1$
+        memberPrompt.setFileName(""); //$NON-NLS-1$
+        memberPrompt.setMemberName(""); //$NON-NLS-1$
+
+        String connection = loadValue(prefix + CONNECTION, null);
+        String library = loadValue(prefix + LIBRARY, null);
+        String file = loadValue(prefix + FILE, null);
+        String member = loadValue(prefix + MEMBER, null);
 
         setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
     }
@@ -711,31 +710,23 @@ public class RSECompareDialog extends CompareDialog {
     protected void storeScreenValues() {
         super.storeScreenValues();
 
-        if (!hasNoMembers) {
-            return;
-        }
-
-        if (hasLeftMember()) {
-            // Member is read-only. Do nothing.
-        } else {
-            if (hasNoMembers) {
-                storeMemberValues("LEFT", leftConnectionCombo, leftMemberPrompt);
+        if (hasEditableLeftMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
 
-        if (hasRightMember()) {
-            // Member is read-only. Do nothing.
-        } else {
-            if (hasNoMembers) {
-                storeMemberValues("RIGHT", rightConnectionCombo, rightMemberPrompt);
+        if (hasMultipleRightMembers()) {
+            // do not store special value *LEFT.
+        } else if (hasEditableRightMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
         }
 
-        if (hasAncestorMember()) {
-            // Member is read-only. Do nothing.
-        } else {
-            if (hasNoMembers) {
-                storeMemberValues("ANCESTOR", ancestorConnectionCombo, ancestorMemberPrompt);
+        if (hasEditableAncestorMember()) {
+            if (rememberScreenValues) {
+                storeMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
         }
     }
@@ -748,10 +739,10 @@ public class RSECompareDialog extends CompareDialog {
         String member = memberPrompt.getMemberName();
 
         if (haveMemberValues(connection, library, file, member)) {
-            storeValue(prefix + "_CONNECTION", connection);
-            storeValue(prefix + "_LIBRARY", library);
-            storeValue(prefix + "_FILE", file);
-            storeValue(prefix + "_MEMBER", member);
+            storeValue(prefix + CONNECTION, connection);
+            storeValue(prefix + LIBRARY, library);
+            storeValue(prefix + FILE, file);
+            storeValue(prefix + MEMBER, member);
         }
     }
 
@@ -762,5 +753,17 @@ public class RSECompareDialog extends CompareDialog {
         }
 
         return false;
+    }
+
+    private boolean hasEditableLeftMember() {
+        return leftMemberPrompt != null;
+    }
+
+    private boolean hasEditableRightMember() {
+        return rightMemberPrompt != null;
+    }
+
+    private boolean hasEditableAncestorMember() {
+        return ancestorMemberPrompt != null;
     }
 }
