@@ -482,7 +482,7 @@ public class RSECompareDialog extends CompareDialog {
         if (getCurrentRightConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())
             && getCurrentRightLibraryName().equalsIgnoreCase(getCurrentLeftLibraryName())
             && getCurrentRightFileName().equalsIgnoreCase(getCurrentLeftFileName())
-            && getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName())) {
+            && (hasMultipleRightMembers() || getCurrentRightMemberName().equalsIgnoreCase(getCurrentLeftMemberName()))) {
             return false;
         }
 
