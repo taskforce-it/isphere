@@ -2,6 +2,7 @@ package org.bac.gati.tools.journalexplorer.ui.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.bac.gati.tools.journalexplorer.internals.JournalEntryComparator;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
@@ -18,7 +19,10 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
@@ -28,7 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 
-public class JournalEntryView extends ViewPart implements ISelectionListener {
+public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
     public static final String ID = "org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"; //$NON-NLS-1$
 
@@ -49,9 +53,11 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
     public void createPartControl(Composite parent) {
 
         this.viewer = new JournalEntryViewer(parent);
+        this.viewer.addSelectionChangedListener(this);
         this.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         this.createActions();
         this.createToolBar();
+        this.setActionEnablement(viewer.getSelection());
     }
 
     @Override
@@ -63,6 +69,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
     };
 
     private void createActions() {
+
         // /
         // / Compare action
         // /
@@ -84,6 +91,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
                 JournalEntryView.this.showSideBySideEntries();
             }
         };
+
         showSideBySide.setImageDescriptor(ResourceManager.getPluginImageDescriptor(
             "org.bac.gati.tools.journalexplorer.ui", "icons/horizontal_results_view.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -98,6 +106,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
                 configureParsersDialog.open();
             }
         };
+
         openParserAssociations.setImageDescriptor(ResourceManager.getPluginImageDescriptor(
             "org.eclipse.debug.ui", "/icons/full/obj16/readwrite_obj.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -111,12 +120,13 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
                 JournalEntryView.this.viewer.refresh(true);
             }
         };
+
         reParseEntries.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.eclipse.debug.ui", "/icons/full/obj16/refresh_tab.gif")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void showSideBySideEntries() {
 
-        Object[] input = ((JournalPropertiesContentProvider)this.viewer.getContentProvider()).getElements(null);
+        Object[] input = getSelectedItems();
 
         if (input instanceof Object[]) {
 
@@ -144,8 +154,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
 
     private void reParseAllEntries() {
 
-        JournalPropertiesContentProvider journalPropertiesContentProvider = (JournalPropertiesContentProvider)this.viewer.getContentProvider();
-        Object[] input = journalPropertiesContentProvider.getElements(null);
+        Object[] input = getInput();
 
         for (Object inputElement : input) {
 
@@ -154,9 +163,17 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
         }
     }
 
+    private Object[] getInput() {
+
+        JournalPropertiesContentProvider journalPropertiesContentProvider = (JournalPropertiesContentProvider)this.viewer.getContentProvider();
+        Object[] input = journalPropertiesContentProvider.getElements(null);
+
+        return input;
+    }
+
     protected void compareJOESDEntries() {
 
-        Object[] input = ((JournalPropertiesContentProvider)this.viewer.getContentProvider()).getElements(null);
+        Object[] input = getSelectedItems();
 
         if (input instanceof Object[]) {
 
@@ -250,5 +267,82 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
                 this.viewer.setExpandedTreePaths(expandedTreePaths);
             }
         }
+
+        setActionEnablement(viewer.getSelection());
+    }
+
+    public void selectionChanged(SelectionChangedEvent event) {
+
+        ITreeSelection selection = getSelection(event);
+        setActionEnablement(selection);
+    }
+
+    private void setActionEnablement(ISelection selection) {
+
+        ITreeSelection treeSelection;
+        if (selection instanceof ITreeSelection) {
+            treeSelection = (ITreeSelection)selection;
+        } else {
+            treeSelection = null;
+        }
+
+        if (treeSelection != null) {
+            if (treeSelection != null && treeSelection.size() == 2) {
+                compare.setEnabled(true);
+                showSideBySide.setEnabled(true);
+            } else {
+                showSideBySide.setEnabled(false);
+                compare.setEnabled(false);
+            }
+
+            Object[] items = getInput();
+
+            if (items != null && items.length > 0) {
+                openParserAssociations.setEnabled(true);
+                reParseEntries.setEnabled(true);
+            } else {
+                openParserAssociations.setEnabled(false);
+                reParseEntries.setEnabled(false);
+            }
+        }
+    }
+
+    private JournalProperties[] getSelectedItems() {
+
+        List<JournalProperties> selectedItems = new ArrayList<JournalProperties>();
+
+        ITreeSelection selection = getSelection();
+        Iterator<?> iterator = selection.iterator();
+
+        Object currentItem;
+        while (iterator.hasNext()) {
+
+            currentItem = iterator.next();
+            if (currentItem instanceof JournalProperties) {
+                selectedItems.add((JournalProperties)currentItem);
+            }
+        }
+
+        return selectedItems.toArray(new JournalProperties[selectedItems.size()]);
+    }
+
+    private ITreeSelection getSelection() {
+
+        ISelection selection = viewer.getSelection();
+        if (selection instanceof ITreeSelection) {
+            return (ITreeSelection)selection;
+        }
+
+        return null;
+    }
+
+    private ITreeSelection getSelection(SelectionChangedEvent event) {
+
+        ISelection selection = event.getSelection();
+        if (selection instanceof ITreeSelection) {
+            return (ITreeSelection)selection;
+        }
+
+        return null;
     }
 }
