@@ -23,7 +23,7 @@ public class MetaDataCache {
         return loadMetadata(file.getConnectionName(), file.getOutFileLibrary(), file.getOutFileName());
     }
 
-    public MetaTable retrieveMetaData(Journal journal) throws Exception {
+    public MetaTable retrieveMetaData(JournalEntry journal) throws Exception {
         return loadMetadata(journal.getConnectionName(), journal.getObjectLibrary(), journal.getObjectName());
     }
 

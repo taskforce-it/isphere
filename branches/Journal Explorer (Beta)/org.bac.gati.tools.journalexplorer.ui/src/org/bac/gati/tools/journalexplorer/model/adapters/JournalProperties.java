@@ -3,7 +3,7 @@ package org.bac.gati.tools.journalexplorer.model.adapters;
 import java.util.ArrayList;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 
 public class JournalProperties {
 
@@ -14,11 +14,11 @@ public class JournalProperties {
     private static final String JOENTT = Messages.JournalProperties_JOENTT;
     private static final String STRING_SPECIFIC_DATA = Messages.JournalProperties_JOESD;
 
-    private final Journal journal;
+    private final JournalEntry journal;
 
     private ArrayList<JournalProperty> properties;
 
-    public JournalProperties(Journal journal) {
+    public JournalProperties(JournalEntry journal) {
         this.journal = journal;
         this.properties = new ArrayList<JournalProperty>();
         initialize();
@@ -48,7 +48,7 @@ public class JournalProperties {
         return properties.toArray();
     }
 
-    public Journal getJournal() {
+    public JournalEntry getJournal() {
         return this.journal;
     }
 

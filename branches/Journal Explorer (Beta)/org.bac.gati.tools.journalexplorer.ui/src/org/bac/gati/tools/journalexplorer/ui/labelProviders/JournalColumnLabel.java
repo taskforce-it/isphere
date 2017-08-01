@@ -2,7 +2,7 @@ package org.bac.gati.tools.journalexplorer.ui.labelProviders;
 
 import java.text.SimpleDateFormat;
 
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -21,10 +21,10 @@ public class JournalColumnLabel extends ColumnLabelProvider {
 
     @Override
     public Color getBackground(Object element) {
-        if (element instanceof Journal) {
-            Journal journalObject = (Journal)element;
+        if (element instanceof JournalEntry) {
+            JournalEntry journalObject = (JournalEntry)element;
 
-            if (JournalColumnLabel.highlightUserEntries && journalObject.getJournalCode().equals(Journal.USER_GENERATED)) {
+            if (JournalColumnLabel.highlightUserEntries && journalObject.getJournalCode().equals(JournalEntry.USER_GENERATED)) {
                 return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
             } else {
                 return null;

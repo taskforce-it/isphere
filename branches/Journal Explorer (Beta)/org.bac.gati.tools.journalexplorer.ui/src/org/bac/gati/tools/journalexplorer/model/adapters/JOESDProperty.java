@@ -3,7 +3,7 @@ package org.bac.gati.tools.journalexplorer.model.adapters;
 import java.util.ArrayList;
 
 import org.bac.gati.tools.journalexplorer.internals.JoesdParser;
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
@@ -12,7 +12,7 @@ import com.ibm.as400.access.Record;
 
 public class JOESDProperty extends JournalProperty {
 
-    private Journal journal;
+    private JournalEntry journal;
 
     private MetaTable metatable;
 
@@ -22,7 +22,7 @@ public class JOESDProperty extends JournalProperty {
 
     private boolean errorParsing;
 
-    public JOESDProperty(String name, Object value, Object parent, Journal journal) {
+    public JOESDProperty(String name, Object value, Object parent, JournalEntry journal) {
 
         super(name, "", parent);
         this.journal = journal;

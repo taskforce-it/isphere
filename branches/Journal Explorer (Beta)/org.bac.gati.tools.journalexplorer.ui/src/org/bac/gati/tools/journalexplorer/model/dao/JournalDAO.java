@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.model.File;
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
 import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
@@ -85,13 +85,13 @@ public class JournalDAO extends DAOBase {
         "      FROM %s.%s as result";
     // @formatter:on
 
-    public ArrayList<Journal> getJournalData() throws Exception {
+    public ArrayList<JournalEntry> getJournalData() throws Exception {
 
-        Journal journal = null;
+        JournalEntry journal = null;
         String statementSQL = null;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
-        ArrayList<Journal> journalData = new ArrayList<Journal>();
+        ArrayList<JournalEntry> journalData = new ArrayList<JournalEntry>();
 
         try {
 
@@ -113,7 +113,7 @@ public class JournalDAO extends DAOBase {
 
                 while (resultSet.next()) {
 
-                    journal = new Journal();
+                    journal = new JournalEntry();
 
                     journal.setConnectionName(this.ibmiConnection.getConnectionName());
                     journal.setCommitmentCycle(resultSet.getInt("JOCCID"));

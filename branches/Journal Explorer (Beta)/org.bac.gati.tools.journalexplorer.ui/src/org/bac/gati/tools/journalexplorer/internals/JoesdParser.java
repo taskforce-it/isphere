@@ -1,6 +1,6 @@
 package org.bac.gati.tools.journalexplorer.internals;
 
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
 
@@ -100,14 +100,14 @@ public class JoesdParser {
         }
     }
 
-    public Record procesar(Journal journal) throws Exception {
+    public Record procesar(JournalEntry journal) throws Exception {
         if (this.verificarObjetos(journal))
             return this.getFormatoJoesd().getNewRecord(journal.getSpecificData(), this.metadata.getParsingOffset());
         else
             throw new Exception(Messages.JoesdParser_TableMetadataDontMatchEntry);
     }
 
-    private boolean verificarObjetos(Journal datos) {
+    private boolean verificarObjetos(JournalEntry datos) {
         return this.metadata.getName().equals(datos.getObjectName()) && this.metadata.getLibrary().equals(datos.getObjectLibrary());
     }
 

@@ -3,7 +3,7 @@ package org.bac.gati.tools.journalexplorer.model.dao;
 import java.sql.Time;
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
 
 import biz.isphere.journaling.retrievejournalentries.JournalEntries;
@@ -27,9 +27,9 @@ public class JournalDAO2 extends DAOBase {
         connection = IBMiConnection.getConnection(aConnectionName);
     }
 
-    public ArrayList<Journal> getJournalData() throws Exception {
+    public ArrayList<JournalEntry> getJournalData() throws Exception {
 
-        ArrayList<Journal> tList = new ArrayList<Journal>();
+        ArrayList<JournalEntry> tList = new ArrayList<JournalEntry>();
 
         JrneToRtv tJrneToRtv = getSelectionCriteria("JRN", "RADDATZ");
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(connection.getAS400ToolboxObject(), tJrneToRtv);
@@ -41,7 +41,7 @@ public class JournalDAO2 extends DAOBase {
                 while (tJournalEntries.nextEntry()) {
                     if (tJournalEntries.isFileObject()) {
 
-                        Journal tJournal = new Journal();
+                        JournalEntry tJournal = new JournalEntry();
 
                         tJournal.setConnectionName(connection.getConnectionName());
                         tJournal.setCommitmentCycle(tJournalEntries.getCommitCycleId().intValue());

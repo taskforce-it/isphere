@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.File;
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
@@ -34,7 +34,7 @@ public class JournalViewer extends CTabItem {
 
     private String fileName;
 
-    private ArrayList<Journal> data;
+    private ArrayList<JournalEntry> data;
 
     public JournalViewer(CTabFolder parent, File outputFile) {
 
@@ -84,7 +84,7 @@ public class JournalViewer extends CTabItem {
 
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return Integer.toString(journal.getRrn()).trim();
             }
         });
@@ -100,7 +100,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getEntryType();
             }
         });
@@ -116,7 +116,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return Long.toString(journal.getSequenceNumber());
             }
         });
@@ -132,7 +132,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getJournalCode();
             }
         });
@@ -148,7 +148,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return Integer.toString(journal.getEntryLength());
             }
         });
@@ -164,7 +164,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 Date date = journal.getDate();
                 if (date == null) {
                     return "";
@@ -184,7 +184,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 Time time = journal.getTime();
                 if (time == null) {
                     return "";
@@ -204,7 +204,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getJobName();
             }
         });
@@ -220,7 +220,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getJobUserName();
             }
         });
@@ -236,7 +236,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return Integer.toString(journal.getJobNumber());
             }
         });
@@ -252,7 +252,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getProgramName();
             }
         });
@@ -268,7 +268,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getObjectLibrary();
             }
         });
@@ -284,7 +284,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getMemberName();
             }
         });
@@ -300,7 +300,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getObjectName();
             }
         });
@@ -315,7 +315,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
                 return journal.getMinimizedSpecificData();
             }
         });
@@ -331,7 +331,7 @@ public class JournalViewer extends CTabItem {
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
-                Journal journal = (Journal)element;
+                JournalEntry journal = (JournalEntry)element;
 
                 // For displaying purposes, replace the null ending character
                 // for a blank.

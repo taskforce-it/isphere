@@ -14,7 +14,7 @@ import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400Time;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
-public class Journal {
+public class JournalEntry {
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
@@ -77,7 +77,7 @@ public class Journal {
 
     private String stringSpecificData; // JOESD (String)
 
-    public Journal() {
+    public JournalEntry() {
     }
     
     // //////////////////////////////////////////////////////////

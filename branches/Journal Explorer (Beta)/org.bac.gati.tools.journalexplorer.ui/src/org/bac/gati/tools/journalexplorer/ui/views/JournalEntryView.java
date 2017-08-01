@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.bac.gati.tools.journalexplorer.internals.JournalEntryComparator;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
 import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
@@ -250,8 +250,8 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
                         currentSelection = structuredSelectionElement.next();
 
-                        if (currentSelection instanceof Journal) {
-                            input.add(new JournalProperties((Journal)currentSelection));
+                        if (currentSelection instanceof JournalEntry) {
+                            input.add(new JournalProperties((JournalEntry)currentSelection));
                         }
                     }
                 }

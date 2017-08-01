@@ -2,14 +2,14 @@ package org.bac.gati.tools.journalexplorer.ui.contentProviders;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 public class JournalViewerContentProvider implements ILazyContentProvider {
 
-    private ArrayList<Journal> elements;
+    private ArrayList<JournalEntry> elements;
     private TableViewer viewer;
 
     public JournalViewerContentProvider(TableViewer viewer) {
@@ -22,7 +22,7 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
     @SuppressWarnings("unchecked")
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if (newInput != null) {
-            this.elements = (ArrayList<Journal>)newInput;
+            this.elements = (ArrayList<JournalEntry>)newInput;
         } else {
             this.elements = null;
         }
