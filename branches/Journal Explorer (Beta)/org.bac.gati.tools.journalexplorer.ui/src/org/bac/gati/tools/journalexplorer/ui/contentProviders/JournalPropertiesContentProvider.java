@@ -11,11 +11,9 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
 
     private Object[] input;
 
-    @Override
     public void dispose() {
     }
 
-    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         if (newInput instanceof Object[]) {
@@ -59,7 +57,6 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
         }
     }
 
-    @Override
     public Object[] getChildren(Object parent) {
         if (parent instanceof JournalProperties) {
             return ((JournalProperties)parent).toArray();
@@ -70,7 +67,6 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
         }
     }
 
-    @Override
     public Object getParent(Object element) {
         if (element instanceof JournalProperty) {
             return ((JournalProperty)element).parent;
@@ -79,7 +75,6 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
         }
     }
 
-    @Override
     public boolean hasChildren(Object element) {
 
         if (element instanceof JournalProperties) {
@@ -92,7 +87,6 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
         }
     }
 
-    @Override
     public Object[] getElements(Object inputElement) {
         return this.input;
     }

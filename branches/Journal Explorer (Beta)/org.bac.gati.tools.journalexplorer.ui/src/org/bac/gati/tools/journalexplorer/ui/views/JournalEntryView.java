@@ -209,7 +209,6 @@ public class JournalEntryView extends ViewPart implements ISelectionListener {
     // /
     // / ISelectionListener methods
     // /
-    @Override
     public void selectionChanged(IWorkbenchPart viewPart, ISelection selection) {
 
         @SuppressWarnings("rawtypes")

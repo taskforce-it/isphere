@@ -33,7 +33,6 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
 
     private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
 
-        @Override
         public void selectionChanged(SelectionChangedEvent event) {
 
             if (SelectionProviderIntermediate.this.delegates.contains(event.getSelectionProvider())) {
@@ -44,7 +43,6 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
 
     private ISelectionChangedListener postSelectionListener = new ISelectionChangedListener() {
 
-        @Override
         public void selectionChanged(SelectionChangedEvent event) {
 
             if (SelectionProviderIntermediate.this.delegates.contains(event.getSelectionProvider())) {
@@ -131,27 +129,22 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
     // /
     // / IPostSelectionProvider implemented methods
     // /
-    @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
         this.selectionListeners.add(listener);
     }
 
-    @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
         this.selectionListeners.remove(listener);
     }
 
-    @Override
     public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
         this.postSelectionListeners.add(listener);
     }
 
-    @Override
     public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
         this.postSelectionListeners.remove(listener);
     }
 
-    @Override
     public ISelection getSelection() {
 
         ArrayList<Object> selectedObjects = new ArrayList<Object>();
@@ -167,7 +160,6 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
         }
     }
 
-    @Override
     public void setSelection(ISelection selection) {
     }
 }

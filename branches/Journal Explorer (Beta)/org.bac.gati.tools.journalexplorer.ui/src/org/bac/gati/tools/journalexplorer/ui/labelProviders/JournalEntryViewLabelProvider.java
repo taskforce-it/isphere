@@ -18,24 +18,19 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
     private final int PROPERTY_COLUMN = 0;
     private final int VALUE_COLUMN = 1;
 
-    @Override
     public void addListener(ILabelProviderListener arg0) {
     }
 
-    @Override
     public void dispose() {
     }
 
-    @Override
     public boolean isLabelProperty(Object arg0, String arg1) {
         return false;
     }
 
-    @Override
     public void removeListener(ILabelProviderListener arg0) {
     }
 
-    @Override
     public Image getColumnImage(Object object, int columnIndex) {
         if (object instanceof JOESDProperty && columnIndex == VALUE_COLUMN) {
             if (((JOESDProperty)object).isErrorParsing()) {
@@ -48,7 +43,6 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
         }
     }
 
-    @Override
     public String getColumnText(Object object, int columnIndex) {
 
         if (object instanceof JournalProperties) {
@@ -72,7 +66,6 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
         return null;
     }
 
-    @Override
     public Color getBackground(Object object, int columnIndex) {
 
         if (object instanceof JournalProperties) {
@@ -89,7 +82,6 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
         return null;
     }
 
-    @Override
     public Color getForeground(Object arg0, int arg1) {
         return null;
     }

@@ -147,28 +147,24 @@ public class SelectEntriesToCompareDialog extends Dialog {
         final Color white = new Color(Display.getCurrent(), new RGB(255, 255, 255));
 
         SelectionListener listenerLeft = new SelectionListener() {
-            @Override
             public void widgetSelected(SelectionEvent event) {
                 if (event.getSource() instanceof Button) {
                     SelectEntriesToCompareDialog.this.leftEntry = ((Button)event.getSource()).getData();
                 }
             }
 
-            @Override
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }
         };
 
         SelectionListener listenerRight = new SelectionListener() {
-            @Override
             public void widgetSelected(SelectionEvent event) {
                 if (event.getSource() instanceof Button) {
                     SelectEntriesToCompareDialog.this.rightEntry = ((Button)event.getSource()).getData();
                 }
             }
 
-            @Override
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }

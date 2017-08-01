@@ -91,7 +91,6 @@ public class AddJournalDialog extends Dialog {
         this.cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
         this.cmbConnections.setInput(IBMiConnection.getConnections());
         this.cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
             public void selectionChanged(SelectionChangedEvent event) {
 
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();

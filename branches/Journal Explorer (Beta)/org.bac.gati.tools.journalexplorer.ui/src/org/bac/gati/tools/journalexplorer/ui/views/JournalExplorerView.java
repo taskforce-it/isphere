@@ -54,23 +54,18 @@ public class JournalExplorerView extends ViewPart {
 
         this.tabs = new CTabFolder(container, SWT.BOTTOM | SWT.CLOSE);
         this.tabs.addCTabFolder2Listener(new CTabFolder2Listener() {
-            @Override
             public void showList(CTabFolderEvent arg0) {
             }
 
-            @Override
             public void restore(CTabFolderEvent arg0) {
             }
 
-            @Override
             public void minimize(CTabFolderEvent arg0) {
             }
 
-            @Override
             public void maximize(CTabFolderEvent arg0) {
             }
 
-            @Override
             public void close(CTabFolderEvent event) {
                 if (event.item instanceof JournalViewer) {
                     JournalViewer viewer = ((JournalViewer)event.item);

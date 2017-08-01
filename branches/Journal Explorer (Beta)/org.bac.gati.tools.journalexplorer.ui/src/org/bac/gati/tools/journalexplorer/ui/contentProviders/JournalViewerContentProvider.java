@@ -16,12 +16,10 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
         this.viewer = viewer;
     }
 
-    @Override
     public void dispose() {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if (newInput != null) {
             this.elements = (ArrayList<Journal>)newInput;
@@ -31,7 +29,6 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
 
     }
 
-    @Override
     public void updateElement(int index) {
         this.viewer.replace(elements.get(index), index);
     }
