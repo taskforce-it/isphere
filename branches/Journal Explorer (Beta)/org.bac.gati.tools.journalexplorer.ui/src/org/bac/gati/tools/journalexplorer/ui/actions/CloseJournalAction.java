@@ -4,48 +4,47 @@ import org.eclipse.jface.action.Action;
 
 public class CloseJournalAction extends Action {
 
-	private String library;
-	
-	private String fileName;
-	
-	private String connectionName;
+    private String library;
 
-	public CloseJournalAction(String library, String fileName, String connectionName) {
-		
-		super();
-		this.library = library;
-		this.fileName = fileName;
-		this.connectionName = connectionName;
-	}
+    private String fileName;
 
-	@Override
-	public String getText() {
-		return this.connectionName.trim() + ":" + this.library.trim() + "/" + this.fileName.trim();
-	}
-	
-	public String getLibrary() {
-		return library;
-	}
+    private String connectionName;
 
-	public void setLibrary(String library) {
-		this.library = library;
-	}
+    public CloseJournalAction(String library, String fileName, String connectionName) {
 
-	public String getFileName() {
-		return fileName;
-	}
+        super();
+        this.library = library;
+        this.fileName = fileName;
+        this.connectionName = connectionName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    @Override
+    public String getText() {
+        return this.connectionName.trim() + ":" + this.library.trim() + "/" + this.fileName.trim();
+    }
 
-	public String getConnectionName() {
-		return connectionName;
-	}
+    public String getLibrary() {
+        return library;
+    }
 
-	public void setConnectionName(String connectionName) {
-		this.connectionName = connectionName;
-	}
-	
-	
+    public void setLibrary(String library) {
+        this.library = library;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getConnectionName() {
+        return connectionName;
+    }
+
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
+    }
+
 }

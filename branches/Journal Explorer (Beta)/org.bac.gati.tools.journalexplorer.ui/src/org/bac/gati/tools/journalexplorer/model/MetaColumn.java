@@ -1,66 +1,78 @@
 package org.bac.gati.tools.journalexplorer.model;
 
 public class MetaColumn {
-	
-	public enum DataType {
-		TIME, TIMESTMP, DATE, CHAR, VARCHAR, CLOB, REAL, DOUBLE, SMALLINT, INTEGER, BIGINT, DECIMAL, NUMERIC
-	};
 
-	private String name;
+    public enum DataType {
+        TIME,
+        TIMESTMP,
+        DATE,
+        CHAR,
+        VARCHAR,
+        CLOB,
+        REAL,
+        DOUBLE,
+        SMALLINT,
+        INTEGER,
+        BIGINT,
+        DECIMAL,
+        NUMERIC
+    };
 
-	private String columnText;
-	
-	private int size;
+    private String name;
 
-	private int precision;
+    private String columnText;
 
-	private DataType dataType;
-	
-	public String getName() {
-		return name;
-	}
+    private int size;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private int precision;
 
-	public int getSize() {
-		return size;
-	}
+    private DataType dataType;
 
-	public void setSize(int size) {
-		this.size = size;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getPrecision() {
-		return precision;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setPrecision(int precision) {
-		this.precision = precision;
-	}
+    public int getSize() {
+        return size;
+    }
 
-	public DataType getDataType() {
-		return dataType;
-	}
+    public void setSize(int size) {
+        this.size = size;
+    }
 
-	public void setDataType(DataType dataType) {
-		this.dataType = dataType;
-	}
+    public int getPrecision() {
+        return precision;
+    }
 
-	public void setDataType(String dataType) throws Exception {
-		try {
-			this.dataType = DataType.valueOf(dataType.toUpperCase());
-		} catch (Exception exception) {
-			throw new Exception("Unsupported datatype: " + dataType);
-		}
-	}
+    public void setPrecision(int precision) {
+        this.precision = precision;
+    }
 
-	public String getColumnText() {
-		return columnText;
-	}
+    public DataType getDataType() {
+        return dataType;
+    }
 
-	public void setColumnText(String columnText) {
-		this.columnText = columnText;
-	}
+    public void setDataType(DataType dataType) {
+        this.dataType = dataType;
+    }
+
+    public void setDataType(String dataType) throws Exception {
+        try {
+            this.dataType = DataType.valueOf(dataType.toUpperCase());
+        } catch (Exception exception) {
+            throw new Exception("Unsupported datatype: " + dataType);
+        }
+    }
+
+    public String getColumnText() {
+        return columnText;
+    }
+
+    public void setColumnText(String columnText) {
+        this.columnText = columnText;
+    }
 }
