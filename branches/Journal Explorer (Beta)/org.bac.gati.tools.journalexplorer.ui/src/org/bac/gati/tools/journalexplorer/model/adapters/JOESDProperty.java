@@ -67,7 +67,7 @@ public class JOESDProperty extends JournalProperty {
 
         for (MetaColumn column : this.metatable.getColumns()) {
             columnName = column.getName().trim();
-            if (column.getColumnText().trim() != "") {
+            if (column.getColumnText() != null && column.getColumnText().trim() != "") {
                 columnName += " (" + column.getColumnText().trim() + ")";
             }
 
