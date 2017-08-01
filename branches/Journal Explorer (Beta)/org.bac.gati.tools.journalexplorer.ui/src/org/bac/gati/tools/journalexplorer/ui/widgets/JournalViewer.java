@@ -1,10 +1,12 @@
 package org.bac.gati.tools.journalexplorer.ui.widgets;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.Journal;
-import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO;
+import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO2;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
 import org.eclipse.jface.viewers.TableViewer;
@@ -152,21 +154,43 @@ public class JournalViewer extends CTabItem {
             }
         });
 
-        // //TODO new JournalTimeColumnLabel().addColumnTo(tableViewer);
-
         // /
         // / JODATE Column
         // /
         newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
         newColumn.getColumn().setMoveable(true);
         newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(150);
+        newColumn.getColumn().setWidth(80);
         newColumn.getColumn().setText("JODATE");
         newColumn.setLabelProvider(new JournalColumnLabel() {
             @Override
             public String getText(Object element) {
                 Journal journal = (Journal)element;
-                return journal.getDate().toString();
+                Date date = journal.getDate();
+                if (date == null) {
+                    return "";
+                }
+                return getDateFormatter().format(date);
+            }
+        });
+
+        // /
+        // / JOTIME Column
+        // /
+        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
+        newColumn.getColumn().setMoveable(true);
+        newColumn.getColumn().setResizable(true);
+        newColumn.getColumn().setWidth(80);
+        newColumn.getColumn().setText("JOTIME");
+        newColumn.setLabelProvider(new JournalColumnLabel() {
+            @Override
+            public String getText(Object element) {
+                Journal journal = (Journal)element;
+                Time time = journal.getTime();
+                if (time == null) {
+                    return "";
+                }
+                return getTimeFormatter().format(time);
             }
         });
 
@@ -313,7 +337,12 @@ public class JournalViewer extends CTabItem {
                 // For displaying purposes, replace the null ending character
                 // for a blank.
                 // Otherwise, the string was truncate by JFace
-                return journal.getStringSpecificData().replace('\0', ' ').substring(1, 200);
+                String stringSpecificData = journal.getStringSpecificData();
+                if (stringSpecificData.indexOf('\0') >= 0) {
+                    return stringSpecificData.replace('\0', ' ').substring(1, 200);
+                } else {
+                    return stringSpecificData;
+                }
             }
         });
 
@@ -322,7 +351,9 @@ public class JournalViewer extends CTabItem {
 
     public void openJournal() throws Exception {
 
-        JournalDAO journalDAO = new JournalDAO(this.connection, this.library, this.fileName);
+        JournalDAO2 journalDAO = new JournalDAO2(this.connection, this.library, this.fileName);
+        // JournalDAO journalDAO = new JournalDAO(this.connection, this.library,
+        // this.fileName);
         this.data = journalDAO.getJournalData();
         this.container.layout(true);
         this.tableViewer.setUseHashlookup(true);
