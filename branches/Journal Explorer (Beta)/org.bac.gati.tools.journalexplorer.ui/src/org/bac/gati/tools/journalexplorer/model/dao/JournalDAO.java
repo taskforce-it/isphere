@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.Journal;
+import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
+import org.bac.gati.tools.journalexplorer.model.MetaTable;
 import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
-
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
  * This class loads the exported journal *TYPE3 data that has been exported by
@@ -30,19 +31,59 @@ public class JournalDAO extends DAOBase {
 
     private String file;
 
-    public JournalDAO(IBMiConnection connection, String library, String file) throws Exception {
-        super(connection);
+    public JournalDAO(String connectionName, String library, String file) throws Exception {
+        super(connectionName);
         this.library = library;
         this.file = file;
     }
 
-    private static final String GET_JOURNAL_DATA = "    SELECT rrn(result) as ID, " + "           result.JOENTL," + "           result.JOSEQN,"
-        + "           result.JOCODE," + "           result.JOENTT," + "           result.JOTSTP," + "           result.JOJOB,"
-        + "           result.JOUSER," + "           result.JONBR," + "           result.JOPGM," + "           result.JOOBJ,"
-        + "           result.JOLIB," + "           result.JOMBR," + "           result.JOCTRR," + "           result.JOFLAG,"
-        + "           result.JOCCID," + "           result.JOINCDAT," + "           result.JOMINESD,"
-        + "           SUBSTR(result.JOESD,1,5000) AS JOESD" // TODO
-        + "      FROM %s.%s as result";
+    // @formatter:off
+    private static final String GET_JOURNAL_DATA_1 = 
+        "    SELECT rrn(result) as ID, " + 
+        "           result.JOENTL,  " + 
+        "           result.JOSEQN,  " + 
+        "           result.JOCODE,  " + 
+        "           result.JOENTT,  " + 
+        "           result.JODATE,  " +
+        "           result.JOTIME,  " +
+        "           result.JOJOB,   " + 
+        "           result.JOUSER,  " + 
+        "           result.JONBR,   " + 
+        "           result.JOPGM,   " +
+        "           result.JOOBJ,   " +
+        "           result.JOLIB,   " + 
+        "           result.JOMBR,   " + 
+        "           result.JOCTRR,  " + 
+        "           result.JOFLAG,  " + 
+        "           result.JOCCID,  " + 
+        "           result.JOINCDAT," + 
+        "           result.JOMINESD," + 
+        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+        "      FROM %s.%s as result";
+    
+    
+    private static final String GET_JOURNAL_DATA_3 = 
+        "    SELECT rrn(result) as ID, " + 
+        "           result.JOENTL,  " + 
+        "           result.JOSEQN,  " + 
+        "           result.JOCODE,  " + 
+        "           result.JOENTT,  " + 
+        "           result.JOTSTP,  " +
+        "           result.JOJOB,   " + 
+        "           result.JOUSER,  " + 
+        "           result.JONBR,   " + 
+        "           result.JOPGM,   " +
+        "           result.JOOBJ,   " +
+        "           result.JOLIB,   " + 
+        "           result.JOMBR,   " + 
+        "           result.JOCTRR,  " + 
+        "           result.JOFLAG,  " + 
+        "           result.JOCCID,  " + 
+        "           result.JOINCDAT," + 
+        "           result.JOMINESD," + 
+        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+        "      FROM %s.%s as result";
+    // @formatter:on
 
     public ArrayList<Journal> getJournalData() throws Exception {
 
@@ -54,10 +95,14 @@ public class JournalDAO extends DAOBase {
 
         try {
 
-            statementSQL = String.format(GET_JOURNAL_DATA, this.library, this.file);
+            boolean isType3OutputFile = isType3OutputFile(this.library, this.file);
+            if (isType3OutputFile) {
+                statementSQL = String.format(GET_JOURNAL_DATA_3, this.library, this.file);
+            } else {
+                statementSQL = String.format(GET_JOURNAL_DATA_1, this.library, this.file);
+            }
 
-            this.connection.setAutoCommit(false);
-            preparedStatement = this.connection.prepareStatement(statementSQL);
+            preparedStatement = prepareStatement(statementSQL);
             resultSet = preparedStatement.executeQuery();
             resultSet.setFetchSize(50);
 
@@ -70,7 +115,7 @@ public class JournalDAO extends DAOBase {
 
                     journal = new Journal();
 
-                    journal.connection = this.ibmiConnection;
+                    journal.setConnectionName(this.ibmiConnection.getConnectionName());
                     journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
@@ -79,8 +124,9 @@ public class JournalDAO extends DAOBase {
                         journal.setDate(resultSet.getDate("JOTSTP"));
                         journal.setTime(resultSet.getTime("JOTSTP"));
                     } else {
-                        // journal.setDate(resultSet.getString("JODATE"));
-                        // journal.setTime(resultSet.getInt("JOTIME"));
+                         String date = resultSet.getString("JODATE");
+                         int time = resultSet.getInt("JOTIME");
+                         journal.setDate(date, time, getDateFormat());
                     }
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
                     journal.setEntryType(resultSet.getString("JOENTT"));
@@ -135,6 +181,18 @@ public class JournalDAO extends DAOBase {
             super.destroy(resultSet);
         }
         return journalData;
+    }
+
+    private boolean isType3OutputFile(String library2, String file2) throws Exception {
+
+        File outputFile = new File();
+        outputFile.setOutFileLibrary(library2);
+        outputFile.setOutFileName(file2);
+        outputFile.setConnetionName(getConnectionName());
+
+        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
+        
+        return metaTable.hasColumn("JOTSTP");
     }
 
     private boolean hasColumn(ResultSet resultSet, String columnName) throws SQLException {

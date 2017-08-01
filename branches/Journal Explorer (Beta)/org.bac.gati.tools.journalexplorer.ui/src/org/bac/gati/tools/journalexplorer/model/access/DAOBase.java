@@ -3,33 +3,54 @@ package org.bac.gati.tools.journalexplorer.model.access;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 
+import com.ibm.as400.access.AS400Date;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class DAOBase {
     protected static final String properties = "thread used=false;extendeddynamic=true;package criteria=select;package cache=true;"; //$NON-NLS-1$
 
     protected IBMiConnection ibmiConnection;
+    private Connection connection;
+    private String dateFormat;
+    private String dateSeparator;
 
-    protected Connection connection;
-
-    public DAOBase(IBMiConnection connection) throws Exception {
-        if (connection != null) {
-            if (!connection.isConnected()) {
-                if (!connection.connect()) {
+    public DAOBase(String connectionName) throws Exception {
+        if (connectionName != null) {
+            this.ibmiConnection = IBMiConnection.getConnection(connectionName);
+            if (!ibmiConnection.isConnected()) {
+                if (!ibmiConnection.connect()) {
                     throw new Exception(Messages.DAOBase_ConnectionNotStablished);
                 }
             }
 
-            this.ibmiConnection = connection;
-            this.connection = connection.getJDBCConnection("", false); //$NON-NLS-1$
+            this.dateFormat = this.ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateFormat();
+            if (this.dateFormat.startsWith("*")) {
+                this.dateFormat=this.dateFormat.substring(1);
+            }
+            this.dateSeparator = this.ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
+            this.connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
+            this.connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.DAOBase_InvalidConnectionObject);
     }
 
     public void destroy() {
+    }
+
+    protected String getConnectionName() {
+        return ibmiConnection.getConnectionName();
+    }
+
+    protected PreparedStatement prepareStatement(String sql) throws SQLException {
+        return this.connection.prepareStatement(sql);
+    }
+
+    protected int getDateFormat() {
+        return AS400Date.toFormat(this.dateFormat);
     }
 
     protected void destroy(Connection connection) throws Exception {

@@ -19,7 +19,7 @@ public class Journal {
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
     // TODO: Remove this, look an elegant solution
-    public IBMiConnection connection;
+    private String connection;
 
     private String outFileName;
 
@@ -77,13 +77,24 @@ public class Journal {
 
     private String stringSpecificData; // JOESD (String)
 
+    public Journal() {
+    }
+    
     // //////////////////////////////////////////////////////////
     // / Getters / Setters
     // //////////////////////////////////////////////////////////
 
+    public String getConnectionName(){
+        return connection;
+    }
+    
+    public void setConnectionName(String connectionName) {
+        this.connection = connectionName;
+    }
+    
     public String getKey() {
         // TODO: usar string format
-        return this.connection.getHostName() + ":" + //$NON-NLS-1$
+        return this.connection + ":" + //$NON-NLS-1$
             this.outFileLibrary + '/' + this.outFileName + Messages.Journal_RecordNum + Integer.toString(this.rrn);
     }
 
@@ -305,15 +316,16 @@ public class Journal {
         this.rrn = rrn;
     }
 
-    public void setDate(String date, String time) {
+    public void setDate(String date, int time, int dateFormat) {
 
-        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), AS400Date.FORMAT_MDY, null);
+        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
         java.sql.Date dateObject = as400date.parse(date);
 
         AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, null);
-        Time timeObject = as400time.parse(time);
+        Time timeObject = as400time.parse(Integer.toString(time));
 
-        this.date = new Timestamp(dateObject.getTime() + timeObject.getTime());
+        setDate(new Date(dateObject.getTime()));
+        setTime(new Time(timeObject.getTime()));
     }
 
     public String getOutFileName() {

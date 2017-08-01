@@ -8,12 +8,10 @@ import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
 import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 public class MetaTableDAO extends DAOBase {
 
-    public MetaTableDAO(IBMiConnection connection) throws Exception {
-        super(connection);
+    public MetaTableDAO(String connectionName) throws Exception {
+        super(connectionName);
     }
 
     private static final String GET_TABLE_DEFINITION_SQL = "    SELECT Tables.SYSTEM_TABLE_NAME, " //$NON-NLS-1$
@@ -49,7 +47,7 @@ public class MetaTableDAO extends DAOBase {
 
         try {
 
-            sqlStatement = this.connection.prepareStatement(GET_TABLE_DEFINITION_SQL);
+            sqlStatement = prepareStatement(GET_TABLE_DEFINITION_SQL);
             sqlStatement.setString(1, table.getDefinitionName());
             sqlStatement.setString(2, table.getDefinitionLibrary());
 

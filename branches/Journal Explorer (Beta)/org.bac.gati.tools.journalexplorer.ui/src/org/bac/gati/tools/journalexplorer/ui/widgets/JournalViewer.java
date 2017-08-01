@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
+import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.Journal;
-import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO2;
+import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
 import org.eclipse.jface.viewers.TableViewer;
@@ -21,15 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 public class JournalViewer extends CTabItem {
 
     private Composite container;
 
     private TableViewer tableViewer;
 
-    private IBMiConnection connection;
+    private String connectionName;
 
     private String library;
 
@@ -37,12 +36,12 @@ public class JournalViewer extends CTabItem {
 
     private ArrayList<Journal> data;
 
-    public JournalViewer(CTabFolder parent, String library, String fileName, IBMiConnection connection) {
+    public JournalViewer(CTabFolder parent, File outputFile) {
 
         super(parent, SWT.NONE);
-        this.library = library;
-        this.fileName = fileName;
-        this.connection = connection;
+        this.library = outputFile.getOutFileLibrary();
+        this.fileName = outputFile.getOutFileName();
+        this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
         this.initializeComponents();
     }
@@ -50,7 +49,7 @@ public class JournalViewer extends CTabItem {
     private void initializeComponents() {
 
         this.container.setLayout(new FillLayout());
-        this.setText(this.connection.getHostName() + ": " + library + "/" + fileName);
+        this.setText(this.connectionName + ": " + library + "/" + fileName);
         this.initializeTable();
         this.container.layout(true);
         this.setControl(this.container);
@@ -351,9 +350,9 @@ public class JournalViewer extends CTabItem {
 
     public void openJournal() throws Exception {
 
-        JournalDAO2 journalDAO = new JournalDAO2(this.connection, this.library, this.fileName);
-        // JournalDAO journalDAO = new JournalDAO(this.connection, this.library,
-        // this.fileName);
+        // JournalDAO2 journalDAO = new JournalDAO2(this.connection,
+        // this.library, this.fileName);
+        JournalDAO journalDAO = new JournalDAO(this.connectionName, this.library, this.fileName);
         this.data = journalDAO.getJournalData();
         this.container.layout(true);
         this.tableViewer.setUseHashlookup(true);

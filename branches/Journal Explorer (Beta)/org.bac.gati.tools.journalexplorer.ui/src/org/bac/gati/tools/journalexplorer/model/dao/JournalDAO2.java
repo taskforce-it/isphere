@@ -20,11 +20,11 @@ public class JournalDAO2 extends DAOBase {
 
     private static int MAX_NUM_ENTRIES = 70;
 
-    public JournalDAO2(IBMiConnection aConnection, String aLibrary, String aFile) throws Exception {
-        super(aConnection);
+    public JournalDAO2(String aConnectionName, String aLibrary, String aFile) throws Exception {
+        super(aConnectionName);
         library = aLibrary;
         file = aFile;
-        connection = aConnection;
+        connection = IBMiConnection.getConnection(aConnectionName);
     }
 
     public ArrayList<Journal> getJournalData() throws Exception {
@@ -43,7 +43,7 @@ public class JournalDAO2 extends DAOBase {
 
                         Journal tJournal = new Journal();
 
-                        tJournal.connection = connection;
+                        tJournal.setConnectionName(connection.getConnectionName());
                         tJournal.setCommitmentCycle(tJournalEntries.getCommitCycleId().intValue());
                         tJournal.setDate(tJournalEntries.getTimestamp());
                         tJournal.setEntryLength(tJournalEntries.getEntrySpecificDataLength());

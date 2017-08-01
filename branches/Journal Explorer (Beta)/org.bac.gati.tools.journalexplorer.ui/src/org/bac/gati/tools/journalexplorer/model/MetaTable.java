@@ -1,6 +1,7 @@
 package org.bac.gati.tools.journalexplorer.model;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents the metatada of a table. It contains the name and
@@ -98,5 +99,17 @@ public class MetaTable {
 
     public void setParsingOffset(int parsingOffset) {
         this.parsingOffset = parsingOffset;
+    }
+
+    public boolean hasColumn(String columnName) {
+
+        List<MetaColumn> metaColumns = getColumns();
+        for (MetaColumn metaColumn : metaColumns) {
+            if (metaColumn.getName().equals(columnName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

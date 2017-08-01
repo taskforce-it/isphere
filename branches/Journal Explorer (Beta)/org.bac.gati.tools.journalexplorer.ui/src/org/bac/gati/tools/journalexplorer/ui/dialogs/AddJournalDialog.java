@@ -1,15 +1,17 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
+import org.bac.gati.tools.journalexplorer.ui.Activator;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.IBMiConnectionLabelProvider;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -20,9 +22,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.jface.dialogs.XDialog;
+
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
-public class AddJournalDialog extends Dialog {
+public class AddJournalDialog extends XDialog {
+
+    private static final String CONNECTION = "CONNECTION";
+    private static final String LIBRARY = "LIBRARY";
+    private static final String FILE = "FILE";
 
     private Text txtLibrary;
 
@@ -82,7 +90,35 @@ public class AddJournalDialog extends Dialog {
         this.txtFileName = new Text(container, SWT.BORDER);
         this.txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+        loadValues();
+
         return container;
+    }
+
+    private void loadValues() {
+
+        String connectionName = loadValue(CONNECTION, null);
+        if (connectionName == null) {
+            Object object = cmbConnections.getElementAt(0);
+            if (object instanceof IBMiConnection) {
+                IBMiConnection connection = (IBMiConnection)object;
+                connectionName = connection.getConnectionName();
+            }
+        }
+
+        if (connectionName != null) {
+            cmbConnections.setSelection(new StructuredSelection(IBMiConnection.getConnection(connectionName)));
+        }
+
+        txtLibrary.setText(loadValue(LIBRARY, ""));
+        txtFileName.setText(loadValue(FILE, ""));
+    }
+
+    private void storeValues() {
+
+        storeValue(FILE, fileName);
+        storeValue(LIBRARY, library);
+        storeValue(CONNECTION, connection.getConnectionName());
     }
 
     private void configureConnectionsCombo() {
@@ -143,6 +179,8 @@ public class AddJournalDialog extends Dialog {
             this.fileName = this.txtFileName.getText();
             this.library = this.txtLibrary.getText();
 
+            storeValues();
+
             return true;
 
         } else {
@@ -161,8 +199,17 @@ public class AddJournalDialog extends Dialog {
         return this.library.toUpperCase();
     }
 
-    public IBMiConnection getConnection() {
+    public String getConnectionName() {
 
-        return this.connection;
+        return this.connection.getConnectionName();
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(Activator.getDefault().getDialogSettings());
     }
 }

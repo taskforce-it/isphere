@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
+import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.AddJournalDialog;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
 import org.bac.gati.tools.journalexplorer.ui.widgets.JournalViewer;
@@ -104,8 +105,11 @@ public class JournalExplorerView extends ViewPart {
                 int result = addJournalDialog.open();
 
                 if (result == Window.OK) {
-                    JournalExplorerView.this.handleAddJournal(addJournalDialog.getLibrary(), addJournalDialog.getFileName(),
-                        addJournalDialog.getConnection());
+                    File outputFile = new File();
+                    outputFile.setOutFileLibrary(addJournalDialog.getLibrary());
+                    outputFile.setOutFileName(addJournalDialog.getFileName());
+                    outputFile.setConnetionName(addJournalDialog.getConnectionName());
+                    JournalExplorerView.this.handleAddJournal(outputFile);
                 }
             }
         };
@@ -132,13 +136,13 @@ public class JournalExplorerView extends ViewPart {
         }
     }
 
-    private void handleAddJournal(String library, String fileName, IBMiConnection connection) {
+    private void handleAddJournal(File outputFile) {
 
         JournalViewer journalViewer = null;
 
         try {
 
-            journalViewer = new JournalViewer(this.tabs, library, fileName, connection);
+            journalViewer = new JournalViewer(this.tabs, outputFile);
             journalViewer.setAsSelectionProvider(this.selectionProviderIntermediate);
             journalViewer.openJournal();
 

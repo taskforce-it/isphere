@@ -33,7 +33,7 @@ public class MetaColumn {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public int getSize() {
@@ -73,6 +73,6 @@ public class MetaColumn {
     }
 
     public void setColumnText(String columnText) {
-        this.columnText = columnText;
+        this.columnText = columnText.trim();
     }
 }

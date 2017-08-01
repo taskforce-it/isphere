@@ -19,29 +19,35 @@ public class MetaDataCache {
         this.cache.put(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()), metaTable);
     }
 
+    public MetaTable retrieveMetaData(File file) throws Exception {
+        return loadMetadata(file.getConnectionName(), file.getOutFileLibrary(), file.getOutFileName());
+    }
+
     public MetaTable retrieveMetaData(Journal journal) throws Exception {
+        return loadMetadata(journal.getConnectionName(), journal.getObjectLibrary(), journal.getObjectName());
+    }
 
-        MetaTable metatable;
-        String key = QualifiedName.getName(journal.getObjectLibrary(), journal.getObjectName());
+    private MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName) throws Exception {
 
-        metatable = this.cache.get(key);
+        String key = QualifiedName.getName(objectLibrary, objectName);
+        MetaTable metatable = this.cache.get(key);
 
         if (metatable == null) {
-            metatable = new MetaTable(journal.getObjectName(), journal.getObjectLibrary());
+            metatable = new MetaTable(objectName, objectLibrary);
             this.saveMetaData(metatable);
-            this.loadMetadata(metatable, journal);
+            this.loadMetadata(metatable, connectionName);
 
         } else if (!metatable.isLoaded()) {
             metatable.clearColumns();
-            this.loadMetadata(metatable, journal);
+            this.loadMetadata(metatable, connectionName);
         }
 
         return metatable;
     }
 
-    private void loadMetadata(MetaTable metaTable, Journal journal) throws Exception {
+    private void loadMetadata(MetaTable metaTable, String connectionName) throws Exception {
 
-        MetaTableDAO metaTableDAO = new MetaTableDAO(journal.connection);
+        MetaTableDAO metaTableDAO = new MetaTableDAO(connectionName);
 
         try {
             metaTableDAO.retrieveColumnsMetaData(metaTable);
