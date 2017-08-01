@@ -37,7 +37,7 @@ public class Journal {
 
     private Date date; // JODATE
 
-    private Timestamp time; // JOTIME
+    private Time time; // JOTIME
 
     private String jobName; // JOJOB
 
@@ -289,11 +289,11 @@ public class Journal {
         this.specificData = specificData;
     }
 
-    public Timestamp getTime() {
+    public Time getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(Time time) {
         this.time = time;
     }
 

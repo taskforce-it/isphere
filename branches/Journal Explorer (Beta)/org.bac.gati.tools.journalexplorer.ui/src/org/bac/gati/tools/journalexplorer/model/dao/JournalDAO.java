@@ -2,6 +2,8 @@ package org.bac.gati.tools.journalexplorer.model.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +13,17 @@ import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+/**
+ * This class loads the exported journal *TYPE3 data that has been exported by
+ * DSPJRN to an output file. For example:
+ * 
+ * <pre>
+ * DSPJRN JRN(library/journal) FILE((library/file)) RCVRNG(*CURCHAIN) 
+ *   FROMTIME(060417 140000) TOTIME(060417 160000) ENTTYP(*RCD)    
+ *   OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3) OUTFILE(library/file)    
+ *   ENTDTALEN(1024)
+ * </pre>
+ */
 public class JournalDAO extends DAOBase {
 
     private String library;
@@ -57,38 +70,55 @@ public class JournalDAO extends DAOBase {
 
                     journal = new Journal();
 
+                    journal.connection = this.ibmiConnection;
+                    journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
+                    // Depending of the journal out type, the timestamp can be a
+                    // single field or splitted in JODATE and JOTYPE
+                    // TODO
+                    if (hasColumn(resultSet, "JOTSTP")) {
+                        journal.setDate(resultSet.getDate("JOTSTP"));
+                        journal.setTime(resultSet.getTime("JOTSTP"));
+                    } else {
+                        // journal.setDate(resultSet.getString("JODATE"));
+                        // journal.setTime(resultSet.getInt("JOTIME"));
+                    }
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
-                    journal.setSequenceNumber(resultSet.getLong("JOSEQN"));
-                    journal.setJournalCode(resultSet.getString("JOCODE"));
                     journal.setEntryType(resultSet.getString("JOENTT"));
+                    journal.setIncompleteData(resultSet.getString("JOINCDAT"));
+                    journal.setJobName(resultSet.getString("JOJOB"));
+                    journal.setJobNumber(resultSet.getInt("JONBR"));
+                    journal.setJobUserName(resultSet.getString("JOUSER"));
+                    journal.setJoCtrr(resultSet.getInt("JOCTRR"));
+                    journal.setJoFlag(resultSet.getString("JOFLAG"));
+                    journal.setJournalCode(resultSet.getString("JOCODE"));
+                    // setJournalID
+                    journal.setMemberName(resultSet.getString("JOMBR"));
+                    journal.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
+                    journal.setObjectLibrary(resultSet.getString("JOLIB"));
+                    journal.setObjectName(resultSet.getString("JOOBJ"));
+                    // setOutFileLibrary
+                    // setOutFileName
+                    journal.setProgramName(resultSet.getString("JOPGM"));
+                    // setReferentialConstraint
+                    journal.setRrn(resultSet.getInt("ID"));
+                    journal.setSequenceNumber(resultSet.getLong("JOSEQN"));
+                    journal.setSpecificData(resultSet.getBytes("JOESD"));
+                    journal.setStringSpecificData(resultSet.getString("JOESD"));
+                    // setSystemName
+                    // setTime
+                    // setTrigger
+                    // setUserProfile
 
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
                     // TODO
                     // if (this.hasColumn(resultSet, "JOTSTP")) {
-                    journal.setDate(resultSet.getTimestamp("JOTSTP"));
                     // }
                     // else {
                     // journal.setDate(resultSet.getString("JODATE"),
                     // resultSet.getString("JOTIME"));
                     // }
 
-                    journal.setJobName(resultSet.getString("JOJOB"));
-                    journal.setJobUserName(resultSet.getString("JOUSER"));
-                    journal.setJobNumber(resultSet.getInt("JONBR"));
-                    journal.setProgramName(resultSet.getString("JOPGM"));
-                    journal.setObjectName(resultSet.getString("JOOBJ"));
-                    journal.setObjectLibrary(resultSet.getString("JOLIB"));
-                    journal.setMemberName(resultSet.getString("JOMBR"));
-                    journal.setJoCtrr(resultSet.getInt("JOCTRR"));
-                    journal.setJoFlag(resultSet.getString("JOFLAG"));
-                    journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
-                    journal.setIncompleteData(resultSet.getString("JOINCDAT"));
-                    journal.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
-                    journal.setSpecificData(resultSet.getBytes("JOESD"));
-                    journal.setStringSpecificData(resultSet.getString("JOESD"));
-                    journal.setRrn(resultSet.getInt("ID"));
-                    journal.connection = this.ibmiConnection;
                     journal.setOutFileLibrary(library);
                     journal.setOutFileName(file);
                     journalData.add(journal);
@@ -105,6 +135,19 @@ public class JournalDAO extends DAOBase {
             super.destroy(resultSet);
         }
         return journalData;
+    }
+
+    private boolean hasColumn(ResultSet resultSet, String columnName) throws SQLException {
+
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int count = metaData.getColumnCount();
+        for (int i = 1; i <= count; i++) {
+            if (metaData.getColumnName(i).equals(columnName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /*
