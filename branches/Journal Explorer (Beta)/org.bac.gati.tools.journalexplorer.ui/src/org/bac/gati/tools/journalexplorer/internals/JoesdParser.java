@@ -3,27 +3,23 @@ package org.bac.gati.tools.journalexplorer.internals;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
+import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJoesdParserDelegate;
+import org.bac.gati.tools.journalexplorer.rse.shared.JoesdParserDelegate;
 
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Bin8;
-import com.ibm.as400.access.AS400Date;
 import com.ibm.as400.access.AS400Float4;
 import com.ibm.as400.access.AS400Float8;
 import com.ibm.as400.access.AS400PackedDecimal;
 import com.ibm.as400.access.AS400Text;
-import com.ibm.as400.access.AS400Time;
-import com.ibm.as400.access.AS400Timestamp;
 import com.ibm.as400.access.AS400ZonedDecimal;
 import com.ibm.as400.access.BinaryFieldDescription;
 import com.ibm.as400.access.CharacterFieldDescription;
-import com.ibm.as400.access.DateFieldDescription;
 import com.ibm.as400.access.FloatFieldDescription;
 import com.ibm.as400.access.PackedDecimalFieldDescription;
 import com.ibm.as400.access.Record;
 import com.ibm.as400.access.RecordFormat;
-import com.ibm.as400.access.TimeFieldDescription;
-import com.ibm.as400.access.TimestampFieldDescription;
 import com.ibm.as400.access.ZonedDecimalFieldDescription;
 
 public class JoesdParser {
@@ -32,6 +28,8 @@ public class JoesdParser {
     private MetaTable metadata;
 
     private RecordFormat formatoJoesd;
+
+    private IJoesdParserDelegate joesdParserDelegate = new JoesdParserDelegate();
 
     public JoesdParser(MetaTable metadata) throws Exception {
         this.metadata = metadata;
@@ -55,7 +53,7 @@ public class JoesdParser {
                 throw new Exception(Messages.JoesdParser_CLOBNotSupported);
 
             case DATE:
-                this.formatoJoesd.addFieldDescription(new DateFieldDescription(new AS400Date(), columna.getName()));
+                this.formatoJoesd.addFieldDescription(joesdParserDelegate.getDateFieldDescription(columna.getName()));
                 break;
 
             case DECIMAL:
@@ -85,11 +83,11 @@ public class JoesdParser {
                 break;
 
             case TIME:
-                this.formatoJoesd.addFieldDescription(new TimeFieldDescription(new AS400Time(), columna.getName()));
+                this.formatoJoesd.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(columna.getName()));
                 break;
 
             case TIMESTMP:
-                this.formatoJoesd.addFieldDescription(new TimestampFieldDescription(new AS400Timestamp(), columna.getName()));
+                this.formatoJoesd.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(columna.getName()));
                 break;
 
             case VARCHAR:
