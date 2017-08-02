@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Journal Explorer RSE Interfaces
+Bundle-SymbolicName: org.bac.gati.tools.journalexplorer.rse.base
+Bundle-Version: 1.0.0
+Bundle-Activator: org.bac.gati.tools.journalexplorer.rse.base.ISphereJournalExplorerRSEBasePlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Import-Package: com.ibm.as400.access
+Export-Package: org.bac.gati.tools.journalexplorer.rse.base.interfaces
