@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Journal Explorer for RDi 8.0+
+Bundle-SymbolicName: org.bac.gati.tools.journalexplorer.rse
+Bundle-Version: 1.0.0
+Bundle-Activator: org.bac.gati.tools.journalexplorer.rse.ISphereJournalExplorerRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.bac.gati.tools.journalexplorer.rse.base
+Eclipse-LazyStart: true
+Import-Package: com.ibm.as400.access
+Export-Package: org.bac.gati.tools.journalexplorer.rse.shared
