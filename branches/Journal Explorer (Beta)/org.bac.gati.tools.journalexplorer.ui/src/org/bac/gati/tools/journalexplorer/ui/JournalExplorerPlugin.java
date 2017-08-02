@@ -1,24 +1,37 @@
 package org.bac.gati.tools.journalexplorer.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class JournalExplorerPlugin extends AbstractUIPlugin {
+
+    private static final String ICON_PATH = "icons/";
+    public static final String IMAGE_COMPARE = "compare.png";
+    public static final String IMAGE_DETAILS = "details.png";
+    public static final String IMAGE_HIGHLIGHT = "highlight.png";
+    public static final String IMAGE_HORIZONTAL_RESULTS_VIEW = "horizontal_results_view.gif";
+    public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer.png";
+    public static final String IMAGE_READ_WRITE_OBJ = "readwrite_obj.gif";
+    public static final String IMAGE_REFRESH = "refresh.gif";
+    public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
+    public static final String IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN = "table_bottom_left_corner_new_green.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.bac.gati.tools.journalexplorer.ui"; //$NON-NLS-1$
 
     // The shared instance
-    private static Activator plugin;
+    private static JournalExplorerPlugin plugin;
 
     /**
      * The constructor
      */
-    public Activator() {
+    public JournalExplorerPlugin() {
     }
 
     /*
@@ -50,7 +63,7 @@ public class Activator extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static Activator getDefault() {
+    public static JournalExplorerPlugin getDefault() {
         return plugin;
     }
 
@@ -62,6 +75,10 @@ public class Activator extends AbstractUIPlugin {
      * @return the image descriptor
      */
     public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+        return ResourceManager.getPluginImageDescriptor(PLUGIN_ID, ICON_PATH + path);
+    }
+
+    public static Image getImage(String path) {
+        return ResourceManager.getPluginImage(PLUGIN_ID, ICON_PATH + path);
     }
 }

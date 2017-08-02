@@ -4,8 +4,9 @@ import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.internals.QualifiedName;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
-import org.eclipse.jface.dialogs.Dialog;
+import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -13,6 +14,8 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -24,7 +27,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-public class ConfigureParsersDialog extends Dialog {
+import biz.isphere.base.jface.dialogs.XDialog;
+
+public class ConfigureParsersDialog extends XDialog {
 
     TableViewer tableViewer;
 
@@ -58,6 +63,20 @@ public class ConfigureParsersDialog extends Dialog {
         this.table.setLinesVisible(true);
         this.table.setHeaderVisible(true);
         this.tableViewer.setContentProvider(new ArrayContentProvider());
+        this.tableViewer.addFilter(new ViewerFilter() {
+            @Override
+            public boolean select(Viewer viewer, Object parent, Object elements) {
+                
+                if(elements instanceof MetaTable){
+                    MetaTable metaTable = (MetaTable)elements;
+                    if (! metaTable.isHidden()){
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+        });
 
         this.configureTable();
         this.populate();
@@ -334,4 +353,12 @@ public class ConfigureParsersDialog extends Dialog {
         newShell.setText(Messages.ConfigureParsersDialog_SetDefinitions);
     }
 
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
+    }
 }

@@ -42,6 +42,7 @@ public class Messages extends NLS {
     public static String SelectEntriesToCompareDialog_ChooseLeftRecord;
     public static String SelectEntriesToCompareDialog_ChooseRightRecord;
     public static String SideBySideCompareDialog_SideBySideComparison;
+    public static String Error;
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

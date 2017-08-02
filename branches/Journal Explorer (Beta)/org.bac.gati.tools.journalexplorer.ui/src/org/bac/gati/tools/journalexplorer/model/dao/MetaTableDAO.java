@@ -14,7 +14,9 @@ public class MetaTableDAO extends DAOBase {
         super(connectionName);
     }
 
-    private static final String GET_TABLE_DEFINITION_SQL = "    SELECT Tables.SYSTEM_TABLE_NAME, " //$NON-NLS-1$
+    // @formatter:off
+    private static final String GET_TABLE_DEFINITION_SQL = 
+          "    SELECT Tables.SYSTEM_TABLE_NAME, " //$NON-NLS-1$
         + "           Tables.SYSTEM_TABLE_SCHEMA, " //$NON-NLS-1$
         + "           Tables.COLUMN_COUNT, " //$NON-NLS-1$
         + "           Tables.TABLE_TEXT, " //$NON-NLS-1$
@@ -37,6 +39,7 @@ public class MetaTableDAO extends DAOBase {
         + "     WHERE Tables.SYSTEM_TABLE_NAME = ? " //$NON-NLS-1$
         + "       AND Tables.SYSTEM_TABLE_SCHEMA = ?" //$NON-NLS-1$
         + " ORDER BY  Columns.ORDINAL_POSITION"; //$NON-NLS-1$
+    // @formatter:on
 
     public void retrieveColumnsMetaData(MetaTable table) throws Exception {
 

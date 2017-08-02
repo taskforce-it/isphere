@@ -21,15 +21,20 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
 
     @SuppressWarnings("unchecked")
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
         if (newInput != null) {
             this.elements = (ArrayList<JournalEntry>)newInput;
         } else {
             this.elements = null;
         }
-
     }
 
     public void updateElement(int index) {
+
+        if (getInput() == null || getInput().length < index + 1) {
+            return;
+        }
+
         this.viewer.replace(elements.get(index), index);
     }
 

@@ -1,7 +1,7 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.ui.Activator;
+import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.IBMiConnectionLabelProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -184,7 +184,7 @@ public class AddJournalDialog extends XDialog {
             return true;
 
         } else {
-            MessageDialog.openError(this.getShell(), "Error", Messages.AddJournalDialog_AllDataRequired); //$NON-NLS-1$
+            MessageDialog.openError(this.getShell(), Messages.Error, Messages.AddJournalDialog_AllDataRequired); //$NON-NLS-1$
             return false;
         }
     }
@@ -204,12 +204,25 @@ public class AddJournalDialog extends XDialog {
         return this.connection.getConnectionName();
     }
 
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+    
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        return getShell().computeSize(500, SWT.DEFAULT, true);
+    }
+
     /**
      * Overridden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(Activator.getDefault().getDialogSettings());
+        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
     }
 }

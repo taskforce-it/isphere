@@ -1,8 +1,10 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
+import org.bac.gati.tools.journalexplorer.internals.JournalEntryComparator;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryViewer;
+import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
+import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryDetailsViewer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -15,12 +17,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.wb.swt.ResourceManager;
 
 public class SideBySideCompareDialog extends Dialog {
 
-    private JournalEntryViewer leftEntry;
-    private JournalEntryViewer rightEntry;
+    private JournalEntryDetailsViewer leftEntry;
+    private JournalEntryDetailsViewer rightEntry;
     private Label lblLeftEntry;
     private Label lblRightEntry;
 
@@ -54,7 +55,7 @@ public class SideBySideCompareDialog extends Dialog {
         lblLeftEntry = new Label(leftComposite, SWT.NONE);
         lblLeftEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-        this.leftEntry = new JournalEntryViewer(leftComposite);
+        this.leftEntry = new JournalEntryDetailsViewer(leftComposite);
         Tree tree = leftEntry.getTree();
         tree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 
@@ -63,7 +64,7 @@ public class SideBySideCompareDialog extends Dialog {
 
         lblRightEntry = new Label(rightComposite, SWT.NONE);
         lblRightEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        this.rightEntry = new JournalEntryViewer(rightComposite);
+        this.rightEntry = new JournalEntryDetailsViewer(rightComposite);
         Tree tree_1 = rightEntry.getTree();
         tree_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -71,6 +72,8 @@ public class SideBySideCompareDialog extends Dialog {
     }
 
     public void setInput(JournalProperties leftEntry, JournalProperties rightEntry) {
+
+        new JournalEntryComparator().compare(leftEntry, rightEntry);
 
         this.lblLeftEntry.setText(leftEntry.toString());
         this.leftEntry.setInput(new Object[] { leftEntry });
@@ -101,8 +104,8 @@ public class SideBySideCompareDialog extends Dialog {
 
     @Override
     protected void configureShell(Shell newShell) {
-        newShell.setImage(ResourceManager.getPluginImage("org.bac.gati.tools.journalexplorer.ui", "icons/horizontal_results_view.gif")); //$NON-NLS-1$ //$NON-NLS-2$
         super.configureShell(newShell);
+        newShell.setImage(JournalExplorerPlugin.getImage(JournalExplorerPlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
         newShell.setText(Messages.SideBySideCompareDialog_SideBySideComparison);
     }
 }

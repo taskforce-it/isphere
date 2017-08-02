@@ -1,6 +1,7 @@
 package org.bac.gati.tools.journalexplorer.ui.widgets;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
+import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalEntryViewLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -9,9 +10,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-public class JournalEntryViewer extends TreeViewer {
+public class JournalEntryDetailsViewer extends TreeViewer {
 
-    public JournalEntryViewer(Composite parent) {
+    public JournalEntryDetailsViewer(Composite parent) {
         super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
         this.initializeComponents();
     }
@@ -26,12 +27,16 @@ public class JournalEntryViewer extends TreeViewer {
 
         TreeColumn property = new TreeColumn(tree, SWT.LEFT);
         property.setAlignment(SWT.LEFT);
-        property.setWidth(250);
+        property.setWidth(240);
         property.setText(Messages.JournalEntryViewer_Property);
 
         TreeColumn value = new TreeColumn(tree, SWT.LEFT);
         value.setAlignment(SWT.LEFT);
-        value.setWidth(250);
+        value.setWidth(240);
         value.setText(Messages.JournalEntryViewer_Value);
+    }
+
+    public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {
+        selectionProvider.setSelectionProviderDelegate(this);
     }
 }

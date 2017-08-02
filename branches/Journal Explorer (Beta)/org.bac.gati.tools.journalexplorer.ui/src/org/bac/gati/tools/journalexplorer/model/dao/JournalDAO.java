@@ -124,9 +124,9 @@ public class JournalDAO extends DAOBase {
                         journal.setDate(resultSet.getDate("JOTSTP"));
                         journal.setTime(resultSet.getTime("JOTSTP"));
                     } else {
-                         String date = resultSet.getString("JODATE");
-                         int time = resultSet.getInt("JOTIME");
-                         journal.setDate(date, time, getDateFormat());
+                        String date = resultSet.getString("JODATE");
+                        int time = resultSet.getInt("JOTIME");
+                        journal.setDate(date, time, getDateFormat());
                     }
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
                     journal.setEntryType(resultSet.getString("JOENTT"));
@@ -172,7 +172,8 @@ public class JournalDAO extends DAOBase {
                 }
                 // TODO
                 Date Fin = Calendar.getInstance().getTime();
-                System.out.println(Integer.toString(journalData.size()) + "':" + Long.toString(Fin.getTime() - inicio.getTime()));
+                // System.out.println(Integer.toString(journalData.size()) +
+                // "':" + Long.toString(Fin.getTime() - inicio.getTime()));
             }
         } catch (Exception exception) {
             throw exception;
@@ -191,7 +192,8 @@ public class JournalDAO extends DAOBase {
         outputFile.setConnetionName(getConnectionName());
 
         MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-        
+        metaTable.setHidden(true); // Hide table for ConfigureParserDialog
+
         return metaTable.hasColumn("JOTSTP");
     }
 

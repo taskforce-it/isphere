@@ -32,13 +32,23 @@ public class MetaTable {
 
     private int parsingOffset;
 
+    private boolean isHidden;
+
     public MetaTable(String name, String library) {
 
         this.columns = new LinkedList<MetaColumn>();
-        this.name = this.definitionName = name;
-        this.library = this.definitionLibrary = library;
+        this.name = this.definitionName = name.trim();
+        this.library = this.definitionLibrary = library.trim();
         this.loaded = false;
         this.parsingOffset = 0;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
     }
 
     public String getName() {
@@ -46,7 +56,7 @@ public class MetaTable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public String getLibrary() {
@@ -54,7 +64,7 @@ public class MetaTable {
     }
 
     public void setLibrary(String library) {
-        this.library = library;
+        this.library = library.trim();
     }
 
     public LinkedList<MetaColumn> getColumns() {
@@ -66,11 +76,11 @@ public class MetaTable {
     }
 
     public void setDefinitionLibrary(String definitionLibrary) {
-        this.definitionLibrary = definitionLibrary;
+        this.definitionLibrary = definitionLibrary.trim();
     }
 
     public void setDefinitionName(String definitionName) {
-        this.definitionName = definitionName;
+        this.definitionName = definitionName.trim();
     }
 
     public String getDefinitionLibrary() {
@@ -105,7 +115,7 @@ public class MetaTable {
 
         List<MetaColumn> metaColumns = getColumns();
         for (MetaColumn metaColumn : metaColumns) {
-            if (metaColumn.getName().equals(columnName)) {
+            if (metaColumn.getName().equals(columnName.trim())) {
                 return true;
             }
         }

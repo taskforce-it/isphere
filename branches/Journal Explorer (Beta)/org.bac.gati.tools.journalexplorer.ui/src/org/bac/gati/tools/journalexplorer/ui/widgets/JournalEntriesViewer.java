@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 
-public class JournalViewer extends CTabItem {
+public class JournalEntriesViewer extends CTabItem {
 
     private Composite container;
 
@@ -36,7 +36,7 @@ public class JournalViewer extends CTabItem {
 
     private ArrayList<JournalEntry> data;
 
-    public JournalViewer(CTabFolder parent, File outputFile) {
+    public JournalEntriesViewer(CTabFolder parent, File outputFile) {
 
         super(parent, SWT.NONE);
         this.library = outputFile.getOutFileLibrary();
@@ -350,11 +350,10 @@ public class JournalViewer extends CTabItem {
 
     public void openJournal() throws Exception {
 
-        // JournalDAO2 journalDAO = new JournalDAO2(this.connection,
-        // this.library, this.fileName);
         JournalDAO journalDAO = new JournalDAO(this.connectionName, this.library, this.fileName);
         this.data = journalDAO.getJournalData();
         this.container.layout(true);
+        this.tableViewer.setInput(null);
         this.tableViewer.setUseHashlookup(true);
         this.tableViewer.setItemCount(data.size());
         this.tableViewer.setInput(data);

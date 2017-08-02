@@ -6,26 +6,19 @@ import java.util.List;
 
 import org.bac.gati.tools.journalexplorer.internals.JournalEntryComparator;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
 import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
-import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.ConfigureParsersDialog;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.SelectEntriesToCompareDialog;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.SideBySideCompareDialog;
 import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryDetailsViewer;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
@@ -33,24 +26,13 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
-public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
+public class JournalEntryDetailsView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
-    public static final String ID = "org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"; //$NON-NLS-1$
+    public static final String ID = "org.bac.gati.tools.journalexplorer.ui.views.JournalEntryDetailsView"; //$NON-NLS-1$
 
     private JournalEntryDetailsViewer viewer;
 
-    private Action compare;
-
-    private Action showSideBySide;
-
-    private Action openParserAssociations;
-
-    private Action reParseEntries;
-
-    private SelectionProviderIntermediate selectionProviderIntermediate;
-
-    public JournalEntryView() {
-        this.selectionProviderIntermediate = new SelectionProviderIntermediate();
+    public JournalEntryDetailsView() {
     }
 
     @Override
@@ -62,9 +44,6 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         this.createActions();
         this.createToolBar();
         this.setActionEnablement(viewer.getSelection());
-
-        viewer.setAsSelectionProvider(this.selectionProviderIntermediate);
-        this.getSite().setSelectionProvider(this.selectionProviderIntermediate);
     }
 
     @Override
@@ -77,56 +56,9 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     private void createActions() {
 
-        // /
-        // / Compare action
-        // /
-        this.compare = new Action(Messages.JournalEntryView_CompareEntries) {
-            @Override
-            public void run() {
-                JournalEntryView.this.performCompareJOESDEntries();
-            }
-        };
-
-        this.compare.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_COMPARE));
-
-        // /
-        // / showSideBySide action
-        // /
-        this.showSideBySide = new Action(Messages.JournalEntryView_ShowSideBySide) {
-            @Override
-            public void run() {
-                JournalEntryView.this.performShowSideBySideEntries();
-            }
-        };
-
-        showSideBySide.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
-
-        // /
-        // / openParserAssociations action
-        // /
-        this.openParserAssociations = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
-            @Override
-            public void run() {
-                JournalEntryView.this.performConfigureParsers();
-            }
-        };
-
-        openParserAssociations.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_READ_WRITE_OBJ));
-
-        // /
-        // / reParseEntries action
-        // /
-        this.reParseEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
-            @Override
-            public void run() {
-                JournalEntryView.this.performRefresh();
-            }
-        };
-
-        reParseEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_REFRESH));
     }
 
-    protected void performShowSideBySideEntries() {
+    protected void showSideBySideEntries() {
 
         Object[] input = getSelectedItems();
 
@@ -154,19 +86,6 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         }
     }
 
-    protected void performConfigureParsers() {
-
-        ConfigureParsersDialog configureParsersDialog = new ConfigureParsersDialog(JournalEntryView.this.getSite().getShell());
-        configureParsersDialog.create();
-        configureParsersDialog.open();
-    }
-
-    private void performRefresh() {
-
-        JournalEntryView.this.reParseAllEntries();
-        JournalEntryView.this.viewer.refresh(true);
-    }
-
     private void reParseAllEntries() {
 
         Object[] input = getInput();
@@ -186,7 +105,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         return input;
     }
 
-    protected void performCompareJOESDEntries() {
+    protected void compareJOESDEntries() {
 
         Object[] input = getSelectedItems();
 
@@ -225,12 +144,13 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
     }
 
     private void createToolBar() {
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(this.compare);
-        toolBarManager.add(this.showSideBySide);
-        toolBarManager.add(new Separator());
-        toolBarManager.add(this.openParserAssociations);
-        toolBarManager.add(this.reParseEntries);
+        // IToolBarManager toolBarManager =
+        // getViewSite().getActionBars().getToolBarManager();
+        // toolBarManager.add(this.compare);
+        // toolBarManager.add(this.showSideBySide);
+        // toolBarManager.add(new Separator());
+        // toolBarManager.add(this.openParserAssociations);
+        // toolBarManager.add(this.reParseEntries);
     }
 
     @Override
@@ -251,39 +171,56 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         Object currentSelection;
         ArrayList<JournalProperties> input = new ArrayList<JournalProperties>();
 
-        if (viewPart instanceof JournalExplorerView) {
+        // if (viewPart instanceof JournalEntryView) {
+        // structuredSelectionList =
+        // ((IStructuredSelection)selection).iterator();
+        // if (structuredSelectionList.hasNext()) {
+        // structuredSelectionElement =
+        // ((IStructuredSelection)structuredSelectionList.next()).iterator();
+        // if (structuredSelectionElement.hasNext()) {
+        // currentSelection = structuredSelectionElement.next();
+        // if (currentSelection instanceof JournalProperties) {
+        // input.add((JournalProperties)currentSelection);
+        // }
+        // }
+        // }
+        //
+        // refreshViewer(input);
+        // }
 
+        if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryView) {
             if (selection instanceof IStructuredSelection) {
-
                 structuredSelectionList = ((IStructuredSelection)selection).iterator();
-
-                while (structuredSelectionList.hasNext()) {
-
+                while (input.size() < 2 && structuredSelectionList.hasNext()) {
                     structuredSelectionElement = ((IStructuredSelection)structuredSelectionList.next()).iterator();
-
-                    while (structuredSelectionElement.hasNext()) {
-
+                    while (input.size() < 2 && structuredSelectionElement.hasNext()) {
                         currentSelection = structuredSelectionElement.next();
-
                         if (currentSelection instanceof JournalEntry) {
                             input.add(new JournalProperties((JournalEntry)currentSelection));
+                        } else if (currentSelection instanceof JournalProperties) {
+                            input.add((JournalProperties)currentSelection);
                         }
+
                     }
                 }
 
-                // Save tree state
-                Object[] expandedElements = this.viewer.getExpandedElements();
-                TreePath[] expandedTreePaths = this.viewer.getExpandedTreePaths();
+                if (input.size() > 1) {
+                    input.clear();
+                }
 
-                this.viewer.setInput(input.toArray());
-
-                // Restore tree state
-                this.viewer.setExpandedElements(expandedElements);
-                this.viewer.setExpandedTreePaths(expandedTreePaths);
+                refreshViewer(input);
             }
         }
 
         setActionEnablement(viewer.getSelection());
+    }
+
+    private void refreshViewer(ArrayList<JournalProperties> input) {
+
+        this.viewer.setInput(input.toArray());
+
+        // Restore tree state
+        this.viewer.expandAll();
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
@@ -294,32 +231,32 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     private void setActionEnablement(ISelection selection) {
 
-        ITreeSelection treeSelection;
-        if (selection instanceof ITreeSelection) {
-            treeSelection = (ITreeSelection)selection;
-        } else {
-            treeSelection = null;
-        }
-
-        if (treeSelection != null) {
-            if (treeSelection != null && treeSelection.size() == 2) {
-                compare.setEnabled(true);
-                showSideBySide.setEnabled(true);
-            } else {
-                showSideBySide.setEnabled(false);
-                compare.setEnabled(false);
-            }
-
-            Object[] items = getInput();
-
-            if (items != null && items.length > 0) {
-                openParserAssociations.setEnabled(true);
-                reParseEntries.setEnabled(true);
-            } else {
-                openParserAssociations.setEnabled(false);
-                reParseEntries.setEnabled(false);
-            }
-        }
+        // ITreeSelection treeSelection;
+        // if (selection instanceof ITreeSelection) {
+        // treeSelection = (ITreeSelection)selection;
+        // } else {
+        // treeSelection = null;
+        // }
+        //
+        // if (treeSelection != null) {
+        // if (treeSelection != null && treeSelection.size() == 2) {
+        // compare.setEnabled(true);
+        // showSideBySide.setEnabled(true);
+        // } else {
+        // showSideBySide.setEnabled(false);
+        // compare.setEnabled(false);
+        // }
+        //
+        // Object[] items = getInput();
+        //
+        // if (items != null && items.length > 0) {
+        // openParserAssociations.setEnabled(true);
+        // reParseEntries.setEnabled(true);
+        // } else {
+        // openParserAssociations.setEnabled(false);
+        // reParseEntries.setEnabled(false);
+        // }
+        // }
     }
 
     private JournalProperties[] getSelectedItems() {

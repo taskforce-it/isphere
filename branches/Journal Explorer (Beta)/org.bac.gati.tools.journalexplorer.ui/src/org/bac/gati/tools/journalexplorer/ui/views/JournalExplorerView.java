@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.File;
+import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.AddJournalDialog;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalViewer;
+import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntriesViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -19,9 +20,6 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.wb.swt.ResourceManager;
-
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class JournalExplorerView extends ViewPart {
 
@@ -31,15 +29,17 @@ public class JournalExplorerView extends ViewPart {
 
     private Action highlightUserEntries;
 
+    private Action reloadEntries;
+
     private CTabFolder tabs;
 
-    private ArrayList<JournalViewer> journalViewers;
+    private ArrayList<JournalEntriesViewer> journalViewers;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
 
     public JournalExplorerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
-        this.journalViewers = new ArrayList<JournalViewer>();
+        this.journalViewers = new ArrayList<JournalEntriesViewer>();
     }
 
     /**
@@ -68,8 +68,8 @@ public class JournalExplorerView extends ViewPart {
             }
 
             public void close(CTabFolderEvent event) {
-                if (event.item instanceof JournalViewer) {
-                    JournalViewer viewer = ((JournalViewer)event.item);
+                if (event.item instanceof JournalEntriesViewer) {
+                    JournalEntriesViewer viewer = ((JournalEntriesViewer)event.item);
 
                     viewer.removeAsSelectionProvider(selectionProviderIntermediate);
                     JournalExplorerView.this.journalViewers.remove(viewer);
@@ -113,8 +113,8 @@ public class JournalExplorerView extends ViewPart {
                 }
             }
         };
-        this.openJournalAction.setImageDescriptor(ResourceManager.getPluginImageDescriptor(
-            "org.bac.gati.tools.journalexplorer.ui", "/icons/table_bottom_left_corner_new_green.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        this.openJournalAction.setImageDescriptor(JournalExplorerPlugin
+            .getImageDescriptor(JournalExplorerPlugin.IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN));
 
         // /
         // / highlightUserEntries action
@@ -126,30 +126,47 @@ public class JournalExplorerView extends ViewPart {
                 JournalExplorerView.this.refreshAllViewers();
             }
         };
-        highlightUserEntries.setImageDescriptor(ResourceManager.getPluginImageDescriptor(
-            "org.bac.gati.tools.journalexplorer.ui", "icons/highlight.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        highlightUserEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_HIGHLIGHT));
+
+        // /
+        // / reParseEntries action
+        // /
+        this.reloadEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+            @Override
+            public void run() {
+                // JournalEntryView.this.reParseAllEntries();
+                try {
+                    JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
+                    viewer.openJournal();
+                } catch (Exception exception) {
+                    MessageDialog.openError(JournalExplorerView.this.getSite().getShell(), Messages.Error, exception.getMessage());
+                }
+            }
+        };
+        reloadEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_REFRESH));
+
     }
 
     private void refreshAllViewers() {
-        for (JournalViewer viewer : this.journalViewers) {
+        for (JournalEntriesViewer viewer : this.journalViewers) {
             viewer.refreshTable();
         }
     }
 
     private void handleAddJournal(File outputFile) {
 
-        JournalViewer journalViewer = null;
+        JournalEntriesViewer journalViewer = null;
 
         try {
 
-            journalViewer = new JournalViewer(this.tabs, outputFile);
+            journalViewer = new JournalEntriesViewer(this.tabs, outputFile);
             journalViewer.setAsSelectionProvider(this.selectionProviderIntermediate);
             journalViewer.openJournal();
 
             this.journalViewers.add(journalViewer);
             this.tabs.setSelection(journalViewer);
         } catch (Exception exception) {
-            MessageDialog.openError(this.getSite().getShell(), "Error", exception.getMessage()); //$NON-NLS-1$
+            MessageDialog.openError(this.getSite().getShell(), Messages.Error, exception.getMessage()); //$NON-NLS-1$
 
             if (journalViewer != null) {
                 journalViewer.removeAsSelectionProvider(this.selectionProviderIntermediate);
@@ -165,6 +182,7 @@ public class JournalExplorerView extends ViewPart {
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
         tbm.add(this.openJournalAction);
         tbm.add(this.highlightUserEntries);
+        tbm.add(this.reloadEntries);
     }
 
     @Override

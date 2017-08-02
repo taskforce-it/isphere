@@ -1,7 +1,6 @@
 package org.bac.gati.tools.journalexplorer.model;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -12,14 +11,12 @@ import org.bac.gati.tools.journalexplorer.internals.Messages;
 import com.ibm.as400.access.AS400Date;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400Time;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class JournalEntry {
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
-    // TODO: Remove this, look an elegant solution
-    private String connection;
+    private String connectionName;
 
     private String outFileName;
 
@@ -79,28 +76,33 @@ public class JournalEntry {
 
     public JournalEntry() {
     }
-    
+
     // //////////////////////////////////////////////////////////
     // / Getters / Setters
     // //////////////////////////////////////////////////////////
 
-    public String getConnectionName(){
-        return connection;
+    public String getConnectionName() {
+        return connectionName;
     }
-    
+
     public void setConnectionName(String connectionName) {
-        this.connection = connectionName;
+        this.connectionName = connectionName;
     }
-    
+
     public String getKey() {
-        // TODO: usar string format
-        return this.connection + ":" + //$NON-NLS-1$
-            this.outFileLibrary + '/' + this.outFileName + Messages.Journal_RecordNum + Integer.toString(this.rrn);
+        // TODO: use string format
+        return Messages.bind(Messages.Journal_RecordNum, new Object[] { connectionName, outFileLibrary, outFileName, rrn });
+        // return String.format("%s: %s/%s %d", connectionName, outFileLibrary,
+        // outFileName, rrn);
+        //        return this.connectionName + ": " + //$NON-NLS-1$
+        // this.outFileLibrary + '/' + this.outFileName +
+        // Messages.Journal_RecordNum + Integer.toString(this.rrn);
     }
 
     public String getQualifiedObjectName() {
-        // TODO: usar string format
-        return this.objectLibrary.trim() + '/' + this.objectName.trim();
+        // TODO: use string format
+        return String.format("%s/%s", objectLibrary, objectName);
+        // return this.objectLibrary.trim() + '/' + this.objectName.trim();
 
     }
 
@@ -125,7 +127,7 @@ public class JournalEntry {
     }
 
     public void setJournalCode(String journalCode) {
-        this.journalCode = journalCode;
+        this.journalCode = journalCode.trim();
     }
 
     public String getEntryType() {
@@ -133,7 +135,7 @@ public class JournalEntry {
     }
 
     public void setEntryType(String entryType) {
-        this.entryType = entryType;
+        this.entryType = entryType.trim();
     }
 
     public Date getDate() {
@@ -149,7 +151,7 @@ public class JournalEntry {
     }
 
     public void setJobName(String jobName) {
-        this.jobName = jobName;
+        this.jobName = jobName.trim();
     }
 
     public String getJobUserName() {
@@ -157,7 +159,7 @@ public class JournalEntry {
     }
 
     public void setJobUserName(String userName) {
-        this.jobUserName = userName;
+        this.jobUserName = userName.trim();
     }
 
     public int getJobNumber() {
@@ -173,7 +175,7 @@ public class JournalEntry {
     }
 
     public void setProgramName(String programName) {
-        this.programName = programName;
+        this.programName = programName.trim();
     }
 
     public String getObjectName() {
@@ -181,7 +183,7 @@ public class JournalEntry {
     }
 
     public void setObjectName(String objectName) {
-        this.objectName = objectName;
+        this.objectName = objectName.trim();
     }
 
     public String getObjectLibrary() {
@@ -189,7 +191,7 @@ public class JournalEntry {
     }
 
     public void setObjectLibrary(String objectLibrary) {
-        this.objectLibrary = objectLibrary;
+        this.objectLibrary = objectLibrary.trim();
     }
 
     public String getMemberName() {
@@ -197,7 +199,7 @@ public class JournalEntry {
     }
 
     public void setMemberName(String memberName) {
-        this.memberName = memberName;
+        this.memberName = memberName.trim();
     }
 
     public int getJoCtrr() {
@@ -213,7 +215,7 @@ public class JournalEntry {
     }
 
     public void setJoFlag(String joFlag) {
-        this.joFlag = joFlag;
+        this.joFlag = joFlag.trim();
     }
 
     public int getCommitmentCycle() {
@@ -229,7 +231,7 @@ public class JournalEntry {
     }
 
     public void setUserProfile(String userProfile) {
-        this.userProfile = userProfile;
+        this.userProfile = userProfile.trim();
     }
 
     public String getSystemName() {
@@ -237,7 +239,7 @@ public class JournalEntry {
     }
 
     public void setSystemName(String systemName) {
-        this.systemName = systemName;
+        this.systemName = systemName.trim();
     }
 
     public String getJournalID() {
@@ -245,7 +247,7 @@ public class JournalEntry {
     }
 
     public void setJournalID(String journalID) {
-        this.journalID = journalID;
+        this.journalID = journalID.trim();
     }
 
     public String getReferentialConstraint() {
@@ -253,7 +255,7 @@ public class JournalEntry {
     }
 
     public void setReferentialConstraint(String referentialConstraint) {
-        this.referentialConstraint = referentialConstraint;
+        this.referentialConstraint = referentialConstraint.trim();
     }
 
     public String getTrigger() {
@@ -261,7 +263,7 @@ public class JournalEntry {
     }
 
     public void setTrigger(String trigger) {
-        this.trigger = trigger;
+        this.trigger = trigger.trim();
     }
 
     public String getIncompleteData() {
@@ -269,7 +271,7 @@ public class JournalEntry {
     }
 
     public void setIncompleteData(String incompleteData) {
-        this.incompleteData = incompleteData;
+        this.incompleteData = incompleteData.trim();
     }
 
     public String getMinimizedSpecificData() {
@@ -277,7 +279,7 @@ public class JournalEntry {
     }
 
     public void setMinimizedSpecificData(String minimizedSpecificData) {
-        this.minimizedSpecificData = minimizedSpecificData;
+        this.minimizedSpecificData = minimizedSpecificData.trim();
     }
 
     public String getStringSpecificData() {
@@ -333,7 +335,7 @@ public class JournalEntry {
     }
 
     public void setOutFileName(String outFileName) {
-        this.outFileName = outFileName;
+        this.outFileName = outFileName.trim();
     }
 
     public String getOutFileLibrary() {
@@ -341,6 +343,6 @@ public class JournalEntry {
     }
 
     public void setOutFileLibrary(String outFileLibrary) {
-        this.outFileLibrary = outFileLibrary;
+        this.outFileLibrary = outFileLibrary.trim();
     }
 }
