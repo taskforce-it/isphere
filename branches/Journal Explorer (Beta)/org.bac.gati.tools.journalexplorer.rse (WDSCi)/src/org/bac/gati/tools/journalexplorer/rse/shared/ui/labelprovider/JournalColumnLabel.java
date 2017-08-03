@@ -65,7 +65,6 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
     }
 
     public Image getColumnImage(Object object, int index) {
-        // TODO Auto-generated method stub
         return null;
     }
 
