@@ -9,7 +9,7 @@
 package org.bac.gati.tools.journalexplorer.rse.shared.ui.dialogs;
 
 import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelProvider.ParserColumnLabel;
+import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2.ParserColumnLabel;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;

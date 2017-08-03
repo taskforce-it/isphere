@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelProvider;
+package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
