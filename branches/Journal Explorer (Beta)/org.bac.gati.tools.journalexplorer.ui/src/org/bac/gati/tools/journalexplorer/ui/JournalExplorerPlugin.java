@@ -21,6 +21,7 @@ public class JournalExplorerPlugin extends AbstractUIPlugin {
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
     public static final String IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN = "table_bottom_left_corner_new_green.png";
+    public static final String IMAGE_WARNING_OV = "warning_ov.gif";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.bac.gati.tools.journalexplorer.ui"; //$NON-NLS-1$

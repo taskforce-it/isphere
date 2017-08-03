@@ -1,11 +1,11 @@
-package org.bac.gati.tools.journalexplorer.model.access;
+package org.bac.gati.tools.journalexplorer.rse.shared.model.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
+import org.bac.gati.tools.journalexplorer.rse.Messages;
 
 import com.ibm.as400.access.AS400Date;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -29,7 +29,7 @@ public class DAOBase {
 
             this.dateFormat = this.ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateFormat();
             if (this.dateFormat.startsWith("*")) {
-                this.dateFormat=this.dateFormat.substring(1);
+                this.dateFormat = this.dateFormat.substring(1);
             }
             this.dateSeparator = this.ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
             this.connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$

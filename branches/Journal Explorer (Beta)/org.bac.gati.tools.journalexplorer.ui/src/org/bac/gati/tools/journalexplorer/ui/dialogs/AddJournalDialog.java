@@ -1,6 +1,7 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
+import org.bac.gati.tools.journalexplorer.rse.shared.model.ConnectionDelegate;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.IBMiConnectionLabelProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,8 +25,6 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 public class AddJournalDialog extends XDialog {
 
     private static final String CONNECTION = "CONNECTION";
@@ -42,7 +41,7 @@ public class AddJournalDialog extends XDialog {
 
     private String fileName;
 
-    private IBMiConnection connection;
+    private ConnectionDelegate connection;
 
     /**
      * Create the dialog.
@@ -100,14 +99,14 @@ public class AddJournalDialog extends XDialog {
         String connectionName = loadValue(CONNECTION, null);
         if (connectionName == null) {
             Object object = cmbConnections.getElementAt(0);
-            if (object instanceof IBMiConnection) {
-                IBMiConnection connection = (IBMiConnection)object;
+            if (ConnectionDelegate.instanceOf(object)) {
+                ConnectionDelegate connection = new ConnectionDelegate(object);
                 connectionName = connection.getConnectionName();
             }
         }
 
         if (connectionName != null) {
-            cmbConnections.setSelection(new StructuredSelection(IBMiConnection.getConnection(connectionName)));
+            cmbConnections.setSelection(new StructuredSelection(ConnectionDelegate.getConnection(connectionName)));
         }
 
         txtLibrary.setText(loadValue(LIBRARY, ""));
@@ -123,16 +122,16 @@ public class AddJournalDialog extends XDialog {
 
     private void configureConnectionsCombo() {
 
-        this.cmbConnections.setContentProvider(ArrayContentProvider.getInstance());
+        this.cmbConnections.setContentProvider(new ArrayContentProvider());
         this.cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
-        this.cmbConnections.setInput(IBMiConnection.getConnections());
+        this.cmbConnections.setInput(ConnectionDelegate.getConnections());
         this.cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
 
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 
                 if (selection.size() > 0) {
-                    AddJournalDialog.this.connection = (IBMiConnection)selection.getFirstElement();
+                    AddJournalDialog.this.connection = new ConnectionDelegate(selection.getFirstElement());
                 }
             }
         });
@@ -208,7 +207,7 @@ public class AddJournalDialog extends XDialog {
     protected boolean isResizable() {
         return true;
     }
-    
+
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */

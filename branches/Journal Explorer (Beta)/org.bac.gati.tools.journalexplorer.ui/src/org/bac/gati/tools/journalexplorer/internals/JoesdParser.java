@@ -4,7 +4,7 @@ import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
 import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJoesdParserDelegate;
-import org.bac.gati.tools.journalexplorer.rse.shared.JoesdParserDelegate;
+import org.bac.gati.tools.journalexplorer.rse.shared.model.JoesdParserDelegate;
 
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;

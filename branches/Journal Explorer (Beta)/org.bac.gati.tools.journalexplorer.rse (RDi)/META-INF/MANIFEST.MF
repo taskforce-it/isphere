@@ -8,7 +8,17 @@ Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.rse.services,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.subsystems.qsys,
  org.bac.gati.tools.journalexplorer.rse.base
 Eclipse-LazyStart: true
 Import-Package: com.ibm.as400.access
-Export-Package: org.bac.gati.tools.journalexplorer.rse.shared
+Export-Package: org.bac.gati.tools.journalexplorer.rse.shared.model,
+ org.bac.gati.tools.journalexplorer.rse.shared.model.dao,
+ org.bac.gati.tools.journalexplorer.rse.shared.ui.dialogs,
+ org.bac.gati.tools.journalexplorer.rse.shared.ui.labelProvider,
+ org.bac.gati.tools.journalexplorer.rse.shared.ui.views
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

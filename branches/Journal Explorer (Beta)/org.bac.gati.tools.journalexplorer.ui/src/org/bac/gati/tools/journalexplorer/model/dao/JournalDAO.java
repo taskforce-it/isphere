@@ -12,7 +12,7 @@ import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
-import org.bac.gati.tools.journalexplorer.model.access.DAOBase;
+import org.bac.gati.tools.journalexplorer.rse.shared.model.dao.DAOBase;
 
 /**
  * This class loads the exported journal *TYPE3 data that has been exported by
@@ -108,18 +108,18 @@ public class JournalDAO extends DAOBase {
 
             if (resultSet != null) {
 
-                // TODO
+                // TODO: remove it later
                 Date inicio = Calendar.getInstance().getTime();
 
                 while (resultSet.next()) {
 
                     journal = new JournalEntry();
 
-                    journal.setConnectionName(this.ibmiConnection.getConnectionName());
+                    journal.setConnectionName(getConnectionName());
                     journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
+                    
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
-                    // TODO
                     if (hasColumn(resultSet, "JOTSTP")) {
                         journal.setDate(resultSet.getDate("JOTSTP"));
                         journal.setTime(resultSet.getTime("JOTSTP"));
@@ -128,6 +128,7 @@ public class JournalDAO extends DAOBase {
                         int time = resultSet.getInt("JOTIME");
                         journal.setDate(date, time, getDateFormat());
                     }
+                    
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
                     journal.setEntryType(resultSet.getString("JOENTT"));
                     journal.setIncompleteData(resultSet.getString("JOINCDAT"));
@@ -155,22 +156,12 @@ public class JournalDAO extends DAOBase {
                     // setTrigger
                     // setUserProfile
 
-                    // Depending of the journal out type, the timestamp can be a
-                    // single field or splitted in JODATE and JOTYPE
-                    // TODO
-                    // if (this.hasColumn(resultSet, "JOTSTP")) {
-                    // }
-                    // else {
-                    // journal.setDate(resultSet.getString("JODATE"),
-                    // resultSet.getString("JOTIME"));
-                    // }
-
                     journal.setOutFileLibrary(library);
                     journal.setOutFileName(file);
                     journalData.add(journal);
 
                 }
-                // TODO
+                // TODO: remove it later
                 Date Fin = Calendar.getInstance().getTime();
                 // System.out.println(Integer.toString(journalData.size()) +
                 // "':" + Long.toString(Fin.getTime() - inicio.getTime()));

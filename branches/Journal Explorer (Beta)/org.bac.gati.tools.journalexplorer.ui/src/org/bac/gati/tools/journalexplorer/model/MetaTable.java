@@ -3,6 +3,9 @@ package org.bac.gati.tools.journalexplorer.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bac.gati.tools.journalexplorer.internals.QualifiedName;
+import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
+
 /**
  * This class represents the metatada of a table. It contains the name and
  * library of the table and a list of its fields. Also it contains the name and
@@ -16,7 +19,7 @@ import java.util.List;
  * 
  * @author Isaac Ramirez Herrera
  */
-public class MetaTable {
+public class MetaTable implements IMetaTable {
 
     private String name;
 
@@ -121,5 +124,9 @@ public class MetaTable {
         }
 
         return false;
+    }
+
+    public String getQualifiedName() {
+        return QualifiedName.getName(getLibrary(), getName());
     }
 }

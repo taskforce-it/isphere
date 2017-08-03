@@ -3,6 +3,7 @@ package org.bac.gati.tools.journalexplorer.ui.labelProviders;
 import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
 import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
 import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperty;
+import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -10,8 +11,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITableColorProvider {
 
@@ -34,7 +33,7 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
     public Image getColumnImage(Object object, int columnIndex) {
         if (object instanceof JOESDProperty && columnIndex == VALUE_COLUMN) {
             if (((JOESDProperty)object).isErrorParsing()) {
-                return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_WARNING);
+                return JournalExplorerPlugin.getImage(JournalExplorerPlugin.IMAGE_WARNING_OV);
             } else {
                 return null;
             }

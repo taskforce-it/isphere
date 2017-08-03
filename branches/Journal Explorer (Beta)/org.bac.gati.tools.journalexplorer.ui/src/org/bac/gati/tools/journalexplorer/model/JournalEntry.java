@@ -1,20 +1,17 @@
 package org.bac.gati.tools.journalexplorer.model;
 
 import java.sql.Time;
-import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.bac.gati.tools.journalexplorer.internals.Messages;
+import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IDatatypeConverterDelegate;
+import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJournalEntry;
+import org.bac.gati.tools.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
+import org.bac.gati.tools.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
-import com.ibm.as400.access.AS400Date;
 import com.ibm.as400.access.AS400Text;
-import com.ibm.as400.access.AS400Time;
 
-public class JournalEntry {
-
-    public static final String USER_GENERATED = "U"; //$NON-NLS-1$
+public class JournalEntry implements IJournalEntry {
 
     private String connectionName;
 
@@ -74,6 +71,8 @@ public class JournalEntry {
 
     private String stringSpecificData; // JOESD (String)
 
+    private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
+
     public JournalEntry() {
     }
 
@@ -90,20 +89,11 @@ public class JournalEntry {
     }
 
     public String getKey() {
-        // TODO: use string format
         return Messages.bind(Messages.Journal_RecordNum, new Object[] { connectionName, outFileLibrary, outFileName, rrn });
-        // return String.format("%s: %s/%s %d", connectionName, outFileLibrary,
-        // outFileName, rrn);
-        //        return this.connectionName + ": " + //$NON-NLS-1$
-        // this.outFileLibrary + '/' + this.outFileName +
-        // Messages.Journal_RecordNum + Integer.toString(this.rrn);
     }
 
     public String getQualifiedObjectName() {
-        // TODO: use string format
         return String.format("%s/%s", objectLibrary, objectName);
-        // return this.objectLibrary.trim() + '/' + this.objectName.trim();
-
     }
 
     public int getEntryLength() {
@@ -293,7 +283,7 @@ public class JournalEntry {
     public void setStringSpecificData(String specificData) {
         AS400Text text;
 
-        byte[] bytes = DatatypeConverter.parseHexBinary(specificData);
+        byte[] bytes = datatypeConverterDelegate.parseHexBinary(specificData);
         text = new AS400Text(bytes.length, 284);
         this.stringSpecificData = (String)text.toObject(bytes);
     }
@@ -320,14 +310,8 @@ public class JournalEntry {
 
     public void setDate(String date, int time, int dateFormat) {
 
-        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
-        java.sql.Date dateObject = as400date.parse(date);
-
-        AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, null);
-        Time timeObject = as400time.parse(Integer.toString(time));
-
-        setDate(new Date(dateObject.getTime()));
-        setTime(new Time(timeObject.getTime()));
+        setDate(JournalEntryDelegate.getDate(date, dateFormat));
+        setTime(JournalEntryDelegate.getTime(time));
     }
 
     public String getOutFileName() {

@@ -1,26 +1,22 @@
 package org.bac.gati.tools.journalexplorer.ui.widgets;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO;
+import org.bac.gati.tools.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
-import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalColumnLabel;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class JournalEntriesViewer extends CTabItem {
 
@@ -50,15 +46,15 @@ public class JournalEntriesViewer extends CTabItem {
 
         this.container.setLayout(new FillLayout());
         this.setText(this.connectionName + ": " + library + "/" + fileName);
-        this.initializeTable();
+        this.createTableViewer(container);
         this.container.layout(true);
         this.setControl(this.container);
     }
 
-    private void initializeTable() {
+    private void createTableViewer(Composite container) {
 
         Table table;
-        TableViewerColumn newColumn;
+        TableColumn newColumn;
 
         this.tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
 
@@ -70,280 +66,284 @@ public class JournalEntriesViewer extends CTabItem {
         // /
         // / RRN Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.RIGHT);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(45);
-        newColumn.getColumn().setText("RRN");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-
-            @Override
-            public Color getBackground(Object element) {
-                return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-            }
-
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return Integer.toString(journal.getRrn()).trim();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.RIGHT);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(45);
+        newColumn.setText("RRN");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        //
+        // @Override
+        // public Color getBackground(Object element) {
+        // return
+        // Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+        // }
+        //
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return Integer.toString(journal.getRrn()).trim();
+        // }
+        // });
 
         // /
         // / JOENTT Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(55);
-        newColumn.getColumn().setText("JOENTT");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getEntryType();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(55);
+        newColumn.setText("JOENTT");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getEntryType();
+        // }
+        // });
 
         // /
         // / JOSEQN Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(55);
-        newColumn.getColumn().setText("JOSEQN");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return Long.toString(journal.getSequenceNumber());
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(55);
+        newColumn.setText("JOSEQN");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return Long.toString(journal.getSequenceNumber());
+        // }
+        // });
 
         // /
         // / JOCODE Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(50);
-        newColumn.getColumn().setText("JOCODE");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getJournalCode();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(50);
+        newColumn.setText("JOCODE");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getJournalCode();
+        // }
+        // });
 
         // /
         // / JOENTL Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(50);
-        newColumn.getColumn().setText("JOENTL");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return Integer.toString(journal.getEntryLength());
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(50);
+        newColumn.setText("JOENTL");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return Integer.toString(journal.getEntryLength());
+        // }
+        // });
 
         // /
         // / JODATE Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(80);
-        newColumn.getColumn().setText("JODATE");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                Date date = journal.getDate();
-                if (date == null) {
-                    return "";
-                }
-                return getDateFormatter().format(date);
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(80);
+        newColumn.setText("JODATE");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // Date date = journal.getDate();
+        // if (date == null) {
+        // return "";
+        // }
+        // return getDateFormatter().format(date);
+        // }
+        // });
 
         // /
         // / JOTIME Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(80);
-        newColumn.getColumn().setText("JOTIME");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                Time time = journal.getTime();
-                if (time == null) {
-                    return "";
-                }
-                return getTimeFormatter().format(time);
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(80);
+        newColumn.setText("JOTIME");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // Time time = journal.getTime();
+        // if (time == null) {
+        // return "";
+        // }
+        // return getTimeFormatter().format(time);
+        // }
+        // });
 
         // /
         // / JOJOB Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOJOB");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getJobName();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOJOB");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getJobName();
+        // }
+        // });
 
         // /
         // / JOUSER Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOUSER");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getJobUserName();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOUSER");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getJobUserName();
+        // }
+        // });
 
         // /
         // / JONBR Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JONBR");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return Integer.toString(journal.getJobNumber());
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JONBR");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return Integer.toString(journal.getJobNumber());
+        // }
+        // });
 
         // /
         // / JOPGM Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOPGM");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getProgramName();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOPGM");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getProgramName();
+        // }
+        // });
 
         // /
         // / JOLIB Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOLIB");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getObjectLibrary();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOLIB");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getObjectLibrary();
+        // }
+        // });
 
         // /
         // / JOMBR Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOMBR");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getMemberName();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOMBR");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getMemberName();
+        // }
+        // });
 
         // /
         // / JOOBJ Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(90);
-        newColumn.getColumn().setText("JOOBJ");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getObjectName();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOOBJ");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getObjectName();
+        // }
+        // });
+
         // /
         // / JOMINESD Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(50);
-        newColumn.getColumn().setText("JOMINESD");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
-                return journal.getMinimizedSpecificData();
-            }
-        });
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(50);
+        newColumn.setText("JOMINESD");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        // return journal.getMinimizedSpecificData();
+        // }
+        // });
 
         // /
         // / JOESD Column
         // /
-        newColumn = new TableViewerColumn(this.tableViewer, SWT.NONE);
-        newColumn.getColumn().setMoveable(true);
-        newColumn.getColumn().setResizable(true);
-        newColumn.getColumn().setWidth(350);
-        newColumn.getColumn().setText("JOESD");
-        newColumn.setLabelProvider(new JournalColumnLabel() {
-            @Override
-            public String getText(Object element) {
-                JournalEntry journal = (JournalEntry)element;
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(350);
+        newColumn.setText("JOESD");
+        // newColumn.setLabelProvider(new JournalColumnLabel() {
+        // @Override
+        // public String getText(Object element) {
+        // JournalEntry journal = (JournalEntry)element;
+        //
+        // // For displaying purposes, replace the null ending character
+        // // for a blank.
+        // // Otherwise, the string was truncate by JFace
+        // String stringSpecificData = journal.getStringSpecificData();
+        // if (stringSpecificData.indexOf('\0') >= 0) {
+        // return stringSpecificData.replace('\0', ' ').substring(1, 200);
+        // } else {
+        // return stringSpecificData;
+        // }
+        // }
+        // });
 
-                // For displaying purposes, replace the null ending character
-                // for a blank.
-                // Otherwise, the string was truncate by JFace
-                String stringSpecificData = journal.getStringSpecificData();
-                if (stringSpecificData.indexOf('\0') >= 0) {
-                    return stringSpecificData.replace('\0', ' ').substring(1, 200);
-                } else {
-                    return stringSpecificData;
-                }
-            }
-        });
+        ConfigureJournalEntriesTableViewer.configureTableViewer(tableViewer);
 
         this.tableViewer.setContentProvider(new JournalViewerContentProvider(this.tableViewer));
     }
