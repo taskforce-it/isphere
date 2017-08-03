@@ -1,13 +1,14 @@
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider;
+package biz.isphere.journalexplorer.rse.shared.ui.labelprovider;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJournalEntry;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
 
 public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider {
 

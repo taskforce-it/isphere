@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.rse;
+package biz.isphere.journalexplorer.rse;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class ISphereJournalExplorerRSEPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.bac.gati.tools.journalexplorer.rse";
+	public static final String PLUGIN_ID = "biz.isphere.journalexplorer.rse";
 
 	// The shared instance
 	private static ISphereJournalExplorerRSEPlugin plugin;

@@ -1,10 +1,10 @@
-package org.bac.gati.tools.journalexplorer.rse;
+package biz.isphere.journalexplorer.rse;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    
-    private static final String BUNDLE_NAME = "org.bac.gati.tools.journalexplorer.ui.views.messages"; //$NON-NLS-1$
+
+    private static final String BUNDLE_NAME = "biz.isphere.journalexplorer.rse.messages"; //$NON-NLS-1$
 
     public static String DAOBase_ConnectionNotStablished;
     public static String DAOBase_InvalidConnectionObject;

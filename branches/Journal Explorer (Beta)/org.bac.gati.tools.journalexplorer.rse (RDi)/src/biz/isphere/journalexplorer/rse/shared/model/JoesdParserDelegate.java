@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.model;
+package biz.isphere.journalexplorer.rse.shared.model;
 
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJoesdParserDelegate;
+
+import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 
 import com.ibm.as400.access.AS400Date;
 import com.ibm.as400.access.AS400Time;

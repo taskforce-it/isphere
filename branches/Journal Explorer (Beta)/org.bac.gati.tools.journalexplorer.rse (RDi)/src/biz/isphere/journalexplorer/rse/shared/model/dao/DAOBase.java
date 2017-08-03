@@ -1,11 +1,12 @@
-package org.bac.gati.tools.journalexplorer.rse.shared.model.dao;
+package biz.isphere.journalexplorer.rse.shared.model.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.bac.gati.tools.journalexplorer.rse.Messages;
+
+import biz.isphere.journalexplorer.rse.Messages;
 
 import com.ibm.as400.access.AS400Date;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;

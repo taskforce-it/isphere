@@ -6,17 +6,17 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.model;
+package biz.isphere.journalexplorer.rse.shared.ui.views;
 
-import javax.xml.bind.DatatypeConverter;
+import org.eclipse.jface.viewers.TableViewer;
 
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IDatatypeConverterDelegate;
+import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 
-public class DatatypeConverterDelegate implements IDatatypeConverterDelegate {
+public final class ConfigureJournalEntriesTableViewer {
 
-    @Override
-    public byte[] parseHexBinary(String paramString) {
-        return DatatypeConverter.parseHexBinary(paramString);
+    public static void configureTableViewer(TableViewer tableViewer) {
+
+        tableViewer.setLabelProvider(new JournalColumnLabel());
     }
 
 }
