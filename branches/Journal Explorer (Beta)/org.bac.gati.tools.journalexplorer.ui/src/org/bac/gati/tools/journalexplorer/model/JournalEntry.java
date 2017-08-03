@@ -4,10 +4,11 @@ import java.sql.Time;
 import java.util.Date;
 
 import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IDatatypeConverterDelegate;
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJournalEntry;
-import org.bac.gati.tools.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
-import org.bac.gati.tools.journalexplorer.rse.shared.model.JournalEntryDelegate;
+
+import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
+import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
+import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
+import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
 import com.ibm.as400.access.AS400Text;
 

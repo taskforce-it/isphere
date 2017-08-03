@@ -12,7 +12,8 @@ import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
-import org.bac.gati.tools.journalexplorer.rse.shared.model.dao.DAOBase;
+
+import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 /**
  * This class loads the exported journal *TYPE3 data that has been exported by

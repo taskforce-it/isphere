@@ -1,7 +1,8 @@
 package org.bac.gati.tools.journalexplorer.ui.labelProviders;
 
-import org.bac.gati.tools.journalexplorer.rse.shared.model.ConnectionDelegate;
 import org.eclipse.jface.viewers.LabelProvider;
+
+import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
 public class IBMiConnectionLabelProvider extends LabelProvider {
 

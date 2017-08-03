@@ -6,7 +6,6 @@ import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediat
 import org.bac.gati.tools.journalexplorer.model.File;
 import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.bac.gati.tools.journalexplorer.model.dao.JournalDAO;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -17,6 +16,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import biz.isphere.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
 
 public class JournalEntriesViewer extends CTabItem {
 

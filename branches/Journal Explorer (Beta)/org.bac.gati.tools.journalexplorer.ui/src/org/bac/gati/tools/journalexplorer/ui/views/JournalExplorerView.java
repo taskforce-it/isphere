@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.File;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.AddJournalDialog;
 import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntriesViewer;
@@ -20,6 +19,8 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 
 public class JournalExplorerView extends ViewPart {
 

@@ -4,7 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bac.gati.tools.journalexplorer.internals.QualifiedName;
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
+
+import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 
 /**
  * This class represents the metatada of a table. It contains the name and

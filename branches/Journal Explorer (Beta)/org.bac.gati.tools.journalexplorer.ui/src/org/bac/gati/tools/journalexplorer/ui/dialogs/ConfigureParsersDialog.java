@@ -3,7 +3,6 @@ package org.bac.gati.tools.journalexplorer.ui.dialogs;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.dialogs.ConfigureParsersTableViewer;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -21,6 +20,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.journalexplorer.rse.shared.ui.dialogs.ConfigureParsersTableViewer;
 
 public class ConfigureParsersDialog extends XDialog {
 

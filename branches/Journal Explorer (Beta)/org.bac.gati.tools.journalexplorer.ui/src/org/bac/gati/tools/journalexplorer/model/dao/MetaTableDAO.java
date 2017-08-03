@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.model.MetaColumn;
 import org.bac.gati.tools.journalexplorer.model.MetaTable;
-import org.bac.gati.tools.journalexplorer.rse.shared.model.dao.DAOBase;
+
+import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 public class MetaTableDAO extends DAOBase {
 
