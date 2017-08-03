@@ -20,6 +20,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
 
     }
 
+    // TODO: fix it
     // @Override
     // public Color getBackground(Object element) {
     // if (element instanceof JournalEntry) {
