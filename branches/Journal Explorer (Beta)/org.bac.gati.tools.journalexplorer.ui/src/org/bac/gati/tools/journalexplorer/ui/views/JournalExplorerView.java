@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.model.File;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2.JournalColumnLabel;
+import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.AddJournalDialog;
 import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntriesViewer;

@@ -19,6 +19,6 @@ Import-Package: com.ibm.as400.access
 Export-Package: org.bac.gati.tools.journalexplorer.rse.shared.model,
  org.bac.gati.tools.journalexplorer.rse.shared.model.dao,
  org.bac.gati.tools.journalexplorer.rse.shared.ui.dialogs,
- org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2,
+ org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider,
  org.bac.gati.tools.journalexplorer.rse.shared.ui.views
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -8,7 +8,7 @@
 
 package org.bac.gati.tools.journalexplorer.rse.shared.ui.views;
 
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2.JournalColumnLabel;
+import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 import org.eclipse.jface.viewers.TableViewer;
 
 public final class ConfigureJournalEntriesTableViewer {

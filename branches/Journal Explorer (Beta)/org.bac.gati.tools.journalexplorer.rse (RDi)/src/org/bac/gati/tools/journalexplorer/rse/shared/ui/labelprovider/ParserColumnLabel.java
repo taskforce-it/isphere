@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider2;
+package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider;
 
 import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
 import org.eclipse.jface.viewers.ITableLabelProvider;
