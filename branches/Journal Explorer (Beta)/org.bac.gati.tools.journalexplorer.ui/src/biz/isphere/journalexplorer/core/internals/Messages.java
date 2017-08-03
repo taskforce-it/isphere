@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.internals;
+package biz.isphere.journalexplorer.core.internals;
 
 import org.eclipse.osgi.util.NLS;
 

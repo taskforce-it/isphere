@@ -1,6 +1,5 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.IBMiConnectionLabelProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -23,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
 public class AddJournalDialog extends XDialog {

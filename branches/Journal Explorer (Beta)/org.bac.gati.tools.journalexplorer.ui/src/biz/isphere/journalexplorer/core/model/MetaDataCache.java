@@ -1,9 +1,10 @@
-package org.bac.gati.tools.journalexplorer.model;
+package biz.isphere.journalexplorer.core.model;
 
 import java.util.HashMap;
 
-import org.bac.gati.tools.journalexplorer.internals.QualifiedName;
-import org.bac.gati.tools.journalexplorer.model.dao.MetaTableDAO;
+
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
+import biz.isphere.journalexplorer.core.model.dao.MetaTableDAO;
 
 public class MetaDataCache {
 

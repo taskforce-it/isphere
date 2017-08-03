@@ -1,7 +1,5 @@
 package org.bac.gati.tools.journalexplorer.ui.widgets;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.labelProviders.JournalEntryViewLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -9,6 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+
+import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 
 public class JournalEntryDetailsViewer extends TreeViewer {
 

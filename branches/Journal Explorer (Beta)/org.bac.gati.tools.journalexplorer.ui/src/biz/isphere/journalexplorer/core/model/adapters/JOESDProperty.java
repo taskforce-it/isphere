@@ -1,12 +1,13 @@
-package org.bac.gati.tools.journalexplorer.model.adapters;
+package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.internals.JoesdParser;
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
-import org.bac.gati.tools.journalexplorer.model.MetaColumn;
-import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
-import org.bac.gati.tools.journalexplorer.model.MetaTable;
+
+import biz.isphere.journalexplorer.core.internals.JoesdParser;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 
 import com.ibm.as400.access.Record;
 

@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bac.gati.tools.journalexplorer.internals.JournalEntryComparator;
-import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.internals.SelectionProviderIntermediate;
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
-import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
 import org.bac.gati.tools.journalexplorer.ui.dialogs.ConfigureParsersDialog;
@@ -32,6 +26,13 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
+
+import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
+import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 
 public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 

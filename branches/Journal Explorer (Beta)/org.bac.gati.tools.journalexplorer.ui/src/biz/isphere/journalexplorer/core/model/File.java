@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.model;
+package biz.isphere.journalexplorer.core.model;
 
 public class File {
 

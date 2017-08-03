@@ -1,9 +1,10 @@
-package org.bac.gati.tools.journalexplorer.model.adapters;
+package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
+
+import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
 
 public class JournalProperties {
 

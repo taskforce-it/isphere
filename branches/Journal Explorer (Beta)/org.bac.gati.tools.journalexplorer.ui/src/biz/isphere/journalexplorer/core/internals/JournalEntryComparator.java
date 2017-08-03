@@ -1,8 +1,8 @@
-package org.bac.gati.tools.journalexplorer.internals;
+package biz.isphere.journalexplorer.core.internals;
 
 import java.util.Comparator;
 
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 
 public class JournalEntryComparator implements Comparator<JournalProperties> {
 

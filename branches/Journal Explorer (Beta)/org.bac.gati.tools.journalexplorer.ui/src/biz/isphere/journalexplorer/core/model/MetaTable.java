@@ -1,11 +1,11 @@
-package org.bac.gati.tools.journalexplorer.model;
+package biz.isphere.journalexplorer.core.model;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bac.gati.tools.journalexplorer.internals.QualifiedName;
 
 import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 /**
  * This class represents the metatada of a table. It contains the name and

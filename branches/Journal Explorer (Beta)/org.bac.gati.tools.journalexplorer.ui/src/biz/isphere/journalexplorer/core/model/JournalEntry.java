@@ -1,12 +1,12 @@
-package org.bac.gati.tools.journalexplorer.model;
+package biz.isphere.journalexplorer.core.model;
 
 import java.sql.Time;
 import java.util.Date;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
 
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
+import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 

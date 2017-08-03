@@ -1,12 +1,12 @@
-package org.bac.gati.tools.journalexplorer.model.dao;
+package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
-import org.bac.gati.tools.journalexplorer.model.MetaColumn;
-import org.bac.gati.tools.journalexplorer.model.MetaTable;
 
+import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 public class MetaTableDAO extends DAOBase {

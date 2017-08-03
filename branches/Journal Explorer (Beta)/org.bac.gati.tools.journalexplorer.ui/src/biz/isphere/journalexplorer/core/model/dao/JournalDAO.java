@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.model.dao;
+package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.bac.gati.tools.journalexplorer.model.File;
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
-import org.bac.gati.tools.journalexplorer.model.MetaDataCache;
-import org.bac.gati.tools.journalexplorer.model.MetaTable;
 
+import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 /**

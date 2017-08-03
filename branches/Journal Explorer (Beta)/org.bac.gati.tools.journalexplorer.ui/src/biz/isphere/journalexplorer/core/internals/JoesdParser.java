@@ -1,10 +1,10 @@
-package org.bac.gati.tools.journalexplorer.internals;
+package biz.isphere.journalexplorer.core.internals;
 
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
-import org.bac.gati.tools.journalexplorer.model.MetaColumn;
-import org.bac.gati.tools.journalexplorer.model.MetaTable;
 
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.rse.shared.model.JoesdParserDelegate;
 
 import com.ibm.as400.access.AS400Bin2;

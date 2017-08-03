@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.model;
+package biz.isphere.journalexplorer.core.model;
 
 public class MetaColumn {
 

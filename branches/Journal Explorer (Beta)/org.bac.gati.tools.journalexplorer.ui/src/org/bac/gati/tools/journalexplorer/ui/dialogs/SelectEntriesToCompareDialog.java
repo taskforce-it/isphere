@@ -1,6 +1,5 @@
 package org.bac.gati.tools.journalexplorer.ui.dialogs;
 
-import org.bac.gati.tools.journalexplorer.internals.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -20,6 +19,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import biz.isphere.journalexplorer.core.internals.Messages;
 
 public class SelectEntriesToCompareDialog extends Dialog {
 

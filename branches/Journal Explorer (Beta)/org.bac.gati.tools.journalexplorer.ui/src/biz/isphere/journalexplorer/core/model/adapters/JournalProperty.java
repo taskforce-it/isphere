@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.model.adapters;
+package biz.isphere.journalexplorer.core.model.adapters;
 
 public class JournalProperty implements Comparable<JournalProperty> {
 

@@ -1,8 +1,5 @@
 package org.bac.gati.tools.journalexplorer.ui.labelProviders;
 
-import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperty;
 import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -11,6 +8,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+
+import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 
 public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITableColorProvider {
 

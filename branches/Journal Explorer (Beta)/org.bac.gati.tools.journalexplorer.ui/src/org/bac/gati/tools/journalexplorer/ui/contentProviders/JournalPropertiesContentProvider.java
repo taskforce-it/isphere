@@ -1,11 +1,12 @@
 package org.bac.gati.tools.journalexplorer.ui.contentProviders;
 
-import org.bac.gati.tools.journalexplorer.model.adapters.JOESDProperty;
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperties;
-import org.bac.gati.tools.journalexplorer.model.adapters.JournalProperty;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 
 public class JournalPropertiesContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 

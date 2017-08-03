@@ -2,10 +2,11 @@ package org.bac.gati.tools.journalexplorer.ui.contentProviders;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.model.JournalEntry;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
+import biz.isphere.journalexplorer.core.model.JournalEntry;
 
 public class JournalViewerContentProvider implements ILazyContentProvider {
 
