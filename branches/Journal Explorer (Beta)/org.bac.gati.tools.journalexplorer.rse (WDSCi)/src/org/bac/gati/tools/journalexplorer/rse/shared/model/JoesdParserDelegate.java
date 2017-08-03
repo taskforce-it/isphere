@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared;
+package org.bac.gati.tools.journalexplorer.rse.shared.model;
 
 import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IJoesdParserDelegate;
 
@@ -14,7 +14,7 @@ import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.CharacterFieldDescription;
 import com.ibm.as400.access.FieldDescription;
 
-public class JoesdParserDelegate implements IJoesdParserDelegate {
+public final class JoesdParserDelegate implements IJoesdParserDelegate {
 
     public FieldDescription getDateFieldDescription(String name) {
         return new CharacterFieldDescription(new AS400Text(10), name);
