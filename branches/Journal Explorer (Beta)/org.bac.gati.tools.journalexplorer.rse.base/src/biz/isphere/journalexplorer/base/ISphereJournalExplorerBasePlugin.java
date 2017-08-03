@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.rse.base;
+package biz.isphere.journalexplorer.base;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
@@ -6,18 +6,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereJournalExplorerRSEBasePlugin extends Plugin {
+public class ISphereJournalExplorerBasePlugin extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.bac.gati.tools.journalexplorer.rse.base";
+	public static final String PLUGIN_ID = "biz.isphere.journalexplorer.base";
 
 	// The shared instance
-	private static ISphereJournalExplorerRSEBasePlugin plugin;
+	private static ISphereJournalExplorerBasePlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public ISphereJournalExplorerRSEBasePlugin() {
+	public ISphereJournalExplorerBasePlugin() {
 		plugin = this;
 	}
 
@@ -43,7 +43,7 @@ public class ISphereJournalExplorerRSEBasePlugin extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static ISphereJournalExplorerRSEBasePlugin getDefault() {
+	public static ISphereJournalExplorerBasePlugin getDefault() {
 		return plugin;
 	}
 

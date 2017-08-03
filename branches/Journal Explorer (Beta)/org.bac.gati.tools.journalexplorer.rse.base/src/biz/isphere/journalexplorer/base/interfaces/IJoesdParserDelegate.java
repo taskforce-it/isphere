@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.base.interfaces;
+package biz.isphere.journalexplorer.base.interfaces;
 
 import com.ibm.as400.access.FieldDescription;
 
