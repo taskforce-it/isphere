@@ -24,7 +24,7 @@ import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabe
 
 public class JournalExplorerView extends ViewPart {
 
-    public static final String ID = "org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
     private Action openJournalAction;
 

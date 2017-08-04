@@ -3,7 +3,9 @@ package biz.isphere.journalexplorer.core.internals;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "org.bac.gati.tools.journalexplorer.ui.views.messages"; //$NON-NLS-1$
+    
+    private static final String BUNDLE_NAME = "biz.isphere.journalexplorer.core.internals.messages"; //$NON-NLS-1$
+    
     public static String AddJournalDialog_AllDataRequired;
     public static String AddJournalDialog_Conection;
     public static String AddJournalDialog_FileName;

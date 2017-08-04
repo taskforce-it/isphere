@@ -10,13 +10,11 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 public abstract class AbstractJournalExplorerPerspectiveLayout implements IPerspectiveFactory {
 
-    public static final String ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout";//$NON-NLS-1$
-
-    private static final String NAV_FOLDER_ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout.NavFolder";//$NON-NLS-1$
-    private static final String PROPS_FOLDER_ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout.PropsFolder";//$NON-NLS-1$
-    private static final String JOURNAL_EXPLORER_ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout.JournalExplorerFolder";//$NON-NLS-1$
-    private static final String JOURNAL_ENTRIES_FOLDER_ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntriesFolder";//$NON-NLS-1$
-    private static final String JOURNAL_ENTRY_DETAILS_FOLDER_ID = "org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntryDetailsFolder";//$NON-NLS-1$
+    private static final String NAV_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.NavFolder";//$NON-NLS-1$
+    private static final String PROPS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.PropsFolder";//$NON-NLS-1$
+    private static final String JOURNAL_EXPLORER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalExplorerFolder";//$NON-NLS-1$
+    private static final String JOURNAL_ENTRIES_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntriesFolder";//$NON-NLS-1$
+    private static final String JOURNAL_ENTRY_DETAILS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntryDetailsFolder";//$NON-NLS-1$
 
     public void createInitialLayout(IPageLayout layout) {
 
@@ -56,10 +54,12 @@ public abstract class AbstractJournalExplorerPerspectiveLayout implements IPersp
         layout.addShowViewShortcut(JournalEntryView.ID);
         layout.addShowViewShortcut(JournalEntryDetailsView.ID);
 
-        layout.addPerspectiveShortcut(ID);
+        layout.addPerspectiveShortcut(getPerspectiveLayoutID());
         
         layout.setEditorAreaVisible(false);
     }
+    
+    protected abstract String getPerspectiveLayoutID();
 
     protected abstract String getRemoveSystemsViewID();
 

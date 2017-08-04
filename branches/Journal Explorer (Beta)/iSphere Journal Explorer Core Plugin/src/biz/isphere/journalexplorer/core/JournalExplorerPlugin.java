@@ -24,7 +24,7 @@ public class JournalExplorerPlugin extends AbstractUIPlugin {
     public static final String IMAGE_WARNING_OV = "warning_ov.gif";
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "org.bac.gati.tools.journalexplorer.ui"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "biz.isphere.journalexplorer.core"; //$NON-NLS-1$
 
     // The shared instance
     private static JournalExplorerPlugin plugin;

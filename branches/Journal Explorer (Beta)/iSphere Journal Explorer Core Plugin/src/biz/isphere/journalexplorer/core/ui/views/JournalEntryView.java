@@ -36,7 +36,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
-    public static final String ID = "org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryView"; //$NON-NLS-1$
 
     private JournalEntryDetailsViewer viewer;
 
