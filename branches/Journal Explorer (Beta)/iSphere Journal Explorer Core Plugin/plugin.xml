@@ -18,21 +18,21 @@
             name="%JournalExplore-View"
             icon="icons/journal_explorer.png"
             category="org.bac.gati.tools"
-            class="org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView"
-            id="org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView">
+            class="biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"
+            id="biz.isphere.journalexplorer.core.ui.views.JournalExplorerView">
       </view>
       <view
             category="org.bac.gati.tools"
-            class="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"
+            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
             icon="icons/segment_edit.png"
-            id="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"
+            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
             name="%JournalEntryViewer-View">
       </view>
       <view
             category="org.bac.gati.tools"
-            class="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryDetailsView"
+            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"
             icon="icons/details.png"
-            id="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryDetailsView"
+            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"
             name="%JournalEntryDetailsViewer-View">
       </view>
    </extension>
@@ -46,9 +46,9 @@
    <extension point="org.eclipse.ui.perspectives">
    
       <perspective 
-	       id="org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout" 
+	       id="biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout" 
 	       name="Journal Explorer"
-	       class="org.bac.gati.tools.journalexplorer.ui.perspective.JournalExplorerPerspectiveLayout"
+	       class="biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout"
 	       icon="icons/journal_explorer.png">
       </perspective>
        

@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui.actions;
+package biz.isphere.journalexplorer.core.ui.actions;
 
 import org.eclipse.jface.action.Action;
 

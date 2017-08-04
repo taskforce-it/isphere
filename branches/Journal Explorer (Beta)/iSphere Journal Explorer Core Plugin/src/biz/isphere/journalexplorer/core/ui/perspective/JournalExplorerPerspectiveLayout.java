@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui.perspective;
+package biz.isphere.journalexplorer.core.ui.perspective;
 
 public class JournalExplorerPerspectiveLayout extends AbstractJournalExplorerPerspectiveLayout {
 

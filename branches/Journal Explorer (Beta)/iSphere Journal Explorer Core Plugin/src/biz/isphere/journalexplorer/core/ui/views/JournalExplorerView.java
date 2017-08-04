@@ -1,10 +1,7 @@
-package org.bac.gati.tools.journalexplorer.ui.views;
+package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.AddJournalDialog;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntriesViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,9 +14,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 
 public class JournalExplorerView extends ViewPart {

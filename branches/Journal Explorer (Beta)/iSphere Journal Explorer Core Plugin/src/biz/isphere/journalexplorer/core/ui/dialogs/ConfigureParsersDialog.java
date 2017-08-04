@@ -1,6 +1,5 @@
-package org.bac.gati.tools.journalexplorer.ui.dialogs;
+package biz.isphere.journalexplorer.core.ui.dialogs;
 
-import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -17,6 +16,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;

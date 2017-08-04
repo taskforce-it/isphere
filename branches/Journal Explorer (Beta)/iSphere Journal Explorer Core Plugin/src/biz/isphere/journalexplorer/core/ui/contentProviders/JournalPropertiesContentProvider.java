@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui.contentProviders;
+package biz.isphere.journalexplorer.core.ui.contentProviders;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;

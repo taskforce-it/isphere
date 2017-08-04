@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui.labelProviders;
+package biz.isphere.journalexplorer.core.ui.labelProviders;
 
 import org.eclipse.jface.viewers.LabelProvider;
 

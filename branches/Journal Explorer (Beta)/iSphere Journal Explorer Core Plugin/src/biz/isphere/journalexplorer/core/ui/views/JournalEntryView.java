@@ -1,15 +1,9 @@
-package org.bac.gati.tools.journalexplorer.ui.views;
+package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
-import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.ConfigureParsersDialog;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.SelectEntriesToCompareDialog;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.SideBySideCompareDialog;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryDetailsViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -27,12 +21,18 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.ui.contentProviders.JournalPropertiesContentProvider;
+import biz.isphere.journalexplorer.core.ui.dialogs.ConfigureParsersDialog;
+import biz.isphere.journalexplorer.core.ui.dialogs.SelectEntriesToCompareDialog;
+import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 

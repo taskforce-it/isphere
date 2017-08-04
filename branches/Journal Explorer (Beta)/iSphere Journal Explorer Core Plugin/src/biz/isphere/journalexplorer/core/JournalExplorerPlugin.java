@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui;
+package biz.isphere.journalexplorer.core;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;

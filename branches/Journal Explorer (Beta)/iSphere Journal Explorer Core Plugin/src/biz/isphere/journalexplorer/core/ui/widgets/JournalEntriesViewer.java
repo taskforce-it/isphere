@@ -1,22 +1,26 @@
-package org.bac.gati.tools.journalexplorer.ui.widgets;
+package biz.isphere.journalexplorer.core.ui.widgets;
 
 import java.util.ArrayList;
 
-import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalViewerContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.wb.swt.ResourceManager;
 
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
+import biz.isphere.journalexplorer.core.ui.contentProviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
 
 public class JournalEntriesViewer extends CTabItem {
@@ -72,6 +76,20 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(45);
         newColumn.setText("RRN");
+        table.addListener(SWT.PaintItem, new Listener() {
+
+            public void handleEvent(Event event) {
+
+                switch (event.type) {
+                case SWT.PaintItem: 
+                    Color backgroundColor = event.gc.getBackground();
+                    event.gc.setBackground(ResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+                    event.gc.drawRectangle(event.getBounds());
+                    event.gc.setBackground(backgroundColor);
+                    break;
+                }
+            }
+        });
         // newColumn.setLabelProvider(new JournalColumnLabel() {
         //
         // @Override

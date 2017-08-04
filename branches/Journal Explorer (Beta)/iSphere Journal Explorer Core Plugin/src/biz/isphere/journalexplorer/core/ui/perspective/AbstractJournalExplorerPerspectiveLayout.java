@@ -1,11 +1,12 @@
-package org.bac.gati.tools.journalexplorer.ui.perspective;
+package biz.isphere.journalexplorer.core.ui.perspective;
 
-import org.bac.gati.tools.journalexplorer.ui.views.JournalEntryDetailsView;
-import org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView;
-import org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+
+import biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView;
+import biz.isphere.journalexplorer.core.ui.views.JournalEntryView;
+import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 public abstract class AbstractJournalExplorerPerspectiveLayout implements IPerspectiveFactory {
 

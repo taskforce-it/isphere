@@ -1,13 +1,9 @@
-package org.bac.gati.tools.journalexplorer.ui.views;
+package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bac.gati.tools.journalexplorer.ui.contentProviders.JournalPropertiesContentProvider;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.SelectEntriesToCompareDialog;
-import org.bac.gati.tools.journalexplorer.ui.dialogs.SideBySideCompareDialog;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryDetailsViewer;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,8 +20,10 @@ import org.eclipse.ui.part.ViewPart;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.ui.dialogs.SelectEntriesToCompareDialog;
+import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class JournalEntryDetailsView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
@@ -85,25 +83,6 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                 }
             }
         }
-    }
-
-    private void reParseAllEntries() {
-
-        Object[] input = getInput();
-
-        for (Object inputElement : input) {
-
-            JournalProperties journalProperties = (JournalProperties)inputElement;
-            ((JOESDProperty)journalProperties.getJOESDProperty()).executeParsing();
-        }
-    }
-
-    private Object[] getInput() {
-
-        JournalPropertiesContentProvider journalPropertiesContentProvider = (JournalPropertiesContentProvider)this.viewer.getContentProvider();
-        Object[] input = journalPropertiesContentProvider.getElements(null);
-
-        return input;
     }
 
     protected void compareJOESDEntries() {

@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.ui.dialogs;
+package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

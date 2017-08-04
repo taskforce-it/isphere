@@ -1,7 +1,5 @@
-package org.bac.gati.tools.journalexplorer.ui.dialogs;
+package biz.isphere.journalexplorer.core.ui.dialogs;
 
-import org.bac.gati.tools.journalexplorer.ui.JournalExplorerPlugin;
-import org.bac.gati.tools.journalexplorer.ui.widgets.JournalEntryDetailsViewer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -15,9 +13,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
+import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class SideBySideCompareDialog extends Dialog {
 
