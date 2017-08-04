@@ -6,10 +6,8 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.dialogs;
+package biz.isphere.journalexplorer.rse.shared.ui.dialogs;
 
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider.ParserColumnLabel;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
@@ -19,6 +17,9 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
+import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.ParserColumnLabel;
 
 public final class ConfigureParsersTableViewer {
 

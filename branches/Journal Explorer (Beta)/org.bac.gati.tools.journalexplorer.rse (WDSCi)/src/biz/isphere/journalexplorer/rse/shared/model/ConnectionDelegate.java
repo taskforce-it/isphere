@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.model;
+package biz.isphere.journalexplorer.rse.shared.model;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 

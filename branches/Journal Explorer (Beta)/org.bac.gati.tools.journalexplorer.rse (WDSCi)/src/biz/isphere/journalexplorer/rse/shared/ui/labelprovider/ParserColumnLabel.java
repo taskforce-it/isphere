@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider;
+package biz.isphere.journalexplorer.rse.shared.ui.labelprovider;
 
-import org.bac.gati.tools.journalexplorer.rse.base.interfaces.IMetaTable;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 
 public class ParserColumnLabel extends LabelProvider implements ITableLabelProvider {
 

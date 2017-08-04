@@ -1,4 +1,4 @@
-package org.bac.gati.tools.journalexplorer.rse;
+package biz.isphere.journalexplorer.rse;
 
 import org.eclipse.osgi.util.NLS;
 

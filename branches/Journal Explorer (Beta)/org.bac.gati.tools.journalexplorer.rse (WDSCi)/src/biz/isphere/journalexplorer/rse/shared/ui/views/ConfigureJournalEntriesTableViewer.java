@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package org.bac.gati.tools.journalexplorer.rse.shared.ui.views;
+package biz.isphere.journalexplorer.rse.shared.ui.views;
 
-import org.bac.gati.tools.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 import org.eclipse.jface.viewers.TableViewer;
+
+import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 
 public final class ConfigureJournalEntriesTableViewer {
 
