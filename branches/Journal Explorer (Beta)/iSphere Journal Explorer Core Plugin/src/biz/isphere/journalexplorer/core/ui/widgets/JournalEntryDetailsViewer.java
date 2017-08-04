@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
-import biz.isphere.journalexplorer.core.ui.contentproviders2.JournalPropertiesContentProvider;
+import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelProviders.JournalEntryViewLabelProvider;
 
 public class JournalEntryDetailsViewer extends TreeViewer {

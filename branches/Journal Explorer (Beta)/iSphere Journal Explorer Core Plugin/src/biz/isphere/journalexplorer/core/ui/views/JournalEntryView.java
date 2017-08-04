@@ -39,7 +39,7 @@ import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
-import biz.isphere.journalexplorer.core.ui.contentproviders2.JournalPropertiesContentProvider;
+import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.dialogs.ConfigureParsersDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.SelectEntriesToCompareDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;

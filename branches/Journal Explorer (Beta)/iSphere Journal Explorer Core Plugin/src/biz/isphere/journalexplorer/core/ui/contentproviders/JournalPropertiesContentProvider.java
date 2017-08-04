@@ -9,7 +9,7 @@
  * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.ui.contentproviders2;
+package biz.isphere.journalexplorer.core.ui.contentproviders;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;

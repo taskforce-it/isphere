@@ -27,7 +27,7 @@ import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
-import biz.isphere.journalexplorer.core.ui.contentproviders2.JournalViewerContentProvider;
+import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
 
 public class JournalEntriesViewer extends CTabItem {
