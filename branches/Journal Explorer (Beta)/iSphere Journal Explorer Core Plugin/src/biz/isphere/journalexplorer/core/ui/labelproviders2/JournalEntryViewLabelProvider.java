@@ -9,7 +9,7 @@
  * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.ui.labelProviders;
+package biz.isphere.journalexplorer.core.ui.labelproviders2;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;

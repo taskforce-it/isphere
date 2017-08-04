@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.ui.labelProviders.IBMiConnectionLabelProvider;
+import biz.isphere.journalexplorer.core.ui.labelproviders2.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
 public class AddJournalDialog extends XDialog {
