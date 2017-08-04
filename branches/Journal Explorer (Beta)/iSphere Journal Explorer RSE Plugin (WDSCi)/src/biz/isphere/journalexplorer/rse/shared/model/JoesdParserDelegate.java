@@ -8,7 +8,6 @@
 
 package biz.isphere.journalexplorer.rse.shared.model;
 
-
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 
 import com.ibm.as400.access.AS400Text;

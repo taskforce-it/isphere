@@ -21,7 +21,7 @@ public class JournalEntryDelegate {
         // java.sql.Date dateObject = as400date.parse(date);
 
         // return new Date(dateObject.getTime());
-        return new Date(1,1,1970);
+        return new Date(1, 1, 1970);
     }
 
     public static Time getTime(int time) {
@@ -33,6 +33,6 @@ public class JournalEntryDelegate {
         // Time timeObject = as400time.parse(Integer.toString(time));
 
         // return new Time(timeObject.getTime());
-        return new Time(0,0,0);
+        return new Time(0, 0, 0);
     }
 }

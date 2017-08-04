@@ -10,7 +10,6 @@ package biz.isphere.journalexplorer.rse.shared.model;
 
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 
-
 public final class DatatypeConverterDelegate implements IDatatypeConverterDelegate {
 
     public byte[] parseHexBinary(String paramString) {
