@@ -9,7 +9,7 @@
  * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.ui.contentProviders;
+package biz.isphere.journalexplorer.core.ui.contentproviders2;
 
 import java.util.ArrayList;
 
