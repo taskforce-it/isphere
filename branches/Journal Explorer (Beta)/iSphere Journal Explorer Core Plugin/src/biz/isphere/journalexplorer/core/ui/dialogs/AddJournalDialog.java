@@ -160,14 +160,6 @@ public class AddJournalDialog extends XDialog {
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
     }
 
-    /**
-     * Return the initial size of the dialog.
-     */
-    @Override
-    protected Point getInitialSize() {
-        return new Point(216, 184);
-    }
-
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -214,17 +206,20 @@ public class AddJournalDialog extends XDialog {
         return this.connection.getConnectionName();
     }
 
+    /**
+     * Overridden make this dialog resizable {@link XDialog}.
+     */
     @Override
     protected boolean isResizable() {
         return true;
     }
-
+    
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(500, SWT.DEFAULT, true);
+        return getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
     }
 
     /**

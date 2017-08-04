@@ -67,7 +67,7 @@ public class ConfigureParsersDialog extends XDialog {
         container.setLayout(fl_container);
 
         this.createTableViewer(container);
-        this.populate();
+        this.loadValues();
 
         return container;
     }
@@ -198,7 +198,7 @@ public class ConfigureParsersDialog extends XDialog {
         ConfigureParsersTableViewer.configureTableViewer(tableViewer, COLUMN_NAMES);
     }
 
-    private void populate() {
+    private void loadValues() {
         this.tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers());
     }
 
@@ -212,14 +212,12 @@ public class ConfigureParsersDialog extends XDialog {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     }
 
-    /**
-     * Return the initial size of the dialog.
-     */
     @Override
-    protected Point getInitialSize() {
-        return new Point(643, 300);
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.ConfigureParsersDialog_SetDefinitions);
     }
-
+    
     // class ParserLibraryEditingSupport extends EditingSupport {
     //
     // private final CellEditor cellEditor;
@@ -367,10 +365,20 @@ public class ConfigureParsersDialog extends XDialog {
     // }
     // }
 
+    /**
+     * Overridden make this dialog resizable {@link XDialog}.
+     */
     @Override
-    protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText(Messages.ConfigureParsersDialog_SetDefinitions);
+    protected boolean isResizable() {
+        return true;
+    }
+    
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        return new Point(680, 310);
     }
 
     /**

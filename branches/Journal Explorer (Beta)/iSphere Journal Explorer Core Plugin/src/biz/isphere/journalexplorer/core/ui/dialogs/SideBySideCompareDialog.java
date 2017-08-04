@@ -11,8 +11,8 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -24,13 +24,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
-public class SideBySideCompareDialog extends Dialog {
+public class SideBySideCompareDialog extends XDialog {
 
     private JournalEntryDetailsViewer leftEntry;
     private JournalEntryDetailsViewer rightEntry;
@@ -106,18 +107,35 @@ public class SideBySideCompareDialog extends Dialog {
         this.createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     }
 
-    /**
-     * Return the initial size of the dialog.
-     */
-    @Override
-    protected Point getInitialSize() {
-        return new Point(830, 699);
-    }
-
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImage(JournalExplorerPlugin.getImage(JournalExplorerPlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
         newShell.setText(Messages.SideBySideCompareDialog_SideBySideComparison);
+    }
+
+    /**
+     * Overridden make this dialog resizable {@link XDialog}.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        return new Point(1020, 700);
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
     }
 }

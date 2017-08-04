@@ -11,8 +11,8 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -31,9 +31,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.Messages;
 
-public class SelectEntriesToCompareDialog extends Dialog {
+public class SelectEntriesToCompareDialog extends XDialog {
 
     private Composite container;
     private ScrolledComposite scrolledComposite;
@@ -144,14 +146,6 @@ public class SelectEntriesToCompareDialog extends Dialog {
         newShell.setText(Messages.SelectEntriesToCompareDialog_ChooseEntriesToCompare);
     }
 
-    /**
-     * Return the initial size of the dialog.
-     */
-    @Override
-    protected Point getInitialSize() {
-        return new Point(442, 388);
-    }
-
     public void setInput(Object[] input) {
 
         Button option;
@@ -219,5 +213,22 @@ public class SelectEntriesToCompareDialog extends Dialog {
 
     public Object getRightEntry() {
         return this.rightEntry;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        return getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
     }
 }
