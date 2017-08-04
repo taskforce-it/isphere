@@ -21,4 +21,3 @@ Export-Package: biz.isphere.journalexplorer.rse.shared.model,
  biz.isphere.journalexplorer.rse.shared.ui.dialogs,
  biz.isphere.journalexplorer.rse.shared.ui.labelprovider,
  biz.isphere.journalexplorer.rse.shared.ui.views
-Bundle-RequiredExecutionEnvironment: J2SE-1.5

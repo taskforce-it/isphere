@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -17,7 +28,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
-import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.rse.shared.ui.dialogs.ConfigureParsersTableViewer;

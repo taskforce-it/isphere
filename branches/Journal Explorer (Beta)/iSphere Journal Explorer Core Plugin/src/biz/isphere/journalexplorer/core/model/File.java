@@ -41,5 +41,4 @@ public class File {
         this.outFileLibrary = outFileLibrary;
     }
 
-    
 }

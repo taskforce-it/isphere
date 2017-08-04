@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Journal Explorer RSE Interfaces
+Bundle-Name: iSphere Journal Explorer Base
 Bundle-SymbolicName: biz.isphere.journalexplorer.base
 Bundle-Version: 1.0.0
 Bundle-Activator: biz.isphere.journalexplorer.base.ISphereJournalExplorerBasePlugin

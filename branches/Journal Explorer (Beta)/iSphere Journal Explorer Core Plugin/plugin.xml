@@ -11,29 +11,29 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="%Plugin-Category"
-            id="org.bac.gati.tools">
+            name="iSphere"
+            id="biz.isphere.core.views.categories">
       </category>
       <view
-            name="%JournalExplore-View"
             icon="icons/journal_explorer.png"
-            category="org.bac.gati.tools"
             class="biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"
+            category="biz.isphere.core.views.categories"
+            name="%JournalExplore-View"
             id="biz.isphere.journalexplorer.core.ui.views.JournalExplorerView">
       </view>
       <view
-            category="org.bac.gati.tools"
-            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
             icon="icons/segment_edit.png"
-            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
-            name="%JournalEntryViewer-View">
+            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
+            category="biz.isphere.core.views.categories"
+            name="%JournalEntryViewer-View"
+            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryView">
       </view>
       <view
-            category="org.bac.gati.tools"
-            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"
             icon="icons/details.png"
-            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"
-            name="%JournalEntryDetailsViewer-View">
+            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"
+            category="biz.isphere.core.views.categories"
+            name="%JournalEntryDetailsViewer-View"
+            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView">
       </view>
    </extension>
       	

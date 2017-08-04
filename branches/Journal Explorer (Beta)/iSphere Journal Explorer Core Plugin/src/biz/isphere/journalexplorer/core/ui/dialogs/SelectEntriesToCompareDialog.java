@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -20,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.Messages;
 
 public class SelectEntriesToCompareDialog extends Dialog {
 

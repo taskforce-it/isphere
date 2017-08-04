@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
@@ -15,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
-import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
@@ -140,7 +151,7 @@ public class JournalExplorerView extends ViewPart {
                     JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
                     viewer.openJournal();
                 } catch (Exception exception) {
-                    MessageDialog.openError(JournalExplorerView.this.getSite().getShell(), Messages.Error, exception.getMessage());
+                    MessageDialog.openError(JournalExplorerView.this.getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage());
                 }
             }
         };
@@ -167,7 +178,7 @@ public class JournalExplorerView extends ViewPart {
             this.journalViewers.add(journalViewer);
             this.tabs.setSelection(journalViewer);
         } catch (Exception exception) {
-            MessageDialog.openError(this.getSite().getShell(), Messages.Error, exception.getMessage()); //$NON-NLS-1$
+            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage()); //$NON-NLS-1$
 
             if (journalViewer != null) {
                 journalViewer.removeAsSelectionProvider(this.selectionProviderIntermediate);

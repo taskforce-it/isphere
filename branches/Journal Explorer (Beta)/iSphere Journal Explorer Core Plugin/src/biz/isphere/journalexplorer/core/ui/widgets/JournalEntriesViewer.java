@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.widgets;
 
 import java.util.ArrayList;
@@ -6,15 +17,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.wb.swt.ResourceManager;
 
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
@@ -76,20 +83,7 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(45);
         newColumn.setText("RRN");
-        table.addListener(SWT.PaintItem, new Listener() {
 
-            public void handleEvent(Event event) {
-
-                switch (event.type) {
-                case SWT.PaintItem: 
-                    Color backgroundColor = event.gc.getBackground();
-                    event.gc.setBackground(ResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-                    event.gc.drawRectangle(event.getBounds());
-                    event.gc.setBackground(backgroundColor);
-                    break;
-                }
-            }
-        });
         // newColumn.setLabelProvider(new JournalColumnLabel() {
         //
         // @Override

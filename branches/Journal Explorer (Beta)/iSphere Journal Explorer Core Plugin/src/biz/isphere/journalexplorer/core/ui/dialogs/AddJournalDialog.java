@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -21,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
-import biz.isphere.journalexplorer.core.internals.Messages;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.ui.labelProviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
@@ -183,7 +194,7 @@ public class AddJournalDialog extends XDialog {
             return true;
 
         } else {
-            MessageDialog.openError(this.getShell(), Messages.Error, Messages.AddJournalDialog_AllDataRequired); //$NON-NLS-1$
+            MessageDialog.openError(this.getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired); //$NON-NLS-1$
             return false;
         }
     }

@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.PreparedStatement;
@@ -8,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -16,8 +26,8 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 /**
- * This class loads the exported journal *TYPE3 data that has been exported by
- * DSPJRN to an output file. For example:
+ * This class loads the exported journal *TYPE1 to *TYPE5 data that has been
+ * exported by DSPJRN to an output file. For example:
  * 
  * <pre>
  * DSPJRN JRN(library/journal) FILE((library/file)) RCVRNG(*CURCHAIN) 
@@ -118,7 +128,7 @@ public class JournalDAO extends DAOBase {
 
                     journal.setConnectionName(getConnectionName());
                     journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
-                    
+
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
                     if (hasColumn(resultSet, "JOTSTP")) {
@@ -129,7 +139,7 @@ public class JournalDAO extends DAOBase {
                         int time = resultSet.getInt("JOTIME");
                         journal.setDate(date, time, getDateFormat());
                     }
-                    
+
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
                     journal.setEntryType(resultSet.getString("JOENTT"));
                     journal.setIncompleteData(resultSet.getString("JOINCDAT"));

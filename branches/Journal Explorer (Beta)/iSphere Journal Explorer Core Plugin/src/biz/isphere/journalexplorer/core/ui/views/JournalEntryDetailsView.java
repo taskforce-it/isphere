@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
@@ -17,8 +25,8 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
-import biz.isphere.journalexplorer.core.internals.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.dialogs.SelectEntriesToCompareDialog;
@@ -104,7 +112,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                 }
             }
         } else {
-            MessageDialog.openError(this.getSite().getShell(), Messages.Error, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
+            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
         }
     }
 
@@ -119,7 +127,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
             this.viewer.refresh(true);
 
         } else {
-            MessageDialog.openError(this.getSite().getShell(), Messages.Error, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
+            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
         }
     }
 
