@@ -18,5 +18,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer (WDSCi)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Add-Remove Comments Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer RSE Plugin (WDSCi)"/>
+	<classpathentry kind="lib" path="lib/jt400_7.1.0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import biz.isphere.journalexplorer.rse.Messages;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
@@ -59,9 +60,7 @@ public class DAOBase {
     }
 
     protected int getDateFormat() {
-        // TODO: fix it
-        // return AS400Date.toFormat(this.dateFormat);
-        return -1;
+        return AS400Date.toFormat(this.dateFormat);
     }
 
     protected void destroy(Connection connection) throws Exception {

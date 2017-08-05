@@ -9,19 +9,20 @@
 package biz.isphere.journalexplorer.rse.shared.model;
 
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
+
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 
 public class JournalEntryDelegate {
 
     public static Date getDate(String date, int dateFormat) {
 
         // TODO: fix it
-        // AS400Date as400date = new
-        // AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
-        // java.sql.Date dateObject = as400date.parse(date);
+        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
+        java.sql.Date dateObject = as400date.parse(date);
 
-        // return new Date(dateObject.getTime());
-        return new Date(1, 1, 1970);
+        return new Date(dateObject.getTime());
     }
 
     public static Time getTime(int time) {
