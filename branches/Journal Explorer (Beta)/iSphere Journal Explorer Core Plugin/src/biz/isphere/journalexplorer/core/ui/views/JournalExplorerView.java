@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
@@ -178,7 +179,7 @@ public class JournalExplorerView extends ViewPart {
             this.journalViewers.add(journalViewer);
             this.tabs.setSelection(journalViewer);
         } catch (Exception exception) {
-            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage()); //$NON-NLS-1$
+            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
 
             if (journalViewer != null) {
                 journalViewer.removeAsSelectionProvider(this.selectionProviderIntermediate);
