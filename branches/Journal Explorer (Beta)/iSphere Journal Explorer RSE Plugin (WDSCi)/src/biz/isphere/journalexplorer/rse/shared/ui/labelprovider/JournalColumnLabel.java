@@ -15,13 +15,17 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
 
-public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider {
+public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private static boolean highlightUserEntries;
 
@@ -32,22 +36,23 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
 
     }
 
-    // TODO: fix it
-    // @Override
-    // public Color getBackground(Object element) {
-    // if (element instanceof JournalEntry) {
-    // JournalEntry journalObject = (JournalEntry)element;
-    //
-    // if (JournalColumnLabel.highlightUserEntries &&
-    // journalObject.getJournalCode().equals(JournalEntry.USER_GENERATED)) {
-    // return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-    // } else {
-    // return null;
-    // }
-    // } else {
-    // return null;
-    // }
-    // }
+    public Color getBackground(Object element, int index) {
+        if (element instanceof IJournalEntry) {
+            IJournalEntry journalEntry = (IJournalEntry)element;
+
+            if (JournalColumnLabel.highlightUserEntries && journalEntry.getJournalCode().equals(IJournalEntry.USER_GENERATED)) {
+                return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public Color getForeground(Object element, int index) {
+        return null;
+    }
 
     public static boolean isHighlightUserEntries() {
         return JournalColumnLabel.highlightUserEntries;
