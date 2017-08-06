@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
@@ -91,13 +92,15 @@ public class AddJournalDialog extends XDialog {
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
 
-        this.txtLibrary = new Text(container, SWT.BORDER);
+        this.txtLibrary = WidgetFactory.createUpperCaseText(container);
+        this.txtLibrary.setTextLimit(10);
         this.txtLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
 
-        this.txtFileName = new Text(container, SWT.BORDER);
+        this.txtFileName = WidgetFactory.createUpperCaseText(container);
+        this.txtFileName.setTextLimit(10);
         this.txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         loadValues();
@@ -213,7 +216,7 @@ public class AddJournalDialog extends XDialog {
     protected boolean isResizable() {
         return true;
     }
-    
+
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */
