@@ -106,8 +106,8 @@ public class CheckAS400Date {
     private void check3DigitDateFormat(String format) {
 
         for (int century = 0; century <= 9; century++) {
+            log("Testing " + format + ": c=" + century);
             for (int year = 0; year <= 99; year++) {
-                log("Testing " + format + ": c=" + century + ", y=" + year);
                 for (int month = 1; month <= 12; month++) {
                     for (int day = 1; day <= 28; day++) {
                         String dateToParse = produceDateToParse(format, century, year, month, day);
@@ -171,7 +171,7 @@ public class CheckAS400Date {
     }
 
     private Date[] build2DigitDates() {
-        
+
         List<Date> dates = new ArrayList<Date>();
         for (int year = 1940; year <= 2039; year++) {
             for (int month = 1; month <= 12; month++) {

@@ -17,6 +17,18 @@ import java.util.TimeZone;
 
 public class AS400Date {
 
+    public static final int FORMAT_MDY = AS400DateFormat.MDY.format();
+    public static final int FORMAT_DMY = AS400DateFormat.DMY.format();
+    public static final int FORMAT_YMD = AS400DateFormat.YMD.format();
+    public static final int FORMAT_JUL = AS400DateFormat.JUL.format();
+    public static final int FORMAT_USA = AS400DateFormat.USA.format();
+    public static final int FORMAT_EUR = AS400DateFormat.EUR.format();
+    public static final int FORMAT_JIS = AS400DateFormat.JIS.format();
+    public static final int FORMAT_CYMD = AS400DateFormat.CYMD.format();
+    public static final int FORMAT_CMDY = AS400DateFormat.CMDY.format();
+    public static final int FORMAT_CDMY = AS400DateFormat.CDMY.format();
+    public static final int FORMAT_LONGJUL = AS400DateFormat.LONGJUL.format();
+
     private static TimeZone defaultTimeZone;
 
     private static Map<String, AS400DateFormat> dateFormatsMap;
@@ -24,7 +36,7 @@ public class AS400Date {
 
     private AS400DateFormat dateFormat;
     private TimeZone timeZone;
-    private Character dateDelimiter;
+    private Character dateSeparator;
 
     private static Map<String, AS400DateFormat> getDateFormatsMap() {
         initializeDateFormats();
@@ -54,19 +66,7 @@ public class AS400Date {
                     dateFormatsMap.put(AS400DateFormat.CDMY.rpgLiteral(), AS400DateFormat.CDMY);
                     dateFormatsMap.put(AS400DateFormat.LONGJUL.rpgLiteral(), AS400DateFormat.LONGJUL);
 
-                    dateFormatsTable = new AS400DateFormat[dateFormatsMap.size()];
-                    dateFormatsTable[AS400DateFormat.MDY.index()] = AS400DateFormat.MDY;
-                    dateFormatsTable[AS400DateFormat.DMY.index()] = AS400DateFormat.DMY;
-                    dateFormatsTable[AS400DateFormat.YMD.index()] = AS400DateFormat.YMD;
-                    dateFormatsTable[AS400DateFormat.JUL.index()] = AS400DateFormat.JUL;
-                    dateFormatsTable[AS400DateFormat.ISO.index()] = AS400DateFormat.ISO;
-                    dateFormatsTable[AS400DateFormat.USA.index()] = AS400DateFormat.USA;
-                    dateFormatsTable[AS400DateFormat.EUR.index()] = AS400DateFormat.EUR;
-                    dateFormatsTable[AS400DateFormat.JIS.index()] = AS400DateFormat.JIS;
-                    dateFormatsTable[AS400DateFormat.CYMD.index()] = AS400DateFormat.CYMD;
-                    dateFormatsTable[AS400DateFormat.CMDY.index()] = AS400DateFormat.CMDY;
-                    dateFormatsTable[AS400DateFormat.CDMY.index()] = AS400DateFormat.CDMY;
-                    dateFormatsTable[AS400DateFormat.LONGJUL.index()] = AS400DateFormat.LONGJUL;
+                    dateFormatsTable = dateFormatsMap.values().toArray(new AS400DateFormat[dateFormatsMap.size()]);
                 }
             }
         }
@@ -77,7 +77,7 @@ public class AS400Date {
     }
 
     public AS400Date(TimeZone timeZone) {
-        this(timeZone, getDefaultFormat().index());
+        this(timeZone, getDefaultFormat().format());
     }
 
     public AS400Date(TimeZone timeZone, int format) {
@@ -85,23 +85,23 @@ public class AS400Date {
         setDateFormat(format);
     }
 
-    public AS400Date(TimeZone timeZone, int format, Character delimiter) {
+    public AS400Date(TimeZone timeZone, int format, Character separator) {
         this(timeZone, format);
-        setDelimiter(delimiter);
+        setSeparator(separator);
     }
 
     public java.sql.Date parse(String date) {
 
         try {
 
-            SimpleDateFormat formatter = dateFormat.getFormatter(timeZone, dateDelimiter);
+            SimpleDateFormat formatter = dateFormat.getFormatter(timeZone, dateSeparator);
 
             if (dateFormat.is3DigitYearFormat()) {
                 Date startDate = dateFormat.get3DigitYearFormatStartDate(date, timeZone);
                 formatter.set2DigitYearStart(startDate);
                 return new java.sql.Date(formatter.parse(date.substring(1)).getTime());
             } else if (dateFormat.is2DigitYearFormat()) {
-                Date startDate = dateFormat.get2DigitYearFormatStartDate(date, timeZone, dateDelimiter);
+                Date startDate = dateFormat.get2DigitYearFormatStartDate(date, timeZone, dateSeparator);
                 formatter.set2DigitYearStart(startDate);
                 return new java.sql.Date(formatter.parse(date).getTime());
             } else {
@@ -114,27 +114,43 @@ public class AS400Date {
         }
     }
 
-    private void setDateFormat(int dateFormat) {
-        validateDateFormat(dateFormat);
-        this.dateFormat = getDateFormatsTable()[dateFormat];
-        setDelimiter(this.dateFormat.delimiter());
-    }
+    private void setDateFormat(int format) {
 
-    private void setDelimiter(Character delimiter) {
-        this.dateDelimiter = delimiter;
-    }
-
-    private void validateDateFormat(int dateFormat) {
-        if (dateFormat < 0 || dateFormat > getDateFormatsTable().length - 1) {
-            throw getIllegalDateFormatException(dateFormat);
+        AS400DateFormat dateFormat = getDateFormat(format);
+        if (dateFormat == null) {
+            throw getIllegalDateFormatException(format);
         }
 
+        this.dateFormat = dateFormat;
+        setSeparator(this.dateFormat.separator());
+    }
+
+    private void setSeparator(Character separator) {
+
+        if (separator != null && !this.dateFormat.isValidSeparator(separator)) {
+            throw new IllegalArgumentException("Invalid separator: " + separator.toString());
+        }
+
+        this.dateSeparator = separator;
+    }
+
+    private AS400DateFormat getDateFormat(int format) {
+
+        for (AS400DateFormat as400DateFormat : getDateFormatsTable()) {
+            if (as400DateFormat.format() == format) {
+                return as400DateFormat;
+            }
+        }
+
+        return null;
     }
 
     private static TimeZone getDefaultTimeZone() {
+
         if (defaultTimeZone == null) {
             defaultTimeZone = GregorianCalendar.getInstance().getTimeZone();
         }
+
         return defaultTimeZone;
     }
 
@@ -158,15 +174,15 @@ public class AS400Date {
             throw getIllegalDateFormatException(rpgLiteral);
         }
 
-        return dateFormat.index();
+        return dateFormat.format();
     }
 
     private static IllegalArgumentException getIllegalDateFormatException(int dateFormat) {
-        return new IllegalArgumentException("Illegal date format index: " + Integer.toString(dateFormat));
+        return new IllegalArgumentException("Illegal date format: " + Integer.toString(dateFormat));
     }
 
     private static IllegalArgumentException getIllegalDateFormatException(String rpgLiteral) {
-        return new IllegalArgumentException("Illegal date format: " + rpgLiteral);
+        return new IllegalArgumentException("Illegal date format literal: " + rpgLiteral);
     }
 
 }

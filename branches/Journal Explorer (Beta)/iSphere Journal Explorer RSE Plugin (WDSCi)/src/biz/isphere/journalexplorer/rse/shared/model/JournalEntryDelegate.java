@@ -13,12 +13,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
 
 public class JournalEntryDelegate {
 
     public static Date getDate(String date, int dateFormat) {
 
-        // TODO: fix it
         AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
         java.sql.Date dateObject = as400date.parse(date);
 
@@ -27,13 +27,9 @@ public class JournalEntryDelegate {
 
     public static Time getTime(int time) {
 
-        // TODO: fix it
-        // AS400Time as400time = new
-        // AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS,
-        // null);
-        // Time timeObject = as400time.parse(Integer.toString(time));
+        AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, null);
+        Time timeObject = as400time.parse(Integer.toString(time));
 
-        // return new Time(timeObject.getTime());
-        return new Time(0, 0, 0);
+        return new Time(timeObject.getTime());
     }
 }
