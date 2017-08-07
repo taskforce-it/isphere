@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
 
 public class MetaTableDAO extends DAOBase {
 

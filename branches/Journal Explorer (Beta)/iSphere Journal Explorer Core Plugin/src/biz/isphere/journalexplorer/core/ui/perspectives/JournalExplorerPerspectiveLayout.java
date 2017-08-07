@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.ui.perspective;
+package biz.isphere.journalexplorer.core.ui.perspectives;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -15,8 +15,11 @@ import org.eclipse.ui.IPerspectiveFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
+import biz.isphere.journalexplorer.rse.shared.ui.perspectives.IJournalExplorerPerspectiveLayout;
 
-public abstract class AbstractJournalExplorerPerspectiveLayout implements IPerspectiveFactory {
+public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJournalExplorerPerspectiveLayout {
+
+    public static final String ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout";//$NON-NLS-1$
 
     private static final String NAV_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.NavFolder";//$NON-NLS-1$
     private static final String PROPS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.PropsFolder";//$NON-NLS-1$
@@ -38,7 +41,7 @@ public abstract class AbstractJournalExplorerPerspectiveLayout implements IPersp
 
         // Place remote system view to left of journal explorer view.
         folder = layout.createFolder(NAV_FOLDER_ID, IPageLayout.LEFT, 0.15F, editorArea);
-        folder.addView(getRemoveSystemsViewID());
+        folder.addView(this.ID);
 
         // Place journal entry details to right of journal explorer view.
         folder = layout.createFolder(JOURNAL_ENTRY_DETAILS_FOLDER_ID, IPageLayout.RIGHT, 0.7F, editorArea);
@@ -56,20 +59,14 @@ public abstract class AbstractJournalExplorerPerspectiveLayout implements IPersp
         folder = layout.createFolder(JOURNAL_ENTRIES_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, JournalExplorerView.ID);
         folder.addView(JournalEntryView.ID);
 
-        layout.addShowViewShortcut(getRemoveSystemsViewID());
+        layout.addShowViewShortcut(REMOTE_SYSTEMS_VIEW_ID);
         layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
         layout.addShowViewShortcut(JournalExplorerView.ID);
         layout.addShowViewShortcut(JournalEntryView.ID);
         layout.addShowViewShortcut(JournalEntryDetailsView.ID);
 
-        layout.addPerspectiveShortcut(getPerspectiveLayoutID());
+        layout.addPerspectiveShortcut(this.ID);
 
         layout.setEditorAreaVisible(false);
     }
-
-    protected abstract String getPerspectiveLayoutID();
-
-    protected abstract String getRemoveSystemsViewID();
-
-    protected abstract String getCommandLogViewID();
 }

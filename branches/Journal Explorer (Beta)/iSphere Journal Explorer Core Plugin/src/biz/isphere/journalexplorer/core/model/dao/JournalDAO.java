@@ -23,7 +23,7 @@ import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.rse.shared.model.dao.DAOBase;
+import biz.isphere.journalexplorer.rse.shared.model.dao.AbstractDAOBase;
 
 /**
  * This class loads the exported journal *TYPE1 to *TYPE5 data that has been

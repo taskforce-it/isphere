@@ -14,10 +14,15 @@ package biz.isphere.journalexplorer.core.ui.dialogs;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -25,13 +30,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.rse.shared.ui.dialogs.ConfigureParsersTableViewer;
+import biz.isphere.journalexplorer.core.ui.labelproviders.ParserColumnLabel;
 
 public class ConfigureParsersDialog extends XDialog {
 
@@ -194,8 +202,113 @@ public class ConfigureParsersDialog extends XDialog {
         // ParsingOffsetEditingSupport(tableViewer));
 
         tableViewer.setColumnProperties(COLUMN_NAMES);
+        tableViewer.setLabelProvider(new ParserColumnLabel());
 
-        ConfigureParsersTableViewer.configureTableViewer(tableViewer, COLUMN_NAMES);
+        configureEditors(tableViewer, COLUMN_NAMES);
+    }
+
+    private void configureEditors(final TableViewer tableViewer, final String[] columnNames) {
+
+        Table table = tableViewer.getTable();
+        TextCellEditor textEditor;
+
+        // Create the cell editors
+        final CellEditor[] editors = new CellEditor[columnNames.length];
+
+        // Column 1 : Journal object
+        editors[0] = null;
+
+        // Column 2 : Parser library
+        textEditor = new TextCellEditor(table);
+        ((Text)textEditor.getControl()).setTextLimit(10);
+        editors[1] = textEditor;
+
+        // Column 3 : Parser name
+        textEditor = new TextCellEditor(table);
+        ((Text)textEditor.getControl()).setTextLimit(10);
+        editors[2] = textEditor;
+
+        // Column 4 : Parsing offset
+        textEditor = new TextCellEditor(table);
+        ((Text)textEditor.getControl()).addVerifyListener(
+
+        new VerifyListener() {
+            public void verifyText(VerifyEvent e) {
+                e.doit = "0123456789".indexOf(e.text) >= 0;
+            }
+        });
+        editors[3] = textEditor;
+
+        // Assign the cell editors to the viewer
+        tableViewer.setCellEditors(editors);
+
+        // Set the cell modifier for the viewer
+        tableViewer.setCellModifier(new ICellModifier() {
+
+            public void modify(Object element, String property, Object value) {
+
+                TableItem tableItem = (TableItem)element;
+                IMetaTable metaTable = (IMetaTable)tableItem.getData();
+
+                int index = getColumnIndex(property);
+                switch (index) {
+                case 1: // Parser library
+                    metaTable.setDefinitionLibrary((String)value);
+                    tableViewer.update(metaTable, null);
+                case 2: // Parser name
+                    metaTable.setDefinitionName((String)value);
+                    tableViewer.update(metaTable, null);
+                case 3: // Parsing offset
+                    try {
+                        metaTable.setParsingOffset(Integer.parseInt((String)value));
+                        tableViewer.update(metaTable, null);
+                    } catch (Exception e) {
+                    }
+                default:
+                }
+            }
+
+            public Object getValue(Object element, String property) {
+
+                IMetaTable metaTable = (IMetaTable)element;
+
+                int index = getColumnIndex(property);
+                switch (index) {
+                case 0: // Journaled object
+                    return metaTable.getQualifiedName();
+                case 1: // Parser library
+                    return metaTable.getDefinitionLibrary();
+                case 2: // Parser name
+                    return metaTable.getDefinitionName();
+                case 3: // Parsing offset
+                    return Integer.toString(metaTable.getParsingOffset());
+                default:
+                    return "";
+                }
+            }
+
+            public boolean canModify(Object element, String property) {
+
+                int index = getColumnIndex(property);
+                if (index < 0 || index > editors.length - 1) {
+                    return false;
+                }
+
+                return editors[index] != null;
+            }
+
+            private int getColumnIndex(String property) {
+
+                for (int i = 0; i < columnNames.length; i++) {
+                    if (property.equals(columnNames[i])) {
+                        return i;
+                    }
+
+                }
+
+                return -1;
+            }
+        });
     }
 
     private void loadValues() {

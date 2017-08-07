@@ -30,29 +30,26 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
-import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
 
 public class JournalExplorerView extends ViewPart {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
     private Action openJournalAction;
-
     private Action highlightUserEntries;
-
     private Action reloadEntries;
-
     private CTabFolder tabs;
-
     private ArrayList<JournalEntriesViewer> journalViewers;
-
     private SelectionProviderIntermediate selectionProviderIntermediate;
+    private Preferences preferences;
 
     public JournalExplorerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
         this.journalViewers = new ArrayList<JournalEntriesViewer>();
+        this.preferences = Preferences.getInstance();
     }
 
     /**
@@ -135,11 +132,13 @@ public class JournalExplorerView extends ViewPart {
         this.highlightUserEntries = new Action(Messages.JournalExplorerView_HighlightUserEntries) {
             @Override
             public void run() {
-                JournalColumnLabel.setHighlightUserEntries(!JournalColumnLabel.isHighlightUserEntries());
+                boolean hightlightUserEntries = preferences.isHighlightUserEntries();
+                preferences.setHighlightUserEntries(!hightlightUserEntries);
                 JournalExplorerView.this.refreshAllViewers();
             }
         };
-        highlightUserEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT));
+        highlightUserEntries
+            .setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT));
 
         // /
         // / reParseEntries action

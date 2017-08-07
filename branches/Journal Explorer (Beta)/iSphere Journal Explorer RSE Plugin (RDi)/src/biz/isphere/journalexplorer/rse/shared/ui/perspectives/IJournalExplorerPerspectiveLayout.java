@@ -6,17 +6,11 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.shared.ui.views;
+package biz.isphere.journalexplorer.rse.shared.ui.perspectives;
 
-import org.eclipse.jface.viewers.TableViewer;
+public interface IJournalExplorerPerspectiveLayout {
 
-import biz.isphere.journalexplorer.rse.shared.ui.labelprovider.JournalColumnLabel;
-
-public final class ConfigureJournalEntriesTableViewer {
-
-    public static void configureTableViewer(TableViewer tableViewer) {
-
-        tableViewer.setLabelProvider(new JournalColumnLabel());
-    }
-
+    public static final String REMOTE_SYSTEMS_VIEW_ID = "org.eclipse.rse.ui.view.systemView"; //$NON-NLS-1$
+    public static final String COMMAND_LOG_VIEW_ID = "com.ibm.etools.iseries.rse.ui.view.cmdlog"; //$NON-NLS-1$
+    
 }

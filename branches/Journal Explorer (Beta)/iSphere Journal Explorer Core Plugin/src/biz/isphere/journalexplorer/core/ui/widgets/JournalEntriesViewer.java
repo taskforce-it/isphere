@@ -28,7 +28,7 @@ import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
-import biz.isphere.journalexplorer.rse.shared.ui.views.ConfigureJournalEntriesTableViewer;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalColumnLabel;
 
 public class JournalEntriesViewer extends CTabItem {
 
@@ -356,7 +356,7 @@ public class JournalEntriesViewer extends CTabItem {
         // }
         // });
 
-        ConfigureJournalEntriesTableViewer.configureTableViewer(tableViewer);
+        tableViewer.setLabelProvider(new JournalColumnLabel());
 
         this.tableViewer.setContentProvider(new JournalViewerContentProvider(this.tableViewer));
     }
