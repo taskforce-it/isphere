@@ -186,7 +186,9 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
 
             this.journalViewers.add(journalViewer);
             this.tabs.setSelection(journalViewer);
+            
         } catch (Exception exception) {
+            
             MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
 
             if (journalViewer != null) {

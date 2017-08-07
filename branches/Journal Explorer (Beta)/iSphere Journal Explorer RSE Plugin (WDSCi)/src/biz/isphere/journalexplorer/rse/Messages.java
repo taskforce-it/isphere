@@ -17,8 +17,9 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.journalexplorer.rse.messages"; //$NON-NLS-1$
 
-    public static String DAOBase_ConnectionNotStablished;
-    public static String DAOBase_InvalidConnectionObject;
+    public static String DAOBase_Failed_to_connect_to_A;
+    public static String DAOBase_Invalid_or_missing_connection_name_A;
+    public static String DAOBase_Connection_A_not_found;
 
     static {
         // initialize resource bundle

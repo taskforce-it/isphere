@@ -25,28 +25,43 @@ public abstract class AbstractDAOBase {
     private Connection connection;
     private String dateFormat;
     private String dateSeparator;
+    private String timeSeparator;
 
     public AbstractDAOBase(String connectionName) throws Exception {
         if (connectionName != null) {
-            this.ibmiConnection = ISeriesConnection.getConnection(connectionName);
+            ibmiConnection = ISeriesConnection.getConnection(connectionName);
+            if (ibmiConnection == null) {
+                throw new Exception(Messages.bind(Messages.DAOBase_Connection_A_not_found, connectionName));
+            }
             if (!ibmiConnection.isConnected()) {
                 if (!ibmiConnection.connect()) {
-                    throw new Exception(Messages.DAOBase_ConnectionNotStablished);
+                    throw new Exception(Messages.bind(Messages.DAOBase_Failed_to_connect_to_A, connectionName));
                 }
             }
 
-            this.dateFormat = this.ibmiConnection.getServerJob(null).getDateFormat();
-            if (this.dateFormat.startsWith("*")) {
-                this.dateFormat = this.dateFormat.substring(1);
+            dateFormat = ibmiConnection.getServerJob(null).getDateFormat();
+            if (dateFormat.startsWith("*")) {
+                dateFormat = dateFormat.substring(1);
             }
-            this.dateSeparator = this.ibmiConnection.getServerJob(null).getDateSeparator();
-            this.connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
-            this.connection.setAutoCommit(false);
+
+            dateSeparator = ibmiConnection.getServerJob(null).getDateSeparator();
+            timeSeparator = ibmiConnection.getServerJob(null).getTimeSeparator();
+
+            connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
+            connection.setAutoCommit(false);
         } else
-            throw new Exception(Messages.DAOBase_InvalidConnectionObject);
+            throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
     }
 
     public void destroy() {
+    }
+
+    protected Character getTimeSeparator() {
+        return timeSeparator.charAt(0);
+    }
+
+    protected Character getDateSeparator() {
+        return dateSeparator.charAt(0);
     }
 
     protected int getDateFormat() {

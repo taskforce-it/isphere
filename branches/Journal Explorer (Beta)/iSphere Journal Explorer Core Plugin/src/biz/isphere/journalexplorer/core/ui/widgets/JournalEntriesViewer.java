@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,6 +44,8 @@ public class JournalEntriesViewer extends CTabItem {
     private String fileName;
 
     private ArrayList<JournalEntry> data;
+
+    private Exception dataLoadException;
 
     public JournalEntriesViewer(CTabFolder parent, File outputFile) {
 
@@ -363,13 +366,32 @@ public class JournalEntriesViewer extends CTabItem {
 
     public void openJournal() throws Exception {
 
-        JournalDAO journalDAO = new JournalDAO(this.connectionName, this.library, this.fileName);
-        this.data = journalDAO.getJournalData();
-        this.container.layout(true);
-        this.tableViewer.setInput(null);
-        this.tableViewer.setUseHashlookup(true);
-        this.tableViewer.setItemCount(data.size());
-        this.tableViewer.setInput(data);
+        dataLoadException = null;
+
+        Runnable loadJournalDataJob = new Runnable() {
+
+            public void run() {
+
+                try {
+                    JournalDAO journalDAO = new JournalDAO(connectionName, library, fileName);
+                    data = journalDAO.getJournalData();
+                    container.layout(true);
+                    tableViewer.setInput(null);
+                    tableViewer.setUseHashlookup(true);
+                    tableViewer.setItemCount(data.size());
+                    tableViewer.setInput(data);
+                } catch (Exception e) {
+                    dataLoadException = e;
+                }
+            }
+
+        };
+
+        BusyIndicator.showWhile(getDisplay(), loadJournalDataJob);
+
+        if (dataLoadException != null) {
+            throw dataLoadException;
+        }
     }
 
     @Override

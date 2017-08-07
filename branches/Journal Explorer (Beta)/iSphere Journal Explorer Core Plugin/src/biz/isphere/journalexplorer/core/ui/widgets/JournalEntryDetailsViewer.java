@@ -30,6 +30,7 @@ public class JournalEntryDetailsViewer extends TreeViewer {
     }
 
     private void initializeComponents() {
+        
         this.setAutoExpandLevel(1);
         Tree tree = this.getTree();
         tree.setHeaderVisible(true);

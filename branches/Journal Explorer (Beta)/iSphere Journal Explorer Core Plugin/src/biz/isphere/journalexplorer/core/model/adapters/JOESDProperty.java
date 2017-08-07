@@ -74,7 +74,7 @@ public class JOESDProperty extends JournalProperty {
 
         this.metatable = MetaDataCache.INSTANCE.retrieveMetaData(this.journal);
 
-        this.parsedJOESD = new JoesdParser(this.metatable).procesar(this.journal);
+        this.parsedJOESD = new JoesdParser(this.metatable).execute(this.journal);
 
         for (MetaColumn column : this.metatable.getColumns()) {
             columnName = column.getName().trim();

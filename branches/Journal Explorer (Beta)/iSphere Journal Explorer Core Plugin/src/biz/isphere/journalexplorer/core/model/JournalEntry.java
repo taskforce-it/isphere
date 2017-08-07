@@ -319,10 +319,10 @@ public class JournalEntry implements IJournalEntry {
         this.rrn = rrn;
     }
 
-    public void setDate(String date, int time, int dateFormat) {
+    public void setDate(String date, int time, int dateFormat, Character dateSeparator, Character timeSeparator) {
 
-        setDate(JournalEntryDelegate.getDate(date, dateFormat));
-        setTime(JournalEntryDelegate.getTime(time));
+        setDate(JournalEntryDelegate.getDate(date, dateFormat, dateSeparator));
+        setTime(JournalEntryDelegate.getTime(time, timeSeparator));
     }
 
     public String getOutFileName() {

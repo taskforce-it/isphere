@@ -137,7 +137,7 @@ public class JournalDAO extends DAOBase {
                     } else {
                         String date = resultSet.getString("JODATE");
                         int time = resultSet.getInt("JOTIME");
-                        journal.setDate(date, time, getDateFormat());
+                        journal.setDate(date, time, getDateFormat(), getDateSeparator(), getTimeSeparator());
                     }
 
                     journal.setEntryLength(resultSet.getInt("JOENTL"));
@@ -174,8 +174,6 @@ public class JournalDAO extends DAOBase {
                 }
                 // TODO: remove it later
                 Date Fin = Calendar.getInstance().getTime();
-                // System.out.println(Integer.toString(journalData.size()) +
-                // "':" + Long.toString(Fin.getTime() - inicio.getTime()));
             }
         } catch (Exception exception) {
             throw exception;
