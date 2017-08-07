@@ -41,7 +41,7 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
 
         // Place remote system view to left of journal explorer view.
         folder = layout.createFolder(NAV_FOLDER_ID, IPageLayout.LEFT, 0.15F, editorArea);
-        folder.addView(this.ID);
+        folder.addView(REMOTE_SYSTEMS_VIEW_ID);
 
         // Place journal entry details to right of journal explorer view.
         folder = layout.createFolder(JOURNAL_ENTRY_DETAILS_FOLDER_ID, IPageLayout.RIGHT, 0.7F, editorArea);
