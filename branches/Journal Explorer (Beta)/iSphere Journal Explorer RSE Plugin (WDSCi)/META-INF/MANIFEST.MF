@@ -5,7 +5,6 @@ Bundle-SymbolicName: biz.isphere.journalexplorer.rse
 Bundle-Version: 0.0.0.b001
 Bundle-Activator: biz.isphere.journalexplorer.rse.ISphereJournalExplorerRSEPlugin
 Bundle-Vendor: iSphere Project Team
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ibm.etools.iseries.core,
@@ -15,6 +14,4 @@ Eclipse-LazyStart: true
 Import-Package: com.ibm.as400.access
 Export-Package: biz.isphere.journalexplorer.rse.shared.model,
  biz.isphere.journalexplorer.rse.shared.model.dao,
- biz.isphere.journalexplorer.rse.shared.ui.dialogs,
- biz.isphere.journalexplorer.rse.shared.ui.labelprovider,
- biz.isphere.journalexplorer.rse.shared.ui.views
+ biz.isphere.journalexplorer.rse.shared.ui.perspectives
