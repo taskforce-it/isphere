@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
@@ -126,8 +126,8 @@ public class JournalExplorerView extends ViewPart {
                 }
             }
         };
-        this.openJournalAction.setImageDescriptor(JournalExplorerPlugin
-            .getImageDescriptor(JournalExplorerPlugin.IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN));
+        this.openJournalAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
+            .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN));
 
         // /
         // / highlightUserEntries action
@@ -139,7 +139,7 @@ public class JournalExplorerView extends ViewPart {
                 JournalExplorerView.this.refreshAllViewers();
             }
         };
-        highlightUserEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_HIGHLIGHT));
+        highlightUserEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT));
 
         // /
         // / reParseEntries action
@@ -156,7 +156,7 @@ public class JournalExplorerView extends ViewPart {
                 }
             }
         };
-        reloadEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_REFRESH));
+        reloadEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
 
     }
 

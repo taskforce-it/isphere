@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
@@ -387,6 +387,6 @@ public class ConfigureParsersDialog extends XDialog {
      */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
+        return super.getDialogBoundsSettings(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings());
     }
 }

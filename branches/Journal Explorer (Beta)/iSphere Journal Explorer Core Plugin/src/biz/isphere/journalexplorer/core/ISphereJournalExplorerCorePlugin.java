@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class JournalExplorerPlugin extends AbstractUIPlugin {
+public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
 
     private static final String ICON_PATH = "icons/";
     public static final String IMAGE_COMPARE = "compare.png";
@@ -38,12 +38,12 @@ public class JournalExplorerPlugin extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "biz.isphere.journalexplorer.core"; //$NON-NLS-1$
 
     // The shared instance
-    private static JournalExplorerPlugin plugin;
+    private static ISphereJournalExplorerCorePlugin plugin;
 
     /**
      * The constructor
      */
-    public JournalExplorerPlugin() {
+    public ISphereJournalExplorerCorePlugin() {
     }
 
     /*
@@ -75,7 +75,7 @@ public class JournalExplorerPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static JournalExplorerPlugin getDefault() {
+    public static ISphereJournalExplorerCorePlugin getDefault() {
         return plugin;
     }
 

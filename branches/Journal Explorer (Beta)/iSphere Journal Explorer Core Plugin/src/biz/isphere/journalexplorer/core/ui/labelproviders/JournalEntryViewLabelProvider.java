@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
@@ -45,7 +45,7 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
     public Image getColumnImage(Object object, int columnIndex) {
         if (object instanceof JOESDProperty && columnIndex == VALUE_COLUMN) {
             if (((JOESDProperty)object).isErrorParsing()) {
-                return JournalExplorerPlugin.getImage(JournalExplorerPlugin.IMAGE_WARNING_OV);
+                return ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
             } else {
                 return null;
             }

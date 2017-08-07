@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
@@ -231,6 +231,6 @@ public class AddJournalDialog extends XDialog {
      */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
+        return super.getDialogBoundsSettings(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings());
     }
 }

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
@@ -110,7 +110,7 @@ public class SideBySideCompareDialog extends XDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setImage(JournalExplorerPlugin.getImage(JournalExplorerPlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
+        newShell.setImage(ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
         newShell.setText(Messages.SideBySideCompareDialog_SideBySideComparison);
     }
 
@@ -136,6 +136,6 @@ public class SideBySideCompareDialog extends XDialog {
      */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
+        return super.getDialogBoundsSettings(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings());
     }
 }

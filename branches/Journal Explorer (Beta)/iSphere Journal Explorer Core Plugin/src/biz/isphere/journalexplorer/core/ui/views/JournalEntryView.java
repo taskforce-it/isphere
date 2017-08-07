@@ -32,7 +32,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
@@ -99,7 +99,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         };
 
-        this.compare.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_COMPARE));
+        this.compare.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_COMPARE));
 
         // /
         // / showSideBySide action
@@ -111,7 +111,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         };
 
-        showSideBySide.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
+        showSideBySide.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
 
         // /
         // / openParserAssociations action
@@ -123,7 +123,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         };
 
-        openParserAssociations.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_READ_WRITE_OBJ));
+        openParserAssociations.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_READ_WRITE_OBJ));
 
         // /
         // / reParseEntries action
@@ -135,7 +135,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         };
 
-        reParseEntries.setImageDescriptor(JournalExplorerPlugin.getImageDescriptor(JournalExplorerPlugin.IMAGE_REFRESH));
+        reParseEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
     }
 
     protected void performShowSideBySideEntries() {

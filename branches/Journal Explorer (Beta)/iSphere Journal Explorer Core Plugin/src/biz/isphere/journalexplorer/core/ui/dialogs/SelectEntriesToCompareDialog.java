@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.journalexplorer.core.JournalExplorerPlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 
 public class SelectEntriesToCompareDialog extends XDialog {
@@ -229,6 +229,6 @@ public class SelectEntriesToCompareDialog extends XDialog {
      */
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
-        return super.getDialogBoundsSettings(JournalExplorerPlugin.getDefault().getDialogSettings());
+        return super.getDialogBoundsSettings(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings());
     }
 }
