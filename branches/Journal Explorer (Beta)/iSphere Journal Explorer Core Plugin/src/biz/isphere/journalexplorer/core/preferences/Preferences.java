@@ -1,6 +1,7 @@
 package biz.isphere.journalexplorer.core.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 
@@ -31,7 +32,7 @@ public final class Preferences {
 
     private static final String DOMAIN = ISphereJournalExplorerCorePlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
-    private static final String HIGHLIGHT_USER_ENTRIES = DOMAIN + "HIGHLIGHT_USER_ENTRIES."; //$NON-NLS-1$
+    public static final String HIGHLIGHT_USER_ENTRIES = DOMAIN + "HIGHLIGHT_USER_ENTRIES."; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -94,5 +95,13 @@ public final class Preferences {
 
     public boolean getInitialHighlightUserEntries() {
         return false;
+    }
+
+    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+        preferenceStore.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+        preferenceStore.removePropertyChangeListener(listener);
     }
 }

@@ -23,7 +23,7 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
 
     private static final String NAV_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.NavFolder";//$NON-NLS-1$
     private static final String PROPS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.PropsFolder";//$NON-NLS-1$
-    private static final String JOURNAL_EXPLORER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalExplorerFolder";//$NON-NLS-1$
+    private static final String JOURNAL_EXPLORER_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalExplorerFolder";//$NON-NLS-1$
     private static final String JOURNAL_ENTRIES_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntriesFolder";//$NON-NLS-1$
     private static final String JOURNAL_ENTRY_DETAILS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.JournalEntryDetailsFolder";//$NON-NLS-1$
 
@@ -52,12 +52,15 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
         folder.addView("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
 
         // Place journal explorer view below editor area.
-        folder = layout.createFolder(JOURNAL_EXPLORER_ID, IPageLayout.BOTTOM, 0.0F, editorArea);
+        folder = layout.createFolder(JOURNAL_EXPLORER_FOLDER_ID, IPageLayout.BOTTOM, 0.0F, editorArea);
         folder.addView(JournalExplorerView.ID);
 
         // Place journal entries view below journal explorer view.
         folder = layout.createFolder(JOURNAL_ENTRIES_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, JournalExplorerView.ID);
         folder.addView(JournalEntryView.ID);
+
+        // Place command log view below journal explorer view.
+        folder.addView(COMMAND_LOG_VIEW_ID);
 
         layout.addShowViewShortcut(REMOTE_SYSTEMS_VIEW_ID);
         layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
