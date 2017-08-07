@@ -17,17 +17,17 @@ import com.ibm.as400.access.AS400Time;
 
 public class JournalEntryDelegate {
 
-    public static Date getDate(String date, int dateFormat) {
+    public static Date getDate(String date, int dateFormat, Character dateSeparator) {
 
-        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, null);
+        AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, dateSeparator);
         java.sql.Date dateObject = as400date.parse(date);
 
         return new Date(dateObject.getTime());
     }
 
-    public static Time getTime(int time) {
+    public static Time getTime(int time, Character timeSeparaCharacter) {
 
-        AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, null);
+        AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, timeSeparaCharacter);
         Time timeObject = as400time.parse(Integer.toString(time));
 
         return new Time(timeObject.getTime());
