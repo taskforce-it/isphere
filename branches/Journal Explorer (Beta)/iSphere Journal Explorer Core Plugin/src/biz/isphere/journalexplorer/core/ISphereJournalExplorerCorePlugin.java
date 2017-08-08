@@ -33,6 +33,10 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
     public static final String IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN = "table_bottom_left_corner_new_green.png";
     public static final String IMAGE_WARNING_OV = "warning_ov.gif";
+    public static final String IMAGE_ERROR_OV = "error_ov.gif";
+    public static final String IMAGE_LOADED_OV = "loaded_ov.gif";
+    public static final String IMAGE_CHECKED_OV = "checked_ov.gif";
+    public static final String IMAGE_DIRTY_OV = "dirty_ov.gif";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.journalexplorer.core"; //$NON-NLS-1$

@@ -49,10 +49,12 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
     private Action highlightUserEntries;
     private Action configureJoesdParsers;
     private Action reloadEntries;
-    private CTabFolder tabs;
-    private ArrayList<JournalEntriesViewer> journalViewers;
+
     private SelectionProviderIntermediate selectionProviderIntermediate;
+    private ArrayList<JournalEntriesViewer> journalViewers;
     private Preferences preferences;
+
+    private CTabFolder tabs;
 
     public JournalExplorerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
@@ -87,10 +89,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
             public void close(CTabFolderEvent event) {
                 if (event.item instanceof JournalEntriesViewer) {
-                    JournalEntriesViewer viewer = ((JournalEntriesViewer)event.item);
-
-                    viewer.removeAsSelectionProvider(selectionProviderIntermediate);
-                    JournalExplorerView.this.journalViewers.remove(viewer);
+                    cleanupClosedTab((JournalEntriesViewer)event.item);
                 }
 
             }
@@ -119,18 +118,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
             @Override
             public void run() {
-
-                AddJournalDialog addJournalDialog = new AddJournalDialog(JournalExplorerView.this.getSite().getShell());
-                addJournalDialog.create();
-                int result = addJournalDialog.open();
-
-                if (result == Window.OK) {
-                    File outputFile = new File();
-                    outputFile.setOutFileLibrary(addJournalDialog.getLibrary());
-                    outputFile.setOutFileName(addJournalDialog.getFileName());
-                    outputFile.setConnetionName(addJournalDialog.getConnectionName());
-                    JournalExplorerView.this.performAddJournal(outputFile);
-                }
+                performOpenJournal();
             }
         };
         this.openJournalAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
@@ -177,13 +165,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
     }
 
-    private void refreshAllViewers() {
-        for (JournalEntriesViewer viewer : this.journalViewers) {
-            viewer.refreshTable();
-        }
-    }
-
-    private void performAddJournal(File outputFile) {
+    private void createJournalTab(File outputFile) {
 
         JournalEntriesViewer journalViewer = null;
 
@@ -206,6 +188,33 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
                 journalViewer.removeAsSelectionProvider(this.selectionProviderIntermediate);
                 journalViewer.dispose();
             }
+        }
+    }
+
+    private void cleanupClosedTab(JournalEntriesViewer viewer) {
+
+        viewer.removeAsSelectionProvider(selectionProviderIntermediate);
+        JournalExplorerView.this.journalViewers.remove(viewer);
+    }
+
+    private void refreshAllViewers() {
+        for (JournalEntriesViewer viewer : this.journalViewers) {
+            viewer.refreshTable();
+        }
+    }
+
+    private void performOpenJournal() {
+
+        AddJournalDialog addJournalDialog = new AddJournalDialog(JournalExplorerView.this.getSite().getShell());
+        addJournalDialog.create();
+        int result = addJournalDialog.open();
+
+        if (result == Window.OK) {
+            File outputFile = new File();
+            outputFile.setOutFileLibrary(addJournalDialog.getLibrary());
+            outputFile.setOutFileName(addJournalDialog.getFileName());
+            outputFile.setConnetionName(addJournalDialog.getConnectionName());
+            JournalExplorerView.this.createJournalTab(outputFile);
         }
     }
 

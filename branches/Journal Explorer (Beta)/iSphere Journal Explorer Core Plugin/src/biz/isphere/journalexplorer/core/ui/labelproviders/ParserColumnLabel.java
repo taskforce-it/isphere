@@ -16,11 +16,21 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 
 public class ParserColumnLabel extends LabelProvider implements ITableLabelProvider {
 
-    public Image getColumnImage(Object arg0, int arg1) {
-        return null;
+    public Image getColumnImage(Object object, int index) {
+        if (index == 0 && object instanceof MetaTable) {
+            if (((MetaTable)object).isLoaded()) {
+                return null;
+            } else {
+                return ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
+            }
+        } else {
+            return null;
+        }
     }
 
     public String getColumnText(Object object, int index) {

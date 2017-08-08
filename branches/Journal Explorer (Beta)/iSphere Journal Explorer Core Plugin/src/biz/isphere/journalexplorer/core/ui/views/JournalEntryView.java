@@ -52,12 +52,8 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
     private JournalEntryDetailsViewer viewer;
 
     private Action compare;
-
     private Action showSideBySide;
-
-    private Action configureJoesdParsers;
-
-    private Action reParseEntries;
+    private Action reParseJournalEntries;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
 
@@ -111,31 +107,20 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         };
 
-        showSideBySide.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
-
-        // /
-        // / openParserAssociations action
-        // /
-        this.configureJoesdParsers = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
-            @Override
-            public void run() {
-                JournalEntryView.this.performConfigureParsers();
-            }
-        };
-
-        configureJoesdParsers.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_READ_WRITE_OBJ));
+        showSideBySide.setImageDescriptor(ISphereJournalExplorerCorePlugin
+            .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
 
         // /
         // / reParseEntries action
         // /
-        this.reParseEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+        this.reParseJournalEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
             @Override
             public void run() {
-                JournalEntryView.this.performRefresh();
+                JournalEntryView.this.performReparseJournalEntries();
             }
         };
 
-        reParseEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
+        reParseJournalEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
     }
 
     protected void performShowSideBySideEntries() {
@@ -173,7 +158,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         configureParsersDialog.open();
     }
 
-    private void performRefresh() {
+    private void performReparseJournalEntries() {
 
         JournalEntryView.this.reParseAllEntries();
         JournalEntryView.this.viewer.refresh(true);
@@ -241,8 +226,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         toolBarManager.add(this.compare);
         toolBarManager.add(this.showSideBySide);
         toolBarManager.add(new Separator());
-        toolBarManager.add(this.configureJoesdParsers);
-        toolBarManager.add(this.reParseEntries);
+        toolBarManager.add(this.reParseJournalEntries);
     }
 
     @Override
@@ -325,11 +309,9 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             Object[] items = getInput();
 
             if (items != null && items.length > 0) {
-                configureJoesdParsers.setEnabled(true);
-                reParseEntries.setEnabled(true);
+                reParseJournalEntries.setEnabled(true);
             } else {
-                configureJoesdParsers.setEnabled(false);
-                reParseEntries.setEnabled(false);
+                reParseJournalEntries.setEnabled(false);
             }
         }
     }
