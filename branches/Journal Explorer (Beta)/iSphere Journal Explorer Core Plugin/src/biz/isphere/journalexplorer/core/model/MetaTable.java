@@ -148,7 +148,7 @@ public class MetaTable {
                 outfileType = new Integer(JournalOutputType.TYPE5);
             } else if (hasColumn("JOJID")) {
                 // Added with *TYPE4
-                outfileType = new Integer(JournalOutputType.TYPE5);
+                outfileType = new Integer(JournalOutputType.TYPE4);
             } else if (hasColumn("JOTSTP")) {
                 // Added with *TYPE3
                 outfileType = new Integer(JournalOutputType.TYPE3);

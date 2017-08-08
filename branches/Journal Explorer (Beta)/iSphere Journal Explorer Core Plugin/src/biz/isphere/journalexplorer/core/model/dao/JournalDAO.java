@@ -34,11 +34,11 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
  */
 public class JournalDAO extends DAOBase {
 
-    private File file;
+    private File outputFile;
 
     public JournalDAO(File outputFile) throws Exception {
         super(outputFile.getConnectionName());
-        this.file = outputFile;
+        this.outputFile = outputFile;
     }
 
     // @formatter:off
@@ -205,99 +205,110 @@ public class JournalDAO extends DAOBase {
         String statementSQL = null;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
-        List<JournalEntry> journalData = new ArrayList<JournalEntry>();
+        List<JournalEntry> journalEntries = new ArrayList<JournalEntry>();
+        AbstractTypeDAO typeDAO = null;
 
-        try {
+//        try {
 
-            int type = getOutfileType(file);
+            int type = getOutfileType(outputFile);
             switch (type) {
             case JournalOutputType.TYPE5:
-                statementSQL = String.format(GET_JOURNAL_DATA_5, file.getOutFileLibrary(), file.getOutFileName());
+//                statementSQL = String.format(GET_JOURNAL_DATA_5, outputFile.getOutFileLibrary(), outputFile.getOutFileName());
                 break;
             case JournalOutputType.TYPE4:
-                statementSQL = String.format(GET_JOURNAL_DATA_4, file.getOutFileLibrary(), file.getOutFileName());
+//                statementSQL = String.format(GET_JOURNAL_DATA_4, outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+                typeDAO=new Type4DAO(outputFile);
                 break;
             case JournalOutputType.TYPE3:
-                statementSQL = String.format(GET_JOURNAL_DATA_3, file.getOutFileLibrary(), file.getOutFileName());
+//                statementSQL = String.format(GET_JOURNAL_DATA_3, outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+                typeDAO=new Type3DAO(outputFile);
                 break;
             case JournalOutputType.TYPE2:
-                statementSQL = String.format(GET_JOURNAL_DATA_2, file.getOutFileLibrary(), file.getOutFileName());
+//                statementSQL = String.format(GET_JOURNAL_DATA_2, outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+                typeDAO=new Type2DAO(outputFile);
                 break;
             default:
-                statementSQL = String.format(GET_JOURNAL_DATA_1, file.getOutFileLibrary(), file.getOutFileName());
+//                statementSQL = String.format(GET_JOURNAL_DATA_1, outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+                typeDAO=new Type1DAO(outputFile);
                 break;
             }
+            
+            journalEntries = typeDAO.load();
 
-            preparedStatement = prepareStatement(statementSQL);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.setFetchSize(50);
-
-            if (resultSet != null) {
-
-                while (resultSet.next()) {
-
-                    journalEntry = new JournalEntry();
-
-                    journalEntry.setConnectionName(getConnectionName());
-                    
-                    journalEntry.setRrn(resultSet.getInt("ID"));
-                    journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
-
-                    // Depending of the journal out type, the timestamp can be a
-                    // single field or splitted in JODATE and JOTYPE
-                    if (type >= JournalOutputType.TYPE3) {
-                        journalEntry.setDate(resultSet.getDate("JOTSTP"));
-                        journalEntry.setTime(resultSet.getTime("JOTSTP"));
-                    } else {
-                        String date = resultSet.getString("JODATE");
-                        int time = resultSet.getInt("JOTIME");
-                        journalEntry.setDate(date, time, getDateFormat(), null, null);
-                    }
-
-                    journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
-                    journalEntry.setEntryType(resultSet.getString("JOENTT"));
-                    journalEntry.setIncompleteData(resultSet.getString("JOINCDAT"));
-                    journalEntry.setJobName(resultSet.getString("JOJOB"));
-                    journalEntry.setJobNumber(resultSet.getInt("JONBR"));
-                    journalEntry.setJobUserName(resultSet.getString("JOUSER"));
-                    journalEntry.setJoCtrr(resultSet.getInt("JOCTRR"));
-                    journalEntry.setJoFlag(resultSet.getString("JOFLAG"));
-                    journalEntry.setJournalCode(resultSet.getString("JOCODE"));
-                    // setJournalID
-                    journalEntry.setMemberName(resultSet.getString("JOMBR"));
-                    journalEntry.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
-                    journalEntry.setObjectLibrary(resultSet.getString("JOLIB"));
-                    journalEntry.setObjectName(resultSet.getString("JOOBJ"));
-                    // setOutFileLibrary
-                    // setOutFileName
-                    journalEntry.setProgramName(resultSet.getString("JOPGM"));
-                    // setReferentialConstraint
-                    journalEntry.setSequenceNumber(resultSet.getLong("JOSEQN"));
-                    journalEntry.setSpecificData(resultSet.getBytes("JOESD"));
-                    journalEntry.setStringSpecificData(resultSet.getString("JOESD"));
-                    // setSystemName
-                    // setTime
-                    // setTrigger
-                    // setUserProfile
-
-                    journalEntry.setOutFileLibrary(file.getOutFileLibrary());
-                    journalEntry.setOutFileName(file.getOutFileName());
-                    journalData.add(journalEntry);
-
-                    MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
-
-                    if (type >= JournalOutputType.TYPE5) {
-                        journalEntry.setProgramLibrary(resultSet.getString("JOPGMLIB"));
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            throw exception;
-        } finally {
-            super.destroy(preparedStatement);
-            super.destroy(resultSet);
-        }
-        return journalData;
+            return journalEntries;
+            
+//            preparedStatement = prepareStatement(statementSQL);
+//            resultSet = preparedStatement.executeQuery();
+//            resultSet.setFetchSize(50);
+//
+//            if (resultSet != null) {
+//
+//                while (resultSet.next()) {
+//
+//                    journalEntry = new JournalEntry();
+//
+//                    journalEntry.setConnectionName(getConnectionName());
+//                    
+//                    journalEntry.setRrn(resultSet.getInt("ID"));
+//                    journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
+//
+//                    // Depending of the journal out type, the timestamp can be a
+//                    // single field or splitted in JODATE and JOTYPE
+//                    if (type >= JournalOutputType.TYPE3) {
+//                        journalEntry.setDate(resultSet.getDate("JOTSTP"));
+//                        journalEntry.setTime(resultSet.getTime("JOTSTP"));
+//                    } else {
+//                        String date = resultSet.getString("JODATE");
+//                        int time = resultSet.getInt("JOTIME");
+//                        journalEntry.setDate(date, time, getDateFormat(), null, null);
+//                    }
+//
+//                    journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
+//                    journalEntry.setEntryType(resultSet.getString("JOENTT"));
+//                    journalEntry.setIncompleteData(resultSet.getString("JOINCDAT"));
+//                    journalEntry.setJobName(resultSet.getString("JOJOB"));
+//                    journalEntry.setJobNumber(resultSet.getInt("JONBR"));
+//                    journalEntry.setJobUserName(resultSet.getString("JOUSER"));
+//                    journalEntry.setJoCtrr(resultSet.getInt("JOCTRR"));
+//                    journalEntry.setJoFlag(resultSet.getString("JOFLAG"));
+//                    journalEntry.setJournalCode(resultSet.getString("JOCODE"));
+//                    // setJournalID
+//                    journalEntry.setMemberName(resultSet.getString("JOMBR"));
+//                    journalEntry.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
+//                    journalEntry.setObjectLibrary(resultSet.getString("JOLIB"));
+//                    journalEntry.setObjectName(resultSet.getString("JOOBJ"));
+//                    // setOutFileLibrary
+//                    // setOutFileName
+//                    journalEntry.setProgramName(resultSet.getString("JOPGM"));
+//                    // setReferentialConstraint
+//                    journalEntry.setSequenceNumber(resultSet.getLong("JOSEQN"));
+//                    journalEntry.setSpecificData(resultSet.getBytes("JOESD"));
+//                    journalEntry.setStringSpecificData(resultSet.getString("JOESD"));
+//                    // setSystemName
+//                    // setTime
+//                    // setTrigger
+//                    // setUserProfile
+//
+//                    journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
+//                    journalEntry.setOutFileName(outputFile.getOutFileName());
+//                    journalEntries.add(journalEntry);
+//
+//                    MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+//
+//                    if (type >= JournalOutputType.TYPE5) {
+//                        journalEntry.setProgramLibrary(resultSet.getString("JOPGMLIB"));
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception exception) {
+//            throw exception;
+//        } finally {
+//            super.destroy(preparedStatement);
+//            super.destroy(resultSet);
+//        }
+//
+//        return journalEntries;
     }
 
     private int getOutfileType(File outputFile) throws Exception {
