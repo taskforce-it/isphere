@@ -35,9 +35,9 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         if (newInput != null) {
-            this.elements = (ArrayList<JournalEntry>)newInput;
+            elements = (ArrayList<JournalEntry>)newInput;
         } else {
-            this.elements = null;
+            elements = null;
         }
     }
 
@@ -47,12 +47,12 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
             return;
         }
 
-        this.viewer.replace(elements.get(index), index);
+        viewer.replace(elements.get(index), index);
     }
 
     public JournalEntry[] getInput() {
 
-        if (this.elements != null) {
+        if (elements != null) {
             return elements.toArray(new JournalEntry[elements.size()]);
         } else {
             return null;

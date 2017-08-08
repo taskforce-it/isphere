@@ -16,43 +16,47 @@ import org.osgi.framework.BundleContext;
  */
 public class ISphereJournalExplorerBasePlugin extends Plugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "biz.isphere.journalexplorer.base";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "biz.isphere.journalexplorer.base";
 
-	// The shared instance
-	private static ISphereJournalExplorerBasePlugin plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public ISphereJournalExplorerBasePlugin() {
-		plugin = this;
-	}
+    // The shared instance
+    private static ISphereJournalExplorerBasePlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
+    /**
+     * The constructor
+     */
+    public ISphereJournalExplorerBasePlugin() {
+        plugin = this;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static ISphereJournalExplorerBasePlugin getDefault() {
-		return plugin;
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static ISphereJournalExplorerBasePlugin getDefault() {
+        return plugin;
+    }
 
 }

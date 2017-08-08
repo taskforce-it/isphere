@@ -64,15 +64,15 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
     @Override
     public void createPartControl(Composite parent) {
 
-        this.viewer = new JournalEntryDetailsViewer(parent);
-        this.viewer.addSelectionChangedListener(this);
-        this.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-        this.createActions();
-        this.createToolBar();
-        this.setActionEnablement(viewer.getSelection());
+        viewer = new JournalEntryDetailsViewer(parent);
+        viewer.addSelectionChangedListener(this);
+        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+        createActions();
+        createToolBar();
+        setActionEnablement(viewer.getSelection());
 
-        viewer.setAsSelectionProvider(this.selectionProviderIntermediate);
-        this.getSite().setSelectionProvider(this.selectionProviderIntermediate);
+        viewer.setAsSelectionProvider(selectionProviderIntermediate);
+        getSite().setSelectionProvider(selectionProviderIntermediate);
     }
 
     @Override
@@ -88,22 +88,22 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         // /
         // / Compare action
         // /
-        this.compare = new Action(Messages.JournalEntryView_CompareEntries) {
+        compare = new Action(Messages.JournalEntryView_CompareEntries) {
             @Override
             public void run() {
-                JournalEntryView.this.performCompareJOESDEntries();
+                performCompareJOESDEntries();
             }
         };
 
-        this.compare.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_COMPARE));
+        compare.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_COMPARE));
 
         // /
         // / showSideBySide action
         // /
-        this.showSideBySide = new Action(Messages.JournalEntryView_ShowSideBySide) {
+        showSideBySide = new Action(Messages.JournalEntryView_ShowSideBySide) {
             @Override
             public void run() {
-                JournalEntryView.this.performShowSideBySideEntries();
+                performShowSideBySideEntries();
             }
         };
 
@@ -113,10 +113,10 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         // /
         // / reParseEntries action
         // /
-        this.reParseJournalEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+        reParseJournalEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
             @Override
             public void run() {
-                JournalEntryView.this.performReparseJournalEntries();
+                performReparseJournalEntries();
             }
         };
 
@@ -129,7 +129,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
         if (input instanceof Object[]) {
 
-            SideBySideCompareDialog sideBySideCompareDialog = new SideBySideCompareDialog(this.getSite().getShell());
+            SideBySideCompareDialog sideBySideCompareDialog = new SideBySideCompareDialog(getSite().getShell());
             sideBySideCompareDialog.create();
 
             if (input.length == 2) {
@@ -137,7 +137,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
                 sideBySideCompareDialog.open();
             } else {
 
-                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(this.getSite().getShell());
+                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(getSite().getShell());
                 selectEntriesToCompareDialog.create();
                 selectEntriesToCompareDialog.setInput(input);
 
@@ -153,15 +153,15 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     protected void performConfigureParsers() {
 
-        ConfigureParsersDialog configureParsersDialog = new ConfigureParsersDialog(JournalEntryView.this.getSite().getShell());
+        ConfigureParsersDialog configureParsersDialog = new ConfigureParsersDialog(getSite().getShell());
         configureParsersDialog.create();
         configureParsersDialog.open();
     }
 
     private void performReparseJournalEntries() {
 
-        JournalEntryView.this.reParseAllEntries();
-        JournalEntryView.this.viewer.refresh(true);
+        reParseAllEntries();
+        viewer.refresh(true);
     }
 
     private void reParseAllEntries() {
@@ -177,7 +177,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     private Object[] getInput() {
 
-        JournalPropertiesContentProvider journalPropertiesContentProvider = (JournalPropertiesContentProvider)this.viewer.getContentProvider();
+        JournalPropertiesContentProvider journalPropertiesContentProvider = (JournalPropertiesContentProvider)viewer.getContentProvider();
         Object[] input = journalPropertiesContentProvider.getElements(null);
 
         return input;
@@ -190,19 +190,19 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         if (input instanceof Object[]) {
 
             if (input.length == 2) {
-                this.compareEntries(input[0], input[1]);
+                compareEntries(input[0], input[1]);
             } else {
 
-                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(this.getSite().getShell());
+                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(getSite().getShell());
                 selectEntriesToCompareDialog.create();
                 selectEntriesToCompareDialog.setInput(input);
 
                 if (selectEntriesToCompareDialog.open() == Window.OK) {
-                    this.compareEntries(selectEntriesToCompareDialog.getLeftEntry(), selectEntriesToCompareDialog.getRightEntry());
+                    compareEntries(selectEntriesToCompareDialog.getLeftEntry(), selectEntriesToCompareDialog.getRightEntry());
                 }
             }
         } else {
-            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries);
         }
     }
 
@@ -214,19 +214,19 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             JournalProperties right = (JournalProperties)rightObject;
 
             new JournalEntryComparator().compare(left, right);
-            this.viewer.refresh(true);
+            viewer.refresh(true);
 
         } else {
-            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries); //$NON-NLS-1$
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries);
         }
     }
 
     private void createToolBar() {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(this.compare);
-        toolBarManager.add(this.showSideBySide);
+        toolBarManager.add(compare);
+        toolBarManager.add(showSideBySide);
         toolBarManager.add(new Separator());
-        toolBarManager.add(this.reParseJournalEntries);
+        toolBarManager.add(reParseJournalEntries);
     }
 
     @Override
@@ -268,14 +268,14 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
                 }
 
                 // Save tree state
-                Object[] expandedElements = this.viewer.getExpandedElements();
-                TreePath[] expandedTreePaths = this.viewer.getExpandedTreePaths();
+                Object[] expandedElements = viewer.getExpandedElements();
+                TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 
-                this.viewer.setInput(input.toArray());
+                viewer.setInput(input.toArray());
 
                 // Restore tree state
-                this.viewer.setExpandedElements(expandedElements);
-                this.viewer.setExpandedTreePaths(expandedTreePaths);
+                viewer.setExpandedElements(expandedElements);
+                viewer.setExpandedTreePaths(expandedTreePaths);
             }
         }
 

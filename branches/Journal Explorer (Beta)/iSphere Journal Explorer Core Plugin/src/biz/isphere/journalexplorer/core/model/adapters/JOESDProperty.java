@@ -44,27 +44,27 @@ public class JOESDProperty extends JournalProperty {
 
     public void executeParsing() {
         try {
-            this.initialize();
-            this.parseJOESD();
+            initialize();
+            parseJOESD();
         } catch (Exception exception) {
-            this.value = exception.getMessage();
-            this.errorParsing = true;
+            value = exception.getMessage();
+            errorParsing = true;
         }
     }
 
     private void initialize() throws Exception {
 
-        this.errorParsing = false;
-        this.value = "";
+        errorParsing = false;
+        value = "";
 
-        this.metatable = null;
+        metatable = null;
 
-        this.parsedJOESD = null;
+        parsedJOESD = null;
 
-        if (this.specificProperties != null) {
-            this.specificProperties.clear();
+        if (specificProperties != null) {
+            specificProperties.clear();
         } else {
-            this.specificProperties = new ArrayList<JournalProperty>();
+            specificProperties = new ArrayList<JournalProperty>();
         }
     }
 
@@ -72,23 +72,23 @@ public class JOESDProperty extends JournalProperty {
 
         String columnName;
 
-        this.metatable = MetaDataCache.INSTANCE.retrieveMetaData(this.journal);
+        metatable = MetaDataCache.INSTANCE.retrieveMetaData(journal);
 
-        this.parsedJOESD = new JoesdParser(this.metatable).execute(this.journal);
+        parsedJOESD = new JoesdParser(metatable).execute(journal);
 
-        for (MetaColumn column : this.metatable.getColumns()) {
+        for (MetaColumn column : metatable.getColumns()) {
             columnName = column.getName().trim();
             if (column.getColumnText() != null && column.getColumnText().trim() != "") {
                 columnName += " (" + column.getColumnText().trim() + ")";
             }
 
-            this.specificProperties.add(new JournalProperty(columnName, this.parsedJOESD.getField(column.getName()).toString(), this));
+            specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this));
         }
     }
 
     public Object[] toPropertyArray() {
-        if (this.specificProperties != null) {
-            return this.specificProperties.toArray();
+        if (specificProperties != null) {
+            return specificProperties.toArray();
         } else {
             return null;
         }
@@ -100,16 +100,16 @@ public class JOESDProperty extends JournalProperty {
         if (comparable instanceof JOESDProperty) {
             JOESDProperty joesdSpecificProperty = (JOESDProperty)comparable;
 
-            if (joesdSpecificProperty.parsedJOESD.getNumberOfFields() != this.parsedJOESD.getNumberOfFields()) {
-                this.highlighted = comparable.highlighted = true;
+            if (joesdSpecificProperty.parsedJOESD.getNumberOfFields() != parsedJOESD.getNumberOfFields()) {
+                highlighted = comparable.highlighted = true;
                 return -1;
 
             } else {
                 int status = 0;
 
-                for (int i = 0; i < this.specificProperties.size(); i++) {
+                for (int i = 0; i < specificProperties.size(); i++) {
 
-                    if (this.specificProperties.get(i).compareTo(joesdSpecificProperty.specificProperties.get(i)) != 0) {
+                    if (specificProperties.get(i).compareTo(joesdSpecificProperty.specificProperties.get(i)) != 0) {
                         status = -1;
                     }
                 }
@@ -121,6 +121,6 @@ public class JOESDProperty extends JournalProperty {
     }
 
     public boolean isErrorParsing() {
-        return this.errorParsing;
+        return errorParsing;
     }
 }

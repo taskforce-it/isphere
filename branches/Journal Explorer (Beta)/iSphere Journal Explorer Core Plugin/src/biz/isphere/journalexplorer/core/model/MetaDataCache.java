@@ -30,7 +30,7 @@ public class MetaDataCache {
     public void prepareMetaData(JournalEntry journalEntry) throws Exception {
 
         String key = produceKey(journalEntry);
-        if (!this.cache.containsKey(key)){
+        if (!this.cache.containsKey(key)) {
             saveMetaData(produceMetaTable(journalEntry));
         }
     }

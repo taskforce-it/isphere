@@ -11,5 +11,5 @@ package biz.isphere.journalexplorer.base.interfaces;
 public interface IDatatypeConverterDelegate {
 
     public byte[] parseHexBinary(String paramString);
-    
+
 }

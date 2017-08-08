@@ -73,8 +73,8 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-        this.tabs = new CTabFolder(container, SWT.TOP | SWT.CLOSE);
-        this.tabs.addCTabFolder2Listener(new CTabFolder2Listener() {
+        tabs = new CTabFolder(container, SWT.TOP | SWT.CLOSE);
+        tabs.addCTabFolder2Listener(new CTabFolder2Listener() {
             public void showList(CTabFolderEvent arg0) {
             }
 
@@ -94,9 +94,9 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
             }
         });
-        this.createActions();
-        this.initializeToolBar();
-        this.getSite().setSelectionProvider(this.selectionProviderIntermediate);
+        createActions();
+        initializeToolBar();
+        getSite().setSelectionProvider(selectionProviderIntermediate);
 
         setActionEnablement(null);
     }
@@ -114,25 +114,25 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         // /
         // / openJournalAction
         // /
-        this.openJournalAction = new Action(Messages.JournalExplorerView_OpenJournal) {
+        openJournalAction = new Action(Messages.JournalExplorerView_OpenJournal) {
 
             @Override
             public void run() {
                 performOpenJournal();
             }
         };
-        this.openJournalAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
+        openJournalAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
             .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN));
 
         // /
         // / highlightUserEntries action
         // /
-        this.highlightUserEntries = new Action(Messages.JournalExplorerView_HighlightUserEntries, Action.AS_CHECK_BOX) {
+        highlightUserEntries = new Action(Messages.JournalExplorerView_HighlightUserEntries, Action.AS_CHECK_BOX) {
 
             @Override
             public void run() {
                 preferences.setHighlightUserEntries(isChecked());
-                JournalExplorerView.this.refreshAllViewers();
+                refreshAllViewers();
             }
         };
         highlightUserEntries
@@ -142,7 +142,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         // /
         // / openParserAssociations action
         // /
-        this.configureJoesdParsers = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
+        configureJoesdParsers = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
             @Override
             public void run() {
                 performConfigureParsers();
@@ -155,7 +155,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         // /
         // / reParseEntries action
         // /
-        this.reloadEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+        reloadEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
             @Override
             public void run() {
                 performRefresh();
@@ -171,21 +171,21 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
         try {
 
-            journalViewer = new JournalEntriesViewer(this.tabs, outputFile);
-            journalViewer.setAsSelectionProvider(this.selectionProviderIntermediate);
+            journalViewer = new JournalEntriesViewer(tabs, outputFile);
+            journalViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalViewer.openJournal();
 
-            this.journalViewers.add(journalViewer);
-            this.tabs.setSelection(journalViewer);
+            journalViewers.add(journalViewer);
+            tabs.setSelection(journalViewer);
 
             setActionEnablement(journalViewer);
 
         } catch (Exception exception) {
 
-            MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
 
             if (journalViewer != null) {
-                journalViewer.removeAsSelectionProvider(this.selectionProviderIntermediate);
+                journalViewer.removeAsSelectionProvider(selectionProviderIntermediate);
                 journalViewer.dispose();
             }
         }
@@ -194,18 +194,18 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
     private void cleanupClosedTab(JournalEntriesViewer viewer) {
 
         viewer.removeAsSelectionProvider(selectionProviderIntermediate);
-        JournalExplorerView.this.journalViewers.remove(viewer);
+        journalViewers.remove(viewer);
     }
 
     private void refreshAllViewers() {
-        for (JournalEntriesViewer viewer : this.journalViewers) {
+        for (JournalEntriesViewer viewer : journalViewers) {
             viewer.refreshTable();
         }
     }
 
     private void performOpenJournal() {
 
-        AddJournalDialog addJournalDialog = new AddJournalDialog(JournalExplorerView.this.getSite().getShell());
+        AddJournalDialog addJournalDialog = new AddJournalDialog(getSite().getShell());
         addJournalDialog.create();
         int result = addJournalDialog.open();
 
@@ -214,7 +214,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
             outputFile.setOutFileLibrary(addJournalDialog.getLibrary());
             outputFile.setOutFileName(addJournalDialog.getFileName());
             outputFile.setConnetionName(addJournalDialog.getConnectionName());
-            JournalExplorerView.this.createJournalTab(outputFile);
+            createJournalTab(outputFile);
         }
     }
 
@@ -227,12 +227,12 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
     private void performRefresh() {
 
-        // JournalEntryView.this.reParseAllEntries();
+        // JournalEntryView.reParseAllEntries();
         try {
             JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
             viewer.openJournal();
         } catch (Exception exception) {
-            MessageDialog.openError(JournalExplorerView.this.getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage());
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage());
         }
     }
 
@@ -241,10 +241,10 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
      */
     private void initializeToolBar() {
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add(this.openJournalAction);
-        tbm.add(this.highlightUserEntries);
-        tbm.add(this.configureJoesdParsers);
-        tbm.add(this.reloadEntries);
+        tbm.add(openJournalAction);
+        tbm.add(highlightUserEntries);
+        tbm.add(configureJoesdParsers);
+        tbm.add(reloadEntries);
     }
 
     @Override

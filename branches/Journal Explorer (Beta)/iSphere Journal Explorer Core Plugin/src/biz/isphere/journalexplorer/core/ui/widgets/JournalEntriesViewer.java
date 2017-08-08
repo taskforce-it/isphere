@@ -54,11 +54,11 @@ public class JournalEntriesViewer extends CTabItem {
 
     private void initializeComponents() {
 
-        this.container.setLayout(new FillLayout());
-        this.setText(this.connectionName + ": " + library + "/" + fileName);
-        this.createTableViewer(container);
-        this.container.layout(true);
-        this.setControl(this.container);
+        container.setLayout(new FillLayout());
+        setText(connectionName + ": " + library + "/" + fileName);
+        createTableViewer(container);
+        container.layout(true);
+        setControl(container);
     }
 
     private void createTableViewer(Composite container) {
@@ -66,9 +66,9 @@ public class JournalEntriesViewer extends CTabItem {
         Table table;
         TableColumn newColumn;
 
-        this.tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
+        tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
 
-        table = this.tableViewer.getTable();
+        table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -82,21 +82,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setWidth(45);
         newColumn.setText("RRN");
 
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        //
-        // @Override
-        // public Color getBackground(Object element) {
-        // return
-        // Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-        // }
-        //
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return Integer.toString(journal.getRrn()).trim();
-        // }
-        // });
-
         // /
         // / JOENTT Column
         // /
@@ -105,13 +90,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(55);
         newColumn.setText("JOENTT");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getEntryType();
-        // }
-        // });
 
         // /
         // / JOSEQN Column
@@ -121,13 +99,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(55);
         newColumn.setText("JOSEQN");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return Long.toString(journal.getSequenceNumber());
-        // }
-        // });
 
         // /
         // / JOCODE Column
@@ -137,13 +108,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(50);
         newColumn.setText("JOCODE");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getJournalCode();
-        // }
-        // });
 
         // /
         // / JOENTL Column
@@ -153,13 +117,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(50);
         newColumn.setText("JOENTL");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return Integer.toString(journal.getEntryLength());
-        // }
-        // });
 
         // /
         // / JODATE Column
@@ -169,17 +126,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(80);
         newColumn.setText("JODATE");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // Date date = journal.getDate();
-        // if (date == null) {
-        // return "";
-        // }
-        // return getDateFormatter().format(date);
-        // }
-        // });
 
         // /
         // / JOTIME Column
@@ -189,17 +135,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(80);
         newColumn.setText("JOTIME");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // Time time = journal.getTime();
-        // if (time == null) {
-        // return "";
-        // }
-        // return getTimeFormatter().format(time);
-        // }
-        // });
 
         // /
         // / JOJOB Column
@@ -209,13 +144,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOJOB");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getJobName();
-        // }
-        // });
 
         // /
         // / JOUSER Column
@@ -225,13 +153,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOUSER");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getJobUserName();
-        // }
-        // });
 
         // /
         // / JONBR Column
@@ -241,13 +162,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JONBR");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return Integer.toString(journal.getJobNumber());
-        // }
-        // });
 
         // /
         // / JOPGM Column
@@ -257,13 +171,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOPGM");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getProgramName();
-        // }
-        // });
 
         // /
         // / JOLIB Column
@@ -273,13 +180,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOLIB");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getObjectLibrary();
-        // }
-        // });
 
         // /
         // / JOMBR Column
@@ -289,13 +189,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOMBR");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getMemberName();
-        // }
-        // });
 
         // /
         // / JOOBJ Column
@@ -305,13 +198,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOOBJ");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getObjectName();
-        // }
-        // });
 
         // /
         // / JOMINESD Column
@@ -321,13 +207,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(50);
         newColumn.setText("JOMINESD");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        // return journal.getMinimizedSpecificData();
-        // }
-        // });
 
         // /
         // / JOESD Column
@@ -337,25 +216,9 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(350);
         newColumn.setText("JOESD");
-        // newColumn.setLabelProvider(new JournalColumnLabel() {
-        // @Override
-        // public String getText(Object element) {
-        // JournalEntry journal = (JournalEntry)element;
-        //
-        // // For displaying purposes, replace the null ending character
-        // // for a blank.
-        // // Otherwise, the string was truncate by JFace
-        // String stringSpecificData = journal.getStringSpecificData();
-        // if (stringSpecificData.indexOf('\0') >= 0) {
-        // return stringSpecificData.replace('\0', ' ').substring(1, 200);
-        // } else {
-        // return stringSpecificData;
-        // }
-        // }
-        // });
 
         tableViewer.setLabelProvider(new JournalColumnLabel());
-        tableViewer.setContentProvider(new JournalViewerContentProvider(this.tableViewer));
+        tableViewer.setContentProvider(new JournalViewerContentProvider(tableViewer));
     }
 
     public void openJournal() throws Exception {
@@ -393,16 +256,16 @@ public class JournalEntriesViewer extends CTabItem {
 
         super.dispose();
 
-        if (this.data != null) {
+        if (data != null) {
 
-            this.data.clear();
-            this.data = null;
+            data.clear();
+            data = null;
         }
 
-        if (this.tableViewer != null) {
+        if (tableViewer != null) {
 
-            this.tableViewer.getTable().dispose();
-            this.tableViewer = null;
+            tableViewer.getTable().dispose();
+            tableViewer = null;
         }
     }
 
@@ -411,16 +274,16 @@ public class JournalEntriesViewer extends CTabItem {
     }
 
     public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {
-        selectionProvider.setSelectionProviderDelegate(this.tableViewer);
+        selectionProvider.setSelectionProviderDelegate(tableViewer);
     }
 
     public void removeAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {
-        selectionProvider.removeSelectionProviderDelegate(this.tableViewer);
+        selectionProvider.removeSelectionProviderDelegate(tableViewer);
     }
 
     public void refreshTable() {
-        if (this.tableViewer != null) {
-            this.tableViewer.refresh(true);
+        if (tableViewer != null) {
+            tableViewer.refresh(true);
         }
 
     }

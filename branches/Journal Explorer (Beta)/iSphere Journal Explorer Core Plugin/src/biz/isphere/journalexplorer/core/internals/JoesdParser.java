@@ -49,61 +49,61 @@ public class JoesdParser {
     }
 
     private void initialize() throws Exception {
-        this.joesdRecordFormat = new RecordFormat();
+        joesdRecordFormat = new RecordFormat();
 
-        for (MetaColumn columna : this.metadata.getColumns()) {
-            switch (columna.getDataType()) {
+        for (MetaColumn column : metadata.getColumns()) {
+            switch (column.getDataType()) {
             case BIGINT:
-                this.joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin8(), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin8(), column.getName()));
                 break;
 
             case CHAR:
-                this.joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(columna.getSize()), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(column.getSize()), column.getName()));
                 break;
 
             case CLOB:
                 throw new Exception(Messages.JoesdParser_CLOBNotSupported);
 
             case DATE:
-                this.joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(columna.getName()));
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName()));
                 break;
 
             case DECIMAL:
-                this.joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(columna.getSize(), columna
-                    .getPrecision()), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(column.getSize(), column
+                    .getPrecision()), column.getName()));
                 break;
 
             case DOUBLE:
-                this.joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), column.getName()));
                 break;
 
             case INTEGER:
-                this.joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin4(), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin4(), column.getName()));
                 break;
 
             case NUMERIC:
-                this.joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(new AS400ZonedDecimal(columna.getSize(), columna
-                    .getPrecision()), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(
+                    new AS400ZonedDecimal(column.getSize(), column.getPrecision()), column.getName()));
                 break;
 
             case REAL:
-                this.joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float4(), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float4(), column.getName()));
                 break;
 
             case SMALLINT:
-                this.joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin2(), columna.getName()));
+                joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin2(), column.getName()));
                 break;
 
             case TIME:
-                this.joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(columna.getName()));
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName()));
                 break;
 
             case TIMESTMP:
-                this.joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(columna.getName()));
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
                 break;
 
             case VARCHAR:
-                this.joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(columna.getSize() + AJUSTE_VARCHAR), columna
+                joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(column.getSize() + AJUSTE_VARCHAR), column
                     .getName()));
                 break;
             }
@@ -111,14 +111,14 @@ public class JoesdParser {
     }
 
     public Record execute(JournalEntry journal) throws Exception {
-        if (this.verifyJournalEntry(journal))
-            return this.getFormatoJoesd().getNewRecord(journal.getSpecificData(), this.metadata.getParsingOffset());
+        if (verifyJournalEntry(journal))
+            return getFormatoJoesd().getNewRecord(journal.getSpecificData(), metadata.getParsingOffset());
         else
             throw new Exception(Messages.JoesdParser_TableMetadataDontMatchEntry);
     }
 
     private boolean verifyJournalEntry(JournalEntry journalEntry) {
-        return this.metadata.getName().equals(journalEntry.getObjectName()) && this.metadata.getLibrary().equals(journalEntry.getObjectLibrary());
+        return metadata.getName().equals(journalEntry.getObjectName()) && metadata.getLibrary().equals(journalEntry.getObjectLibrary());
     }
 
     /**

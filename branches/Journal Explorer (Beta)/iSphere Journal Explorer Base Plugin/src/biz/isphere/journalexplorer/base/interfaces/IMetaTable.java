@@ -22,5 +22,5 @@ public interface IMetaTable {
 
     public void setDefinitionName(String definitionName);
 
-    public void setParsingOffset(int parsingOffset) ;
+    public void setParsingOffset(int parsingOffset);
 }

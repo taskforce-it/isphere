@@ -68,7 +68,7 @@ public class SideBySideCompareDialog extends XDialog {
         lblLeftEntry = new Label(leftComposite, SWT.NONE);
         lblLeftEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-        this.leftEntry = new JournalEntryDetailsViewer(leftComposite);
+        leftEntry = new JournalEntryDetailsViewer(leftComposite);
         Tree tree = leftEntry.getTree();
         tree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 
@@ -77,24 +77,24 @@ public class SideBySideCompareDialog extends XDialog {
 
         lblRightEntry = new Label(rightComposite, SWT.NONE);
         lblRightEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        this.rightEntry = new JournalEntryDetailsViewer(rightComposite);
+        rightEntry = new JournalEntryDetailsViewer(rightComposite);
         Tree tree_1 = rightEntry.getTree();
         tree_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         return container;
     }
 
-    public void setInput(JournalProperties leftEntry, JournalProperties rightEntry) {
+    public void setInput(JournalProperties leftEntryData, JournalProperties rightEntryData) {
 
-        new JournalEntryComparator().compare(leftEntry, rightEntry);
+        new JournalEntryComparator().compare(leftEntryData, rightEntryData);
 
-        this.lblLeftEntry.setText(leftEntry.toString());
-        this.leftEntry.setInput(new Object[] { leftEntry });
-        this.leftEntry.expandAll();
+        lblLeftEntry.setText(leftEntryData.toString());
+        leftEntry.setInput(new Object[] { leftEntryData });
+        leftEntry.expandAll();
 
-        this.lblRightEntry.setText(rightEntry.toString());
-        this.rightEntry.setInput(new Object[] { rightEntry });
-        this.rightEntry.expandAll();
+        lblRightEntry.setText(rightEntryData.toString());
+        rightEntry.setInput(new Object[] { rightEntryData });
+        rightEntry.expandAll();
     }
 
     /**
@@ -104,7 +104,7 @@ public class SideBySideCompareDialog extends XDialog {
      */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        this.createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     }
 
     @Override

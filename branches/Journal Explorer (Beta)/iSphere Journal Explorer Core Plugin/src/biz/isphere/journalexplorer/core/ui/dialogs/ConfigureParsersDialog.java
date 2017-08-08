@@ -74,17 +74,17 @@ public class ConfigureParsersDialog extends XDialog {
         fl_container.marginWidth = 10;
         container.setLayout(fl_container);
 
-        this.createTableViewer(container);
-        this.loadValues();
+        createTableViewer(container);
+        loadValues();
 
         return container;
     }
 
     private void createTableViewer(Composite container) {
 
-        this.tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
-        this.tableViewer.setContentProvider(new ArrayContentProvider());
-        this.tableViewer.addFilter(new ViewerFilter() {
+        tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.setContentProvider(new ArrayContentProvider());
+        tableViewer.addFilter(new ViewerFilter() {
             @Override
             public boolean select(Viewer viewer, Object parent, Object elements) {
 
@@ -312,7 +312,7 @@ public class ConfigureParsersDialog extends XDialog {
     }
 
     private void loadValues() {
-        this.tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers());
+        tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers());
     }
 
     /**
@@ -330,153 +330,6 @@ public class ConfigureParsersDialog extends XDialog {
         super.configureShell(newShell);
         newShell.setText(Messages.ConfigureParsersDialog_SetDefinitions);
     }
-    
-    // class ParserLibraryEditingSupport extends EditingSupport {
-    //
-    // private final CellEditor cellEditor;
-    // private TableViewer viewer;
-    //
-    // public ParserLibraryEditingSupport(TableViewer viewer) {
-    // super(viewer);
-    // this.viewer = viewer;
-    // this.cellEditor = new TextCellEditor(viewer.getTable());
-    // }
-    //
-    // @Override
-    // protected boolean canEdit(Object arg0) {
-    // return true;
-    // }
-    //
-    // @Override
-    // protected CellEditor getCellEditor(Object arg0) {
-    // return this.cellEditor;
-    // }
-    //
-    // @Override
-    // protected Object getValue(Object object) {
-    // if (object instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)object;
-    // return currentItem.getDefinitionLibrary().trim();
-    // } else {
-    // return null;
-    // }
-    // }
-    //
-    // @Override
-    // protected void setValue(Object element, Object userInput) {
-    // if (element instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)element;
-    // String input = String.valueOf(userInput).trim();
-    //
-    // if (!input.equals(currentItem.getDefinitionLibrary().trim())) {
-    //
-    // currentItem.setDefinitionLibrary(input);
-    // currentItem.setLoaded(false);
-    //
-    // MetaDataCache.INSTANCE.saveMetaData(currentItem);
-    //
-    // this.viewer.update(element, null);
-    // }
-    // }
-    // }
-    // }
-    //
-    // class ParserNameEditingSupport extends EditingSupport {
-    //
-    // private final CellEditor cellEditor;
-    // private TableViewer viewer;
-    //
-    // public ParserNameEditingSupport(TableViewer viewer) {
-    // super(viewer);
-    // this.viewer = viewer;
-    // this.cellEditor = new TextCellEditor(viewer.getTable());
-    // }
-    //
-    // @Override
-    // protected boolean canEdit(Object arg0) {
-    // return true;
-    // }
-    //
-    // @Override
-    // protected CellEditor getCellEditor(Object arg0) {
-    // return this.cellEditor;
-    // }
-    //
-    // @Override
-    // protected Object getValue(Object object) {
-    // if (object instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)object;
-    // return currentItem.getDefinitionName().trim();
-    // } else {
-    // return null;
-    // }
-    // }
-    //
-    // @Override
-    // protected void setValue(Object element, Object userInput) {
-    // if (element instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)element;
-    // String input = String.valueOf(userInput).trim();
-    //
-    // if (!input.equals(currentItem.getDefinitionName().trim())) {
-    // currentItem.setDefinitionName(input);
-    // currentItem.setLoaded(false);
-    //
-    // MetaDataCache.INSTANCE.saveMetaData(currentItem);
-    //
-    // this.viewer.update(element, null);
-    // }
-    // }
-    // }
-    // }
-    //
-    // class ParsingOffsetEditingSupport extends EditingSupport {
-    //
-    // private final CellEditor cellEditor;
-    // private TableViewer viewer;
-    //
-    // public ParsingOffsetEditingSupport(TableViewer viewer) {
-    // super(viewer);
-    // this.viewer = viewer;
-    // this.cellEditor = new TextCellEditor(viewer.getTable());
-    // }
-    //
-    // @Override
-    // protected boolean canEdit(Object arg0) {
-    // return true;
-    // }
-    //
-    // @Override
-    // protected CellEditor getCellEditor(Object arg0) {
-    // return this.cellEditor;
-    // }
-    //
-    // @Override
-    // protected Object getValue(Object object) {
-    // if (object instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)object;
-    // return Integer.toString(currentItem.getParsingOffset());
-    // } else {
-    // return null;
-    // }
-    // }
-    //
-    // @Override
-    // protected void setValue(Object element, Object userInput) {
-    // if (element instanceof MetaTable) {
-    // MetaTable currentItem = (MetaTable)element;
-    // int input = Integer.valueOf(userInput.toString());
-    //
-    // if (input != currentItem.getParsingOffset()) {
-    // currentItem.setParsingOffset(input);
-    //
-    // MetaDataCache.INSTANCE.saveMetaData(currentItem);
-    //
-    // this.viewer.update(element, null);
-    // }
-    // }
-    // }
-    // }
 
     /**
      * Overridden make this dialog resizable {@link XDialog}.
@@ -485,7 +338,7 @@ public class ConfigureParsersDialog extends XDialog {
     protected boolean isResizable() {
         return true;
     }
-    
+
     /**
      * Overridden to provide a default size to {@link XDialog}.
      */

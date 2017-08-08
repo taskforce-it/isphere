@@ -37,17 +37,17 @@ public class JournalProperties {
 
     private void initialize() {
 
-        this.properties.add(new JournalProperty(RRN, this.journal.getRrn(), this.journal));
-        this.properties.add(new JournalProperty(JOENTL, this.journal.getEntryLength(), this.journal));
-        this.properties.add(new JournalProperty(JOSEQN, this.journal.getSequenceNumber(), this.journal));
-        this.properties.add(new JournalProperty(JOCODE, this.journal.getJournalCode(), this.journal));
-        this.properties.add(new JournalProperty(JOENTT, this.journal.getEntryType(), this.journal));
-        this.properties.add(new JOESDProperty(STRING_SPECIFIC_DATA, "", this.journal, this.journal)); //$NON-NLS-1$
+        properties.add(new JournalProperty(RRN, journal.getRrn(), journal));
+        properties.add(new JournalProperty(JOENTL, journal.getEntryLength(), journal));
+        properties.add(new JournalProperty(JOSEQN, journal.getSequenceNumber(), journal));
+        properties.add(new JournalProperty(JOCODE, journal.getJournalCode(), journal));
+        properties.add(new JournalProperty(JOENTT, journal.getEntryType(), journal));
+        properties.add(new JOESDProperty(STRING_SPECIFIC_DATA, "", journal, journal)); //$NON-NLS-1$
     }
 
     public JournalProperty getJOESDProperty() {
 
-        for (JournalProperty property : this.properties) {
+        for (JournalProperty property : properties) {
             if (property.name == STRING_SPECIFIC_DATA) {
                 return property;
             }
@@ -60,18 +60,18 @@ public class JournalProperties {
     }
 
     public JournalEntry getJournal() {
-        return this.journal;
+        return journal;
     }
 
     @Override
     public int hashCode() {
-        return this.journal.hashCode();
+        return journal.hashCode();
     }
 
     @Override
     public boolean equals(Object comparedObject) {
         if (comparedObject instanceof JournalProperties) {
-            return this.journal.equals(((JournalProperties)comparedObject).journal);
+            return journal.equals(((JournalProperties)comparedObject).journal);
         } else {
             return false;
         }
@@ -79,6 +79,6 @@ public class JournalProperties {
 
     @Override
     public String toString() {
-        return this.journal.getKey() + " " + this.journal.getQualifiedObjectName(); //$NON-NLS-1$
+        return journal.getKey() + " " + journal.getQualifiedObjectName(); //$NON-NLS-1$
     }
 }

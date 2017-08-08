@@ -30,13 +30,13 @@ public class JournalEntryDetailsViewer extends TreeViewer {
     }
 
     private void initializeComponents() {
-        
-        this.setAutoExpandLevel(1);
-        Tree tree = this.getTree();
+
+        setAutoExpandLevel(1);
+        Tree tree = getTree();
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
-        this.setContentProvider(new JournalPropertiesContentProvider());
-        this.setLabelProvider(new JournalEntryViewLabelProvider());
+        setContentProvider(new JournalPropertiesContentProvider());
+        setLabelProvider(new JournalEntryViewLabelProvider());
 
         TreeColumn property = new TreeColumn(tree, SWT.LEFT);
         property.setAlignment(SWT.LEFT);

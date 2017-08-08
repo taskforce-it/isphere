@@ -43,10 +43,10 @@ public abstract class AbstractDAOBase {
             if (dateFormat.startsWith("*")) {
                 dateFormat = dateFormat.substring(1);
             }
-            
+
             dateSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
             timeSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getTimeSeparator();
-            
+
             connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
             connection.setAutoCommit(false);
         } else
@@ -67,7 +67,7 @@ public abstract class AbstractDAOBase {
     protected int getDateFormat() {
         return AS400Date.toFormat(dateFormat);
     }
-    
+
     protected Connection getConnection() {
         return connection;
     }

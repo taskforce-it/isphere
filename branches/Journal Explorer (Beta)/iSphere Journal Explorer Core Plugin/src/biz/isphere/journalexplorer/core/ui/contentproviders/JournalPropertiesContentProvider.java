@@ -33,17 +33,17 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
 
             for (Object inputObject : inputArray) {
                 if (!(inputObject instanceof JournalProperties)) {
-                    this.input = null;
+                    input = null;
                     return;
                 }
             }
 
-            if (this.input == null || !equalInput((Object[])newInput, input)) {
-                this.input = (Object[])newInput;
+            if (input == null || !equalInput((Object[])newInput, input)) {
+                input = (Object[])newInput;
             }
         } else {
 
-            this.input = null;
+            input = null;
         }
     }
 
@@ -100,6 +100,6 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
     }
 
     public Object[] getElements(Object inputElement) {
-        return this.input;
+        return input;
     }
 }

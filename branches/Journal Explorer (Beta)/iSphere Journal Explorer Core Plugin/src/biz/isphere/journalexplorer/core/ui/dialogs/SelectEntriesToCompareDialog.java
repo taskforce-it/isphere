@@ -67,7 +67,7 @@ public class SelectEntriesToCompareDialog extends XDialog {
         // /
         // / Main container
         // /
-        this.container = (Composite)super.createDialogArea(parent);
+        container = (Composite)super.createDialogArea(parent);
         RowLayout rl_container = new RowLayout(SWT.VERTICAL);
         rl_container.fill = true;
         rl_container.marginTop = 10;
@@ -93,13 +93,13 @@ public class SelectEntriesToCompareDialog extends XDialog {
         // /
         // / leftEntryComposite
         // /
-        this.leftEntryComposite = new Composite(this.scrolledComposite, SWT.NONE);
+        leftEntryComposite = new Composite(scrolledComposite, SWT.NONE);
         leftEntryComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
         RowLayout leftLayout = new RowLayout(SWT.VERTICAL);
         leftLayout.fill = true;
         leftLayout.wrap = false;
-        this.leftEntryComposite.setLayout(leftLayout);
-        this.scrolledComposite.setContent(leftEntryComposite);
+        leftEntryComposite.setLayout(leftLayout);
+        scrolledComposite.setContent(leftEntryComposite);
 
         // /
         // / rightLabel
@@ -110,21 +110,21 @@ public class SelectEntriesToCompareDialog extends XDialog {
         // /
         // / scrolledCompositeRight
         // /
-        this.scrolledCompositeRight = new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        this.scrolledCompositeRight.setExpandVertical(true);
-        this.scrolledCompositeRight.setExpandHorizontal(true);
-        this.scrolledCompositeRight.setLayoutData(new RowData(397, 112));
+        scrolledCompositeRight = new ScrolledComposite(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        scrolledCompositeRight.setExpandVertical(true);
+        scrolledCompositeRight.setExpandHorizontal(true);
+        scrolledCompositeRight.setLayoutData(new RowData(397, 112));
 
         // /
         // / rightEntryComposite
         // /
-        this.rightEntryComposite = new Composite(scrolledCompositeRight, SWT.NONE);
+        rightEntryComposite = new Composite(scrolledCompositeRight, SWT.NONE);
         rightEntryComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
         RowLayout rightLayout = new RowLayout(SWT.VERTICAL);
         rightLayout.wrap = false;
         rightLayout.fill = true;
-        this.rightEntryComposite.setLayout(rightLayout);
-        this.scrolledCompositeRight.setContent(rightEntryComposite);
+        rightEntryComposite.setLayout(rightLayout);
+        scrolledCompositeRight.setContent(rightEntryComposite);
 
         return container;
     }
@@ -155,7 +155,7 @@ public class SelectEntriesToCompareDialog extends XDialog {
         SelectionListener listenerLeft = new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (event.getSource() instanceof Button) {
-                    SelectEntriesToCompareDialog.this.leftEntry = ((Button)event.getSource()).getData();
+                    leftEntry = ((Button)event.getSource()).getData();
                 }
             }
 
@@ -167,7 +167,7 @@ public class SelectEntriesToCompareDialog extends XDialog {
         SelectionListener listenerRight = new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 if (event.getSource() instanceof Button) {
-                    SelectEntriesToCompareDialog.this.rightEntry = ((Button)event.getSource()).getData();
+                    rightEntry = ((Button)event.getSource()).getData();
                 }
             }
 
@@ -177,42 +177,42 @@ public class SelectEntriesToCompareDialog extends XDialog {
         };
 
         for (Object object : input) {
-            option = new Button(this.leftEntryComposite, SWT.RADIO);
+            option = new Button(leftEntryComposite, SWT.RADIO);
             option.setText(object.toString());
             option.setData(object);
             option.addSelectionListener(listenerLeft);
             option.setBackground(white);
 
-            option = new Button(this.rightEntryComposite, SWT.RADIO);
+            option = new Button(rightEntryComposite, SWT.RADIO);
             option.setText(object.toString());
             option.setData(object);
             option.addSelectionListener(listenerRight);
             option.setBackground(white);
         }
 
-        this.leftEntryComposite.layout(true);
-        this.scrolledComposite.setMinSize(this.leftEntryComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        leftEntryComposite.layout(true);
+        scrolledComposite.setMinSize(leftEntryComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        this.rightEntryComposite.layout(true);
-        this.scrolledCompositeRight.setMinSize(this.rightEntryComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        rightEntryComposite.layout(true);
+        scrolledCompositeRight.setMinSize(rightEntryComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
 
     @Override
     public void okPressed() {
-        if (this.leftEntry != null && this.rightEntry != null) {
+        if (leftEntry != null && rightEntry != null) {
             super.okPressed();
         } else {
-            MessageDialog.openError(this.getShell(), Messages.SelectEntriesToCompareDialog_3,
+            MessageDialog.openError(getShell(), Messages.SelectEntriesToCompareDialog_3,
                 Messages.SelectEntriesToCompareDialog_ChooseBothRecordsToCompare);
         }
     }
 
     public Object getLeftEntry() {
-        return this.leftEntry;
+        return leftEntry;
     }
 
     public Object getRightEntry() {
-        return this.rightEntry;
+        return rightEntry;
     }
 
     /**

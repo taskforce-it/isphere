@@ -40,12 +40,12 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
     @Override
     public void createPartControl(Composite parent) {
 
-        this.viewer = new JournalEntryDetailsViewer(parent);
-        this.viewer.addSelectionChangedListener(this);
-        this.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-        this.createActions();
-        this.createToolBar();
-        this.setActionEnablement(viewer.getSelection());
+        viewer = new JournalEntryDetailsViewer(parent);
+        viewer.addSelectionChangedListener(this);
+        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+        createActions();
+        createToolBar();
+        setActionEnablement(viewer.getSelection());
     }
 
     @Override
@@ -112,10 +112,10 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
     private void refreshViewer(ArrayList<JournalProperties> input) {
 
-        this.viewer.setInput(input.toArray());
+        viewer.setInput(input.toArray());
 
         // Restore tree state
-        this.viewer.expandAll();
+        viewer.expandAll();
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
@@ -174,8 +174,8 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         private ArrayList<JournalProperties> input;
 
         public LoadPropertiesRunnable(ArrayList<JournalProperties> input, JournalEntry journalEntry) {
-            this.input = input;
-            this.journalEntry = journalEntry;
+            input = input;
+            journalEntry = journalEntry;
         }
 
         public void run() {

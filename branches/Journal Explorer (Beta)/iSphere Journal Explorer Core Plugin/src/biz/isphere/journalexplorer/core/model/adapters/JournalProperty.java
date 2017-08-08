@@ -26,11 +26,11 @@ public class JournalProperty implements Comparable<JournalProperty> {
 
     public int compareTo(JournalProperty comparable) {
 
-        if (this.name.equals(comparable.name) && this.value.equals(comparable.value)) {
-            this.highlighted = comparable.highlighted = false;
+        if (name.equals(comparable.name) && value.equals(comparable.value)) {
+            highlighted = comparable.highlighted = false;
             return 0;
         } else {
-            this.highlighted = comparable.highlighted = true;
+            highlighted = comparable.highlighted = true;
             return -1;
         }
     }

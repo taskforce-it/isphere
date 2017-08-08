@@ -16,14 +16,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.rse.shared.model.dao.AbstractDAOBase;
 
 /**
  * This class loads the exported journal *TYPE1 to *TYPE5 data that has been
@@ -106,11 +103,11 @@ public class JournalDAO extends DAOBase {
 
         try {
 
-            boolean isType3OutputFile = isType3OutputFile(this.library, this.file);
+            boolean isType3OutputFile = isType3OutputFile(library, file);
             if (isType3OutputFile) {
-                statementSQL = String.format(GET_JOURNAL_DATA_3, this.library, this.file);
+                statementSQL = String.format(GET_JOURNAL_DATA_3, library, file);
             } else {
-                statementSQL = String.format(GET_JOURNAL_DATA_1, this.library, this.file);
+                statementSQL = String.format(GET_JOURNAL_DATA_1, library, file);
             }
 
             preparedStatement = prepareStatement(statementSQL);
@@ -118,9 +115,6 @@ public class JournalDAO extends DAOBase {
             resultSet.setFetchSize(50);
 
             if (resultSet != null) {
-
-                // TODO: remove it later
-                Date inicio = Calendar.getInstance().getTime();
 
                 while (resultSet.next()) {
 
@@ -173,8 +167,6 @@ public class JournalDAO extends DAOBase {
 
                     MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
                 }
-                // TODO: remove it later
-                Date Fin = Calendar.getInstance().getTime();
             }
         } catch (Exception exception) {
             throw exception;

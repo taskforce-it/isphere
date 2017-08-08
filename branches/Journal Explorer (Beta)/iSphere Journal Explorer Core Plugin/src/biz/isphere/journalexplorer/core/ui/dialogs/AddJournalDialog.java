@@ -86,22 +86,22 @@ public class AddJournalDialog extends XDialog {
         Label lblConnections = new Label(container, SWT.NONE);
         lblConnections.setText(Messages.AddJournalDialog_Conection);
 
-        this.cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
-        this.configureConnectionsCombo();
+        cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
+        configureConnectionsCombo();
 
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
 
-        this.txtLibrary = WidgetFactory.createUpperCaseText(container);
-        this.txtLibrary.setTextLimit(10);
-        this.txtLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtLibrary = WidgetFactory.createUpperCaseText(container);
+        txtLibrary.setTextLimit(10);
+        txtLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
 
-        this.txtFileName = WidgetFactory.createUpperCaseText(container);
-        this.txtFileName.setTextLimit(10);
-        this.txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtFileName = WidgetFactory.createUpperCaseText(container);
+        txtFileName.setTextLimit(10);
+        txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         loadValues();
 
@@ -136,16 +136,16 @@ public class AddJournalDialog extends XDialog {
 
     private void configureConnectionsCombo() {
 
-        this.cmbConnections.setContentProvider(new ArrayContentProvider());
-        this.cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
-        this.cmbConnections.setInput(ConnectionDelegate.getConnections());
-        this.cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
+        cmbConnections.setContentProvider(new ArrayContentProvider());
+        cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
+        cmbConnections.setInput(ConnectionDelegate.getConnections());
+        cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
 
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 
                 if (selection.size() > 0) {
-                    AddJournalDialog.this.connection = new ConnectionDelegate(selection.getFirstElement());
+                    connection = new ConnectionDelegate(selection.getFirstElement());
                 }
             }
         });
@@ -173,40 +173,40 @@ public class AddJournalDialog extends XDialog {
     @Override
     protected void okPressed() {
 
-        if (this.saveInput()) {
+        if (saveInput()) {
             super.okPressed();
         }
     };
 
     private boolean saveInput() {
 
-        if (this.txtFileName.getText().trim() != "" && this.txtLibrary.getText().trim() != "" && this.connection != null) { //$NON-NLS-1$ //$NON-NLS-2$
-            this.fileName = this.txtFileName.getText();
-            this.library = this.txtLibrary.getText();
+        if (txtFileName.getText().trim() != "" && txtLibrary.getText().trim() != "" && connection != null) { //$NON-NLS-1$ //$NON-NLS-2$
+            fileName = txtFileName.getText();
+            library = txtLibrary.getText();
 
             storeValues();
 
             return true;
 
         } else {
-            MessageDialog.openError(this.getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired); //$NON-NLS-1$
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
             return false;
         }
     }
 
     public String getFileName() {
 
-        return this.fileName.toUpperCase();
+        return fileName.toUpperCase();
     }
 
     public String getLibrary() {
 
-        return this.library.toUpperCase();
+        return library.toUpperCase();
     }
 
     public String getConnectionName() {
 
-        return this.connection.getConnectionName();
+        return connection.getConnectionName();
     }
 
     /**

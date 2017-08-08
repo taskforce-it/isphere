@@ -68,7 +68,7 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
         layout.addShowViewShortcut(JournalEntryView.ID);
         layout.addShowViewShortcut(JournalEntryDetailsView.ID);
 
-        layout.addPerspectiveShortcut(this.ID);
+        layout.addPerspectiveShortcut(JournalExplorerPerspectiveLayout.ID);
 
         layout.setEditorAreaVisible(false);
     }
