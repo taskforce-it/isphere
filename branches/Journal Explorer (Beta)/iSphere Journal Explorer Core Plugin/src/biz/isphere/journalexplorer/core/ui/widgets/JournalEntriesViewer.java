@@ -34,26 +34,21 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalColumnLabel;
 public class JournalEntriesViewer extends CTabItem {
 
     private Composite container;
-
     private TableViewer tableViewer;
-
     private String connectionName;
-
     private String library;
-
     private String fileName;
-
     private ArrayList<JournalEntry> data;
-
     private Exception dataLoadException;
 
     public JournalEntriesViewer(CTabFolder parent, File outputFile) {
-
         super(parent, SWT.NONE);
+
         this.library = outputFile.getOutFileLibrary();
         this.fileName = outputFile.getOutFileName();
         this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
+
         this.initializeComponents();
     }
 
@@ -360,8 +355,7 @@ public class JournalEntriesViewer extends CTabItem {
         // });
 
         tableViewer.setLabelProvider(new JournalColumnLabel());
-
-        this.tableViewer.setContentProvider(new JournalViewerContentProvider(this.tableViewer));
+        tableViewer.setContentProvider(new JournalViewerContentProvider(this.tableViewer));
     }
 
     public void openJournal() throws Exception {
@@ -431,4 +425,9 @@ public class JournalEntriesViewer extends CTabItem {
 
     }
 
+    public JournalEntry[] getInput() {
+
+        JournalViewerContentProvider contentProvider = (JournalViewerContentProvider)tableViewer.getContentProvider();
+        return contentProvider.getInput();
+    }
 }

@@ -55,7 +55,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     private Action showSideBySide;
 
-    private Action openParserAssociations;
+    private Action configureJoesdParsers;
 
     private Action reParseEntries;
 
@@ -116,14 +116,14 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         // /
         // / openParserAssociations action
         // /
-        this.openParserAssociations = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
+        this.configureJoesdParsers = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
             @Override
             public void run() {
                 JournalEntryView.this.performConfigureParsers();
             }
         };
 
-        openParserAssociations.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_READ_WRITE_OBJ));
+        configureJoesdParsers.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_READ_WRITE_OBJ));
 
         // /
         // / reParseEntries action
@@ -241,7 +241,7 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         toolBarManager.add(this.compare);
         toolBarManager.add(this.showSideBySide);
         toolBarManager.add(new Separator());
-        toolBarManager.add(this.openParserAssociations);
+        toolBarManager.add(this.configureJoesdParsers);
         toolBarManager.add(this.reParseEntries);
     }
 
@@ -325,10 +325,10 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             Object[] items = getInput();
 
             if (items != null && items.length > 0) {
-                openParserAssociations.setEnabled(true);
+                configureJoesdParsers.setEnabled(true);
                 reParseEntries.setEnabled(true);
             } else {
-                openParserAssociations.setEnabled(false);
+                configureJoesdParsers.setEnabled(false);
                 reParseEntries.setEnabled(false);
             }
         }

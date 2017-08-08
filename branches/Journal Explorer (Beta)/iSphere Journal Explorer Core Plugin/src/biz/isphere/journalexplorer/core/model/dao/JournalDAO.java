@@ -98,7 +98,7 @@ public class JournalDAO extends DAOBase {
 
     public ArrayList<JournalEntry> getJournalData() throws Exception {
 
-        JournalEntry journal = null;
+        JournalEntry journalEntry = null;
         String statementSQL = null;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
@@ -124,53 +124,54 @@ public class JournalDAO extends DAOBase {
 
                 while (resultSet.next()) {
 
-                    journal = new JournalEntry();
+                    journalEntry = new JournalEntry();
 
-                    journal.setConnectionName(getConnectionName());
-                    journal.setCommitmentCycle(resultSet.getInt("JOCCID"));
+                    journalEntry.setConnectionName(getConnectionName());
+                    journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
 
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
                     if (hasColumn(resultSet, "JOTSTP")) {
-                        journal.setDate(resultSet.getDate("JOTSTP"));
-                        journal.setTime(resultSet.getTime("JOTSTP"));
+                        journalEntry.setDate(resultSet.getDate("JOTSTP"));
+                        journalEntry.setTime(resultSet.getTime("JOTSTP"));
                     } else {
                         String date = resultSet.getString("JODATE");
                         int time = resultSet.getInt("JOTIME");
-                        journal.setDate(date, time, getDateFormat(), getDateSeparator(), getTimeSeparator());
+                        journalEntry.setDate(date, time, getDateFormat(), getDateSeparator(), getTimeSeparator());
                     }
 
-                    journal.setEntryLength(resultSet.getInt("JOENTL"));
-                    journal.setEntryType(resultSet.getString("JOENTT"));
-                    journal.setIncompleteData(resultSet.getString("JOINCDAT"));
-                    journal.setJobName(resultSet.getString("JOJOB"));
-                    journal.setJobNumber(resultSet.getInt("JONBR"));
-                    journal.setJobUserName(resultSet.getString("JOUSER"));
-                    journal.setJoCtrr(resultSet.getInt("JOCTRR"));
-                    journal.setJoFlag(resultSet.getString("JOFLAG"));
-                    journal.setJournalCode(resultSet.getString("JOCODE"));
+                    journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
+                    journalEntry.setEntryType(resultSet.getString("JOENTT"));
+                    journalEntry.setIncompleteData(resultSet.getString("JOINCDAT"));
+                    journalEntry.setJobName(resultSet.getString("JOJOB"));
+                    journalEntry.setJobNumber(resultSet.getInt("JONBR"));
+                    journalEntry.setJobUserName(resultSet.getString("JOUSER"));
+                    journalEntry.setJoCtrr(resultSet.getInt("JOCTRR"));
+                    journalEntry.setJoFlag(resultSet.getString("JOFLAG"));
+                    journalEntry.setJournalCode(resultSet.getString("JOCODE"));
                     // setJournalID
-                    journal.setMemberName(resultSet.getString("JOMBR"));
-                    journal.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
-                    journal.setObjectLibrary(resultSet.getString("JOLIB"));
-                    journal.setObjectName(resultSet.getString("JOOBJ"));
+                    journalEntry.setMemberName(resultSet.getString("JOMBR"));
+                    journalEntry.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
+                    journalEntry.setObjectLibrary(resultSet.getString("JOLIB"));
+                    journalEntry.setObjectName(resultSet.getString("JOOBJ"));
                     // setOutFileLibrary
                     // setOutFileName
-                    journal.setProgramName(resultSet.getString("JOPGM"));
+                    journalEntry.setProgramName(resultSet.getString("JOPGM"));
                     // setReferentialConstraint
-                    journal.setRrn(resultSet.getInt("ID"));
-                    journal.setSequenceNumber(resultSet.getLong("JOSEQN"));
-                    journal.setSpecificData(resultSet.getBytes("JOESD"));
-                    journal.setStringSpecificData(resultSet.getString("JOESD"));
+                    journalEntry.setRrn(resultSet.getInt("ID"));
+                    journalEntry.setSequenceNumber(resultSet.getLong("JOSEQN"));
+                    journalEntry.setSpecificData(resultSet.getBytes("JOESD"));
+                    journalEntry.setStringSpecificData(resultSet.getString("JOESD"));
                     // setSystemName
                     // setTime
                     // setTrigger
                     // setUserProfile
 
-                    journal.setOutFileLibrary(library);
-                    journal.setOutFileName(file);
-                    journalData.add(journal);
+                    journalEntry.setOutFileLibrary(library);
+                    journalEntry.setOutFileName(file);
+                    journalData.add(journalEntry);
 
+                    MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
                 }
                 // TODO: remove it later
                 Date Fin = Calendar.getInstance().getTime();

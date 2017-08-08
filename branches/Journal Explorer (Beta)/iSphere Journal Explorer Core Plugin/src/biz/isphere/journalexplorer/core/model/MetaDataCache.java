@@ -11,6 +11,7 @@
 
 package biz.isphere.journalexplorer.core.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
@@ -26,25 +27,29 @@ public class MetaDataCache {
         this.cache = new HashMap<String, MetaTable>();
     }
 
-    public void saveMetaData(MetaTable metaTable) {
-        this.cache.put(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()), metaTable);
+    public void prepareMetaData(JournalEntry journalEntry) throws Exception {
+
+        String key = produceKey(journalEntry);
+        if (!this.cache.containsKey(key)){
+            saveMetaData(produceMetaTable(journalEntry));
+        }
     }
 
     public MetaTable retrieveMetaData(File file) throws Exception {
         return loadMetadata(file.getConnectionName(), file.getOutFileLibrary(), file.getOutFileName());
     }
 
-    public MetaTable retrieveMetaData(JournalEntry journal) throws Exception {
-        return loadMetadata(journal.getConnectionName(), journal.getObjectLibrary(), journal.getObjectName());
+    public MetaTable retrieveMetaData(JournalEntry journalEntry) throws Exception {
+        return loadMetadata(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName());
     }
 
     private MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName) throws Exception {
 
-        String key = QualifiedName.getName(objectLibrary, objectName);
+        String key = produceKey(objectLibrary, objectName);
         MetaTable metatable = this.cache.get(key);
 
         if (metatable == null) {
-            metatable = new MetaTable(objectName, objectLibrary);
+            metatable = produceMetaTable(objectLibrary, objectName);
             this.saveMetaData(metatable);
             this.loadMetadata(metatable, connectionName);
 
@@ -54,6 +59,22 @@ public class MetaDataCache {
         }
 
         return metatable;
+    }
+
+    private MetaTable produceMetaTable(JournalEntry journalEntry) {
+        return produceMetaTable(journalEntry.getObjectLibrary(), journalEntry.getObjectName());
+    }
+
+    private MetaTable produceMetaTable(String objectLibrary, String objectName) {
+        return new MetaTable(objectName, objectLibrary);
+    }
+
+    private String produceKey(JournalEntry journalEntry) {
+        return QualifiedName.getName(journalEntry.getObjectLibrary(), journalEntry.getObjectName());
+    }
+
+    private String produceKey(String objectLibrary, String objectName) {
+        return QualifiedName.getName(objectLibrary, objectName);
     }
 
     private void loadMetadata(MetaTable metaTable, String connectionName) throws Exception {
@@ -70,7 +91,11 @@ public class MetaDataCache {
         }
     }
 
-    public Object getCachedParsers() {
+    private void saveMetaData(MetaTable metaTable) {
+        this.cache.put(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()), metaTable);
+    }
+
+    public Collection<MetaTable> getCachedParsers() {
         return this.cache.values();
     }
 }

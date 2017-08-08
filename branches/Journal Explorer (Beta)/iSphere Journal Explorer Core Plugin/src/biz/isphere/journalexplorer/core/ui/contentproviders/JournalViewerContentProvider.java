@@ -50,10 +50,10 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
         this.viewer.replace(elements.get(index), index);
     }
 
-    public Object[] getInput() {
+    public JournalEntry[] getInput() {
 
         if (this.elements != null) {
-            return this.elements.toArray();
+            return elements.toArray(new JournalEntry[elements.size()]);
         } else {
             return null;
         }
