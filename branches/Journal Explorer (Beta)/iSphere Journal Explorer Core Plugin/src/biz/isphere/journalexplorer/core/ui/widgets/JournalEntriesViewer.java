@@ -11,7 +11,7 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -37,7 +37,7 @@ public class JournalEntriesViewer extends CTabItem {
     private TableViewer tableViewer;
     private String connectionName;
     private File outputFile;
-    private ArrayList<JournalEntry> data;
+    private List<JournalEntry> data;
     private Exception dataLoadException;
 
     public JournalEntriesViewer(CTabFolder parent, File outputFile) {
