@@ -11,8 +11,9 @@
 
 package biz.isphere.journalexplorer.core.model;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
@@ -41,6 +42,7 @@ public class MetaTable {
     private String definitionLibrary;
 
     private LinkedList<MetaColumn> columns;
+    private Map<String, MetaColumn> columnNames;
 
     private boolean loaded;
 
@@ -48,9 +50,12 @@ public class MetaTable {
 
     private boolean isJournalOutputFile;
 
+    private Integer outfileType;
+
     public MetaTable(String name, String library) {
 
         this.columns = new LinkedList<MetaColumn>();
+        this.columnNames = new HashMap<String, MetaColumn>();
         this.name = this.definitionName = name.trim();
         this.library = this.definitionLibrary = library.trim();
         this.loaded = false;
@@ -81,14 +86,6 @@ public class MetaTable {
         this.library = library.trim();
     }
 
-    public LinkedList<MetaColumn> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(LinkedList<MetaColumn> columns) {
-        this.columns = columns;
-    }
-
     public void setDefinitionLibrary(String definitionLibrary) {
         this.definitionLibrary = definitionLibrary.trim();
     }
@@ -113,10 +110,6 @@ public class MetaTable {
         this.loaded = loaded;
     }
 
-    public void clearColumns() {
-        this.columns.clear();
-    }
-
     public int getParsingOffset() {
         return parsingOffset;
     }
@@ -125,16 +118,21 @@ public class MetaTable {
         this.parsingOffset = parsingOffset;
     }
 
+    public void addColumn(MetaColumn column) {
+        columns.add(column);
+        columnNames.put(column.getName(), column);
+    }
+
+    public MetaColumn[] getColumns() {
+        return columns.toArray(new MetaColumn[columns.size()]);
+    }
+
+    public void clearColumns() {
+        this.columns.clear();
+    }
+
     public boolean hasColumn(String columnName) {
-
-        List<MetaColumn> metaColumns = getColumns();
-        for (MetaColumn metaColumn : metaColumns) {
-            if (metaColumn.getName().equals(columnName.trim())) {
-                return true;
-            }
-        }
-
-        return false;
+        return columnNames.containsKey(columnName);
     }
 
     public String getQualifiedName() {
@@ -143,16 +141,26 @@ public class MetaTable {
 
     public int getOutfileType() {
 
-        if (hasColumn("JOPGMLIB")) { // Added with *TYPE5
-            return JournalOutputType.TYPE5;
-        } else if (hasColumn("JOJID")) { // Added with *TYPE4
-            return JournalOutputType.TYPE5;
-        } else if (hasColumn("JOTSTP")) { // Added with *TYPE3
-            return JournalOutputType.TYPE3;
-        } else if (hasColumn("JOUSPF")) { // Added with *TYPE2
-            return JournalOutputType.TYPE2;
-        } else {
-            return JournalOutputType.TYPE1;
+        if (outfileType == null) {
+
+            if (hasColumn("JOPGMLIB")) {
+                // Added with *TYPE5
+                outfileType = new Integer(JournalOutputType.TYPE5);
+            } else if (hasColumn("JOJID")) {
+                // Added with *TYPE4
+                outfileType = new Integer(JournalOutputType.TYPE5);
+            } else if (hasColumn("JOTSTP")) {
+                // Added with *TYPE3
+                outfileType = new Integer(JournalOutputType.TYPE3);
+            } else if (hasColumn("JOUSPF")) {
+                // Added with *TYPE2
+                outfileType = new Integer(JournalOutputType.TYPE2);
+            } else {
+                outfileType = new Integer(JournalOutputType.TYPE1);
+            }
+
         }
+
+        return outfileType.intValue();
     }
 }

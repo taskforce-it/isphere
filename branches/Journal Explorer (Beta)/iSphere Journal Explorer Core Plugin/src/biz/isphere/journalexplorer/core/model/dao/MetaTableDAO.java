@@ -81,7 +81,7 @@ public class MetaTableDAO extends DAOBase {
                         column.setSize(resultSet.getInt("LENGTH")); //$NON-NLS-1$
                         column.setPrecision(resultSet.getInt("NUMERIC_SCALE")); //$NON-NLS-1$
 
-                        table.getColumns().add(column);
+                        table.addColumn(column);
 
                         nextColumn = resultSet.next();
                     }
