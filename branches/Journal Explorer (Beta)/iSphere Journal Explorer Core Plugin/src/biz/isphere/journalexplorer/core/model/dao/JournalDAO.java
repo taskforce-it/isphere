@@ -14,6 +14,7 @@ package biz.isphere.journalexplorer.core.model.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -198,13 +199,13 @@ public class JournalDAO extends DAOBase {
         "      FROM %s.%s as result";
     // @formatter:on
 
-    public ArrayList<JournalEntry> getJournalData() throws Exception {
+    public List<JournalEntry> getJournalData() throws Exception {
 
         JournalEntry journalEntry = null;
         String statementSQL = null;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
-        ArrayList<JournalEntry> journalData = new ArrayList<JournalEntry>();
+        List<JournalEntry> journalData = new ArrayList<JournalEntry>();
 
         try {
 
