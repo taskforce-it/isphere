@@ -174,8 +174,8 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         private ArrayList<JournalProperties> input;
 
         public LoadPropertiesRunnable(ArrayList<JournalProperties> input, JournalEntry journalEntry) {
-            input = input;
-            journalEntry = journalEntry;
+            this.input = input;
+            this.journalEntry = journalEntry;
         }
 
         public void run() {

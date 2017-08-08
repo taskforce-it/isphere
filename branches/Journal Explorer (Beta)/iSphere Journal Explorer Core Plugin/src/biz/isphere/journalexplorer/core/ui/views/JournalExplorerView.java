@@ -173,10 +173,11 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
             journalViewer = new JournalEntriesViewer(tabs, outputFile);
             journalViewer.setAsSelectionProvider(selectionProviderIntermediate);
-            journalViewer.openJournal();
 
             journalViewers.add(journalViewer);
             tabs.setSelection(journalViewer);
+
+            performLoadJournalEntries(journalViewer);
 
             setActionEnablement(journalViewer);
 
@@ -210,10 +211,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         int result = addJournalDialog.open();
 
         if (result == Window.OK) {
-            File outputFile = new File();
-            outputFile.setOutFileLibrary(addJournalDialog.getLibrary());
-            outputFile.setOutFileName(addJournalDialog.getFileName());
-            outputFile.setConnetionName(addJournalDialog.getConnectionName());
+            File outputFile = new File(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
             createJournalTab(outputFile);
         }
     }
@@ -227,9 +225,13 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
     private void performRefresh() {
 
-        // JournalEntryView.reParseAllEntries();
+        JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
+        performLoadJournalEntries(viewer);
+    }
+
+    private void performLoadJournalEntries(JournalEntriesViewer viewer) {
+
         try {
-            JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
             viewer.openJournal();
         } catch (Exception exception) {
             MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage());

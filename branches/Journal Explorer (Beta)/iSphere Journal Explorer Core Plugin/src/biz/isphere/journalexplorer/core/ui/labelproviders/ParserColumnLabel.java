@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 
@@ -35,7 +34,7 @@ public class ParserColumnLabel extends LabelProvider implements ITableLabelProvi
 
     public String getColumnText(Object object, int index) {
 
-        IMetaTable metaTable = (IMetaTable)object;
+        MetaTable metaTable = (MetaTable)object;
 
         switch (index) {
         case 0: // Journaled Object

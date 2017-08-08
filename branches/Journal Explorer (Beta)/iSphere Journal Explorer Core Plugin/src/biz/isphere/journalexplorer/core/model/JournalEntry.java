@@ -15,14 +15,15 @@ import java.sql.Time;
 import java.util.Date;
 
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
-import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
 import com.ibm.as400.access.AS400Text;
 
-public class JournalEntry implements IJournalEntry {
+public class JournalEntry {
+
+    public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
     private String connectionName;
 
@@ -52,15 +53,17 @@ public class JournalEntry implements IJournalEntry {
 
     private String programName; // JOPGM
 
+    private String programLibrary; // JOLIB
+
     private String objectName; // JOOBJ
 
     private String objectLibrary; // JOLIB
 
     private String memberName; // JOMBR
 
-    private int joCtrr;
+    private int joCtrr; // JOCTRR
 
-    private String joFlag;
+    private String joFlag; // JOFLAG
 
     private int commitmentCycle; // JOCCID
 
@@ -68,9 +71,9 @@ public class JournalEntry implements IJournalEntry {
 
     private String systemName; // JOSYNM
 
-    private String journalID; // joJid
+    private String journalID; // JOJID
 
-    private String referentialConstraint; // joRcst
+    private String referentialConstraint; // JORCST
 
     private String trigger; // JOTGR
 
@@ -107,6 +110,11 @@ public class JournalEntry implements IJournalEntry {
         return String.format("%s/%s", objectLibrary, objectName);
     }
 
+    /**
+     * Returns the 'Length of Entry'.
+     * 
+     * @return value of field 'JOENTL'.
+     */
     public int getEntryLength() {
         return entryLength;
     }
@@ -115,6 +123,11 @@ public class JournalEntry implements IJournalEntry {
         this.entryLength = largoEntrada;
     }
 
+    /**
+     * Returns the 'Sequence number'.
+     * 
+     * @return value of field 'JOSEQN'.
+     */
     public long getSequenceNumber() {
         return sequenceNumber;
     }
@@ -123,6 +136,11 @@ public class JournalEntry implements IJournalEntry {
         this.sequenceNumber = sequenceNumber;
     }
 
+    /**
+     * Returns the 'Journal Code'.
+     * 
+     * @return value of field 'JOCODE'.
+     */
     public String getJournalCode() {
         return journalCode;
     }
@@ -131,6 +149,11 @@ public class JournalEntry implements IJournalEntry {
         this.journalCode = journalCode.trim();
     }
 
+    /**
+     * Returns the 'Entry Type'.
+     * 
+     * @return value of field 'JOENTT'.
+     */
     public String getEntryType() {
         return entryType;
     }
@@ -139,6 +162,12 @@ public class JournalEntry implements IJournalEntry {
         this.entryType = entryType.trim();
     }
 
+    /**
+     * Returns the time portion of field 'Timestamp of Entry' or 'Date of
+     * entry', depending on the type of the journal output file.
+     * 
+     * @return value of field 'JOTSTP' or 'JODATE'.
+     */
     public Date getDate() {
         return date;
     }
@@ -147,6 +176,25 @@ public class JournalEntry implements IJournalEntry {
         this.date = date;
     }
 
+    /**
+     * Returns the time portion of field 'Timestamp of Entry' or 'Time of
+     * entry', depending on the type of the journal output file.
+     * 
+     * @return value of field 'JOTSTP' or 'JOTIME'.
+     */
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    /**
+     * Returns the 'Name of Job'.
+     * 
+     * @return value of field 'JOJOB'.
+     */
     public String getJobName() {
         return jobName;
     }
@@ -155,6 +203,11 @@ public class JournalEntry implements IJournalEntry {
         this.jobName = jobName.trim();
     }
 
+    /**
+     * Returns the 'Name of User'.
+     * 
+     * @return value of field 'JOUSER'.
+     */
     public String getJobUserName() {
         return jobUserName;
     }
@@ -163,6 +216,11 @@ public class JournalEntry implements IJournalEntry {
         this.jobUserName = userName.trim();
     }
 
+    /**
+     * Returns the 'Name of Job'.
+     * 
+     * @return value of field 'JONBR'.
+     */
     public int getJobNumber() {
         return jobNumber;
     }
@@ -171,6 +229,11 @@ public class JournalEntry implements IJournalEntry {
         this.jobNumber = jobNumber;
     }
 
+    /**
+     * Returns the 'Name of Program'.
+     * 
+     * @return value of field 'JOPGM'.
+     */
     public String getProgramName() {
         return programName;
     }
@@ -179,6 +242,25 @@ public class JournalEntry implements IJournalEntry {
         this.programName = programName.trim();
     }
 
+    /**
+     * Returns the 'Program Library'.
+     * 
+     * @return value of field 'JOPGMPMG'.
+     * @since *TYPE5
+     */
+    public String getProgramLibrary() {
+        return programLibrary;
+    }
+
+    public void setProgramLibrary(String programLibrary) {
+        this.programLibrary = programLibrary.trim();
+    }
+
+    /**
+     * Returns the 'Name of Object'.
+     * 
+     * @return value of field 'JOOBJ'.
+     */
     public String getObjectName() {
         return objectName;
     }
@@ -187,6 +269,11 @@ public class JournalEntry implements IJournalEntry {
         this.objectName = objectName.trim();
     }
 
+    /**
+     * Returns the 'Objects Library'.
+     * 
+     * @return value of field 'JOLIB'.
+     */
     public String getObjectLibrary() {
         return objectLibrary;
     }
@@ -195,6 +282,11 @@ public class JournalEntry implements IJournalEntry {
         this.objectLibrary = objectLibrary.trim();
     }
 
+    /**
+     * Returns the 'Name of Member'.
+     * 
+     * @return value of field 'JOMBR'.
+     */
     public String getMemberName() {
         return memberName;
     }
@@ -203,6 +295,11 @@ public class JournalEntry implements IJournalEntry {
         this.memberName = memberName.trim();
     }
 
+    /**
+     * Returns the 'Count or relative record number changed'.
+     * 
+     * @return value of field 'JOCTRR'.
+     */
     public int getJoCtrr() {
         return joCtrr;
     }
@@ -211,6 +308,11 @@ public class JournalEntry implements IJournalEntry {
         this.joCtrr = joCtrr;
     }
 
+    /**
+     * Returns the 'Flag'.
+     * 
+     * @return value of field 'JOFLAG'.
+     */
     public String getJoFlag() {
         return joFlag;
     }
@@ -219,6 +321,11 @@ public class JournalEntry implements IJournalEntry {
         this.joFlag = joFlag.trim();
     }
 
+    /**
+     * Returns the 'Commit cycle identifier'.
+     * 
+     * @return value of field 'JOCCID'.
+     */
     public int getCommitmentCycle() {
         return commitmentCycle;
     }
@@ -227,6 +334,11 @@ public class JournalEntry implements IJournalEntry {
         this.commitmentCycle = commitmentCycle;
     }
 
+    /**
+     * Returns the 'User Profile'.
+     * 
+     * @return value of field 'JOUSPF'.
+     */
     public String getUserProfile() {
         return userProfile;
     }
@@ -235,6 +347,11 @@ public class JournalEntry implements IJournalEntry {
         this.userProfile = userProfile.trim();
     }
 
+    /**
+     * Returns the 'System Name'.
+     * 
+     * @return value of field 'JOSYNM'.
+     */
     public String getSystemName() {
         return systemName;
     }
@@ -243,6 +360,11 @@ public class JournalEntry implements IJournalEntry {
         this.systemName = systemName.trim();
     }
 
+    /**
+     * Returns the 'Journal Identifier'.
+     * 
+     * @return value of field 'JOJID'.
+     */
     public String getJournalID() {
         return journalID;
     }
@@ -251,6 +373,11 @@ public class JournalEntry implements IJournalEntry {
         this.journalID = journalID.trim();
     }
 
+    /**
+     * Returns the 'Referential Constraint'.
+     * 
+     * @return value of field 'JORCST'.
+     */
     public String getReferentialConstraint() {
         return referentialConstraint;
     }
@@ -259,6 +386,11 @@ public class JournalEntry implements IJournalEntry {
         this.referentialConstraint = referentialConstraint.trim();
     }
 
+    /**
+     * Returns the 'Trigger'.
+     * 
+     * @return value of field 'JOTGR'.
+     */
     public String getTrigger() {
         return trigger;
     }
@@ -267,6 +399,11 @@ public class JournalEntry implements IJournalEntry {
         this.trigger = trigger.trim();
     }
 
+    /**
+     * Returns the 'Incomplete Data'.
+     * 
+     * @return value of field 'JOINCDAT'.
+     */
     public String getIncompleteData() {
         return incompleteData;
     }
@@ -275,6 +412,11 @@ public class JournalEntry implements IJournalEntry {
         this.incompleteData = incompleteData.trim();
     }
 
+    /**
+     * Returns the 'Minimized Entry Specific Data'.
+     * 
+     * @return value of field 'JOMINESD'.
+     */
     public String getMinimizedSpecificData() {
         return minimizedSpecificData;
     }
@@ -283,10 +425,20 @@ public class JournalEntry implements IJournalEntry {
         this.minimizedSpecificData = minimizedSpecificData.trim();
     }
 
+    /**
+     * Returns the string representation of field 'Entry Specific Data'.
+     * 
+     * @return value of field 'JOESD'.
+     */
     public String getStringSpecificData() {
         return stringSpecificData;
     }
 
+    /**
+     * Returns the 'Entry Specific Data'.
+     * 
+     * @return value of field 'JOESD'.
+     */
     public byte[] getSpecificData() {
         return specificData;
     }
@@ -301,14 +453,6 @@ public class JournalEntry implements IJournalEntry {
 
     public void setSpecificData(byte[] specificData) {
         this.specificData = specificData;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
     }
 
     public int getRrn() {

@@ -13,8 +13,6 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import biz.isphere.journalexplorer.core.model.File;
@@ -35,60 +33,167 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
  */
 public class JournalDAO extends DAOBase {
 
-    private String library;
+    private File file;
 
-    private String file;
-
-    public JournalDAO(String connectionName, String library, String file) throws Exception {
-        super(connectionName);
-        this.library = library;
-        this.file = file;
+    public JournalDAO(File outputFile) throws Exception {
+        super(outputFile.getConnectionName());
+        this.file = outputFile;
     }
 
     // @formatter:off
-    private static final String GET_JOURNAL_DATA_1 = 
-        "    SELECT rrn(result) as ID, " + 
-        "           result.JOENTL,  " + 
-        "           result.JOSEQN,  " + 
-        "           result.JOCODE,  " + 
-        "           result.JOENTT,  " + 
+    private static final String GET_JOURNAL_DATA_1 =
+        "    SELECT rrn(result) as ID, " +
+        "           result.JOENTL,  " +
+        "           result.JOSEQN,  " +
+        "           result.JOCODE,  " +
+        "           result.JOENTT,  " +
         "           result.JODATE,  " +
         "           result.JOTIME,  " +
-        "           result.JOJOB,   " + 
-        "           result.JOUSER,  " + 
+        "           result.JOJOB,   " +
+        "           result.JOUSER,  " +
+        "           result.JONBR,   " +
+        "           result.JOPGM,   " +
+        "           result.JOOBJ,   " +
+        "           result.JOLIB,   " +
+        "           result.JOMBR,   " +
+        "           result.JOCTRR,  " +
+        "           result.JOFLAG,  " +
+        "           result.JOCCID,  " +
+        "           result.JOINCDAT," +
+        "           result.JOMINESD," +
+                    // JORES - reserved
+        "           SUBSTR(result.JOESD,1,5000) AS JOESD" +
+        "      FROM %s.%s as result";
+    
+    private static final String GET_JOURNAL_DATA_2 =
+        "    SELECT rrn(result) as ID, " +
+        "           result.JOENTL,  " +
+        "           result.JOSEQN,  " +
+        "           result.JOCODE,  " +
+        "           result.JOENTT,  " +
+        "           result.JODATE,  " +
+        "           result.JOTIME,  " +
+        "           result.JOJOB,   " +
+        "           result.JOUSER,  " +
         "           result.JONBR,   " + 
         "           result.JOPGM,   " +
         "           result.JOOBJ,   " +
-        "           result.JOLIB,   " + 
-        "           result.JOMBR,   " + 
-        "           result.JOCTRR,  " + 
-        "           result.JOFLAG,  " + 
-        "           result.JOCCID,  " + 
-        "           result.JOINCDAT," + 
-        "           result.JOMINESD," + 
+        "           result.JOLIB,   " +
+        "           result.JOMBR,   " +
+        "           result.JOCTRR,  " +
+        "           result.JOFLAG,  " +
+        "           result.JOCCID,  " +
+        "           result.JOUSPF,  " + //  added with TYPE2
+        "           result.JOSYNM,  " + //  added with TYPE2
+        "           result.JOINCDAT," +
+        "           result.JOMINESD," +
+                    // JORES - reserved
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     
-    
-    private static final String GET_JOURNAL_DATA_3 = 
-        "    SELECT rrn(result) as ID, " + 
-        "           result.JOENTL,  " + 
-        "           result.JOSEQN,  " + 
-        "           result.JOCODE,  " + 
-        "           result.JOENTT,  " + 
-        "           result.JOTSTP,  " +
-        "           result.JOJOB,   " + 
-        "           result.JOUSER,  " + 
-        "           result.JONBR,   " + 
+    private static final String GET_JOURNAL_DATA_3 =
+        "    SELECT rrn(result) as ID, " +
+        "           result.JOENTL,  " +
+        "           result.JOSEQN,  " +
+        "           result.JOCODE,  " +
+        "           result.JOENTT,  " +
+        "           result.JOTSTP,  " + //  changed with TYPE3
+        "           result.JOJOB,   " +
+        "           result.JOUSER,  " +
+        "           result.JONBR,   " +
         "           result.JOPGM,   " +
         "           result.JOOBJ,   " +
-        "           result.JOLIB,   " + 
-        "           result.JOMBR,   " + 
-        "           result.JOCTRR,  " + 
-        "           result.JOFLAG,  " + 
-        "           result.JOCCID,  " + 
-        "           result.JOINCDAT," + 
-        "           result.JOMINESD," + 
+        "           result.JOLIB,   " +
+        "           result.JOMBR,   " +
+        "           result.JOCTRR,  " +
+        "           result.JOFLAG,  " +
+        "           result.JOCCID,  " +
+        "           result.JOUSPF,  " +
+        "           result.JOSYNM,  " +
+        "           result.JOINCDAT," +
+        "           result.JOMINESD," +
+                    // JORES - reserved
+                    // JONVI - null value indicators
+        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+        "      FROM %s.%s as result";
+    
+    private static final String GET_JOURNAL_DATA_4 = 
+        "    SELECT rrn(result) as ID, " + 
+        "           result.JOENTL,  " +
+        "           result.JOSEQN,  " +
+        "           result.JOCODE,  " +
+        "           result.JOENTT,  " +
+        "           result.JOTSTP,  " +
+        "           result.JOJOB,   " +
+        "           result.JOUSER,  " +
+        "           result.JONBR,   " +
+        "           result.JOPGM,   " +
+        "           result.JOOBJ,   " +
+        "           result.JOLIB,   " +
+        "           result.JOMBR,   " +
+        "           result.JOCTRR,  " +
+        "           result.JOFLAG,  " +
+        "           result.JOCCID,  " +
+        "           result.JOUSPF,  " +
+        "           result.JOSYNM,  " +
+        "           result.JOJID,   " +   //  added with TYPE4
+        "           result.JORCST,  " +   //  added with TYPE4
+        "           result.JOTGR,   " +   //  added with TYPE4
+        "           result.JOINCDAT," +
+        "           result.JOIGNAPY," +   //  added with TYPE4
+        "           result.JOMINESD," +
+                    // JORES - reserved
+                    // JONVI - null value indicators
+        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+        "      FROM %s.%s as result";
+    
+    private static final String GET_JOURNAL_DATA_5 = 
+        "    SELECT rrn(result) as ID, " + 
+        "           result.JOENTL,  " +
+        "           result.JOSEQN,  " +
+        "           result.JOCODE,  " +
+        "           result.JOENTT,  " +
+        "           result.JOTSTP,  " +
+        "           result.JOJOB,   " +
+        "           result.JOUSER,  " +
+        "           result.JONBR,   " +
+        "           result.JOPGM,   " +
+        "           result.JOPGMLIB," +   //  added with TYPE5
+        "           result.JOPGMDEV," +   //  added with TYPE5
+        "           result.JOPGMASP," +   //  added with TYPE5
+        "           result.JOOBJ,   " +
+        "           result.JOLIB,   " +
+        "           result.JOMBR,   " +
+        "           result.JOCTRR,  " +
+        "           result.JOFLAG,  " +
+        "           result.JOCCID,  " +
+        "           result.JOUSPF,  " +
+        "           result.JOSYNM,  " +
+        "           result.JOJID,   " +
+        "           result.JORCST,  " +
+        "           result.JOTGR,   " +
+        "           result.JOINCDAT," +
+        "           result.JOIGNAPY," +
+        "           result.JOMINESD," +
+        "           result.JOOBJIND," +   //  added with TYPE5
+        "           result.JOSYSSEQ," +   //  added with TYPE5
+        "           result.JORCV   ," +   //  added with TYPE5
+        "           result.JORCVLIB," +   //  added with TYPE5
+        "           result.JORCVDEV," +   //  added with TYPE5
+        "           result.JORCVASP," +   //  added with TYPE5
+        "           result.JOARM   ," +   //  added with TYPE5
+        "           result.JOTHD   ," +   //  added with TYPE5
+        "           result.JOTHDX  ," +   //  added with TYPE5
+        "           result.JOADF   ," +   //  added with TYPE5
+        "           result.JORPORT ," +   //  added with TYPE5
+        "           result.JORADR  ," +   //  added with TYPE5
+        "           result.JOLUW   ," +   //  added with TYPE5
+        "           result.JOXID   ," +   //  added with TYPE5
+        "           result.JOOBJTYP," +   //  added with TYPE5
+        "           result.JOFILTYP," +   //  added with TYPE5
+        "           result.JOCMTLVL," +   //  added with TYPE5
+                    // JORES - reserved
+                    // JONVI - null value indicators
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
@@ -103,11 +208,23 @@ public class JournalDAO extends DAOBase {
 
         try {
 
-            boolean isType3OutputFile = isType3OutputFile(library, file);
-            if (isType3OutputFile) {
-                statementSQL = String.format(GET_JOURNAL_DATA_3, library, file);
-            } else {
-                statementSQL = String.format(GET_JOURNAL_DATA_1, library, file);
+            int type = getOutfileType(file);
+            switch (type) {
+            case JournalOutputType.TYPE5:
+                statementSQL = String.format(GET_JOURNAL_DATA_5, file.getOutFileLibrary(), file.getOutFileName());
+                break;
+            case JournalOutputType.TYPE4:
+                statementSQL = String.format(GET_JOURNAL_DATA_4, file.getOutFileLibrary(), file.getOutFileName());
+                break;
+            case JournalOutputType.TYPE3:
+                statementSQL = String.format(GET_JOURNAL_DATA_3, file.getOutFileLibrary(), file.getOutFileName());
+                break;
+            case JournalOutputType.TYPE2:
+                statementSQL = String.format(GET_JOURNAL_DATA_2, file.getOutFileLibrary(), file.getOutFileName());
+                break;
+            default:
+                statementSQL = String.format(GET_JOURNAL_DATA_1, file.getOutFileLibrary(), file.getOutFileName());
+                break;
             }
 
             preparedStatement = prepareStatement(statementSQL);
@@ -121,11 +238,13 @@ public class JournalDAO extends DAOBase {
                     journalEntry = new JournalEntry();
 
                     journalEntry.setConnectionName(getConnectionName());
+                    
+                    journalEntry.setRrn(resultSet.getInt("ID"));
                     journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
 
                     // Depending of the journal out type, the timestamp can be a
                     // single field or splitted in JODATE and JOTYPE
-                    if (hasColumn(resultSet, "JOTSTP")) {
+                    if (type >= JournalOutputType.TYPE3) {
                         journalEntry.setDate(resultSet.getDate("JOTSTP"));
                         journalEntry.setTime(resultSet.getTime("JOTSTP"));
                     } else {
@@ -152,7 +271,6 @@ public class JournalDAO extends DAOBase {
                     // setOutFileName
                     journalEntry.setProgramName(resultSet.getString("JOPGM"));
                     // setReferentialConstraint
-                    journalEntry.setRrn(resultSet.getInt("ID"));
                     journalEntry.setSequenceNumber(resultSet.getLong("JOSEQN"));
                     journalEntry.setSpecificData(resultSet.getBytes("JOESD"));
                     journalEntry.setStringSpecificData(resultSet.getString("JOESD"));
@@ -161,11 +279,15 @@ public class JournalDAO extends DAOBase {
                     // setTrigger
                     // setUserProfile
 
-                    journalEntry.setOutFileLibrary(library);
-                    journalEntry.setOutFileName(file);
+                    journalEntry.setOutFileLibrary(file.getOutFileLibrary());
+                    journalEntry.setOutFileName(file.getOutFileName());
                     journalData.add(journalEntry);
 
                     MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+
+                    if (type >= JournalOutputType.TYPE5) {
+                        journalEntry.setProgramLibrary(resultSet.getString("JOPGMLIB"));
+                    }
                 }
             }
         } catch (Exception exception) {
@@ -177,35 +299,10 @@ public class JournalDAO extends DAOBase {
         return journalData;
     }
 
-    private boolean isType3OutputFile(String library2, String file2) throws Exception {
-
-        File outputFile = new File();
-        outputFile.setOutFileLibrary(library2);
-        outputFile.setOutFileName(file2);
-        outputFile.setConnetionName(getConnectionName());
+    private int getOutfileType(File outputFile) throws Exception {
 
         MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-        metaTable.setHidden(true); // Hide table for ConfigureParserDialog
 
-        return metaTable.hasColumn("JOTSTP");
+        return metaTable.getOutfileType();
     }
-
-    private boolean hasColumn(ResultSet resultSet, String columnName) throws SQLException {
-
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int count = metaData.getColumnCount();
-        for (int i = 1; i <= count; i++) {
-            if (metaData.getColumnName(i).equals(columnName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /*
-     * private boolean hasColumn(ResultSet resultSet, String columnName) { int
-     * columnIndex; try { columnIndex = resultSet.findColumn(columnName); return
-     * columnIndex >= 0; } catch (Exception exception) { return false; } }
-     */
 }

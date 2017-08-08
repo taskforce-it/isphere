@@ -14,8 +14,8 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
+import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 
 /**
  * This class represents the metatada of a table. It contains the name and
@@ -30,7 +30,7 @@ import biz.isphere.journalexplorer.core.internals.QualifiedName;
  * 
  * @author Isaac Ramirez Herrera
  */
-public class MetaTable implements IMetaTable {
+public class MetaTable {
 
     private String name;
 
@@ -46,7 +46,7 @@ public class MetaTable implements IMetaTable {
 
     private int parsingOffset;
 
-    private boolean isHidden;
+    private boolean isJournalOutputFile;
 
     public MetaTable(String name, String library) {
 
@@ -57,12 +57,12 @@ public class MetaTable implements IMetaTable {
         this.parsingOffset = 0;
     }
 
-    public boolean isHidden() {
-        return isHidden;
+    public boolean isJournalOutputFile() {
+        return isJournalOutputFile;
     }
 
-    public void setHidden(boolean isHidden) {
-        this.isHidden = isHidden;
+    public void setJournalOutputFile(boolean isHidden) {
+        this.isJournalOutputFile = isHidden;
     }
 
     public String getName() {
@@ -139,5 +139,20 @@ public class MetaTable implements IMetaTable {
 
     public String getQualifiedName() {
         return QualifiedName.getName(getLibrary(), getName());
+    }
+
+    public int getOutfileType() {
+
+        if (hasColumn("JOPGMLIB")) { // Added with *TYPE5
+            return JournalOutputType.TYPE5;
+        } else if (hasColumn("JOJID")) { // Added with *TYPE4
+            return JournalOutputType.TYPE5;
+        } else if (hasColumn("JOTSTP")) { // Added with *TYPE3
+            return JournalOutputType.TYPE3;
+        } else if (hasColumn("JOUSPF")) { // Added with *TYPE2
+            return JournalOutputType.TYPE2;
+        } else {
+            return JournalOutputType.TYPE1;
+        }
     }
 }

@@ -6,21 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.base.interfaces;
+package biz.isphere.journalexplorer.core.model.dao;
 
-public interface IMetaTable {
-
-    public String getQualifiedName();
-
-    public String getDefinitionLibrary();
-
-    public String getDefinitionName();
-
-    public int getParsingOffset();
-
-    public void setDefinitionLibrary(String definitionLibrary);
-
-    public void setDefinitionName(String definitionName);
-
-    public void setParsingOffset(int parsingOffset);
+public interface JournalOutputType {
+    public static final int TYPE1 = 1;
+    public static final int TYPE2 = 2;
+    public static final int TYPE3 = 3;
+    public static final int TYPE4 = 4;
+    public static final int TYPE5 = 5;
 }

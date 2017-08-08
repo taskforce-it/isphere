@@ -36,16 +36,14 @@ public class JournalEntriesViewer extends CTabItem {
     private Composite container;
     private TableViewer tableViewer;
     private String connectionName;
-    private String library;
-    private String fileName;
+    private File outputFile;
     private ArrayList<JournalEntry> data;
     private Exception dataLoadException;
 
     public JournalEntriesViewer(CTabFolder parent, File outputFile) {
         super(parent, SWT.NONE);
 
-        this.library = outputFile.getOutFileLibrary();
-        this.fileName = outputFile.getOutFileName();
+        this.outputFile = outputFile;
         this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
 
@@ -55,7 +53,7 @@ public class JournalEntriesViewer extends CTabItem {
     private void initializeComponents() {
 
         container.setLayout(new FillLayout());
-        setText(connectionName + ": " + library + "/" + fileName);
+        setText(connectionName + ": " + outputFile.getQualifiedName());
         createTableViewer(container);
         container.layout(true);
         setControl(container);
@@ -230,13 +228,15 @@ public class JournalEntriesViewer extends CTabItem {
             public void run() {
 
                 try {
-                    JournalDAO journalDAO = new JournalDAO(connectionName, library, fileName);
+
+                    JournalDAO journalDAO = new JournalDAO(outputFile);
                     data = journalDAO.getJournalData();
                     container.layout(true);
                     tableViewer.setInput(null);
                     tableViewer.setUseHashlookup(true);
                     tableViewer.setItemCount(data.size());
                     tableViewer.setInput(data);
+
                 } catch (Exception e) {
                     dataLoadException = e;
                 }

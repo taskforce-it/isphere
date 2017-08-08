@@ -8,13 +8,18 @@
 
 package biz.isphere.journalexplorer.core.model;
 
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
+
 public class File {
 
     private String connetionName;
     private String outFileName;
     private String outFileLibrary;
 
-    public File() {
+    public File(String connectionName, String outFileLibrary, String outfileName) {
+        this.connetionName = connectionName;
+        this.outFileLibrary = outFileLibrary;
+        this.outFileName = outfileName;
     }
 
     public String getConnectionName() {
@@ -41,4 +46,7 @@ public class File {
         this.outFileLibrary = outFileLibrary;
     }
 
+    public String getQualifiedName() {
+        return QualifiedName.getName(outFileLibrary, outFileName);
+    }
 }

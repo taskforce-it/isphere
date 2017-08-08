@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import biz.isphere.journalexplorer.base.interfaces.IJournalEntry;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
@@ -38,10 +38,10 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
     }
 
     public Color getBackground(Object element, int index) {
-        if (element instanceof IJournalEntry) {
-            IJournalEntry journalEntry = (IJournalEntry)element;
+        if (element instanceof JournalEntry) {
+            JournalEntry journalEntry = (JournalEntry)element;
 
-            if (preferences.isHighlightUserEntries() && journalEntry.getJournalCode().equals(IJournalEntry.USER_GENERATED)) {
+            if (preferences.isHighlightUserEntries() && journalEntry.getJournalCode().equals(JournalEntry.USER_GENERATED)) {
                 return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
             } else {
                 return null;
@@ -79,7 +79,9 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
     }
 
     public String getColumnText(Object object, int index) {
-        IJournalEntry journal = (IJournalEntry)object;
+
+        JournalEntry journal = (JournalEntry)object;
+
         switch (index) {
         case 0: // RRN
             return Integer.toString(journal.getRrn()).trim();
@@ -132,6 +134,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
         default:
             break;
         }
+
         return null;
     }
 }

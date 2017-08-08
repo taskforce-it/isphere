@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.journalexplorer.base.interfaces.IMetaTable;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -90,7 +89,7 @@ public class ConfigureParsersDialog extends XDialog {
 
                 if (elements instanceof MetaTable) {
                     MetaTable metaTable = (MetaTable)elements;
-                    if (!metaTable.isHidden()) {
+                    if (!metaTable.isJournalOutputFile()) {
                         return true;
                     }
                 }
@@ -248,7 +247,7 @@ public class ConfigureParsersDialog extends XDialog {
             public void modify(Object element, String property, Object value) {
 
                 TableItem tableItem = (TableItem)element;
-                IMetaTable metaTable = (IMetaTable)tableItem.getData();
+                MetaTable metaTable = (MetaTable)tableItem.getData();
 
                 int index = getColumnIndex(property);
                 switch (index) {
@@ -270,7 +269,7 @@ public class ConfigureParsersDialog extends XDialog {
 
             public Object getValue(Object element, String property) {
 
-                IMetaTable metaTable = (IMetaTable)element;
+                MetaTable metaTable = (MetaTable)element;
 
                 int index = getColumnIndex(property);
                 switch (index) {
