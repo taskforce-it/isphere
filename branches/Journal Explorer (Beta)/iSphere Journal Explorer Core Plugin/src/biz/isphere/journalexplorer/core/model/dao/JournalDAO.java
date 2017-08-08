@@ -250,7 +250,7 @@ public class JournalDAO extends DAOBase {
                     } else {
                         String date = resultSet.getString("JODATE");
                         int time = resultSet.getInt("JOTIME");
-                        journalEntry.setDate(date, time, getDateFormat(), getDateSeparator(), getTimeSeparator());
+                        journalEntry.setDate(date, time, getDateFormat(), null, null);
                     }
 
                     journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
