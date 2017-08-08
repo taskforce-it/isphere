@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -36,7 +34,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
-public class JournalExplorerView extends ViewPart implements IPropertyChangeListener {
+public class JournalExplorerView extends ViewPart {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
@@ -52,8 +50,6 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
         this.journalViewers = new ArrayList<JournalEntriesViewer>();
         this.preferences = Preferences.getInstance();
-
-        this.preferences.addPropertyChangeListener(this);
     }
 
     /**
@@ -98,7 +94,6 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
 
     @Override
     public void dispose() {
-        preferences.removePropertyChangeListener(this);
         super.dispose();
     }
 
@@ -135,19 +130,16 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
         // / highlightUserEntries action
         // /
         this.highlightUserEntries = new Action(Messages.JournalExplorerView_HighlightUserEntries, Action.AS_CHECK_BOX) {
-            @Override
-            public boolean isChecked() {
-                return Preferences.getInstance().isHighlightUserEntries();
-            }
+
             @Override
             public void run() {
-                boolean hightlightUserEntries = preferences.isHighlightUserEntries();
-                preferences.setHighlightUserEntries(!hightlightUserEntries);
+                preferences.setHighlightUserEntries(isChecked());
                 JournalExplorerView.this.refreshAllViewers();
             }
         };
         highlightUserEntries
             .setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT));
+        highlightUserEntries.setChecked(preferences.isHighlightUserEntries());
 
         // /
         // / reParseEntries action
@@ -186,9 +178,9 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
 
             this.journalViewers.add(journalViewer);
             this.tabs.setSelection(journalViewer);
-            
+
         } catch (Exception exception) {
-            
+
             MessageDialog.openError(this.getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
 
             if (journalViewer != null) {
@@ -210,14 +202,5 @@ public class JournalExplorerView extends ViewPart implements IPropertyChangeList
 
     @Override
     public void setFocus() {
-    }
-
-    public void propertyChange(PropertyChangeEvent event) {
-        if (event.getProperty() == Preferences.HIGHLIGHT_USER_ENTRIES) {
-            if (event.getNewValue() != null && (event.getNewValue() instanceof Boolean)) {
-                Boolean tLibrary = (Boolean)event.getNewValue();
-                System.out.println("New value: " + tLibrary);
-            }
-        }
     }
 }
