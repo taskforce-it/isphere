@@ -238,7 +238,8 @@ public class JournalEntry {
 
     /**
      * Returns the time portion of field 'Timestamp of Entry' or 'Date of
-     * entry', depending on the type of the journal output file.
+     * entry', depending on the type of the journal output file. That has been
+     * changed with output file type *TYPE3.
      * <p>
      * Date type in journal output file: TIMESTAMP(26) / CHAR(6)
      * 
@@ -259,7 +260,8 @@ public class JournalEntry {
 
     /**
      * Returns the time portion of field 'Timestamp of Entry' or 'Time of
-     * entry', depending on the type of the journal output file.
+     * entry', depending on the type of the journal output file. That has been
+     * changed with output file type *TYPE3.
      * <p>
      * Date type in journal output file: TIMESTAMP(26) / ZONED(6 0)
      * 
@@ -354,7 +356,7 @@ public class JournalEntry {
      * <p>
      * Date type in journal output file: CHAR(10)
      * 
-     * @return value of field 'JOPGMLIB'.
+     * @return value of field 'JOPGMDEV'.
      * @since *TYPE5
      */
     public String getProgramAspDevice() {
@@ -380,7 +382,7 @@ public class JournalEntry {
     public void setProgramAsp(int programAsp) {
         this.programAsp = programAsp;
     }
-    
+
     /**
      * Returns the 'Name of Object'.
      * <p>
@@ -506,6 +508,7 @@ public class JournalEntry {
      * <p>
      * Date type in journal output file: CHAR(10)
      * 
+     * @since *TYPE4
      * @return value of field 'JOJID'.
      */
     public String getJournalID() {
@@ -522,6 +525,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JORCST'.
+     * @since *TYPE4
      */
     public String getReferentialConstraint() {
         return referentialConstraint;
@@ -537,6 +541,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOTGR'.
+     * @since *TYPE4
      */
     public String getTrigger() {
         return trigger;
@@ -567,6 +572,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOIGNAPY'.
+     * @since *TYPE4
      */
     public String getIgnoredByApyRmvJrnChg() {
         return apyRmvJrnChg;
@@ -597,6 +603,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOOBJIND'.
+     * @since *TYPE5
      */
     public String getObjectIndicator() {
         return objectIndicator;
@@ -612,6 +619,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(20)
      * 
      * @return value of field 'JOSYSSEQ'.
+     * @since *TYPE5
      */
     public String getSystemSequenceNumber() {
         return systemSequenceNumber;
@@ -627,6 +635,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JORCV'.
+     * @since *TYPE5
      */
     public String getReceiver() {
         return receiver;
@@ -642,6 +651,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JORCVLIB'.
+     * @since *TYPE5
      */
     public String getReceiverLibrary() {
         return receiverLibrary;
@@ -657,6 +667,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JORCVDEV'.
+     * @since *TYPE5
      */
     public String getReceiverAspDevice() {
         return receiverAspDevice;
@@ -672,6 +683,7 @@ public class JournalEntry {
      * Date type in journal output file: ZONED(5 0)
      * 
      * @return value of field 'JORCVASP'.
+     * @since *TYPE5
      */
     public int getReceiverAsp() {
         return receiverAsp;
@@ -687,6 +699,7 @@ public class JournalEntry {
      * Date type in journal output file: ZONED(5 0)
      * 
      * @return value of field 'JOARM'.
+     * @since *TYPE5
      */
     public int getArmNumber() {
         return armNumber;
@@ -702,6 +715,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(16)
      * 
      * @return value of field 'JOTHDX'.
+     * @since *TYPE5
      */
     public String getThreadId() {
         return threadId;
@@ -717,6 +731,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOADF'.
+     * @since *TYPE5
      */
     public String getAddressFamily() {
         return addressFamily;
@@ -732,6 +747,7 @@ public class JournalEntry {
      * Date type in journal output file: ZONED(5 0)
      * 
      * @return value of field 'JORPORT'.
+     * @since *TYPE5
      */
     public int getRemotePort() {
         return remotePort;
@@ -747,6 +763,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(46)
      * 
      * @return value of field 'JORADR'.
+     * @since *TYPE5
      */
     public String getRemoteAddress() {
         return remoteAddress;
@@ -762,6 +779,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(39)
      * 
      * @return value of field 'JOLUW'.
+     * @since *TYPE5
      */
     public String getLogicalUnitOfWork() {
         return logicalUnitOfWork;
@@ -777,6 +795,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(140)
      * 
      * @return value of field 'JOXID'.
+     * @since *TYPE5
      */
     public String getTransactionIdentifier() {
         return transactionIdentifier;
@@ -792,6 +811,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(7)
      * 
      * @return value of field 'JOOBJTYP'.
+     * @since *TYPE5
      */
     public String getObjectType() {
         return objectType;
@@ -807,6 +827,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOFILTYP'.
+     * @since *TYPE5
      */
     public String getFileTypeIndicator() {
         return fileTypeIndicator;
@@ -822,6 +843,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(7)
      * 
      * @return value of field 'JOCMTLVL'.
+     * @since *TYPE5
      */
     public String getNestedCommitLevel() {
         return nestedCommitLevel;
