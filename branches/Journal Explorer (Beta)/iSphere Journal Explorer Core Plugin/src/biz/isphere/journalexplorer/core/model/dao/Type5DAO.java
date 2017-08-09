@@ -79,7 +79,7 @@ public class Type5DAO extends Type4DAO {
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
         super.populateJournalEntry(resultSet, journalEntry);
-
+        
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
         journalEntry.setProgramLibrary(resultSet.getString(JOPGMLIB));
         journalEntry.setProgramAspDevice(resultSet.getString(JOPGMDEV));
@@ -94,7 +94,7 @@ public class Type5DAO extends Type4DAO {
         journalEntry.setThreadId(resultSet.getString(JOTHDX));
         journalEntry.setAddressFamily(resultSet.getString(JOADF));
         journalEntry.setRemotePort(resultSet.getInt(JORPORT));
-        journalEntry.setRemoteAddress(new String(resultSet.getBytes(JORADR), Charset.forName("IBM037")));
+        journalEntry.setRemoteAddress(new String(resultSet.getBytes(JORADR), "IBM037"));
         journalEntry.setLogicalUnitOfWork(resultSet.getString(JOLUW));
         journalEntry.setTransactionIdentifier(resultSet.getString(JOXID));
         journalEntry.setObjectType(resultSet.getString(JOOBJTYP));
