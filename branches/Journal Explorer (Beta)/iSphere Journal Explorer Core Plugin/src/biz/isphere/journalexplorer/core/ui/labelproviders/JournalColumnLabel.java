@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.views.model.ViewerColumn;
+import biz.isphere.journalexplorer.core.ui.model.ViewerColumn;
 
 public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 

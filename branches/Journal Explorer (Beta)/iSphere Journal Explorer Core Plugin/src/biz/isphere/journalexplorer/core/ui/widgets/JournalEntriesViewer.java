@@ -32,12 +32,12 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
-import biz.isphere.journalexplorer.core.ui.views.model.AbstractTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.views.model.Type1ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.views.model.Type2ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.views.model.Type3ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.views.model.Type4ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.views.model.Type5ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 
 public class JournalEntriesViewer extends CTabItem {
 
