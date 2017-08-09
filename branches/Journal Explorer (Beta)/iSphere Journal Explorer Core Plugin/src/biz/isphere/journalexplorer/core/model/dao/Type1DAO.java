@@ -54,7 +54,7 @@ public class Type1DAO extends AbstractTypeDAO {
         
         journalEntry.setConnectionName(getConnectionName());
         
-        journalEntry.setRrn(resultSet.getInt("ID"));
+        journalEntry.setId(resultSet.getInt("ID"));
         journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
 
         // Depending of the journal out type, the timestamp can be a
@@ -62,7 +62,7 @@ public class Type1DAO extends AbstractTypeDAO {
         // For TYPE1 output files it is splitted into Date and Time.
         String date = resultSet.getString("JODATE");
         int time = resultSet.getInt("JOTIME");
-        journalEntry.setDate(date, time, getDateFormat(), null, null);
+        journalEntry.setDateAndTime(date, time, getDateFormat(), null, null);
 
         journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
         journalEntry.setEntryType(resultSet.getString("JOENTT"));
@@ -70,8 +70,8 @@ public class Type1DAO extends AbstractTypeDAO {
         journalEntry.setJobName(resultSet.getString("JOJOB"));
         journalEntry.setJobNumber(resultSet.getInt("JONBR"));
         journalEntry.setJobUserName(resultSet.getString("JOUSER"));
-        journalEntry.setJoCtrr(resultSet.getInt("JOCTRR"));
-        journalEntry.setJoFlag(resultSet.getString("JOFLAG"));
+        journalEntry.setCountRrn(resultSet.getInt("JOCTRR"));
+        journalEntry.setFlag(resultSet.getString("JOFLAG"));
         journalEntry.setJournalCode(resultSet.getString("JOCODE"));
         // setJournalID
         journalEntry.setMemberName(resultSet.getString("JOMBR"));

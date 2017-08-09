@@ -31,7 +31,7 @@ public class JournalEntry {
 
     private String outFileLibrary;
 
-    private int rrn;
+    private int id;
 
     private int entryLength; // JOENTL
 
@@ -61,9 +61,9 @@ public class JournalEntry {
 
     private String memberName; // JOMBR
 
-    private int joCtrr; // JOCTRR
+    private int countRrn; // JOCTRR
 
-    private String joFlag; // JOFLAG
+    private String flag; // JOFLAG
 
     private int commitmentCycle; // JOCCID
 
@@ -79,11 +79,49 @@ public class JournalEntry {
 
     private String incompleteData; // JOINCDAT
 
+    private String apyRmvJrnChg; // JOIGNAPY
+
     private String minimizedSpecificData; // JOMINESD
 
     private byte[] specificData; // JOESD
 
     private String stringSpecificData; // JOESD (String)
+
+    private String programAspDevice; // JOPGMDEV
+
+    private int programAsp; // JOPGMASP
+
+    private String objectIndicator; // JOOBJIND
+
+    private String systemSequenceNumber; // JOSYSSEQ
+
+    private String receiver; // JORCV
+
+    private String receiverLibrary; // JORCVLIB
+
+    private String receiverAspDevice; // JORCVDEV
+
+    private int receiverAsp; // JORCVASP
+
+    private int armNumber; // JOARM
+
+    private String threadId; // JOTHDX
+
+    private String addressFamily; // JOADF
+
+    private int remotePort; // JORPORT
+
+    private String remoteAddress; // JORADR
+
+    private String logicalUnitOfWork; // JOLUW
+
+    private String transactionIdentifier; // JOXID
+
+    private String objectType; // JOOBJTYP
+
+    private String fileTypeIndicator; // JOFILTYP
+
+    private String nestedCommitLevel; // JOCMTLVL
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
 
@@ -103,15 +141,45 @@ public class JournalEntry {
     }
 
     public String getKey() {
-        return Messages.bind(Messages.Journal_RecordNum, new Object[] { connectionName, outFileLibrary, outFileName, rrn });
+        return Messages.bind(Messages.Journal_RecordNum, new Object[] { connectionName, outFileLibrary, outFileName, id });
     }
 
     public String getQualifiedObjectName() {
         return String.format("%s/%s", objectLibrary, objectName);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getOutFileName() {
+        return outFileName;
+    }
+
+    public void setOutFileName(String outFileName) {
+        this.outFileName = outFileName.trim();
+    }
+
+    public String getOutFileLibrary() {
+        return outFileLibrary;
+    }
+
+    public void setOutFileLibrary(String outFileLibrary) {
+        this.outFileLibrary = outFileLibrary.trim();
+    }
+
+    // //////////////////////////////////////////////////////////
+    // / Getters / Setters of journal entry
+    // //////////////////////////////////////////////////////////
+
     /**
      * Returns the 'Length of Entry'.
+     * <p>
+     * Date type in journal output file: ZONED(5 0)
      * 
      * @return value of field 'JOENTL'.
      */
@@ -125,6 +193,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Sequence number'.
+     * <p>
+     * Date type in journal output file: CHAR(20)
      * 
      * @return value of field 'JOSEQN'.
      */
@@ -138,6 +208,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Journal Code'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOCODE'.
      */
@@ -151,6 +223,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Entry Type'.
+     * <p>
+     * Date type in journal output file: CHAR(2)
      * 
      * @return value of field 'JOENTT'.
      */
@@ -165,6 +239,8 @@ public class JournalEntry {
     /**
      * Returns the time portion of field 'Timestamp of Entry' or 'Date of
      * entry', depending on the type of the journal output file.
+     * <p>
+     * Date type in journal output file: TIMESTAMP(26) / CHAR(6)
      * 
      * @return value of field 'JOTSTP' or 'JODATE'.
      */
@@ -176,9 +252,16 @@ public class JournalEntry {
         this.date = date;
     }
 
+    public void setDateAndTime(String date, int time, int dateFormat, Character dateSeparator, Character timeSeparator) {
+        setDate(JournalEntryDelegate.getDate(date, dateFormat, dateSeparator));
+        setTime(JournalEntryDelegate.getTime(time, timeSeparator));
+    }
+
     /**
      * Returns the time portion of field 'Timestamp of Entry' or 'Time of
      * entry', depending on the type of the journal output file.
+     * <p>
+     * Date type in journal output file: TIMESTAMP(26) / ZONED(6 0)
      * 
      * @return value of field 'JOTSTP' or 'JOTIME'.
      */
@@ -192,6 +275,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Name of Job'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOJOB'.
      */
@@ -205,6 +290,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Name of User'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOUSER'.
      */
@@ -217,7 +304,9 @@ public class JournalEntry {
     }
 
     /**
-     * Returns the 'Name of Job'.
+     * Returns the 'Job Number'.
+     * <p>
+     * Date type in journal output file: ZONED(6 0)
      * 
      * @return value of field 'JONBR'.
      */
@@ -231,6 +320,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Name of Program'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOPGM'.
      */
@@ -244,8 +335,10 @@ public class JournalEntry {
 
     /**
      * Returns the 'Program Library'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
-     * @return value of field 'JOPGMPMG'.
+     * @return value of field 'JOPGMLIB'.
      * @since *TYPE5
      */
     public String getProgramLibrary() {
@@ -257,7 +350,41 @@ public class JournalEntry {
     }
 
     /**
+     * Returns the 'Program ASP Device'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
+     * 
+     * @return value of field 'JOPGMLIB'.
+     * @since *TYPE5
+     */
+    public String getProgramAspDevice() {
+        return programAspDevice;
+    }
+
+    public void setProgramAspDevice(String programAspDevice) {
+        this.programAspDevice = programAspDevice;
+    }
+
+    /**
+     * Returns the 'Program ASP'.
+     * <p>
+     * Date type in journal output file: ZONED(5 0)
+     * 
+     * @return value of field 'JOPGMLIB'.
+     * @since *TYPE5
+     */
+    public int getProgramAsp() {
+        return programAsp;
+    }
+
+    public void setProgramAsp(int programAsp) {
+        this.programAsp = programAsp;
+    }
+    
+    /**
      * Returns the 'Name of Object'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOOBJ'.
      */
@@ -270,7 +397,9 @@ public class JournalEntry {
     }
 
     /**
-     * Returns the 'Objects Library'.
+     * Returns the 'Object Library'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOLIB'.
      */
@@ -284,6 +413,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Name of Member'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOMBR'.
      */
@@ -297,32 +428,38 @@ public class JournalEntry {
 
     /**
      * Returns the 'Count or relative record number changed'.
+     * <p>
+     * Date type in journal output file: CHAR(20)
      * 
      * @return value of field 'JOCTRR'.
      */
-    public int getJoCtrr() {
-        return joCtrr;
+    public int getCountRrn() {
+        return countRrn;
     }
 
-    public void setJoCtrr(int joCtrr) {
-        this.joCtrr = joCtrr;
+    public void setCountRrn(int countRrn) {
+        this.countRrn = countRrn;
     }
 
     /**
      * Returns the 'Flag'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOFLAG'.
      */
-    public String getJoFlag() {
-        return joFlag;
+    public String getFlag() {
+        return flag;
     }
 
-    public void setJoFlag(String joFlag) {
-        this.joFlag = joFlag.trim();
+    public void setFlag(String flag) {
+        this.flag = flag.trim();
     }
 
     /**
      * Returns the 'Commit cycle identifier'.
+     * <p>
+     * Date type in journal output file: CHAR(20)
      * 
      * @return value of field 'JOCCID'.
      */
@@ -336,6 +473,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'User Profile'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOUSPF'.
      */
@@ -349,6 +488,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'System Name'.
+     * <p>
+     * Date type in journal output file: CHAR(8)
      * 
      * @return value of field 'JOSYNM'.
      */
@@ -362,6 +503,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Journal Identifier'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOJID'.
      */
@@ -375,6 +518,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Referential Constraint'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JORCST'.
      */
@@ -388,6 +533,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Trigger'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOTGR'.
      */
@@ -401,6 +548,8 @@ public class JournalEntry {
 
     /**
      * Returns the 'Incomplete Data'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOINCDAT'.
      */
@@ -413,7 +562,24 @@ public class JournalEntry {
     }
 
     /**
+     * Returns the 'Ignored by APY/RMVJRNCHG'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
+     * 
+     * @return value of field 'JOIGNAPY'.
+     */
+    public String getIgnoredByApyRmvJrnChg() {
+        return apyRmvJrnChg;
+    }
+
+    public void setIgnoredByApyRmvJrnChg(String apyRmvJrnChg) {
+        this.apyRmvJrnChg = apyRmvJrnChg.trim();
+    }
+
+    /**
      * Returns the 'Minimized Entry Specific Data'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
      * 
      * @return value of field 'JOMINESD'.
      */
@@ -423,6 +589,246 @@ public class JournalEntry {
 
     public void setMinimizedSpecificData(String minimizedSpecificData) {
         this.minimizedSpecificData = minimizedSpecificData.trim();
+    }
+
+    /**
+     * Returns the 'Object Indicator'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
+     * 
+     * @return value of field 'JOOBJIND'.
+     */
+    public String getObjectIndicator() {
+        return objectIndicator;
+    }
+
+    public void setObjectIndicator(String objectIndicator) {
+        this.objectIndicator = objectIndicator;
+    }
+
+    /**
+     * Returns the 'System Sequence Number'.
+     * <p>
+     * Date type in journal output file: CHAR(20)
+     * 
+     * @return value of field 'JOSYSSEQ'.
+     */
+    public String getSystemSequenceNumber() {
+        return systemSequenceNumber;
+    }
+
+    public void setSystemSequenceNumber(String systemSequenceNumber) {
+        this.systemSequenceNumber = systemSequenceNumber;
+    }
+
+    /**
+     * Returns the 'Receiver'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
+     * 
+     * @return value of field 'JORCV'.
+     */
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    /**
+     * Returns the 'Receiver Library'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
+     * 
+     * @return value of field 'JORCVLIB'.
+     */
+    public String getReceiverLibrary() {
+        return receiverLibrary;
+    }
+
+    public void setReceiverLibrary(String receiverLibrary) {
+        this.receiverLibrary = receiverLibrary;
+    }
+
+    /**
+     * Returns the 'Receiver ASP Device'.
+     * <p>
+     * Date type in journal output file: CHAR(10)
+     * 
+     * @return value of field 'JORCVDEV'.
+     */
+    public String getReceiverAspDevice() {
+        return receiverAspDevice;
+    }
+
+    public void setReceiverAspDevice(String receiverAspDevice) {
+        this.receiverAspDevice = receiverAspDevice;
+    }
+
+    /**
+     * Returns the 'Receiver ASP'.
+     * <p>
+     * Date type in journal output file: ZONED(5 0)
+     * 
+     * @return value of field 'JORCVASP'.
+     */
+    public int getReceiverAsp() {
+        return receiverAsp;
+    }
+
+    public void setReceiverAsp(int receiverAsp) {
+        this.receiverAsp = receiverAsp;
+    }
+
+    /**
+     * Returns the 'ARM Number'.
+     * <p>
+     * Date type in journal output file: ZONED(5 0)
+     * 
+     * @return value of field 'JOARM'.
+     */
+    public int getArmNumber() {
+        return armNumber;
+    }
+
+    public void setArmNumber(int armNumber) {
+        this.armNumber = armNumber;
+    }
+
+    /**
+     * Returns the 'Thread ID Hex'.
+     * <p>
+     * Date type in journal output file: CHAR(16)
+     * 
+     * @return value of field 'JOTHDX'.
+     */
+    public String getThreadId() {
+        return threadId;
+    }
+
+    public void setThreadId(String threadId) {
+        this.threadId = threadId;
+    }
+
+    /**
+     * Returns the 'Address Family'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
+     * 
+     * @return value of field 'JOADF'.
+     */
+    public String getAddressFamily() {
+        return addressFamily;
+    }
+
+    public void setAddressFamily(String addressFamily) {
+        this.addressFamily = addressFamily;
+    }
+
+    /**
+     * Returns the 'Remote Port'.
+     * <p>
+     * Date type in journal output file: ZONED(5 0)
+     * 
+     * @return value of field 'JORPORT'.
+     */
+    public int getRemotePort() {
+        return remotePort;
+    }
+
+    public void setRemotePort(int remotePort) {
+        this.remotePort = remotePort;
+    }
+
+    /**
+     * Returns the 'Remote Address'.
+     * <p>
+     * Date type in journal output file: CHAR(46)
+     * 
+     * @return value of field 'JORADR'.
+     */
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
+    }
+
+    /**
+     * Returns the 'Logical Unit of Work'.
+     * <p>
+     * Date type in journal output file: CHAR(39)
+     * 
+     * @return value of field 'JOLUW'.
+     */
+    public String getLogicalUnitOfWork() {
+        return logicalUnitOfWork;
+    }
+
+    public void setLogicalUnitOfWork(String logicalUnitOfWork) {
+        this.logicalUnitOfWork = logicalUnitOfWork;
+    }
+
+    /**
+     * Returns the 'Transaction ID'.
+     * <p>
+     * Date type in journal output file: CHAR(140)
+     * 
+     * @return value of field 'JOXID'.
+     */
+    public String getTransactionIdentifier() {
+        return transactionIdentifier;
+    }
+
+    public void setTransactionIdentifier(String transactionIdentifier) {
+        this.transactionIdentifier = transactionIdentifier;
+    }
+
+    /**
+     * Returns the 'Object Type'.
+     * <p>
+     * Date type in journal output file: CHAR(7)
+     * 
+     * @return value of field 'JOOBJTYP'.
+     */
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
+
+    /**
+     * Returns the 'File Type'.
+     * <p>
+     * Date type in journal output file: CHAR(1)
+     * 
+     * @return value of field 'JOFILTYP'.
+     */
+    public String getFileTypeIndicator() {
+        return fileTypeIndicator;
+    }
+
+    public void setFileTypeIndicator(String fileTypeIndicator) {
+        this.fileTypeIndicator = fileTypeIndicator;
+    }
+
+    /**
+     * Returns the 'Nested Commit Level'.
+     * <p>
+     * Date type in journal output file: CHAR(7)
+     * 
+     * @return value of field 'JOCMTLVL'.
+     */
+    public String getNestedCommitLevel() {
+        return nestedCommitLevel;
+    }
+
+    public void setNestedCommitLevel(String nestedCommitLevel) {
+        this.nestedCommitLevel = nestedCommitLevel;
     }
 
     /**
@@ -453,35 +859,5 @@ public class JournalEntry {
 
     public void setSpecificData(byte[] specificData) {
         this.specificData = specificData;
-    }
-
-    public int getRrn() {
-        return rrn;
-    }
-
-    public void setRrn(int rrn) {
-        this.rrn = rrn;
-    }
-
-    public void setDate(String date, int time, int dateFormat, Character dateSeparator, Character timeSeparator) {
-
-        setDate(JournalEntryDelegate.getDate(date, dateFormat, dateSeparator));
-        setTime(JournalEntryDelegate.getTime(time, timeSeparator));
-    }
-
-    public String getOutFileName() {
-        return outFileName;
-    }
-
-    public void setOutFileName(String outFileName) {
-        this.outFileName = outFileName.trim();
-    }
-
-    public String getOutFileLibrary() {
-        return outFileLibrary;
-    }
-
-    public void setOutFileLibrary(String outFileLibrary) {
-        this.outFileLibrary = outFileLibrary.trim();
     }
 }

@@ -233,8 +233,9 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
         try {
             viewer.openJournal();
-        } catch (Exception exception) {
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, exception.getMessage());
+        } catch (Exception e) {
+            ISphereJournalExplorerCorePlugin.logError(ExceptionHelper.getLocalizedMessage(e), e);
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 

@@ -24,6 +24,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -180,15 +183,6 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setText("JOLIB");
 
         // /
-        // / JOMBR Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOMBR");
-
-        // /
         // / JOOBJ Column
         // /
         newColumn = new TableColumn(table, SWT.NONE);
@@ -196,6 +190,15 @@ public class JournalEntriesViewer extends CTabItem {
         newColumn.setResizable(true);
         newColumn.setWidth(90);
         newColumn.setText("JOOBJ");
+
+        // /
+        // / JOMBR Column
+        // /
+        newColumn = new TableColumn(table, SWT.NONE);
+        newColumn.setMoveable(true);
+        newColumn.setResizable(true);
+        newColumn.setWidth(90);
+        newColumn.setText("JOMBR");
 
         // /
         // / JOMINESD Column

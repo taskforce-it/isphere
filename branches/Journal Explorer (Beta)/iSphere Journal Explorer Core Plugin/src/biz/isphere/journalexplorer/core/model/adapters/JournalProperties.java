@@ -37,7 +37,7 @@ public class JournalProperties {
 
     private void initialize() {
 
-        properties.add(new JournalProperty(RRN, journal.getRrn(), journal));
+        properties.add(new JournalProperty(RRN, journal.getId(), journal));
         properties.add(new JournalProperty(JOENTL, journal.getEntryLength(), journal));
         properties.add(new JournalProperty(JOSEQN, journal.getSequenceNumber(), journal));
         properties.add(new JournalProperty(JOCODE, journal.getJournalCode(), journal));

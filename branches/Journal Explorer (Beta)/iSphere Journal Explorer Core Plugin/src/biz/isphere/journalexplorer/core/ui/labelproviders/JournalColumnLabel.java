@@ -84,7 +84,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
 
         switch (index) {
         case 0: // RRN
-            return Integer.toString(journal.getRrn()).trim();
+            return Integer.toString(journal.getId()).trim();
         case 1: // JOENTT
             return journal.getEntryType();
         case 2: // JOSEQN

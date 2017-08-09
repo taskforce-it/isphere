@@ -11,6 +11,7 @@
 
 package biz.isphere.journalexplorer.core;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -81,6 +82,23 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
      */
     public static ISphereJournalExplorerCorePlugin getDefault() {
         return plugin;
+    }
+
+    /**
+     * Convenience method to log error messages to the application log.
+     * 
+     * @param message Message
+     * @param e The exception that has produced the error
+     */
+    public static void logError(String message, Throwable e) {
+        if (plugin == null) {
+            System.err.println(message);
+            if (e != null) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 
     /**

@@ -50,6 +50,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
                     journalEntry = new JournalEntry();
                     journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
                     journalEntry.setOutFileName(outputFile.getOutFileName());
+                    
                     journalEntries.add(populateJournalEntry(resultSet, journalEntry));
 
                     MetaDataCache.INSTANCE.prepareMetaData(journalEntry);

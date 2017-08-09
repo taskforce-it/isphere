@@ -62,7 +62,7 @@ public class Type4DAO extends Type3DAO {
         journalEntry.setJournalID(resultSet.getString("JOJID"));
         journalEntry.setReferentialConstraint(resultSet.getString("JORCST"));
         journalEntry.setTrigger(resultSet.getString("JOTGR"));
-//        journalEntry.setTrigger(resultSet.getString("JOIGNAPY")); TODO: fix it
+        journalEntry.setIgnoredByApyRmvJrnChg(resultSet.getString("JOIGNAPY"));
 
         return journalEntry;
     }
