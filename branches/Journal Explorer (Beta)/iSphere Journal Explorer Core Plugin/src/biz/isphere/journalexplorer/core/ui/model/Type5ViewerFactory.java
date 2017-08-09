@@ -56,6 +56,7 @@ public class Type5ViewerFactory extends AbstractTypeViewerFactory {
         ViewerColumn.JOTGR,
         ViewerColumn.JOIGNAPY, 
         ViewerColumn.JOMINESD, 
+        ViewerColumn.JOINCDAT,
         ViewerColumn.JOESD };
     // @formatter:on
 

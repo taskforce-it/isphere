@@ -27,7 +27,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.ViewerColumn;
 
-public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+public class JournalEntryColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat timeFormat;
@@ -35,7 +35,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
     private Preferences preferences;
     private ViewerColumn[] fieldIdMapping;
 
-    public JournalColumnLabel(ViewerColumn[] fieldIdMapping) {
+    public JournalEntryColumnLabel(ViewerColumn[] fieldIdMapping) {
         this.preferences = Preferences.getInstance();
         this.fieldIdMapping = fieldIdMapping;
     }
@@ -141,17 +141,17 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
         case JOJID:
             return journal.getJournalID();
         case JORCST:
-            return journal.getReferentialConstraint();
+            return journal.getReferentialConstraintText();
         case JOTGR:
-            return journal.getTrigger();
+            return journal.getTriggerText();
         case JOINCDAT:
-            return journal.getIncompleteData();
+            return journal.getIncompleteDataText();
         case JOIGNAPY:
-            return journal.getIgnoredByApyRmvJrnChg();
+            return journal.getIgnoredByApyRmvJrnChgText();
         case JOMINESD:
-            return journal.getMinimizedSpecificData();
+            return journal.getMinimizedSpecificDataText();
         case JOOBJIND:
-            return journal.getObjectIndicator();
+            return journal.getObjectIndicatorText();
         case JOSYSSEQ:
             return journal.getSystemSequenceNumber();
         case JORCV:
@@ -167,7 +167,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
         case JOTHDX:
             return journal.getThreadId();
         case JOADF:
-            return journal.getAddressFamily();
+            return journal.getAddressFamilyText();
         case JORPORT:
             return Integer.toString(journal.getRemotePort());
         case JORADR:
@@ -179,7 +179,7 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
         case JOOBJTYP:
             return journal.getObjectType();
         case JOFILTYP:
-            return journal.getFileTypeIndicator();
+            return journal.getFileTypeIndicatorText();
         case JOCMTLVL:
             return Integer.toString(journal.getCommitmentCycle());
         case JOESD:

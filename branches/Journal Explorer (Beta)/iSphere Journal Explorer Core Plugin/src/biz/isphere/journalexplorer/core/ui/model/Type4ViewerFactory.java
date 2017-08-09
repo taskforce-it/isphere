@@ -13,10 +13,31 @@ import java.util.HashSet;
 
 public class Type4ViewerFactory extends AbstractTypeViewerFactory {
 
-    private static ViewerColumn[] columnNames = { ViewerColumn.ID, ViewerColumn.JOENTT, ViewerColumn.JOSEQN, ViewerColumn.JOCODE, ViewerColumn.JOENTL,
-        ViewerColumn.JODATE, ViewerColumn.JOTIME, ViewerColumn.JOSYNM, ViewerColumn.JOJOB, ViewerColumn.JOUSER, ViewerColumn.JONBR, ViewerColumn.JOUSPF,
-        ViewerColumn.JOPGM, ViewerColumn.JOLIB, ViewerColumn.JOOBJ, ViewerColumn.JOMBR, ViewerColumn.JOJID, ViewerColumn.JORCST, ViewerColumn.JOTGR,
-        ViewerColumn.JOIGNAPY, ViewerColumn.JOMINESD, ViewerColumn.JOESD };
+    // @formatter:off
+    private static ViewerColumn[] columnNames = { 
+        ViewerColumn.ID, 
+        ViewerColumn.JOENTT, 
+        ViewerColumn.JOSEQN, 
+        ViewerColumn.JOCODE,
+        ViewerColumn.JOENTL, 
+        ViewerColumn.JODATE, 
+        ViewerColumn.JOTIME, 
+        ViewerColumn.JOSYNM, 
+        ViewerColumn.JOJOB,
+        ViewerColumn.JOUSER, 
+        ViewerColumn.JONBR, 
+        ViewerColumn.JOUSPF, 
+        ViewerColumn.JOPGM, 
+        ViewerColumn.JOLIB, 
+        ViewerColumn.JOOBJ, 
+        ViewerColumn.JOMBR,
+        ViewerColumn.JOJID, 
+        ViewerColumn.JORCST, 
+        ViewerColumn.JOTGR, 
+        ViewerColumn.JOIGNAPY, 
+        ViewerColumn.JOMINESD, 
+        ViewerColumn.JOESD };
+    // @formatter:on
 
     public Type4ViewerFactory() {
         super(new HashSet<ViewerColumn>(Arrays.asList(columnNames)));

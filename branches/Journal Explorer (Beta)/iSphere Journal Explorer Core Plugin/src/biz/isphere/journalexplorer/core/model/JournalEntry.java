@@ -74,14 +74,19 @@ public class JournalEntry {
     private String journalID; // JOJID
 
     private String referentialConstraint; // JORCST
+    private String referentialConstraintText;
 
     private String trigger; // JOTGR
+    private String triggerText;
 
     private String incompleteData; // JOINCDAT
+    private String incompleteDataText;
 
     private String apyRmvJrnChg; // JOIGNAPY
+    private String apyRmvJrnChgText;
 
     private String minimizedSpecificData; // JOMINESD
+    private String minimizedSpecificDataText;
 
     private byte[] specificData; // JOESD
 
@@ -92,6 +97,7 @@ public class JournalEntry {
     private int programAsp; // JOPGMASP
 
     private String objectIndicator; // JOOBJIND
+    private String objectIndicatorText;
 
     private String systemSequenceNumber; // JOSYSSEQ
 
@@ -108,6 +114,7 @@ public class JournalEntry {
     private String threadId; // JOTHDX
 
     private String addressFamily; // JOADF
+    private String addressFamilyText;
 
     private int remotePort; // JORPORT
 
@@ -120,6 +127,7 @@ public class JournalEntry {
     private String objectType; // JOOBJTYP
 
     private String fileTypeIndicator; // JOFILTYP
+    private String fileTypeIndicatorText;
 
     private String nestedCommitLevel; // JOCMTLVL
 
@@ -533,8 +541,23 @@ public class JournalEntry {
         return referentialConstraint;
     }
 
+    public String getReferentialConstraintText() {
+        if (referentialConstraintText == null) {
+            if ("0".equals(referentialConstraint)) {
+                referentialConstraintText = "no";
+            } else if ("1".equals(referentialConstraint)) {
+                referentialConstraintText = "yes";
+            } else {
+                referentialConstraintText = referentialConstraint;
+            }
+        }
+
+        return referentialConstraintText;
+    }
+
     public void setReferentialConstraint(String referentialConstraint) {
         this.referentialConstraint = referentialConstraint.trim();
+        this.referentialConstraintText = null;
     }
 
     /**
@@ -549,8 +572,23 @@ public class JournalEntry {
         return trigger;
     }
 
+    public String getTriggerText() {
+        if (triggerText == null) {
+            if ("0".equals(trigger)) {
+                triggerText = "no";
+            } else if ("1".equals(trigger)) {
+                triggerText = "yes";
+            } else {
+                triggerText = trigger;
+            }
+        }
+
+        return triggerText;
+    }
+
     public void setTrigger(String trigger) {
         this.trigger = trigger.trim();
+        this.triggerText = null;
     }
 
     /**
@@ -564,8 +602,23 @@ public class JournalEntry {
         return incompleteData;
     }
 
+    public String getIncompleteDataText() {
+        if (incompleteDataText == null) {
+            if ("0".equals(incompleteData)) {
+                incompleteDataText = "no";
+            } else if ("1".equals(incompleteData)) {
+                incompleteDataText = "yes";
+            } else {
+                incompleteDataText = incompleteData;
+            }
+        }
+
+        return incompleteDataText;
+    }
+
     public void setIncompleteData(String incompleteData) {
         this.incompleteData = incompleteData.trim();
+        this.incompleteDataText = null;
     }
 
     /**
@@ -580,8 +633,23 @@ public class JournalEntry {
         return apyRmvJrnChg;
     }
 
+    public String getIgnoredByApyRmvJrnChgText() {
+        if (apyRmvJrnChgText == null) {
+            if ("0".equals(apyRmvJrnChg)) {
+                apyRmvJrnChgText = "no";
+            } else if ("1".equals(apyRmvJrnChg)) {
+                apyRmvJrnChgText = "yes";
+            } else {
+                apyRmvJrnChgText = apyRmvJrnChg;
+            }
+        }
+
+        return apyRmvJrnChgText;
+    }
+
     public void setIgnoredByApyRmvJrnChg(String apyRmvJrnChg) {
         this.apyRmvJrnChg = apyRmvJrnChg.trim();
+        this.apyRmvJrnChgText = null;
     }
 
     /**
@@ -595,8 +663,25 @@ public class JournalEntry {
         return minimizedSpecificData;
     }
 
+    public String getMinimizedSpecificDataText() {
+        if (minimizedSpecificDataText == null) {
+            if ("0".equals(minimizedSpecificData)) {
+                minimizedSpecificDataText = "no";
+            } else if ("1".equals(minimizedSpecificData)) {
+                minimizedSpecificDataText = "minimized";
+            } else if ("2".equals(minimizedSpecificData)) {
+                minimizedSpecificDataText = "field boundaries";
+            } else {
+                minimizedSpecificDataText = minimizedSpecificData;
+            }
+        }
+
+        return minimizedSpecificDataText;
+    }
+
     public void setMinimizedSpecificData(String minimizedSpecificData) {
         this.minimizedSpecificData = minimizedSpecificData.trim();
+        this.minimizedSpecificDataText = null;
     }
 
     /**
@@ -611,8 +696,25 @@ public class JournalEntry {
         return objectIndicator;
     }
 
+    public String getObjectIndicatorText() {
+        if (objectIndicatorText == null) {
+            if ("0".equals(objectIndicator)) {
+                objectIndicatorText = "-/-";
+            } else if ("1".equals(objectIndicator)) {
+                objectIndicatorText = "accurate";
+            } else if ("2".equals(objectIndicator)) {
+                objectIndicatorText = "uncertain";
+            } else {
+                objectIndicatorText = objectIndicator;
+            }
+        }
+
+        return objectIndicatorText;
+    }
+
     public void setObjectIndicator(String objectIndicator) {
         this.objectIndicator = objectIndicator.trim();
+        this.objectIndicatorText = null;
     }
 
     /**
@@ -739,8 +841,25 @@ public class JournalEntry {
         return addressFamily;
     }
 
+    public String getAddressFamilyText() {
+        if (addressFamilyText == null) {
+            if ("0".equals(addressFamily)) {
+                addressFamilyText = "-/-";
+            } else if ("4".equals(addressFamily)) {
+                addressFamilyText = "IPv4 (" + addressFamily + ")";
+            } else if ("6".equals(addressFamily)) {
+                addressFamilyText = "IPv6 (" + addressFamily + ")";
+            } else {
+                addressFamilyText = addressFamily;
+            }
+        }
+
+        return addressFamilyText;
+    }
+
     public void setAddressFamily(String addressFamily) {
         this.addressFamily = addressFamily.trim();
+        this.addressFamilyText = null;
     }
 
     /**
@@ -835,8 +954,23 @@ public class JournalEntry {
         return fileTypeIndicator;
     }
 
+    public String getFileTypeIndicatorText() {
+        if (fileTypeIndicatorText == null) {
+            if ("0".equals(fileTypeIndicator)) {
+                fileTypeIndicatorText = "PF (" + fileTypeIndicator + ")";
+            } else if ("1".equals(fileTypeIndicator)) {
+                fileTypeIndicatorText = "LF (" + fileTypeIndicator + ")";
+            } else {
+                fileTypeIndicatorText = fileTypeIndicator;
+            }
+        }
+
+        return fileTypeIndicatorText;
+    }
+
     public void setFileTypeIndicator(String fileTypeIndicator) {
         this.fileTypeIndicator = fileTypeIndicator.trim();
+        this.fileTypeIndicatorText = null;
     }
 
     /**

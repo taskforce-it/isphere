@@ -55,6 +55,54 @@ public class Messages extends NLS {
     public static String SelectEntriesToCompareDialog_ChooseRightRecord;
     public static String SideBySideCompareDialog_SideBySideComparison;
 
+    public static String ColLabel_OutputFile_Rrn;
+
+    public static String Tooltip_OutputFile_Rrn;
+    public static String Tooltip_JOENTL;
+    public static String Tooltip_JOSEQN;
+    public static String Tooltip_JOCODE;
+    public static String Tooltip_JOENTT;
+    public static String Tooltip_JODATE;
+    public static String Tooltip_JOTIME;
+    public static String Tooltip_JOJOB;
+    public static String Tooltip_JOUSER;
+    public static String Tooltip_JONBR;
+    public static String Tooltip_JOPGM;
+    public static String Tooltip_JOPGMLIB;
+    public static String Tooltip_JOPGMDEV;
+    public static String Tooltip_JOPGMASP;
+    public static String Tooltip_JOOBJ;
+    public static String Tooltip_JOLIB;
+    public static String Tooltip_JOMBR;
+    public static String Tooltip_JOCTRR;
+    public static String Tooltip_JOFLAG;
+    public static String Tooltip_JOCCID;
+    public static String Tooltip_JOUSPF;
+    public static String Tooltip_JOSYNM;
+    public static String Tooltip_JOJID;
+    public static String Tooltip_JORCST;
+    public static String Tooltip_JOTGR;
+    public static String Tooltip_JOINCDAT;
+    public static String Tooltip_JOIGNAPY;
+    public static String Tooltip_JOMINESD;
+    public static String Tooltip_JOOBJIND;
+    public static String Tooltip_JOSYSSEQ;
+    public static String Tooltip_JORCV;
+    public static String Tooltip_JORCVLIB;
+    public static String Tooltip_JORCVDEV;
+    public static String Tooltip_JORCVASP;
+    public static String Tooltip_JOARM;
+    public static String Tooltip_JOTHDX;
+    public static String Tooltip_JOADF;
+    public static String Tooltip_JORPORT;
+    public static String Tooltip_JORADR;
+    public static String Tooltip_JOLUW;
+    public static String Tooltip_JOXID;
+    public static String Tooltip_JOOBJTYP;
+    public static String Tooltip_JOFILTYP;
+    public static String Tooltip_JOCMTLVL;
+    public static String Tooltip_JOESD;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

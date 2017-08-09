@@ -8,6 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 
 import biz.isphere.journalexplorer.core.model.File;
@@ -66,7 +67,7 @@ public class Type5DAO extends Type4DAO {
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
-    
+
     public Type5DAO(File outputFile) throws Exception {
         super(outputFile);
     }
@@ -78,28 +79,27 @@ public class Type5DAO extends Type4DAO {
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
         super.populateJournalEntry(resultSet, journalEntry);
-        
+
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
         journalEntry.setProgramLibrary(resultSet.getString(JOPGMLIB));
         journalEntry.setProgramAspDevice(resultSet.getString(JOPGMDEV));
         journalEntry.setProgramAsp(resultSet.getInt(JOPGMASP));
-        journalEntry.setObjectIndicator(resultSet.getString(JOOBJIND)); 
-        journalEntry.setSystemSequenceNumber(resultSet.getString(JOSYSSEQ)); 
-        journalEntry.setReceiver(resultSet.getString(JORCV)); 
-        journalEntry.setReceiverLibrary(resultSet.getString(JORCVLIB)); 
-        journalEntry.setReceiverAspDevice(resultSet.getString(JORCVDEV)); 
-        journalEntry.setReceiverAsp(resultSet.getInt(JORCVASP)); 
-        journalEntry.setArmNumber(resultSet.getInt(JOARM)); 
-//        journalEntry.setTrigger(resultSet.getString(JOTHD)); // Thread ID, HEX(8) 
-        journalEntry.setThreadId(resultSet.getString(JOTHDX)); // Thread ID Hex, CHAR(16) 
-        journalEntry.setAddressFamily(resultSet.getString(JOADF)); // Address Family
-        journalEntry.setRemotePort(resultSet.getInt(JORPORT)); // Remote Port 
-        journalEntry.setRemoteAddress(resultSet.getString(JORADR)); // Remote Address
-        journalEntry.setLogicalUnitOfWork(resultSet.getString(JOLUW)); // Logical Unit of Work 
-        journalEntry.setTransactionIdentifier(resultSet.getString(JOXID)); // XID
-        journalEntry.setObjectType(resultSet.getString(JOOBJTYP)); // Object Type
-        journalEntry.setFileTypeIndicator(resultSet.getString(JOFILTYP)); // File Type Indicator 
-        journalEntry.setNestedCommitLevel(resultSet.getString(JOCMTLVL)); // Nested Commit Level
+        journalEntry.setObjectIndicator(resultSet.getString(JOOBJIND));
+        journalEntry.setSystemSequenceNumber(resultSet.getString(JOSYSSEQ));
+        journalEntry.setReceiver(resultSet.getString(JORCV));
+        journalEntry.setReceiverLibrary(resultSet.getString(JORCVLIB));
+        journalEntry.setReceiverAspDevice(resultSet.getString(JORCVDEV));
+        journalEntry.setReceiverAsp(resultSet.getInt(JORCVASP));
+        journalEntry.setArmNumber(resultSet.getInt(JOARM));
+        journalEntry.setThreadId(resultSet.getString(JOTHDX));
+        journalEntry.setAddressFamily(resultSet.getString(JOADF));
+        journalEntry.setRemotePort(resultSet.getInt(JORPORT));
+        journalEntry.setRemoteAddress(new String(resultSet.getBytes(JORADR), Charset.forName("IBM037")));
+        journalEntry.setLogicalUnitOfWork(resultSet.getString(JOLUW));
+        journalEntry.setTransactionIdentifier(resultSet.getString(JOXID));
+        journalEntry.setObjectType(resultSet.getString(JOOBJTYP));
+        journalEntry.setFileTypeIndicator(resultSet.getString(JOFILTYP));
+        journalEntry.setNestedCommitLevel(resultSet.getString(JOCMTLVL));
 
         return journalEntry;
     }
