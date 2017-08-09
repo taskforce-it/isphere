@@ -55,6 +55,7 @@ public class Type2DAO extends Type1DAO {
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
         
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
+        
         journalEntry.setJobName(resultSet.getString("JOUSPF"));
         journalEntry.setJobName(resultSet.getString("JOSYNM"));
 

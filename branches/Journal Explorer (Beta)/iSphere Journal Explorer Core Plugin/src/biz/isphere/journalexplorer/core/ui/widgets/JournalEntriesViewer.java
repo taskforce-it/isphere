@@ -13,26 +13,31 @@ package biz.isphere.journalexplorer.core.ui.widgets;
 
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
+import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
-import biz.isphere.journalexplorer.core.ui.labelproviders.JournalColumnLabel;
+import biz.isphere.journalexplorer.core.ui.views.model.AbstractTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.model.Type1ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.model.Type2ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.model.Type3ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.model.Type4ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.model.Type5ViewerFactory;
 
 public class JournalEntriesViewer extends CTabItem {
 
@@ -64,162 +69,39 @@ public class JournalEntriesViewer extends CTabItem {
 
     private void createTableViewer(Composite container) {
 
-        Table table;
-        TableColumn newColumn;
+        try {
 
-        tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
+            AbstractTypeViewerFactory factory = null;
+            switch (getOutfileType(outputFile)) {
+            case JournalOutputType.TYPE5:
+                factory = new Type5ViewerFactory();
+                break;
+            case JournalOutputType.TYPE4:
+                factory = new Type4ViewerFactory();
+                break;
+            case JournalOutputType.TYPE3:
+                factory = new Type3ViewerFactory();
+                break;
+            case JournalOutputType.TYPE2:
+                factory = new Type2ViewerFactory();
+                break;
+            default:
+                factory = new Type1ViewerFactory();
+                break;
+            }
 
-        table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        table.setLinesVisible(true);
-        table.setHeaderVisible(true);
+            tableViewer = factory.createTableViewer(container);
 
-        // /
-        // / RRN Column
-        // /
-        newColumn = new TableColumn(table, SWT.RIGHT);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(45);
-        newColumn.setText("RRN");
+        } catch (Exception e) {
+            MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
 
-        // /
-        // / JOENTT Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(55);
-        newColumn.setText("JOENTT");
+    private int getOutfileType(File outputFile) throws Exception {
 
-        // /
-        // / JOSEQN Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(55);
-        newColumn.setText("JOSEQN");
+        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
 
-        // /
-        // / JOCODE Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(50);
-        newColumn.setText("JOCODE");
-
-        // /
-        // / JOENTL Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(50);
-        newColumn.setText("JOENTL");
-
-        // /
-        // / JODATE Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(80);
-        newColumn.setText("JODATE");
-
-        // /
-        // / JOTIME Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(80);
-        newColumn.setText("JOTIME");
-
-        // /
-        // / JOJOB Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOJOB");
-
-        // /
-        // / JOUSER Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOUSER");
-
-        // /
-        // / JONBR Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JONBR");
-
-        // /
-        // / JOPGM Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOPGM");
-
-        // /
-        // / JOLIB Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOLIB");
-
-        // /
-        // / JOOBJ Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOOBJ");
-
-        // /
-        // / JOMBR Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(90);
-        newColumn.setText("JOMBR");
-
-        // /
-        // / JOMINESD Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(50);
-        newColumn.setText("JOMINESD");
-
-        // /
-        // / JOESD Column
-        // /
-        newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setMoveable(true);
-        newColumn.setResizable(true);
-        newColumn.setWidth(350);
-        newColumn.setText("JOESD");
-
-        tableViewer.setLabelProvider(new JournalColumnLabel());
-        tableViewer.setContentProvider(new JournalViewerContentProvider(tableViewer));
+        return metaTable.getOutfileType();
     }
 
     public void openJournal() throws Exception {

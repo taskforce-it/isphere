@@ -45,7 +45,7 @@ public class Messages extends NLS {
     public static String JournalProperties_JOENTT;
     public static String JournalProperties_JOESD;
     public static String JournalProperties_JOSEQN;
-    public static String JournalProperties_RRN;
+    public static String JournalProperties_RRN_OutputFile;
     public static String MetaTableDAO_NullResultSet;
     public static String MetaTableDAO_TableDefinitionNotFound;
     public static String SelectEntriesToCompareDialog_3;

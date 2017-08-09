@@ -46,7 +46,7 @@ public class Type4DAO extends Type3DAO {
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
-    
+
     public Type4DAO(File outputFile) throws Exception {
         super(outputFile);
     }
@@ -57,12 +57,13 @@ public class Type4DAO extends Type3DAO {
 
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
-        
+
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
-        journalEntry.setJournalID(resultSet.getString("JOJID"));
-        journalEntry.setReferentialConstraint(resultSet.getString("JORCST"));
-        journalEntry.setTrigger(resultSet.getString("JOTGR"));
-        journalEntry.setIgnoredByApyRmvJrnChg(resultSet.getString("JOIGNAPY"));
+
+        journalEntry.setJournalID(resultSet.getString(JOJID));
+        journalEntry.setReferentialConstraint(resultSet.getString(JORCST));
+        journalEntry.setTrigger(resultSet.getString(JOTGR));
+        journalEntry.setIgnoredByApyRmvJrnChg(resultSet.getString(JOIGNAPY));
 
         return journalEntry;
     }

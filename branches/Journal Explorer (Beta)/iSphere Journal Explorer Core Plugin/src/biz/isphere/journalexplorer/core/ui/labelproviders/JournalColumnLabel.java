@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.views.model.ViewerColumn;
 
 public class JournalColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
@@ -32,9 +33,11 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
     private SimpleDateFormat timeFormat;
 
     private Preferences preferences;
+    private ViewerColumn[] fieldIdMapping;
 
-    public JournalColumnLabel() {
+    public JournalColumnLabel(ViewerColumn[] fieldIdMapping) {
         this.preferences = Preferences.getInstance();
+        this.fieldIdMapping = fieldIdMapping;
     }
 
     public Color getBackground(Object element, int index) {
@@ -82,46 +85,104 @@ public class JournalColumnLabel extends LabelProvider implements ITableLabelProv
 
         JournalEntry journal = (JournalEntry)object;
 
-        switch (index) {
-        case 0: // RRN
+        switch (fieldIdMapping[index]) {
+        case ID:
             return Integer.toString(journal.getId()).trim();
-        case 1: // JOENTT
-            return journal.getEntryType();
-        case 2: // JOSEQN
-            return Long.toString(journal.getSequenceNumber());
-        case 3: // JOCODE
-            return journal.getJournalCode();
-        case 4: // JOENTL
+        case JOENTL:
             return Integer.toString(journal.getEntryLength());
-        case 5: // JODATE
+        case JOSEQN:
+            return Long.toString(journal.getSequenceNumber());
+        case JOCODE:
+            return journal.getJournalCode();
+        case JOENTT:
+            return journal.getEntryType();
+        case JODATE:
             Date date = journal.getDate();
             if (date == null) {
                 return "";
             }
             return getDateFormatter().format(date);
-        case 6: // JOTIME
+        case JOTIME:
             Time time = journal.getTime();
             if (time == null) {
                 return "";
             }
             return getTimeFormatter().format(time);
-        case 7: // JOJOB
+        case JOJOB:
             return journal.getJobName();
-        case 8: // JOUSER
+        case JOUSER:
             return journal.getJobUserName();
-        case 9: // JONBR
+        case JONBR:
             return Integer.toString(journal.getJobNumber());
-        case 10: // JOPGM
+        case JOPGM:
             return journal.getProgramName();
-        case 11: // JOLIB
-            return journal.getObjectLibrary();
-        case 12: // JOMBR
-            return journal.getMemberName();
-        case 13: // JOOBJ
+        case JOPGMLIB:
+            return journal.getProgramLibrary();
+        case JOPGMDEV:
+            return journal.getProgramAspDevice();
+        case JOPGMASP:
+            return Integer.toString(journal.getProgramAsp());
+        case JOOBJ:
             return journal.getObjectName();
-        case 14: // JOMINESD
+        case JOLIB:
+            return journal.getObjectLibrary();
+        case JOMBR:
+            return journal.getMemberName();
+        case JOCTRR:
+            return Integer.toString(journal.getCountRrn());
+        case JOFLAG:
+            return journal.getFlag();
+        case JOCCID:
+            return Integer.toString(journal.getCommitmentCycle());
+        case JOUSPF:
+            return journal.getUserProfile();
+        case JOSYNM:
+            return journal.getSystemName();
+        case JOJID:
+            return journal.getJournalID();
+        case JORCST:
+            return journal.getReferentialConstraint();
+        case JOTGR:
+            return journal.getTrigger();
+        case JOINCDAT:
+            return journal.getIncompleteData();
+        case JOIGNAPY:
+            return journal.getIgnoredByApyRmvJrnChg();
+        case JOMINESD:
             return journal.getMinimizedSpecificData();
-        case 15: // JOESD
+        case JOOBJIND:
+            return journal.getObjectIndicator();
+        case JOSYSSEQ:
+            return journal.getSystemSequenceNumber();
+        case JORCV:
+            return journal.getReceiver();
+        case JORCVLIB:
+            return journal.getReceiverLibrary();
+        case JORCVDEV:
+            return journal.getReceiverAspDevice();
+        case JORCVASP:
+            return Integer.toString(journal.getReceiverAsp());
+        case JOARM:
+            return Integer.toString(journal.getArmNumber());
+        case JOTHDX:
+            return journal.getThreadId();
+        case JOADF:
+            return journal.getAddressFamily();
+        case JORPORT:
+            return Integer.toString(journal.getRemotePort());
+        case JORADR:
+            return journal.getRemoteAddress();
+        case JOLUW:
+            return journal.getLogicalUnitOfWork();
+        case JOXID:
+            return journal.getTransactionIdentifier();
+        case JOOBJTYP:
+            return journal.getObjectType();
+        case JOFILTYP:
+            return journal.getFileTypeIndicator();
+        case JOCMTLVL:
+            return Integer.toString(journal.getCommitmentCycle());
+        case JOESD:
             // For displaying purposes, replace the null ending character
             // for a blank.
             // Otherwise, the string was truncate by JFace

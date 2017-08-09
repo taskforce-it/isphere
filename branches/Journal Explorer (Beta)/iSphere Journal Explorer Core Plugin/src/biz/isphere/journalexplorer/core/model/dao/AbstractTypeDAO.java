@@ -17,7 +17,7 @@ import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 
-public abstract class AbstractTypeDAO extends DAOBase {
+public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     private File outputFile;
 
@@ -69,6 +69,30 @@ public abstract class AbstractTypeDAO extends DAOBase {
     
     protected abstract String getSqlStatement();
     
-    protected abstract JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception;
+    protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
+        
+        journalEntry.setConnectionName(getConnectionName());
+        journalEntry.setId(resultSet.getInt(RRN_OUTPUT_FILE));
+        journalEntry.setCommitmentCycle(resultSet.getInt(JOCCID));
+        journalEntry.setEntryLength(resultSet.getInt(JOENTL));
+        journalEntry.setEntryType(resultSet.getString(JOENTT));
+        journalEntry.setIncompleteData(resultSet.getString(JOINCDAT));
+        journalEntry.setJobName(resultSet.getString(JOJOB));
+        journalEntry.setJobNumber(resultSet.getInt(JONBR));
+        journalEntry.setJobUserName(resultSet.getString(JOUSER));
+        journalEntry.setCountRrn(resultSet.getInt(JOCTRR));
+        journalEntry.setFlag(resultSet.getString(JOFLAG));
+        journalEntry.setJournalCode(resultSet.getString(JOCODE));
+        journalEntry.setMemberName(resultSet.getString(JOMBR));
+        journalEntry.setMinimizedSpecificData(resultSet.getString(JOMINESD));
+        journalEntry.setObjectLibrary(resultSet.getString(JOLIB));
+        journalEntry.setObjectName(resultSet.getString(JOOBJ));
+        journalEntry.setProgramName(resultSet.getString(JOPGM));
+        journalEntry.setSequenceNumber(resultSet.getLong(JOSEQN));
+        journalEntry.setSpecificData(resultSet.getBytes(JOESD));
+        journalEntry.setStringSpecificData(resultSet.getString(JOESD));
+        
+        return journalEntry;
+    }
 
 }

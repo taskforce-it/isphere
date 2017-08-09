@@ -53,43 +53,17 @@ public class Type3DAO extends AbstractTypeDAO {
 
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
+
+        super.populateJournalEntry(resultSet, journalEntry);
         
-        journalEntry.setConnectionName(getConnectionName());
-        
-        journalEntry.setId(resultSet.getInt("ID"));
-        journalEntry.setCommitmentCycle(resultSet.getInt("JOCCID"));
+        journalEntry.setUserProfile(resultSet.getString(JOUSPF));
+        journalEntry.setSystemName(resultSet.getString(JOSYNM));
 
         // Depending of the journal out type, the timestamp can be a
         // single field or splitted in JODATE and JOTYPE.
         // For TYPE3+ output files it is returned as a timestamp value.
-        journalEntry.setDate(resultSet.getDate("JOTSTP"));
-        journalEntry.setTime(resultSet.getTime("JOTSTP"));
-        
-        journalEntry.setEntryLength(resultSet.getInt("JOENTL"));
-        journalEntry.setEntryType(resultSet.getString("JOENTT"));
-        journalEntry.setIncompleteData(resultSet.getString("JOINCDAT"));
-        journalEntry.setJobName(resultSet.getString("JOJOB"));
-        journalEntry.setJobNumber(resultSet.getInt("JONBR"));
-        journalEntry.setJobUserName(resultSet.getString("JOUSER"));
-        journalEntry.setCountRrn(resultSet.getInt("JOCTRR"));
-        journalEntry.setFlag(resultSet.getString("JOFLAG"));
-        journalEntry.setJournalCode(resultSet.getString("JOCODE"));
-        // setJournalID
-        journalEntry.setMemberName(resultSet.getString("JOMBR"));
-        journalEntry.setMinimizedSpecificData(resultSet.getString("JOMINESD"));
-        journalEntry.setObjectLibrary(resultSet.getString("JOLIB"));
-        journalEntry.setObjectName(resultSet.getString("JOOBJ"));
-        // setOutFileLibrary
-        // setOutFileName
-        journalEntry.setProgramName(resultSet.getString("JOPGM"));
-        // setReferentialConstraint
-        journalEntry.setSequenceNumber(resultSet.getLong("JOSEQN"));
-        journalEntry.setSpecificData(resultSet.getBytes("JOESD"));
-        journalEntry.setStringSpecificData(resultSet.getString("JOESD"));
-        // setSystemName
-        // setTime
-        // setTrigger
-        // setUserProfile
+        journalEntry.setDate(resultSet.getDate(JOTSTP));
+        journalEntry.setTime(resultSet.getTime(JOTSTP));
 
         return journalEntry;
     }

@@ -364,7 +364,7 @@ public class JournalEntry {
     }
 
     public void setProgramAspDevice(String programAspDevice) {
-        this.programAspDevice = programAspDevice;
+        this.programAspDevice = programAspDevice.trim();
     }
 
     /**
@@ -372,7 +372,7 @@ public class JournalEntry {
      * <p>
      * Date type in journal output file: ZONED(5 0)
      * 
-     * @return value of field 'JOPGMLIB'.
+     * @return value of field 'JOPGMASP'.
      * @since *TYPE5
      */
     public int getProgramAsp() {
@@ -479,6 +479,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(10)
      * 
      * @return value of field 'JOUSPF'.
+     * @since *TYPE2
      */
     public String getUserProfile() {
         return userProfile;
@@ -494,6 +495,7 @@ public class JournalEntry {
      * Date type in journal output file: CHAR(8)
      * 
      * @return value of field 'JOSYNM'.
+     * @since *TYPE2
      */
     public String getSystemName() {
         return systemName;
@@ -508,8 +510,8 @@ public class JournalEntry {
      * <p>
      * Date type in journal output file: CHAR(10)
      * 
-     * @since *TYPE4
      * @return value of field 'JOJID'.
+     * @since *TYPE4
      */
     public String getJournalID() {
         return journalID;
@@ -610,7 +612,7 @@ public class JournalEntry {
     }
 
     public void setObjectIndicator(String objectIndicator) {
-        this.objectIndicator = objectIndicator;
+        this.objectIndicator = objectIndicator.trim();
     }
 
     /**
@@ -626,7 +628,7 @@ public class JournalEntry {
     }
 
     public void setSystemSequenceNumber(String systemSequenceNumber) {
-        this.systemSequenceNumber = systemSequenceNumber;
+        this.systemSequenceNumber = systemSequenceNumber.trim();
     }
 
     /**
@@ -642,7 +644,7 @@ public class JournalEntry {
     }
 
     public void setReceiver(String receiver) {
-        this.receiver = receiver;
+        this.receiver = receiver.trim();
     }
 
     /**
@@ -658,7 +660,7 @@ public class JournalEntry {
     }
 
     public void setReceiverLibrary(String receiverLibrary) {
-        this.receiverLibrary = receiverLibrary;
+        this.receiverLibrary = receiverLibrary.trim();
     }
 
     /**
@@ -674,7 +676,7 @@ public class JournalEntry {
     }
 
     public void setReceiverAspDevice(String receiverAspDevice) {
-        this.receiverAspDevice = receiverAspDevice;
+        this.receiverAspDevice = receiverAspDevice.trim();
     }
 
     /**
@@ -722,7 +724,7 @@ public class JournalEntry {
     }
 
     public void setThreadId(String threadId) {
-        this.threadId = threadId;
+        this.threadId = threadId.trim();
     }
 
     /**
@@ -738,7 +740,7 @@ public class JournalEntry {
     }
 
     public void setAddressFamily(String addressFamily) {
-        this.addressFamily = addressFamily;
+        this.addressFamily = addressFamily.trim();
     }
 
     /**
@@ -770,7 +772,7 @@ public class JournalEntry {
     }
 
     public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
+        this.remoteAddress = remoteAddress.trim();
     }
 
     /**
@@ -786,7 +788,7 @@ public class JournalEntry {
     }
 
     public void setLogicalUnitOfWork(String logicalUnitOfWork) {
-        this.logicalUnitOfWork = logicalUnitOfWork;
+        this.logicalUnitOfWork = logicalUnitOfWork.trim();
     }
 
     /**
@@ -802,7 +804,7 @@ public class JournalEntry {
     }
 
     public void setTransactionIdentifier(String transactionIdentifier) {
-        this.transactionIdentifier = transactionIdentifier;
+        this.transactionIdentifier = transactionIdentifier.trim();
     }
 
     /**
@@ -818,7 +820,7 @@ public class JournalEntry {
     }
 
     public void setObjectType(String objectType) {
-        this.objectType = objectType;
+        this.objectType = objectType.trim();
     }
 
     /**
@@ -834,7 +836,7 @@ public class JournalEntry {
     }
 
     public void setFileTypeIndicator(String fileTypeIndicator) {
-        this.fileTypeIndicator = fileTypeIndicator;
+        this.fileTypeIndicator = fileTypeIndicator.trim();
     }
 
     /**
@@ -850,7 +852,7 @@ public class JournalEntry {
     }
 
     public void setNestedCommitLevel(String nestedCommitLevel) {
-        this.nestedCommitLevel = nestedCommitLevel;
+        this.nestedCommitLevel = nestedCommitLevel.trim();
     }
 
     /**

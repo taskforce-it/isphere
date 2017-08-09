@@ -18,7 +18,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 
 public class JournalProperties {
 
-    private static final String RRN = Messages.JournalProperties_RRN;
+    private static final String RRN_OUTPUT_FILE = Messages.JournalProperties_RRN_OutputFile;
     private static final String JOENTL = Messages.JournalProperties_JOENTL;
     private static final String JOSEQN = Messages.JournalProperties_JOSEQN;
     private static final String JOCODE = Messages.JournalProperties_JOCODE;
@@ -37,7 +37,7 @@ public class JournalProperties {
 
     private void initialize() {
 
-        properties.add(new JournalProperty(RRN, journal.getId(), journal));
+        properties.add(new JournalProperty(RRN_OUTPUT_FILE, journal.getId(), journal));
         properties.add(new JournalProperty(JOENTL, journal.getEntryLength(), journal));
         properties.add(new JournalProperty(JOSEQN, journal.getSequenceNumber(), journal));
         properties.add(new JournalProperty(JOCODE, journal.getJournalCode(), journal));
