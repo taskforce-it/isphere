@@ -822,6 +822,11 @@ public class JournalEntry {
      * @since *TYPE5
      */
     public String getThreadId() {
+
+        if (threadId.replaceAll("0", "").trim().length() == 0) {
+            return "-/-"; //$NON-NLS-1$
+        }
+
         return threadId;
     }
 

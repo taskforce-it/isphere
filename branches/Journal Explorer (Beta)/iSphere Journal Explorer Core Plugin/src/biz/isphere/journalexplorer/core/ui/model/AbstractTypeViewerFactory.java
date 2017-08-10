@@ -88,27 +88,44 @@ public abstract class AbstractTypeViewerFactory {
         List<JournalViewerTableColumn> columns = new LinkedList<JournalViewerTableColumn>();
 
         columns.add(new JournalViewerTableColumn(ViewerColumn.ID, Messages.ColLabel_OutputFile_Rrn, Messages.Tooltip_OutputFile_Rrn, 45, SWT.RIGHT));
+
+        // Entry seq#, code, type, ...
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOENTL, Messages.Tooltip_JOENTL, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOSEQN, Messages.Tooltip_JOSEQN, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOCODE, Messages.Tooltip_JOCODE, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOENTT, Messages.Tooltip_JOENTT, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JODATE, Messages.Tooltip_JODATE, 80));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOTIME, Messages.Tooltip_JOTIME, 80));
+
+        // Job, that added the journal entry ...
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOJOB, Messages.Tooltip_JOJOB, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOUSER, Messages.Tooltip_JOUSER, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JONBR, Messages.Tooltip_JONBR, 90));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOPGM, Messages.Tooltip_JOPGM, 90));
+        // .. extended attributes
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOUSPF, Messages.Tooltip_JOUSPF, 90));
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOTHDX, Messages.Tooltip_JOTHDX, 120));
+
+        // Program, that added the journal entry
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOPGMLIB, Messages.Tooltip_JOPGMLIB, 90));
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOPGM, Messages.Tooltip_JOPGM, 90));
+        // .. extended attributes
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOPGMDEV, Messages.Tooltip_JOPGMDEV, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOPGMASP, Messages.Tooltip_JOPGMASP, 90));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOOBJ, Messages.Tooltip_JOOBJ, 90));
+
+        // Object that was changed
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOLIB, Messages.Tooltip_JOLIB, 90));
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOOBJ, Messages.Tooltip_JOOBJ, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOMBR, Messages.Tooltip_JOMBR, 90));
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOOBJTYP, Messages.Tooltip_JOOBJTYP, 60));
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOFILTYP, Messages.Tooltip_JOFILTYP, 60));
+
+        // System that the object resides on
+        columns.add(new JournalViewerTableColumn(ViewerColumn.JOSYNM, Messages.Tooltip_JOSYNM, 90));
+
+        // Journal entry flags
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOCTRR, Messages.Tooltip_JOCTRR, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOFLAG, Messages.Tooltip_JOFLAG, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOCCID, Messages.Tooltip_JOCCID, 60));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOUSPF, Messages.Tooltip_JOUSPF, 90));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOSYNM, Messages.Tooltip_JOSYNM, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOJID, Messages.Tooltip_JOJID, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORCST, Messages.Tooltip_JORCST, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOTGR, Messages.Tooltip_JOTGR, 60));
@@ -117,20 +134,25 @@ public abstract class AbstractTypeViewerFactory {
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOMINESD, Messages.Tooltip_JOMINESD, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOOBJIND, Messages.Tooltip_JOOBJIND, 80));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOSYSSEQ, Messages.Tooltip_JOSYSSEQ, 140));
+
+        // Journal receiver
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORCV, Messages.Tooltip_JORCV, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORCVLIB, Messages.Tooltip_JORCVLIB, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORCVDEV, Messages.Tooltip_JORCVDEV, 90));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORCVASP, Messages.Tooltip_JORCVASP, 50));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOARM, Messages.Tooltip_JOARM, 60));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOTHDX, Messages.Tooltip_JOTHDX, 120));
+
+        // Remote address
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOADF, Messages.Tooltip_JOADF, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORPORT, Messages.Tooltip_JORPORT, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JORADR, Messages.Tooltip_JORADR, 90));
+
+        // Logical unit of work
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOLUW, Messages.Tooltip_JOLUW, 200));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOXID, Messages.Tooltip_JOXID, 200));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOOBJTYP, Messages.Tooltip_JOOBJTYP, 60));
-        columns.add(new JournalViewerTableColumn(ViewerColumn.JOFILTYP, Messages.Tooltip_JOFILTYP, 60));
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOCMTLVL, Messages.Tooltip_JOCMTLVL, 60));
+
+        // Entry specific data
         columns.add(new JournalViewerTableColumn(ViewerColumn.JOESD, Messages.Tooltip_JOESD, 350));
 
         return columns.toArray(new JournalViewerTableColumn[columns.size()]);
