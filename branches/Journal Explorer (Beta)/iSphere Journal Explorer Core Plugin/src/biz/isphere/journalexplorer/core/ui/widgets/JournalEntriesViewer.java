@@ -11,9 +11,15 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -39,7 +45,7 @@ import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 
-public class JournalEntriesViewer extends CTabItem {
+public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener {
 
     private Composite container;
     private TableViewer tableViewer;
@@ -47,6 +53,7 @@ public class JournalEntriesViewer extends CTabItem {
     private File outputFile;
     private List<JournalEntry> data;
     private Exception dataLoadException;
+    private Set<ISelectionChangedListener> selectionChangedListeners;
 
     public JournalEntriesViewer(CTabFolder parent, File outputFile) {
         super(parent, SWT.NONE);
@@ -55,11 +62,13 @@ public class JournalEntriesViewer extends CTabItem {
         this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
 
+        this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
+
         this.initializeComponents();
     }
 
     private void initializeComponents() {
-
+        
         container.setLayout(new FillLayout());
         setText(connectionName + ": " + outputFile.getQualifiedName());
         createTableViewer(container);
@@ -91,6 +100,7 @@ public class JournalEntriesViewer extends CTabItem {
             }
 
             tableViewer = factory.createTableViewer(container);
+            tableViewer.addSelectionChangedListener(this);
 
         } catch (Exception e) {
             MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
@@ -100,6 +110,7 @@ public class JournalEntriesViewer extends CTabItem {
     private int getOutfileType(File outputFile) throws Exception {
 
         MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
+        metaTable.setHidden(true);
 
         return metaTable.getOutfileType();
     }
@@ -173,9 +184,34 @@ public class JournalEntriesViewer extends CTabItem {
 
     }
 
+    public ITreeSelection getSelection() {
+
+        ISelection selection = tableViewer.getSelection();
+        if (selection instanceof ITreeSelection) {
+            return (ITreeSelection)selection;
+        }
+
+        return null;
+    }
+
     public JournalEntry[] getInput() {
 
         JournalViewerContentProvider contentProvider = (JournalViewerContentProvider)tableViewer.getContentProvider();
         return contentProvider.getInput();
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.add(listener);
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.remove(listener);
+    }
+
+    public void selectionChanged(SelectionChangedEvent event) {
+
+        for (ISelectionChangedListener selectionChangedListener : selectionChangedListeners) {
+            selectionChangedListener.selectionChanged(event);
+        }
     }
 }

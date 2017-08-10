@@ -13,15 +13,19 @@ package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -36,30 +40,31 @@ import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
-import biz.isphere.journalexplorer.core.ui.dialogs.ConfigureParsersDialog;
+import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
+import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
+import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
+import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
-public class JournalExplorerView extends ViewPart implements SelectionListener {
+public class JournalExplorerView extends ViewPart implements ISelectionChangedListener, SelectionListener {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
-    private Action openJournalAction;
-    private Action highlightUserEntries;
-    private Action configureJoesdParsers;
-    private Action reloadEntries;
+    private OpenJournalOutfileAction openJournalOutputFileAction;
+    private ShowSideBySideAction showSideBySideAction;
+    private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
+    private ConfigureParsersAction configureParsersAction;
+    private GenericRefreshAction reloadEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
     private ArrayList<JournalEntriesViewer> journalViewers;
-    private Preferences preferences;
 
     private CTabFolder tabs;
 
     public JournalExplorerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
         this.journalViewers = new ArrayList<JournalEntriesViewer>();
-        this.preferences = Preferences.getInstance();
     }
 
     /**
@@ -74,6 +79,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         container.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         tabs = new CTabFolder(container, SWT.TOP | SWT.CLOSE);
+        tabs.addSelectionListener(this);
         tabs.addCTabFolder2Listener(new CTabFolder2Listener() {
             public void showList(CTabFolderEvent arg0) {
             }
@@ -90,10 +96,12 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
             public void close(CTabFolderEvent event) {
                 if (event.item instanceof JournalEntriesViewer) {
                     cleanupClosedTab((JournalEntriesViewer)event.item);
+                    setActionEnablement(null);
                 }
 
             }
         });
+
         createActions();
         initializeToolBar();
         getSite().setSelectionProvider(selectionProviderIntermediate);
@@ -111,83 +119,65 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
      */
     private void createActions() {
 
-        // /
-        // / openJournalAction
-        // /
-        openJournalAction = new Action(Messages.JournalExplorerView_OpenJournal) {
-
+        openJournalOutputFileAction = new OpenJournalOutfileAction(getSite().getShell()) {
             @Override
-            public void run() {
-                performOpenJournal();
+            public void postRunAction() {
+                File outputFile = openJournalOutputFileAction.getOutputFile();
+                createJournalTab(outputFile);
             }
         };
-        openJournalAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
-            .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN));
 
-        // /
-        // / highlightUserEntries action
-        // /
-        highlightUserEntries = new Action(Messages.JournalExplorerView_HighlightUserEntries, Action.AS_CHECK_BOX) {
+        showSideBySideAction = new ShowSideBySideAction(getSite().getShell());
 
+        toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction() {
             @Override
-            public void run() {
-                preferences.setHighlightUserEntries(isChecked());
+            public void postRunAction() {
                 refreshAllViewers();
             }
         };
-        highlightUserEntries
-            .setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT));
-        highlightUserEntries.setChecked(preferences.isHighlightUserEntries());
 
-        // /
-        // / openParserAssociations action
-        // /
-        configureJoesdParsers = new Action(Messages.JournalEntryView_ConfigureTableDefinitions) {
-            @Override
+        configureParsersAction = new ConfigureParsersAction(getSite().getShell()) {
             public void run() {
-                performConfigureParsers();
-            }
+                super.run();
+                // if (getButtonPressed() == Dialog.OK) {
+                // performReloadJournalEntries();
+                // }
+            };
         };
 
-        configureJoesdParsers.setImageDescriptor(ISphereJournalExplorerCorePlugin
-            .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_READ_WRITE_OBJ));
-
-        // /
-        // / reParseEntries action
-        // /
-        reloadEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+        reloadEntriesAction = new GenericRefreshAction() {
             @Override
-            public void run() {
-                performRefresh();
+            protected void postRunAction() {
+                performReloadJournalEntries();
             }
         };
-        reloadEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
 
     }
 
     private void createJournalTab(File outputFile) {
 
-        JournalEntriesViewer journalViewer = null;
+        JournalEntriesViewer journalEntriesViewer = null;
 
         try {
 
-            journalViewer = new JournalEntriesViewer(tabs, outputFile);
-            journalViewer.setAsSelectionProvider(selectionProviderIntermediate);
+            journalEntriesViewer = new JournalEntriesViewer(tabs, outputFile);
+            journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
+            journalEntriesViewer.addSelectionChangedListener(this);
 
-            journalViewers.add(journalViewer);
-            tabs.setSelection(journalViewer);
+            journalViewers.add(journalEntriesViewer);
+            tabs.setSelection(journalEntriesViewer);
 
-            performLoadJournalEntries(journalViewer);
+            performLoadJournalEntries(journalEntriesViewer);
 
-            setActionEnablement(journalViewer);
+            setActionEnablement(journalEntriesViewer);
 
         } catch (Exception exception) {
 
             MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
 
-            if (journalViewer != null) {
-                journalViewer.removeAsSelectionProvider(selectionProviderIntermediate);
-                journalViewer.dispose();
+            if (journalEntriesViewer != null) {
+                journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);
+                journalEntriesViewer.dispose();
             }
         }
     }
@@ -204,26 +194,7 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         }
     }
 
-    private void performOpenJournal() {
-
-        AddJournalDialog addJournalDialog = new AddJournalDialog(getSite().getShell());
-        addJournalDialog.create();
-        int result = addJournalDialog.open();
-
-        if (result == Window.OK) {
-            File outputFile = new File(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
-            createJournalTab(outputFile);
-        }
-    }
-
-    protected void performConfigureParsers() {
-
-        ConfigureParsersDialog configureParsersDialog = new ConfigureParsersDialog(getSite().getShell());
-        configureParsersDialog.create();
-        configureParsersDialog.open();
-    }
-
-    private void performRefresh() {
+    private void performReloadJournalEntries() {
 
         JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
         performLoadJournalEntries(viewer);
@@ -243,11 +214,13 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
      * Initialize the toolbar.
      */
     private void initializeToolBar() {
+
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add(openJournalAction);
-        tbm.add(highlightUserEntries);
-        tbm.add(configureJoesdParsers);
-        tbm.add(reloadEntries);
+        tbm.add(openJournalOutputFileAction);
+        tbm.add(toggleHighlightUserEntriesAction);
+        tbm.add(showSideBySideAction);
+        tbm.add(configureParsersAction);
+        tbm.add(reloadEntriesAction);
     }
 
     @Override
@@ -258,9 +231,9 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
 
         Collection<MetaTable> joesdParser = MetaDataCache.INSTANCE.getCachedParsers();
         if (joesdParser == null || joesdParser.isEmpty()) {
-            configureJoesdParsers.setEnabled(false);
+            configureParsersAction.setEnabled(false);
         } else {
-            configureJoesdParsers.setEnabled(true);
+            configureParsersAction.setEnabled(true);
         }
 
         int numEntries = 0;
@@ -273,11 +246,39 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
         }
 
         if (numEntries == 0) {
-            reloadEntries.setEnabled(false);
-            highlightUserEntries.setEnabled(false);
+            reloadEntriesAction.setEnabled(false);
+            toggleHighlightUserEntriesAction.setEnabled(false);
+
+            showSideBySideAction.setEnabled(false);
         } else {
-            reloadEntries.setEnabled(true);
-            highlightUserEntries.setEnabled(true);
+            reloadEntriesAction.setEnabled(true);
+            toggleHighlightUserEntriesAction.setEnabled(true);
+        }
+    }
+
+    public void selectionChanged(SelectionChangedEvent event) {
+
+        showSideBySideAction.setEnabled(false);
+
+        Object selection = event.getSelection();
+        if (selection instanceof StructuredSelection) {
+
+            StructuredSelection strucuredSelection = (StructuredSelection)selection;
+
+            if (strucuredSelection.size() == 2) {
+                showSideBySideAction.setEnabled(true);
+            }
+
+            List<JournalEntry> selectedItems = new ArrayList<JournalEntry>();
+            for (Iterator<?> iterator = strucuredSelection.iterator(); iterator.hasNext();) {
+                Object object = iterator.next();
+                if (object instanceof JournalEntry) {
+                    JournalEntry journalEntry = (JournalEntry)object;
+                    selectedItems.add(journalEntry);
+                }
+            }
+
+            showSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
         }
     }
 
@@ -286,10 +287,14 @@ public class JournalExplorerView extends ViewPart implements SelectionListener {
     }
 
     public void widgetSelected(SelectionEvent event) {
-
-        CTabFolder folder = (CTabFolder)event.getSource();
-        JournalEntriesViewer viewer = (JournalEntriesViewer)folder.getSelection();
-        viewer.getInput();
-        setActionEnablement(viewer);
+        Object source = event.getSource();
+        if (source instanceof CTabFolder) {
+            CTabFolder tabFolder = (CTabFolder)source;
+            CTabItem tabItem = tabFolder.getItem(tabFolder.getSelectionIndex());
+            if (tabItem instanceof JournalEntriesViewer) {
+                JournalEntriesViewer viewer = (JournalEntriesViewer)tabItem;
+                setActionEnablement(viewer);
+            }
+        }
     }
 }

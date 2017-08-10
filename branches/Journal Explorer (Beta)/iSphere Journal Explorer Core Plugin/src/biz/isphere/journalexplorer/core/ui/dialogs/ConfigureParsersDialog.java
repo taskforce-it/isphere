@@ -11,7 +11,6 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -109,33 +108,6 @@ public class ConfigureParsersDialog extends XDialog {
         TableColumn journaledObject = new TableColumn(table, SWT.NONE);
         journaledObject.setWidth(150);
         journaledObject.setText(Messages.ConfigureParsersDialog_JournalObject);
-        // journaledObject.setLabelProvider(new ColumnLabelProvider() {
-        // @Override
-        // public String getText(Object element) {
-        //
-        // if (element instanceof MetaTable) {
-        // MetaTable currentElement = (MetaTable)element;
-        // return QualifiedName.getName(currentElement.getLibrary(),
-        // currentElement.getName());
-        // } else {
-        // return null;
-        // }
-        // }
-        //
-        // @Override
-        // public Image getImage(Object element) {
-        // if (element instanceof MetaTable) {
-        // if (((MetaTable)element).isLoaded()) {
-        // return null;
-        // } else {
-        // return
-        // PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR);
-        // }
-        // } else {
-        // return null;
-        // }
-        // }
-        // });
 
         // /
         // / parserLibrary column
@@ -143,20 +115,6 @@ public class ConfigureParsersDialog extends XDialog {
         TableColumn parserLibrary = new TableColumn(table, SWT.NONE);
         parserLibrary.setWidth(150);
         parserLibrary.setText(Messages.ConfigureParsersDialog_DefinitionLibrary);
-        // parserLibrary.setLabelProvider(new ColumnLabelProvider() {
-        // @Override
-        // public String getText(Object element) {
-        //
-        // if (element instanceof MetaTable) {
-        // MetaTable currentElement = (MetaTable)element;
-        // return currentElement.getDefinitionLibrary().trim();
-        // } else {
-        // return null;
-        // }
-        // }
-        // });
-        // parserLibrary.setEditingSupport(new
-        // ParserLibraryEditingSupport(tableViewer));
 
         // /
         // / parserObject column
@@ -164,20 +122,6 @@ public class ConfigureParsersDialog extends XDialog {
         TableColumn parserObject = new TableColumn(table, SWT.NONE);
         parserObject.setWidth(150);
         parserObject.setText(Messages.ConfigureParsersDialog_DefinitionObject);
-        // parserObject.setLabelProvider(new ColumnLabelProvider() {
-        // @Override
-        // public String getText(Object element) {
-        //
-        // if (element instanceof MetaTable) {
-        // MetaTable currentElement = (MetaTable)element;
-        // return currentElement.getDefinitionName().trim();
-        // } else {
-        // return null;
-        // }
-        // }
-        // });
-        // parserObject.setEditingSupport(new
-        // ParserNameEditingSupport(tableViewer));
 
         // /
         // / parsingOffset column
@@ -185,20 +129,6 @@ public class ConfigureParsersDialog extends XDialog {
         TableColumn parsingOffset = new TableColumn(table, SWT.NONE);
         parsingOffset.setWidth(170);
         parsingOffset.setText(Messages.ConfigureParsersDialog_ParsingOffset);
-        // parsingOffset.setLabelProvider(new ColumnLabelProvider() {
-        // @Override
-        // public String getText(Object element) {
-        //
-        // if (element instanceof MetaTable) {
-        // MetaTable currentElement = (MetaTable)element;
-        // return Integer.toString(currentElement.getParsingOffset());
-        // } else {
-        // return null;
-        // }
-        // }
-        // });
-        // parsingOffset.setEditingSupport(new
-        // ParsingOffsetEditingSupport(tableViewer));
 
         tableViewer.setColumnProperties(COLUMN_NAMES);
         tableViewer.setLabelProvider(new ParserColumnLabel());
@@ -253,13 +183,16 @@ public class ConfigureParsersDialog extends XDialog {
                 switch (index) {
                 case 1: // Parser library
                     metaTable.setDefinitionLibrary((String)value);
+                    metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
                 case 2: // Parser name
                     metaTable.setDefinitionName((String)value);
+                    metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
                 case 3: // Parsing offset
                     try {
                         metaTable.setParsingOffset(Integer.parseInt((String)value));
+                        metaTable.setLoaded(false);
                         tableViewer.update(metaTable, null);
                     } catch (Exception e) {
                     }
@@ -312,22 +245,6 @@ public class ConfigureParsersDialog extends XDialog {
 
     private void loadValues() {
         tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers());
-    }
-
-    /**
-     * Create contents of the button bar.
-     * 
-     * @param parent
-     */
-    @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-    }
-
-    @Override
-    protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText(Messages.ConfigureParsersDialog_SetDefinitions);
     }
 
     /**

@@ -23,10 +23,10 @@
       </view>
       <view
             icon="icons/segment_edit.png"
-            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryView"
+            class="biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"
             category="biz.isphere.core.views.categories"
             name="%JournalEntryViewer_View"
-            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryView">
+            id="biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView">
       </view>
       <view
             icon="icons/details.png"

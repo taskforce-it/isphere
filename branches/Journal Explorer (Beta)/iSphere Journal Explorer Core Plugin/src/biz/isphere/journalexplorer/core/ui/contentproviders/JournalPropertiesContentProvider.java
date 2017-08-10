@@ -61,7 +61,7 @@ public class JournalPropertiesContentProvider implements IStructuredContentProvi
                 newInputObject = (JournalProperties)newInput[i];
                 oldInputObject = (JournalProperties)currentInput[i];
 
-                if (!newInputObject.getJournal().equals(oldInputObject.getJournal())) {
+                if (!newInputObject.getJournalEntry().equals(oldInputObject.getJournalEntry())) {
                     return false;
                 }
             }

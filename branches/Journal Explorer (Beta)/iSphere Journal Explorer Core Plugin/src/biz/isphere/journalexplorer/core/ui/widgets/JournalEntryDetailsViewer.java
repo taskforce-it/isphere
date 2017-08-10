@@ -29,6 +29,11 @@ public class JournalEntryDetailsViewer extends TreeViewer {
         this.initializeComponents();
     }
 
+    @Override
+    public void refresh(boolean updateLabels) {
+        super.refresh(updateLabels);
+    }
+    
     private void initializeComponents() {
 
         setAutoExpandLevel(1);

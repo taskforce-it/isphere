@@ -8,7 +8,6 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
-import java.nio.charset.Charset;
 import java.sql.ResultSet;
 
 import biz.isphere.journalexplorer.core.model.File;
@@ -79,7 +78,7 @@ public class Type5DAO extends Type4DAO {
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
         super.populateJournalEntry(resultSet, journalEntry);
-        
+
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
         journalEntry.setProgramLibrary(resultSet.getString(JOPGMLIB));
         journalEntry.setProgramAspDevice(resultSet.getString(JOPGMDEV));

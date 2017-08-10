@@ -32,7 +32,7 @@ public class Messages extends NLS {
     public static String JoesdParser_TableMetadataDontMatchEntry;
     public static String Journal_RecordNum;
     public static String JournalEntryView_CompareEntries;
-    public static String JournalEntryView_ConfigureTableDefinitions;
+    public static String JournalEntryView_ConfigureParsers;
     public static String JournalEntryView_ReloadEntries;
     public static String JournalEntryView_ShowSideBySide;
     public static String JournalEntryView_UncomparableEntries;

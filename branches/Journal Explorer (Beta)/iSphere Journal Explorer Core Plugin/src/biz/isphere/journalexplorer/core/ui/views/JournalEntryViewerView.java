@@ -15,49 +15,47 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
-import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
+import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
+import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
-import biz.isphere.journalexplorer.core.ui.dialogs.ConfigureParsersDialog;
-import biz.isphere.journalexplorer.core.ui.dialogs.SelectEntriesToCompareDialog;
-import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;
+import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
-public class JournalEntryView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
+public class JournalEntryViewerView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
-    public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryView"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"; //$NON-NLS-1$
 
     private JournalEntryDetailsViewer viewer;
 
-    private Action compare;
-    private Action showSideBySide;
-    private Action reParseJournalEntries;
+    private CompareJournalPropertiesAction compareJournalPropertiesAction;
+    private ShowSideBySideAction showSideBySideAction;
+    private GenericRefreshAction reParseJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
 
-    public JournalEntryView() {
+    public JournalEntryViewerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
     }
 
@@ -69,7 +67,15 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         createActions();
         createToolBar();
-        setActionEnablement(viewer.getSelection());
+        setActionEnablement(getSelection());
+
+        Control control = viewer.getControl();
+        if (control instanceof Tree) {
+            Tree tree = (Tree)control;
+            final Menu menuTableMembers = new Menu(tree);
+            menuTableMembers.addMenuListener(new JournalPropertiesMenuAdapter(menuTableMembers, viewer));
+            tree.setMenu(menuTableMembers);
+        }
 
         viewer.setAsSelectionProvider(selectionProviderIntermediate);
         getSite().setSelectionProvider(selectionProviderIntermediate);
@@ -85,94 +91,36 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
 
     private void createActions() {
 
-        // /
-        // / Compare action
-        // /
-        compare = new Action(Messages.JournalEntryView_CompareEntries) {
+        compareJournalPropertiesAction = new CompareJournalPropertiesAction() {
             @Override
-            public void run() {
-                performCompareJOESDEntries();
+            public void postRunAction() {
+                viewer.refresh(true);
             }
         };
 
-        compare.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_COMPARE));
+        showSideBySideAction = new ShowSideBySideAction(getSite().getShell());
 
-        // /
-        // / showSideBySide action
-        // /
-        showSideBySide = new Action(Messages.JournalEntryView_ShowSideBySide) {
-            @Override
-            public void run() {
-                performShowSideBySideEntries();
-            }
-        };
-
-        showSideBySide.setImageDescriptor(ISphereJournalExplorerCorePlugin
+        showSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
             .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
 
-        // /
-        // / reParseEntries action
-        // /
-        reParseJournalEntries = new Action(Messages.JournalEntryView_ReloadEntries) {
+        reParseJournalEntriesAction = new GenericRefreshAction() {
             @Override
-            public void run() {
+            protected void postRunAction() {
                 performReparseJournalEntries();
             }
         };
-
-        reParseJournalEntries.setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_REFRESH));
-    }
-
-    protected void performShowSideBySideEntries() {
-
-        Object[] input = getSelectedItems();
-
-        if (input instanceof Object[]) {
-
-            SideBySideCompareDialog sideBySideCompareDialog = new SideBySideCompareDialog(getSite().getShell());
-            sideBySideCompareDialog.create();
-
-            if (input.length == 2) {
-                sideBySideCompareDialog.setInput((JournalProperties)input[0], (JournalProperties)input[1]);
-                sideBySideCompareDialog.open();
-            } else {
-
-                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(getSite().getShell());
-                selectEntriesToCompareDialog.create();
-                selectEntriesToCompareDialog.setInput(input);
-
-                if (selectEntriesToCompareDialog.open() == Window.OK) {
-                    sideBySideCompareDialog.setInput((JournalProperties)selectEntriesToCompareDialog.getLeftEntry(),
-                        (JournalProperties)selectEntriesToCompareDialog.getRightEntry());
-
-                    sideBySideCompareDialog.open();
-                }
-            }
-        }
-    }
-
-    protected void performConfigureParsers() {
-
-        ConfigureParsersDialog configureParsersDialog = new ConfigureParsersDialog(getSite().getShell());
-        configureParsersDialog.create();
-        configureParsersDialog.open();
     }
 
     private void performReparseJournalEntries() {
 
-        reParseAllEntries();
-        viewer.refresh(true);
-    }
-
-    private void reParseAllEntries() {
-
-        Object[] input = getInput();
-
-        for (Object inputElement : input) {
-
-            JournalProperties journalProperties = (JournalProperties)inputElement;
-            ((JOESDProperty)journalProperties.getJOESDProperty()).executeParsing();
+        for (Object object : getInput()) {
+            if (object instanceof JournalProperties) {
+                JournalProperties journalProperties = (JournalProperties)object;
+                journalProperties.getJOESDProperty().executeParsing();
+            }
         }
+
+        viewer.refresh(true);
     }
 
     private Object[] getInput() {
@@ -183,50 +131,12 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
         return input;
     }
 
-    protected void performCompareJOESDEntries() {
-
-        Object[] input = getSelectedItems();
-
-        if (input instanceof Object[]) {
-
-            if (input.length == 2) {
-                compareEntries(input[0], input[1]);
-            } else {
-
-                SelectEntriesToCompareDialog selectEntriesToCompareDialog = new SelectEntriesToCompareDialog(getSite().getShell());
-                selectEntriesToCompareDialog.create();
-                selectEntriesToCompareDialog.setInput(input);
-
-                if (selectEntriesToCompareDialog.open() == Window.OK) {
-                    compareEntries(selectEntriesToCompareDialog.getLeftEntry(), selectEntriesToCompareDialog.getRightEntry());
-                }
-            }
-        } else {
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries);
-        }
-    }
-
-    private void compareEntries(Object leftObject, Object rightObject) {
-
-        if (leftObject instanceof JournalProperties && rightObject instanceof JournalProperties) {
-
-            JournalProperties left = (JournalProperties)leftObject;
-            JournalProperties right = (JournalProperties)rightObject;
-
-            new JournalEntryComparator().compare(left, right);
-            viewer.refresh(true);
-
-        } else {
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, Messages.JournalEntryView_UncomparableEntries);
-        }
-    }
-
     private void createToolBar() {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(compare);
-        toolBarManager.add(showSideBySide);
+        toolBarManager.add(compareJournalPropertiesAction);
+        toolBarManager.add(showSideBySideAction);
         toolBarManager.add(new Separator());
-        toolBarManager.add(reParseJournalEntries);
+        toolBarManager.add(reParseJournalEntriesAction);
     }
 
     @Override
@@ -279,48 +189,59 @@ public class JournalEntryView extends ViewPart implements ISelectionListener, IS
             }
         }
 
-        setActionEnablement(viewer.getSelection());
+        setActionEnablement(getSelection());
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
 
         ITreeSelection selection = getSelection(event);
         setActionEnablement(selection);
+
+        List<JournalEntry> journalEntriesList = new ArrayList<JournalEntry>();
+        List<JournalProperties> journalPropertiesList = new ArrayList<JournalProperties>();
+        for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
+            Object object = iterator.next();
+            if (object instanceof JournalProperties) {
+                JournalProperties journalProperties = (JournalProperties)object;
+                JournalEntry journalEntry = journalProperties.getJournalEntry();
+                journalPropertiesList.add(journalProperties);
+                journalEntriesList.add(journalEntry);
+                if (journalEntriesList.size() > 2) {
+                    journalEntriesList.clear();
+                    break;
+                }
+            }
+        }
+
+        showSideBySideAction.setSelectedItems(journalEntriesList.toArray(new JournalEntry[journalEntriesList.size()]));
+        compareJournalPropertiesAction.setSelectedItems(journalPropertiesList.toArray(new JournalProperties[journalPropertiesList.size()]));
     }
 
-    private void setActionEnablement(ISelection selection) {
+    private void setActionEnablement(ITreeSelection selection) {
 
-        ITreeSelection treeSelection;
-        if (selection instanceof ITreeSelection) {
-            treeSelection = (ITreeSelection)selection;
+        JournalProperties[] journalProperties = getSelectedItems(selection);
+
+        if (journalProperties.length == 2) {
+            compareJournalPropertiesAction.setEnabled(true);
+            showSideBySideAction.setEnabled(true);
         } else {
-            treeSelection = null;
+            showSideBySideAction.setEnabled(false);
+            compareJournalPropertiesAction.setEnabled(false);
         }
 
-        if (treeSelection != null) {
-            if (treeSelection != null && treeSelection.size() == 2) {
-                compare.setEnabled(true);
-                showSideBySide.setEnabled(true);
-            } else {
-                showSideBySide.setEnabled(false);
-                compare.setEnabled(false);
-            }
+        Object[] items = getInput();
 
-            Object[] items = getInput();
-
-            if (items != null && items.length > 0) {
-                reParseJournalEntries.setEnabled(true);
-            } else {
-                reParseJournalEntries.setEnabled(false);
-            }
+        if (items != null && items.length > 0) {
+            reParseJournalEntriesAction.setEnabled(true);
+        } else {
+            reParseJournalEntriesAction.setEnabled(false);
         }
     }
 
-    private JournalProperties[] getSelectedItems() {
+    private JournalProperties[] getSelectedItems(ITreeSelection selection) {
 
         List<JournalProperties> selectedItems = new ArrayList<JournalProperties>();
 
-        ITreeSelection selection = getSelection();
         Iterator<?> iterator = selection.iterator();
 
         Object currentItem;

@@ -48,7 +48,7 @@ public class MetaTable {
 
     private int parsingOffset;
 
-    private boolean isJournalOutputFile;
+    private boolean isHidden;
 
     private Integer outfileType;
 
@@ -63,11 +63,11 @@ public class MetaTable {
     }
 
     public boolean isJournalOutputFile() {
-        return isJournalOutputFile;
+        return isHidden;
     }
 
-    public void setJournalOutputFile(boolean isHidden) {
-        this.isJournalOutputFile = isHidden;
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
     }
 
     public String getName() {

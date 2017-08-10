@@ -29,10 +29,10 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_HIGHLIGHT = "highlight.png";
     public static final String IMAGE_HORIZONTAL_RESULTS_VIEW = "horizontal_results_view.gif";
     public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer.png";
-    public static final String IMAGE_READ_WRITE_OBJ = "readwrite_obj.gif";
+    public static final String IMAGE_CONFIGURE_PARSERS = "configure_parsers.gif";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
-    public static final String IMAGE_TABLE_BOTTOM_LEFT_CORNER_NEW_GREEN = "table_bottom_left_corner_new_green.png";
+    public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_outfile.png";
     public static final String IMAGE_WARNING_OV = "warning_ov.gif";
     public static final String IMAGE_ERROR_OV = "error_ov.gif";
     public static final String IMAGE_LOADED_OV = "loaded_ov.gif";
@@ -91,6 +91,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
      * @param e The exception that has produced the error
      */
     public static void logError(String message, Throwable e) {
+        
         if (plugin == null) {
             System.err.println(message);
             if (e != null) {
@@ -98,6 +99,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
             }
             return;
         }
+        
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 

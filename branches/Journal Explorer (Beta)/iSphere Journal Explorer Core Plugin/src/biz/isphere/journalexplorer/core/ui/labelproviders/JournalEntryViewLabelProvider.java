@@ -59,11 +59,11 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
         if (object instanceof JournalProperties) {
             switch (columnIndex) {
             case PROPERTY_COLUMN:
-                return ((JournalProperties)object).getJournal().getKey();
+                return ((JournalProperties)object).getJournalEntry().getKey();
 
                 // TODO encapsular logica
             case VALUE_COLUMN:
-                return "Table " + ((JournalProperties)object).getJournal().getQualifiedObjectName();
+                return "Table " + ((JournalProperties)object).getJournalEntry().getQualifiedObjectName();
             }
         } else if (object instanceof JournalProperty) {
             switch (columnIndex) {

@@ -10,7 +10,6 @@ package biz.isphere.journalexplorer.core.ui.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -82,7 +81,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         Object currentSelection;
         ArrayList<JournalProperties> input = new ArrayList<JournalProperties>();
 
-        if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryView) {
+        if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
             if (selection instanceof IStructuredSelection) {
                 structuredSelectionList = ((IStructuredSelection)selection).iterator();
                 while (input.size() < 2 && structuredSelectionList.hasNext()) {
@@ -125,37 +124,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
     }
 
     private void setActionEnablement(ISelection selection) {
-
         // no actions implemented
-    }
-
-    private JournalProperties[] getSelectedItems() {
-
-        List<JournalProperties> selectedItems = new ArrayList<JournalProperties>();
-
-        ITreeSelection selection = getSelection();
-        Iterator<?> iterator = selection.iterator();
-
-        Object currentItem;
-        while (iterator.hasNext()) {
-
-            currentItem = iterator.next();
-            if (currentItem instanceof JournalProperties) {
-                selectedItems.add((JournalProperties)currentItem);
-            }
-        }
-
-        return selectedItems.toArray(new JournalProperties[selectedItems.size()]);
-    }
-
-    private ITreeSelection getSelection() {
-
-        ISelection selection = viewer.getSelection();
-        if (selection instanceof ITreeSelection) {
-            return (ITreeSelection)selection;
-        }
-
-        return null;
     }
 
     private ITreeSelection getSelection(SelectionChangedEvent event) {

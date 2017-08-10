@@ -17,12 +17,14 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryColumnLabel;
+import biz.isphere.journalexplorer.core.ui.popupmenus.JournalEntryMenuAdapter;
 
 public abstract class AbstractTypeViewerFactory {
 
@@ -70,6 +72,10 @@ public abstract class AbstractTypeViewerFactory {
                 i++;
             }
         }
+
+        final Menu menuTableMembers = new Menu(table);
+        menuTableMembers.addMenuListener(new JournalEntryMenuAdapter(menuTableMembers, tableViewer));
+        table.setMenu(menuTableMembers);
 
         tableViewer.setLabelProvider(new JournalEntryColumnLabel(fieldIdMapping));
         tableViewer.setContentProvider(new JournalViewerContentProvider(tableViewer));

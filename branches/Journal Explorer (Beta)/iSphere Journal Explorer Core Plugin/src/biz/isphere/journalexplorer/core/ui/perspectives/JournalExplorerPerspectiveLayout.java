@@ -13,7 +13,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView;
-import biz.isphere.journalexplorer.core.ui.views.JournalEntryView;
+import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 import biz.isphere.journalexplorer.rse.shared.ui.perspectives.IJournalExplorerPerspectiveLayout;
 
@@ -57,7 +57,7 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
 
         // Place journal entries view below journal explorer view.
         folder = layout.createFolder(JOURNAL_ENTRIES_FOLDER_ID, IPageLayout.BOTTOM, 0.75F, JournalExplorerView.ID);
-        folder.addView(JournalEntryView.ID);
+        folder.addView(JournalEntryViewerView.ID);
 
         // Place command log view below journal explorer view.
         folder.addView(COMMAND_LOG_VIEW_ID);
@@ -65,7 +65,7 @@ public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJ
         layout.addShowViewShortcut(REMOTE_SYSTEMS_VIEW_ID);
         layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
         layout.addShowViewShortcut(JournalExplorerView.ID);
-        layout.addShowViewShortcut(JournalEntryView.ID);
+        layout.addShowViewShortcut(JournalEntryViewerView.ID);
         layout.addShowViewShortcut(JournalEntryDetailsView.ID);
 
         layout.addPerspectiveShortcut(JournalExplorerPerspectiveLayout.ID);

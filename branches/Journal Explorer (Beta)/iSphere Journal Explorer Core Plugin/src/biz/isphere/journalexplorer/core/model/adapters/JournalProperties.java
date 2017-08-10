@@ -45,11 +45,11 @@ public class JournalProperties {
         properties.add(new JOESDProperty(STRING_SPECIFIC_DATA, "", journal, journal)); //$NON-NLS-1$
     }
 
-    public JournalProperty getJOESDProperty() {
+    public JOESDProperty getJOESDProperty() {
 
         for (JournalProperty property : properties) {
-            if (property.name == STRING_SPECIFIC_DATA) {
-                return property;
+            if (property.name == STRING_SPECIFIC_DATA && property instanceof JOESDProperty) {
+                return (JOESDProperty)property;
             }
         }
         return null;
@@ -59,7 +59,7 @@ public class JournalProperties {
         return properties.toArray();
     }
 
-    public JournalEntry getJournal() {
+    public JournalEntry getJournalEntry() {
         return journal;
     }
 
