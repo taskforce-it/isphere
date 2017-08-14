@@ -40,10 +40,10 @@ import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
-import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
@@ -123,7 +123,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             @Override
             public void postRunAction() {
                 File outputFile = openJournalOutputFileAction.getOutputFile();
-                createJournalTab(outputFile);
+                if (outputFile != null) {
+                    createJournalTab(outputFile);
+                }
             }
         };
 
