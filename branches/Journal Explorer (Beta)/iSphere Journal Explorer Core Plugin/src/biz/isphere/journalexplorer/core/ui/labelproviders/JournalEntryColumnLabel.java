@@ -41,6 +41,11 @@ public class JournalEntryColumnLabel extends LabelProvider implements ITableLabe
     }
 
     public Color getBackground(Object element, int index) {
+        
+        if (index == 0){
+            return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+        }
+        
         if (element instanceof JournalEntry) {
             JournalEntry journalEntry = (JournalEntry)element;
 

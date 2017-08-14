@@ -12,14 +12,17 @@
 package biz.isphere.journalexplorer.core.ui.widgets;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -45,7 +48,7 @@ import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 
-public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener {
+public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider {
 
     private Composite container;
     private TableViewer tableViewer;
@@ -68,7 +71,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     }
 
     private void initializeComponents() {
-        
+
         container.setLayout(new FillLayout());
         setText(connectionName + ": " + outputFile.getQualifiedName());
         createTableViewer(container);
@@ -184,14 +187,35 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
     }
 
-    public ITreeSelection getSelection() {
+    public StructuredSelection getSelection() {
 
         ISelection selection = tableViewer.getSelection();
-        if (selection instanceof ITreeSelection) {
-            return (ITreeSelection)selection;
+        if (selection instanceof StructuredSelection) {
+            return (StructuredSelection)selection;
         }
 
-        return null;
+        return new StructuredSelection(new JournalEntry[0]);
+    }
+
+    public void setSelection(ISelection selection) {
+        // satisfy the ISelectionProvider interface
+        tableViewer.setSelection(selection);
+    }
+
+    public JournalEntry[] getSelectedItems() {
+
+        List<JournalEntry> selectedItems = new LinkedList<JournalEntry>();
+
+        StructuredSelection selection = getSelection();
+        Iterator<?> iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            if (object instanceof JournalEntry) {
+                selectedItems.add((JournalEntry)object);
+            }
+        }
+
+        return selectedItems.toArray(new JournalEntry[selectedItems.size()]);
     }
 
     public JournalEntry[] getInput() {
@@ -210,8 +234,10 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
     public void selectionChanged(SelectionChangedEvent event) {
 
+        SelectionChangedEvent newEvent = new SelectionChangedEvent(this, event.getSelection());
+
         for (ISelectionChangedListener selectionChangedListener : selectionChangedListeners) {
-            selectionChangedListener.selectionChanged(event);
+            selectionChangedListener.selectionChanged(newEvent);
         }
     }
 }

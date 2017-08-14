@@ -227,6 +227,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     public void setFocus() {
     }
 
+    /**
+     * Enables the actions for the current viewer,
+     * 
+     * @param viewer - the selected viewer (tab)
+     */
     private void setActionEnablement(JournalEntriesViewer viewer) {
 
         Collection<MetaTable> joesdParser = MetaDataCache.INSTANCE.getCachedParsers();
@@ -237,64 +242,78 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
 
         int numEntries = 0;
+        StructuredSelection selection = new StructuredSelection(new JournalEntry[0]);
         if (viewer != null) {
 
             JournalEntry[] journalEntries = viewer.getInput();
             if (journalEntries != null) {
                 numEntries = journalEntries.length;
             }
+
+            selection = viewer.getSelection();
         }
 
         if (numEntries == 0) {
             reloadEntriesAction.setEnabled(false);
             toggleHighlightUserEntriesAction.setEnabled(false);
-
-            showSideBySideAction.setEnabled(false);
         } else {
             reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(true);
         }
+
+        if (selection != null && selection.size() == 2) {
+            showSideBySideAction.setEnabled(true);
+        } else {
+            showSideBySideAction.setEnabled(false);
+        }
+
+        List<JournalEntry> selectedItems = new ArrayList<JournalEntry>();
+        for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
+            Object object = iterator.next();
+            if (object instanceof JournalEntry) {
+                JournalEntry journalEntry = (JournalEntry)object;
+                selectedItems.add(journalEntry);
+            }
+        }
+
+        showSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
     }
 
+    /**
+     * Called by the viewer, when items are selected by the user.
+     */
     public void selectionChanged(SelectionChangedEvent event) {
+        setActionEnablement(getCurrentViewer());
+    }
 
-        showSideBySideAction.setEnabled(false);
+    /**
+     * Called by the UI, when the user selects a different viewer (tab).
+     */
+    public void widgetSelected(SelectionEvent event) {
 
-        Object selection = event.getSelection();
-        if (selection instanceof StructuredSelection) {
+        setActionEnablement(getCurrentViewer());
 
-            StructuredSelection strucuredSelection = (StructuredSelection)selection;
-
-            if (strucuredSelection.size() == 2) {
-                showSideBySideAction.setEnabled(true);
-            }
-
-            List<JournalEntry> selectedItems = new ArrayList<JournalEntry>();
-            for (Iterator<?> iterator = strucuredSelection.iterator(); iterator.hasNext();) {
-                Object object = iterator.next();
-                if (object instanceof JournalEntry) {
-                    JournalEntry journalEntry = (JournalEntry)object;
-                    selectedItems.add(journalEntry);
-                }
-            }
-
-            showSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
-        }
+        // Trigger a SWT selection event
+        getCurrentViewer().setSelection(getCurrentViewer().getSelection());
     }
 
     public void widgetDefaultSelected(SelectionEvent event) {
         widgetSelected(event);
     }
 
-    public void widgetSelected(SelectionEvent event) {
-        Object source = event.getSource();
-        if (source instanceof CTabFolder) {
-            CTabFolder tabFolder = (CTabFolder)source;
-            CTabItem tabItem = tabFolder.getItem(tabFolder.getSelectionIndex());
-            if (tabItem instanceof JournalEntriesViewer) {
-                JournalEntriesViewer viewer = (JournalEntriesViewer)tabItem;
-                setActionEnablement(viewer);
-            }
+    /**
+     * Returns the currently selected viewer (tab).
+     * 
+     * @return selected viewer
+     */
+    public JournalEntriesViewer getCurrentViewer() {
+
+        CTabItem tabItem = tabs.getItem(tabs.getSelectionIndex());
+        if (tabItem instanceof JournalEntriesViewer) {
+            JournalEntriesViewer viewer = (JournalEntriesViewer)tabItem;
+            return viewer;
         }
+
+        return null;
     }
 }

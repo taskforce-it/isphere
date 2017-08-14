@@ -8,14 +8,16 @@
 
 package biz.isphere.journalexplorer.core.ui.views;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
@@ -68,9 +70,14 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         viewer.getControl().setFocus();
     }
 
-    // /
-    // / ISelectionListener methods
-    // /
+    /**
+     * Called by the WindowSelectionService, when another JournalEntry is
+     * selected in one of the following views:
+     * <ul>
+     * <li>biz.isphere.journalexplorer.core.ui.views.JournalExplorerView</li>
+     * <li>biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView</li>
+     * </ul>
+     */
     public void selectionChanged(IWorkbenchPart viewPart, ISelection selection) {
 
         @SuppressWarnings("rawtypes")
@@ -79,9 +86,14 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         @SuppressWarnings("rawtypes")
         Iterator structuredSelectionElement;
         Object currentSelection;
-        ArrayList<JournalProperties> input = new ArrayList<JournalProperties>();
+        List<JournalProperties> input = new LinkedList<JournalProperties>();
 
         if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
+
+            if (viewPart instanceof JournalExplorerView) {
+                selection = new StructuredSelection(new StructuredSelection(((JournalExplorerView)viewPart).getCurrentViewer().getSelectedItems()));
+            }
+
             if (selection instanceof IStructuredSelection) {
                 structuredSelectionList = ((IStructuredSelection)selection).iterator();
                 while (input.size() < 2 && structuredSelectionList.hasNext()) {
@@ -109,7 +121,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         setActionEnablement(viewer.getSelection());
     }
 
-    private void refreshViewer(ArrayList<JournalProperties> input) {
+    private void refreshViewer(List<JournalProperties> input) {
 
         viewer.setInput(input.toArray());
 
@@ -140,9 +152,9 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
     private class LoadPropertiesRunnable implements Runnable {
 
         private JournalEntry journalEntry;
-        private ArrayList<JournalProperties> input;
+        private List<JournalProperties> input;
 
-        public LoadPropertiesRunnable(ArrayList<JournalProperties> input, JournalEntry journalEntry) {
+        public LoadPropertiesRunnable(List<JournalProperties> input, JournalEntry journalEntry) {
             this.input = input;
             this.journalEntry = journalEntry;
         }

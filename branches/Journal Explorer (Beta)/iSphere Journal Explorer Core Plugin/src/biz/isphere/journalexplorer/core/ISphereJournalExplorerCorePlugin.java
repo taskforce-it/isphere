@@ -28,7 +28,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_DETAILS = "details.png";
     public static final String IMAGE_HIGHLIGHT = "highlight.png";
     public static final String IMAGE_HORIZONTAL_RESULTS_VIEW = "horizontal_results_view.gif";
-    public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer.png";
+    public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer2.png";
     public static final String IMAGE_CONFIGURE_PARSERS = "configure_parsers.gif";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
