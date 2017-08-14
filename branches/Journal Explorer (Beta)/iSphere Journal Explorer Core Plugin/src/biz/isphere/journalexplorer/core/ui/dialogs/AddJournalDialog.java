@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -106,6 +107,30 @@ public class AddJournalDialog extends XDialog {
         loadValues();
 
         return container;
+    }
+
+    @Override
+    public void setFocus() {
+
+        String connectionName = null;
+
+        Object object = cmbConnections.getElementAt(0);
+        if (ConnectionDelegate.instanceOf(object)) {
+            ConnectionDelegate connection = new ConnectionDelegate(object);
+            connectionName = connection.getConnectionName();
+        }
+
+        if (StringHelper.isNullOrEmpty(connectionName)) {
+            cmbConnections.getControl().setFocus();
+            return;
+        }
+
+        if (StringHelper.isNullOrEmpty(txtLibrary.getText())){
+            txtLibrary.setFocus();
+            return;
+        }
+        
+        txtFileName.setFocus();
     }
 
     private void loadValues() {
