@@ -88,6 +88,10 @@ public class AddJournalDialog extends XDialog {
         lblConnections.setText(Messages.AddJournalDialog_Conection);
 
         cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
+        GridData cmbConnectionLayoutData = new GridData();
+        cmbConnectionLayoutData.minimumWidth = 100;
+        cmbConnectionLayoutData.grabExcessHorizontalSpace = true;
+        cmbConnections.getControl().setLayoutData(cmbConnectionLayoutData);
         configureConnectionsCombo();
 
         Label lblLibrary = new Label(container, SWT.NONE);
@@ -125,11 +129,11 @@ public class AddJournalDialog extends XDialog {
             return;
         }
 
-        if (StringHelper.isNullOrEmpty(txtLibrary.getText())){
+        if (StringHelper.isNullOrEmpty(txtLibrary.getText())) {
             txtLibrary.setFocus();
             return;
         }
-        
+
         txtFileName.setFocus();
     }
 
