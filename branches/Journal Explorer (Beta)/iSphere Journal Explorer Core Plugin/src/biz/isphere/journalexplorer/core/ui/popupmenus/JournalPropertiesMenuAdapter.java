@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
-import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 
 public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
@@ -30,7 +30,7 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
     private Menu menuTableMembers;
     private Shell shell;
     private MenuItem compareJournalPropertiesMenuItem;
-    private MenuItem showSideBySideMenuItem;
+    private MenuItem compareSideBySideMenuItem;
 
     public JournalPropertiesMenuAdapter(Menu menuTableMembers, TreeViewer treeViewer) {
         this.treeViewer = treeViewer;
@@ -54,7 +54,7 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
     public void destroyMenuItems() {
         dispose(compareJournalPropertiesMenuItem);
-        dispose(showSideBySideMenuItem);
+        dispose(compareSideBySideMenuItem);
     }
 
     private int selectedItemsCount() {
@@ -136,15 +136,15 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
                 }
             });
 
-            showSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final ShowSideBySideAction showSideBySideAction = new ShowSideBySideAction(shell);
-            showSideBySideMenuItem.setText(showSideBySideAction.getText());
-            showSideBySideMenuItem.setImage(showSideBySideAction.getImage());
-            showSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
+            compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
+            compareSideBySideMenuItem.setText(compareSideBySideAction.getText());
+            compareSideBySideMenuItem.setImage(compareSideBySideAction.getImage());
+            compareSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    showSideBySideAction.setSelectedItems(getSelectedJournalEntries());
-                    showSideBySideAction.run();
+                    compareSideBySideAction.setSelectedItems(getSelectedJournalEntries());
+                    compareSideBySideAction.run();
                 }
             });
         }

@@ -43,7 +43,7 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
-import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
@@ -52,7 +52,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
     private OpenJournalOutfileAction openJournalOutputFileAction;
-    private ShowSideBySideAction showSideBySideAction;
+    private CompareSideBySideAction compareSideBySideAction;
     private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
     private ConfigureParsersAction configureParsersAction;
     private GenericRefreshAction reloadEntriesAction;
@@ -127,7 +127,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        showSideBySideAction = new ShowSideBySideAction(getSite().getShell());
+        compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 
         toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction() {
             @Override
@@ -218,7 +218,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
         tbm.add(openJournalOutputFileAction);
         tbm.add(toggleHighlightUserEntriesAction);
-        tbm.add(showSideBySideAction);
+        tbm.add(compareSideBySideAction);
         tbm.add(configureParsersAction);
         tbm.add(reloadEntriesAction);
     }
@@ -262,9 +262,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
 
         if (selection != null && selection.size() == 2) {
-            showSideBySideAction.setEnabled(true);
+            compareSideBySideAction.setEnabled(true);
         } else {
-            showSideBySideAction.setEnabled(false);
+            compareSideBySideAction.setEnabled(false);
         }
 
         List<JournalEntry> selectedItems = new ArrayList<JournalEntry>();
@@ -276,7 +276,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         }
 
-        showSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
+        compareSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
     }
 
     /**

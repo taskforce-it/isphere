@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
-import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 
 public class JournalEntryMenuAdapter extends MenuAdapter {
 
@@ -26,7 +26,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     private TableViewer tableViewer;
     private Menu menuTableMembers;
     private Shell shell;
-    private MenuItem showSideBySideMenuItem;
+    private MenuItem compareSideBySideMenuItem;
 
     public JournalEntryMenuAdapter(Menu menuTableMembers, Tree tree) {
         this.tree = tree;
@@ -49,7 +49,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
-        dispose(showSideBySideMenuItem);
+        dispose(compareSideBySideMenuItem);
     }
 
     private int selectedItemsCount() {
@@ -87,16 +87,16 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     public void createMenuItems() {
 
         if (selectedItemsCount() == 2) {
-            showSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final ShowSideBySideAction action = new ShowSideBySideAction(shell);
-            showSideBySideMenuItem.setText(action.getText());
-            showSideBySideMenuItem.setImage(action.getImage());
-            showSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
+            compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CompareSideBySideAction action = new CompareSideBySideAction(shell);
+            compareSideBySideMenuItem.setText(action.getText());
+            compareSideBySideMenuItem.setImage(action.getImage());
+            compareSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ShowSideBySideAction showSideBySideAction = new ShowSideBySideAction(shell);
-                    showSideBySideAction.setSelectedItems(getSelection());
-                    showSideBySideAction.run();
+                    CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
+                    compareSideBySideAction.setSelectedItems(getSelection());
+                    compareSideBySideAction.run();
                 }
             });
         }

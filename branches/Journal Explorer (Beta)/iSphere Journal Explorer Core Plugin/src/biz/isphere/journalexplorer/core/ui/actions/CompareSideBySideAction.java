@@ -24,15 +24,15 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;
 
-public class ShowSideBySideAction extends Action {
+public class CompareSideBySideAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW;
 
     private Shell shell;
     private JournalEntry[] selectedItems;
 
-    public ShowSideBySideAction(Shell shell) {
-        super(Messages.JournalEntryView_ShowSideBySide);
+    public CompareSideBySideAction(Shell shell) {
+        super(Messages.JournalEntryView_CompareSideBySide);
 
         this.shell = shell;
 
@@ -77,10 +77,10 @@ public class ShowSideBySideAction extends Action {
 
     @Override
     public void run() {
-        performShowSideBySideEntries(selectedItems);
+        performCompareSideBySideEntries(selectedItems);
     }
 
-    protected void performShowSideBySideEntries(JournalEntry[] selectedItems) {
+    protected void performCompareSideBySideEntries(JournalEntry[] selectedItems) {
 
         if (selectedItems == null || selectedItems.length != 2) {
             return;

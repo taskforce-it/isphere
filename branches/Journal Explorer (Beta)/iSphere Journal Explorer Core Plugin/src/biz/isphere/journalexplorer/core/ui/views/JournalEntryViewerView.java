@@ -38,7 +38,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
-import biz.isphere.journalexplorer.core.ui.actions.ShowSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
@@ -50,7 +50,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
     private JournalEntryDetailsViewer viewer;
 
     private CompareJournalPropertiesAction compareJournalPropertiesAction;
-    private ShowSideBySideAction showSideBySideAction;
+    private CompareSideBySideAction compareSideBySideAction;
     private GenericRefreshAction reParseJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
@@ -98,9 +98,9 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
             }
         };
 
-        showSideBySideAction = new ShowSideBySideAction(getSite().getShell());
+        compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 
-        showSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
+        compareSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
             .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
 
         reParseJournalEntriesAction = new GenericRefreshAction() {
@@ -134,7 +134,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
     private void createToolBar() {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(compareJournalPropertiesAction);
-        toolBarManager.add(showSideBySideAction);
+        toolBarManager.add(compareSideBySideAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(reParseJournalEntriesAction);
     }
@@ -213,7 +213,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
             }
         }
 
-        showSideBySideAction.setSelectedItems(journalEntriesList.toArray(new JournalEntry[journalEntriesList.size()]));
+        compareSideBySideAction.setSelectedItems(journalEntriesList.toArray(new JournalEntry[journalEntriesList.size()]));
         compareJournalPropertiesAction.setSelectedItems(journalPropertiesList.toArray(new JournalProperties[journalPropertiesList.size()]));
     }
 
@@ -223,9 +223,9 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
         if (journalProperties.length == 2) {
             compareJournalPropertiesAction.setEnabled(true);
-            showSideBySideAction.setEnabled(true);
+            compareSideBySideAction.setEnabled(true);
         } else {
-            showSideBySideAction.setEnabled(false);
+            compareSideBySideAction.setEnabled(false);
             compareJournalPropertiesAction.setEnabled(false);
         }
 
