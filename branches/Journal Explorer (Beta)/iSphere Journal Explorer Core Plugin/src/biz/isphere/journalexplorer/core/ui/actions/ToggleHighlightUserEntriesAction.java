@@ -24,14 +24,14 @@ public abstract class ToggleHighlightUserEntriesAction extends Action {
     public ToggleHighlightUserEntriesAction() {
         super(Messages.JournalExplorerView_HighlightUserEntries, Action.AS_CHECK_BOX);
 
-        setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(IMAGE));
+        setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
 
         this.preferences = Preferences.getInstance();
         setChecked(preferences.isHighlightUserEntries());
     }
 
     public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getImage(IMAGE);
+        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     @Override

@@ -37,8 +37,8 @@ import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
-import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
@@ -100,8 +100,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
         compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 
-        compareSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin
-            .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
+        compareSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(
+            ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
 
         reParseJournalEntriesAction = new GenericRefreshAction() {
             @Override

@@ -21,11 +21,11 @@ public abstract class GenericRefreshAction extends Action {
     public GenericRefreshAction() {
         super(Messages.JournalEntryView_ReloadEntries);
 
-        setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(IMAGE));
+        setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
     public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getImage(IMAGE);
+        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     @Override

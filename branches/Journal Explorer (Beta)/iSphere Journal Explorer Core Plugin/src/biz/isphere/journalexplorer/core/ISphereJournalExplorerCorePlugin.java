@@ -13,7 +13,9 @@ package biz.isphere.journalexplorer.core;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
@@ -91,7 +93,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
      * @param e The exception that has produced the error
      */
     public static void logError(String message, Throwable e) {
-        
+
         if (plugin == null) {
             System.err.println(message);
             if (e != null) {
@@ -99,7 +101,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
             }
             return;
         }
-        
+
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
 
@@ -110,11 +112,11 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
      * @param path the path
      * @return the image descriptor
      */
-    public static ImageDescriptor getImageDescriptor(String path) {
+    public ImageDescriptor getImageDescriptor(String path) {
         return ResourceManager.getPluginImageDescriptor(PLUGIN_ID, ICON_PATH + path);
     }
 
-    public static Image getImage(String path) {
+    public Image getImage(String path) {
         return ResourceManager.getPluginImage(PLUGIN_ID, ICON_PATH + path);
     }
 }

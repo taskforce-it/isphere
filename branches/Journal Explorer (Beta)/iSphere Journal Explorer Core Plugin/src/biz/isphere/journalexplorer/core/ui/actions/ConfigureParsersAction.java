@@ -28,19 +28,19 @@ public class ConfigureParsersAction extends Action {
 
         this.shell = shell;
 
-        setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(IMAGE));
+        setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
     public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getImage(IMAGE);
+        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     @Override
     public void run() {
         performConfigureParsers();
     }
-    
-    public int getButtonPressed(){
+
+    public int getButtonPressed() {
         return buttonPressed;
     }
 

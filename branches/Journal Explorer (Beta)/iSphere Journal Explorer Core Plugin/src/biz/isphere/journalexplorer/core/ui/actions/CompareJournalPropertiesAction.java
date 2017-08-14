@@ -30,11 +30,11 @@ public abstract class CompareJournalPropertiesAction extends Action {
     public CompareJournalPropertiesAction() {
         super(Messages.JournalEntryView_CompareEntries);
 
-        setImageDescriptor(ISphereJournalExplorerCorePlugin.getImageDescriptor(IMAGE));
+        setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
     public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getImage(IMAGE);
+        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     public void setSelectedItems(StructuredSelection selection) {

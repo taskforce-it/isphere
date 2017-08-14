@@ -45,7 +45,7 @@ public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITabl
     public Image getColumnImage(Object object, int columnIndex) {
         if (object instanceof JOESDProperty && columnIndex == VALUE_COLUMN) {
             if (((JOESDProperty)object).isErrorParsing()) {
-                return ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
+                return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
             } else {
                 return null;
             }

@@ -110,7 +110,7 @@ public class SideBySideCompareDialog extends XDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setImage(ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
+        newShell.setImage(ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
         newShell.setText(Messages.SideBySideCompareDialog_SideBySideComparison);
     }
 

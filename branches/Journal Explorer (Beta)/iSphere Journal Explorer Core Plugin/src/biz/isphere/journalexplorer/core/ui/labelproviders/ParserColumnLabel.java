@@ -25,7 +25,7 @@ public class ParserColumnLabel extends LabelProvider implements ITableLabelProvi
             if (((MetaTable)object).isLoaded()) {
                 return null;
             } else {
-                return ISphereJournalExplorerCorePlugin.getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
+                return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
             }
         } else {
             return null;
