@@ -38,11 +38,11 @@ public class Type3DAO extends AbstractTypeDAO {
         "           result.JOINCDAT," +
         "           result.JOMINESD," +
                     // JORES - reserved
-                    // JONVI - null value indicators
+                    // JONVI - null value indicators, added with TYPE3
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
-    
+
     public Type3DAO(File outputFile) throws Exception {
         super(outputFile);
     }
@@ -55,7 +55,7 @@ public class Type3DAO extends AbstractTypeDAO {
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
 
         super.populateJournalEntry(resultSet, journalEntry);
-        
+
         journalEntry.setUserProfile(resultSet.getString(JOUSPF));
         journalEntry.setSystemName(resultSet.getString(JOSYNM));
 
