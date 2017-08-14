@@ -203,6 +203,7 @@ public class AddJournalDialog extends XDialog {
     protected void okPressed() {
 
         if (saveInput()) {
+            storeValues();
             super.okPressed();
         }
     };
@@ -212,8 +213,6 @@ public class AddJournalDialog extends XDialog {
         if (txtFileName.getText().trim() != "" && txtLibrary.getText().trim() != "" && connection != null) { //$NON-NLS-1$ //$NON-NLS-2$
             fileName = txtFileName.getText();
             library = txtLibrary.getText();
-
-            storeValues();
 
             return true;
 
