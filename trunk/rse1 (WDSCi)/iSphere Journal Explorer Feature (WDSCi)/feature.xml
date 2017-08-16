@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="biz.isphere.joblogexplorer.rse"
+      id="biz.isphere.journalexplorer.rse"
       label="iSphere Journal Explorer for WDSCi 7.0+ (optional)"
       version="0.0.0.b001"
       provider-name="iSphere Project Team"
