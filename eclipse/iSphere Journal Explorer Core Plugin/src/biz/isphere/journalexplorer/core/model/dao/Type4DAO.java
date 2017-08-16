@@ -51,6 +51,7 @@ public class Type4DAO extends Type3DAO {
         super(outputFile);
     }
 
+    @Override
     protected String getSqlStatement() {
         return GET_JOURNAL_DATA_4;
     }

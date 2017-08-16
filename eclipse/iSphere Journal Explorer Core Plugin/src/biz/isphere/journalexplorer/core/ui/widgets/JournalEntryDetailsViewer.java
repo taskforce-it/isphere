@@ -33,7 +33,7 @@ public class JournalEntryDetailsViewer extends TreeViewer {
     public void refresh(boolean updateLabels) {
         super.refresh(updateLabels);
     }
-    
+
     private void initializeComponents() {
 
         setAutoExpandLevel(1);

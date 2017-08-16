@@ -64,6 +64,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         checkboxEnableColoring.setToolTipText(Messages.Enable_coloring_tooltip);
         checkboxEnableColoring.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         checkboxEnableColoring.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 validateAll();
                 setControlsEnablement();
