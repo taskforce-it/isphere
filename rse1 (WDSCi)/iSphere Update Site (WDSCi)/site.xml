@@ -33,7 +33,7 @@
    <feature url="features/biz.isphere.lpex.comments_3.1.0.b003.jar" id="biz.isphere.lpex.comments" version="3.1.0.b003">
       <category name="iSphere Additions for WDSCi 7.0"/>
    </feature>
-   <feature url="features/biz.isphere.journalexplorer.rse_0.0.0.b001.jar" id="biz.isphere.journalexplorer.rse" version="0.0.0.b001">
+   <feature url="features/biz.isphere.journalexplorer.rse_3.1.0.b003.jar" id="biz.isphere.journalexplorer.rse" version="3.1.0.b003">
       <category name="iSphere Journal Explorer for WDSCi 7.0"/>
    </feature>
    <category-def name="iSphere for WDSCi 7.0 (Base Component)" label="iSphere for WDSCi 7.0 (Base Component)">
