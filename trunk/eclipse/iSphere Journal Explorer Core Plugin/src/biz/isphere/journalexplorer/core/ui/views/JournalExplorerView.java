@@ -139,6 +139,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         };
 
         configureParsersAction = new ConfigureParsersAction(getSite().getShell()) {
+            @Override
             public void run() {
                 super.run();
                 // if (getButtonPressed() == Dialog.OK) {

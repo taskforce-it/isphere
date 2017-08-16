@@ -42,20 +42,21 @@ public class Type2DAO extends Type1DAO {
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
-    
+
     public Type2DAO(File outputFile) throws Exception {
         super(outputFile);
     }
 
+    @Override
     protected String getSqlStatement() {
         return GET_JOURNAL_DATA_2;
     }
 
     @Override
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
-        
+
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
-        
+
         journalEntry.setJobName(resultSet.getString("JOUSPF"));
         journalEntry.setJobName(resultSet.getString("JOSYNM"));
 

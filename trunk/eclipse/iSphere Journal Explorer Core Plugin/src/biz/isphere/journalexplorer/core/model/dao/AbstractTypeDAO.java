@@ -23,10 +23,10 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     public AbstractTypeDAO(File outputFile) throws Exception {
         super(outputFile.getConnectionName());
-        
+
         this.outputFile = outputFile;
     }
-    
+
     public List<JournalEntry> load() throws Exception {
 
         List<JournalEntry> journalEntries = new ArrayList<JournalEntry>();
@@ -36,13 +36,13 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
-            String sqlStatement = String.format( getSqlStatement(),outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+            String sqlStatement = String.format(getSqlStatement(), outputFile.getOutFileLibrary(), outputFile.getOutFileName());
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
             resultSet.setFetchSize(50);
 
             if (resultSet != null) {
-                
+
                 JournalEntry journalEntry = null;
 
                 while (resultSet.next()) {
@@ -50,7 +50,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
                     journalEntry = new JournalEntry();
                     journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
                     journalEntry.setOutFileName(outputFile.getOutFileName());
-                    
+
                     journalEntries.add(populateJournalEntry(resultSet, journalEntry));
 
                     MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
@@ -66,11 +66,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         return journalEntries;
     }
-    
+
     protected abstract String getSqlStatement();
-    
+
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
-        
+
         journalEntry.setConnectionName(getConnectionName());
         journalEntry.setId(resultSet.getInt(RRN_OUTPUT_FILE));
         journalEntry.setCommitmentCycle(resultSet.getInt(JOCCID));
@@ -91,7 +91,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         journalEntry.setSequenceNumber(resultSet.getLong(JOSEQN));
         journalEntry.setSpecificData(resultSet.getBytes(JOESD));
         journalEntry.setStringSpecificData(resultSet.getString(JOESD));
-        
+
         return journalEntry;
     }
 

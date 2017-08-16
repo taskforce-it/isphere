@@ -40,11 +40,12 @@ public class Type1DAO extends AbstractTypeDAO {
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" +
         "      FROM %s.%s as result";
     // @formatter:on
-    
+
     public Type1DAO(File outputFile) throws Exception {
         super(outputFile);
     }
 
+    @Override
     protected String getSqlStatement() {
         return GET_JOURNAL_DATA_1;
     }
@@ -53,7 +54,7 @@ public class Type1DAO extends AbstractTypeDAO {
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
 
         super.populateJournalEntry(resultSet, journalEntry);
-        
+
         // Depending of the journal out type, the timestamp can be a
         // single field or splitted in JODATE and JOTYPE.
         // For TYPE1 output files it is splitted into Date and Time.

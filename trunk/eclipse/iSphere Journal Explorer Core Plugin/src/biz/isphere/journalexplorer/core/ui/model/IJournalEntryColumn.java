@@ -11,7 +11,7 @@ package biz.isphere.journalexplorer.core.ui.model;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 
 public enum IJournalEntryColumn {
-    ID (ColumnsDAO.RRN_OUTPUT_FILE), 
+    ID (ColumnsDAO.RRN_OUTPUT_FILE),
     JOENTL (ColumnsDAO.JOENTL),
     JOSEQN (ColumnsDAO.JOSEQN),
     JOCODE (ColumnsDAO.JOCODE),
