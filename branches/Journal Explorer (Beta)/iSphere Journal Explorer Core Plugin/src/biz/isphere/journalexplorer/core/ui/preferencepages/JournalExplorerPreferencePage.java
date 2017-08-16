@@ -12,6 +12,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -77,9 +78,32 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         editor = new JournalEntryAppearanceEditor(groupColors);
         editor.setLayoutData(new GridData(GridData.FILL, SWT.FILL, true, true));
 
+        Button clearColors = WidgetFactory.createPushButton(groupColors, Messages.Clear_Colors);
+        clearColors.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                performClearColors();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
         setScreenToValues();
 
         return container;
+    }
+
+    private void performClearColors() {
+
+        columns = editor.getInput();
+
+        for (JournalEntryColumn column : columns) {
+            column.setColor(null);
+        }
+
+        editor.setInput(columns);
     }
 
     @Override
@@ -159,8 +183,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     }
 
     private boolean clearError() {
+
         setErrorMessage(null);
         setValid(true);
+
         return true;
     }
 

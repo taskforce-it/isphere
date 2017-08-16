@@ -90,8 +90,7 @@ public class BaseTypeViewerFactory {
         menuTableMembers.addMenuListener(new JournalEntryMenuAdapter(menuTableMembers, tableViewer));
         table.setMenu(menuTableMembers);
 
-        tableViewer.setLabelProvider(new JournalEntryLabelProvider(fieldIdMapping, usedColumns.toArray(new JournalEntryColumn[usedColumns
-            .size()])));
+        tableViewer.setLabelProvider(new JournalEntryLabelProvider(fieldIdMapping, usedColumns.toArray(new JournalEntryColumn[usedColumns.size()])));
         tableViewer.setContentProvider(new JournalViewerContentProvider(tableViewer));
 
         return tableViewer;
@@ -101,8 +100,7 @@ public class BaseTypeViewerFactory {
 
         List<JournalEntryColumn> columns = new LinkedList<JournalEntryColumn>();
 
-        columns.add(new JournalEntryColumn(IJournalEntryColumn.ID, Messages.ColLabel_OutputFile_Rrn, Messages.Tooltip_OutputFile_Rrn, 45,
-            SWT.RIGHT));
+        columns.add(new JournalEntryColumn(IJournalEntryColumn.ID, Messages.ColLabel_OutputFile_Rrn, Messages.Tooltip_OutputFile_Rrn, 45, SWT.RIGHT));
 
         // Entry seq#, code, type, ...
         columns.add(new JournalEntryColumn(IJournalEntryColumn.JOENTL, Messages.Tooltip_JOENTL, 60));

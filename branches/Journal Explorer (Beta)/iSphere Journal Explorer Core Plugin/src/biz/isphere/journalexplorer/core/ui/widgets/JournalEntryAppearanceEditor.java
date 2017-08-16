@@ -42,22 +42,10 @@ public class JournalEntryAppearanceEditor extends Composite {
     public JournalEntryAppearanceEditor(Composite parent) {
         super(parent, SWT.NONE);
 
-        // this.container = new Composite(this, SWT.BORDER);
         this.initializeComponents();
     }
 
     private void initializeComponents() {
-
-        // container.setLayout(new FillLayout(SWT.VERTICAL));
-        // GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-        // layoutData.heightHint = 0;
-        // container.setLayoutData(layoutData);
-
-        // createTableViewer(container);
-
-        // container.layout(true);
-
-        // = = = = = = = = = = =
 
         this.setLayout(new GridLayout(1, true));
         createTableViewer(this);
@@ -202,13 +190,14 @@ public class JournalEntryAppearanceEditor extends Composite {
 
     }
 
-    // @Override
-    // public void setEnabled(boolean enabled) {
-    // tableViewer.getControl().setEnabled(enabled);
-    // }
-    //
-    // @Override
-    // public boolean getEnabled() {
-    // return tableViewer.getControl().isEnabled();
-    // }
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        tableViewer.getControl().setEnabled(enabled);
+    }
+
+    @Override
+    public boolean getEnabled() {
+        return super.getEnabled();
+    }
 }

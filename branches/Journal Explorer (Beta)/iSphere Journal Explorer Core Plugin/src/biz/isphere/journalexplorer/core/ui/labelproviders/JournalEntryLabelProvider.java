@@ -46,7 +46,11 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
     public Color getBackground(Object element, int index) {
 
         if (index == 0) {
-            return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            if (preferences.isColoringEnabled()) {
+                return columns[index].getColor();
+            } else {
+                return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            }
         }
 
         if (element instanceof JournalEntry) {
@@ -209,5 +213,20 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
         }
 
         return null;
+    }
+
+    public void setColumnColor(String columnName, Color color) {
+
+        if (columns == null || columnName == null) {
+            return;
+        }
+
+        for (JournalEntryColumn column : columns) {
+            if (columnName.equals(column.getName())) {
+                column.setColor(color);
+                return;
+            }
+        }
+
     }
 }

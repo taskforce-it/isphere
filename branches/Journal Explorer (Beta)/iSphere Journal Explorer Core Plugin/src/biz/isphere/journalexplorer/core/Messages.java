@@ -106,6 +106,7 @@ public class Messages extends NLS {
     public static String Colors;
     public static String Enable_coloring;
     public static String Enable_coloring_tooltip;
+    public static String Clear_Colors;
 
     static {
         // initialize resource bundle

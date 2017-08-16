@@ -13,7 +13,6 @@ package biz.isphere.journalexplorer.core;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -21,6 +20,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
+
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -124,6 +125,10 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
 
     public Color getColor(RGB rgb) {
         return ResourceManager.getColor(rgb);
+    }
+
+    public Color getColor(String color) {
+        return Preferences.getInstance().deserializeColor(color);
     }
 
     public Color getSystemColor(int color) {

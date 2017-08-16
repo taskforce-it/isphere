@@ -58,5 +58,4 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
             return null;
         }
     }
-
 }

@@ -36,9 +36,6 @@ public final class Preferences implements ColumnsDAO {
      */
     private IPreferenceStore preferenceStore;
 
-    private static Color COLOR_JOB = ISphereJournalExplorerCorePlugin.getDefault().getColor(new RGB(255, 255, 128)); // yellow
-    private static Color COLOR_OBJECT = ISphereJournalExplorerCorePlugin.getDefault().getColor(new RGB(255, 128, 64)); // orange
-
     /*
      * Preferences keys:
      */
@@ -47,9 +44,15 @@ public final class Preferences implements ColumnsDAO {
 
     public static final String HIGHLIGHT_USER_ENTRIES = DOMAIN + "HIGHLIGHT_USER_ENTRIES."; //$NON-NLS-1$
 
-    private static final String COLORS = DOMAIN + "COLOR."; //$NON-NLS-1$
+    public static final String COLORS = DOMAIN + "COLOR."; //$NON-NLS-1$
 
-    private static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
+    public static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
+
+    private static Color COLOR_ID = ISphereJournalExplorerCorePlugin.getDefault().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+
+    private static Color COLOR_JOB = ISphereJournalExplorerCorePlugin.getDefault().getColor(new RGB(255, 255, 128)); // yellow
+
+    private static Color COLOR_OBJECT = ISphereJournalExplorerCorePlugin.getDefault().getColor(new RGB(255, 128, 64)); // orange
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -103,7 +106,7 @@ public final class Preferences implements ColumnsDAO {
             String rgb = preferenceStore.getString(getColorKey(columnName));
 
             if (!StringHelper.isNullOrEmpty(rgb)) {
-                color = unserializeColor(rgb);
+                color = deserializeColor(rgb);
             }
 
             if (color == null) {
@@ -165,7 +168,7 @@ public final class Preferences implements ColumnsDAO {
         return "R:" + color.getRed() + ",G:" + color.getGreen() + ",B:" + color.getBlue();
     }
 
-    private Color unserializeColor(String rgb) {
+    public Color deserializeColor(String rgb) {
 
         int red = -1;
         int green = -1;
@@ -219,6 +222,10 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public Color getInitialColumnColor(String columnName) {
+
+        if (RRN_OUTPUT_FILE.equals(columnName)) {
+            return COLOR_ID;
+        }
 
         if (JOJOB.equals(columnName)) {
             return COLOR_JOB;

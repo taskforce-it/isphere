@@ -30,10 +30,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
@@ -44,6 +46,7 @@ import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.BaseTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
@@ -247,11 +250,30 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         }
     }
 
-    public void propertyChange(PropertyChangeEvent arg0) {
-        // TODO Auto-generated method stub
-        // biz.isphere.journalexplorer.core.COLOR.ENABLED
-        // biz.isphere.journalexplorer.core.COLOR.*
-        tableViewer.refresh(true);
-        return;
+    public void propertyChange(PropertyChangeEvent event) {
+
+        if (event.getProperty() == null) {
+            return;
+        }
+
+        if (Preferences.ENABLED.equals(event.getProperty())) {
+            tableViewer.refresh(true);
+            return;
+        }
+
+        if (event.getProperty().startsWith(Preferences.COLORS)) {
+            JournalEntryLabelProvider labelProvider = (JournalEntryLabelProvider)tableViewer.getLabelProvider();
+            String columnName = event.getProperty().substring(Preferences.COLORS.length());
+            Object object = event.getNewValue();
+            if (object instanceof String) {
+                String rgb = (String)event.getNewValue();
+                if (columnName != null) {
+                    Color color = ISphereJournalExplorerCorePlugin.getDefault().getColor(rgb);
+                    labelProvider.setColumnColor(columnName, color);
+                }
+            }
+            tableViewer.refresh(true);
+            return;
+        }
     }
 }
