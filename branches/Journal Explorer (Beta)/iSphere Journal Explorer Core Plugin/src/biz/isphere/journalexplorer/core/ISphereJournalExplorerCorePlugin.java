@@ -13,9 +13,11 @@ package biz.isphere.journalexplorer.core;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
@@ -118,5 +120,13 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
 
     public Image getImage(String path) {
         return ResourceManager.getPluginImage(PLUGIN_ID, ICON_PATH + path);
+    }
+
+    public Color getColor(RGB rgb) {
+        return ResourceManager.getColor(rgb);
+    }
+
+    public Color getSystemColor(int color) {
+        return Display.getCurrent().getSystemColor(color);
     }
 }

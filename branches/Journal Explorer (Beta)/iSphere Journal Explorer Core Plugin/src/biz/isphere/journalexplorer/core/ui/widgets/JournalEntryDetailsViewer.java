@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
-import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryViewLabelProvider;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
 
 public class JournalEntryDetailsViewer extends TreeViewer {
 
@@ -41,7 +41,7 @@ public class JournalEntryDetailsViewer extends TreeViewer {
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
         setContentProvider(new JournalPropertiesContentProvider());
-        setLabelProvider(new JournalEntryViewLabelProvider());
+        setLabelProvider(new JournalPropertiesLabelProvider());
 
         TreeColumn property = new TreeColumn(tree, SWT.LEFT);
         property.setAlignment(SWT.LEFT);

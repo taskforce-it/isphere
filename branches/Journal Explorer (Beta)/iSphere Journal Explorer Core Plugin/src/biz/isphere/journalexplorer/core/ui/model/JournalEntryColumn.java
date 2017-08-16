@@ -9,10 +9,11 @@
 package biz.isphere.journalexplorer.core.ui.model;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 
-public class JournalViewerTableColumn {
+public class JournalEntryColumn {
 
-    private ViewerColumn columnDef;
+    private IJournalEntryColumn columnDef;
     private boolean resizable;
     private boolean moveable;
 
@@ -20,8 +21,9 @@ public class JournalViewerTableColumn {
     private String text;
     private String tooltipText;
     private int width;
+    private Color color;
 
-    private JournalViewerTableColumn(ViewerColumn columnDef) {
+    private JournalEntryColumn(IJournalEntryColumn columnDef) {
         this.columnDef = columnDef;
         this.resizable = true;
         this.moveable = true;
@@ -30,21 +32,23 @@ public class JournalViewerTableColumn {
         this.text = ""; //$NON-NLS-1$
         this.tooltipText = ""; //$NON-NLS-1$
         this.width = 90;
+
+        this.color = null;
     }
 
-    public JournalViewerTableColumn(ViewerColumn columnDef, String tooltipText, int width) {
+    public JournalEntryColumn(IJournalEntryColumn columnDef, String tooltipText, int width) {
         this(columnDef, columnDef.name(), tooltipText, width, SWT.NONE);
     }
 
-    public JournalViewerTableColumn(ViewerColumn columnDef, String tooltipText, int width, int style) {
+    public JournalEntryColumn(IJournalEntryColumn columnDef, String tooltipText, int width, int style) {
         this(columnDef, columnDef.name(), tooltipText, width, style);
     }
 
-    public JournalViewerTableColumn(ViewerColumn columnDef, String text, String tooltipText, int width) {
+    public JournalEntryColumn(IJournalEntryColumn columnDef, String text, String tooltipText, int width) {
         this(columnDef, text, tooltipText, width, SWT.NONE);
     }
 
-    public JournalViewerTableColumn(ViewerColumn columnDef, String text, String tooltipText, int width, int style) {
+    public JournalEntryColumn(IJournalEntryColumn columnDef, String text, String tooltipText, int width, int style) {
         this(columnDef);
 
         this.text = text;
@@ -53,12 +57,12 @@ public class JournalViewerTableColumn {
         this.style = style;
     }
 
-    public ViewerColumn getColumnDef() {
+    public IJournalEntryColumn getColumnDef() {
         return columnDef;
     }
 
     public String getName() {
-        return this.columnDef.fieldName();
+        return this.columnDef.columnName();
     }
 
     public int getStyle() {
@@ -116,6 +120,14 @@ public class JournalViewerTableColumn {
         }
 
         return text;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 }

@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 
-public class ParserColumnLabel extends LabelProvider implements ITableLabelProvider {
+public class MetaTableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
     public Image getColumnImage(Object object, int index) {
         if (index == 0 && object instanceof MetaTable) {

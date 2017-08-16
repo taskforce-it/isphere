@@ -11,13 +11,29 @@ package biz.isphere.journalexplorer.core.ui.model;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Type1ViewerFactory extends AbstractTypeViewerFactory {
+public class Type1ViewerFactory extends BaseTypeViewerFactory {
 
-    private static ViewerColumn[] columnNames = { ViewerColumn.ID, ViewerColumn.JOENTT, ViewerColumn.JOSEQN, ViewerColumn.JOCODE, ViewerColumn.JOENTL,
-        ViewerColumn.JODATE, ViewerColumn.JOTIME, ViewerColumn.JOJOB, ViewerColumn.JOUSER, ViewerColumn.JONBR, ViewerColumn.JOPGM, ViewerColumn.JOLIB,
-        ViewerColumn.JOOBJ, ViewerColumn.JOMBR, ViewerColumn.JOMINESD, ViewerColumn.JOESD };
+    // @formatter:off
+    private static IJournalEntryColumn[] columnNames = { 
+        IJournalEntryColumn.ID, 
+        IJournalEntryColumn.JOENTT, 
+        IJournalEntryColumn.JOSEQN, 
+        IJournalEntryColumn.JOCODE, 
+        IJournalEntryColumn.JOENTL,
+        IJournalEntryColumn.JODATE, 
+        IJournalEntryColumn.JOTIME, 
+        IJournalEntryColumn.JOJOB, 
+        IJournalEntryColumn.JOUSER, 
+        IJournalEntryColumn.JONBR, 
+        IJournalEntryColumn.JOPGM, 
+        IJournalEntryColumn.JOLIB,
+        IJournalEntryColumn.JOOBJ, 
+        IJournalEntryColumn.JOMBR, 
+        IJournalEntryColumn.JOMINESD, 
+        IJournalEntryColumn.JOESD };
+    // @formatter:on
 
     public Type1ViewerFactory() {
-        super(new HashSet<ViewerColumn>(Arrays.asList(columnNames)));
+        super(new HashSet<IJournalEntryColumn>(Arrays.asList(columnNames)));
     }
 }

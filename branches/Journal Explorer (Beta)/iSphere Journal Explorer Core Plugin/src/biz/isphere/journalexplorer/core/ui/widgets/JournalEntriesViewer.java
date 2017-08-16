@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -40,15 +42,16 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
-import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.BaseTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 
-public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider {
+public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private Composite container;
     private TableViewer tableViewer;
@@ -66,6 +69,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         this.container = new Composite(parent, SWT.NONE);
 
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
+        Preferences.getInstance().addPropertyChangeListener(this);
 
         this.initializeComponents();
     }
@@ -83,7 +87,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
         try {
 
-            AbstractTypeViewerFactory factory = null;
+            BaseTypeViewerFactory factory = null;
             switch (getOutfileType(outputFile)) {
             case JournalOutputType.TYPE5:
                 factory = new Type5ViewerFactory();
@@ -153,8 +157,6 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     @Override
     public void dispose() {
 
-        super.dispose();
-
         if (data != null) {
 
             data.clear();
@@ -166,6 +168,10 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
             tableViewer.getTable().dispose();
             tableViewer = null;
         }
+
+        Preferences.getInstance().addPropertyChangeListener(this);
+
+        super.dispose();
     }
 
     public TableViewer getTableViewer() {
@@ -239,5 +245,13 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         for (ISelectionChangedListener selectionChangedListener : selectionChangedListeners) {
             selectionChangedListener.selectionChanged(newEvent);
         }
+    }
+
+    public void propertyChange(PropertyChangeEvent arg0) {
+        // TODO Auto-generated method stub
+        // biz.isphere.journalexplorer.core.COLOR.ENABLED
+        // biz.isphere.journalexplorer.core.COLOR.*
+        tableViewer.refresh(true);
+        return;
     }
 }

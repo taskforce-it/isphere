@@ -11,35 +11,35 @@ package biz.isphere.journalexplorer.core.ui.model;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Type4ViewerFactory extends AbstractTypeViewerFactory {
+public class Type4ViewerFactory extends BaseTypeViewerFactory {
 
     // @formatter:off
-    private static ViewerColumn[] columnNames = { 
-        ViewerColumn.ID, 
-        ViewerColumn.JOENTT, 
-        ViewerColumn.JOSEQN, 
-        ViewerColumn.JOCODE,
-        ViewerColumn.JOENTL, 
-        ViewerColumn.JODATE, 
-        ViewerColumn.JOTIME, 
-        ViewerColumn.JOSYNM, 
-        ViewerColumn.JOJOB,
-        ViewerColumn.JOUSER, 
-        ViewerColumn.JONBR, 
-        ViewerColumn.JOUSPF, 
-        ViewerColumn.JOPGM, 
-        ViewerColumn.JOLIB, 
-        ViewerColumn.JOOBJ, 
-        ViewerColumn.JOMBR,
-        ViewerColumn.JOJID, 
-        ViewerColumn.JORCST, 
-        ViewerColumn.JOTGR, 
-        ViewerColumn.JOIGNAPY, 
-        ViewerColumn.JOMINESD, 
-        ViewerColumn.JOESD };
+    private static IJournalEntryColumn[] columnNames = { 
+        IJournalEntryColumn.ID, 
+        IJournalEntryColumn.JOENTT, 
+        IJournalEntryColumn.JOSEQN, 
+        IJournalEntryColumn.JOCODE,
+        IJournalEntryColumn.JOENTL, 
+        IJournalEntryColumn.JODATE, 
+        IJournalEntryColumn.JOTIME, 
+        IJournalEntryColumn.JOSYNM, 
+        IJournalEntryColumn.JOJOB,
+        IJournalEntryColumn.JOUSER, 
+        IJournalEntryColumn.JONBR, 
+        IJournalEntryColumn.JOUSPF, 
+        IJournalEntryColumn.JOPGM, 
+        IJournalEntryColumn.JOLIB, 
+        IJournalEntryColumn.JOOBJ, 
+        IJournalEntryColumn.JOMBR,
+        IJournalEntryColumn.JOJID, 
+        IJournalEntryColumn.JORCST, 
+        IJournalEntryColumn.JOTGR, 
+        IJournalEntryColumn.JOIGNAPY, 
+        IJournalEntryColumn.JOMINESD, 
+        IJournalEntryColumn.JOESD };
     // @formatter:on
 
     public Type4ViewerFactory() {
-        super(new HashSet<ViewerColumn>(Arrays.asList(columnNames)));
+        super(new HashSet<IJournalEntryColumn>(Arrays.asList(columnNames)));
     }
 }

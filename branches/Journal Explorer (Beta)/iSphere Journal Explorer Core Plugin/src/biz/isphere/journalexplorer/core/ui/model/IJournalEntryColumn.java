@@ -10,7 +10,7 @@ package biz.isphere.journalexplorer.core.ui.model;
 
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 
-public enum ViewerColumn {
+public enum IJournalEntryColumn {
     ID (ColumnsDAO.RRN_OUTPUT_FILE), 
     JOENTL (ColumnsDAO.JOENTL),
     JOSEQN (ColumnsDAO.JOSEQN),
@@ -57,13 +57,13 @@ public enum ViewerColumn {
     JOCMTLVL (ColumnsDAO.JOCMTLVL),
     JOESD (ColumnsDAO.JOESD);
 
-    private String fieldName;
+    private String columnName;
 
-    private ViewerColumn(String fieldName) {
-        this.fieldName = fieldName;
+    private IJournalEntryColumn(String fieldName) {
+        this.columnName = fieldName;
     }
 
-    public String fieldName() {
-        return fieldName;
+    public String columnName() {
+        return columnName;
     }
 }

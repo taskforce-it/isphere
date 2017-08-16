@@ -24,7 +24,7 @@ import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 
-public class JournalEntryViewLabelProvider implements ITableLabelProvider, ITableColorProvider {
+public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private final int PROPERTY_COLUMN = 0;
     private final int VALUE_COLUMN = 1;

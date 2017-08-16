@@ -37,7 +37,7 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.ui.labelproviders.ParserColumnLabel;
+import biz.isphere.journalexplorer.core.ui.labelproviders.MetaTableLabelProvider;
 
 public class ConfigureParsersDialog extends XDialog {
 
@@ -131,7 +131,7 @@ public class ConfigureParsersDialog extends XDialog {
         parsingOffset.setText(Messages.ConfigureParsersDialog_ParsingOffset);
 
         tableViewer.setColumnProperties(COLUMN_NAMES);
-        tableViewer.setLabelProvider(new ParserColumnLabel());
+        tableViewer.setLabelProvider(new MetaTableLabelProvider());
 
         configureEditors(tableViewer, COLUMN_NAMES);
     }

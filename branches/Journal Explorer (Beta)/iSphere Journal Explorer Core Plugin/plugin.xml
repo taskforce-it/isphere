@@ -66,5 +66,20 @@
             class="biz.isphere.journalexplorer.core.preferences.PreferencesInitializer">
       </initializer>
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Preferences
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.journalexplorer.core.ui.preferencepages.JournalExplorerPreferencePage"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Journal_Explorer_PreferencePage"
+            id="biz.isphere.journalexplorer.core.ui.preferencepages.JournalExplorerPreferencePage"/>
+   </extension>
    
 </plugin>

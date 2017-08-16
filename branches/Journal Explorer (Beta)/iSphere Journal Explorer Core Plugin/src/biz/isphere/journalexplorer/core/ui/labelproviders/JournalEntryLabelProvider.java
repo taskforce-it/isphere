@@ -25,34 +25,41 @@ import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.model.ViewerColumn;
+import biz.isphere.journalexplorer.core.ui.model.IJournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 
-public class JournalEntryColumnLabel extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+public class JournalEntryLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat timeFormat;
 
     private Preferences preferences;
-    private ViewerColumn[] fieldIdMapping;
+    private IJournalEntryColumn[] fieldIdMapping;
+    private JournalEntryColumn[] columns;
 
-    public JournalEntryColumnLabel(ViewerColumn[] fieldIdMapping) {
+    public JournalEntryLabelProvider(IJournalEntryColumn[] fieldIdMapping, JournalEntryColumn[] columns) {
         this.preferences = Preferences.getInstance();
         this.fieldIdMapping = fieldIdMapping;
+        this.columns = columns;
     }
 
     public Color getBackground(Object element, int index) {
-        
-        if (index == 0){
+
+        if (index == 0) {
             return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
         }
-        
+
         if (element instanceof JournalEntry) {
             JournalEntry journalEntry = (JournalEntry)element;
 
             if (preferences.isHighlightUserEntries() && journalEntry.getJournalCode().equals(JournalEntry.USER_GENERATED)) {
                 return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
             } else {
-                return null;
+                if (preferences.isColoringEnabled()) {
+                    return columns[index].getColor();
+                } else {
+                    return null;
+                }
             }
         } else {
             return null;

@@ -103,6 +103,10 @@ public class Messages extends NLS {
     public static String Tooltip_JOCMTLVL;
     public static String Tooltip_JOESD;
 
+    public static String Colors;
+    public static String Enable_coloring;
+    public static String Enable_coloring_tooltip;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
