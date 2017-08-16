@@ -140,7 +140,7 @@ public final class Preferences implements ColumnsDAO {
         } else {
             color = getInitialColumnColor();
         }
-        String oldColor = preferenceStore.getString(getColorKey(columnName));
+
         preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
     }
 
