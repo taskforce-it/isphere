@@ -157,6 +157,8 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     protected void setScreenValues() {
 
         editor.setInput(columns);
+
+        setControlsEnablement();
     }
 
     private void setControlsEnablement() {
