@@ -33,6 +33,9 @@
    <feature url="features/biz.isphere.lpex.comments_3.1.0.b003.jar" id="biz.isphere.lpex.comments" version="3.1.0.b003">
       <category name="iSphere Additions for WDSCi 7.0"/>
    </feature>
+   <feature url="features/biz.isphere.journalexplorer.rse_0.0.0.b001.jar" id="biz.isphere.journalexplorer.rse" version="0.0.0.b001">
+      <category name="iSphere Journal Explorer for WDSCi 7.0"/>
+   </feature>
    <category-def name="iSphere for WDSCi 7.0 (Base Component)" label="iSphere for WDSCi 7.0 (Base Component)">
       <description>
          iSphere for WDSCi 7.0. Base component of the iSphere plug-in.
@@ -51,6 +54,11 @@
    <category-def name="iSphere Job Log Explorer for WDSCi 7.0" label="iSphere Job Log Explorer for WDSCi 7.0">
       <description>
          Plug-in that adds an editor for exploring job log spooled files. Requires installing the iSphere base component &quot;iSphere for WDSCi 7.0&quot;.
+      </description>
+   </category-def>
+   <category-def name="iSphere Journal Explorer for WDSCi 7.0" label="iSphere Journal Explorer for WDSCi 7.0">
+      <description>
+         Plug-in that adds views for exploring output files of the DSPJRN command. Requires installing the iSphere base component &quot;iSphere for WDSCi 7.0&quot;.
       </description>
    </category-def>
    <category-def name="iSphere Additions for WDSCi 7.0" label="iSphere Additions for WDSCi 7.0">
