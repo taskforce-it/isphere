@@ -168,7 +168,7 @@ public class AS400Date {
             rpgLiteral = rpgLiteral.substring(1);
         }
 
-        AS400DateFormat dateFormat = (AS400DateFormat)getDateFormatsMap().get(rpgLiteral.trim().toUpperCase());
+        AS400DateFormat dateFormat = getDateFormatsMap().get(rpgLiteral.trim().toUpperCase());
 
         if (dateFormat == null) {
             throw getIllegalDateFormatException(rpgLiteral);

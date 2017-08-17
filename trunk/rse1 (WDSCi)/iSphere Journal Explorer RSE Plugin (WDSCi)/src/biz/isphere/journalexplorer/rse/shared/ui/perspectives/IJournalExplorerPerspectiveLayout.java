@@ -12,5 +12,5 @@ public interface IJournalExplorerPerspectiveLayout {
 
     public static final String REMOTE_SYSTEMS_VIEW_ID = "com.ibm.etools.systems.core.ui.view.systemView"; //$NON-NLS-1$
     public static final String COMMAND_LOG_VIEW_ID = "com.ibm.etools.iseries.core.ui.view.cmdlog"; //$NON-NLS-1$
-    
+
 }

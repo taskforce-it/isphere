@@ -142,7 +142,7 @@ public class AS400Time {
             rpgLiteral = rpgLiteral.substring(1);
         }
 
-        AS400TimeFormat timeFormat = (AS400TimeFormat)getTimeFormatsMap().get(rpgLiteral.trim().toUpperCase());
+        AS400TimeFormat timeFormat = getTimeFormatsMap().get(rpgLiteral.trim().toUpperCase());
 
         if (timeFormat == null) {
             throw getIllegalTimeFormatException(rpgLiteral);
