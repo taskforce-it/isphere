@@ -45,7 +45,8 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 /**
- * This view displays the journal entries that are selected on the tabs of the "Journal Explorer" view.
+ * This view displays the journal entries that are selected on the tabs of the
+ * "Journal Explorer" view.
  * 
  * @see JournalExplorerView
  * @see JournalEntriesViewer

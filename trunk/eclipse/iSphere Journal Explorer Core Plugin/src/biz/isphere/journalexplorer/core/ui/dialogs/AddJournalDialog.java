@@ -124,7 +124,6 @@ public class AddJournalDialog extends XDialog {
 
         Object object = cmbConnections.getElementAt(0);
         if (ConnectionDelegate.instanceOf(object)) {
-            // ConnectionDelegate connection = new ConnectionDelegate(object);
             connectionName = connection.getConnectionName();
         }
 

@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
 /**

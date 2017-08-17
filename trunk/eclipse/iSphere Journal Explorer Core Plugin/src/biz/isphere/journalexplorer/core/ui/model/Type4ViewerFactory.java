@@ -11,6 +11,8 @@ package biz.isphere.journalexplorer.core.ui.model;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+
 /**
  * This class creates a "Journal Entries Viewer" widget for a *TYPE4 output file
  * of the DSPJRN command.
