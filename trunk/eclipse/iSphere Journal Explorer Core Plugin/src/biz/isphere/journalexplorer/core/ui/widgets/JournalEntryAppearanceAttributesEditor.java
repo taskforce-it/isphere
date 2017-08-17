@@ -29,17 +29,30 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryAppearanceLabelProvider;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryAppearanceAttributesLabelProvider;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 
-public class JournalEntryAppearanceEditor extends Composite {
+/**
+ * This widget is an editor for editing the persisted appearance attributes of a
+ * journal entry column.
+ * 
+ * @see JournalEntryAppearanceAttributes
+ * @see JournalEntryAppearanceAttributesLabelProvider
+ */
+public class JournalEntryAppearanceAttributesEditor extends Composite {
 
-    // private Composite container;
+    private static final String COLUMN_NAME = "NAME";
+    private static final String COLUMN_DESCRIPTION = "DESCRIPTION";
+    private static final String COLUMN_COLOR = "COLOR";
+    private static final String[] COLUMN_NAMES = new String[] { COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_COLOR };
+
     private TableViewer tableViewer;
     private List<JournalEntry> data;
 
-    public JournalEntryAppearanceEditor(Composite parent) {
+    public JournalEntryAppearanceAttributesEditor(Composite parent) {
         super(parent, SWT.NONE);
 
         this.initializeComponents();
@@ -65,27 +78,26 @@ public class JournalEntryAppearanceEditor extends Composite {
         TableColumn newColumn;
 
         newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setText("Column");
+        newColumn.setText(Messages.ColumnHeading_ColumnName);
         newColumn.setWidth(100);
 
         newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setText("Description");
+        newColumn.setText(Messages.ColumnHeading_Description);
         newColumn.setWidth(100);
 
         newColumn = new TableColumn(table, SWT.NONE);
-        newColumn.setText("Color");
+        newColumn.setText(Messages.ColumnHeading_Color);
         newColumn.setWidth(100);
 
-        tableViewer.setLabelProvider(new JournalEntryAppearanceLabelProvider());
+        tableViewer.setLabelProvider(new JournalEntryAppearanceAttributesLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
 
-        String[] columnNames = new String[] { "NAME", "DESCRIPTION", "SELECT_COLOR" };
-        tableViewer.setColumnProperties(columnNames);
+        tableViewer.setColumnProperties(COLUMN_NAMES);
 
         table.getVerticalBar().setEnabled(true);
         table.getHorizontalBar().setEnabled(true);
 
-        configureEditors(tableViewer, columnNames);
+        configureEditors(tableViewer, COLUMN_NAMES);
     }
 
     private void configureEditors(final TableViewer tableViewer, final String[] columnNames) {
@@ -112,7 +124,7 @@ public class JournalEntryAppearanceEditor extends Composite {
 
             public void modify(Object element, String property, Object value) {
 
-                if ("SELECT_COLOR".equals(property)) {
+                if (COLUMN_COLOR.equals(property)) {
                     TableItem tableItem = (TableItem)element;
                     JournalEntryColumn columnColorEntry = (JournalEntryColumn)tableItem.getData();
                     Color color = ISphereJournalExplorerCorePlugin.getDefault().getColor((RGB)value);
@@ -123,7 +135,7 @@ public class JournalEntryAppearanceEditor extends Composite {
 
             public Object getValue(Object element, String property) {
 
-                if ("SELECT_COLOR".equals(property)) {
+                if (COLUMN_COLOR.equals(property)) {
                     JournalEntryColumn columnColorEntry = (JournalEntryColumn)element;
                     return columnColorEntry.getColor().getRGB();
                 }
@@ -132,25 +144,7 @@ public class JournalEntryAppearanceEditor extends Composite {
             }
 
             public boolean canModify(Object element, String property) {
-
-                int index = getColumnIndex(property);
-                if (index < 0 || index > editors.length - 1) {
-                    return false;
-                }
-
-                return editors[index] != null;
-            }
-
-            private int getColumnIndex(String property) {
-
-                for (int i = 0; i < columnNames.length; i++) {
-                    if (property.equals(columnNames[i])) {
-                        return i;
-                    }
-
-                }
-
-                return -1;
+                return COLUMN_COLOR.equals(property);
             }
         });
     }

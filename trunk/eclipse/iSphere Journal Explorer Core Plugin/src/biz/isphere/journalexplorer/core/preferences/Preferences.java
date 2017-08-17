@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.RGB;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearance;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 
 /**
@@ -96,9 +96,9 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getBoolean(ENABLED);
     }
 
-    public Map<String, JournalEntryAppearance> getJournalEntriesAppearances() {
+    public Map<String, JournalEntryAppearanceAttributes> getJournalEntriesAppearances() {
 
-        Map<String, JournalEntryAppearance> colors = new HashMap<String, JournalEntryAppearance>();
+        Map<String, JournalEntryAppearanceAttributes> colors = new HashMap<String, JournalEntryAppearanceAttributes>();
 
         for (String columnName : ColumnsDAO.ALL) {
 
@@ -113,7 +113,7 @@ public final class Preferences implements ColumnsDAO {
                 color = getInitialColumnColor(columnName);
             }
 
-            colors.put(columnName, new JournalEntryAppearance(columnName, color));
+            colors.put(columnName, new JournalEntryAppearanceAttributes(columnName, color));
         }
 
         return colors;
@@ -126,11 +126,11 @@ public final class Preferences implements ColumnsDAO {
     public void setJounalEntriesAppearances(JournalEntryColumn[] journalEntries) {
 
         for (JournalEntryColumn journalEntryColumn : journalEntries) {
-            setJounalEntryAppearance(new JournalEntryAppearance(journalEntryColumn.getName(), journalEntryColumn.getColor()));
+            setJounalEntryAppearance(new JournalEntryAppearanceAttributes(journalEntryColumn.getName(), journalEntryColumn.getColor()));
         }
     }
 
-    public void setJounalEntryAppearance(JournalEntryAppearance appearance) {
+    public void setJounalEntryAppearance(JournalEntryAppearanceAttributes appearance) {
 
         String columnName = appearance.getColumnName();
         Color color;
@@ -144,10 +144,10 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
     }
 
-    public void setJournalEntriesAppearances(Map<String, JournalEntryAppearance> colors) {
+    public void setJournalEntriesAppearances(Map<String, JournalEntryAppearanceAttributes> colors) {
 
         for (String columnName : ColumnsDAO.ALL) {
-            JournalEntryAppearance color = colors.get(columnName);
+            JournalEntryAppearanceAttributes color = colors.get(columnName);
             setJounalEntryAppearance(color);
         }
     }

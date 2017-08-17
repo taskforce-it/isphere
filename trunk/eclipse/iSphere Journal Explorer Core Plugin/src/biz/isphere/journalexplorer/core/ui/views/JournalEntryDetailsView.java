@@ -29,6 +29,9 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
+/**
+ * This view displays the properties of a journal entry record.
+ */
 public class JournalEntryDetailsView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView"; //$NON-NLS-1$

@@ -25,19 +25,26 @@ import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.model.IJournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 
+/**
+ * This class is the label provider for a "Journal Entry" column.
+ * 
+ * @see JournalEntryColumn
+ * @see JournalEntriesViewer
+ */
 public class JournalEntryLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat timeFormat;
 
     private Preferences preferences;
-    private IJournalEntryColumn[] fieldIdMapping;
+    private JournalEntryColumnUI[] fieldIdMapping;
     private JournalEntryColumn[] columns;
 
-    public JournalEntryLabelProvider(IJournalEntryColumn[] fieldIdMapping, JournalEntryColumn[] columns) {
+    public JournalEntryLabelProvider(JournalEntryColumnUI[] fieldIdMapping, JournalEntryColumn[] columns) {
         this.preferences = Preferences.getInstance();
         this.fieldIdMapping = fieldIdMapping;
         this.columns = columns;

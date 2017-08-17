@@ -41,11 +41,11 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.MetaTableLabelProvider
 
 public class ConfigureParsersDialog extends XDialog {
 
-    private static final String JOURNALED_OBJECT = "JOURNALED_OBJECT";
-    private static final String PARSER_LIBRARY = "PARSER_LIBRARY";
-    private static final String PARSER_NAME = "PARSER_NAME";
-    private static final String PARSING_OFFSET = "PARSING_OFFSET";
-    private static final String[] COLUMN_NAMES = new String[] { JOURNALED_OBJECT, PARSER_LIBRARY, PARSER_NAME, PARSING_OFFSET };
+    private static final String COLUMN_JOURNALED_OBJECT = "JOURNALED_OBJECT";
+    private static final String COLUMN_PARSER_LIBRARY = "PARSER_LIBRARY";
+    private static final String COLUMN_PARSER_NAME = "PARSER_NAME";
+    private static final String COLUMN_PARSING_OFFSET = "PARSING_OFFSET";
+    private static final String[] COLUMN_NAMES = new String[] { COLUMN_JOURNALED_OBJECT, COLUMN_PARSER_LIBRARY, COLUMN_PARSER_NAME, COLUMN_PARSING_OFFSET };
 
     TableViewer tableViewer;
 

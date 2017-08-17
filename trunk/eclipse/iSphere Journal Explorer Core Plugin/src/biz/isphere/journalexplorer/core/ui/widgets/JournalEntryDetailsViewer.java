@@ -19,9 +19,15 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
 
+/**
+ * This widget display the properties of a journal entry item.
+ * 
+ * @see JournalProperties
+ */
 public class JournalEntryDetailsViewer extends TreeViewer {
 
     public JournalEntryDetailsViewer(Composite parent) {

@@ -15,8 +15,16 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttributesEditor;
 
-public class JournalEntryAppearanceLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+/**
+ * This class is the label provider for the appearance attributes of a
+ * "Journal Entry" column.
+ * 
+ * @see JournalEntryColumn
+ * @see JournalEntryAppearanceAttributesEditor
+ */
+public class JournalEntryAppearanceAttributesLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     public Image getColumnImage(Object object, int index) {
         return null;
@@ -32,7 +40,7 @@ public class JournalEntryAppearanceLabelProvider extends LabelProvider implement
         case 1: // Description
             return columnColorEntry.getTooltipText();
         case 2: // Color
-            return ""; // columnColorEntry.getColor().toString();
+            return ""; //$NON-NLS-1$
         default:
             break;
         }
@@ -52,7 +60,6 @@ public class JournalEntryAppearanceLabelProvider extends LabelProvider implement
     }
 
     public Color getForeground(Object object, int index) {
-        // TODO Auto-generated method stub
         return null;
     }
 

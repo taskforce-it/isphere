@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
@@ -44,13 +47,13 @@ public class AddJournalDialog extends XDialog {
     private static final String LIBRARY = "LIBRARY";
     private static final String FILE = "FILE";
 
-    private Text txtLibrary;
+    private Text txtLibraryName;
 
     private Text txtFileName;
 
     private ComboViewer cmbConnections;
 
-    private String library;
+    private String libraryName;
 
     private String fileName;
 
@@ -92,14 +95,13 @@ public class AddJournalDialog extends XDialog {
         cmbConnectionLayoutData.minimumWidth = 100;
         cmbConnectionLayoutData.grabExcessHorizontalSpace = true;
         cmbConnections.getControl().setLayoutData(cmbConnectionLayoutData);
-        configureConnectionsCombo();
 
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
 
-        txtLibrary = WidgetFactory.createUpperCaseText(container);
-        txtLibrary.setTextLimit(10);
-        txtLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtLibraryName = WidgetFactory.createUpperCaseText(container);
+        txtLibraryName.setTextLimit(10);
+        txtLibraryName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
@@ -107,6 +109,8 @@ public class AddJournalDialog extends XDialog {
         txtFileName = WidgetFactory.createUpperCaseText(container);
         txtFileName.setTextLimit(10);
         txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        configureControls();
 
         loadValues();
 
@@ -120,7 +124,7 @@ public class AddJournalDialog extends XDialog {
 
         Object object = cmbConnections.getElementAt(0);
         if (ConnectionDelegate.instanceOf(object)) {
-            ConnectionDelegate connection = new ConnectionDelegate(object);
+            // ConnectionDelegate connection = new ConnectionDelegate(object);
             connectionName = connection.getConnectionName();
         }
 
@@ -129,8 +133,8 @@ public class AddJournalDialog extends XDialog {
             return;
         }
 
-        if (StringHelper.isNullOrEmpty(txtLibrary.getText())) {
-            txtLibrary.setFocus();
+        if (StringHelper.isNullOrEmpty(txtLibraryName.getText())) {
+            txtLibraryName.setFocus();
             return;
         }
 
@@ -152,27 +156,37 @@ public class AddJournalDialog extends XDialog {
             cmbConnections.setSelection(new StructuredSelection(ConnectionDelegate.getConnection(connectionName)));
         }
 
-        txtLibrary.setText(loadValue(LIBRARY, ""));
+        txtLibraryName.setText(loadValue(LIBRARY, ""));
         txtFileName.setText(loadValue(FILE, ""));
     }
 
     private void storeValues() {
 
         storeValue(FILE, fileName);
-        storeValue(LIBRARY, library);
+        storeValue(LIBRARY, libraryName);
         storeValue(CONNECTION, connection.getConnectionName());
     }
 
-    private void configureConnectionsCombo() {
+    private void configureControls() {
+
+        txtFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                fileName = txtFileName.getText().trim();
+            }
+        });
+
+        txtLibraryName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                libraryName = txtLibraryName.getText().trim();
+            }
+        });
 
         cmbConnections.setContentProvider(new ArrayContentProvider());
         cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
         cmbConnections.setInput(ConnectionDelegate.getConnections());
         cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
-
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-
                 if (selection.size() > 0) {
                     connection = new ConnectionDelegate(selection.getFirstElement());
                 }
@@ -202,24 +216,26 @@ public class AddJournalDialog extends XDialog {
     @Override
     protected void okPressed() {
 
-        if (saveInput()) {
+        if (validated()) {
             storeValues();
             super.okPressed();
         }
     };
 
-    private boolean saveInput() {
+    private boolean validated() {
 
-        if (txtFileName.getText().trim() != "" && txtLibrary.getText().trim() != "" && connection != null) { //$NON-NLS-1$ //$NON-NLS-2$
-            fileName = txtFileName.getText();
-            library = txtLibrary.getText();
-
-            return true;
-
-        } else {
+        if (StringHelper.isNullOrEmpty(fileName) || StringHelper.isNullOrEmpty(libraryName) || connection == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
             return false;
         }
+
+        if (!IBMiHostContributionsHandler.checkFile(connection.getConnectionName(), libraryName, fileName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.File_A_B_does_not_exist, new String[] { libraryName, fileName }));
+            return false;
+        }
+
+        return true;
     }
 
     public String getFileName() {
@@ -229,7 +245,7 @@ public class AddJournalDialog extends XDialog {
 
     public String getLibrary() {
 
-        return library.toUpperCase();
+        return libraryName.toUpperCase();
     }
 
     public String getConnectionName() {

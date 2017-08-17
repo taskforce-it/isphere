@@ -107,6 +107,11 @@ public class Messages extends NLS {
     public static String Enable_coloring;
     public static String Enable_coloring_tooltip;
     public static String Clear_Colors;
+    public static String File_A_B_does_not_exist;
+
+    public static String ColumnHeading_ColumnName;
+    public static String ColumnHeading_Description;
+    public static String ColumnHeading_Color;
 
     static {
         // initialize resource bundle
