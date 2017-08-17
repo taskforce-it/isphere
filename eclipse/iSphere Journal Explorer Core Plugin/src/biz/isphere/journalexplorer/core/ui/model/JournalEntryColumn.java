@@ -11,53 +11,64 @@ package biz.isphere.journalexplorer.core.ui.model;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+
+/**
+ * This class represents a column of the "Journal Entries Viewer" widget. It
+ * defines the properties of the column, such as column heading, color, width.
+ * 
+ * @see JournalEntriesViewer
+ * @see JournalEntryLabelProvider
+ */
 public class JournalEntryColumn {
 
-    private IJournalEntryColumn columnDef;
+    private JournalEntryColumnUI columnDef;
     private boolean resizable;
     private boolean moveable;
 
     private int style;
-    private String text;
+    private String columnHeading;
     private String tooltipText;
     private int width;
     private Color color;
 
-    private JournalEntryColumn(IJournalEntryColumn columnDef) {
+    private JournalEntryColumn(JournalEntryColumnUI columnDef) {
+
         this.columnDef = columnDef;
         this.resizable = true;
         this.moveable = true;
 
         this.style = SWT.NONE;
-        this.text = ""; //$NON-NLS-1$
+        this.columnHeading = ""; //$NON-NLS-1$
         this.tooltipText = ""; //$NON-NLS-1$
         this.width = 90;
 
         this.color = null;
     }
 
-    public JournalEntryColumn(IJournalEntryColumn columnDef, String tooltipText, int width) {
+    public JournalEntryColumn(JournalEntryColumnUI columnDef, String tooltipText, int width) {
         this(columnDef, columnDef.name(), tooltipText, width, SWT.NONE);
     }
 
-    public JournalEntryColumn(IJournalEntryColumn columnDef, String tooltipText, int width, int style) {
+    public JournalEntryColumn(JournalEntryColumnUI columnDef, String tooltipText, int width, int style) {
         this(columnDef, columnDef.name(), tooltipText, width, style);
     }
 
-    public JournalEntryColumn(IJournalEntryColumn columnDef, String text, String tooltipText, int width) {
+    public JournalEntryColumn(JournalEntryColumnUI columnDef, String text, String tooltipText, int width) {
         this(columnDef, text, tooltipText, width, SWT.NONE);
     }
 
-    public JournalEntryColumn(IJournalEntryColumn columnDef, String text, String tooltipText, int width, int style) {
+    public JournalEntryColumn(JournalEntryColumnUI columnDef, String columnHeading, String tooltipText, int width, int style) {
         this(columnDef);
 
-        this.text = text;
+        this.columnHeading = columnHeading;
         this.tooltipText = tooltipText;
         this.width = width;
         this.style = style;
     }
 
-    public IJournalEntryColumn getColumnDef() {
+    public JournalEntryColumnUI getColumnDef() {
         return columnDef;
     }
 
@@ -73,12 +84,12 @@ public class JournalEntryColumn {
         this.style = style;
     }
 
-    public String getText() {
-        return notNull(text);
+    public String getColumnHeading() {
+        return notNull(columnHeading);
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setColumnHeading(String columnHeading) {
+        this.columnHeading = columnHeading;
     }
 
     public String getTooltipText() {

@@ -10,12 +10,24 @@ package biz.isphere.journalexplorer.core.ui.model;
 
 import org.eclipse.swt.graphics.Color;
 
-public class JournalEntryAppearance {
+import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryAppearanceAttributesLabelProvider;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttributesEditor;
+
+/**
+ * This class holds the persisted appearance attributes of a journal entry
+ * column.
+ * 
+ * @see Preferences
+ * @see JournalEntryAppearanceAttributesLabelProvider
+ * @see JournalEntryAppearanceAttributesEditor
+ */
+public class JournalEntryAppearanceAttributes {
 
     private String columnName;
     private Color color;
 
-    public JournalEntryAppearance(String columnName, Color color) {
+    public JournalEntryAppearanceAttributes(String columnName, Color color) {
         this.columnName = columnName;
         this.color = color;
     }

@@ -11,56 +11,65 @@ package biz.isphere.journalexplorer.core.ui.model;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Type5ViewerFactory extends BaseTypeViewerFactory {
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+
+/**
+ * This class creates a "Journal Entries Viewer" widget for a *TYPE5 output file
+ * of the DSPJRN command.
+ * 
+ * @see JournalEntriesViewer
+ * @see AbstractTypeViewerFactory
+ */
+public class Type5ViewerFactory extends AbstractTypeViewerFactory {
 
     // @formatter:off
-    private static IJournalEntryColumn[] columnNames = { 
-        IJournalEntryColumn.ID, 
-        IJournalEntryColumn.JOENTT, 
-        IJournalEntryColumn.JOSEQN, 
-        IJournalEntryColumn.JOCODE, 
-        IJournalEntryColumn.JOENTL,
-        IJournalEntryColumn.JODATE, 
-        IJournalEntryColumn.JOTIME,
-        IJournalEntryColumn.JOCCID,
-        IJournalEntryColumn.JOLUW,
-        IJournalEntryColumn.JOXID,
-        IJournalEntryColumn.JOCMTLVL,
-        IJournalEntryColumn.JOSYNM, 
-        IJournalEntryColumn.JOSYSSEQ, 
-        IJournalEntryColumn.JOJOB, 
-        IJournalEntryColumn.JOUSER, 
-        IJournalEntryColumn.JONBR, 
-        IJournalEntryColumn.JOTHDX, 
-        IJournalEntryColumn.JOUSPF,
-        IJournalEntryColumn.JOPGM, 
-        IJournalEntryColumn.JOPGMLIB, 
-        IJournalEntryColumn.JOPGMDEV, 
-        IJournalEntryColumn.JOPGMASP, 
-        IJournalEntryColumn.JOLIB, 
-        IJournalEntryColumn.JOOBJ,
-        IJournalEntryColumn.JOOBJIND,
-        IJournalEntryColumn.JOOBJTYP,
-        IJournalEntryColumn.JOFILTYP,
-        IJournalEntryColumn.JOMBR, 
-        IJournalEntryColumn.JOJID, 
-        IJournalEntryColumn.JORCV, 
-        IJournalEntryColumn.JORCVLIB, 
-        IJournalEntryColumn.JORCVDEV, 
-        IJournalEntryColumn.JORCVASP, 
-        IJournalEntryColumn.JOARM, 
-        IJournalEntryColumn.JOADF, 
-        IJournalEntryColumn.JORPORT, 
-        IJournalEntryColumn.JORADR, 
-        IJournalEntryColumn.JORCST, 
-        IJournalEntryColumn.JOTGR,
-        IJournalEntryColumn.JOIGNAPY, 
-        IJournalEntryColumn.JOMINESD, 
-        IJournalEntryColumn.JOINCDAT,
-        IJournalEntryColumn.JOESD };
+    private static JournalEntryColumnUI[] columnNames = { 
+        JournalEntryColumnUI.ID, 
+        JournalEntryColumnUI.JOENTT, 
+        JournalEntryColumnUI.JOSEQN, 
+        JournalEntryColumnUI.JOCODE, 
+        JournalEntryColumnUI.JOENTL,
+        JournalEntryColumnUI.JODATE, 
+        JournalEntryColumnUI.JOTIME,
+        JournalEntryColumnUI.JOCCID,
+        JournalEntryColumnUI.JOLUW,
+        JournalEntryColumnUI.JOXID,
+        JournalEntryColumnUI.JOCMTLVL,
+        JournalEntryColumnUI.JOSYNM, 
+        JournalEntryColumnUI.JOSYSSEQ, 
+        JournalEntryColumnUI.JOJOB, 
+        JournalEntryColumnUI.JOUSER, 
+        JournalEntryColumnUI.JONBR, 
+        JournalEntryColumnUI.JOTHDX, 
+        JournalEntryColumnUI.JOUSPF,
+        JournalEntryColumnUI.JOPGM, 
+        JournalEntryColumnUI.JOPGMLIB, 
+        JournalEntryColumnUI.JOPGMDEV, 
+        JournalEntryColumnUI.JOPGMASP, 
+        JournalEntryColumnUI.JOLIB, 
+        JournalEntryColumnUI.JOOBJ,
+        JournalEntryColumnUI.JOOBJIND,
+        JournalEntryColumnUI.JOOBJTYP,
+        JournalEntryColumnUI.JOFILTYP,
+        JournalEntryColumnUI.JOMBR, 
+        JournalEntryColumnUI.JOJID, 
+        JournalEntryColumnUI.JORCV, 
+        JournalEntryColumnUI.JORCVLIB, 
+        JournalEntryColumnUI.JORCVDEV, 
+        JournalEntryColumnUI.JORCVASP, 
+        JournalEntryColumnUI.JOARM, 
+        JournalEntryColumnUI.JOADF, 
+        JournalEntryColumnUI.JORPORT, 
+        JournalEntryColumnUI.JORADR, 
+        JournalEntryColumnUI.JORCST, 
+        JournalEntryColumnUI.JOTGR,
+        JournalEntryColumnUI.JOIGNAPY, 
+        JournalEntryColumnUI.JOMINESD, 
+        JournalEntryColumnUI.JOINCDAT,
+        JournalEntryColumnUI.JOESD };
     // @formatter:on
 
     public Type5ViewerFactory() {
-        super(new HashSet<IJournalEntryColumn>(Arrays.asList(columnNames)));
+        super(new HashSet<JournalEntryColumnUI>(Arrays.asList(columnNames)));
     }
 }

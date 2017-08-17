@@ -47,13 +47,23 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
-import biz.isphere.journalexplorer.core.ui.model.BaseTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 
+/**
+ * This widget is a viewer for the journal entries of an output file of the
+ * DSPJRN command. It is created by a sub-class of the
+ * {@link AbstractTypeViewerFactory}. It is used by the "Journal Explorer" view
+ * to create the tabs for the opened output files of the DSPJRN command.
+ * 
+ * @see JournalEntry
+ * @see JournalEntryViewerView
+ */
 public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private Composite container;
@@ -90,7 +100,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
         try {
 
-            BaseTypeViewerFactory factory = null;
+            AbstractTypeViewerFactory factory = null;
             switch (getOutfileType(outputFile)) {
             case JournalOutputType.TYPE5:
                 factory = new Type5ViewerFactory();

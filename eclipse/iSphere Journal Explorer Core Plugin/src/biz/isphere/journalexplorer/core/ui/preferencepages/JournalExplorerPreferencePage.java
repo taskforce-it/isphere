@@ -26,14 +26,14 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.model.BaseTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearance;
+import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceEditor;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttributesEditor;
 
 public class JournalExplorerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private JournalEntryAppearanceEditor editor;
+    private JournalEntryAppearanceAttributesEditor editor;
     private JournalEntryColumn[] columns;
 
     private Preferences preferences;
@@ -76,7 +76,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         groupColors.setLayoutData(new GridData(GridData.FILL, SWT.FILL, false, true));
         groupColors.setText(Messages.Colors);
 
-        editor = new JournalEntryAppearanceEditor(groupColors);
+        editor = new JournalEntryAppearanceAttributesEditor(groupColors);
         editor.setLayoutData(new GridData(GridData.FILL, SWT.FILL, true, true));
 
         Button clearColors = WidgetFactory.createPushButton(groupColors, Messages.Clear_Colors);
@@ -130,7 +130,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         preferences.setColoringEnabled(checkboxEnableColoring.getSelection());
 
         for (JournalEntryColumn column : columns) {
-            preferences.setJounalEntryAppearance(new JournalEntryAppearance(column.getName(), column.getColor()));
+            preferences.setJounalEntryAppearance(new JournalEntryAppearanceAttributes(column.getName(), column.getColor()));
         }
     }
 
@@ -138,8 +138,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         checkboxEnableColoring.setSelection(preferences.isColoringEnabled());
 
-        BaseTypeViewerFactory factory = new BaseTypeViewerFactory();
-        columns = factory.getAvailableTableColumns();
+        columns = AbstractTypeViewerFactory.getAvailableTableColumns();
 
         setScreenValues();
     }

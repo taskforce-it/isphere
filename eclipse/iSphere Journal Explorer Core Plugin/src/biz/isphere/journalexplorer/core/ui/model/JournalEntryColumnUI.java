@@ -10,7 +10,10 @@ package biz.isphere.journalexplorer.core.ui.model;
 
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 
-public enum IJournalEntryColumn {
+/**
+ * This class defines the UI names for the columns of a journal entry record.
+ */
+public enum JournalEntryColumnUI {
     ID (ColumnsDAO.RRN_OUTPUT_FILE),
     JOENTL (ColumnsDAO.JOENTL),
     JOSEQN (ColumnsDAO.JOSEQN),
@@ -59,7 +62,7 @@ public enum IJournalEntryColumn {
 
     private String columnName;
 
-    private IJournalEntryColumn(String fieldName) {
+    private JournalEntryColumnUI(String fieldName) {
         this.columnName = fieldName;
     }
 

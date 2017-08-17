@@ -41,8 +41,15 @@ import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
+/**
+ * This view displays the journal entries that are selected on the tabs of the "Journal Explorer" view.
+ * 
+ * @see JournalExplorerView
+ * @see JournalEntriesViewer
+ */
 public class JournalEntryViewerView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"; //$NON-NLS-1$
