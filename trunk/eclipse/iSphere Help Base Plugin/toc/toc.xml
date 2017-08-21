@@ -14,8 +14,8 @@
       <topic label="Uninstall RDi" href="html/uninstall/uninstall_rdi.html" />
       <topic label="Uninstall Library" href="html/uninstall/uninstall_library.html" />
    </topic>
-   <topic label="Reference">
-     <anchor id="reference" />
+   <topic label="Reference" sort="true">
+     <anchor id="reference"/>
    </topic>
    <topic label="Local Update Site" href="html/localupdatesite/localupdatesite.html" />
    <topic label="Contribution" href="html/contributions/contributions.html" >
