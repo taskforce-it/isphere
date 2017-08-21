@@ -69,17 +69,18 @@ public class SideBySideCompareDialog extends XDialog {
         lblLeftEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
         leftEntry = new JournalEntryDetailsViewer(leftComposite);
-        Tree tree = leftEntry.getTree();
-        tree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
+        Tree leftTree = leftEntry.getTree();
+        leftTree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 
         Composite rightComposite = new Composite(container, SWT.BORDER);
         rightComposite.setLayout(new GridLayout(1, false));
 
         lblRightEntry = new Label(rightComposite, SWT.NONE);
         lblRightEntry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+
         rightEntry = new JournalEntryDetailsViewer(rightComposite);
-        Tree tree_1 = rightEntry.getTree();
-        tree_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        Tree rightTree = rightEntry.getTree();
+        rightTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         return container;
     }
