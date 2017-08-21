@@ -25,15 +25,13 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttributesEditor;
 
 public class JournalExplorerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private JournalEntryAppearanceAttributesEditor editor;
-    private JournalEntryColumn[] columns;
+    private JournalEntryAppearanceAttributes[] columns;
 
     private Preferences preferences;
 
@@ -105,18 +103,16 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         preferences.setColoringEnabled(checkboxEnableColoring.getSelection());
 
-        for (JournalEntryColumn column : columns) {
-            preferences.setJounalEntryAppearance(new JournalEntryAppearanceAttributes(column.getName(), column.getColor()));
-        }
-        
-//        preferences.setJournalEntryColumnsOrder(sortedColumnNames)
+        columns = editor.getInput();
+
+        preferences.setSortedJournalEntriesAppearances(columns);
     }
 
     protected void setScreenToValues() {
 
         checkboxEnableColoring.setSelection(preferences.isColoringEnabled());
 
-        columns = AbstractTypeViewerFactory.getAvailableTableColumns();
+        columns = preferences.getSortedJournalEntriesAppearances();
 
         setScreenValues();
     }
@@ -125,9 +121,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         checkboxEnableColoring.setSelection(preferences.getInitialColoringEnabled());
 
-        for (JournalEntryColumn column : columns) {
-            column.setColor(preferences.getInitialColumnColor(column.getName()));
-        }
+        columns = preferences.getInitialSortedJournalEntriesAppearances();
 
         setScreenValues();
     }

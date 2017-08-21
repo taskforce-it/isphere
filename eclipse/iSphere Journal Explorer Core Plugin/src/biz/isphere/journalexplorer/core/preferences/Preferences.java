@@ -1,9 +1,9 @@
 package biz.isphere.journalexplorer.core.preferences;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -11,11 +11,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
 /**
@@ -59,6 +57,8 @@ public final class Preferences implements ColumnsDAO {
 
     private static Color COLOR_OBJECT = ISphereJournalExplorerCorePlugin.getDefault().getColor(new RGB(255, 128, 64)); // orange
 
+    private static final String COLOR_NULL = "[null]"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -101,79 +101,29 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getBoolean(ENABLED);
     }
 
-    public Map<String, JournalEntryAppearanceAttributes> getJournalEntriesAppearances() {
+    public JournalEntryAppearanceAttributes[] getSortedJournalEntriesAppearances() {
 
-        Map<String, JournalEntryAppearanceAttributes> colors = new HashMap<String, JournalEntryAppearanceAttributes>();
+        List<JournalEntryAppearanceAttributes> journalEntryAppearanceAttributes = new LinkedList<JournalEntryAppearanceAttributes>();
 
-        for (String columnName : ColumnsDAO.ALL) {
+        for (String columnName : getSortedColumnNames()) {
 
             Color color = null;
             String rgb = preferenceStore.getString(getColorKey(columnName));
 
-            if (!StringHelper.isNullOrEmpty(rgb)) {
-                color = deserializeColor(rgb);
-            }
-
+            color = deserializeColor(rgb);
             if (color == null) {
                 color = getInitialColumnColor(columnName);
             }
 
-            colors.put(columnName, new JournalEntryAppearanceAttributes(columnName, color));
+            journalEntryAppearanceAttributes.add(new JournalEntryAppearanceAttributes(columnName, color));
         }
 
-        return colors;
-    }
-
-    public String[] getJournalEntryColumnsOrder() {
-
-        List<String> sortedColumnNames = new LinkedList<String>();
-
-        int i = 0;
-        String columnName;
-        do {
-            columnName = preferenceStore.getString(getColumnOrderKey(i));
-            if (columnName.trim().length() > 0) {
-                sortedColumnNames.add(columnName);
-                i++;
-            }
-        } while (columnName.trim().length() > 0);
-
-        return sortedColumnNames.toArray(new String[sortedColumnNames.size()]);
+        return journalEntryAppearanceAttributes.toArray(new JournalEntryAppearanceAttributes[journalEntryAppearanceAttributes.size()]);
     }
 
     /*
      * Preferences: SETTER
      */
-
-    public void setJounalEntriesAppearances(JournalEntryColumn[] journalEntries) {
-
-        for (JournalEntryColumn journalEntryColumn : journalEntries) {
-            setJounalEntryAppearance(new JournalEntryAppearanceAttributes(journalEntryColumn.getName(), journalEntryColumn.getColor()));
-        }
-    }
-
-    public void setJounalEntryAppearance(JournalEntryAppearanceAttributes appearance) {
-
-        String columnName = appearance.getColumnName();
-        Color color;
-
-        if (appearance.getColor() != null) {
-            color = appearance.getColor();
-        } else {
-            color = getInitialColumnColor();
-        }
-
-        preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
-    }
-
-    public void setJournalEntriesAppearances(Map<String, JournalEntryAppearanceAttributes> colors) {
-
-        for (String columnName : ColumnsDAO.ALL) {
-            JournalEntryAppearanceAttributes color = colors.get(columnName);
-            setJounalEntryAppearance(color);
-        }
-    }
-
     public void setHighlightUserEntries(boolean enabled) {
         preferenceStore.setValue(HIGHLIGHT_USER_ENTRIES, enabled);
     }
@@ -182,10 +132,13 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setValue(ENABLED, enabled);
     }
 
-    public void setJournalEntryColumnsOrder(String[] sortedColumnNames) {
+    public void setSortedJournalEntriesAppearances(JournalEntryAppearanceAttributes[] journalEntriesAppearances) {
 
-        for (int i = 0; i < sortedColumnNames.length; i++) {
-            preferenceStore.setValue(getColumnOrderKey(i), sortedColumnNames[i]);
+        for (int i = 0; i < journalEntriesAppearances.length; i++) {
+            String columnName = journalEntriesAppearances[i].getColumnName();
+            Color color = journalEntriesAppearances[i].getColor();
+            preferenceStore.setValue(getColumnOrderKey(i), columnName);
+            preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
         }
     }
 
@@ -198,6 +151,11 @@ public final class Preferences implements ColumnsDAO {
     }
 
     private String serializeColor(Color color) {
+
+        if (color == null) {
+            return COLOR_NULL;
+        }
+
         return "R:" + color.getRed() + ",G:" + color.getGreen() + ",B:" + color.getBlue();
     }
 
@@ -205,7 +163,34 @@ public final class Preferences implements ColumnsDAO {
         return COLUMNS_ORDER + index;
     }
 
+    private String[] getSortedColumnNames() {
+
+        Set<String> alreadyAdded = new HashSet<String>();
+        List<String> sortedColumnNames = new LinkedList<String>();
+
+        int i = 0;
+        String columnName;
+        do {
+            columnName = preferenceStore.getString(getColumnOrderKey(i));
+            if (columnName.trim().length() > 0) {
+                if (!alreadyAdded.contains(columnName)) {
+                    sortedColumnNames.add(columnName);
+                    alreadyAdded.add(columnName);
+                } else {
+                    // Should not happen, but who knows?
+                }
+                i++;
+            }
+        } while (columnName.trim().length() > 0);
+
+        return sortedColumnNames.toArray(new String[sortedColumnNames.size()]);
+    }
+
     public Color deserializeColor(String rgb) {
+
+        if (COLOR_NULL.equals(rgb)) {
+            return null;
+        }
 
         int red = -1;
         int green = -1;
@@ -241,13 +226,11 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(HIGHLIGHT_USER_ENTRIES, getInitialHighlightUserEntries());
         preferenceStore.setDefault(ENABLED, getInitialColoringEnabled());
 
-        for (String columnName : ColumnsDAO.ALL) {
+        JournalEntryAppearanceAttributes[] sortedJournalEntryAppearanceAttributes = getInitialSortedJournalEntriesAppearances();
+        for (int i = 0; i < sortedJournalEntryAppearanceAttributes.length; i++) {
+            String columnName = sortedJournalEntryAppearanceAttributes[i].getColumnName();
+            preferenceStore.setDefault(getColumnOrderKey(i), columnName);
             preferenceStore.setDefault(getColorKey(columnName), serializeColor(getInitialColumnColor(columnName)));
-        }
-
-        String[] sortedColumnNames = getInitialJournalEntryColumnsOrder();
-        for (int i = 0; i < sortedColumnNames.length; i++) {
-            preferenceStore.setDefault(getColumnOrderKey(i), sortedColumnNames[i]);
         }
     }
 
@@ -255,7 +238,7 @@ public final class Preferences implements ColumnsDAO {
      * Preferences: Default Values
      */
 
-    public boolean getInitialHighlightUserEntries() {
+    private boolean getInitialHighlightUserEntries() {
         return false;
     }
 
@@ -263,7 +246,88 @@ public final class Preferences implements ColumnsDAO {
         return true;
     }
 
-    public Color getInitialColumnColor(String columnName) {
+    public JournalEntryAppearanceAttributes[] getInitialSortedJournalEntriesAppearances() {
+
+        List<JournalEntryAppearanceAttributes> sortedNames = new LinkedList<JournalEntryAppearanceAttributes>();
+
+        // Entry seq#, code, type, ...
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.ID.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTL.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSEQN.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCODE.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTT.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JODATE.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTIME.name()));
+
+        // Job, that added the journal entry ...
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJOB.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSER.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JONBR.name()));
+        // .. extended attributes
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSPF.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTHDX.name()));
+
+        // Program, that added the journal entry
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMLIB.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGM.name()));
+        // .. extended attributes
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMDEV.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMASP.name()));
+
+        // Object that was changed
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLIB.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJ.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMBR.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJTYP.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFILTYP.name()));
+
+        // System that the object resides on
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYNM.name()));
+
+        // Journal entry flags
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCTRR.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFLAG.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCCID.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJID.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCST.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTGR.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOINCDAT.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOIGNAPY.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMINESD.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJIND.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYSSEQ.name()));
+
+        // Journal receiver
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCV.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVLIB.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVDEV.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVASP.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOARM.name()));
+
+        // Remote address
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOADF.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORPORT.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORADR.name()));
+
+        // Logical unit of work
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLUW.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOXID.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCMTLVL.name()));
+
+        // Entry specific data
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOESD.name()));
+
+        return sortedNames.toArray(new JournalEntryAppearanceAttributes[sortedNames.size()]);
+    }
+
+    private JournalEntryAppearanceAttributes createAppearanceAttributes(String columnName) {
+
+        Color color = getInitialColumnColor(columnName);
+
+        return new JournalEntryAppearanceAttributes(columnName, color);
+    }
+
+    private Color getInitialColumnColor(String columnName) {
 
         if (RRN_OUTPUT_FILE.equals(columnName)) {
             return COLOR_ID;
@@ -289,85 +353,11 @@ public final class Preferences implements ColumnsDAO {
             return COLOR_OBJECT;
         }
 
-        return ISphereJournalExplorerCorePlugin.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+        return getInitialColumnColor();
     }
 
-    public Color getInitialColumnColor() {
+    private Color getInitialColumnColor() {
         return ISphereJournalExplorerCorePlugin.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-    }
-
-    private String[] getInitialJournalEntryColumnsOrder() {
-
-        List<String> sortedNames = new LinkedList<String>();
-
-        // Entry seq#, code, type, ...
-        sortedNames.add(JournalEntryColumnUI.ID.name());
-        sortedNames.add(JournalEntryColumnUI.JOENTL.name());
-        sortedNames.add(JournalEntryColumnUI.JOSEQN.name());
-        sortedNames.add(JournalEntryColumnUI.JOCODE.name());
-        sortedNames.add(JournalEntryColumnUI.JOENTT.name());
-        sortedNames.add(JournalEntryColumnUI.JODATE.name());
-        sortedNames.add(JournalEntryColumnUI.JOTIME.name());
-
-        // Job, that added the journal entry ...
-        sortedNames.add(JournalEntryColumnUI.JOJOB.name());
-        sortedNames.add(JournalEntryColumnUI.JOUSER.name());
-        sortedNames.add(JournalEntryColumnUI.JONBR.name());
-        // .. extended attributes
-        sortedNames.add(JournalEntryColumnUI.JOUSPF.name());
-        sortedNames.add(JournalEntryColumnUI.JOTHDX.name());
-
-        // Program, that added the journal entry
-        sortedNames.add(JournalEntryColumnUI.JOPGMLIB.name());
-        sortedNames.add(JournalEntryColumnUI.JOPGM.name());
-        // .. extended attributes
-        sortedNames.add(JournalEntryColumnUI.JOPGMDEV.name());
-        sortedNames.add(JournalEntryColumnUI.JOPGMASP.name());
-
-        // Object that was changed
-        sortedNames.add(JournalEntryColumnUI.JOLIB.name());
-        sortedNames.add(JournalEntryColumnUI.JOOBJ.name());
-        sortedNames.add(JournalEntryColumnUI.JOMBR.name());
-        sortedNames.add(JournalEntryColumnUI.JOOBJTYP.name());
-        sortedNames.add(JournalEntryColumnUI.JOFILTYP.name());
-
-        // System that the object resides on
-        sortedNames.add(JournalEntryColumnUI.JOSYNM.name());
-
-        // Journal entry flags
-        sortedNames.add(JournalEntryColumnUI.JOCTRR.name());
-        sortedNames.add(JournalEntryColumnUI.JOFLAG.name());
-        sortedNames.add(JournalEntryColumnUI.JOCCID.name());
-        sortedNames.add(JournalEntryColumnUI.JOJID.name());
-        sortedNames.add(JournalEntryColumnUI.JORCST.name());
-        sortedNames.add(JournalEntryColumnUI.JOTGR.name());
-        sortedNames.add(JournalEntryColumnUI.JOINCDAT.name());
-        sortedNames.add(JournalEntryColumnUI.JOIGNAPY.name());
-        sortedNames.add(JournalEntryColumnUI.JOMINESD.name());
-        sortedNames.add(JournalEntryColumnUI.JOOBJIND.name());
-        sortedNames.add(JournalEntryColumnUI.JOSYSSEQ.name());
-
-        // Journal receiver
-        sortedNames.add(JournalEntryColumnUI.JORCV.name());
-        sortedNames.add(JournalEntryColumnUI.JORCVLIB.name());
-        sortedNames.add(JournalEntryColumnUI.JORCVDEV.name());
-        sortedNames.add(JournalEntryColumnUI.JORCVASP.name());
-        sortedNames.add(JournalEntryColumnUI.JOARM.name());
-
-        // Remote address
-        sortedNames.add(JournalEntryColumnUI.JOADF.name());
-        sortedNames.add(JournalEntryColumnUI.JORPORT.name());
-        sortedNames.add(JournalEntryColumnUI.JORADR.name());
-
-        // Logical unit of work
-        sortedNames.add(JournalEntryColumnUI.JOLUW.name());
-        sortedNames.add(JournalEntryColumnUI.JOXID.name());
-        sortedNames.add(JournalEntryColumnUI.JOCMTLVL.name());
-
-        // Entry specific data
-        sortedNames.add(JournalEntryColumnUI.JOESD.name());
-
-        return sortedNames.toArray(new String[sortedNames.size()]);
     }
 
     /*

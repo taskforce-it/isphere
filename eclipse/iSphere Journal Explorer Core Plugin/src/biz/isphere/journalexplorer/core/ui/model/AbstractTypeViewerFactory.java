@@ -174,12 +174,12 @@ public abstract class AbstractTypeViewerFactory {
         // Entry specific data
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOESD, Messages.Tooltip_JOESD, 350));
 
-        setColumnColors(columns);
-
-        return sortColumns(columns.toArray(new JournalEntryColumn[columns.size()]), Preferences.getInstance().getJournalEntryColumnsOrder());
+        return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JournalEntryColumn[columns.size()]), Preferences.getInstance()
+            .getSortedJournalEntriesAppearances());
     }
 
-    private static JournalEntryColumn[] sortColumns(JournalEntryColumn[] journalEntryColumns, String[] sortedNames) {
+    private static JournalEntryColumn[] sortColumnsAndApplyAppearanceAttributes(JournalEntryColumn[] journalEntryColumns,
+        JournalEntryAppearanceAttributes[] sortedNames) {
 
         Map<String, JournalEntryColumn> journalEntryColumnsMap = new HashMap<String, JournalEntryColumn>();
         for (JournalEntryColumn journalEntryColumn : journalEntryColumns) {
@@ -187,9 +187,12 @@ public abstract class AbstractTypeViewerFactory {
         }
 
         List<JournalEntryColumn> sortedColumns = new LinkedList<JournalEntryColumn>();
-        for (String string : sortedNames) {
-            JournalEntryColumn journalEntryColumn = journalEntryColumnsMap.get(string);
-            sortedColumns.add(journalEntryColumn);
+        for (JournalEntryAppearanceAttributes journalEntryAppearanceAttributes : sortedNames) {
+            JournalEntryColumn journalEntryColumn = journalEntryColumnsMap.get(journalEntryAppearanceAttributes.getColumnName());
+            if (journalEntryColumn != null) {
+                journalEntryColumn.setColor(journalEntryAppearanceAttributes.getColor());
+                sortedColumns.add(journalEntryColumn);
+            }
         }
 
         if (sortedColumns.size() == 0) {
@@ -197,14 +200,5 @@ public abstract class AbstractTypeViewerFactory {
         }
 
         return sortedColumns.toArray(new JournalEntryColumn[sortedColumns.size()]);
-    }
-
-    private static void setColumnColors(List<JournalEntryColumn> columnNames) {
-
-        Map<String, JournalEntryAppearanceAttributes> colors = Preferences.getInstance().getJournalEntriesAppearances();
-
-        for (JournalEntryColumn columnName : columnNames) {
-            columnName.setColor(colors.get(columnName.getName()).getColor());
-        }
     }
 }
