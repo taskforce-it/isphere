@@ -8,6 +8,7 @@
 
 package biz.isphere.journalexplorer.core.ui.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -175,7 +176,27 @@ public abstract class AbstractTypeViewerFactory {
 
         setColumnColors(columns);
 
-        return columns.toArray(new JournalEntryColumn[columns.size()]);
+        return sortColumns(columns.toArray(new JournalEntryColumn[columns.size()]), Preferences.getInstance().getJournalEntryColumnsOrder());
+    }
+
+    private static JournalEntryColumn[] sortColumns(JournalEntryColumn[] journalEntryColumns, String[] sortedNames) {
+
+        Map<String, JournalEntryColumn> journalEntryColumnsMap = new HashMap<String, JournalEntryColumn>();
+        for (JournalEntryColumn journalEntryColumn : journalEntryColumns) {
+            journalEntryColumnsMap.put(journalEntryColumn.getName(), journalEntryColumn);
+        }
+
+        List<JournalEntryColumn> sortedColumns = new LinkedList<JournalEntryColumn>();
+        for (String string : sortedNames) {
+            JournalEntryColumn journalEntryColumn = journalEntryColumnsMap.get(string);
+            sortedColumns.add(journalEntryColumn);
+        }
+
+        if (sortedColumns.size() == 0) {
+            return journalEntryColumns;
+        }
+
+        return sortedColumns.toArray(new JournalEntryColumn[sortedColumns.size()]);
     }
 
     private static void setColumnColors(List<JournalEntryColumn> columnNames) {

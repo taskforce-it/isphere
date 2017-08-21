@@ -1,6 +1,8 @@
 package biz.isphere.journalexplorer.core.preferences;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -14,6 +16,7 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -47,6 +50,8 @@ public final class Preferences implements ColumnsDAO {
     public static final String COLORS = DOMAIN + "COLOR."; //$NON-NLS-1$
 
     public static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
+
+    public static final String COLUMNS_ORDER = DOMAIN + "COLUMNS_ORDER."; //$NON-NLS-1$
 
     private static Color COLOR_ID = ISphereJournalExplorerCorePlugin.getDefault().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 
@@ -119,6 +124,23 @@ public final class Preferences implements ColumnsDAO {
         return colors;
     }
 
+    public String[] getJournalEntryColumnsOrder() {
+
+        List<String> sortedColumnNames = new LinkedList<String>();
+
+        int i = 0;
+        String columnName;
+        do {
+            columnName = preferenceStore.getString(getColumnOrderKey(i));
+            if (columnName.trim().length() > 0) {
+                sortedColumnNames.add(columnName);
+                i++;
+            }
+        } while (columnName.trim().length() > 0);
+
+        return sortedColumnNames.toArray(new String[sortedColumnNames.size()]);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -160,12 +182,27 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setValue(ENABLED, enabled);
     }
 
+    public void setJournalEntryColumnsOrder(String[] sortedColumnNames) {
+
+        for (int i = 0; i < sortedColumnNames.length; i++) {
+            preferenceStore.setValue(getColumnOrderKey(i), sortedColumnNames[i]);
+        }
+    }
+
+    /*
+     * Others
+     */
+
     private String getColorKey(String columnName) {
         return COLORS + columnName;
     }
 
     private String serializeColor(Color color) {
         return "R:" + color.getRed() + ",G:" + color.getGreen() + ",B:" + color.getBlue();
+    }
+
+    private String getColumnOrderKey(int index) {
+        return COLUMNS_ORDER + index;
     }
 
     public Color deserializeColor(String rgb) {
@@ -206,6 +243,11 @@ public final class Preferences implements ColumnsDAO {
 
         for (String columnName : ColumnsDAO.ALL) {
             preferenceStore.setDefault(getColorKey(columnName), serializeColor(getInitialColumnColor(columnName)));
+        }
+
+        String[] sortedColumnNames = getInitialJournalEntryColumnsOrder();
+        for (int i = 0; i < sortedColumnNames.length; i++) {
+            preferenceStore.setDefault(getColumnOrderKey(i), sortedColumnNames[i]);
         }
     }
 
@@ -253,6 +295,84 @@ public final class Preferences implements ColumnsDAO {
     public Color getInitialColumnColor() {
         return ISphereJournalExplorerCorePlugin.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
     }
+
+    private String[] getInitialJournalEntryColumnsOrder() {
+
+        List<String> sortedNames = new LinkedList<String>();
+
+        // Entry seq#, code, type, ...
+        sortedNames.add(JournalEntryColumnUI.ID.name());
+        sortedNames.add(JournalEntryColumnUI.JOENTL.name());
+        sortedNames.add(JournalEntryColumnUI.JOSEQN.name());
+        sortedNames.add(JournalEntryColumnUI.JOCODE.name());
+        sortedNames.add(JournalEntryColumnUI.JOENTT.name());
+        sortedNames.add(JournalEntryColumnUI.JODATE.name());
+        sortedNames.add(JournalEntryColumnUI.JOTIME.name());
+
+        // Job, that added the journal entry ...
+        sortedNames.add(JournalEntryColumnUI.JOJOB.name());
+        sortedNames.add(JournalEntryColumnUI.JOUSER.name());
+        sortedNames.add(JournalEntryColumnUI.JONBR.name());
+        // .. extended attributes
+        sortedNames.add(JournalEntryColumnUI.JOUSPF.name());
+        sortedNames.add(JournalEntryColumnUI.JOTHDX.name());
+
+        // Program, that added the journal entry
+        sortedNames.add(JournalEntryColumnUI.JOPGMLIB.name());
+        sortedNames.add(JournalEntryColumnUI.JOPGM.name());
+        // .. extended attributes
+        sortedNames.add(JournalEntryColumnUI.JOPGMDEV.name());
+        sortedNames.add(JournalEntryColumnUI.JOPGMASP.name());
+
+        // Object that was changed
+        sortedNames.add(JournalEntryColumnUI.JOLIB.name());
+        sortedNames.add(JournalEntryColumnUI.JOOBJ.name());
+        sortedNames.add(JournalEntryColumnUI.JOMBR.name());
+        sortedNames.add(JournalEntryColumnUI.JOOBJTYP.name());
+        sortedNames.add(JournalEntryColumnUI.JOFILTYP.name());
+
+        // System that the object resides on
+        sortedNames.add(JournalEntryColumnUI.JOSYNM.name());
+
+        // Journal entry flags
+        sortedNames.add(JournalEntryColumnUI.JOCTRR.name());
+        sortedNames.add(JournalEntryColumnUI.JOFLAG.name());
+        sortedNames.add(JournalEntryColumnUI.JOCCID.name());
+        sortedNames.add(JournalEntryColumnUI.JOJID.name());
+        sortedNames.add(JournalEntryColumnUI.JORCST.name());
+        sortedNames.add(JournalEntryColumnUI.JOTGR.name());
+        sortedNames.add(JournalEntryColumnUI.JOINCDAT.name());
+        sortedNames.add(JournalEntryColumnUI.JOIGNAPY.name());
+        sortedNames.add(JournalEntryColumnUI.JOMINESD.name());
+        sortedNames.add(JournalEntryColumnUI.JOOBJIND.name());
+        sortedNames.add(JournalEntryColumnUI.JOSYSSEQ.name());
+
+        // Journal receiver
+        sortedNames.add(JournalEntryColumnUI.JORCV.name());
+        sortedNames.add(JournalEntryColumnUI.JORCVLIB.name());
+        sortedNames.add(JournalEntryColumnUI.JORCVDEV.name());
+        sortedNames.add(JournalEntryColumnUI.JORCVASP.name());
+        sortedNames.add(JournalEntryColumnUI.JOARM.name());
+
+        // Remote address
+        sortedNames.add(JournalEntryColumnUI.JOADF.name());
+        sortedNames.add(JournalEntryColumnUI.JORPORT.name());
+        sortedNames.add(JournalEntryColumnUI.JORADR.name());
+
+        // Logical unit of work
+        sortedNames.add(JournalEntryColumnUI.JOLUW.name());
+        sortedNames.add(JournalEntryColumnUI.JOXID.name());
+        sortedNames.add(JournalEntryColumnUI.JOCMTLVL.name());
+
+        // Entry specific data
+        sortedNames.add(JournalEntryColumnUI.JOESD.name());
+
+        return sortedNames.toArray(new String[sortedNames.size()]);
+    }
+
+    /*
+     * Property change listeners
+     */
 
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
         preferenceStore.addPropertyChangeListener(listener);

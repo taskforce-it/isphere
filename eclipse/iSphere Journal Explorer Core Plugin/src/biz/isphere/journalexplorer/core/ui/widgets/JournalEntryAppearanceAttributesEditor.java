@@ -11,23 +11,32 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -51,6 +60,9 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     private TableViewer tableViewer;
     private List<JournalEntry> data;
+    private Button btnUp;
+    private Button btnDown;
+    private Button btnClearColors;
 
     public JournalEntryAppearanceAttributesEditor(Composite parent) {
         super(parent, SWT.NONE);
@@ -60,8 +72,10 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     private void initializeComponents() {
 
-        this.setLayout(new GridLayout(1, true));
+        this.setLayout(new GridLayout(2, false));
         createTableViewer(this);
+
+        setButtonsEnablement(tableViewer.getSelection());
     }
 
     private void createTableViewer(Composite container) {
@@ -89,13 +103,58 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         newColumn.setText(Messages.ColumnHeading_Color);
         newColumn.setWidth(100);
 
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                setButtonsEnablement(event.getSelection());
+            }
+        });
+
+        tableViewer.setColumnProperties(COLUMN_NAMES);
         tableViewer.setLabelProvider(new JournalEntryAppearanceAttributesLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
 
-        tableViewer.setColumnProperties(COLUMN_NAMES);
-
         table.getVerticalBar().setEnabled(true);
         table.getHorizontalBar().setEnabled(true);
+
+        Composite groupButtons = new Composite(container, SWT.NONE);
+        groupButtons.setLayout(new GridLayout());
+        groupButtons.setLayoutData(new GridData(GridData.FILL, SWT.CENTER, true, true));
+
+        btnUp = WidgetFactory.createPushButton(groupButtons, "&Up");
+        btnUp.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        btnUp.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                performMoveUp();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        btnDown = WidgetFactory.createPushButton(groupButtons, "&Down");
+        btnDown.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        btnDown.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                performMoveDown();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        btnClearColors = WidgetFactory.createPushButton(this, Messages.Clear_Colors);
+        btnClearColors.setLayoutData(new GridData());
+        btnClearColors.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                performClearColors();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
 
         configureEditors(tableViewer, COLUMN_NAMES);
     }
@@ -184,10 +243,88 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     }
 
+    private void performMoveUp() {
+
+        JournalEntryColumn[] items = getInput();
+
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index <= 0) {
+            return;
+        }
+
+        moveItem(items, index, -1);
+    }
+
+    private void performMoveDown() {
+
+        JournalEntryColumn[] items = getInput();
+
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index >= items.length - 1) {
+            return;
+        }
+
+        moveItem(items, index, 1);
+    }
+
+    private void moveItem(JournalEntryColumn[] items, int index, int positions) {
+
+        List<JournalEntryColumn> columns = new LinkedList<JournalEntryColumn>();
+        columns.addAll(Arrays.asList(items));
+        JournalEntryColumn removedItem = columns.remove(index);
+        index = index + positions;
+        columns.add(index, removedItem);
+
+        items = columns.toArray(new JournalEntryColumn[columns.size()]);
+
+        setInput(items);
+        setButtonsEnablement(tableViewer.getSelection());
+    }
+
+    private void setButtonsEnablement(ISelection selection) {
+
+        if (selection == null || selection.isEmpty()) {
+            btnUp.setEnabled(false);
+            btnDown.setEnabled(false);
+        } else {
+            btnUp.setEnabled(!isFirstEntryOfList());
+            btnDown.setEnabled(!isLastEntryOfList());
+        }
+    }
+
+    private boolean isFirstEntryOfList() {
+        return tableViewer.getTable().getSelectionIndex() <= 0;
+    }
+
+    private boolean isLastEntryOfList() {
+        return tableViewer.getTable().getSelectionIndex() >= tableViewer.getTable().getItemCount() - 1;
+    }
+
+    private void performClearColors() {
+
+        JournalEntryColumn[] columns = getInput();
+
+        for (JournalEntryColumn column : columns) {
+            column.setColor(null);
+        }
+
+        setInput(columns);
+    }
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        
         tableViewer.getControl().setEnabled(enabled);
+
+        if (enabled) {
+            setButtonsEnablement(tableViewer.getSelection());
+        } else {
+            btnUp.setEnabled(false);
+            btnDown.setEnabled(false);
+        }
+
+        btnClearColors.setEnabled(enabled);
     }
 
     @Override
