@@ -105,14 +105,14 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         columns = editor.getInput();
 
-        preferences.setSortedJournalEntriesAppearances(columns);
+        preferences.setSortedJournalEntryAppearanceAttributes(columns);
     }
 
     protected void setScreenToValues() {
 
         checkboxEnableColoring.setSelection(preferences.isColoringEnabled());
 
-        columns = preferences.getSortedJournalEntriesAppearances();
+        columns = preferences.getSortedJournalEntryAppearancesAttributes();
 
         setScreenValues();
     }
@@ -121,7 +121,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         checkboxEnableColoring.setSelection(preferences.getInitialColoringEnabled());
 
-        columns = preferences.getInitialSortedJournalEntriesAppearances();
+        columns = preferences.getInitialSortedJournalEntryAppearanceAttributes();
 
         setScreenValues();
     }

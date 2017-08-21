@@ -101,7 +101,7 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getBoolean(ENABLED);
     }
 
-    public JournalEntryAppearanceAttributes[] getSortedJournalEntriesAppearances() {
+    public JournalEntryAppearanceAttributes[] getSortedJournalEntryAppearancesAttributes() {
 
         List<JournalEntryAppearanceAttributes> journalEntryAppearanceAttributes = new LinkedList<JournalEntryAppearanceAttributes>();
 
@@ -132,7 +132,7 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setValue(ENABLED, enabled);
     }
 
-    public void setSortedJournalEntriesAppearances(JournalEntryAppearanceAttributes[] journalEntriesAppearances) {
+    public void setSortedJournalEntryAppearanceAttributes(JournalEntryAppearanceAttributes[] journalEntriesAppearances) {
 
         for (int i = 0; i < journalEntriesAppearances.length; i++) {
             String columnName = journalEntriesAppearances[i].getColumnName();
@@ -226,7 +226,7 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(HIGHLIGHT_USER_ENTRIES, getInitialHighlightUserEntries());
         preferenceStore.setDefault(ENABLED, getInitialColoringEnabled());
 
-        JournalEntryAppearanceAttributes[] sortedJournalEntryAppearanceAttributes = getInitialSortedJournalEntriesAppearances();
+        JournalEntryAppearanceAttributes[] sortedJournalEntryAppearanceAttributes = getInitialSortedJournalEntryAppearanceAttributes();
         for (int i = 0; i < sortedJournalEntryAppearanceAttributes.length; i++) {
             String columnName = sortedJournalEntryAppearanceAttributes[i].getColumnName();
             preferenceStore.setDefault(getColumnOrderKey(i), columnName);
@@ -246,7 +246,7 @@ public final class Preferences implements ColumnsDAO {
         return true;
     }
 
-    public JournalEntryAppearanceAttributes[] getInitialSortedJournalEntriesAppearances() {
+    public JournalEntryAppearanceAttributes[] getInitialSortedJournalEntryAppearanceAttributes() {
 
         List<JournalEntryAppearanceAttributes> sortedNames = new LinkedList<JournalEntryAppearanceAttributes>();
 
