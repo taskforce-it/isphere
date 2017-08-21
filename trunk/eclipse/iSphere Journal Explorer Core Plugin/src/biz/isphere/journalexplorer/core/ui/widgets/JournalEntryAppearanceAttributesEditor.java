@@ -42,7 +42,6 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryAppearanceAttributesLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 
 /**
  * This widget is an editor for editing the persisted appearance attributes of a
@@ -185,7 +184,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
                 if (COLUMN_COLOR.equals(property)) {
                     TableItem tableItem = (TableItem)element;
-                    JournalEntryColumn columnColorEntry = (JournalEntryColumn)tableItem.getData();
+                    JournalEntryAppearanceAttributes columnColorEntry = (JournalEntryAppearanceAttributes)tableItem.getData();
                     Color color = ISphereJournalExplorerCorePlugin.getDefault().getColor((RGB)value);
                     columnColorEntry.setColor(color);
                     tableViewer.refresh(columnColorEntry);
@@ -195,7 +194,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
             public Object getValue(Object element, String property) {
 
                 if (COLUMN_COLOR.equals(property)) {
-                    JournalEntryColumn columnColorEntry = (JournalEntryColumn)element;
+                    JournalEntryAppearanceAttributes columnColorEntry = (JournalEntryAppearanceAttributes)element;
                     return columnColorEntry.getColor().getRGB();
                 }
 
@@ -208,12 +207,12 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         });
     }
 
-    public void setInput(JournalEntryColumn[] columns) {
+    public void setInput(JournalEntryAppearanceAttributes[] columns) {
         tableViewer.setInput(columns);
     }
 
-    public JournalEntryColumn[] getInput() {
-        return (JournalEntryColumn[])tableViewer.getInput();
+    public JournalEntryAppearanceAttributes[] getInput() {
+        return (JournalEntryAppearanceAttributes[])tableViewer.getInput();
     }
 
     @Override
@@ -245,7 +244,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     private void performMoveUp() {
 
-        JournalEntryColumn[] items = getInput();
+        JournalEntryAppearanceAttributes[] items = getInput();
 
         int index = tableViewer.getTable().getSelectionIndex();
         if (index <= 0) {
@@ -257,7 +256,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     private void performMoveDown() {
 
-        JournalEntryColumn[] items = getInput();
+        JournalEntryAppearanceAttributes[] items = getInput();
 
         int index = tableViewer.getTable().getSelectionIndex();
         if (index >= items.length - 1) {
@@ -267,15 +266,15 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         moveItem(items, index, 1);
     }
 
-    private void moveItem(JournalEntryColumn[] items, int index, int positions) {
+    private void moveItem(JournalEntryAppearanceAttributes[] items, int index, int positions) {
 
-        List<JournalEntryColumn> columns = new LinkedList<JournalEntryColumn>();
+        List<JournalEntryAppearanceAttributes> columns = new LinkedList<JournalEntryAppearanceAttributes>();
         columns.addAll(Arrays.asList(items));
-        JournalEntryColumn removedItem = columns.remove(index);
+        JournalEntryAppearanceAttributes removedItem = columns.remove(index);
         index = index + positions;
         columns.add(index, removedItem);
 
-        items = columns.toArray(new JournalEntryColumn[columns.size()]);
+        items = columns.toArray(new JournalEntryAppearanceAttributes[columns.size()]);
 
         setInput(items);
         setButtonsEnablement(tableViewer.getSelection());
@@ -302,9 +301,9 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
 
     private void performClearColors() {
 
-        JournalEntryColumn[] columns = getInput();
+        JournalEntryAppearanceAttributes[] columns = getInput();
 
-        for (JournalEntryColumn column : columns) {
+        for (JournalEntryAppearanceAttributes column : columns) {
             column.setColor(null);
         }
 
@@ -314,7 +313,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        
+
         tableViewer.getControl().setEnabled(enabled);
 
         if (enabled) {

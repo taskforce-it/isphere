@@ -40,4 +40,8 @@ public class JournalEntryAppearanceAttributes {
         return color;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
 }

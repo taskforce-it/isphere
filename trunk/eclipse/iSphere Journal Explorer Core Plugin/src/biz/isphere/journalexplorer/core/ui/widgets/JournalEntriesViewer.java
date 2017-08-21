@@ -267,7 +267,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         }
 
         if (Preferences.ENABLED.equals(event.getProperty())) {
-            tableViewer.refresh(true);
+            refreshTable();
             return;
         }
 
@@ -282,7 +282,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
                     labelProvider.setColumnColor(columnName, color);
                 }
             }
-            tableViewer.refresh(true);
+            refreshTable();
             return;
         }
     }

@@ -14,14 +14,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttributesEditor;
 
 /**
  * This class is the label provider for the appearance attributes of a
  * "Journal Entry" column.
  * 
- * @see JournalEntryColumn
+ * @see JournalEntryAppearanceAttributes
  * @see JournalEntryAppearanceAttributesEditor
  */
 public class JournalEntryAppearanceAttributesLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
@@ -32,13 +32,13 @@ public class JournalEntryAppearanceAttributesLabelProvider extends LabelProvider
 
     public String getColumnText(Object object, int index) {
 
-        JournalEntryColumn columnColorEntry = (JournalEntryColumn)object;
+        JournalEntryAppearanceAttributes columnColorEntry = (JournalEntryAppearanceAttributes)object;
 
         switch (index) {
         case 0: // Name
-            return columnColorEntry.getName();
+            return columnColorEntry.getColumnName();
         case 1: // Description
-            return columnColorEntry.getTooltipText();
+            return ""; // columnColorEntry.getTooltipText();
         case 2: // Color
             return ""; //$NON-NLS-1$
         default:
@@ -54,7 +54,7 @@ public class JournalEntryAppearanceAttributesLabelProvider extends LabelProvider
             return null;
         }
 
-        JournalEntryColumn columnColorEntry = (JournalEntryColumn)object;
+        JournalEntryAppearanceAttributes columnColorEntry = (JournalEntryAppearanceAttributes)object;
 
         return columnColorEntry.getColor();
     }
