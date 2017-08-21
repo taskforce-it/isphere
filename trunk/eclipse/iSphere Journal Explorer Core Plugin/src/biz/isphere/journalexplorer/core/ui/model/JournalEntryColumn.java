@@ -141,4 +141,8 @@ public class JournalEntryColumn {
         this.color = color;
     }
 
+    @Override
+    public String toString() {
+        return columnDef.name() + " (" + super.toString() + ")";
+    }
 }

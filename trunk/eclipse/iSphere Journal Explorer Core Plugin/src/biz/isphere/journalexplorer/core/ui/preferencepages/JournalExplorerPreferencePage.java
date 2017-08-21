@@ -12,7 +12,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,8 +37,8 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
     private Preferences preferences;
 
-    private Group groupColors;
     private Button checkboxEnableColoring;
+    private Group groupColors;
 
     public JournalExplorerPreferencePage() {
         super();
@@ -57,7 +56,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     protected Control createContents(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NONE);
-        container.setLayout(new GridLayout());
+        container.setLayout(new GridLayout(1, false));
 
         checkboxEnableColoring = WidgetFactory.createCheckbox(container);
         checkboxEnableColoring.setText(Messages.Enable_coloring);
@@ -72,39 +71,16 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         });
 
         groupColors = new Group(container, SWT.NONE);
-        groupColors.setLayout(new GridLayout());
+        groupColors.setLayout(new GridLayout(1, false));
         groupColors.setLayoutData(new GridData(GridData.FILL, SWT.FILL, false, true));
         groupColors.setText(Messages.Colors);
 
         editor = new JournalEntryAppearanceAttributesEditor(groupColors);
         editor.setLayoutData(new GridData(GridData.FILL, SWT.FILL, true, true));
 
-        Button clearColors = WidgetFactory.createPushButton(groupColors, Messages.Clear_Colors);
-        clearColors.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-                performClearColors();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent event) {
-                widgetSelected(event);
-            }
-        });
-
         setScreenToValues();
 
         return container;
-    }
-
-    private void performClearColors() {
-
-        columns = editor.getInput();
-
-        for (JournalEntryColumn column : columns) {
-            column.setColor(null);
-        }
-
-        editor.setInput(columns);
     }
 
     @Override
@@ -132,6 +108,8 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         for (JournalEntryColumn column : columns) {
             preferences.setJounalEntryAppearance(new JournalEntryAppearanceAttributes(column.getName(), column.getColor()));
         }
+        
+//        preferences.setJournalEntryColumnsOrder(sortedColumnNames)
     }
 
     protected void setScreenToValues() {
