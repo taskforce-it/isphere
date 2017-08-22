@@ -149,6 +149,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
                     data = journalDAO.getJournalData();
                     container.layout(true);
                     tableViewer.setInput(null);
+                    tableViewer.setSelection(null);
                     tableViewer.setUseHashlookup(true);
                     tableViewer.setItemCount(data.size());
                     tableViewer.setInput(data);
