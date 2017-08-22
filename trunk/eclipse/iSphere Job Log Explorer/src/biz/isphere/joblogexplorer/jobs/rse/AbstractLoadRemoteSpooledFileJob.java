@@ -41,16 +41,7 @@ public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
             String format = IPreferences.OUTPUT_FORMAT_TEXT;
             String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + spooledFile.getTemporaryName(format);
 
-            File localFile = new File(target);
-            boolean cleanup;
-            if (localFile.exists() && localFile.isFile()) {
-                cleanup = false;
-            } else {
-                cleanup = true;
-            }
-
             IFile localSpooledFilePath = spooledFile.downloadSpooledFile(format, target);
-
             final String filePath = localSpooledFilePath.getLocation().toOSString();
             final String originalFileName = spooledFile.getQualifiedName();
 

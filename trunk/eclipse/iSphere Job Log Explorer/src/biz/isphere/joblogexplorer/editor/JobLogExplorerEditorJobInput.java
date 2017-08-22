@@ -8,8 +8,6 @@
 
 package biz.isphere.joblogexplorer.editor;
 
-import java.io.File;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;

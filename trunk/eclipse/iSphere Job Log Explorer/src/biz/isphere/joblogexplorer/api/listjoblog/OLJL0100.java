@@ -65,7 +65,7 @@ public class OLJL0100 extends APIFormat {
 
         this.timeFormatter = Preferences.getInstance().getTimeFormatter();
         this.dateFormatter = Preferences.getInstance().getDateFormatter();
-        
+
         createStructure();
     }
 
@@ -198,7 +198,7 @@ public class OLJL0100 extends APIFormat {
 
     public String getFieldData(int key) throws UnsupportedEncodingException {
 
-        OLJL0100_Field field = field = getField(key);
+        OLJL0100_Field field = getField(key);
         if (field == null) {
             return ""; //$NON-NLS-1$
         }

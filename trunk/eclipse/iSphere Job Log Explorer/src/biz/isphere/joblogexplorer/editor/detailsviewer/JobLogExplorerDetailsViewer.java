@@ -120,13 +120,6 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         textMessage = createMultilineDetailsField(messageArea);
     }
 
-    /**
-     * Create the Details
-     */
-    private void createDetails(Composite parent) {
-
-    }
-
     private void createSeparator(Composite detailsArea) {
         WidgetFactory.createSeparator(detailsArea).setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
     }
