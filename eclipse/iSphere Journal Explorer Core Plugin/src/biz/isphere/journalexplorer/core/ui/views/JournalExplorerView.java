@@ -236,7 +236,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         IActionBars bars = getViewSite().getActionBars();
         if (numItems >= 0) {
-            bars.getStatusLineManager().setMessage("Number of items: " + numItems);
+            bars.getStatusLineManager().setMessage(Messages.bind(Messages.Number_of_journal_entries_A, Integer.valueOf(numItems)));
         } else {
             bars.getStatusLineManager().setMessage(""); //$NON-NLS-1$
         }
