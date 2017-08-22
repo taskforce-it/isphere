@@ -15,7 +15,7 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
-public abstract class ToggleHighlightUserEntriesAction extends Action {
+public class ToggleHighlightUserEntriesAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_HIGHLIGHT;
 
@@ -37,12 +37,9 @@ public abstract class ToggleHighlightUserEntriesAction extends Action {
     @Override
     public void run() {
         performHighlightUserEntries();
-        postRunAction();
     }
 
     protected void performHighlightUserEntries() {
         preferences.setHighlightUserEntries(isChecked());
     }
-
-    protected abstract void postRunAction();
 }
