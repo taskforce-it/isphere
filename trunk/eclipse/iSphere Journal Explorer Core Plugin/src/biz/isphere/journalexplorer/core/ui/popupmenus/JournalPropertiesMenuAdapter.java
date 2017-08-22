@@ -3,9 +3,7 @@ package biz.isphere.journalexplorer.core.ui.popupmenus;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -26,7 +24,6 @@ import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
     private TreeViewer treeViewer;
-    private TableViewer tableViewer;
     private Menu menuTableMembers;
     private Shell shell;
     private MenuItem compareJournalPropertiesMenuItem;
@@ -34,15 +31,7 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
     public JournalPropertiesMenuAdapter(Menu menuTableMembers, TreeViewer treeViewer) {
         this.treeViewer = treeViewer;
-        this.tableViewer = null;
         this.shell = treeViewer.getControl().getShell();
-        this.menuTableMembers = menuTableMembers;
-    }
-
-    public JournalPropertiesMenuAdapter(Menu menuTableMembers, TableViewer tableViewer) {
-        this.treeViewer = null;
-        this.tableViewer = tableViewer;
-        this.shell = tableViewer.getControl().getShell();
         this.menuTableMembers = menuTableMembers;
     }
 
@@ -93,11 +82,6 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
             return new StructuredSelection(journalEntries.toArray(new JournalEntry[journalEntries.size()]));
         }
 
-        ISelection selection = tableViewer.getSelection();
-        if (selection instanceof StructuredSelection) {
-            return (StructuredSelection)selection;
-        }
-
         return new StructuredSelection(new Object[0]);
     }
 
@@ -108,24 +92,11 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
         }
     }
 
-    private void refreshViewer() {
-        if (treeViewer != null) {
-            treeViewer.refresh(true);
-        } else if (tableViewer != null) {
-            tableViewer.refresh(true);
-        }
-    }
-
     public void createMenuItems() {
 
         if (selectedItemsCount() == 2) {
             compareJournalPropertiesMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final CompareJournalPropertiesAction compareJournalPropertiesAction = new CompareJournalPropertiesAction() {
-                @Override
-                protected void postRunAction() {
-                    refreshViewer();
-                }
-            };
+            final CompareJournalPropertiesAction compareJournalPropertiesAction = new CompareJournalPropertiesAction(treeViewer);
             compareJournalPropertiesMenuItem.setText(compareJournalPropertiesAction.getText());
             compareJournalPropertiesMenuItem.setImage(compareJournalPropertiesAction.getImage());
             compareJournalPropertiesMenuItem.addSelectionListener(new SelectionAdapter() {

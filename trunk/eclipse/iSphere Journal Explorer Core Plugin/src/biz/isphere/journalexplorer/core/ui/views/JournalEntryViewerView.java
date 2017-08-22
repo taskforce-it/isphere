@@ -99,12 +99,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     private void createActions() {
 
-        compareJournalPropertiesAction = new CompareJournalPropertiesAction() {
-            @Override
-            public void postRunAction() {
-                viewer.refresh(true);
-            }
-        };
+        compareJournalPropertiesAction = new CompareJournalPropertiesAction(viewer);
 
         compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 

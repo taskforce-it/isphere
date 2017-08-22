@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -21,14 +22,17 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 
-public abstract class CompareJournalPropertiesAction extends Action {
+public class CompareJournalPropertiesAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_COMPARE;
 
+    private TreeViewer treeViewer;
     private JournalProperties[] selectedItems;
 
-    public CompareJournalPropertiesAction() {
+    public CompareJournalPropertiesAction(TreeViewer treeViewer) {
         super(Messages.JournalEntryView_CompareEntries);
+
+        this.treeViewer = treeViewer;
 
         setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
@@ -57,7 +61,6 @@ public abstract class CompareJournalPropertiesAction extends Action {
     @Override
     public void run() {
         performCompareJournalProperties(selectedItems);
-        postRunAction();
     }
 
     protected void performCompareJournalProperties(JournalProperties[] selectedItems) {
@@ -67,7 +70,12 @@ public abstract class CompareJournalPropertiesAction extends Action {
         }
 
         new JournalEntryComparator().compare(selectedItems[0], selectedItems[1]);
-    }
 
-    protected abstract void postRunAction();
+        treeViewer.setExpandedElements(selectedItems);
+        for (JournalProperties selectedItem : selectedItems) {
+            treeViewer.setExpandedState(selectedItem.getJOESDProperty(), true);
+        }
+        treeViewer.refresh(true);
+
+    }
 }
