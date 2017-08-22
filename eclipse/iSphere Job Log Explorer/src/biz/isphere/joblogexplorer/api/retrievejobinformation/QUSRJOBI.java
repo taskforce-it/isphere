@@ -8,9 +8,6 @@
 
 package biz.isphere.joblogexplorer.api.retrievejobinformation;
 
-import java.io.CharConversionException;
-import java.io.UnsupportedEncodingException;
-
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;

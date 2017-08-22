@@ -121,9 +121,4 @@ public final class StatusLine {
     private boolean isOKForUpdate(Control control) {
         return control != null && !control.isDisposed();
     }
-
-    private int getWidthHint(Control control) {
-        StatusLineLayoutData layoutData = (StatusLineLayoutData)control.getLayoutData();
-        return layoutData.widthHint;
-    }
 }

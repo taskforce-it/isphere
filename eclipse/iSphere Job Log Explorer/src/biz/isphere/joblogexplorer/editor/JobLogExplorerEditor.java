@@ -10,7 +10,6 @@ package biz.isphere.joblogexplorer.editor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,7 +32,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -85,7 +83,6 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
     private JobLogExplorerTableViewer tableViewerPanel;
     private JobLogExplorerFilterPanel filterPanel;
-    private int[] sashFormWeights;
 
     public JobLogExplorerEditor() {
     }
@@ -254,17 +251,6 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         filterPanel.createViewer(parent);
 
         return filterPanel;
-    }
-
-    private void createUsagePanel(Composite parent) {
-
-        Composite usageArea = new Composite(parent, SWT.NONE);
-        usageArea.setLayout(createGridLayoutWithMargin());
-        usageArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        Label labelUsage = new Label(usageArea, SWT.NONE);
-        labelUsage.setText(Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
-        labelUsage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private JobLogExplorerTableViewer createLeftPanel(SashForm sashForm) {
