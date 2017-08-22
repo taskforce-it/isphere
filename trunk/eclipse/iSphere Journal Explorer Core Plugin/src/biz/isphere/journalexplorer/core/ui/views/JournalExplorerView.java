@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -97,6 +98,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                 if (event.item instanceof JournalEntriesViewer) {
                     cleanupClosedTab((JournalEntriesViewer)event.item);
                     setActionEnablement(null);
+                    updateStatusLine();
                 }
 
             }
@@ -199,17 +201,44 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private void performReloadJournalEntries() {
 
-        JournalEntriesViewer viewer = (JournalEntriesViewer)tabs.getSelection();
+        JournalEntriesViewer viewer = getSelectedViewer();
         performLoadJournalEntries(viewer);
+    }
+
+    private JournalEntriesViewer getSelectedViewer() {
+        return (JournalEntriesViewer)tabs.getSelection();
     }
 
     private void performLoadJournalEntries(JournalEntriesViewer viewer) {
 
         try {
+
             viewer.openJournal();
+            updateStatusLine();
+
         } catch (Exception e) {
             ISphereJournalExplorerCorePlugin.logError(ExceptionHelper.getLocalizedMessage(e), e);
             MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
+
+    private void updateStatusLine() {
+
+        int numItems = -1;
+
+        JournalEntriesViewer viewer = getSelectedViewer();
+        if (viewer != null) {
+            JournalEntry[] journalEntries = viewer.getInput();
+            if (journalEntries != null) {
+                numItems = journalEntries.length;
+            }
+        }
+
+        IActionBars bars = getViewSite().getActionBars();
+        if (numItems >= 0) {
+            bars.getStatusLineManager().setMessage("Number of items: " + numItems);
+        } else {
+            bars.getStatusLineManager().setMessage(""); //$NON-NLS-1$
         }
     }
 
@@ -228,6 +257,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     @Override
     public void setFocus() {
+
+        updateStatusLine();
     }
 
     /**
@@ -287,6 +318,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      */
     public void selectionChanged(SelectionChangedEvent event) {
         setActionEnablement(getCurrentViewer());
+        updateStatusLine();
     }
 
     /**
