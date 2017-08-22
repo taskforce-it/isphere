@@ -34,7 +34,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
@@ -201,25 +200,24 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private void performReloadJournalEntries() {
 
-        JournalEntriesViewer viewer = getSelectedViewer();
-        performLoadJournalEntries(viewer);
+        try {
+
+            JournalEntriesViewer viewer = getSelectedViewer();
+            performLoadJournalEntries(viewer);
+
+        } catch (Exception e) {
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
     }
 
     private JournalEntriesViewer getSelectedViewer() {
         return (JournalEntriesViewer)tabs.getSelection();
     }
 
-    private void performLoadJournalEntries(JournalEntriesViewer viewer) {
+    private void performLoadJournalEntries(JournalEntriesViewer viewer) throws Exception {
 
-        try {
-
-            viewer.openJournal();
-            updateStatusLine();
-
-        } catch (Exception e) {
-            ISphereJournalExplorerCorePlugin.logError(ExceptionHelper.getLocalizedMessage(e), e);
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
+        viewer.openJournal();
+        updateStatusLine();
     }
 
     private void updateStatusLine() {
