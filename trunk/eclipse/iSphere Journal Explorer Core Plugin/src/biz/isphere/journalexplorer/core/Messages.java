@@ -54,6 +54,7 @@ public class Messages extends NLS {
     public static String SelectEntriesToCompareDialog_ChooseLeftRecord;
     public static String SelectEntriesToCompareDialog_ChooseRightRecord;
     public static String SideBySideCompareDialog_SideBySideComparison;
+    public static String Number_of_journal_entries_A;
 
     public static String ColLabel_OutputFile_Rrn;
 
