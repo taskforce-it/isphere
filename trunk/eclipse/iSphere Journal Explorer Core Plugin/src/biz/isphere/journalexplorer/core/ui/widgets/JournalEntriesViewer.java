@@ -200,7 +200,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         selectionProvider.removeSelectionProviderDelegate(tableViewer);
     }
 
-    public void refreshTable() {
+    private void refreshTable() {
         if (tableViewer != null) {
             tableViewer.refresh(true);
         }
@@ -264,6 +264,11 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     public void propertyChange(PropertyChangeEvent event) {
 
         if (event.getProperty() == null) {
+            return;
+        }
+
+        if (Preferences.HIGHLIGHT_USER_ENTRIES.equals(event.getProperty())) {
+            refreshTable();
             return;
         }
 

@@ -58,13 +58,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private GenericRefreshAction reloadEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
-    private ArrayList<JournalEntriesViewer> journalViewers;
 
     private CTabFolder tabs;
 
     public JournalExplorerView() {
         this.selectionProviderIntermediate = new SelectionProviderIntermediate();
-        this.journalViewers = new ArrayList<JournalEntriesViewer>();
     }
 
     /**
@@ -132,12 +130,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 
-        toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction() {
-            @Override
-            public void postRunAction() {
-                refreshAllViewers();
-            }
-        };
+        toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction();
 
         configureParsersAction = new ConfigureParsersAction(getSite().getShell()) {
             @Override
@@ -168,7 +161,6 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
 
-            journalViewers.add(journalEntriesViewer);
             tabs.setSelection(journalEntriesViewer);
 
             performLoadJournalEntries(journalEntriesViewer);
@@ -189,13 +181,6 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private void cleanupClosedTab(JournalEntriesViewer viewer) {
 
         viewer.removeAsSelectionProvider(selectionProviderIntermediate);
-        journalViewers.remove(viewer);
-    }
-
-    private void refreshAllViewers() {
-        for (JournalEntriesViewer viewer : journalViewers) {
-            viewer.refreshTable();
-        }
     }
 
     private void performReloadJournalEntries() {
