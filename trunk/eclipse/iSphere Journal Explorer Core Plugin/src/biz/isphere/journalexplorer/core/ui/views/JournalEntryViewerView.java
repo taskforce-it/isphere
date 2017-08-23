@@ -36,6 +36,7 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.ui.actions.CollapseAllAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
@@ -57,6 +58,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     private JournalEntryDetailsViewer viewer;
 
+    private CollapseAllAction collapseAllAction;
     private CompareJournalPropertiesAction compareJournalPropertiesAction;
     private CompareSideBySideAction compareSideBySideAction;
     private GenericRefreshAction reParseJournalEntriesAction;
@@ -99,6 +101,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     private void createActions() {
 
+        collapseAllAction = new CollapseAllAction(viewer);
+
         compareJournalPropertiesAction = new CompareJournalPropertiesAction(viewer);
 
         compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
@@ -136,6 +140,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     private void createToolBar() {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(collapseAllAction);
+        toolBarManager.add(new Separator());
         toolBarManager.add(compareJournalPropertiesAction);
         toolBarManager.add(compareSideBySideAction);
         toolBarManager.add(new Separator());
@@ -235,8 +241,10 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         Object[] items = getInput();
 
         if (items != null && items.length > 0) {
+            collapseAllAction.setEnabled(true);
             reParseJournalEntriesAction.setEnabled(true);
         } else {
+            collapseAllAction.setEnabled(false);
             reParseJournalEntriesAction.setEnabled(false);
         }
     }

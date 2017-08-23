@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -230,12 +231,14 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      */
     private void initializeToolBar() {
 
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add(openJournalOutputFileAction);
-        tbm.add(toggleHighlightUserEntriesAction);
-        tbm.add(compareSideBySideAction);
-        tbm.add(configureParsersAction);
-        tbm.add(reloadEntriesAction);
+        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(openJournalOutputFileAction);
+        toolBarManager.add(new Separator());
+        toolBarManager.add(compareSideBySideAction);
+        toolBarManager.add(toggleHighlightUserEntriesAction);
+        toolBarManager.add(configureParsersAction);
+        toolBarManager.add(new Separator());
+        toolBarManager.add(reloadEntriesAction);
     }
 
     @Override
