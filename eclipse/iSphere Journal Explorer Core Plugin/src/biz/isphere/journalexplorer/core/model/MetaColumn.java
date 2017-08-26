@@ -19,6 +19,9 @@ public class MetaColumn {
         BIGINT,
         NUMERIC,
         DECIMAL,
+        FLOAT, // Returns as REAL or DOUBLE from IQDBRTVFD API
+        REAL,
+        DOUBLE,
         CHAR,
         VARCHAR,
         BINARY,
@@ -28,13 +31,14 @@ public class MetaColumn {
         TIMESTMP,
         GRAPHIC,
         VARGRAPHIC,
-        REAL,
-        DOUBLE,
-        CLOB,
-        BLOB,
-        DBCLOB,
         LOB,
-        UNKNOWN
+        CLOB, // returned as LOB with CCSID from IQDBRTVFD API.
+        BLOB, // returned as LOB with CCSID = 65535 from IQDBRTVFD API.
+        UNKNOWN,
+        // Not yet supported
+        DECFLOAT,
+        LONG_VARCHAR,
+        LONG_VARGRAPHIC
     };
 
     private String name;

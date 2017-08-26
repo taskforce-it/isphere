@@ -38,32 +38,6 @@ public class RVFD0100 extends APIFormat {
     private static final String DATE_TIME_SEPARATOR = "dateTimeSeparator"; //$NON-NLS-1$
     private static final String TEXT = "text"; //$NON-NLS-1$
 
-    public static final String TYPE_SQL_INTEGER = "INTEGER"; //$NON-NLS-1$
-    public static final String TYPE_SQL_SMALLINT = "SMALLINT"; //$NON-NLS-1$
-    public static final String TYPE_SQL_BIGINT = "BIGINT"; //$NON-NLS-1$
-    public static final String TYPE_SQL_FLOAT = "FLOAT"; //$NON-NLS-1$
-    public static final String TYPE_SQL_DECFLOAT = "DECFLOAT"; //$NON-NLS-1$
-    public static final String TYPE_SQL_NUMERIC = "NUMERIC"; //$NON-NLS-1$
-    public static final String TYPE_SQL_DECIMAL = "DECIMAL"; //$NON-NLS-1$
-    public static final String TYPE_SQL_CHAR = "CHAR"; //$NON-NLS-1$
-    public static final String TYPE_SQL_VARCHAR = "VARCHAR"; //$NON-NLS-1$
-    // public static final String TYPE_SQL_LONG_VARCHAR = "LONG VARCHAR";
-    public static final String TYPE_SQL_BINARY = "BINARY"; //$NON-NLS-1$
-    public static final String TYPE_SQL_VARBINARY = "VARBINARY"; //$NON-NLS-1$
-    public static final String TYPE_SQL_DATE = "DATE"; //$NON-NLS-1$
-    public static final String TYPE_SQL_TIME = "TIME"; //$NON-NLS-1$
-    // // Value matches QSYS2.SYSCOLUMNS
-    public static final String TYPE_SQL_TIMESTAMP = "TIMESTMP"; //$NON-NLS-1$
-    public static final String TYPE_SQL_GRAPHIC = "GRAPHIC"; //$NON-NLS-1$
-    public static final String TYPE_SQL_VARGRAPHIC = "VARGRAPHIC"; //$NON-NLS-1$
-    // public static final String TYPE_SQL_LONG_VARGRAPHIC = "LONG VARGRAPHIC";
-    public static final String TYPE_SQL_REAL = "REAL"; //$NON-NLS-1$
-    public static final String TYPE_SQL_DOUBLE = "DOUBLE"; //$NON-NLS-1$
-    public static final String TYPE_SQL_CLOB = "CLOB"; //$NON-NLS-1$
-    public static final String TYPE_SQL_BLOB = "BLOB"; //$NON-NLS-1$
-    public static final String TYPE_SQL_DBCLOB = "DBCLOB"; //$NON-NLS-1$
-    public static final String TYPE_SQL_LOB = "LOB"; //$NON-NLS-1$
-
     /**
      * Constructs a RVFD0100 object.
      * 

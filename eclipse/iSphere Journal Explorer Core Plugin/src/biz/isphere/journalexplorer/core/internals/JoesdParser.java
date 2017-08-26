@@ -118,11 +118,12 @@ public class JoesdParser {
                 break;
             }
 
-            case CLOB:
-                throw new Exception(Messages.JoesdParser_CLOBNotSupported);
-
             case LOB:
-                CharacterFieldDescription lobField = new CharacterFieldDescription(new AS400Text(column.getLength()), column.getName());
+                /*
+                 * Handles CLOB and BLOB data types.
+                 */
+                CharacterFieldDescription lobField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
+                    column.getName());
                 if (column.isVaryingLength()) {
                     lobField.setVARLEN(column.getLength());
                 }
@@ -160,7 +161,11 @@ public class JoesdParser {
             }
 
             default:
-                throw new RuntimeException("Invalid column data type: " + column.getType()); //$NON-NLS-1$
+                /*
+                 * Should never be reached. All unsupported data types should
+                 * come by as UNKNOWN.
+                 */
+                throw new Exception(Messages.bind(Messages.JoesdParser_Data_type_not_supported_A, column.getType()));
             }
         }
 
