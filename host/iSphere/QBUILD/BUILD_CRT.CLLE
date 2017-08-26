@@ -481,6 +481,9 @@
             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO5') +
                          LIB(&PRDLIB) OBJ(*DFT) +
                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO7') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create programs: 5250 Emulator                  */
@@ -593,6 +596,14 @@
              /* ----------------------------------------------- */
 
              STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQMHRTVM') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
+             /* -------------------------------------------------------------- */
+             /* Create programs: iSphere Retrieve File Field Description API   */
+             /* -------------------------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQDBRTVFD') +
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
