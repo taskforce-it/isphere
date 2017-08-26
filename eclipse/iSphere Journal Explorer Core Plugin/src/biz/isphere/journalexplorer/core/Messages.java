@@ -57,7 +57,10 @@ public class Messages extends NLS {
     public static String SideBySideCompareDialog_SideBySideComparison;
     public static String Number_of_journal_entries_A;
 
+    public static String Error_Unknown_data_type;
+
     public static String ColLabel_OutputFile_Rrn;
+    public static String ColLabel_JournalEntry_Table_A;
 
     public static String Tooltip_OutputFile_Rrn;
     public static String Tooltip_JOENTL;

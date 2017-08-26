@@ -13,6 +13,8 @@ package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
@@ -31,13 +33,11 @@ public class JOESDProperty extends JournalProperty {
 
     private Record parsedJOESD;
 
-    private boolean errorParsing;
-
     public JOESDProperty(String name, Object value, Object parent, JournalEntry journal) {
 
-        super(name, "", parent);
+        super(name, "", parent); //$NON-NLS-1$
         this.journal = journal;
-        this.errorParsing = false;
+        setErrorParsing(false);
 
         this.executeParsing();
     }
@@ -47,15 +47,15 @@ public class JOESDProperty extends JournalProperty {
             initialize();
             parseJOESD();
         } catch (Exception exception) {
-            value = exception.getMessage();
-            errorParsing = true;
+            value = ExceptionHelper.getLocalizedMessage(exception);
+            setErrorParsing(true);
         }
     }
 
     private void initialize() throws Exception {
 
-        errorParsing = false;
-        value = "";
+        setErrorParsing(false);
+        value = ""; //$NON-NLS-1$
 
         metatable = null;
 
@@ -78,11 +78,19 @@ public class JOESDProperty extends JournalProperty {
 
         for (MetaColumn column : metatable.getColumns()) {
             columnName = column.getName().trim();
-            if (column.getColumnText() != null && column.getColumnText().trim() != "") {
-                columnName += " (" + column.getColumnText().trim() + ")";
+            if (column.getText() != null && column.getText().trim().length() != 0) {
+                columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
             }
 
-            specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this));
+            if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
+                JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);
+                journalProperty.setErrorParsing(true);
+                specificProperties.add(journalProperty);
+            } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
+                specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this));
+            } else {
+                specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this));
+            }
         }
     }
 
@@ -118,9 +126,5 @@ public class JOESDProperty extends JournalProperty {
         } else {
             return -1;
         }
-    }
-
-    public boolean isErrorParsing() {
-        return errorParsing;
     }
 }

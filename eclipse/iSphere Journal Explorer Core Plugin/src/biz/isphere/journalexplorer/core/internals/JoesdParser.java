@@ -28,6 +28,7 @@ import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400ZonedDecimal;
 import com.ibm.as400.access.BinaryFieldDescription;
 import com.ibm.as400.access.CharacterFieldDescription;
+import com.ibm.as400.access.DBCSGraphicFieldDescription;
 import com.ibm.as400.access.FloatFieldDescription;
 import com.ibm.as400.access.PackedDecimalFieldDescription;
 import com.ibm.as400.access.Record;
@@ -35,7 +36,6 @@ import com.ibm.as400.access.RecordFormat;
 import com.ibm.as400.access.ZonedDecimalFieldDescription;
 
 public class JoesdParser {
-    private static final int AJUSTE_VARCHAR = 2;
 
     private MetaTable metadata;
 
@@ -52,62 +52,119 @@ public class JoesdParser {
         joesdRecordFormat = new RecordFormat();
 
         for (MetaColumn column : metadata.getColumns()) {
-            switch (column.getDataType()) {
-            case BIGINT:
-                joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin8(), column.getName()));
-                break;
-
-            case CHAR:
-                joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(column.getSize()), column.getName()));
-                break;
-
-            case CLOB:
-                throw new Exception(Messages.JoesdParser_CLOBNotSupported);
-
-            case DATE:
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName()));
-                break;
-
-            case DECIMAL:
-                joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(column.getSize(), column
-                    .getPrecision()), column.getName()));
-                break;
-
-            case DOUBLE:
-                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), column.getName()));
-                break;
-
+            switch (column.getType()) {
             case INTEGER:
                 joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin4(), column.getName()));
-                break;
-
-            case NUMERIC:
-                joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(
-                    new AS400ZonedDecimal(column.getSize(), column.getPrecision()), column.getName()));
-                break;
-
-            case REAL:
-                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float4(), column.getName()));
                 break;
 
             case SMALLINT:
                 joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin2(), column.getName()));
                 break;
 
+            case BIGINT:
+                joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin8(), column.getName()));
+                break;
+
+            case DOUBLE:
+                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), column.getName()));
+                break;
+
+            case REAL:
+                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float4(), column.getName()));
+                break;
+
+            case CHAR: {
+                CharacterFieldDescription charField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
+                    column.getName());
+                joesdRecordFormat.addFieldDescription(charField);
+                break;
+            }
+
+            case VARCHAR: {
+                CharacterFieldDescription varCharField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
+                    column.getName());
+                varCharField.setVARLEN(column.getLength());
+                joesdRecordFormat.addFieldDescription(varCharField);
+                break;
+            }
+
+            case BINARY: {
+                CharacterFieldDescription binaryField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
+                    column.getName());
+                joesdRecordFormat.addFieldDescription(binaryField);
+                break;
+            }
+
+            case VARBINARY: {
+                CharacterFieldDescription varBinaryField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
+                    column.getName());
+                varBinaryField.setVARLEN(column.getLength());
+                joesdRecordFormat.addFieldDescription(varBinaryField);
+                break;
+            }
+
+            case GRAPHIC: {
+                DBCSGraphicFieldDescription graphicField = new DBCSGraphicFieldDescription(new AS400Text(column.getLength() * 2, column.getCcsid()),
+                    column.getName());
+                joesdRecordFormat.addFieldDescription(graphicField);
+                break;
+            }
+
+            case VARGRAPHIC: {
+                DBCSGraphicFieldDescription varGraphicField = new DBCSGraphicFieldDescription(
+                    new AS400Text(column.getLength() * 2, column.getCcsid()), column.getName());
+                varGraphicField.setVARLEN(varGraphicField.getLength());
+                joesdRecordFormat.addFieldDescription(varGraphicField);
+                break;
+            }
+
+            case CLOB:
+                throw new Exception(Messages.JoesdParser_CLOBNotSupported);
+
+            case LOB:
+                CharacterFieldDescription lobField = new CharacterFieldDescription(new AS400Text(column.getLength()), column.getName());
+                if (column.isVaryingLength()) {
+                    lobField.setVARLEN(column.getLength());
+                }
+                joesdRecordFormat.addFieldDescription(lobField);
+                break;
+
+            case DECIMAL:
+                joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(column.getLength(), column
+                    .getDecimalPositions()), column.getName()));
+                break;
+
+            case NUMERIC:
+                joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(new AS400ZonedDecimal(column.getLength(), column
+                    .getDecimalPositions()), column.getName()));
+                break;
+
+            case DATE:
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName(), column.getDateTimeFormat(),
+                    column.getDateTimeSeparator()));
+                break;
+
             case TIME:
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName()));
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName(), column.getDateTimeFormat(),
+                    column.getDateTimeSeparator()));
                 break;
 
             case TIMESTMP:
                 joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
                 break;
 
-            case VARCHAR:
-                joesdRecordFormat.addFieldDescription(new CharacterFieldDescription(new AS400Text(column.getSize() + AJUSTE_VARCHAR), column
-                    .getName()));
+            case UNKNOWN: {
+                UnknownFieldDescription unknownField = new UnknownFieldDescription(new AS400Text(column.getBufferLength(), 65535), column.getName());
+                joesdRecordFormat.addFieldDescription(unknownField);
                 break;
             }
+
+            default:
+                throw new RuntimeException("Invalid column data type: " + column.getType()); //$NON-NLS-1$
+            }
         }
+
+        return;
     }
 
     public Record execute(JournalEntry journal) throws Exception {

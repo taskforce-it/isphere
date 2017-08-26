@@ -14,7 +14,7 @@ package biz.isphere.journalexplorer.core.model.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.api.retrievefielddescription.IQDBRTVFD;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 
@@ -59,37 +59,45 @@ public class MetaTableDAO extends DAOBase {
         boolean nextColumn = true;
 
         try {
+            IQDBRTVFD iqdbrtvfd = new IQDBRTVFD(getSystem(), getConnectionName());
+            iqdbrtvfd.setFile(table.getDefinitionName(), table.getDefinitionLibrary());
+            MetaColumn[] metaColumns = iqdbrtvfd.retrieveFieldDescriptions();
 
-            sqlStatement = prepareStatement(GET_TABLE_DEFINITION_SQL);
-            sqlStatement.setString(1, table.getDefinitionName());
-            sqlStatement.setString(2, table.getDefinitionLibrary());
-
-            resultSet = sqlStatement.executeQuery();
-
-            if (resultSet == null) {
-
-                throw new Exception(Messages.MetaTableDAO_NullResultSet);
-            } else {
-
-                if (resultSet.next()) {
-
-                    while (nextColumn) {
-                        column = new MetaColumn();
-                        column.setName(resultSet.getString("SYSTEM_COLUMN_NAME")); //$NON-NLS-1$
-                        column.setColumnText(resultSet.getString("COLUMN_TEXT")); //$NON-NLS-1$
-                        column.setDataType(resultSet.getString("DATA_TYPE")); //$NON-NLS-1$
-                        column.setSize(resultSet.getInt("LENGTH")); //$NON-NLS-1$
-                        column.setPrecision(resultSet.getInt("NUMERIC_SCALE")); //$NON-NLS-1$
-
-                        table.addColumn(column);
-
-                        nextColumn = resultSet.next();
-                    }
-
-                } else {
-                    throw new Exception(Messages.MetaTableDAO_TableDefinitionNotFound);
-                }
+            for (MetaColumn metaColumn : metaColumns) {
+                table.addColumn(metaColumn);
             }
+
+            // sqlStatement = prepareStatement(GET_TABLE_DEFINITION_SQL);
+            // sqlStatement.setString(1, table.getDefinitionName());
+            // sqlStatement.setString(2, table.getDefinitionLibrary());
+            //
+            // resultSet = sqlStatement.executeQuery();
+            //
+            // if (resultSet == null) {
+            //
+            // throw new Exception(Messages.MetaTableDAO_NullResultSet);
+            // } else {
+            //
+            // if (resultSet.next()) {
+            //
+            // while (nextColumn) {
+            // column = new MetaColumn();
+            //                        column.setName(resultSet.getString("SYSTEM_COLUMN_NAME")); //$NON-NLS-1$
+            //                        column.setColumnText(resultSet.getString("COLUMN_TEXT")); //$NON-NLS-1$
+            //                        column.setDataType(resultSet.getString("DATA_TYPE")); //$NON-NLS-1$
+            //                        column.setSize(resultSet.getInt("LENGTH")); //$NON-NLS-1$
+            //                        column.setPrecision(resultSet.getInt("NUMERIC_SCALE")); //$NON-NLS-1$
+            //
+            // table.addColumn(column);
+            //
+            // nextColumn = resultSet.next();
+            // }
+            //
+            // } else {
+            // throw new
+            // Exception(Messages.MetaTableDAO_TableDefinitionNotFound);
+            // }
+            // }
 
         } catch (Exception exception) {
 

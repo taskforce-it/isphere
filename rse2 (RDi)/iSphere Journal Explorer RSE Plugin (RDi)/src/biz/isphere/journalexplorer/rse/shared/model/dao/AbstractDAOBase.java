@@ -15,11 +15,13 @@ import java.sql.Connection;
 
 import biz.isphere.journalexplorer.rse.Messages;
 
+import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Date;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public abstract class AbstractDAOBase {
-    protected static final String properties = "thread used=false;extendeddynamic=true;package criteria=select;package cache=true;"; //$NON-NLS-1$
+    // protected static final String properties = "thread used=false; extendeddynamic=true; package criteria=select; package cache=true;"; //$NON-NLS-1$
+    protected static final String properties = "translate hex=binary; prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
 
     protected IBMiConnection ibmiConnection;
     private Connection connection;
@@ -40,14 +42,14 @@ public abstract class AbstractDAOBase {
             }
 
             dateFormat = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateFormat();
-            if (dateFormat.startsWith("*")) {
+            if (dateFormat.startsWith("*")) { //$NON-NLS-1$
                 dateFormat = dateFormat.substring(1);
             }
 
             dateSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
             timeSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getTimeSeparator();
 
-            connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
+            connection = ibmiConnection.getJDBCConnection(properties, true);
             connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
@@ -74,5 +76,9 @@ public abstract class AbstractDAOBase {
 
     protected String getConnectionName() {
         return ibmiConnection.getConnectionName();
+    }
+
+    protected AS400 getSystem() throws Exception {
+        return ibmiConnection.getAS400ToolboxObject();
     }
 }
