@@ -97,8 +97,8 @@ Strongly Recommended Run Configuration Settings:
 Add argument "-en" to the "VM arguments" field to enable Java assertions.
 
 
-Useful Settings:
-----------------
+Useful Eclipse Settings:
+------------------------
 
 a) Preferences -> General -> Show heap status (enable)
 
@@ -120,6 +120,20 @@ d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
 e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
+
+Useful LPEX Editor Settings:
+----------------------------
+
+a) Map the [Enter] key to "splittLine":
+     - From the RDp toolbar select Window > Preferences
+     - Expand LPEX Editor
+     - Select User Key Actions
+     - Enter the key definition (such as enter) in the Key input field
+     - Enter an editor action (such as splitLine) in the Action field
+     - Click on the Set button
+     - Click on OK
+
+   Source: http://www-01.ibm.com/support/docview.wss?uid=swg21639969
 
 
 Usefull plug-ins:
