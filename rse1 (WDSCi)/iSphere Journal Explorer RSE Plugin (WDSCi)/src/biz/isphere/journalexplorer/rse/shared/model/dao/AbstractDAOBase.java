@@ -16,6 +16,7 @@ import java.sql.Connection;
 import biz.isphere.journalexplorer.rse.Messages;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 
+import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
 public abstract class AbstractDAOBase {
@@ -74,5 +75,9 @@ public abstract class AbstractDAOBase {
 
     protected String getConnectionName() {
         return ibmiConnection.getConnectionName();
+    }
+
+    protected AS400 getSystem() throws Exception {
+        return ibmiConnection.getAS400ToolboxObject(null);
     }
 }
