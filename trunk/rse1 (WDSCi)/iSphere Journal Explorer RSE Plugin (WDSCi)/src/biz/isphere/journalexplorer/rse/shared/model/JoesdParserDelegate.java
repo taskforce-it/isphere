@@ -16,16 +16,16 @@ import com.ibm.as400.access.FieldDescription;
 
 public final class JoesdParserDelegate implements IJoesdParserDelegate {
 
-    public FieldDescription getDateFieldDescription(String name) {
+    public FieldDescription getDateFieldDescription(String name, String format, String separator) {
         return new CharacterFieldDescription(new AS400Text(10), name);
     }
 
-    public FieldDescription getTimeFieldDescription(String name) {
+    public FieldDescription getTimeFieldDescription(String name, String format, String separator) {
         return new CharacterFieldDescription(new AS400Text(8), name);
     }
 
     public FieldDescription getTimestampFieldDescription(String name) {
-        return new CharacterFieldDescription(new AS400Text(32), name);
+        return new CharacterFieldDescription(new AS400Text(26), name);
     }
 
 }
