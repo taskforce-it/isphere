@@ -28,7 +28,7 @@ public class Messages extends NLS {
     public static String ConfigureParsersDialog_JournalObject;
     public static String ConfigureParsersDialog_ParsingOffset;
     public static String ConfigureParsersDialog_SetDefinitions;
-    public static String JoesdParser_CLOBNotSupported;
+    public static String JoesdParser_Data_type_not_supported_A;
     public static String JoesdParser_TableMetadataDontMatchEntry;
     public static String Journal_RecordNum;
     public static String JournalEntryView_CollapseAll;
