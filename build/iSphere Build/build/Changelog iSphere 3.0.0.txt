@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.1.0.b004 
 --------------------------------------------
+ • Added iSphere Journal Explorer plug-in.
+ • Changed library dependency to version 3.1.0.
  • Change iSphere compare dialog to load/store member values when called 
    from the iSphere main menu (no members passed to compare dialog).
  • Fixed OK button enablement of RSECompareDialog.
