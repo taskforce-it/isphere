@@ -18,6 +18,8 @@ public class JournalProperty implements Comparable<JournalProperty> {
     public Object parent;
     public boolean highlighted;
 
+    private boolean errorParsing;
+
     public JournalProperty(String name, Object value, Object parent) {
         this.name = name;
         this.value = value;
@@ -33,6 +35,14 @@ public class JournalProperty implements Comparable<JournalProperty> {
             highlighted = comparable.highlighted = true;
             return -1;
         }
+    }
+
+    public void setErrorParsing(boolean error) {
+        this.errorParsing = error;
+    }
+
+    public boolean isErrorParsing() {
+        return errorParsing;
     }
 
 }

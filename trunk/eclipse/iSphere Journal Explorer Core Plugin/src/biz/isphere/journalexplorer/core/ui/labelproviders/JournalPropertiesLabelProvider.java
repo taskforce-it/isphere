@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
-import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 
@@ -43,8 +43,8 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
     }
 
     public Image getColumnImage(Object object, int columnIndex) {
-        if (object instanceof JOESDProperty && columnIndex == VALUE_COLUMN) {
-            if (((JOESDProperty)object).isErrorParsing()) {
+        if (object instanceof JournalProperty && columnIndex == VALUE_COLUMN) {
+            if (((JournalProperty)object).isErrorParsing()) {
                 return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
             } else {
                 return null;
@@ -57,21 +57,25 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
     public String getColumnText(Object object, int columnIndex) {
 
         if (object instanceof JournalProperties) {
+            JournalProperties journalProperties = (JournalProperties)object;
+
             switch (columnIndex) {
             case PROPERTY_COLUMN:
-                return ((JournalProperties)object).getJournalEntry().getKey();
+                return journalProperties.getJournalEntry().getKey();
 
-                // TODO encapsular logica
             case VALUE_COLUMN:
-                return "Table " + ((JournalProperties)object).getJournalEntry().getQualifiedObjectName();
+                String qualifiedName = journalProperties.getJournalEntry().getQualifiedObjectName();
+                return Messages.bind(Messages.ColLabel_JournalEntry_Table_A, qualifiedName);
             }
         } else if (object instanceof JournalProperty) {
+            JournalProperty journalProperty = (JournalProperty)object;
+
             switch (columnIndex) {
             case PROPERTY_COLUMN:
 
-                return ((JournalProperty)object).name;
+                return journalProperty.name;
             case VALUE_COLUMN:
-                return ((JournalProperty)object).value.toString();
+                return journalProperty.value.toString();
             }
         }
         return null;

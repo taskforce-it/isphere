@@ -12,7 +12,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.File;
@@ -53,10 +55,12 @@ public abstract class OpenJournalOutfileAction extends Action {
         addJournalDialog.create();
         int result = addJournalDialog.open();
 
+        outputFile = null;
         if (result == Window.OK) {
-            outputFile = new File(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
-        } else {
-            outputFile = null;
+            if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                addJournalDialog.getConnectionName())) {
+                outputFile = new File(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
+            }
         }
     }
 

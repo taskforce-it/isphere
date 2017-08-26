@@ -14,76 +14,175 @@ package biz.isphere.journalexplorer.core.model;
 public class MetaColumn {
 
     public enum DataType {
-        TIME,
-        TIMESTMP,
-        DATE,
+        INTEGER,
+        SMALLINT,
+        BIGINT,
+        NUMERIC,
+        DECIMAL,
         CHAR,
         VARCHAR,
-        CLOB,
+        BINARY,
+        VARBINARY,
+        DATE,
+        TIME,
+        TIMESTMP,
+        GRAPHIC,
+        VARGRAPHIC,
         REAL,
         DOUBLE,
-        SMALLINT,
-        INTEGER,
-        BIGINT,
-        DECIMAL,
-        NUMERIC
+        CLOB,
+        BLOB,
+        DBCLOB,
+        LOB,
+        UNKNOWN
     };
 
     private String name;
-
-    private String columnText;
-
-    private int size;
-
-    private int precision;
-
-    private DataType dataType;
+    private DataType type;
+    private int length;
+    private int decimalPositions;
+    private int bufferLength;
+    private int ccsid;
+    private boolean isVaryingLength;
+    private boolean isBinary;
+    private String dateTimeFormat;
+    private String dateTimeSeparator;
+    private String text;
+    private boolean isNumeric;
+    private boolean isDateTime;
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setFieldName(String name) {
         this.name = name.trim();
     }
 
-    public int getSize() {
-        return size;
+    public DataType getType() {
+        return type;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setType(DataType dataType) {
+        this.type = dataType;
     }
 
-    public int getPrecision() {
-        return precision;
+    public int getLength() {
+        return length;
     }
 
-    public void setPrecision(int precision) {
-        this.precision = precision;
+    public void setLength(int length) {
+        this.length = length;
     }
 
-    public DataType getDataType() {
-        return dataType;
+    public int getDecimalPositions() {
+        return decimalPositions;
     }
 
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
+    public void setDecimalPositions(int decPos) {
+        this.decimalPositions = decPos;
     }
 
-    public void setDataType(String dataType) throws Exception {
+    public int getCcsid() {
+        return ccsid;
+    }
+
+    public void setCcsid(int ccsid) {
+        this.ccsid = ccsid;
+    }
+
+    public boolean isVaryingLength() {
+        return isVaryingLength;
+    }
+
+    public void setVaryingLength(boolean varyingLength) {
+        this.isVaryingLength = varyingLength;
+    }
+
+    public boolean isBinary() {
+        return isBinary;
+    }
+
+    public void setBinary(boolean binary) {
+        this.isBinary = binary;
+    }
+
+    public String getDateTimeFormat() {
+        return dateTimeFormat;
+    }
+
+    public void setDateTimeFormat(String format) {
+        this.dateTimeFormat = format.trim();
+    }
+
+    public String getDateTimeSeparator() {
+        return dateTimeSeparator;
+    }
+
+    public void setDateTimeSeparator(String separator) {
+        this.dateTimeSeparator = separator.trim();
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String columnText) {
+        this.text = columnText.trim();
+    }
+
+    public boolean isNumeric() {
+        return isNumeric;
+    }
+
+    public void setNumeric(boolean binary) {
+        this.isNumeric = binary;
+    }
+
+    public boolean isDateTime() {
+        return isDateTime;
+    }
+
+    public void setDateTime(boolean dateTime) {
+        this.isDateTime = dateTime;
+    }
+
+    public int getBufferLength() {
+        return bufferLength;
+    }
+
+    public void setBufferLength(int bufferLength) {
+        this.bufferLength = bufferLength;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
         try {
-            this.dataType = DataType.valueOf(dataType.toUpperCase());
-        } catch (Exception exception) {
-            throw new Exception("Unsupported datatype: " + dataType);
+
+            buffer.append(getName());
+            buffer.append(": "); //$NON-NLS-1$
+            buffer.append(getType());
+            buffer.append("("); //$NON-NLS-1$
+            buffer.append(getLength());
+            if (isNumeric()) {
+                buffer.append(", "); //$NON-NLS-1$
+                buffer.append(getDecimalPositions());
+            } else if (isDateTime()) {
+                buffer.append(", "); //$NON-NLS-1$
+                buffer.append(getDateTimeFormat());
+                buffer.append(", '"); //$NON-NLS-1$
+                buffer.append(getDateTimeSeparator());
+                buffer.append("'"); //$NON-NLS-1$
+            }
+            buffer.append(")"); //$NON-NLS-1$
+
+            return buffer.toString();
+
+        } catch (Exception e) {
+            return super.toString();
         }
-    }
-
-    public String getColumnText() {
-        return columnText;
-    }
-
-    public void setColumnText(String columnText) {
-        this.columnText = columnText.trim();
     }
 }

@@ -6,16 +6,17 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.base.interfaces;
+package biz.isphere.journalexplorer.core.internals;
 
-import com.ibm.as400.access.FieldDescription;
+import com.ibm.as400.access.AS400Text;
+import com.ibm.as400.access.CharacterFieldDescription;
 
-public interface IJoesdParserDelegate {
+public class UnknownFieldDescription extends CharacterFieldDescription {
 
-    public FieldDescription getDateFieldDescription(String name, String format, String separator);
+    private static final long serialVersionUID = 4913807811105581261L;
 
-    public FieldDescription getTimeFieldDescription(String name, String format, String separator);
-
-    public FieldDescription getTimestampFieldDescription(String name);
+    public UnknownFieldDescription(AS400Text dataType, String name) {
+        super(dataType, name);
+    }
 
 }
