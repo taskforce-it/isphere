@@ -33,6 +33,18 @@ public class IQDBRTVFD extends APIProgramCallDocument {
 
     public static final String RVFD0100 = "RVFD0100";
 
+    public static final String RECORD_FORMAT_FIRST = "*FIRST"; //$NON-NLS-1$
+
+    public static final String OVERRIDE_PROCESSING_NO = "0"; //$NON-NLS-1$
+    public static final String OVERRIDE_PROCESSING_YES = "0"; //$NON-NLS-1$
+
+    public static final String SYSTEM_LOCAL = "*LCL"; //$NON-NLS-1$
+    public static final String SYSTEM_REMOTE = "*RMT"; //$NON-NLS-1$
+    public static final String SYSTEM_FILETYPE = "*FILETYPE"; //$NON-NLS-1$
+
+    public static final String FORMAT_TYPE_EXT = "*EXT"; //$NON-NLS-1$
+    public static final String FORMAT_TYPE_INT = "*INT"; //$NON-NLS-1$
+
     public static final String TYPE_API_BINARY = "B"; //$NON-NLS-1$
     public static final String TYPE_API_FLOAT = "F"; //$NON-NLS-1$
     public static final String TYPE_API_ZONED = "S"; //$NON-NLS-1$
@@ -90,7 +102,6 @@ public class IQDBRTVFD extends APIProgramCallDocument {
 
         this.file = name;
         this.library = library;
-
     }
 
     /**
@@ -177,11 +188,11 @@ public class IQDBRTVFD extends APIProgramCallDocument {
         parameterList[1] = produceIntegerParameter(bufferSize);
         parameterList[2] = produceStringParameter(format, 8);
         parameterList[3] = produceQualifiedObjectName(file, library);
-        parameterList[4] = produceStringParameter("*FIRST", 10); //$NON-NLS-1$
+        parameterList[4] = produceStringParameter(RECORD_FORMAT_FIRST, 10);
         parameterList[5] = produceByteParameter(new APIErrorCode().getBytes());
-        parameterList[6] = produceStringParameter("0", 1); //$NON-NLS-1$
-        parameterList[7] = produceStringParameter("*LCL", 10); //$NON-NLS-1$
-        parameterList[8] = produceStringParameter("*EXT", 10); //$NON-NLS-1$
+        parameterList[6] = produceStringParameter(OVERRIDE_PROCESSING_NO, 1);
+        parameterList[7] = produceStringParameter(SYSTEM_LOCAL, 10);
+        parameterList[8] = produceStringParameter(FORMAT_TYPE_EXT, 10);
 
         return parameterList;
     }
