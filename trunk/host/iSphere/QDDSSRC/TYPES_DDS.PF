@@ -91,5 +91,10 @@
      A                                      DFT('0')
      A                                      VALUES('1' '0')
       *
+     A            D_NULLABLE    10A         TEXT('Char Null Allowed')
+     A                                      CCSID(273)
+     A                                      ALWNULL
+     A                                      DFT(*NULL)
+      *
      A          K D_BIN4
       *

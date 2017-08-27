@@ -366,6 +366,12 @@
                       rvfd0100.isBinary = '0';
                    endif;
 
+                   if (%bitand(x'80': Qdb_Qddffld.Qddffldst2) = x'80');
+                      rvfd0100.isNullable = '1';
+                   else;
+                      rvfd0100.isNullable = '0';
+                   endif;
+
                    rvfd0100.datTimFmt =
                       intToExtDatTimFmt(
                          Qdb_Qddffld.Qddfftyp: Qdb_Qddffld.Qddfdttf);
