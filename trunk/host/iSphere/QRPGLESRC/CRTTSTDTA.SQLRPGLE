@@ -13,6 +13,13 @@
       //* Create test data: TYPES_SQL and TYPES_DDS                                                *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
+      //* Prerequisites:                                                                           *
+      //*  - Compile table TYPES_SQL                                                               *
+      //*  - Compile table TYPES_DDS                                                               *
+      //*  - Create a journal                                                                      *
+      //*  - Start journaling for TYPES_SQL and TYPE_DDS                                           *
+      //*                                                                                          *
+      //*------------------------------------------------------------------------------------------*
       //* STRPREPRC Compile Options:                                                               *
       //*   >>PRE-COMPILER<<                                                                       *
       //*     >>CRTCMD<< CRTSQLRPGI   OBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM);                   *
