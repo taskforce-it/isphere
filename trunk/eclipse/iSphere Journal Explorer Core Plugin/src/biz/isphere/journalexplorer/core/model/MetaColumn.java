@@ -41,6 +41,7 @@ public class MetaColumn {
         LONG_VARGRAPHIC
     };
 
+    private int index;
     private String name;
     private DataType type;
     private int length;
@@ -49,12 +50,21 @@ public class MetaColumn {
     private int ccsid;
     private boolean isVaryingLength;
     private boolean isBinary;
+    private boolean isNullable;
     private String dateTimeFormat;
     private String dateTimeSeparator;
     private String text;
     private boolean isNumeric;
     private boolean isDateTime;
 
+    public MetaColumn(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+    
     public String getName() {
         return name;
     }
@@ -109,6 +119,14 @@ public class MetaColumn {
 
     public void setBinary(boolean binary) {
         this.isBinary = binary;
+    }
+
+    public boolean isNullable() {
+        return isNullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.isNullable = nullable;
     }
 
     public String getDateTimeFormat() {

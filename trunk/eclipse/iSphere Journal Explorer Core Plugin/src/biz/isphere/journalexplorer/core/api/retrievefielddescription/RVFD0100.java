@@ -33,6 +33,7 @@ public class RVFD0100 extends APIFormat {
     private static final String CCSID = "ccsid"; //$NON-NLS-1$
     private static final String IS_VARYING_FIELD = "isVarying"; //$NON-NLS-1$
     private static final String IS_BINARY_FIELD = "isBinary"; //$NON-NLS-1$
+    private static final String IS_NULLABLE_FIELD = "isNullable"; //$NON-NLS-1$
     private static final String RESERVED_1 = "reserved_1"; //$NON-NLS-1$
     private static final String DATE_TIME_FORMAT = "dateTimeFormat"; //$NON-NLS-1$
     private static final String DATE_TIME_SEPARATOR = "dateTimeSeparator"; //$NON-NLS-1$
@@ -145,7 +146,7 @@ public class RVFD0100 extends APIFormat {
                 throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else if (IQDBRTVFD.TYPE_API_LOB.equals(type)) {
-            // TODO: fix it
+            // TODO: fix it, return BLOB or CLOB
             return MetaColumn.DataType.LOB;
         } else {
             return MetaColumn.DataType.UNKNOWN;
@@ -229,6 +230,22 @@ public class RVFD0100 extends APIFormat {
      * 
      * @return <code>true</code> for binary fields
      */
+    public boolean isNullable() throws UnsupportedEncodingException {
+
+        String isNullable = getCharValue(IS_NULLABLE_FIELD);
+        if ("1".equals(isNullable)) { //$NON-NLS-1$
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns <code>true</code> if the NULL value is allowed, else
+     * <code>false</code>.
+     * 
+     * @return <code>true</code> for binary fields
+     */
     public boolean isBinary() throws UnsupportedEncodingException {
 
         String isBinary = getCharValue(IS_BINARY_FIELD);
@@ -301,9 +318,9 @@ public class RVFD0100 extends APIFormat {
         return getCharValue(DATE_TIME_SEPARATOR).trim();
     }
 
-    public MetaColumn createMetaColumn() throws Exception {
+    public MetaColumn createMetaColumn(int index) throws Exception {
 
-        MetaColumn metaColumn = new MetaColumn();
+        MetaColumn metaColumn = new MetaColumn(index);
 
         metaColumn.setFieldName(getFieldName());
         metaColumn.setType(getSqlDataType());
@@ -313,6 +330,7 @@ public class RVFD0100 extends APIFormat {
         metaColumn.setCcsid(getCcsid());
         metaColumn.setVaryingLength(isVaryingLength());
         metaColumn.setBinary(isBinary());
+        metaColumn.setNullable(isNullable());
         metaColumn.setDateTimeFormat(removeLeadingAsterisk(getDateTimeFormat()));
         metaColumn.setDateTimeSeparator(getDateTimeSeparator());
         metaColumn.setText(getText());
@@ -347,7 +365,8 @@ public class RVFD0100 extends APIFormat {
         addInt4Field(CCSID, 28);
         addCharField(IS_VARYING_FIELD, 32, 1);
         addCharField(IS_BINARY_FIELD, 33, 1);
-        addCharField(RESERVED_1, 34, 2);
+        addCharField(IS_NULLABLE_FIELD, 34, 1);
+        addCharField(RESERVED_1, 35, 1);
         addCharField(DATE_TIME_FORMAT, 36, 10);
         addCharField(DATE_TIME_SEPARATOR, 46, 10);
         addCharField(TEXT, 56, 50);

@@ -56,6 +56,7 @@ public interface ColumnsDAO {
     public static final String JOFILTYP = "JOFILTYP";
     public static final String JOCMTLVL = "JOCMTLVL";
     public static final String JOESD = "JOESD";
+    public static final String JONVI = "JONVI";
 
     public static final String[] ALL = new String[] { RRN_OUTPUT_FILE, JOENTL, JOSEQN, JOCODE, JOENTT, JODATE, JOTIME, JOTSTP, JOJOB, JOUSER, JONBR,
         JOPGM, JOPGMLIB, JOPGMDEV, JOPGMASP, JOOBJ, JOLIB, JOMBR, JOCTRR, JOFLAG, JOCCID, JOUSPF, JOSYNM, JOJID, JORCST, JOTGR, JOINCDAT, JOIGNAPY,

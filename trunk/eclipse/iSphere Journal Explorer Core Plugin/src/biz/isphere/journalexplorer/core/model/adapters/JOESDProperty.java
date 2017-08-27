@@ -25,7 +25,7 @@ import com.ibm.as400.access.Record;
 
 public class JOESDProperty extends JournalProperty {
 
-    private JournalEntry journal;
+    private JournalEntry journalEntry;
 
     private MetaTable metatable;
 
@@ -33,10 +33,10 @@ public class JOESDProperty extends JournalProperty {
 
     private Record parsedJOESD;
 
-    public JOESDProperty(String name, Object value, Object parent, JournalEntry journal) {
+    public JOESDProperty(String name, Object value, Object parent, JournalEntry journalEntry) {
 
         super(name, "", parent); //$NON-NLS-1$
-        this.journal = journal;
+        this.journalEntry = journalEntry;
         setErrorParsing(false);
 
         this.executeParsing();
@@ -72,9 +72,9 @@ public class JOESDProperty extends JournalProperty {
 
         String columnName;
 
-        metatable = MetaDataCache.INSTANCE.retrieveMetaData(journal);
+        metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
 
-        parsedJOESD = new JoesdParser(metatable).execute(journal);
+        parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
 
         for (MetaColumn column : metatable.getColumns()) {
             columnName = column.getName().trim();
@@ -82,14 +82,19 @@ public class JOESDProperty extends JournalProperty {
                 columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
             }
 
-            if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
+            if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
+                JournalProperty journalProperty = new JournalProperty(columnName, "[null]", this);
+                specificProperties.add(journalProperty);
+            } else if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
                 JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);
                 journalProperty.setErrorParsing(true);
                 specificProperties.add(journalProperty);
             } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
-                specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this));
+                JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this);
+                specificProperties.add(journalProperty);
             } else {
-                specificProperties.add(new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this));
+                JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this);
+                specificProperties.add(journalProperty);
             }
         }
     }

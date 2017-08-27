@@ -42,7 +42,7 @@ public class Type4DAO extends Type3DAO {
         "           result.JOIGNAPY," +   //  added with TYPE4
         "           result.JOMINESD," +
                     // JORES - reserved
-                    // JONVI - null value indicators
+        "           result.JONVI,   " +   
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on

@@ -51,7 +51,7 @@ public class MetaTableDAO extends DAOBase {
         + " ORDER BY  Columns.ORDINAL_POSITION"; //$NON-NLS-1$
     // @formatter:on
 
-    public void retrieveColumnsMetaData(MetaTable table) throws Exception {
+    public void retrieveColumnsMetaData(MetaTable metaTable) throws Exception {
 
         MetaColumn column = null;
         ResultSet resultSet = null;
@@ -60,11 +60,11 @@ public class MetaTableDAO extends DAOBase {
 
         try {
             IQDBRTVFD iqdbrtvfd = new IQDBRTVFD(getSystem(), getConnectionName());
-            iqdbrtvfd.setFile(table.getDefinitionName(), table.getDefinitionLibrary());
+            iqdbrtvfd.setFile(metaTable.getDefinitionName(), metaTable.getDefinitionLibrary());
             MetaColumn[] metaColumns = iqdbrtvfd.retrieveFieldDescriptions();
 
             for (MetaColumn metaColumn : metaColumns) {
-                table.addColumn(metaColumn);
+                metaTable.addColumn(metaColumn);
             }
 
             // sqlStatement = prepareStatement(GET_TABLE_DEFINITION_SQL);

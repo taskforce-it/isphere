@@ -38,7 +38,7 @@ public class Type3DAO extends AbstractTypeDAO {
         "           result.JOINCDAT," +
         "           result.JOMINESD," +
                     // JORES - reserved
-                    // JONVI - null value indicators, added with TYPE3
+        "           result.JONVI,   " +   //  added with TYPE3
         "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
         "      FROM %s.%s as result";
     // @formatter:on
@@ -65,6 +65,7 @@ public class Type3DAO extends AbstractTypeDAO {
         // For TYPE3+ output files it is returned as a timestamp value.
         journalEntry.setDate(resultSet.getDate(JOTSTP));
         journalEntry.setTime(resultSet.getTime(JOTSTP));
+        journalEntry.setNullIndicators(new String( resultSet.getBytes(JONVI),"IBM37").getBytes());
 
         return journalEntry;
     }

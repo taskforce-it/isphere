@@ -120,7 +120,7 @@ public class IQDBRTVFDResult extends APIFormat {
         for (int i = 0; i < getNumberOfFieldsReturned(); i++) {
 
             rtvm0000.setOffset(offset);
-            messages.add(rtvm0000.createMetaColumn());
+            messages.add(rtvm0000.createMetaColumn(i));
 
             offset += rtvm0000.getLength();
         }
