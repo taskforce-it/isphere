@@ -129,6 +129,10 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
          */
         // for (ISelectionProvider provider : this.delegates) {
 
+        if (delegates.isEmpty()) {
+            return;
+        }
+
         SelectionChangedEvent event = new SelectionChangedEvent(delegates.get(0), selection);
 
         Object[] listeners = list.getListeners();
