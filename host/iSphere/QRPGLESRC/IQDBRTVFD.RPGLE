@@ -279,9 +279,9 @@
           header.bytRtn = HEADER_MIN_SIZE;
 
           if (i_lenFldInf >= MIN_SIZE_QFILE_RTN);
-             header.qFileRtn = qFileRet.name;
-             header.qLibRtn = qFileRet.lib;
-             header.bytRtn += (%size(header.qFileRtn) + %size(header.qLibRtn));
+             header.fileRtn = qFileRet.name;
+             header.libRtn = qFileRet.lib;
+             header.bytRtn += (%size(header.fileRtn) + %size(header.libRtn));
           endif;
 
           if (errCode.bytAvl = 0);
