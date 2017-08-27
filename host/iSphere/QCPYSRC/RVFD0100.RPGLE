@@ -20,7 +20,8 @@
      d  ccsid                 29     32u 0                                      <-- CCSID
      d  isVarying             33     33a                                        <-- is varying field
      d  isBinary              34     34a                                        <-- is binary field
-     d  reserved_1            35     36a
+     d  isNullable            35     35a                                        <-- is NULL allowed
+     d  reserved_1            36     36a
      d  datTimFmt             37     46a                                        <-- date/time format
      d  datTimSep             47     56a                                        <-- date/time sep.
      d  text                  57    106a                                        <-- column text

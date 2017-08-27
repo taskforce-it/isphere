@@ -105,7 +105,8 @@
           S_VARGRA,
           S_DTLINK,
           S_CLOB,
-          S_BLOB)
+          S_BLOB,
+          S_NULLABLE)
        VALUES (
           2,
           :count,
@@ -128,7 +129,8 @@
           '<Vargraphic 20byte>',
           DLVALUE('https://www.ixquick.com/deu'),
           CLOB('The quick brown fox jumps over the lazy dog'),
-          BLOB('The quick brown fox jumps over the lazy dog'));
+          BLOB('The quick brown fox jumps over the lazy dog'),
+          NULL);
 
        endfor;
        // Clear table
@@ -160,7 +162,8 @@
           D_TIME_HMS,
           D_GRAPHIC,
           D_VARGRA,
-          D_BOOL)
+          D_BOOL,
+          D_NULLABLE)
        VALUES (
           1,
           2,
@@ -182,7 +185,8 @@
           '23:59:59',
           '<Graphic 20-bytes-->',
           '<Vargraphic 20byte>',
-          '1'
+          '1',
+          NULL
           );
 
        endfor;
