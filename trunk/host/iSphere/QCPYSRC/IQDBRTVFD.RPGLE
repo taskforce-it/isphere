@@ -142,7 +142,7 @@
      d  gio_fldInf                32767a         options(*varsize)              <-- Message informat
      d  gi_lenFldInf                 10i 0 const                                --> Length of messag
      d  gi_format                     8a   const                                --> Format name
-     d  gi_qFile                           const likeds(qObj_t)                 --> Qualified messag
+     d  gi_qFile                           const likeds(qObj_t)                 --> Qualified file
      d  gi_rcdFmt                    10a   const                                --> Return format co
      d  gio_errCode               32767a         options(*varsize)              <-> Error code
      d  gi_override                   1a   const options(*nopass)               --> Override proc.
@@ -154,8 +154,8 @@
      D  bytRtn                 1      4i 0
      d  bytAvl                 5      8i 0
      d  numFldRtn              9     12i 0
-     d  qFileRtn              13     22a
-     d  qLibRtn               23     32a
+     d  fileRtn               13     22a
+     d  libRtn                23     32a
      d  offsFirstFldD         33     36i 0
 
      d HEADER_MIN_SIZE...
