@@ -16,6 +16,7 @@ import java.util.Date;
 
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
@@ -25,115 +26,79 @@ public class JournalEntry {
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
+    private File outputFile;
+
     private String connectionName;
-
     private String outFileName;
-
     private String outFileLibrary;
-
     private int id;
-
     private int entryLength; // JOENTL
-
     private long sequenceNumber; // JOSEQN
-
     private String journalCode; // JOCODE
-
     private String entryType; // JOENTT
-
     private Date date; // JODATE
-
     private Time time; // JOTIME
-
     private String jobName; // JOJOB
-
     private String jobUserName; // JOUSER
-
     private int jobNumber; // JONBR
-
     private String programName; // JOPGM
-
     private String programLibrary; // JOLIB
-
     private String objectName; // JOOBJ
-
     private String objectLibrary; // JOLIB
-
     private String memberName; // JOMBR
-
     private int countRrn; // JOCTRR
-
     private String flag; // JOFLAG
-
     private int commitmentCycle; // JOCCID
-
     private String userProfile; // JOUSPF
-
     private String systemName; // JOSYNM
-
     private String journalID; // JOJID
-
     private String referentialConstraint; // JORCST
     private String referentialConstraintText;
-
     private String trigger; // JOTGR
     private String triggerText;
-
     private String incompleteData; // JOINCDAT
     private String incompleteDataText;
-
     private String apyRmvJrnChg; // JOIGNAPY
     private String apyRmvJrnChgText;
-
     private String minimizedSpecificData; // JOMINESD
     private String minimizedSpecificDataText;
-
     private byte[] specificData; // JOESD
-
     private String stringSpecificData; // JOESD (String)
-
     private String programAspDevice; // JOPGMDEV
-
     private int programAsp; // JOPGMASP
-
     private String objectIndicator; // JOOBJIND
     private String objectIndicatorText;
-
     private String systemSequenceNumber; // JOSYSSEQ
-
     private String receiver; // JORCV
-
     private String receiverLibrary; // JORCVLIB
-
     private String receiverAspDevice; // JORCVDEV
-
     private int receiverAsp; // JORCVASP
-
     private int armNumber; // JOARM
-
     private String threadId; // JOTHDX
-
     private String addressFamily; // JOADF
     private String addressFamilyText;
-
     private int remotePort; // JORPORT
-
     private String remoteAddress; // JORADR
-
     private String logicalUnitOfWork; // JOLUW
-
     private String transactionIdentifier; // JOXID
-
     private String objectType; // JOOBJTYP
-
     private String fileTypeIndicator; // JOFILTYP
     private String fileTypeIndicatorText;
-
     private String nestedCommitLevel; // JOCMTLVL
+    private byte[] nullIndicators; // JONVI
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
 
-    public JournalEntry() {
+    public JournalEntry(File outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+    
+    public boolean hasNullIndicatorTable() throws Exception {
+        return MetaDataCache.INSTANCE.retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI);
     }
 
     // //////////////////////////////////////////////////////////
@@ -992,6 +957,28 @@ public class JournalEntry {
 
     public void setNestedCommitLevel(String nestedCommitLevel) {
         this.nestedCommitLevel = nestedCommitLevel.trim();
+    }
+
+    public int getNullTableLength() {
+
+        if (nullIndicators == null) {
+            return 0;
+        }
+
+        return nullIndicators.length;
+    }
+
+    public boolean isNull(int index) {
+
+        if (nullIndicators == null) {
+            return false;
+        }
+
+        return nullIndicators[index] == '1';
+    }
+
+    public void setNullIndicators(byte[] nullIndicators) {
+        this.nullIndicators = nullIndicators;
     }
 
     /**

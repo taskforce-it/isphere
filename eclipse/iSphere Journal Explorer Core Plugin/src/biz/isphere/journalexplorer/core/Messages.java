@@ -18,6 +18,7 @@ public class Messages extends NLS {
     private static final String BUNDLE_NAME = "biz.isphere.journalexplorer.core.messages"; //$NON-NLS-1$
 
     public static String E_R_R_O_R;
+    public static String Warning;
     public static String AddJournalDialog_AllDataRequired;
     public static String AddJournalDialog_Conection;
     public static String AddJournalDialog_FileName;
@@ -58,6 +59,8 @@ public class Messages extends NLS {
     public static String Number_of_journal_entries_A;
 
     public static String Error_Unknown_data_type;
+    public static String Error_No_NULL_indicator_information_available;
+    public static String Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;

@@ -12,8 +12,10 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
@@ -34,23 +36,21 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 public class MetaTable {
 
     private String name;
-
     private String library;
-
     private String definitionName;
-
     private String definitionLibrary;
 
     private LinkedList<MetaColumn> columns;
     private Map<String, MetaColumn> columnNames;
 
     private boolean loaded;
-
     private int parsingOffset;
-
     private boolean isHidden;
-
     private Integer outfileType;
+    private int countNullableFields;
+    private int lastNullableFieldIndex;
+
+    private Set<String> warningMessages;
 
     public MetaTable(String name, String library) {
 
@@ -60,6 +60,10 @@ public class MetaTable {
         this.library = this.definitionLibrary = library.trim();
         this.loaded = false;
         this.parsingOffset = 0;
+        this.countNullableFields = 0;
+        this.lastNullableFieldIndex = 0;
+
+        this.warningMessages = new HashSet<String>();
     }
 
     public boolean isJournalOutputFile() {
@@ -68,6 +72,14 @@ public class MetaTable {
 
     public void setHidden(boolean isHidden) {
         this.isHidden = isHidden;
+    }
+
+    public void addWarningMessage(String message) {
+        warningMessages.add(message);
+    }
+
+    public boolean hasWarningMessage(String message) {
+        return warningMessages.contains(message);
     }
 
     public String getName() {
@@ -110,6 +122,19 @@ public class MetaTable {
         this.loaded = loaded;
     }
 
+    public int getLastNullableFieldIndex() {
+        return lastNullableFieldIndex;
+    }
+
+    public boolean hasNullableFields() {
+
+        if (countNullableFields > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public int getParsingOffset() {
         return parsingOffset;
     }
@@ -121,6 +146,12 @@ public class MetaTable {
     public void addColumn(MetaColumn column) {
         columns.add(column);
         columnNames.put(column.getName(), column);
+
+        if (column.isNullable()) {
+            countNullableFields++;
+            lastNullableFieldIndex = columns.size();
+        }
+
     }
 
     public MetaColumn[] getColumns() {

@@ -47,7 +47,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                 while (resultSet.next()) {
 
-                    journalEntry = new JournalEntry();
+                    journalEntry = new JournalEntry(outputFile);
                     journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
                     journalEntry.setOutFileName(outputFile.getOutFileName());
 

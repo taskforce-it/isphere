@@ -124,18 +124,22 @@ public class SelectionProviderIntermediate implements IPostSelectionProvider {
 
     private void fireSelectionChanged(ListenerList list, ISelection selection) {
 
-        for (ISelectionProvider provider : this.delegates) {
+        /*
+         * Fire event only once and not for all tabs.
+         */
+        // for (ISelectionProvider provider : this.delegates) {
 
-            SelectionChangedEvent event = new SelectionChangedEvent(provider, selection);
+        SelectionChangedEvent event = new SelectionChangedEvent(delegates.get(0), selection);
 
-            Object[] listeners = list.getListeners();
+        Object[] listeners = list.getListeners();
 
-            for (int i = 0; i < listeners.length; i++) {
-                ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
-                listener.selectionChanged(event);
-            }
+        for (int i = 0; i < listeners.length; i++) {
+            ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
+            listener.selectionChanged(event);
         }
     }
+
+    // }
 
     // /
     // / IPostSelectionProvider implemented methods

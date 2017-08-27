@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,7 +26,11 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
@@ -94,7 +99,8 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
 
             if (viewPart instanceof JournalExplorerView) {
-                selection = new StructuredSelection(new StructuredSelection(((JournalExplorerView)viewPart).getCurrentViewer().getSelectedItems()));
+                JournalEntry[] selectedItems = ((JournalExplorerView)viewPart).getCurrentViewer().getSelectedItems();
+                selection = new StructuredSelection(new StructuredSelection(selectedItems));
             }
 
             if (selection instanceof IStructuredSelection) {
@@ -127,8 +133,6 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
     private void refreshViewer(List<JournalProperties> input) {
 
         viewer.setInput(input.toArray());
-
-        // Restore tree state
         viewer.expandAll();
     }
 
@@ -163,7 +167,28 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         }
 
         public void run() {
-            input.add(new JournalProperties(journalEntry));
+            try {
+                input.add(new JournalProperties(journalEntry));
+                MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+                if (metatable.hasNullableFields()) {
+                    String message = null;
+                    if (!journalEntry.hasNullIndicatorTable()) {
+                        message = Messages.Error_No_NULL_indicator_information_available;
+                    } else if (metatable.getLastNullableFieldIndex() > journalEntry.getNullTableLength()) {
+                        message = Messages.Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields;
+                    }
+                    if (message != null) {
+                        MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
+                        if (!metatableOutputFile.hasWarningMessage(message)) {
+                            MessageDialog.openWarning(getViewSite().getShell(), Messages.Warning, message);
+                            metatableOutputFile.addWarningMessage(message);
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                MessageDialog.openError(getViewSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
         }
     }
 }
