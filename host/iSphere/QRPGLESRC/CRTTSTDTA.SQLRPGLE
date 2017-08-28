@@ -135,11 +135,18 @@
           '<Graphic 20-bytes-->',
           '<Vargraphic 20byte>',
           DLVALUE('https://www.ixquick.com/deu'),
-          CLOB('The quick brown fox jumps over the lazy dog'),
-          BLOB('The quick brown fox jumps over the lazy dog'),
+          CLOB('The quick brown fox jumps over the lazy dog.'),
+          BLOB('The quick brown fox jumps over the lazy dog.'),
           NULL);
 
-       endfor;
+          endfor;
+
+       // Do some updates
+       exec sql
+          UPDATE TYPES_SQL
+             SET S_DTLINK = DLVALUE('https://www.google.de/en')
+             WHERE S_INTEGER IN (2, 4, 6, 8, 10);
+
        // Clear table
        exec sql
           DELETE FROM TYPES_DDS;
@@ -166,6 +173,7 @@
           D_TIME_ISO,
           D_TMSTMP,
           D_DATE_EUR,
+          D_DATE_JUL,
           D_TIME_HMS,
           D_GRAPHIC,
           D_VARGRA,
@@ -189,6 +197,7 @@
           TIME(NOW()),
           '1970-01-01-23.59.59.999999',
           '01.01.1970',
+          '70.001',
           '23:59:59',
           '<Graphic 20-bytes-->',
           '<Vargraphic 20byte>',
@@ -198,6 +207,13 @@
 
        endfor;
 
+       // Do some updates
+       exec sql
+          UPDATE TYPES_DDS
+             SET D_VARCHAR = 'The quick brown fox jumps over the lazy dog.'
+             WHERE D_BIN4 IN (2, 4, 6, 8, 10);
+
+       // Create DSPJRN output files
        end_time = %timestamp();
 
        cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
