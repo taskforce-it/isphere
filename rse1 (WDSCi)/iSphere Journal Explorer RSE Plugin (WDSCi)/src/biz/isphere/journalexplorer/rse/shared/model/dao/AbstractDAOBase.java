@@ -20,7 +20,8 @@ import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
 public abstract class AbstractDAOBase {
-    protected static final String properties = "thread used=false;extendeddynamic=true;package criteria=select;package cache=true;"; //$NON-NLS-1$
+    // protected static final String properties = "thread used=false; extendeddynamic=true; package criteria=select; package cache=true;"; //$NON-NLS-1$
+    protected static final String properties = "translate hex=binary; prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
 
     protected ISeriesConnection ibmiConnection;
     private Connection connection;
@@ -48,7 +49,7 @@ public abstract class AbstractDAOBase {
             dateSeparator = ibmiConnection.getServerJob(null).getDateSeparator();
             timeSeparator = ibmiConnection.getServerJob(null).getTimeSeparator();
 
-            connection = ibmiConnection.getJDBCConnection("", true); //$NON-NLS-1$
+            connection = ibmiConnection.getJDBCConnection(properties, true); //$NON-NLS-1$
             connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
