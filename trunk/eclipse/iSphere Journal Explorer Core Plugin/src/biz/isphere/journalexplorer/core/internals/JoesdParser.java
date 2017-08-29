@@ -13,6 +13,7 @@ package biz.isphere.journalexplorer.core.internals;
 
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.as400.access.AS400DataLink;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaTable;
@@ -30,6 +31,7 @@ import com.ibm.as400.access.BinaryFieldDescription;
 import com.ibm.as400.access.CharacterFieldDescription;
 import com.ibm.as400.access.DBCSGraphicFieldDescription;
 import com.ibm.as400.access.FloatFieldDescription;
+import com.ibm.as400.access.HexFieldDescription;
 import com.ibm.as400.access.PackedDecimalFieldDescription;
 import com.ibm.as400.access.Record;
 import com.ibm.as400.access.RecordFormat;
@@ -150,9 +152,16 @@ public class JoesdParser {
                     column.getDateTimeSeparator()));
                 break;
 
-            case TIMESTMP:
+            case TIMESTAMP:
                 joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
                 break;
+
+            case DATALINK: {
+                HexFieldDescription charField = new HexFieldDescription(new AS400DataLink(column.getLength(), column.getCcsid()),
+                    column.getName());
+                joesdRecordFormat.addFieldDescription(charField);
+                break;
+            }
 
             case UNKNOWN: {
                 UnknownFieldDescription unknownField = new UnknownFieldDescription(new AS400Text(column.getBufferLength(), 65535), column.getName());

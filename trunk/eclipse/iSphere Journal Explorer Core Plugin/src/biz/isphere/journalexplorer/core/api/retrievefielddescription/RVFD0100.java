@@ -128,7 +128,7 @@ public class RVFD0100 extends APIFormat {
         } else if (IQDBRTVFD.TYPE_API_TIME.equals(type)) {
             return MetaColumn.DataType.TIME;
         } else if (IQDBRTVFD.TYPE_API_TIMESTAMP.equals(type)) {
-            return MetaColumn.DataType.TIMESTMP;
+            return MetaColumn.DataType.TIMESTAMP;
         } else if (IQDBRTVFD.TYPE_API_GRAPHIC.equals(type)) {
             if (isVaryingLength()) {
                 return MetaColumn.DataType.VARGRAPHIC;
@@ -148,6 +148,8 @@ public class RVFD0100 extends APIFormat {
         } else if (IQDBRTVFD.TYPE_API_LOB.equals(type)) {
             // TODO: fix it, return BLOB or CLOB
             return MetaColumn.DataType.LOB;
+        } else if (IQDBRTVFD.TYPE_API_DATALINK.equals(type)) {
+            return MetaColumn.DataType.DATALINK;
         } else {
             return MetaColumn.DataType.UNKNOWN;
         }
