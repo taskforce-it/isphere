@@ -227,45 +227,45 @@
                 FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
-                ENTTYP(*RCD) +
+                JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
                 OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1) OUTFILE(ISPHEREDVP/TYPES_1) +
-                ENTDTALEN(5000)';
+                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
        clCommand(cmd);
 
        cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
                 FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
-                ENTTYP(*RCD) +
+                JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
                 OUTPUT(*OUTFILE) OUTFILFMT(*TYPE2) OUTFILE(ISPHEREDVP/TYPES_2) +
-                ENTDTALEN(5000)';
+                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
        clCommand(cmd);
 
        cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
                 FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
-                ENTTYP(*RCD) +
+                JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
                 OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3) OUTFILE(ISPHEREDVP/TYPES_3) +
-                ENTDTALEN(5000)';
+                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
        clCommand(cmd);
 
        cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
                 FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
-                ENTTYP(*RCD) +
+                JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
                 OUTPUT(*OUTFILE) OUTFILFMT(*TYPE4) OUTFILE(ISPHEREDVP/TYPES_4) +
-                ENTDTALEN(5000)';
+                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
        clCommand(cmd);
 
        cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
                 FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
-                ENTTYP(*RCD) +
+                JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
                 OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5) OUTFILE(ISPHEREDVP/TYPES_5) +
-                ENTDTALEN(5000)';
+                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
        clCommand(cmd);
 
 
