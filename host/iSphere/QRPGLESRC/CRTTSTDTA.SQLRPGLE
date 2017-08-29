@@ -147,6 +147,11 @@
              SET S_DTLINK = DLVALUE('https://www.google.de/en')
              WHERE S_INTEGER IN (2, 4, 6, 8, 10);
 
+       exec sql
+          UPDATE TYPES_SQL
+             SET S_DTLINK = DLVALUE('file://foo.server.com/home/joe/info.txt')
+             WHERE S_INTEGER IN (1, 3, 5, 7, 9);
+
        // Clear table
        exec sql
           DELETE FROM TYPES_DDS;
@@ -197,7 +202,7 @@
           TIME(NOW()),
           '1970-01-01-23.59.59.999999',
           '01.01.1970',
-          '70.001',
+          '01.01.1970', -- '70.001',
           '23:59:59',
           '<Graphic 20-bytes-->',
           '<Vargraphic 20byte>',
