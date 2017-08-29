@@ -66,6 +66,7 @@ public class RVFD0100 extends APIFormat {
     /**
      * Sets the offset to a particular field description.
      */
+    @Override
     public void setOffset(int offset) {
         super.setOffset(offset);
     }
