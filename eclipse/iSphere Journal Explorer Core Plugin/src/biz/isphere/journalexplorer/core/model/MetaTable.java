@@ -45,7 +45,7 @@ public class MetaTable {
 
     private boolean loaded;
     private int parsingOffset;
-    private boolean isHidden;
+    private boolean isJournalOutputFile;
     private Integer outfileType;
     private int countNullableFields;
     private int lastNullableFieldIndex;
@@ -67,11 +67,11 @@ public class MetaTable {
     }
 
     public boolean isJournalOutputFile() {
-        return isHidden;
+        return isJournalOutputFile;
     }
 
-    public void setHidden(boolean isHidden) {
-        this.isHidden = isHidden;
+    public void setJournalOutputFile(boolean isJournalOutputFile) {
+        this.isJournalOutputFile = isJournalOutputFile;
     }
 
     public void addWarningMessage(String message) {

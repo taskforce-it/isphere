@@ -19,6 +19,13 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 
 public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
+    /*
+     * Restrict the number of bytes returned. JOENTL is more than the record
+     * length of the journal file but usually less the actual size of JOESD.
+     * That is close enough for now.
+     */
+    protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
+
     private File outputFile;
 
     public AbstractTypeDAO(File outputFile) throws Exception {

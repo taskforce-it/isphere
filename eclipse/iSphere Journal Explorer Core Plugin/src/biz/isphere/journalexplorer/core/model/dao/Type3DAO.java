@@ -39,7 +39,7 @@ public class Type3DAO extends AbstractTypeDAO {
         "           result.JOMINESD," +
                     // JORES - reserved
         "           result.JONVI,   " +   //  added with TYPE3
-        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+                    SQL_JOESD_RESULT  +
         "      FROM %s.%s as result";
     // @formatter:on
 

@@ -43,7 +43,7 @@ public class Type4DAO extends Type3DAO {
         "           result.JOMINESD," +
                     // JORES - reserved
         "           result.JONVI,   " +   
-        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+                    SQL_JOESD_RESULT  +
         "      FROM %s.%s as result";
     // @formatter:on
 
