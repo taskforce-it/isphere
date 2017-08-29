@@ -20,6 +20,9 @@ import java.util.List;
 import org.junit.Test;
 
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DateFormat;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400TimeFormat;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -90,6 +93,39 @@ public class CheckAS400Date {
     @Test
     public void checkLONGJULFormat() throws Exception {
         check4DigitDateFormat("yyyy/DDD", "LONGJUL", '/');
+    }
+
+    @Test
+    public void checkDateBufferLengths() {
+        
+        checkDateBufferLength(AS400DateFormat.MDY, 6, 8);
+        checkDateBufferLength(AS400DateFormat.DMY, 6, 8);
+        checkDateBufferLength(AS400DateFormat.YMD, 6, 8);
+        
+        checkDateBufferLength(AS400DateFormat.JUL, 5, 6);
+        
+        checkDateBufferLength(AS400DateFormat.ISO, 8, 10);
+        checkDateBufferLength(AS400DateFormat.USA, 8, 10);
+        checkDateBufferLength(AS400DateFormat.EUR, 8, 10);
+        checkDateBufferLength(AS400DateFormat.JIS, 8, 10);
+        
+        checkDateBufferLength(AS400DateFormat.CYMD, 7, 9);
+        checkDateBufferLength(AS400DateFormat.CMDY, 7, 9);
+        checkDateBufferLength(AS400DateFormat.CDMY, 7, 9);
+        
+        checkDateBufferLength(AS400DateFormat.LONGJUL, 7, 8);
+    }
+
+    private void checkDateBufferLength(AS400DateFormat dateFormat, int withoutSeparator, int withSeparator) {
+
+        int actualLength;
+
+        actualLength = AS400Date.getByteLength(dateFormat.format());
+        assertEquals("Expected: " + withoutSeparator + ", actual: " + actualLength, actualLength, withoutSeparator);
+
+        actualLength = AS400Date.getByteLength(dateFormat.format(), dateFormat.separator());
+        assertEquals("Expected: " + withoutSeparator + ", actual: " + actualLength, actualLength, withSeparator);
+
     }
 
     private void check2DigitDateFormat(String pattern, String rpgLabel, Character delimiter) {

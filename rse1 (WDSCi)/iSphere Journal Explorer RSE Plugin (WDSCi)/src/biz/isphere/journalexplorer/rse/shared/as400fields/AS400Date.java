@@ -9,6 +9,7 @@
 package biz.isphere.journalexplorer.rse.shared.as400fields;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
@@ -66,7 +67,11 @@ public class AS400Date {
                     dateFormatsMap.put(AS400DateFormat.CDMY.rpgLiteral(), AS400DateFormat.CDMY);
                     dateFormatsMap.put(AS400DateFormat.LONGJUL.rpgLiteral(), AS400DateFormat.LONGJUL);
 
-                    dateFormatsTable = dateFormatsMap.values().toArray(new AS400DateFormat[dateFormatsMap.size()]);
+                    dateFormatsTable = new AS400DateFormat[12];
+                    Collection<AS400DateFormat> formats = dateFormatsMap.values();
+                    for (AS400DateFormat format : formats) {
+                        dateFormatsTable[format.format()] = format;
+                    }
                 }
             }
         }
@@ -136,10 +141,8 @@ public class AS400Date {
 
     private AS400DateFormat getDateFormat(int format) {
 
-        for (AS400DateFormat as400DateFormat : getDateFormatsTable()) {
-            if (as400DateFormat.format() == format) {
-                return as400DateFormat;
-            }
+        if (format >= 0 && format < getDateFormatsTable().length) {
+            return getDateFormatsTable()[format];
         }
 
         return null;
@@ -175,6 +178,45 @@ public class AS400Date {
         }
 
         return dateFormat.format();
+    }
+
+    public static int getByteLength(int format) {
+
+        if (format == AS400DateFormat.FORMAT_MDY || format == AS400DateFormat.FORMAT_DMY || format == AS400DateFormat.FORMAT_YMD) {
+            return 6;
+        } else if (format == AS400DateFormat.FORMAT_LONGJUL) {
+            return 7;
+        } else if (format == AS400DateFormat.FORMAT_JUL) {
+            return 5;
+        } else if (format == AS400DateFormat.FORMAT_ISO || format == AS400DateFormat.FORMAT_USA || format == AS400DateFormat.FORMAT_EUR
+            || format == AS400DateFormat.FORMAT_JIS) {
+            return 8;
+        } else if (format == AS400DateFormat.FORMAT_CYMD || format == AS400DateFormat.FORMAT_CMDY || format == AS400DateFormat.FORMAT_CDMY) {
+            return 7;
+        }
+
+        throw getIllegalDateFormatException(format);
+    }
+
+    public static int getByteLength(int format, Character separator) {
+
+        if (separator == null) {
+            return getByteLength(format);
+        }
+
+        if (format == AS400DateFormat.JUL.format()) {
+            return 6;
+        } else if (format == AS400DateFormat.MDY.format() || format == AS400DateFormat.DMY.format() || format == AS400DateFormat.YMD.format()
+            || format == AS400DateFormat.LONGJUL.format()) {
+            return 8;
+        } else if (format == AS400DateFormat.ISO.format() || format == AS400DateFormat.USA.format() || format == AS400DateFormat.EUR.format()
+            || format == AS400DateFormat.JIS.format()) {
+            return 10;
+        } else if (format == AS400DateFormat.CYMD.format() || format == AS400DateFormat.CMDY.format() || format == AS400DateFormat.CDMY.format()) {
+            return 9;
+        }
+
+        throw getIllegalDateFormatException(format);
     }
 
     private static IllegalArgumentException getIllegalDateFormatException(int dateFormat) {

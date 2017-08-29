@@ -151,6 +151,30 @@ public class AS400Time {
         return timeFormat.format();
     }
 
+    public static int getByteLength(int format) {
+
+        if (format == AS400TimeFormat.FORMAT_ISO || format == AS400TimeFormat.FORMAT_USA || format == AS400TimeFormat.FORMAT_EUR
+            || format == AS400TimeFormat.FORMAT_JIS || format == AS400TimeFormat.FORMAT_HMS) {
+            return 6;
+        }
+
+        throw getIllegalTimeFormatException(format);
+    }
+
+    public static int getByteLength(int format, Character separator) {
+
+        if (separator == null) {
+            return getByteLength(format);
+        }
+
+        if (format == AS400TimeFormat.ISO.format() || format == AS400TimeFormat.USA.format() || format == AS400TimeFormat.EUR.format()
+            || format == AS400TimeFormat.JIS.format() || format == AS400TimeFormat.FORMAT_HMS) {
+            return 8;
+        }
+
+        throw getIllegalTimeFormatException(format);
+    }
+
     private static IllegalArgumentException getIllegalTimeFormatException(int timeFormat) {
         return new IllegalArgumentException("Illegal time format: " + Integer.toString(timeFormat));
     }
