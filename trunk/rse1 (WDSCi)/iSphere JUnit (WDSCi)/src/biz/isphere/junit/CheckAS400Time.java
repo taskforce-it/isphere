@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Test;
 
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400TimeFormat;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -83,6 +84,28 @@ public class CheckAS400Time {
     @Test(expected = IllegalArgumentException.class)
     public void checkJISFormatIllegalSeparator() throws Exception {
         checkTimeFormat("HH:mm:ss", "JIS", '-');
+    }
+
+    @Test
+    public void checkTimeBufferLengths() {
+        
+        checkTimeBufferLength(AS400TimeFormat.ISO, 6, 8);
+        checkTimeBufferLength(AS400TimeFormat.USA, 6, 8);
+        checkTimeBufferLength(AS400TimeFormat.EUR, 6, 8);
+        checkTimeBufferLength(AS400TimeFormat.JIS, 6, 8);
+        checkTimeBufferLength(AS400TimeFormat.HMS, 6, 8);
+    }
+
+    private void checkTimeBufferLength(AS400TimeFormat timeFormat, int withoutSeparator, int withSeparator) {
+
+        int actualLength;
+
+        actualLength = AS400Time.getByteLength(timeFormat.format());
+        assertEquals("Expected: " + withoutSeparator + ", actual: " + actualLength, actualLength, withoutSeparator);
+
+        actualLength = AS400Time.getByteLength(timeFormat.format(), timeFormat.separator());
+        assertEquals("Expected: " + withoutSeparator + ", actual: " + actualLength, actualLength, withSeparator);
+
     }
 
     private void checkTimeFormat(String pattern, String rpgLabel, char delimiter) {

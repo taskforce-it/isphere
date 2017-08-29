@@ -9,6 +9,10 @@
 package biz.isphere.journalexplorer.rse.shared.model;
 
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DateFormat;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400TimeFormat;
 
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.CharacterFieldDescription;
@@ -17,15 +21,43 @@ import com.ibm.as400.access.FieldDescription;
 public final class JoesdParserDelegate implements IJoesdParserDelegate {
 
     public FieldDescription getDateFieldDescription(String name, String format, String separator) {
-        return new CharacterFieldDescription(new AS400Text(10), name);
+
+        int bufferLength;
+        if ("*IMPLIED".equals(separator)) {
+            bufferLength = AS400Date.getByteLength(AS400Date.toFormat(format), AS400DateFormat.valueOf(format).separator());
+        } else {
+            bufferLength = AS400Date.getByteLength(AS400Date.toFormat(format), toChar(separator));
+        }
+
+        return new CharacterFieldDescription(new AS400Text(bufferLength), name);
     }
 
     public FieldDescription getTimeFieldDescription(String name, String format, String separator) {
-        return new CharacterFieldDescription(new AS400Text(8), name);
+
+        int bufferLength;
+        if ("*IMPLIED".equals(separator)) {
+            bufferLength = AS400Time.getByteLength(AS400Time.toFormat(format), AS400TimeFormat.valueOf(format).separator());
+        } else {
+            bufferLength = AS400Time.getByteLength(AS400Time.toFormat(format), toChar(separator));
+        }
+
+        return new CharacterFieldDescription(new AS400Text(bufferLength), name);
     }
 
     public FieldDescription getTimestampFieldDescription(String name) {
         return new CharacterFieldDescription(new AS400Text(26), name);
     }
 
+    private Character toChar(String separator) {
+
+        if (separator == null || separator.length() == 0) {
+            return null;
+        }
+
+        if (separator.length() != 1) {
+            throw new IllegalArgumentException("Invalid length 'separator': " + separator);
+        }
+
+        return separator.toCharArray()[0];
+    }
 }
