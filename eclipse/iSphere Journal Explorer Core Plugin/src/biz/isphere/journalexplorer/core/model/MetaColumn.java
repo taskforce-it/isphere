@@ -28,12 +28,13 @@ public class MetaColumn {
         VARBINARY,
         DATE,
         TIME,
-        TIMESTMP,
+        TIMESTAMP,
         GRAPHIC,
         VARGRAPHIC,
         LOB,
         CLOB, // returned as LOB with CCSID from IQDBRTVFD API.
         BLOB, // returned as LOB with CCSID = 65535 from IQDBRTVFD API.
+        DATALINK,
         UNKNOWN,
         // Not yet supported
         DECFLOAT,
