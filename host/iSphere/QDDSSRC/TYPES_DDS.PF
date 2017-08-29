@@ -80,6 +80,8 @@
       *
      A            D_TIME_HMS      T         TEXT('Time-HMS') TIMFMT(*HMS)
      A                                      DFT('23:59:59')
+     A            D_TIME_USA      T         TEXT('Time-USA') TIMFMT(*USA)
+     A                                      DFT('11:59 pm')
       *
      A            D_GRAPHIC     20G         TEXT('Graphic 20-bytes')
      A                                      CCSID(1200)
