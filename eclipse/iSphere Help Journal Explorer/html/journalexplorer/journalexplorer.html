@@ -28,7 +28,8 @@ For example:
 <div class="codeCommand">
 DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
-OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5) ENTDTALEN(5000)
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5)<br>
+ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
 </div>
 <p>
 You can open the Journal Explorer perspective from <i>'Window -> Open Perspective -> Other...'</i>. The
