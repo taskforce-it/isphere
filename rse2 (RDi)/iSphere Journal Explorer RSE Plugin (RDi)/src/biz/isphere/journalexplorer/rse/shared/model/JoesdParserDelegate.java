@@ -20,13 +20,36 @@ import com.ibm.as400.access.TimestampFieldDescription;
 
 public class JoesdParserDelegate implements IJoesdParserDelegate {
 
+    private static final String IMPLIED = "*IMPLIED";
+
     public FieldDescription getDateFieldDescription(String name, String format, String separator) {
-        DateFieldDescription dateField = new DateFieldDescription(new AS400Date(AS400Date.toFormat(format)), name);
+
+        int dateFormat = AS400Date.toFormat(format);
+
+        DateFieldDescription dateField;
+        if (IMPLIED.equals(separator)) {
+            dateField = new DateFieldDescription(new AS400Date(dateFormat), name);
+        } else {
+            char dateSeparator = separator.toCharArray()[0];
+            dateField = new DateFieldDescription(new AS400Date(dateFormat, dateSeparator), name);
+        }
+
         return dateField;
     }
 
     public FieldDescription getTimeFieldDescription(String name, String format, String separator) {
-        return new TimeFieldDescription(new AS400Time(AS400Time.toFormat(format)), name);
+
+        int timeFormat = AS400Time.toFormat(format);
+
+        FieldDescription timeField;
+        if (IMPLIED.equals(separator)) {
+            timeField = new TimeFieldDescription(new AS400Time(timeFormat), name);
+        } else {
+            char timeSeparator = separator.toCharArray()[0];
+            timeField = new TimeFieldDescription(new AS400Time(timeFormat, timeSeparator), name);
+        }
+
+        return timeField;
     }
 
     public FieldDescription getTimestampFieldDescription(String name) {
