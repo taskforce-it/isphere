@@ -96,7 +96,7 @@ public class JournalEntry {
     public File getOutputFile() {
         return outputFile;
     }
-    
+
     public boolean hasNullIndicatorTable() throws Exception {
         return MetaDataCache.INSTANCE.retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI);
     }

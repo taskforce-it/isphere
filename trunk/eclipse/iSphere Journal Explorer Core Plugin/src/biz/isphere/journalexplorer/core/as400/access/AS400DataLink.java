@@ -47,44 +47,54 @@ public class AS400DataLink extends AS400ByteArray {
         this.linkValueConverter = new AS400Text(length, this.ccsid);
     }
 
+    @Override
     public Object clone() {
         return super.clone();
     }
 
+    @Override
     public int getByteLength() {
         return super.getByteLength();
     }
 
+    @Override
     public Object getDefaultValue() {
         return ""; //$NON-NLS-1$
     }
 
+    @Override
     public int getInstanceType() {
         return AS400DataType.TYPE_TEXT;
     }
 
+    @Override
     public Class getJavaType() {
         return String.class;
     }
 
+    @Override
     public byte[] toBytes(Object object) {
         byte[] bytes = new byte[length];
         toBytes(object, bytes, 0);
         return bytes;
     }
 
+    @Override
     public int toBytes(Object paramObject, byte[] bytes) {
         return toBytes(paramObject, bytes, 0);
     }
 
+    @Override
     public int toBytes(Object paramObject, byte[] bytes, int offset) {
         throw new IllegalAccessError("not yet implemented"); //$NON-NLS-1$
     }
 
+    @Override
     public Object toObject(byte[] serverValue) {
         return toObject(serverValue, 0);
     }
 
+    @Override
     public Object toObject(byte[] serverValue, int offset) {
 
         /**
@@ -113,7 +123,7 @@ public class AS400DataLink extends AS400ByteArray {
 
         int totalLength = BinaryConverter.byteArrayToUnsignedShort(serverValue, offset + OFFSET_TOTAL_LENGTH);
         if (totalLength > getByteLength()) {
-            throw new IllegalArgumentException("totalLength (" + totalLength + ")"); //$NON-NLS-1$ //$NON-NLS-1$
+            throw new IllegalArgumentException("totalLength (" + totalLength + ")"); //$NON-NLS-1$ 
         }
         if (offset + getByteLength() > serverValue.length) {
             throw new IllegalArgumentException("serverValue too short"); //$NON-NLS-1$

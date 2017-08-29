@@ -157,8 +157,7 @@ public class JoesdParser {
                 break;
 
             case DATALINK: {
-                HexFieldDescription charField = new HexFieldDescription(new AS400DataLink(column.getLength(), column.getCcsid()),
-                    column.getName());
+                HexFieldDescription charField = new HexFieldDescription(new AS400DataLink(column.getLength(), column.getCcsid()), column.getName());
                 joesdRecordFormat.addFieldDescription(charField);
                 break;
             }
