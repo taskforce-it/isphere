@@ -63,7 +63,7 @@ public class Type5DAO extends Type4DAO {
         "           result.JOCMTLVL," +   //  added with TYPE5
                     // JORES - reserved
         "           result.JONVI,   " +
-        "           SUBSTR(result.JOESD,1,5000) AS JOESD" + 
+                    SQL_JOESD_RESULT  +
         "      FROM %s.%s as result";
     // @formatter:on
 

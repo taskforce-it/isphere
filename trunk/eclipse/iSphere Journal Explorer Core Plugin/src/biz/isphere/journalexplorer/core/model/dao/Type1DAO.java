@@ -36,8 +36,7 @@ public class Type1DAO extends AbstractTypeDAO {
         "           result.JOCCID,  " +
         "           result.JOINCDAT," +
         "           result.JOMINESD," +
-                    // JORES - reserved
-        "           SUBSTR(result.JOESD,1,5000) AS JOESD" +
+                    SQL_JOESD_RESULT  +
         "      FROM %s.%s as result";
     // @formatter:on
 

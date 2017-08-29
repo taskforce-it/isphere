@@ -64,6 +64,8 @@ public class Messages extends NLS {
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;
+    
+    public static String ButtonLabel_Reload_All;
 
     public static String Tooltip_OutputFile_Rrn;
     public static String Tooltip_JOENTL;

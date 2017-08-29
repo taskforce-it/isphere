@@ -130,7 +130,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     private int getOutfileType(File outputFile) throws Exception {
 
         MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-        metaTable.setHidden(true);
+        metaTable.setJournalOutputFile(true);
 
         return metaTable.getOutfileType();
     }

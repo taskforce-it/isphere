@@ -11,6 +11,8 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
+import java.util.Collection;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -24,6 +26,8 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -40,6 +44,8 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.labelproviders.MetaTableLabelProvider;
 
 public class ConfigureParsersDialog extends XDialog {
+
+    private static final int RELOAD_BUTTON = -1;
 
     private static final String COLUMN_JOURNALED_OBJECT = "JOURNALED_OBJECT";
     private static final String COLUMN_PARSER_LIBRARY = "PARSER_LIBRARY";
@@ -59,6 +65,14 @@ public class ConfigureParsersDialog extends XDialog {
         super(parentShell);
     }
 
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+
+        createButton(parent, RELOAD_BUTTON, Messages.ButtonLabel_Reload_All, false);
+
+        super.createButtonsForButtonBar(parent);
+    }
+    
     /**
      * Create contents of the dialog.
      * 
@@ -74,11 +88,20 @@ public class ConfigureParsersDialog extends XDialog {
         container.setLayout(fl_container);
 
         createTableViewer(container);
-        loadValues();
 
         return container;
     }
 
+    @Override
+    protected Control createContents(Composite parent) {
+        
+        Control control = super.createContents(parent);
+        
+        loadValues();
+        
+        return control;
+    }
+    
     private void createTableViewer(Composite container) {
 
         tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
@@ -244,8 +267,51 @@ public class ConfigureParsersDialog extends XDialog {
         });
     }
 
+    @Override
+    protected void buttonPressed(int buttonId) {
+
+        if (buttonId == RELOAD_BUTTON) {
+            resetPressed();
+        } else {
+            super.buttonPressed(buttonId);
+        }
+    }
+
+    private void resetPressed() {
+
+        Collection<MetaTable> parsers = MetaDataCache.INSTANCE.getCachedParsers();
+        for (MetaTable parser : parsers) {
+            parser.setLoaded(false);
+            tableViewer.update(parser, null);
+        }
+        
+        setButtonEnablement();
+    }
+
     private void loadValues() {
-        tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers());
+        tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers().toArray());
+        setButtonEnablement();
+    }
+
+    private void setButtonEnablement() {
+
+        if (getButton(RELOAD_BUTTON)==null){
+            return;
+        }
+        
+        getButton(RELOAD_BUTTON).setEnabled(false);
+        
+        Object input = tableViewer.getInput();
+        if (input instanceof Object[]){
+            Object[] items = (Object[])input;
+            for (Object item : items) {
+                MetaTable metaTable = (MetaTable)item;
+                if (!metaTable.isJournalOutputFile() && metaTable.isLoaded()){
+                    getButton(RELOAD_BUTTON).setEnabled(true);
+                    return;
+                }
+            }
+        }
     }
 
     /**
