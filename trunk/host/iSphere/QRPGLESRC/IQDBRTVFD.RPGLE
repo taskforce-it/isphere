@@ -355,6 +355,8 @@
                    endsl;
 
                    rvfd0100.decPos = Qdb_Qddffld.Qddffldp;
+                   rvfd0100.inBuffOffs = Qdb_Qddffld.Qddffibo;
+                   rvfd0100.outBuffOffs = Qdb_Qddffld.Qddffobo;
                    rvfd0100.buffLen = Qdb_Qddffld.Qddffldb;
                    rvfd0100.alcLen = Qdb_Qddffld.Qddflalc;
                    rvfd0100.ccsid = qdb_qddffld.Qddfcsid;

@@ -15,14 +15,16 @@
      d  use                   12     12a                                        <-- usage
      d  length                13     16i 0                                      <-- length
      d  decPos                17     20i 0                                      <-- #decimal pos.
-     d  buffLen               21     24i 0                                      <-- buffer length
-     d  alcLen                25     28i 0                                      <-- allocated Lenght
-     d  ccsid                 29     32u 0                                      <-- CCSID
-     d  isVarying             33     33a                                        <-- is varying field
-     d  isBinary              34     34a                                        <-- is binary field
-     d  isNullable            35     35a                                        <-- is NULL allowed
-     d  reserved_1            36     36a
-     d  datTimFmt             37     46a                                        <-- date/time format
-     d  datTimSep             47     56a                                        <-- date/time sep.
-     d  text                  57    106a                                        <-- column text
+     d  inBuffOffs            21     24i 0                                      <-- buffer offset
+     d  outBuffOffs           25     28i 0                                      <-- buffer offset
+     d  buffLen               29     32i 0                                      <-- buffer length
+     d  alcLen                33     36i 0                                      <-- allocated Lenght
+     d  ccsid                 37     40u 0                                      <-- CCSID
+     d  isVarying             41     41a                                        <-- is varying field
+     d  isBinary              42     42a                                        <-- is binary field
+     d  isNullable            43     43a                                        <-- is NULL allowed
+     d  reserved_1            44     44a
+     d  datTimFmt             45     54a                                        <-- date/time format
+     d  datTimSep             55     64a                                        <-- date/time sep.
+     d  text                  65    114a                                        <-- column text
 
