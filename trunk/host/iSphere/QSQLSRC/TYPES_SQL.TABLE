@@ -14,10 +14,13 @@
 -- * STRPREPRC Compile Options:                                             *
 -- *   >>PRE-COMPILER<<                                                     *
 -- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
--- *       >>COMPILE<<                                                      *
--- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
--- *       >>END-COMPILE<<                                                  *
--- *       >>EXECUTE<<                                                      *
+-- *     >>COMPILE<<                                                        *
+-- *       >>PARM<<  DFTRDBCOL(&LI);                                        *
+-- *     >>END-COMPILE<<                                                    *
+-- *     >>EXECUTE<<                                                        *
+-- *     >>CMD<<     STRJRNPF FILE(&LI/TYPES_SQL) +                         *
+-- *                          JRN(&LI/JRN) IMAGES(*BOTH) +                  *
+-- *                          OMTJRNE(*OPNCLO);                             *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
 
