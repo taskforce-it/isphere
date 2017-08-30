@@ -73,19 +73,40 @@ public class AS400DataLink extends AS400ByteArray {
 
     @Override
     public byte[] toBytes(Object object) {
-        byte[] bytes = new byte[length];
-        toBytes(object, bytes, 0);
-        return bytes;
+        byte[] objectBytes = new byte[getByteLength()];
+        toBytes(object, objectBytes, 0);
+        return objectBytes;
     }
 
     @Override
-    public int toBytes(Object paramObject, byte[] bytes) {
-        return toBytes(paramObject, bytes, 0);
+    public int toBytes(Object object, byte[] bytes) {
+        return toBytes(object, bytes, 0);
     }
 
     @Override
-    public int toBytes(Object paramObject, byte[] bytes, int offset) {
-        throw new IllegalAccessError("not yet implemented"); //$NON-NLS-1$
+    public int toBytes(Object object, byte[] bytes, int offset) {
+
+        // TODO: implement method body
+
+        /*
+         * Actually it is not really necessary to implement the method, because
+         * we only read data from a journal entry. We do not write data
+         * anywhere.
+         */
+
+        // Set total length to bytes 1 - 2
+
+        // Set '00001' as zoned value to bytes 3 - 7
+
+        // Set 'URL ' as character value to bytes 8 - 11
+
+        // Set length of URL as zoned value to bytes 12 - 16
+
+        // Set x'00000000' to bytes 17 - 24
+
+        // Set the URL value to bytes 24 - n
+
+        return getByteLength();
     }
 
     @Override
