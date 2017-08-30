@@ -75,6 +75,9 @@
 
      d EXCP_MSGID      s              7a   import('_EXCP_MSGID')
 
+     d sds            sds                  qualified
+     d  pgmLib                81     90a
+
       //*==========================================================================================*
       //* Main procedure                                                                           *
       //*==========================================================================================*
@@ -89,8 +92,10 @@
      d end_time        s               z
      d msgId           s              7a
 
-     d WORK_LIBRARY    c                   'ISPHEREDVP'
+     d WORK_LIBRARY    s             10a   varying
       /free
+
+       WORK_LIBRARY = %trim(sds.pgmLib);
 
        clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_1)');
        clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_2)');
