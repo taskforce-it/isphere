@@ -181,10 +181,13 @@ public class JoesdParser {
     }
 
     public Record execute(JournalEntry journal) throws Exception {
-        if (verifyJournalEntry(journal))
-            return getFormatoJoesd().getNewRecord(journal.getSpecificData(), metadata.getParsingOffset());
-        else
+
+        if (verifyJournalEntry(journal)) {
+            byte[] recordData = journal.getSpecificData(metadata.getRecordLength());
+            return getJoesdRecordFormat().getNewRecord(recordData, metadata.getParsingOffset());
+        } else {
             throw new Exception(Messages.JoesdParser_TableMetadataDontMatchEntry);
+        }
     }
 
     private boolean verifyJournalEntry(JournalEntry journalEntry) {
@@ -194,7 +197,7 @@ public class JoesdParser {
     /**
      * @return the formatoJoesd
      */
-    public RecordFormat getFormatoJoesd() {
+    public RecordFormat getJoesdRecordFormat() {
         return joesdRecordFormat;
     }
 }

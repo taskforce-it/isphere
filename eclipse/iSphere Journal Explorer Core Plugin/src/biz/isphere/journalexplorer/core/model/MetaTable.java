@@ -17,8 +17,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
+
+import com.ibm.as400.access.Record;
 
 /**
  * This class represents the metatada of a table. It contains the name and
@@ -49,6 +52,7 @@ public class MetaTable {
     private Integer outfileType;
     private int countNullableFields;
     private int lastNullableFieldIndex;
+    private int recordLength;
 
     private Set<String> warningMessages;
 
@@ -119,7 +123,30 @@ public class MetaTable {
     }
 
     public void setLoaded(boolean loaded) {
+
+        Record record = null;
+
+        if (loaded) {
+            try {
+                JoesdParser parser = new JoesdParser(this);
+                record = parser.getJoesdRecordFormat().getNewRecord();
+            } catch (Exception e) {
+                loaded = false;
+            }
+        }
+
         this.loaded = loaded;
+
+        if (loaded) {
+            recordLength = record.getRecordLength();
+        } else {
+            recordLength = 0;
+            warningMessages.clear();
+        }
+    }
+
+    public int getRecordLength() {
+        return recordLength;
     }
 
     public int getLastNullableFieldIndex() {

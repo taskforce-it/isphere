@@ -168,24 +168,46 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
         public void run() {
             try {
+
                 input.add(new JournalProperties(journalEntry));
+
                 MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+                MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
+
+                List<String> messages = new LinkedList<String>();
+
                 if (metatable.hasNullableFields()) {
-                    String message = null;
                     if (!journalEntry.hasNullIndicatorTable()) {
-                        message = Messages.Error_No_NULL_indicator_information_available;
+                        messages.add(Messages.Error_No_NULL_indicator_information_available);
                     } else if (metatable.getLastNullableFieldIndex() > journalEntry.getNullTableLength()) {
-                        message = Messages.Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields;
+                        messages.add(Messages.Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields);
                     }
-                    if (message != null) {
-                        MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
+                }
+
+                int dataLength = journalEntry.getSpecificData().length;
+                int recordLength = metatableOutputFile.getRecordLength();
+                if (dataLength < recordLength) {
+                    messages.add(Messages
+                        .bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, dataLength, recordLength));
+                }
+
+                if (messages.size() > 0) {
+                    StringBuilder dialogMessage = new StringBuilder();
+                    for (String message : messages) {
                         if (!metatableOutputFile.hasWarningMessage(message)) {
-                            MessageDialog.openWarning(getViewSite().getShell(), Messages.Warning, message);
+                            if (dialogMessage.length() > 0) {
+                                dialogMessage.append("\n"); //$NON-NLS-1$
+                            }
+                            dialogMessage.append("• "); //$NON-NLS-1$
+                            dialogMessage.append(message);
                             metatableOutputFile.addWarningMessage(message);
                         }
                     }
-
+                    if (dialogMessage.length() > 0) {
+                        MessageDialog.openWarning(getViewSite().getShell(), Messages.Warning, dialogMessage.toString());
+                    }
                 }
+
             } catch (Exception e) {
                 MessageDialog.openError(getViewSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }

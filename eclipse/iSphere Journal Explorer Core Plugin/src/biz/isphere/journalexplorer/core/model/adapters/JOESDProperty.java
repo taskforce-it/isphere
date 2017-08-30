@@ -82,8 +82,12 @@ public class JOESDProperty extends JournalProperty {
                 columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
             }
 
-            if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
-                JournalProperty journalProperty = new JournalProperty(columnName, "[null]", this);
+            if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificData().length) {
+                JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_not_available, this);
+                journalProperty.setErrorParsing(true);
+                specificProperties.add(journalProperty);
+            } else if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
+                JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_null, this);
                 specificProperties.add(journalProperty);
             } else if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
                 JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);

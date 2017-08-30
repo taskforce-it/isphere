@@ -47,6 +47,8 @@ public class MetaColumn {
     private DataType type;
     private int length;
     private int decimalPositions;
+    private int inputBufferOffset;
+    private int outputBufferOffset;
     private int bufferLength;
     private int ccsid;
     private boolean isVaryingLength;
@@ -168,6 +170,22 @@ public class MetaColumn {
 
     public void setDateTime(boolean dateTime) {
         this.isDateTime = dateTime;
+    }
+
+    public int getInputBufferOffset() {
+        return inputBufferOffset;
+    }
+
+    public void setInputBufferOffset(int offset) {
+        this.inputBufferOffset = offset;
+    }
+
+    public int getOutputBufferOffset() {
+        return outputBufferOffset;
+    }
+
+    public void setOutputBufferOffset(int offset) {
+        this.outputBufferOffset = offset;
     }
 
     public int getBufferLength() {

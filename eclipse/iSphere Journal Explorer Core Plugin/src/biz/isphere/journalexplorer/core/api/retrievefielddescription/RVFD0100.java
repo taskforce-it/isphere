@@ -28,6 +28,8 @@ public class RVFD0100 extends APIFormat {
     private static final String USE = "use"; //$NON-NLS-1$
     private static final String LENGTH = "length"; //$NON-NLS-1$
     private static final String DECIMAL_POSITIONS = "decPos"; //$NON-NLS-1$
+    private static final String IN_BUFFER_OFFSET = "inBuffOffs"; //$NON-NLS-1$
+    private static final String OUT_BUFFER_OFFSET = "outBuffOffs"; //$NON-NLS-1$
     private static final String BUFFER_LENGTH = "buffLen"; //$NON-NLS-1$
     private static final String ALLOCATED_LENGTH = "alcLen"; //$NON-NLS-1$
     private static final String CCSID = "ccsid"; //$NON-NLS-1$
@@ -195,6 +197,24 @@ public class RVFD0100 extends APIFormat {
     }
 
     /**
+     * Returns the offset of the field in the record format buffer.
+     * 
+     * @return input buffer offset
+     */
+    public int getInputBufferOffset() {
+        return getInt4Value(IN_BUFFER_OFFSET);
+    }
+
+    /**
+     * Returns the offset of the field in the record format buffer.
+     * 
+     * @return output buffer offset
+     */
+    public int getOutputBufferOffset() {
+        return getInt4Value(OUT_BUFFER_OFFSET);
+    }
+
+    /**
      * Returns the length of the field in the record format buffer.
      * 
      * @return buffer length
@@ -329,6 +349,8 @@ public class RVFD0100 extends APIFormat {
         metaColumn.setType(getSqlDataType());
         metaColumn.setLength(getFieldLength());
         metaColumn.setDecimalPositions(getDecimalPositions());
+        metaColumn.setInputBufferOffset(getInputBufferOffset());
+        metaColumn.setOutputBufferOffset(getOutputBufferOffset());
         metaColumn.setBufferLength(getBufferLength());
         metaColumn.setCcsid(getCcsid());
         metaColumn.setVaryingLength(isVaryingLength());
@@ -363,16 +385,18 @@ public class RVFD0100 extends APIFormat {
         addCharField(USE, 11, 1);
         addInt4Field(LENGTH, 12);
         addInt4Field(DECIMAL_POSITIONS, 16);
-        addInt4Field(BUFFER_LENGTH, 20);
-        addInt4Field(ALLOCATED_LENGTH, 24);
-        addInt4Field(CCSID, 28);
-        addCharField(IS_VARYING_FIELD, 32, 1);
-        addCharField(IS_BINARY_FIELD, 33, 1);
-        addCharField(IS_NULLABLE_FIELD, 34, 1);
-        addCharField(RESERVED_1, 35, 1);
-        addCharField(DATE_TIME_FORMAT, 36, 10);
-        addCharField(DATE_TIME_SEPARATOR, 46, 10);
-        addCharField(TEXT, 56, 50);
+        addInt4Field(IN_BUFFER_OFFSET, 20);
+        addInt4Field(OUT_BUFFER_OFFSET, 24);
+        addInt4Field(BUFFER_LENGTH, 28);
+        addInt4Field(ALLOCATED_LENGTH, 32);
+        addInt4Field(CCSID, 36);
+        addCharField(IS_VARYING_FIELD, 40, 1);
+        addCharField(IS_BINARY_FIELD, 41, 1);
+        addCharField(IS_NULLABLE_FIELD, 42, 1);
+        addCharField(RESERVED_1, 43, 1);
+        addCharField(DATE_TIME_FORMAT, 44, 10);
+        addCharField(DATE_TIME_SEPARATOR, 54, 10);
+        addCharField(TEXT, 64, 50);
     }
 
     @Override
