@@ -23,12 +23,21 @@ DSPJRN command are supported:
 <li>*TYPE5</li>
 </ul>
 <p>
-For example:
+Example of creating a *TYPE1 or *TYPE2 output file:
 <p>
 <div class="codeCommand">
 DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
-OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5)<br>
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1)<br>
+ENTDTALEN(5000)
+</div>
+<p>
+Example of creating *TYPE3 or higher output file:
+<p>
+<div class="codeCommand">
+DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
+JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3)<br>
 ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
 </div>
 <p>
