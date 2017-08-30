@@ -11,6 +11,8 @@
 
 package biz.isphere.journalexplorer.core.model;
 
+import biz.isphere.journalexplorer.core.api.retrievefielddescription.RVFD0100;
+
 public class MetaColumn {
 
     public enum DataType {
@@ -64,6 +66,27 @@ public class MetaColumn {
         this.index = index;
     }
 
+    public MetaColumn(int index, RVFD0100 fieldDescription) throws Exception {
+
+        setFieldName(fieldDescription.getFieldName());
+        setType(fieldDescription.getSqlDataType());
+        setLength(fieldDescription.getFieldLength());
+        setDecimalPositions(fieldDescription.getDecimalPositions());
+        setInputBufferOffset(fieldDescription.getInputBufferOffset());
+        setOutputBufferOffset(fieldDescription.getOutputBufferOffset());
+        setBufferLength(fieldDescription.getBufferLength());
+        setCcsid(fieldDescription.getCcsid());
+        setVaryingLength(fieldDescription.isVaryingLength());
+        setBinary(fieldDescription.isBinary());
+        setNullable(fieldDescription.isNullable());
+        setDateTimeFormat(removeLeadingAsterisk(fieldDescription.getDateTimeFormat()));
+        setDateTimeSeparator(fieldDescription.getDateTimeSeparator());
+        setText(fieldDescription.getText());
+
+        setNumeric(fieldDescription.isNumericFieldType());
+        setDateTime(fieldDescription.isDateTimeFieldType());
+    }
+
     public int getIndex() {
         return index;
     }
@@ -72,7 +95,7 @@ public class MetaColumn {
         return name;
     }
 
-    public void setFieldName(String name) {
+    private void setFieldName(String name) {
         this.name = name.trim();
     }
 
@@ -80,7 +103,7 @@ public class MetaColumn {
         return type;
     }
 
-    public void setType(DataType dataType) {
+    private void setType(DataType dataType) {
         this.type = dataType;
     }
 
@@ -88,7 +111,7 @@ public class MetaColumn {
         return length;
     }
 
-    public void setLength(int length) {
+    private void setLength(int length) {
         this.length = length;
     }
 
@@ -96,7 +119,7 @@ public class MetaColumn {
         return decimalPositions;
     }
 
-    public void setDecimalPositions(int decPos) {
+    private void setDecimalPositions(int decPos) {
         this.decimalPositions = decPos;
     }
 
@@ -104,7 +127,7 @@ public class MetaColumn {
         return ccsid;
     }
 
-    public void setCcsid(int ccsid) {
+    private void setCcsid(int ccsid) {
         this.ccsid = ccsid;
     }
 
@@ -112,7 +135,7 @@ public class MetaColumn {
         return isVaryingLength;
     }
 
-    public void setVaryingLength(boolean varyingLength) {
+    private void setVaryingLength(boolean varyingLength) {
         this.isVaryingLength = varyingLength;
     }
 
@@ -120,7 +143,7 @@ public class MetaColumn {
         return isBinary;
     }
 
-    public void setBinary(boolean binary) {
+    private void setBinary(boolean binary) {
         this.isBinary = binary;
     }
 
@@ -128,7 +151,7 @@ public class MetaColumn {
         return isNullable;
     }
 
-    public void setNullable(boolean nullable) {
+    private void setNullable(boolean nullable) {
         this.isNullable = nullable;
     }
 
@@ -136,7 +159,7 @@ public class MetaColumn {
         return dateTimeFormat;
     }
 
-    public void setDateTimeFormat(String format) {
+    private void setDateTimeFormat(String format) {
         this.dateTimeFormat = format.trim();
     }
 
@@ -144,7 +167,7 @@ public class MetaColumn {
         return dateTimeSeparator;
     }
 
-    public void setDateTimeSeparator(String separator) {
+    private void setDateTimeSeparator(String separator) {
         this.dateTimeSeparator = separator.trim();
     }
 
@@ -152,7 +175,7 @@ public class MetaColumn {
         return text;
     }
 
-    public void setText(String columnText) {
+    private void setText(String columnText) {
         this.text = columnText.trim();
     }
 
@@ -160,7 +183,7 @@ public class MetaColumn {
         return isNumeric;
     }
 
-    public void setNumeric(boolean binary) {
+    private void setNumeric(boolean binary) {
         this.isNumeric = binary;
     }
 
@@ -168,7 +191,7 @@ public class MetaColumn {
         return isDateTime;
     }
 
-    public void setDateTime(boolean dateTime) {
+    private void setDateTime(boolean dateTime) {
         this.isDateTime = dateTime;
     }
 
@@ -176,7 +199,7 @@ public class MetaColumn {
         return inputBufferOffset;
     }
 
-    public void setInputBufferOffset(int offset) {
+    private void setInputBufferOffset(int offset) {
         this.inputBufferOffset = offset;
     }
 
@@ -184,7 +207,7 @@ public class MetaColumn {
         return outputBufferOffset;
     }
 
-    public void setOutputBufferOffset(int offset) {
+    private void setOutputBufferOffset(int offset) {
         this.outputBufferOffset = offset;
     }
 
@@ -192,8 +215,17 @@ public class MetaColumn {
         return bufferLength;
     }
 
-    public void setBufferLength(int bufferLength) {
+    private void setBufferLength(int bufferLength) {
         this.bufferLength = bufferLength;
+    }
+
+    private String removeLeadingAsterisk(String format) {
+
+        if (format.startsWith("*")) { //$NON-NLS-1$
+            return format.substring(1);
+        }
+
+        return format;
     }
 
     @Override

@@ -108,9 +108,9 @@ public class IQDBRTVFDResult extends APIFormat {
 
         ArrayList<MetaColumn> messages = new ArrayList<MetaColumn>();
 
-        RVFD0100 rtvm0000 = null;
+        RVFD0100 rtvm0100 = null;
         if (IQDBRTVFD.RVFD0100.equals(format)) {
-            rtvm0000 = new RVFD0100(getSystem(), getBytes());
+            rtvm0100 = new RVFD0100(getSystem(), getBytes());
         } else {
             throw new IllegalArgumentException("Invalid format: " + format); //$NON-NLS-1$
         }
@@ -119,10 +119,10 @@ public class IQDBRTVFDResult extends APIFormat {
 
         for (int i = 0; i < getNumberOfFieldsReturned(); i++) {
 
-            rtvm0000.setOffset(offset);
-            messages.add(rtvm0000.createMetaColumn(i));
+            rtvm0100.setOffset(offset);
+            messages.add(new MetaColumn(i, rtvm0100));
 
-            offset += rtvm0000.getLength();
+            offset += rtvm0100.getLength();
         }
 
         return messages;
