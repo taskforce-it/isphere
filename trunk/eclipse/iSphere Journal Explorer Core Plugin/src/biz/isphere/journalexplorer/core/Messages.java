@@ -61,6 +61,7 @@ public class Messages extends NLS {
     public static String Error_Unknown_data_type;
     public static String Error_No_NULL_indicator_information_available;
     public static String Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields;
+    public static String Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;
@@ -123,6 +124,9 @@ public class Messages extends NLS {
     public static String ColumnHeading_Description;
     public static String ColumnHeading_Color;
 
+    public static String JournalPropertyValue_null;
+    public static String JournalPropertyValue_not_available;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

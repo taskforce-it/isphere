@@ -57,10 +57,10 @@ public class IQDBRTVFD extends APIProgramCallDocument {
     public static final String TYPE_API_LOB = "1"; //$NON-NLS-1$
     public static final String TYPE_API_DATALINK = "2"; //$NON-NLS-1$
 
-    // 128 kB (= 131072 bytes) is large enough to return 1236 fields.
+    // 128 kB (= 131072 bytes) is large enough to return 1191 fields.
     // header size: 36 bytes
-    // record size: 106 bytes
-    // 1236 * 106 + 36 = 131052
+    // record size: 110 bytes
+    // 1191 * 110 + 36 = 131046
     private static final int BUFFER_SIZE = Buffer.size("128 kByte"); //$NON-NLS-1$
 
     private String file;
