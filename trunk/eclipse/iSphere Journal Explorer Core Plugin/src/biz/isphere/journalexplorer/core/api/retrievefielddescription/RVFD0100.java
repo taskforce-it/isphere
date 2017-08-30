@@ -96,6 +96,9 @@ public class RVFD0100 extends APIFormat {
 
         String type = getType();
 
+        /*
+         * Numeric field types:
+         */
         if (IQDBRTVFD.TYPE_API_BINARY.equals(type)) {
             int bufferLength = getBufferLength();
             switch (bufferLength) {
@@ -108,11 +111,25 @@ public class RVFD0100 extends APIFormat {
             default:
                 throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
             }
+        } else if (IQDBRTVFD.TYPE_API_FLOAT.equals(type)) {
+            int bufferLength = getBufferLength();
+            switch (bufferLength) {
+            case 4:
+                return MetaColumn.DataType.REAL;
+            case 8:
+                return MetaColumn.DataType.DOUBLE;
+            default:
+                throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         } else if (IQDBRTVFD.TYPE_API_ZONED.equals(type)) {
             return MetaColumn.DataType.NUMERIC;
         } else if (IQDBRTVFD.TYPE_API_PACKED.equals(type)) {
             return MetaColumn.DataType.DECIMAL;
-        } else if (IQDBRTVFD.TYPE_API_CHAR.equals(type)) {
+        } else
+        /*
+         * Character field types:
+         */
+        if (IQDBRTVFD.TYPE_API_CHAR.equals(type)) {
             if (getCcsid() == 65535) {
                 if (isVaryingLength()) {
                     return MetaColumn.DataType.VARBINARY;
@@ -126,7 +143,11 @@ public class RVFD0100 extends APIFormat {
                     return MetaColumn.DataType.CHAR;
                 }
             }
-        } else if (IQDBRTVFD.TYPE_API_DATE.equals(type)) {
+        } else
+        /*
+         * Date/time field types:
+         */
+        if (IQDBRTVFD.TYPE_API_DATE.equals(type)) {
             return MetaColumn.DataType.DATE;
         } else if (IQDBRTVFD.TYPE_API_TIME.equals(type)) {
             return MetaColumn.DataType.TIME;
@@ -138,20 +159,18 @@ public class RVFD0100 extends APIFormat {
             } else {
                 return MetaColumn.DataType.GRAPHIC;
             }
-        } else if (IQDBRTVFD.TYPE_API_FLOAT.equals(type)) {
-            int bufferLength = getBufferLength();
-            switch (bufferLength) {
-            case 4:
-                return MetaColumn.DataType.REAL;
-            case 8:
-                return MetaColumn.DataType.DOUBLE;
-            default:
-                throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        } else if (IQDBRTVFD.TYPE_API_LOB.equals(type)) {
+        } else
+        /*
+         * LOB field types:
+         */
+        if (IQDBRTVFD.TYPE_API_LOB.equals(type)) {
             // TODO: fix it, return BLOB or CLOB
             return MetaColumn.DataType.LOB;
-        } else if (IQDBRTVFD.TYPE_API_DATALINK.equals(type)) {
+        } else
+        /*
+         * DataLink field type:
+         */
+        if (IQDBRTVFD.TYPE_API_DATALINK.equals(type)) {
             return MetaColumn.DataType.DATALINK;
         } else {
             return MetaColumn.DataType.UNKNOWN;
@@ -284,7 +303,7 @@ public class RVFD0100 extends APIFormat {
      * 
      * @return <code>true</code> for numeric fields
      */
-    private boolean isNumeric() throws Exception {
+    public boolean isNumericFieldType() throws Exception {
 
         if (IQDBRTVFD.TYPE_API_BINARY.equals(getType()) || IQDBRTVFD.TYPE_API_FLOAT.equals(getType()) || IQDBRTVFD.TYPE_API_PACKED.equals(getType())
             || IQDBRTVFD.TYPE_API_ZONED.equals(getType())) {
@@ -300,7 +319,7 @@ public class RVFD0100 extends APIFormat {
      * 
      * @return <code>true</code> for date/time/timestamp fields
      */
-    private boolean isDateTime() throws Exception {
+    public boolean isDateTimeFieldType() throws Exception {
 
         if (IQDBRTVFD.TYPE_API_DATE.equals(getType()) || IQDBRTVFD.TYPE_API_TIME.equals(getType()) || IQDBRTVFD.TYPE_API_TIMESTAMP.equals(getType())) {
             return true;
@@ -341,40 +360,6 @@ public class RVFD0100 extends APIFormat {
         return getCharValue(DATE_TIME_SEPARATOR).trim();
     }
 
-    public MetaColumn createMetaColumn(int index) throws Exception {
-
-        MetaColumn metaColumn = new MetaColumn(index);
-
-        metaColumn.setFieldName(getFieldName());
-        metaColumn.setType(getSqlDataType());
-        metaColumn.setLength(getFieldLength());
-        metaColumn.setDecimalPositions(getDecimalPositions());
-        metaColumn.setInputBufferOffset(getInputBufferOffset());
-        metaColumn.setOutputBufferOffset(getOutputBufferOffset());
-        metaColumn.setBufferLength(getBufferLength());
-        metaColumn.setCcsid(getCcsid());
-        metaColumn.setVaryingLength(isVaryingLength());
-        metaColumn.setBinary(isBinary());
-        metaColumn.setNullable(isNullable());
-        metaColumn.setDateTimeFormat(removeLeadingAsterisk(getDateTimeFormat()));
-        metaColumn.setDateTimeSeparator(getDateTimeSeparator());
-        metaColumn.setText(getText());
-
-        metaColumn.setNumeric(isNumeric()); // transient
-        metaColumn.setDateTime(isDateTime()); // transient
-
-        return metaColumn;
-    }
-
-    private String removeLeadingAsterisk(String format) {
-
-        if (format.startsWith("*")) { //$NON-NLS-1$
-            return format.substring(1);
-        }
-
-        return format;
-    }
-
     /**
      * Creates the RVFD0100 structure.
      */
@@ -411,10 +396,10 @@ public class RVFD0100 extends APIFormat {
             buffer.append(getType());
             buffer.append("(");//$NON-NLS-1$
             buffer.append(getFieldLength());
-            if (isNumeric()) {
+            if (isNumericFieldType()) {
                 buffer.append(", ");//$NON-NLS-1$
                 buffer.append(getDecimalPositions());
-            } else if (isDateTime()) {
+            } else if (isDateTimeFieldType()) {
                 buffer.append(", ");//$NON-NLS-1$
                 buffer.append(getDateTimeFormat());
                 buffer.append(", '");//$NON-NLS-1$
