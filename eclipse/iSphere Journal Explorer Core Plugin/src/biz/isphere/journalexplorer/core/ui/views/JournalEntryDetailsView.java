@@ -184,11 +184,11 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                     }
                 }
 
-                int dataLength = journalEntry.getSpecificData().length;
-                int recordLength = metatableOutputFile.getRecordLength();
-                if (dataLength < recordLength) {
-                    messages.add(Messages
-                        .bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, dataLength, recordLength));
+                int joesdLength = journalEntry.getSpecificData().length;
+                int recordLength = metatable.getRecordLength();
+                if (joesdLength < recordLength) {
+                    messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,
+                        recordLength));
                 }
 
                 if (messages.size() > 0) {
