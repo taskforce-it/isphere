@@ -41,19 +41,28 @@
       /copy qcpysrc,h_spec
       /copy qcpysrc,copyright
 
-     d main...
-     d                 pr                                                       <-- Handle
-     d                                     extpgm('CRTTSTDTA')
+      /copy qcpysrc,types
 
-     d clCommand...
-     d                 pr             7a   varying
-     d                                     extproc('clCommand')
-     d  i_cmd                       512a   varying
+     d main...
+     d                 pr
+     d                                     extpgm('CRTTSTDTA')
 
      d getTime...
      d                 pr            20a   varying
      d                                     extproc('getTime')
      d  i_timestamp                    z
+
+     d clCommand...
+     d                 pr             7a   varying
+     d                                     extproc('clCommand')
+     d  i_cmd                       512a   const varying
+
+     d kill...
+     d                 pr
+     d                                     extproc('kill')
+     d  i_msgText                   256a   const varying options(*varsize)
+
+      /copy qcpysrc,qmhsndpm
 
       // system -- Execute a Command
       //    Return value       Meaning
@@ -76,9 +85,18 @@
 
      d count           s             10i 0
      d cmd             s            512a   varying
-     d start_time      s               Z
-     d end_time        s               Z
+     d start_time      s               z
+     d end_time        s               z
+     d msgId           s              7a
+
+     d WORK_LIBRARY    c                   'ISPHEREDVP'
       /free
+
+       clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_1)');
+       clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_2)');
+       clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_3)');
+       clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_4)');
+       clCommand('DLTF FILE(' + WORK_LIBRARY + '/TYPES_5)');
 
        start_time = %timestamp();
 
@@ -223,50 +241,80 @@
        // Create DSPJRN output files
        end_time = %timestamp();
 
-       cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
-                FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
+       cmd = 'DSPJRN JRN(' + WORK_LIBRARY + '/JRN) +
+                FILE((' + WORK_LIBRARY + '/TYPES_DDS) +
+                     (' + WORK_LIBRARY + '/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
                 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
-                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1) OUTFILE(ISPHEREDVP/TYPES_1) +
-                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
-       clCommand(cmd);
+                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1) +
+                OUTFILE(' + WORK_LIBRARY + '/TYPES_1) +
+                ENTDTALEN(500)';
+       msgId = clCommand(cmd);
+       if (msgId <> '');
+          kill('ERROR: ' + msgId +
+               ', Could not append *TYPE1 journal entries to output file');
+       endif;
 
-       cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
-                FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
+       cmd = 'DSPJRN JRN(' + WORK_LIBRARY + '/JRN) +
+                FILE((' + WORK_LIBRARY + '/TYPES_DDS) +
+                     (' + WORK_LIBRARY + '/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
                 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
-                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE2) OUTFILE(ISPHEREDVP/TYPES_2) +
-                ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
-       clCommand(cmd);
+                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE2) +
+                OUTFILE(' + WORK_LIBRARY + '/TYPES_2) +
+                ENTDTALEN(500)';
+       msgId = clCommand(cmd);
+       if (msgId <> '');
+          kill('ERROR: ' + msgId +
+               ', Could not append *TYPE2 journal entries to output file');
+       endif;
 
-       cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
-                FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
+       cmd = 'DSPJRN JRN(' + WORK_LIBRARY + '/JRN) +
+                FILE((' + WORK_LIBRARY + '/TYPES_DDS) +
+                     (' + WORK_LIBRARY + '/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
                 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
-                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3) OUTFILE(ISPHEREDVP/TYPES_3) +
+                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3) +
+                OUTFILE(' + WORK_LIBRARY + '/TYPES_3) +
                 ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
-       clCommand(cmd);
+       msgId = clCommand(cmd);
+       if (msgId <> '');
+          kill('ERROR: ' + msgId +
+               ', Could not append *TYPE3 journal entries to output file');
+       endif;
 
-       cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
-                FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
+       cmd = 'DSPJRN JRN(' + WORK_LIBRARY + '/JRN) +
+                FILE((' + WORK_LIBRARY + '/TYPES_DDS) +
+                     (' + WORK_LIBRARY + '/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
                 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
-                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE4) OUTFILE(ISPHEREDVP/TYPES_4) +
+                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE4) +
+                OUTFILE(' + WORK_LIBRARY + '/TYPES_4) +
                 ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
-       clCommand(cmd);
+       msgId = clCommand(cmd);
+       if (msgId <> '');
+          kill('ERROR: ' + msgId +
+               ', Could not append *TYPE4 journal entries to output file');
+       endif;
 
-       cmd = 'DSPJRN JRN(ISPHEREDVP/JRN) +
-                FILE((ISPHEREDVP/TYPES_DDS) (ISPHEREDVP/TYPES_SQL)) +
+       cmd = 'DSPJRN JRN(' + WORK_LIBRARY + '/JRN) +
+                FILE((' + WORK_LIBRARY + '/TYPES_DDS) +
+                     (' + WORK_LIBRARY + '/TYPES_SQL)) +
                 FROMTIME(' + getTime(start_time) + ') +
                 TOTIME(' + getTime(end_time) + ') +
                 JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL) +
-                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5) OUTFILE(ISPHEREDVP/TYPES_5) +
+                OUTPUT(*OUTFILE) OUTFILFMT(*TYPE5) +
+                OUTFILE(' + WORK_LIBRARY + '/TYPES_5) +
                 ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)';
-       clCommand(cmd);
+       msgId = clCommand(cmd);
+       if (msgId <> '');
+          kill('ERROR: ' + msgId +
+               ', Could not append *TYPE5 journal entries to output file');
+       endif;
 
 
       /end-free
@@ -313,7 +361,7 @@
      p clCommand...
      p                 b
      d                 pi             7a   varying
-     d  i_cmd                       512a   varying
+     d  i_cmd                       512a   const varying
 
      d rc              s             10i 0
       /free
@@ -324,6 +372,31 @@
          endif;
 
          return EXCP_MSGID;
+
+      /end-free
+     p                 e
+
+      //*==========================================================================================*
+      //* send an *ESCAPE message to kill the program.                                             *
+      //*==========================================================================================*
+     p kill...
+     p                 b
+     d                 pi
+     d  i_msgText                   256a   const varying options(*varsize)
+
+     d msgKey          s              4a   inz
+     d qMsgF           ds                  likeds(qObj_t) inz
+     d errCode         ds                  likeds(errCode_t) inz
+      /free
+
+       clear qMsgF;
+       qMsgF.name = 'QCPFMSG';
+       qMsgF.lib  = 'QSYS';
+
+       clear errCode;
+       errCode.bytPrv = %size(errCode);
+       QMHSNDPM('CPF9898': qMsgF: i_msgText: %len(i_msgText): '*ESCAPE'
+                : '*CTLBDY': 1: msgKey: errCode);
 
       /end-free
      p                 e
