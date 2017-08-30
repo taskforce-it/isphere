@@ -21,6 +21,9 @@
       *       >>PARM<<                OPTION(*EVENTF);                         *
       *     >>END-COMPILE<<                                                    *
       *     >>EXECUTE<<                                                        *
+      *     >>CMD<<     STRJRNPF FILE(&LI/&OB) +                               *
+      *                          JRN(&LI/JRN) IMAGES(*BOTH) +                  *
+      *                          OMTJRNE(*OPNCLO);                             *
       *   >>END-PRE-COMPILER<<                                                 *
       *------------------------------------------------------------------------*
      A                                      UNIQUE
@@ -76,7 +79,7 @@
      A            D_DATE_EUR      L         TEXT('Date-EUR') DATFMT(*EUR)
      A                                      DFT('01.01.1970')
      A            D_DATE_JUL      L         TEXT('Date-Julian') DATFMT(*JUL)
-     A                                      DFT('70.001')
+     A                                      DFT('70.001') DATSEP('.')
       *
      A            D_TIME_HMS      T         TEXT('Time-HMS') TIMFMT(*HMS)
      A                                      DFT('23:59:59')
