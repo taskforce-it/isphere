@@ -24,33 +24,6 @@ public class MetaTableDAO extends DAOBase {
         super(connectionName);
     }
 
-    // @formatter:off
-    private static final String GET_TABLE_DEFINITION_SQL = 
-          "    SELECT Tables.SYSTEM_TABLE_NAME, " //$NON-NLS-1$
-        + "           Tables.SYSTEM_TABLE_SCHEMA, " //$NON-NLS-1$
-        + "           Tables.COLUMN_COUNT, " //$NON-NLS-1$
-        + "           Tables.TABLE_TEXT, " //$NON-NLS-1$
-        + "           Tables.LONG_COMMENT," //$NON-NLS-1$
-        + "           Columns.COLUMN_NAME,  " //$NON-NLS-1$
-        + "           Columns.COLUMN_DEFAULT,  " //$NON-NLS-1$
-        + "           Columns.DATA_TYPE," //$NON-NLS-1$
-        + "           Columns.IS_NULLABLE," //$NON-NLS-1$
-        + "           Columns.LONG_COMMENT as COLUMN_LONG_COMMENT," //$NON-NLS-1$
-        + "           Columns.COLUMN_TEXT," //$NON-NLS-1$
-        + "           Columns.SYSTEM_COLUMN_NAME,  " //$NON-NLS-1$
-        + "           Columns.IS_IDENTITY," //$NON-NLS-1$
-        + "           Columns.LENGTH," //$NON-NLS-1$
-        + "           Columns.NUMERIC_SCALE," //$NON-NLS-1$
-        + "           Columns.ORDINAL_POSITION " //$NON-NLS-1$
-        + "      FROM QSYS2.SYSTABLES  Tables " //$NON-NLS-1$
-        + "INNER JOIN QSYS2.SYSCOLUMNS Columns " //$NON-NLS-1$
-        + "        ON Tables.SYSTEM_TABLE_NAME = Columns.SYSTEM_TABLE_NAME " //$NON-NLS-1$
-        + "       AND Tables.SYSTEM_TABLE_SCHEMA = Columns.TABLE_SCHEMA " //$NON-NLS-1$
-        + "     WHERE Tables.SYSTEM_TABLE_NAME = ? " //$NON-NLS-1$
-        + "       AND Tables.SYSTEM_TABLE_SCHEMA = ?" //$NON-NLS-1$
-        + " ORDER BY  Columns.ORDINAL_POSITION"; //$NON-NLS-1$
-    // @formatter:on
-
     public void retrieveColumnsMetaData(MetaTable metaTable) throws Exception {
 
         ResultSet resultSet = null;
