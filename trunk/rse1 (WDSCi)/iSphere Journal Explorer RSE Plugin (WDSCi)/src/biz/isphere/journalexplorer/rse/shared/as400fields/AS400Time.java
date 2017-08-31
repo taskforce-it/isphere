@@ -9,6 +9,7 @@
 package biz.isphere.journalexplorer.rse.shared.as400fields;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Map;
@@ -24,8 +25,8 @@ public class AS400Time {
 
     private static TimeZone defaultTimeZone;
 
-    private static Map<String, AS400TimeFormat> timeFormatsMap;
-    private static AS400TimeFormat[] timeFormatsTable;
+    private static Map<String, AS400TimeFormat> timeFormatsMapExt;
+    private static Map<Integer, AS400TimeFormat> timeFormatsMapInt;
 
     private AS400TimeFormat timeFormat;
     private TimeZone timeZone;
@@ -33,26 +34,30 @@ public class AS400Time {
 
     private static Map<String, AS400TimeFormat> getTimeFormatsMap() {
         initializeTimeFormats();
-        return timeFormatsMap;
+        return timeFormatsMapExt;
     }
 
-    private static AS400TimeFormat[] getTimeFormatsTable() {
-        getTimeFormatsMap();
-        return timeFormatsTable;
+    private static Map<Integer, AS400TimeFormat> getTimeFormatsTable() {
+        initializeTimeFormats();
+        return timeFormatsMapInt;
     }
 
     private static void initializeTimeFormats() {
-        if (timeFormatsMap == null) {
+        if (timeFormatsMapExt == null) {
             synchronized (AS400Time.class) {
-                if (timeFormatsMap == null) {
-                    timeFormatsMap = new Hashtable<String, AS400TimeFormat>(12);
-                    timeFormatsMap.put(AS400TimeFormat.HMS.rpgLiteral(), AS400TimeFormat.HMS);
-                    timeFormatsMap.put(AS400TimeFormat.ISO.rpgLiteral(), AS400TimeFormat.ISO);
-                    timeFormatsMap.put(AS400TimeFormat.USA.rpgLiteral(), AS400TimeFormat.USA);
-                    timeFormatsMap.put(AS400TimeFormat.EUR.rpgLiteral(), AS400TimeFormat.EUR);
-                    timeFormatsMap.put(AS400TimeFormat.JIS.rpgLiteral(), AS400TimeFormat.JIS);
+                if (timeFormatsMapExt == null) {
+                    timeFormatsMapExt = new Hashtable<String, AS400TimeFormat>();
+                    timeFormatsMapExt.put(AS400TimeFormat.HMS.rpgLiteral(), AS400TimeFormat.HMS);
+                    timeFormatsMapExt.put(AS400TimeFormat.ISO.rpgLiteral(), AS400TimeFormat.ISO);
+                    timeFormatsMapExt.put(AS400TimeFormat.USA.rpgLiteral(), AS400TimeFormat.USA);
+                    timeFormatsMapExt.put(AS400TimeFormat.EUR.rpgLiteral(), AS400TimeFormat.EUR);
+                    timeFormatsMapExt.put(AS400TimeFormat.JIS.rpgLiteral(), AS400TimeFormat.JIS);
 
-                    timeFormatsTable = timeFormatsMap.values().toArray(new AS400TimeFormat[timeFormatsMap.size()]);
+                    timeFormatsMapInt = new Hashtable<Integer, AS400TimeFormat>();
+                    Collection<AS400TimeFormat> timeFormats = timeFormatsMapExt.values();
+                    for (AS400TimeFormat dateFormat : timeFormats) {
+                        timeFormatsMapInt.put(dateFormat.format(), dateFormat);
+                    }
                 }
             }
         }
@@ -110,13 +115,7 @@ public class AS400Time {
 
     private AS400TimeFormat getTimeFormat(int format) {
 
-        for (AS400TimeFormat as400TimeFormat : getTimeFormatsTable()) {
-            if (as400TimeFormat.format() == format) {
-                return as400TimeFormat;
-            }
-        }
-
-        return null;
+        return getTimeFormatsTable().get(format);
     }
 
     private static TimeZone getDefaultTimeZone() {
