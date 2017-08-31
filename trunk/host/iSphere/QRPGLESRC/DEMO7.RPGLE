@@ -42,6 +42,9 @@
      D PGM_ENTRY_POINT...
      D                 pr                  extpgm('DEMO5')
 
+     d sds            sds                  qualified
+     d  pgmLib                81     90a
+
       //*==========================================================================================*
       //*  Program Entry Point
       //*==========================================================================================*
@@ -71,8 +74,8 @@
          qFile.name = 'QRPGLESRC';
          qFile.lib  = '*LIBL';
 
-         qFile.name = 'DATATYPES';
-         qFile.lib  = 'RADDATZ';
+         qFile.name = 'TYPES_SQL';
+         qFile.lib  = %trim(sds.pgmLib);
 
          IQDBRTVFD(fldInf: %size(fldInf): 'RVFD0100'
                    : qFile: IQDBRTVFD_RCDFMT_FIRST: errCode

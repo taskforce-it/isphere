@@ -121,6 +121,16 @@ public class RVFD0100 extends APIFormat {
             default:
                 throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
             }
+        } else if (IQDBRTVFD.TYPE_API_DECFLOAT.equals(type)) {
+            int bufferLength = getBufferLength();
+            switch (bufferLength) {
+            case 8:
+                return MetaColumn.DataType.DECREAL;
+            case 16:
+                return MetaColumn.DataType.DECDOUBLE;
+            default:
+                throw new RuntimeException(getName() + " (" + getFieldName() + "): Illegal field length: " + bufferLength); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         } else if (IQDBRTVFD.TYPE_API_ZONED.equals(type)) {
             return MetaColumn.DataType.NUMERIC;
         } else if (IQDBRTVFD.TYPE_API_PACKED.equals(type)) {
@@ -145,6 +155,16 @@ public class RVFD0100 extends APIFormat {
             }
         } else
         /*
+         * Graphic field types:
+         */
+        if (IQDBRTVFD.TYPE_API_GRAPHIC.equals(type)) {
+            if (isVaryingLength()) {
+                return MetaColumn.DataType.VARGRAPHIC;
+            } else {
+                return MetaColumn.DataType.GRAPHIC;
+            }
+        } else
+        /*
          * Date/time field types:
          */
         if (IQDBRTVFD.TYPE_API_DATE.equals(type)) {
@@ -153,12 +173,6 @@ public class RVFD0100 extends APIFormat {
             return MetaColumn.DataType.TIME;
         } else if (IQDBRTVFD.TYPE_API_TIMESTAMP.equals(type)) {
             return MetaColumn.DataType.TIMESTAMP;
-        } else if (IQDBRTVFD.TYPE_API_GRAPHIC.equals(type)) {
-            if (isVaryingLength()) {
-                return MetaColumn.DataType.VARGRAPHIC;
-            } else {
-                return MetaColumn.DataType.GRAPHIC;
-            }
         } else
         /*
          * LOB field types:

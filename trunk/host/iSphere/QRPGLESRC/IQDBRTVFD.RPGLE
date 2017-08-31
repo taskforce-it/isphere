@@ -136,6 +136,8 @@
      d                 c                   x'000C'
      d TYPE_TIMESTAMP...
      d                 c                   x'000D'
+     d TYPE_DECFLOAT...
+     d                 c                   x'000F'
      d TYPE_DATALINK...
      d                 c                   x'8044'
      d TYPE_NULL...
@@ -483,6 +485,9 @@
 
        when (i_intDataType = TYPE_DATALINK);
           extDataType = IQDBRTVFD_TYPE_DATALINK;
+
+       when (i_intDataType = TYPE_DECFLOAT);
+          extDataType = IQDBRTVFD_TYPE_DECFLOAT;
 
        when (i_inTDataType = TYPE_NULL);        // not yet supported
           extDataType = IQDBRTVFD_TYPE_ERROR;
