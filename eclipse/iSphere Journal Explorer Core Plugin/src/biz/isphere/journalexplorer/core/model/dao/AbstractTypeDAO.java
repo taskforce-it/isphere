@@ -64,8 +64,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
                 }
             }
 
-        } catch (Exception exception) {
-            throw exception;
         } finally {
             super.destroy(preparedStatement);
             super.destroy(resultSet);

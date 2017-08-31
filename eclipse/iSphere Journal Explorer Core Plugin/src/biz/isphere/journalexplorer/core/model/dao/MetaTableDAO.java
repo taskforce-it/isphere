@@ -53,12 +53,11 @@ public class MetaTableDAO extends DAOBase {
 
     public void retrieveColumnsMetaData(MetaTable metaTable) throws Exception {
 
-        MetaColumn column = null;
         ResultSet resultSet = null;
         PreparedStatement sqlStatement = null;
-        boolean nextColumn = true;
 
         try {
+
             IQDBRTVFD iqdbrtvfd = new IQDBRTVFD(getSystem(), getConnectionName());
             iqdbrtvfd.setFile(metaTable.getDefinitionName(), metaTable.getDefinitionLibrary());
             MetaColumn[] metaColumns = iqdbrtvfd.retrieveFieldDescriptions();
@@ -66,42 +65,6 @@ public class MetaTableDAO extends DAOBase {
             for (MetaColumn metaColumn : metaColumns) {
                 metaTable.addColumn(metaColumn);
             }
-
-            // sqlStatement = prepareStatement(GET_TABLE_DEFINITION_SQL);
-            // sqlStatement.setString(1, table.getDefinitionName());
-            // sqlStatement.setString(2, table.getDefinitionLibrary());
-            //
-            // resultSet = sqlStatement.executeQuery();
-            //
-            // if (resultSet == null) {
-            //
-            // throw new Exception(Messages.MetaTableDAO_NullResultSet);
-            // } else {
-            //
-            // if (resultSet.next()) {
-            //
-            // while (nextColumn) {
-            // column = new MetaColumn();
-            //                        column.setName(resultSet.getString("SYSTEM_COLUMN_NAME")); //$NON-NLS-1$
-            //                        column.setColumnText(resultSet.getString("COLUMN_TEXT")); //$NON-NLS-1$
-            //                        column.setDataType(resultSet.getString("DATA_TYPE")); //$NON-NLS-1$
-            //                        column.setSize(resultSet.getInt("LENGTH")); //$NON-NLS-1$
-            //                        column.setPrecision(resultSet.getInt("NUMERIC_SCALE")); //$NON-NLS-1$
-            //
-            // table.addColumn(column);
-            //
-            // nextColumn = resultSet.next();
-            // }
-            //
-            // } else {
-            // throw new
-            // Exception(Messages.MetaTableDAO_TableDefinitionNotFound);
-            // }
-            // }
-
-        } catch (Exception exception) {
-
-            throw exception;
 
         } finally {
 

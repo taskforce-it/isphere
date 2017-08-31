@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -219,6 +220,7 @@ public class ConfigureParsersDialog extends XDialog {
                         metaTable.setLoaded(false);
                         tableViewer.update(metaTable, null);
                     } catch (Exception e) {
+                        ISpherePlugin.logError("*** Failed to set parsing offset ***", e); //$NON-NLS-1$
                     }
                 default:
                 }
