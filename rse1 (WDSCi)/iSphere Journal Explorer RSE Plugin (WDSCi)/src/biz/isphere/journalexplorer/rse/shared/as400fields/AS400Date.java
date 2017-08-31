@@ -32,8 +32,8 @@ public class AS400Date {
 
     private static TimeZone defaultTimeZone;
 
-    private static Map<String, AS400DateFormat> dateFormatsMap;
-    private static AS400DateFormat[] dateFormatsTable;
+    private static Map<String, AS400DateFormat> dateFormatsMapExt;
+    private static Map<Integer, AS400DateFormat> dateFormatsMapInt;
 
     private AS400DateFormat dateFormat;
     private TimeZone timeZone;
@@ -41,36 +41,36 @@ public class AS400Date {
 
     private static Map<String, AS400DateFormat> getDateFormatsMap() {
         initializeDateFormats();
-        return dateFormatsMap;
+        return dateFormatsMapExt;
     }
 
-    private static AS400DateFormat[] getDateFormatsTable() {
-        getDateFormatsMap();
-        return dateFormatsTable;
+    private static Map<Integer, AS400DateFormat> getDateFormatsTable() {
+        initializeDateFormats();
+        return dateFormatsMapInt;
     }
 
     private static void initializeDateFormats() {
-        if (dateFormatsMap == null) {
+        if (dateFormatsMapExt == null) {
             synchronized (AS400Date.class) {
-                if (dateFormatsMap == null) {
-                    dateFormatsMap = new Hashtable<String, AS400DateFormat>(12);
-                    dateFormatsMap.put(AS400DateFormat.MDY.rpgLiteral(), AS400DateFormat.MDY);
-                    dateFormatsMap.put(AS400DateFormat.DMY.rpgLiteral(), AS400DateFormat.DMY);
-                    dateFormatsMap.put(AS400DateFormat.YMD.rpgLiteral(), AS400DateFormat.YMD);
-                    dateFormatsMap.put(AS400DateFormat.JUL.rpgLiteral(), AS400DateFormat.JUL);
-                    dateFormatsMap.put(AS400DateFormat.ISO.rpgLiteral(), AS400DateFormat.ISO);
-                    dateFormatsMap.put(AS400DateFormat.USA.rpgLiteral(), AS400DateFormat.USA);
-                    dateFormatsMap.put(AS400DateFormat.EUR.rpgLiteral(), AS400DateFormat.EUR);
-                    dateFormatsMap.put(AS400DateFormat.JIS.rpgLiteral(), AS400DateFormat.JIS);
-                    dateFormatsMap.put(AS400DateFormat.CYMD.rpgLiteral(), AS400DateFormat.CYMD);
-                    dateFormatsMap.put(AS400DateFormat.CMDY.rpgLiteral(), AS400DateFormat.CMDY);
-                    dateFormatsMap.put(AS400DateFormat.CDMY.rpgLiteral(), AS400DateFormat.CDMY);
-                    dateFormatsMap.put(AS400DateFormat.LONGJUL.rpgLiteral(), AS400DateFormat.LONGJUL);
+                if (dateFormatsMapExt == null) {
+                    dateFormatsMapExt = new Hashtable<String, AS400DateFormat>();
+                    dateFormatsMapExt.put(AS400DateFormat.MDY.rpgLiteral(), AS400DateFormat.MDY);
+                    dateFormatsMapExt.put(AS400DateFormat.DMY.rpgLiteral(), AS400DateFormat.DMY);
+                    dateFormatsMapExt.put(AS400DateFormat.YMD.rpgLiteral(), AS400DateFormat.YMD);
+                    dateFormatsMapExt.put(AS400DateFormat.JUL.rpgLiteral(), AS400DateFormat.JUL);
+                    dateFormatsMapExt.put(AS400DateFormat.ISO.rpgLiteral(), AS400DateFormat.ISO);
+                    dateFormatsMapExt.put(AS400DateFormat.USA.rpgLiteral(), AS400DateFormat.USA);
+                    dateFormatsMapExt.put(AS400DateFormat.EUR.rpgLiteral(), AS400DateFormat.EUR);
+                    dateFormatsMapExt.put(AS400DateFormat.JIS.rpgLiteral(), AS400DateFormat.JIS);
+                    dateFormatsMapExt.put(AS400DateFormat.CYMD.rpgLiteral(), AS400DateFormat.CYMD);
+                    dateFormatsMapExt.put(AS400DateFormat.CMDY.rpgLiteral(), AS400DateFormat.CMDY);
+                    dateFormatsMapExt.put(AS400DateFormat.CDMY.rpgLiteral(), AS400DateFormat.CDMY);
+                    dateFormatsMapExt.put(AS400DateFormat.LONGJUL.rpgLiteral(), AS400DateFormat.LONGJUL);
 
-                    dateFormatsTable = new AS400DateFormat[12];
-                    Collection<AS400DateFormat> formats = dateFormatsMap.values();
-                    for (AS400DateFormat format : formats) {
-                        dateFormatsTable[format.format()] = format;
+                    dateFormatsMapInt = new Hashtable<Integer, AS400DateFormat>();
+                    Collection<AS400DateFormat> dateFormats = dateFormatsMapExt.values();
+                    for (AS400DateFormat dateFormat : dateFormats) {
+                        dateFormatsMapInt.put(dateFormat.format(), dateFormat);
                     }
                 }
             }
@@ -141,11 +141,7 @@ public class AS400Date {
 
     private AS400DateFormat getDateFormat(int format) {
 
-        if (format >= 0 && format < getDateFormatsTable().length) {
-            return getDateFormatsTable()[format];
-        }
-
-        return null;
+        return getDateFormatsTable().get(format);
     }
 
     private static TimeZone getDefaultTimeZone() {
