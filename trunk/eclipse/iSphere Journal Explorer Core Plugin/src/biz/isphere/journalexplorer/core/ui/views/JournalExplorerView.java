@@ -168,9 +168,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
             setActionEnablement(journalEntriesViewer);
 
-        } catch (Exception exception) {
+        } catch (Exception e) {
 
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
 
             if (journalEntriesViewer != null) {
                 journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);

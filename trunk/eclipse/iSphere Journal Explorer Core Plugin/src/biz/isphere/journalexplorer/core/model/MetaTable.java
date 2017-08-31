@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
@@ -131,6 +132,7 @@ public class MetaTable {
                 JoesdParser parser = new JoesdParser(this);
                 record = parser.getJoesdRecordFormat().getNewRecord();
             } catch (Exception e) {
+                ISpherePlugin.logError("*** Failed to set 'loaded' attribute ***", e); //$NON-NLS-1$
                 loaded = false;
             }
         }
