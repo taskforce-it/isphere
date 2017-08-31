@@ -56,6 +56,7 @@ public class IQDBRTVFD extends APIProgramCallDocument {
     public static final String TYPE_API_TIMESTAMP = "Z"; //$NON-NLS-1$
     public static final String TYPE_API_LOB = "1"; //$NON-NLS-1$
     public static final String TYPE_API_DATALINK = "2"; //$NON-NLS-1$
+    public static final String TYPE_API_DECFLOAT = "3"; //$NON-NLS-1$
 
     // 128 kB (= 131072 bytes) is large enough to return 1191 fields.
     // header size: 36 bytes

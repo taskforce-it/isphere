@@ -14,6 +14,8 @@ package biz.isphere.journalexplorer.core.internals;
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.as400.access.AS400DataLink;
+import biz.isphere.journalexplorer.core.as400.access.AS400DecDouble;
+import biz.isphere.journalexplorer.core.as400.access.AS400DecReal;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaTable;
@@ -55,26 +57,58 @@ public class JoesdParser {
 
         for (MetaColumn column : metadata.getColumns()) {
             switch (column.getType()) {
-            case INTEGER:
+            /*
+             * Numeric field types:
+             */
+            case INTEGER: {
                 joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin4(), column.getName()));
                 break;
+            }
 
-            case SMALLINT:
+            case SMALLINT: {
                 joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin2(), column.getName()));
                 break;
+            }
 
-            case BIGINT:
+            case BIGINT: {
                 joesdRecordFormat.addFieldDescription(new BinaryFieldDescription(new AS400Bin8(), column.getName()));
                 break;
+            }
 
-            case DOUBLE:
-                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), column.getName()));
-                break;
-
-            case REAL:
+            case REAL: {
                 joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float4(), column.getName()));
                 break;
+            }
 
+            case DOUBLE: {
+                joesdRecordFormat.addFieldDescription(new FloatFieldDescription(new AS400Float8(), column.getName()));
+                break;
+            }
+
+            case DECREAL:
+                HexFieldDescription decFloatRealField = new HexFieldDescription(new AS400DecReal(), column.getName());
+                joesdRecordFormat.addFieldDescription(decFloatRealField);
+                break;
+
+            case DECDOUBLE:
+                HexFieldDescription decFloatDoubleField = new HexFieldDescription(new AS400DecDouble(), column.getName());
+                joesdRecordFormat.addFieldDescription(decFloatDoubleField);
+                break;
+
+            case NUMERIC: {
+                joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(new AS400ZonedDecimal(column.getLength(), column
+                    .getDecimalPositions()), column.getName()));
+                break;
+            }
+
+            case DECIMAL: {
+                joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(column.getLength(), column
+                    .getDecimalPositions()), column.getName()));
+                break;
+            }
+                /*
+                 * Character field types:
+                 */
             case CHAR: {
                 CharacterFieldDescription charField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
                     column.getName());
@@ -104,7 +138,9 @@ public class JoesdParser {
                 joesdRecordFormat.addFieldDescription(varBinaryField);
                 break;
             }
-
+                /*
+                 * Graphic field types:
+                 */
             case GRAPHIC: {
                 DBCSGraphicFieldDescription graphicField = new DBCSGraphicFieldDescription(new AS400Text(column.getLength() * 2, column.getCcsid()),
                     column.getName());
@@ -119,11 +155,29 @@ public class JoesdParser {
                 joesdRecordFormat.addFieldDescription(varGraphicField);
                 break;
             }
-
-            case LOB:
                 /*
-                 * Handles CLOB and BLOB data types.
+                 * Date/time field types:
                  */
+            case DATE: {
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName(), column.getDateTimeFormat(),
+                    column.getDateTimeSeparator()));
+                break;
+            }
+
+            case TIME: {
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName(), column.getDateTimeFormat(),
+                    column.getDateTimeSeparator()));
+                break;
+            }
+
+            case TIMESTAMP: {
+                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
+                break;
+            }
+                /*
+                 * LOB (CLOB & BLOB) field types:
+                 */
+            case LOB: {
                 CharacterFieldDescription lobField = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()),
                     column.getName());
                 if (column.isVaryingLength()) {
@@ -131,31 +185,11 @@ public class JoesdParser {
                 }
                 joesdRecordFormat.addFieldDescription(lobField);
                 break;
+            }
 
-            case DECIMAL:
-                joesdRecordFormat.addFieldDescription(new PackedDecimalFieldDescription(new AS400PackedDecimal(column.getLength(), column
-                    .getDecimalPositions()), column.getName()));
-                break;
-
-            case NUMERIC:
-                joesdRecordFormat.addFieldDescription(new ZonedDecimalFieldDescription(new AS400ZonedDecimal(column.getLength(), column
-                    .getDecimalPositions()), column.getName()));
-                break;
-
-            case DATE:
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName(), column.getDateTimeFormat(),
-                    column.getDateTimeSeparator()));
-                break;
-
-            case TIME:
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName(), column.getDateTimeFormat(),
-                    column.getDateTimeSeparator()));
-                break;
-
-            case TIMESTAMP:
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
-                break;
-
+                /*
+                 * DataLink field type:
+                 */
             case DATALINK: {
                 HexFieldDescription charField = new HexFieldDescription(new AS400DataLink(column.getLength(), column.getCcsid()), column.getName());
                 joesdRecordFormat.addFieldDescription(charField);

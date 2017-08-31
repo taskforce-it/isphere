@@ -64,7 +64,7 @@ public class AS400DataLink extends AS400ByteArray {
 
     @Override
     public int getInstanceType() {
-        return AS400DataType.TYPE_TEXT;
+        return AS400DataType.TYPE_BYTE_ARRAY;
     }
 
     public Class<?> getJavaType() {

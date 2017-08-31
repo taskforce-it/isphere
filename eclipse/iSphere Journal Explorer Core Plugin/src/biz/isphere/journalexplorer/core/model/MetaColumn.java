@@ -21,9 +21,11 @@ public class MetaColumn {
         BIGINT,
         NUMERIC,
         DECIMAL,
-        FLOAT, // Returns as REAL or DOUBLE from IQDBRTVFD API
+        FLOAT, // Returned as REAL or DOUBLE from IQDBRTVFD API
         REAL,
         DOUBLE,
+        DECREAL,
+        DECDOUBLE,
         CHAR,
         VARCHAR,
         BINARY,
@@ -39,7 +41,6 @@ public class MetaColumn {
         DATALINK,
         UNKNOWN,
         // Not yet supported
-        DECFLOAT,
         LONG_VARCHAR,
         LONG_VARGRAPHIC
     };
