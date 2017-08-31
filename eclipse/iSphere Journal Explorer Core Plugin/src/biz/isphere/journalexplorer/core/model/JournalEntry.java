@@ -998,15 +998,15 @@ public class JournalEntry {
     public byte[] getSpecificData() {
         return specificData;
     }
-    
+
     public byte[] getSpecificData(int recordLength) {
-        
-        if (recordLength > specificData.length){
+
+        if (recordLength > specificData.length) {
             byte[] recordData = new byte[recordLength];
             System.arraycopy(specificData, 0, recordData, 0, specificData.length);
             return recordData;
         }
-        
+
         return specificData;
     }
 

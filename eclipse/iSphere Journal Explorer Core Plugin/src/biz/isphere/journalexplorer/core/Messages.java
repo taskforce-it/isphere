@@ -65,7 +65,7 @@ public class Messages extends NLS {
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;
-    
+
     public static String ButtonLabel_Reload_All;
 
     public static String Tooltip_OutputFile_Rrn;
@@ -126,7 +126,7 @@ public class Messages extends NLS {
 
     public static String JournalPropertyValue_null;
     public static String JournalPropertyValue_not_available;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

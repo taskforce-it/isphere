@@ -26,8 +26,6 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -73,7 +71,7 @@ public class ConfigureParsersDialog extends XDialog {
 
         super.createButtonsForButtonBar(parent);
     }
-    
+
     /**
      * Create contents of the dialog.
      * 
@@ -95,14 +93,14 @@ public class ConfigureParsersDialog extends XDialog {
 
     @Override
     protected Control createContents(Composite parent) {
-        
+
         Control control = super.createContents(parent);
-        
+
         loadValues();
-        
+
         return control;
     }
-    
+
     private void createTableViewer(Composite container) {
 
         tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
@@ -286,7 +284,7 @@ public class ConfigureParsersDialog extends XDialog {
             parser.setLoaded(false);
             tableViewer.update(parser, null);
         }
-        
+
         setButtonEnablement();
     }
 
@@ -297,18 +295,18 @@ public class ConfigureParsersDialog extends XDialog {
 
     private void setButtonEnablement() {
 
-        if (getButton(RELOAD_BUTTON)==null){
+        if (getButton(RELOAD_BUTTON) == null) {
             return;
         }
-        
+
         getButton(RELOAD_BUTTON).setEnabled(false);
-        
+
         Object input = tableViewer.getInput();
-        if (input instanceof Object[]){
+        if (input instanceof Object[]) {
             Object[] items = (Object[])input;
             for (Object item : items) {
                 MetaTable metaTable = (MetaTable)item;
-                if (!metaTable.isJournalOutputFile() && metaTable.isLoaded()){
+                if (!metaTable.isJournalOutputFile() && metaTable.isLoaded()) {
                     getButton(RELOAD_BUTTON).setEnabled(true);
                     return;
                 }
