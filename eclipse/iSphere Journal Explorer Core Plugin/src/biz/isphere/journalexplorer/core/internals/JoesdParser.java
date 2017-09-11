@@ -14,8 +14,6 @@ package biz.isphere.journalexplorer.core.internals;
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.as400.access.AS400DataLink;
-import biz.isphere.journalexplorer.core.as400.access.AS400DecDouble;
-import biz.isphere.journalexplorer.core.as400.access.AS400DecReal;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaTable;
@@ -32,6 +30,7 @@ import com.ibm.as400.access.AS400ZonedDecimal;
 import com.ibm.as400.access.BinaryFieldDescription;
 import com.ibm.as400.access.CharacterFieldDescription;
 import com.ibm.as400.access.DBCSGraphicFieldDescription;
+import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.FloatFieldDescription;
 import com.ibm.as400.access.HexFieldDescription;
 import com.ibm.as400.access.PackedDecimalFieldDescription;
@@ -86,12 +85,12 @@ public class JoesdParser {
             }
 
             case DECREAL:
-                HexFieldDescription decFloatRealField = new HexFieldDescription(new AS400DecReal(), column.getName());
+                FieldDescription decFloatRealField = joesdParserDelegate.getDecRealFieldDescription(column.getName());
                 joesdRecordFormat.addFieldDescription(decFloatRealField);
                 break;
 
             case DECDOUBLE:
-                HexFieldDescription decFloatDoubleField = new HexFieldDescription(new AS400DecDouble(), column.getName());
+                FieldDescription decFloatDoubleField = joesdParserDelegate.getDecDoubleFieldDescription(column.getName());
                 joesdRecordFormat.addFieldDescription(decFloatDoubleField);
                 break;
 

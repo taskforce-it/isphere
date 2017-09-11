@@ -6,24 +6,23 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.as400.access;
+package biz.isphere.journalexplorer.rse.shared.as400fields;
 
 import java.math.BigDecimal;
 
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
-import com.ibm.as400.access.AS400DecFloat;
 
-public class AS400DecReal extends AS400ByteArray {
+public class AS400DecDouble extends AS400ByteArray {
 
-    private static final long serialVersionUID = -5047314778801863039L;
+    private static final long serialVersionUID = -346116965230395637L;
 
-    private AS400DecFloat decReal;
+    private AS400DecFloat decDouble;
 
-    public AS400DecReal() {
-        super(8);
+    public AS400DecDouble() {
+        super(16);
 
-        decReal = new AS400DecFloat(16);
+        decDouble = new AS400DecFloat(34);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class AS400DecReal extends AS400ByteArray {
     @Override
     public int toBytes(Object object, byte[] bytes, int offset) {
 
-        return 0;
+        return getByteLength();
     }
 
     @Override
@@ -76,8 +75,9 @@ public class AS400DecReal extends AS400ByteArray {
     @Override
     public Object toObject(byte[] serverValue, int offset) {
 
-        decReal.getByteLength();
+        decDouble.getByteLength();
 
-        return decReal.toObject(serverValue, offset);
+        return decDouble.toObject(serverValue, offset);
     }
+
 }
