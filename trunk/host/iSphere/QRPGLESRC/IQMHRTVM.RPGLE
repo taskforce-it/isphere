@@ -25,6 +25,7 @@
       //*         >>PARM<<  OPTIMIZE(*FULL);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  TGTRLS(&TR);                                                           *
+      //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
