@@ -18,4 +18,8 @@ public interface IJoesdParserDelegate {
 
     public FieldDescription getTimestampFieldDescription(String name);
 
+    public FieldDescription getDecRealFieldDescription(String name);
+
+    public FieldDescription getDecDoubleFieldDescription(String name);
+
 }

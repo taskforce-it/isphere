@@ -11,12 +11,15 @@ package biz.isphere.journalexplorer.rse.shared.model;
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DateFormat;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DecDouble;
+import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DecReal;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400TimeFormat;
 
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.CharacterFieldDescription;
 import com.ibm.as400.access.FieldDescription;
+import com.ibm.as400.access.HexFieldDescription;
 
 public final class JoesdParserDelegate implements IJoesdParserDelegate {
 
@@ -46,6 +49,14 @@ public final class JoesdParserDelegate implements IJoesdParserDelegate {
 
     public FieldDescription getTimestampFieldDescription(String name) {
         return new CharacterFieldDescription(new AS400Text(26), name);
+    }
+
+    public FieldDescription getDecRealFieldDescription(String name) {
+        return new HexFieldDescription(new AS400DecReal(), name);
+    }
+
+    public FieldDescription getDecDoubleFieldDescription(String name) {
+        return new HexFieldDescription(new AS400DecDouble(), name);
     }
 
     private Character toChar(String separator) {
