@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/15/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/16/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -3029,13 +3029,13 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.14 - 15.09.2017 - mailto: thomas.raddatz@tools400.de')                         
+     h COPYRIGHT('V1.14.1 - 16.09.2017 - mailto: thomas.raddatz@tools400.de')                       
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.14'                                                   
+     d                 C                   '1.14.1'                                                 
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '15.09.2017'                                             
+     d                 C                   '16.09.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -7458,6 +7458,9 @@ srccssid=  "00273">
      /*  14.07.2015  Th.Raddatz    Fixed problem, that parameter &XMSGFLIB  */                      
      /*                            was not properly initialized.            */                      
      /*                                                                     */                      
+     /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
+     /*                            2048 to 8192.                            */                      
+     /*                                                                     */                      
      /* =================================================================== */                      
      /* >>PRE-COMPILER<<                                                    */                      
      /*   >>CRTCMD<< CRTCLMOD     MODULE(&LI/&OB) +                         */                      
@@ -7518,7 +7521,7 @@ srccssid=  "00273">
                                                                                                     
              DCL        VAR(&QUSESRCF  ) TYPE(*CHAR) LEN(  20)                                      
              DCL        VAR(&USESRCMBR ) TYPE(*CHAR) LEN(  10)                                      
-             DCL        VAR(&CMD       ) TYPE(*CHAR) LEN(2048)                                      
+             DCL        VAR(&CMD       ) TYPE(*CHAR) LEN(8192)                                      
              DCL        VAR(&OPTION    ) TYPE(*CHAR) LEN(  52)                                      
              DCL        VAR(&CHGOBJD   ) TYPE(*CHAR) LEN(   4)                                      
              DCL        VAR(&OBJTYPE   ) TYPE(*CHAR) LEN(   4)                                      
@@ -7830,6 +7833,16 @@ srccssid=  "00273">
       *                                                                     *                       
       *  06.02.2017  Th.Raddatz    Changed interface of exit program.       *                       
       *                                                                     *                       
+      *  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        *                       
+      *                            command.                                 *                       
+      *                            Added header tags 'LIBL' and 'CURLIB'    *                       
+      *                            to STRPREPRC command.                    *                       
+      *                            Added replacement variables &LL, &CL,    *                       
+      *                            &LX and &CX to STRPREPRC utility.        *                       
+      *                                                                     *                       
+      *  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     *                       
+      *                            2048 to 8192.                            *                       
+      *                                                                     *                       
       * =================================================================== *                       
       * >>PRE-COMPILER<<                                                    *                       
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *                       
@@ -7890,7 +7903,7 @@ srccssid=  "00273">
      D srcFile_t       s             10a   based(pDummy)                                            
      D srcLib_t        s             10a   based(pDummy)                                            
      D srcMbr_t        s             10a   based(pDummy)                                            
-     D cmd_t           s           2048a   based(pDummy)                                            
+     D cmd_t           s           8192a   based(pDummy)                                            
      D cmdLong_t       s          32702a   based(pDummy) varying                                    
      D cmdLongFixLen_t...                                                                           
      D                 s          32702a   based(pDummy)                                            
@@ -11288,54 +11301,56 @@ srclib  =  "selected  "
 srclen  =  "00112"                                                                                  
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
-/* =================================================================== */                           
-/*                                                                     */                           
-/*  Kurzdokumentation :                                                */                           
-/*                                                                     */                           
-/*  Bereich . . . : STRPREPRC                                          */                           
-/*  Objekt  . . . : STRPREPRC                                          */                           
-/*  Beschreibung  : Start Pre-Processor - Ger                          */                           
-/*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */                           
-/*  Datum . . . . : 21.11.2000                                         */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/*                                                                     */                           
-/*  This software is free software, you can redistribute it and/or     */                           
-/*  modify it under the terms of the GNU General Public License (GPL)  */                           
-/*  as published by the Free Software Foundation.                      */                           
-/*                                                                     */                           
-/*  See GNU General Public License for details.                        */                           
-/*          http://www.opensource.org                                  */                           
-/*          http://www.opensource.org/licenses/gpl-license.html        */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/*  History:                                                           */                           
-/*                                                                     */                           
-/*  Datum       Name          Änderung                                 */                           
-/*  ----------  ------------  ---------------------------------------  */                           
-/*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                           
-/*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                           
-/*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/* >>PRE-COMPILER<<                                                    */                           
-/*                                                                     */                           
-/*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */                           
-/*                           SRCFILE(&SL/&SF) +                        */                           
-/*                           SRCMBR(&SM);                              */                           
-/*                                                                     */                           
-/*   >>COMPILE<<                                                       */                           
-/*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */                           
-/*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */                           
-/*     >>PARM<< HLPID(STRPREPRC);                                      */                           
-/*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */                           
-/*     >>PARM<< PRDLIB(&LI);                                           */                           
-/*   >>END-COMPILE<<                                                   */                           
-/*                                                                     */                           
-/*   >>EXECUTE<<                                                       */                           
-/*                                                                     */                           
-/* >>END-PRE-COMPILER<<                                                */                           
-/* =================================================================== */                           
+     /* =================================================================== */                      
+     /*                                                                     */                      
+     /*  Kurzdokumentation :                                                */                      
+     /*                                                                     */                      
+     /*  Bereich . . . : STRPREPRC                                          */                      
+     /*  Objekt  . . . : STRPREPRC                                          */                      
+     /*  Beschreibung  : Start Pre-Processor - Ger                          */                      
+     /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */                      
+     /*  Datum . . . . : 21.11.2000                                         */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /*                                                                     */                      
+     /*  This software is free software, you can redistribute it and/or     */                      
+     /*  modify it under the terms of the GNU General Public License (GPL)  */                      
+     /*  as published by the Free Software Foundation.                      */                      
+     /*                                                                     */                      
+     /*  See GNU General Public License for details.                        */                      
+     /*          http://www.opensource.org                                  */                      
+     /*          http://www.opensource.org/licenses/gpl-license.html        */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /*  History:                                                           */                      
+     /*                                                                     */                      
+     /*  Datum       Name          Änderung                                 */                      
+     /*  ----------  ------------  ---------------------------------------  */                      
+     /*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                      
+     /*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                      
+     /*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                      
+     /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
+     /*                            2048 to 8192.                            */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /* >>PRE-COMPILER<<                                                    */                      
+     /*                                                                     */                      
+     /*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */                      
+     /*                           SRCFILE(&SL/&SF) +                        */                      
+     /*                           SRCMBR(&SM);                              */                      
+     /*                                                                     */                      
+     /*   >>COMPILE<<                                                       */                      
+     /*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */                      
+     /*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */                      
+     /*     >>PARM<< HLPID(STRPREPRC);                                      */                      
+     /*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */                      
+     /*     >>PARM<< PRDLIB(&LI);                                           */                      
+     /*   >>END-COMPILE<<                                                   */                      
+     /*                                                                     */                      
+     /*   >>EXECUTE<<                                                       */                      
+     /*                                                                     */                      
+     /* >>END-PRE-COMPILER<<                                                */                      
+     /* =================================================================== */                      
                                                                                                     
              CMD        PROMPT('Pre-Prozessor starten')                                             
                                                                                                     
@@ -11349,7 +11364,7 @@ srccssid=  "00273">
                           PROMPT('Teildatei')                                                       
                                                                                                     
              PARM       KWD(CMD       ) TYPE(*CMDSTR)      +                                        
-                          LEN(2048)                        +                                        
+                          LEN(8192)                        +                                        
                           MIN(0)                           +                                        
                           PROMPT('Auszuführender Befehl')                                           
                                                                                                     
@@ -11722,54 +11737,56 @@ srclib  =  "selected  "
 srclen  =  "00112"                                                                                  
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
-/* =================================================================== */                           
-/*                                                                     */                           
-/*  Kurzdokumentation :                                                */                           
-/*                                                                     */                           
-/*  Bereich . . . : STRPREPRC                                          */                           
-/*  Objekt  . . . : STRPREPRC                                          */                           
-/*  Beschreibung  : Start Pre-Processor - Eng                          */                           
-/*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */                           
-/*  Datum . . . . : 21.11.2000                                         */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/*                                                                     */                           
-/*  This software is free software, you can redistribute it and/or     */                           
-/*  modify it under the terms of the GNU General Public License (GPL)  */                           
-/*  as published by the Free Software Foundation.                      */                           
-/*                                                                     */                           
-/*  See GNU General Public License for details.                        */                           
-/*          http://www.opensource.org                                  */                           
-/*          http://www.opensource.org/licenses/gpl-license.html        */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/*  History:                                                           */                           
-/*                                                                     */                           
-/*  Datum       Name          Änderung                                 */                           
-/*  ----------  ------------  ---------------------------------------  */                           
-/*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                           
-/*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                           
-/*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                           
-/*                                                                     */                           
-/* =================================================================== */                           
-/* >>PRE-COMPILER<<                                                    */                           
-/*                                                                     */                           
-/*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */                           
-/*                           SRCFILE(&SL/&SF) +                        */                           
-/*                           SRCMBR(&SM);                              */                           
-/*                                                                     */                           
-/*   >>COMPILE<<                                                       */                           
-/*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */                           
-/*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */                           
-/*     >>PARM<< HLPID(STRPREPRC);                                      */                           
-/*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */                           
-/*     >>PARM<< PRDLIB(&LI);                                           */                           
-/*   >>END-COMPILE<<                                                   */                           
-/*                                                                     */                           
-/*   >>EXECUTE<<                                                       */                           
-/*                                                                     */                           
-/* >>END-PRE-COMPILER<<                                                */                           
-/* =================================================================== */                           
+     /* =================================================================== */                      
+     /*                                                                     */                      
+     /*  Kurzdokumentation :                                                */                      
+     /*                                                                     */                      
+     /*  Bereich . . . : STRPREPRC                                          */                      
+     /*  Objekt  . . . : STRPREPRC                                          */                      
+     /*  Beschreibung  : Start Pre-Processor - Eng                          */                      
+     /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */                      
+     /*  Datum . . . . : 21.11.2000                                         */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /*                                                                     */                      
+     /*  This software is free software, you can redistribute it and/or     */                      
+     /*  modify it under the terms of the GNU General Public License (GPL)  */                      
+     /*  as published by the Free Software Foundation.                      */                      
+     /*                                                                     */                      
+     /*  See GNU General Public License for details.                        */                      
+     /*          http://www.opensource.org                                  */                      
+     /*          http://www.opensource.org/licenses/gpl-license.html        */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /*  History:                                                           */                      
+     /*                                                                     */                      
+     /*  Datum       Name          Änderung                                 */                      
+     /*  ----------  ------------  ---------------------------------------  */                      
+     /*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                      
+     /*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                      
+     /*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                      
+     /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
+     /*                            2048 to 8192.                            */                      
+     /*                                                                     */                      
+     /* =================================================================== */                      
+     /* >>PRE-COMPILER<<                                                    */                      
+     /*                                                                     */                      
+     /*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */                      
+     /*                           SRCFILE(&SL/&SF) +                        */                      
+     /*                           SRCMBR(&SM);                              */                      
+     /*                                                                     */                      
+     /*   >>COMPILE<<                                                       */                      
+     /*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */                      
+     /*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */                      
+     /*     >>PARM<< HLPID(STRPREPRC);                                      */                      
+     /*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */                      
+     /*     >>PARM<< PRDLIB(&LI);                                           */                      
+     /*   >>END-COMPILE<<                                                   */                      
+     /*                                                                     */                      
+     /*   >>EXECUTE<<                                                       */                      
+     /*                                                                     */                      
+     /* >>END-PRE-COMPILER<<                                                */                      
+     /* =================================================================== */                      
                                                                                                     
              CMD        PROMPT('Start Pre-Processor')                                               
                                                                                                     
@@ -11783,7 +11800,7 @@ srccssid=  "00273">
                           PROMPT('Source member')                                                   
                                                                                                     
              PARM       KWD(CMD       ) TYPE(*CMDSTR)      +                                        
-                          LEN(2048)                        +                                        
+                          LEN(8192)                        +                                        
                           MIN(0)                           +                                        
                           PROMPT('Creation command')                                                
                                                                                                     
