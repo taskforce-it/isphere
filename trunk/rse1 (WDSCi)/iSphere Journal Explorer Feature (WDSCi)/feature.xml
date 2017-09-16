@@ -31,7 +31,6 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
 
    <requires>
       <import plugin="biz.isphere.core" version="3.1.0.b003" match="perfect"/>
-      <import plugin="biz.isphere.base" version="3.1.0.b003" match="perfect"/>
    </requires>
 
    <plugin
