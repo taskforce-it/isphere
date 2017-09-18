@@ -28,6 +28,8 @@ header consists of a series of tags, similar to HTML or XML. The tags and their 
 <tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;PARM&lt;&lt;            </td><td width="5%" align="center" valign="top">-</td><td valign="top">Parameter and value.</td></tr>
 <tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;EXECUTE&lt;&lt;         </td><td width="5%" align="center" valign="top">-</td><td valign="top">Execution of the object creation command.</td></tr>
 <tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;CMD&lt;&lt;             </td><td width="5%" align="center" valign="top">-</td><td valign="top">Pre- or post command, that is executed before/after the &gt;&gt;EXECUTE&lt;&lt; tag.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;LIBL&lt;&lt;            </td><td width="5%" align="center" valign="top">-</td><td valign="top">Changes the user entries of the library list and saves the previous list to variable &LX.</td></tr>
+<tr><td width="25%" nowrap="nowrap" valign="top">&gt;&gt;CURLIB&lt;&lt;          </td><td width="5%" align="center" valign="top">-</td><td valign="top">Changes the current library and saves the previous value to variable &CX.</td></tr>
 </table>
 <p>
 There are no differences between the three parameter sections. Each section works the same way. It
@@ -76,10 +78,19 @@ General purpose parameters/variables:
 <tr><td width="10%" valign="top">&U9</td><td width="5%" align="center" valign="top">-</td><td valign="top">User defined value #9</td></tr>
 </table>
 <p>
+Library list parameters/variables:
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">&LL</td><td width="5%" align="center" valign="top">-</td><td valign="top">Library list</td></tr>
+<tr><td width="10%" valign="top">&CL</td><td width="5%" align="center" valign="top">-</td><td valign="top">Current library</td></tr>
+<tr><td width="10%" valign="top">&LX</td><td width="5%" align="center" valign="top">-</td><td valign="top">Previous library list</td></tr>
+<tr><td width="10%" valign="top">&CX</td><td width="5%" align="center" valign="top">-</td><td valign="top">Previous current library</td></tr>
+</table>
+<p>
 The STRPREPRC utility does not distinguish between the variables. All variables are handled the same as string 
 values.
 <p>
-<h2>Example Header</h2>
+<h2>Example Header 1</h2>
 <pre class="code">
       //* >>PRE-COMPILER<<                                                       (1)
       //*   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +             (2)
@@ -94,6 +105,42 @@ values.
       //*   >>EXECUTE<<                                                          (7)
       //*   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                              (8)
       //* >>END-PRE-COMPILER<<                                                   (9)
+</pre>
+<p>
+<u>Comments:</u>
+<p>
+<table border="0">
+<tr><td width="10%" valign="top">(1)</td><td valign="top">Start of the STRPREPRC header.</td></tr>
+<tr><td width="10%" valign="top">(2)</td><td valign="top">Base object creation command. Can be overridden with the <i>Creation command</i> (CMD) 
+                                                          parameter of the STRPREPRC command.</td></tr>
+<tr><td width="10%" valign="top">(3)</td><td valign="top">Start of the parameter section.</td></tr>
+<tr><td width="10%" valign="top">(4.1)</td><td valign="top">First overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(4.2)</td><td valign="top">Second overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(4.3)</td><td valign="top">Third overridden parameter.</td></tr>
+<tr><td width="10%" valign="top">(5)</td><td valign="top">End of the parameter section.</td></tr>
+<tr><td width="10%" valign="top">(6)</td><td valign="top">Pre-command that is execute before the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(7)</td><td valign="top">Execution of the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(8)</td><td valign="top">Post-command that is execute after the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(9)</td><td valign="top">End of the STRPREPRC header.</td></tr>
+</table>
+<p>
+<h2>Example Header 2</h2>
+<pre class="code">
+      -- >>PRE-COMPILER<<                                                       (1)
+      --   >>CURLIB<<                                                           (2)
+      --   >>LIBL<<                                                             (3)
+      --   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +             
+      --                 SRCMBR(&SM);
+      --   >>IMPORTANT<<                                                        (3)
+      --     >>PARM<<  TRUNCNBR(*NO);                                           (4.1)
+      --     >>PARM<<  DBGVIEW(*LIST);                                          (4.2)
+      --     >>PARM<<  OPTION(*EVENTF);                                         (4.3)
+      --   >>END-IMPORTANT<<                                                    (5)
+      --   >>CMD<<     CRTDUPOBJ OBJ(QRPGLESRC) FROMLIB(QGPL) +                 (6)
+      --                 OBJTYPE(*FILE) TOLIB(QTEMP);
+      --   >>EXECUTE<<                                                          (7)
+      --   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                              (8)
+      -- >>END-PRE-COMPILER<<                                                   (9)
 </pre>
 <p>
 <u>Comments:</u>
