@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/16/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/18/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -3029,13 +3029,13 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.14.1 - 16.09.2017 - mailto: thomas.raddatz@tools400.de')                       
+     h COPYRIGHT('V1.14.2 - 18.09.2017 - mailto: thomas.raddatz@tools400.de')                       
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.14.1'                                                 
+     d                 C                   '1.14.2'                                                 
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '16.09.2017'                                             
+     d                 C                   '18.09.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -7843,6 +7843,9 @@ srccssid=  "00273">
       *  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     *                       
       *                            2048 to 8192.                            *                       
       *                                                                     *                       
+      *  18.09.2017  Th.Raddatz    Fixed problem that 'cmdLongLength'       *                       
+      *                            was not properly filled.                 *                       
+      *                                                                     *                       
       * =================================================================== *                       
       * >>PRE-COMPILER<<                                                    *                       
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *                       
@@ -9999,6 +10002,7 @@ srccssid=  "00273">
          if (g_pgmCmdExc <> '*NONE');                                                               
             exitPgmName = %trim(g_libPgmCmdExc) + '/' + %trim(g_pgmCmdExc);                         
             cmdLongFixLength = i_cmd;                                                               
+            cmdLongLength = %len(cmdLongFixLength);                                                 
             exitPgm(cmdLongFixLength: cmdLongLength);                                               
             i_cmd = %trimR(%subst(cmdLongFixLength: 1: %int(cmdLongLength)));                       
          endif;                                                                                     
@@ -10059,6 +10063,10 @@ srccssid=  "00273">
       *  ... &1.                                                                                    
       /COPY QSTRPREPRC,PRZ0029                                                                      
       /free                                                                                         
+                                                                                                    
+         if (i_cmd = '');                                                                           
+            i_cmd = '*MISSING';                                                                     
+         endif;                                                                                     
                                                                                                     
          clear PRZ0029;                                                                             
          prefix = 'STRPREPRC: ';                                                                    
