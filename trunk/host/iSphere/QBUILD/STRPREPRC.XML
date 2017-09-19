@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/18/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/19/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -3029,13 +3029,13 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.14.2 - 18.09.2017 - mailto: thomas.raddatz@tools400.de')                       
+     h COPYRIGHT('V1.14.3 - 19.09.2017 - mailto: thomas.raddatz@tools400.de')                       
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.14.2'                                                 
+     d                 C                   '1.14.3'                                                 
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '18.09.2017'                                             
+     d                 C                   '19.09.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -11631,7 +11631,7 @@ srccssid=  "00273">
                           DFT(*NONE)                       +                                        
                           SNGVAL((*NONE))                  +                                        
                           PMTCTL(*PMTRQS)                  +                                        
-                          PROMPT('Bibliotheksliste (&LL)')                                          
+                          PROMPT('Bibliotheksliste')                                                
                                                                                                     
              PARM       KWD(TAGSREQ   ) TYPE(*LGL)         +                                        
                           LEN(1)                           +                                        
@@ -11657,7 +11657,7 @@ srccssid=  "00273">
                           LEN(10)                          +                                        
                           DFT(*CRTDFT)                     +                                        
                           SPCVAL((*SAME) (*CRTDFT))        +                                        
-                          PROMPT('Current library (&CL)')                                           
+                          PROMPT('Aktuelle Bibliothek (&CL)')                                       
                                                                                                     
              ELEM         TYPE(*CHAR)                      +                                        
                           MIN(0)                           +                                        
@@ -11665,7 +11665,7 @@ srccssid=  "00273">
                           LEN(10)                          +                                        
                           DFT(*NONE)                       +                                        
                           SNGVAL((*NONE))                  +                                        
-                          PROMPT('Library list (&LL)')                                              
+                          PROMPT('Bibliotheksliste (&LL)')                                          
                                                                                                     
  QEXICMDEXC: QUAL       TYPE(*NAME)                        +                                        
                           LEN(10)                                                                   
