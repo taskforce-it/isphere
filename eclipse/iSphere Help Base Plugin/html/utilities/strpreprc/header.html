@@ -91,20 +91,21 @@ The STRPREPRC utility does not distinguish between the variables. All variables 
 values.
 <p>
 <h2>Example Header 1</h2>
+This header is an example of a general purpose STRPREPRC header.
 <pre class="code">
-      //* >>PRE-COMPILER<<                                                       (1)
-      //*   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +             (2)
+      //* >>PRE-COMPILER<<                                                        (1)
+      //*   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +              (2)
       //*                 SRCMBR(&SM);
-      //*   >>IMPORTANT<<                                                        (3)
-      //*     >>PARM<<  TRUNCNBR(*NO);                                           (4.1)
-      //*     >>PARM<<  DBGVIEW(*LIST);                                          (4.2)
-      //*     >>PARM<<  OPTION(*EVENTF);                                         (4.3)
-      //*   >>END-IMPORTANT<<                                                    (5)
-      //*   >>CMD<<     CRTDUPOBJ OBJ(QRPGLESRC) FROMLIB(QGPL) +                 (6)
+      //*   >>IMPORTANT<<                                                         (3)
+      //*     >>PARM<<  TRUNCNBR(*NO);                                            (4.1)
+      //*     >>PARM<<  DBGVIEW(*LIST);                                           (4.2)
+      //*     >>PARM<<  OPTION(*EVENTF);                                          (4.3)
+      //*   >>END-IMPORTANT<<                                                     (5)
+      //*   >>CMD<<     CRTDUPOBJ OBJ(QRPGLESRC) FROMLIB(QGPL) +                  (6)
       //*                 OBJTYPE(*FILE) TOLIB(QTEMP);
-      //*   >>EXECUTE<<                                                          (7)
-      //*   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                              (8)
-      //* >>END-PRE-COMPILER<<                                                   (9)
+      //*   >>EXECUTE<<                                                           (7)
+      //*   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                               (8)
+      //* >>END-PRE-COMPILER<<                                                    (9)
 </pre>
 <p>
 <u>Comments:</u>
@@ -125,39 +126,33 @@ values.
 </table>
 <p>
 <h2>Example Header 2</h2>
+This header demonstrates how to use STRPREPRC together with XCRTSQLOBJ of the <a target="CMOne" href="https://taskforce-it.de/de/cmone/">CMOne</a> change management system.
 <pre class="code">
-      -- >>PRE-COMPILER<<                                                       (1)
-      --   >>CURLIB<<                                                           (2)
-      --   >>LIBL<<                                                             (3)
-      --   >>CRTCMD<<  CRTRPGMOD MODULE(&LI/&OB) SRCFILE(&SL/&SF) +             
-      --                 SRCMBR(&SM);
-      --   >>IMPORTANT<<                                                        (3)
-      --     >>PARM<<  TRUNCNBR(*NO);                                           (4.1)
-      --     >>PARM<<  DBGVIEW(*LIST);                                          (4.2)
-      --     >>PARM<<  OPTION(*EVENTF);                                         (4.3)
-      --   >>END-IMPORTANT<<                                                    (5)
-      --   >>CMD<<     CRTDUPOBJ OBJ(QRPGLESRC) FROMLIB(QGPL) +                 (6)
-      --                 OBJTYPE(*FILE) TOLIB(QTEMP);
-      --   >>EXECUTE<<                                                          (7)
-      --   >>CMD<<     DLTF FILE(QTEMP/QRPGLESRC);                              (8)
-      -- >>END-PRE-COMPILER<<                                                   (9)
+      --  >>PRE-COMPILER<<                                                        (1)
+      --    >>CURLIB<<  &CL;                                                      (2)
+      --    >>LIBL<<    &LL;                                                      (3)
+      --    >>CRTCMD<<  XCRTSQLOBJ SQLOBJ(&LI/&OB) SRCFILE(&SL/&SF) SRCMBR(&SM) + (4)
+      --                TYPE(*TABLE) RUNSQLSTM1('NAMING(*SYS)');
+      --    >>IMPORTANT<<                                                         (5)
+      --      >>PARM<<  LIBL(&LX);                                                (5.1)
+      --    >>END-IMPORTANT<<                                                     (6)
+      --    >>EXECUTE<<                                                           (7)
+      --  >>END-PRE-COMPILER<<                                                    (8)
 </pre>
 <p>
 <u>Comments:</u>
 <p>
 <table border="0">
 <tr><td width="10%" valign="top">(1)</td><td valign="top">Start of the STRPREPRC header.</td></tr>
-<tr><td width="10%" valign="top">(2)</td><td valign="top">Base object creation command. Can be overridden with the <i>Creation command</i> (CMD) 
+<tr><td width="10%" valign="top">(2)</td><td valign="top">Sets the current library to the value specified at parameter <i>Library list</i> (LIBL) of the STRPREPRC command.</td></tr>
+<tr><td width="10%" valign="top">(3)</td><td valign="top">Sets the library list to the value specified at parameter <i>Library list</i> (LIBL) of the STRPREPRC command.</td></tr>
+<tr><td width="10%" valign="top">(4)</td><td valign="top">Base object creation command. Can be overridden with the <i>Creation command</i> (CMD) 
                                                           parameter of the STRPREPRC command.</td></tr>
-<tr><td width="10%" valign="top">(3)</td><td valign="top">Start of the parameter section.</td></tr>
-<tr><td width="10%" valign="top">(4.1)</td><td valign="top">First overridden parameter.</td></tr>
-<tr><td width="10%" valign="top">(4.2)</td><td valign="top">Second overridden parameter.</td></tr>
-<tr><td width="10%" valign="top">(4.3)</td><td valign="top">Third overridden parameter.</td></tr>
-<tr><td width="10%" valign="top">(5)</td><td valign="top">End of the parameter section.</td></tr>
-<tr><td width="10%" valign="top">(6)</td><td valign="top">Pre-command that is execute before the CRTRPGMOD command.</td></tr>
+<tr><td width="10%" valign="top">(5)</td><td valign="top">Start of the parameter section.</td></tr>
+<tr><td width="10%" valign="top">(5.1)</td><td valign="top">First overridden parameter. Forwards library list that was active before it has been changed at the <i>&gt;&gt;LIBL&lt;&lt;</i> tag to the XCRTSQLOBJ command.</td></tr>
+<tr><td width="10%" valign="top">(6)</td><td valign="top">End of the parameter section.</td></tr>
 <tr><td width="10%" valign="top">(7)</td><td valign="top">Execution of the CRTRPGMOD command.</td></tr>
-<tr><td width="10%" valign="top">(8)</td><td valign="top">Post-command that is execute after the CRTRPGMOD command.</td></tr>
-<tr><td width="10%" valign="top">(9)</td><td valign="top">End of the STRPREPRC header.</td></tr>
+<tr><td width="10%" valign="top">(8)</td><td valign="top">End of the STRPREPRC header.</td></tr>
 </table>
 <p>
 <h2>Assign Values Automatically</h2>
