@@ -47,6 +47,8 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 
     private Map<String, IViewManager> viewManagers;
 
+    public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
+
     public ISphereRSEPlugin() {
         super();
         plugin = this;
@@ -72,7 +74,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
         super.stop(context);
 
         ConnectionManager.dispose();
-        
+
         for (IViewManager viewManager : viewManagers.values()) {
             viewManager.dispose();
         }
@@ -85,9 +87,10 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
+        reg.put(IMAGE_RETRIEVE_BINDER_SOURCE, getImageDescriptor(IMAGE_RETRIEVE_BINDER_SOURCE));
     }
 
-    @CMOne(info="Don`t change this method due to CMOne compatibility reasons")
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
