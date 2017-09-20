@@ -1,10 +1,15 @@
 
-Changelog: iSphere 3.1.0.b004 
---------------------------------------------
+Changelog: iSphere 3.1.0.b007
+-----------------------------
+ • Added option to retrieve the binder source from a service program.
+
+Changelog: iSphere 3.1.0.b004 to b006
+-------------------------------------
  • Added iSphere Journal Explorer plug-in.
  • Changed library dependency to version 3.1.0.
  • Change iSphere compare dialog to load/store member values when called 
    from the iSphere main menu (no members passed to compare dialog).
+ • Updated STRPREPRC utility to version 1.14.3.
  • Fixed OK button enablement of RSECompareDialog.
 
 Changelog: iSphere 3.1.0.b003 
