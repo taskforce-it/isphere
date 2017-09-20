@@ -14,6 +14,8 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
 
+    public static String iSphere_Retrieve_Binder_Source;
+
     public static String iSphere_Message_File_Editor;
 
     public static String iSphere_Compare_Editor;
@@ -161,6 +163,10 @@ public class Messages extends NLS {
     public static String Filter_colon;
 
     public static String Information;
+
+    public static String Description;
+
+    public static String Copy_to_clipboard;
     
     static {
         // initialize resource bundle

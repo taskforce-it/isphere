@@ -52,6 +52,18 @@
       	
       	<!--
       	  ==========================================
+      	    Service Program Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Retrieve Binder Source"
+			class="biz.isphere.rse.actions.RetrieveBinderSourceAction"
+			id="biz.isphere.rse.actions.RetrieveBinderSourceAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
       	    Message File Editor Contributions
       	  ==========================================
       	-->
