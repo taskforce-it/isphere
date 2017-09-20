@@ -1343,7 +1343,9 @@ public class Messages extends NLS {
     public static String Error_No_Search_Options_available;
 
     public static String Additional_Options_colon;
-    
+
+    public static String Retrieve_Binder_Source;
+
     /*
      * Warning messages
      */
