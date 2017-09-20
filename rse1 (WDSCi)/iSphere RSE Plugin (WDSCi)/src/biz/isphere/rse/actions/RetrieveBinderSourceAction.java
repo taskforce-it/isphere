@@ -25,7 +25,6 @@ import org.eclipse.ui.progress.IProgressService;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -67,7 +66,7 @@ public class RetrieveBinderSourceAction extends ISeriesSystemBaseAction implemen
     protected ArrayList arrayListSelection;
 
     private static final String RESID_MSGTYPE_ESCAPE = ISeriesSystemPlugin.getString("com.ibm.etools.systems.as400.ui.msgType.escape");
-    
+
     public RetrieveBinderSourceAction() {
         super(Messages.iSphere_Retrieve_Binder_Source, "", null);
         arrayListSelection = new ArrayList();
@@ -111,7 +110,8 @@ public class RetrieveBinderSourceAction extends ISeriesSystemBaseAction implemen
 
     }
 
-    public void run(IAction arg0) {
+    @Override
+    public void run() {
 
         if (arrayListSelection.size() > 0) {
 
