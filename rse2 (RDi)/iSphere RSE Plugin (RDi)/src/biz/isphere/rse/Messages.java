@@ -67,7 +67,7 @@ public class Messages extends NLS {
     public static String Enter_or_select_a_simple_or_generic_file_name;
 
     public static String Enter_or_select_a_simple_or_generic_member_name;
-    
+
     public static String Library;
 
     public static String Message_file;
@@ -141,15 +141,19 @@ public class Messages extends NLS {
     public static String IncludeMessageId;
 
     public static String Specify_whether_or_not_to_include_the_message_id;
-    
+
     public static String Refer_to_help_for_details;
-    
+
     public static String Filter_pool_colon;
-    
+
     public static String Filter_colon;
 
     public static String Information;
-    
+
+    public static String Description;
+
+    public static String Copy_to_clipboard;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
