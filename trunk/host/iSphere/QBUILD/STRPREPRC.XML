@@ -3029,11 +3029,11 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.14.4 - 21.09.2017 - mailto: thomas.raddatz@tools400.de')                       
+     h COPYRIGHT('V1.14.5 - 21.09.2017 - mailto: thomas.raddatz@tools400.de')                       
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.14.4'                                                 
+     d                 C                   '1.14.5'                                                 
      d STRPREPRC_DATE...                                                                            
      d                 C                   '21.09.2017'                                             
       *                                                                                             
@@ -8366,7 +8366,7 @@ srccssid=  "00273">
      D                 PR                                                                           
      D                                     extproc('replaceVar')                                    
      D  i_var                        10a   value                                                    
-     D  i_value                     256a   value                                                    
+     D  i_value                            value  like(cmdLong_t)                                   
      D  io_string                                 like(cmdLong_t)                                   
       *                                                                                             
      D QMHRMVPM...                                                                                  
@@ -10618,7 +10618,7 @@ srccssid=  "00273">
      P                 b                                                                            
      D                 pi                                                                           
      D  i_var                        10a   value                                                    
-     D  i_value                     256a   value                                                    
+     D  i_value                            value  like(cmdLong_t)                                   
      D  io_string                                 like(cmdLong_t)                                   
       *                                                                                             
      D x               s                   like(int4_t)                                             
