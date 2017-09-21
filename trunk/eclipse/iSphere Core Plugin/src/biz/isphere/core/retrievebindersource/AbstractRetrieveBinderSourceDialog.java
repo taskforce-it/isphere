@@ -22,8 +22,8 @@ import biz.isphere.core.Messages;
 public abstract class AbstractRetrieveBinderSourceDialog extends XDialog {
 
     private static final String TEMP_SOURCE_FILE_LIBRARY = "QTEMP";
-    private static final String TEMP_SOURCE_FILE = "RTVBNDSRC_";
-    private static final String TEMP_SOURCE_MEMBER = "RTVBNDSRC";
+    private static final String TEMP_SOURCE_FILE = "XBNDSRCX";
+    private static final String TEMP_SOURCE_MEMBER = "XBNDSRCX";
 
     private String connectionName;
     private String library;
