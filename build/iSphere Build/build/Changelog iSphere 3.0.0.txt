@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.1.0.b008
+-----------------------------
+ • Added option to reset the "Copy Members" dialog.
+ • Updated STRPREPRC to v1.15.
+ • Fixed problem that the date and time values were not preserved when
+   copying members between two systems.
+
 Changelog: iSphere 3.1.0.b007
 -----------------------------
  • Added option to retrieve the binder source from a service program.
