@@ -34,6 +34,7 @@
             <topic label="Create Service Program" href="html/utilities/strpreprc/example_crtsrvpgm.html" />
             <topic label="Create Data Area" href="html/utilities/strpreprc/example_crtdtaara.html" />
             <topic label="Create SQL Table" href="html/utilities/strpreprc/example_runsqlstm.html" />
+            <topic label="Create SQL Table with CMOne" href="html/utilities/strpreprc/example_xcrtsqlobj.html" />
          </topic> 
          <!-- <topic label="Plug-in"> -->
             <anchor id="strpreprc_plugin" />

@@ -125,6 +125,7 @@ This header is an example of a general purpose STRPREPRC header.
 <tr><td width="10%" valign="top">(9)</td><td valign="top">End of the STRPREPRC header.</td></tr>
 </table>
 <p>
+<a id="example_header_2"></a>
 <h2>Example Header 2</h2>
 This header demonstrates how to use STRPREPRC together with XCRTSQLOBJ of 
 the <a target="CMOne" href="https://taskforce-it.de/de/cmone/">CMOne</a> change management system. In
@@ -142,6 +143,26 @@ CMOOBJ and CMODTA) at parameter <i>Library list</i> (LIBL) of the STRPREPRC comm
       --    >>EXECUTE<<                                                           (7)
       --  >>END-PRE-COMPILER<<                                                    (8)
 </pre>
+<p>
+<b>Notice:</b> The header above is more advanced and specifies the object creation command for documentation 
+               purposes. Typically the creation command is passed from the Change Management System (CMS) to
+               STRPREPRC.
+               <br>
+               The <i>&gt;&gt;CRTCMD&lt;&lt;</i> tag and the <i>&gt;&gt;IMPORTANT&lt;&lt;</i> section are optional.
+<p>
+See also: <a href="./example_xcrtsqlobj.html">Create SQL Table with CMOne</a> for a minimal STRPREPRC header.
+<p>
+The affected CMOne Type Codes must be defined like that: 
+<p>
+<table border="0" >
+<tr><th align="left" colspan="3">Type Code: TABLE</th></tr>
+<tr><td valign="top" nowrap>Command            </td><td width="5%">&nbsp;</td><td valign="top" nowrap>STRPREPRC                                   </td><td width="5%">&nbsp;</td><td>Object creation command of the type code.</td></tr>
+<tr><td valign="top" nowrap>Parameter CMD      </td><td width="5%">&nbsp;</td><td valign="top" nowrap>&CL/XCRTSQLOBJ ... TYPE(*TABLE) ... LIBL(VAR_LX)</td><td width="5%">&nbsp;</td><td>CMOne command for creating SQL objects.<br>Ensure to specify the LIBL() parameter as demonstrated here.</td></tr>
+<tr><td valign="top" nowrap>Parameter USRDEFVAR</td><td width="5%">&nbsp;</td><td valign="top" nowrap>(VAR_LX '&LX')                              </td><td width="5%">&nbsp;</td><td>Map variable user-defined variable <i>VAR_LX</i> to STRPREPRC variable <i>&LX</i>.</td></tr>
+<tr><td valign="top" nowrap>Parameter LIBL     </td><td width="5%">&nbsp;</td><td valign="top" nowrap>*CRTDFT (&LL)                               </td><td width="5%">&nbsp;</td><td>CMOne parameter <i>LIBL</i> must be set to CMOne replacement variable <i>&LL</i>.</td></tr>
+</table>
+<p>
+<b>Notice:</b> The CMOne replacement variable <i>&CL</i> and <i>&LL</i> are available with CMOne 5.1.9.
 <p>
 <u>Comments:</u>
 <p>
