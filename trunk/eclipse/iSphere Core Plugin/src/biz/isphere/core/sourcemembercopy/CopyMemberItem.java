@@ -12,13 +12,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.SourceLine;
 
 import com.ibm.as400.access.AS400Message;
 
@@ -304,10 +303,9 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
                     getFromMember() });
             }
 
-            fromSourceMember.download(null);
+            SourceLine[] sourceLines = fromSourceMember.downloadSourceMember(null);
 
-            IFile downloadedLocalResource = fromSourceMember.getLocalResource();
-            if (downloadedLocalResource == null) {
+            if (sourceLines.length == 0) {
                 return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0, new Object[] { getFromLibrary(), getFromFile(),
                     getFromMember() });
             }
@@ -317,6 +315,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             } else {
                 message = prepareSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
             }
+
             if (message != null) {
                 return message;
             }
@@ -326,8 +325,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getToLibrary(), getToFile(), getToMember() });
             }
 
-            toSourceMember.setContents(fromSourceMember.getContents());
-            message = toSourceMember.upload(null);
+            message = toSourceMember.uploadSourceMember(sourceLines, null);
             if (message != null) {
                 return message;
             }
@@ -338,7 +336,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Unexpected error when copying member ***", e);
+            ISpherePlugin.logError("*** Unexpected error when copying member ***", e); //$NON-NLS-1$
             return ExceptionHelper.getLocalizedMessage(e);
         }
 
