@@ -223,6 +223,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return true;
     }
 
+    public void reset() {
+
+        setErrorMessage(null);
+        setCopyStatus(false);
+    }
+
     private String performLocalCopy(String connectionName) {
 
         try {

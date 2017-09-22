@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -110,9 +112,9 @@ public class CopyMemberDialog extends XDialog {
 
     @Override
     protected void cancelPressed() {
-        
+
         storeScreenValues();
-        
+
         super.cancelPressed();
     }
 
@@ -284,9 +286,46 @@ public class CopyMemberDialog extends XDialog {
     }
 
     @Override
+    protected Control createContents(Composite parent) {
+
+        Control control = super.createContents(parent);
+
+        setControlEnablement();
+
+        return control;
+    }
+
+    @Override
     protected void createButtonsForButtonBar(Composite parent) {
+        Button btnReset = createButton(parent, IDialogConstants.RETRY_ID, Messages.Reset, false);
+        btnReset.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                jobDescription.reset();
+                setControlEnablement();
+                setFocus();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
         super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setText(Messages.Copy);
+    }
+
+    @Override
+    public void setFocus() {
+
+        if (StringHelper.isNullOrEmpty(comboToConnection.getText())) {
+            comboToConnection.setFocus();
+        } else if (StringHelper.isNullOrEmpty(textToFile.getText())) {
+            textToFile.setFocus();
+        } else if (StringHelper.isNullOrEmpty(textToLibrary.getText())) {
+            textToLibrary.setFocus();
+        } else {
+            comboToConnection.setFocus();
+        }
     }
 
     /**
@@ -392,13 +431,16 @@ public class CopyMemberDialog extends XDialog {
         if (jobDescription == null || !jobDescription.haveItemsToCopy() || jobDescription.isActive()) {
             setButtonEnablement(getButton(IDialogConstants.OK_ID), false);
             setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CLOSE_LABEL);
+            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), true);
         } else {
             setButtonEnablement(getButton(IDialogConstants.OK_ID), true);
             setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CANCEL_LABEL);
+            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), false);
         }
 
         if (jobDescription.isActive()) {
             setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), false);
+            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), false);
         } else {
             setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), true);
         }

@@ -40,7 +40,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
     private Set<String> fromFileNames = new HashSet<String>();
 
     private boolean hasDataLostError;
-    
+
     private List<ModifiedListener> modifiedListeners;
     private int copiedCount;
     private boolean isActive;
@@ -195,9 +195,9 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
             RecordFormatDescriptionsStore fromSourceFiles = new RecordFormatDescriptionsStore(fromSystem);
             RecordFormatDescriptionsStore toSourceFiles = new RecordFormatDescriptionsStore(toSystem);
-            
+
             Set<String> targetMembers = new HashSet<String>();
-            
+
             for (CopyMemberItem member : members) {
                 if (member.isCopied()) {
                     continue;
@@ -207,7 +207,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
                 String to = member.getToQSYSName();
 
                 member.setErrorMessage(null);
-                
+
                 if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
                     member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
                     isError = true;
@@ -251,7 +251,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
     public boolean hasDataLostError() {
         return hasDataLostError;
     }
-    
+
     /**
      * Copies the members.
      * 
@@ -282,6 +282,16 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         }
 
         return !isError;
+    }
+
+    public void reset() {
+
+        for (CopyMemberItem member : members) {
+            member.reset();
+        }
+
+        copiedCount = 0;
+        hasDataLostError = false;
     }
 
     private void startProcess() {

@@ -1346,6 +1346,8 @@ public class Messages extends NLS {
 
     public static String Retrieve_Binder_Source;
 
+    public static String Reset;
+
     /*
      * Warning messages
      */
