@@ -6,4 +6,4 @@ X-Bundle-Info: Enabled the "Delete" key to delete spooled files of the iSphere S
 X-Beta-Version: 3.1.0.b008
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Copy Members bug fix. Now preservung date and time values.\nAdded new feature "Journal Explorer".\nAdded "Map Keys" button to 5250 preferences page.\nAdded menu option "Compare Source Members" to main menu and search result view.\nAdded tooltip showing the search options to search result tabs.\nAdded context menu with option "Display Search Options" to search result tabs.
+X-Beta-Info: Copy Members bug fix. Now preserving date and time values.\nAdded new feature "Journal Explorer".\nAdded "Map Keys" button to 5250 preferences page.\nAdded menu option "Compare Source Members" to main menu and search result view.\nAdded tooltip showing the search options to search result tabs.\nAdded context menu with option "Display Search Options" to search result tabs.
