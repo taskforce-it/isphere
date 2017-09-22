@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/21/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/22/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -3029,13 +3029,13 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.14.5 - 21.09.2017 - mailto: thomas.raddatz@tools400.de')                       
+     h COPYRIGHT('V1.15 - 22.09.2017 - mailto: thomas.raddatz@tools400.de')                         
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.14.5'                                                 
+     d                 C                   '1.15'                                                   
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '21.09.2017'                                             
+     d                 C                   '22.09.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -4942,6 +4942,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER7'.                                                                     
 :IMHELP name='STRPREPRC/USER8'.                                                                     
 :IMHELP name='STRPREPRC/USER9'.                                                                     
+:IMHELP name='STRPREPRC/USRDEFVAR'.                                                                 
 :IMHELP name='STRPREPRC/LIBL'.                                                                      
 :IMHELP name='STRPREPRC/USELIBL'.                                                                   
 :IMHELP name='STRPREPRC/TAGSREQ'.                                                                   
@@ -5897,6 +5898,73 @@ eingetragen werden soll.
 :EHELP.                                                                                             
                                                                                                     
 .********************************************                                                       
+.*  Keyword:  USRDEFVAR (optional)                                                                  
+.********************************************                                                       
+:HELP NAME='STRPREPRC/USRDEFVAR'.                                                                   
+Benutzerdefinierte Variablen (USRDEFVAR) - Hilfe                                                    
+:XH3.Benutzerdefinierte Variablen (USRDEFVAR)                                                       
+:P.                                                                                                 
+Definiert eine Liste von bis zu 20 benutzerdefinierten Variablen                                    
+und deren zugeordnete Werte. Benutzerdefinierte Variablen werden                                    
+vor den STRPREPRC Variablen ersetzt, um benutzerdefinierte                                          
+Variablen STRPREPRC Variablen zuordnen zu können. Dies kann                                         
+erforderlich sein, wenn es nicht möglich ist, eine Variable                                         
+(mit & beginnend) an einen Befehl zu übergeben.                                                     
+:P.                                                                                                 
+Dies kann zum Beispiel wie folgt aussehen:                                                          
+:P.                                                                                                 
+STRPREPRC CMD(XCRTSQLOBJ ... LIBL(V_LX)) USRDEFVAR(V_LX '&LX')                                      
+:P.                                                                                                 
+Damit ersetzt STRPREPC den Wert 'V_LX' des LIBL Parameters des                                      
+XCRTSQLOBJ Befehls mit einer bei der Ausführung des >>LIBL<<                                        
+gesicherten Bibliotheksliste.                                                                       
+:P.                                                                                                 
+Wird die aktuelle Bibliothek mit                                                                    
+dem :HP2.>>CURLIB<<:EHP2. tag geändert, so steht der alte Wert in der                               
+Variablen :HP2.&CX:EHP2. zur Verfügung.                                                             
+:P.                                                                                                 
+:HP2.Die Bibliotheksliste wird am Ende des Programms grundsätzlich auf den                          
+Anfangswert zurückgesetzt.:EHP2.                                                                    
+:P.                                                                                                 
+:IMHELP name='COM/OPTPARM'.                                                                         
+:P.                                                                                                 
+:IMHELP name='COM/VALUES'.                                                                          
+:P.                                                                                                 
+:HP1.Element 1: aktuelle Bibliothek::EHP1.                                                          
+:PARML.                                                                                             
+:PT.:PK DEF.*NONE:EPK.                                                                              
+:PD.Es ist kein Wert angegeben.                                                                     
+:PT.:PV.*SAME:EPV.                                                                                  
+:PD.Die aktuelle Bibliothek in der Bibliotheksliste für                                             
+den aktuellen Thread wird nicht geändert.                                                           
+:PT.:PV.*CRTDFT:EPV.                                                                                
+:PD.Die Bibliotheksliste für den aktuellen Thread soll                                              
+keine Bibliothek enthalten. Wenn Objekte in der                                                     
+aktuellen Bibliothek erstellt werden, wird die                                                      
+Bibliothek QGPL als aktuelle Standardbibliothek                                                     
+verwendet.                                                                                          
+:PT.:PV.Name:EPV.                                                                                   
+:PD.Den Namen der Bibliothek angeben, die den aktuellen                                             
+Bibliothekseintrag in der Bibliotheksliste für den                                                  
+aktuellen Thread ersetzt.                                                                           
+:EPARML.                                                                                            
+:P.                                                                                                 
+:HP1.Element 2: Bibliotheksliste::EHP1.                                                             
+:PARML.                                                                                             
+:PT.:PK DEF.*NONE:EPK.                                                                              
+:PD.Es ist kein Wert angegeben.                                                                     
+:PT.:PV.Name:EPV.                                                                                   
+:PD.Die Namen der Bibliotheken angeben, die dem                                                     
+Benutzerteil der Bibliotheksliste für den aktuellen                                                 
+Thread in der Reihenfolge hinzugefügt werden sollen,                                                
+in der sie durchsucht werden sollen. Es können bis zu                                               
+250 Namen angegeben werden.                                                                         
+:EPARML.                                                                                            
+:IMHELP name='COM/RPLVAR'.                                                                          
+                                                                                                    
+:EHELP.                                                                                             
+                                                                                                    
+.********************************************                                                       
 .*  Keyword:  LIBL (optional)                                                                       
 .********************************************                                                       
 :HELP NAME='STRPREPRC/LIBL'.                                                                        
@@ -5920,7 +5988,7 @@ Anfangswert zurückgesetzt.:EHP2.
 :P.                                                                                                 
 :IMHELP name='COM/VALUES'.                                                                          
 :P.                                                                                                 
-:HP1.Element 1, aktuelle Bibliothek::EHP1.                                                          
+:HP1.Element 1: aktuelle Bibliothek::EHP1.                                                          
 :PARML.                                                                                             
 :PT.:PK DEF.*NONE:EPK.                                                                              
 :PD.Es ist kein Wert angegeben.                                                                     
@@ -5939,7 +6007,7 @@ Bibliothekseintrag in der Bibliotheksliste für den
 aktuellen Thread ersetzt.                                                                           
 :EPARML.                                                                                            
 :P.                                                                                                 
-:HP1.Element 2, Bibliotheksliste::EHP1.                                                             
+:HP1.Element 2: Bibliotheksliste::EHP1.                                                             
 :PARML.                                                                                             
 :PT.:PK DEF.*NONE:EPK.                                                                              
 :PD.Es ist kein Wert angegeben.                                                                     
@@ -6220,6 +6288,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER7'.                                                                     
 :IMHELP name='STRPREPRC/USER8'.                                                                     
 :IMHELP name='STRPREPRC/USER9'.                                                                     
+:IMHELP name='STRPREPRC/USRDEFVAR'.                                                                 
 :IMHELP name='STRPREPRC/LIBL'.                                                                      
 :IMHELP name='STRPREPRC/USELIBL'.                                                                   
 :IMHELP name='STRPREPRC/TAGSREQ'.                                                                   
@@ -7146,11 +7215,54 @@ Specifies the value for the replacement variable
 :EHELP.                                                                                             
                                                                                                     
 .********************************************                                                       
+.*  Keyword:  USRDEFVAR (optional)                                                                  
+.********************************************                                                       
+:HELP NAME='STRPREPRC/USRDEFVAR'.                                                                   
+User defined variables (USRDEFVAR) - Help                                                           
+:XH3.User defined variables (USRDEFVAR)                                                             
+:P.                                                                                                 
+Specifies a list up to 20 user-defined variables and their                                          
+associated values. User-defined variables are replaced before                                       
+STRPREPRC variables in order to be able to map a user-defined                                       
+variabled to a STRPREPRC variable. This can be required, when it                                    
+is not possible to pass a Variable (starting with &) to a                                           
+command.                                                                                            
+:P.                                                                                                 
+That can be done like that:                                                                         
+:P.                                                                                                 
+STRPREPRC CMD(XCRTSQLOBJ ... LIBL(V_LX)) USRDEFVAR(V_LX '&LX')                                      
+:P.                                                                                                 
+With that, STRPREPRC replaces 'V_LX' of parameter LIBL of                                           
+command XCRTSQLOBJ with the library list, which was saved                                           
+when executing the >>LIBL<< tag.                                                                    
+:P.                                                                                                 
+:IMHELP name='COM/OPTPARM'.                                                                         
+:P.                                                                                                 
+:IMHELP name='COM/VALUES'.                                                                          
+:P.                                                                                                 
+:HP1.Element 1: Name::EHP1.                                                                         
+:PARML.                                                                                             
+:PT.:PV.Name:EPV.                                                                                   
+:PD.Name of the user-defined variable.                                                              
+:EPARML.                                                                                            
+:P.                                                                                                 
+:HP1.Element 2: Value::EHP1.                                                                        
+:PARML.                                                                                             
+:PT.:PK DEF.*NONE:EPK.                                                                              
+:PD.Not specified.                                                                                  
+:PT.:PV.Name:EPV.                                                                                   
+:PD.Value of the user-defined variable.                                                             
+:EPARML.                                                                                            
+:IMHELP name='COM/RPLVAR'.                                                                          
+                                                                                                    
+:EHELP.                                                                                             
+                                                                                                    
+.********************************************                                                       
 .*  Keyword:  LIBL (optional)                                                                       
 .********************************************                                                       
 :HELP NAME='STRPREPRC/LIBL'.                                                                        
-Bibliotheksliste (LIBL) - Hilfe                                                                     
-:XH3.Bibliotheksliste (LIBL)                                                                        
+Library list (LIBL) - Hilfe                                                                         
+:XH3.Library list (LIBL)                                                                            
 :P.                                                                                                 
 Specifies a library list for further usage in the                                                   
 STRPREPRC header. The specified library list is available in                                        
@@ -7169,7 +7281,7 @@ the end of the program.:EHP2.
 :P.                                                                                                 
 :IMHELP name='COM/VALUES'.                                                                          
 :P.                                                                                                 
-:HP1.Element 1, current library::EHP1.                                                              
+:HP1.Element 1: Current library::EHP1.                                                              
 :PARML.                                                                                             
 :PT.:PK DEF.*NONE:EPK.                                                                              
 :PD.Not specified.                                                                                  
@@ -7187,7 +7299,7 @@ current library entry in the library list for the
 current thread.                                                                                     
 :EPARML.                                                                                            
 :P.                                                                                                 
-:HP1.Element 2, library list::EHP1.                                                                 
+:HP1.Element 2: Library list::EHP1.                                                                 
 :PARML.                                                                                             
 :PT.:PK DEF.*NONE:EPK.                                                                              
 :PD.Not specified.                                                                                  
@@ -7205,7 +7317,7 @@ Up to 250 names can be specified.
 .*  Keyword:  USELIBL (optional)                                                                    
 .********************************************                                                       
 :HELP NAME='STRPREPRC/USELIBL'.                                                                     
-Use library list implicitly - Hilfe                                                                 
+Use library list implicitly - Help                                                                  
 :XH3.Use library list implicitly (USELIBL)                                                          
 :P.                                                                                                 
 Specifies whether a library list, entered at parameter :HP2.LIBL:EHP2., is                          
@@ -7230,7 +7342,7 @@ when the source does not contain a STRPREPRC header.
 .*  Keyword:  TAGSREQ (optional)                                                                    
 .********************************************                                                       
 :HELP NAME='STRPREPRC/TAGSREQ'.                                                                     
-Pre-Comp. tags required - Hilfe                                                                     
+Pre-Comp. tags required - Help                                                                      
 :XH3.Pre-Comp. tags required (TAGSREQ)                                                              
 :P.                                                                                                 
 Specifies, whether the source member must contain                                                   
@@ -7568,6 +7680,7 @@ srccssid=  "00273">
                              &XUSER7     +                                                          
                              &XUSER8     +                                                          
                              &XUSER9     +                                                          
+                             &USRDEFVAR  +                                                          
                              &LIBL       +                                                          
                              &USELIBL    +                                                          
                              &XTAGSREQ   +                                                          
@@ -7611,6 +7724,15 @@ srccssid=  "00273">
              DCL        VAR(&EXICMDEXC ) TYPE(*CHAR) LEN(  20)                                      
              DCL        VAR(&PGMCMDEXC ) TYPE(*CHAR) LEN(  10)                                      
              DCL        VAR(&LPGMCMDEXC) TYPE(*CHAR) LEN(  10)                                      
+                                                                                                    
+             DCL        VAR(&USRDEFVAR ) TYPE(*CHAR) LEN(2282)                                      
+                /* number of items:            BINARY(2)               */                           
+                /* array of item offsets       BINARY(2)               */                           
+                /* for each item:                                      */                           
+                /*    number of sub-items      BINARY(2)               */                           
+                /*    first sub-item           CHAR(10)                */                           
+                /*    second sub-item          CHAR(100)               */                           
+                                                                                                    
              DCL        VAR(&LIBL      ) TYPE(*CHAR) LEN(2514)                                      
              DCL        VAR(&USELIBL   ) TYPE(*LGL ) LEN(   1)                                      
                 /* number of elements:         BINARY(2)               */                           
@@ -7766,7 +7888,8 @@ srccssid=  "00273">
                                             &LPGMCMDEXC +                                           
                                             &OPTION     +                                           
                                             &LIBL       +                                           
-                                            &USELIBL    )                                           
+                                            &USELIBL    +                                           
+                                            &USRDEFVAR  )                                           
                                                                                                     
              DLTOVR     FILE(SRCFILE) LVL(*)                                                        
                                                                                                     
@@ -7910,6 +8033,8 @@ srccssid=  "00273">
       *                            Renamed a couple of procedures for       *                       
       *                            better names.                            *                       
       *                                                                     *                       
+      *  21.09.2017  Th.Raddatz    Fixed parameter length of replaceVar().  *                       
+      *                                                                     *                       
       * =================================================================== *                       
       * >>PRE-COMPILER<<                                                    *                       
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *                       
@@ -7991,24 +8116,56 @@ srccssid=  "00273">
      D userParm_t      s             50a   based(pDummy)                                            
      D chgObjD_t       s              4a   based(pDummy)                                            
      D objType_t       s             10a   based(pDummy)                                            
+      *                                                                                             
+     D DIM_OPTIONS     c                   5                                                        
+      *                                                                                             
      D option_t        ds                  based(pDummy) qualified                                  
      D  numE                          5i 0                                                          
-     D  option                       10a   dim(5)                                                   
-     D libListInf_t    ds                  qualified based(pDummy)                                  
+     D  option                       10a   dim(DIM_OPTIONS)                                         
+      *                                                                                             
+     D DIM_USRDEFVARS  c                   20                                                       
+      *                                                                                             
+     D inpUsrDefVars_t...                                                                           
+     D                 ds          2282    qualified based(pDummy)                                  
+     D  numElem                       5i 0                                                          
+     D  offsItems                     5i 0 dim(DIM_USRDEFVARS)                                      
+      *                                                                                             
+     D inpUsrDefVar_t...                                                                            
+     D                 ds                  qualified based(pDummy)                                  
+     D  numE                          5i 0                                                          
+     D  name                         10a                                                            
+     D  value                       100a                                                            
+      *                                                                                             
+     D DIM_LIBLIST     c                   250                                                      
+      *                                                                                             
+     D inpLibList_t    ds                  qualified based(pDummy)                                  
      D  numElem                       5i 0                                                          
      D  curLib                       10a                                                            
      D  offsUsrLibl                   5i 0                                                          
      D  numUsrLiblE                   5i 0                                                          
-     D  lib                          10a   dim(250)                                                 
+     D  lib                          10a   dim(DIM_LIBLIST)                                         
+      *                                                                                             
      D libl_t          ds                  qualified based(pDummy)                                  
      D  numE                          5i 0                                                          
-     D  name                               like(lib_t) dim(250)                                     
+     D  name                               like(lib_t) dim(DIM_LIBLIST)                             
+      *                                                                                             
      D liblList_t      ds                  qualified based(pDummy)                                  
      D  curLib                             like(lib_t)                                              
      D  usrLibl                            likeds(libl_t)                                           
+      *                                                                                             
+     D usrDefVars_t    ds                  qualified based(pDummy)                                  
+     D  numE                          5i 0                                                          
+     D  var                                likeds(usrDefVar_t)                                      
+     D                                     dim(DIM_USRDEFVARS)                                      
+      *                                                                                             
+     D usrDefVar_t     ds                  qualified based(pDummy)                                  
+     D  name                         10a                                                            
+     D  value                       100a                                                            
+      *                                                                                             
      D lineData_t      ds                  qualified based(pDummy)                                  
      D  continue                           like(continue_t)                                         
      D  keyData                            like(keyData_t)                                          
+      *                                                                                             
      D variables_t     ds                  qualified based(pDummy)                                  
      D  lib                                like(lib_t)                                              
      D  obj                                like(obj_t)                                              
@@ -8033,6 +8190,7 @@ srccssid=  "00273">
      D  user8                              like(userParm_t)                                         
      D  user9                              like(userParm_t)                                         
      D  libl                               likeds(liblList_t)                                       
+     D  usrDefVars                         likeds(usrDefVars_t)                                     
      D  useLibl                            like(bool_t)                                             
      D  prvLibl                            likeds(liblList_t)                                       
       *                                                                                             
@@ -8200,8 +8358,9 @@ srccssid=  "00273">
      D  i_libPgmCmdExc...                                                                           
      D                                            like(lib_t)                                       
      D  i_option                                  likeds(option_t)                                  
-     D  i_libl                                    likeds(libListInf_t)                              
+     D  i_libl                                    likeds(inpLibList_t)                              
      D  i_useLibl                                 like(bool_t)                                      
+     D  i_usrDefVars                              likeds(inpUsrDefVars_t)                           
       *                                                                                             
      D restoreLibraryList...                                                                        
      D                 pr                                                                           
@@ -8463,8 +8622,9 @@ srccssid=  "00273">
      D  i_libPgmCmdExc...                                                                           
      D                                            like(lib_t)                                       
      D  i_option                                  likeds(option_t)                                  
-     D  i_libl                                    likeds(libListInf_t)                              
+     D  i_libl                                    likeds(inpLibList_t)                              
      D  i_useLibl                                 like(bool_t)                                      
+     D  i_usrDefVars                              likeds(inpUsrDefVars_t)                           
       *                                                                                             
       *  Nachrichten                                                                                
       *  ... Die Datensatzlänge der Eingabedatei ist zu lang.                                       
@@ -8505,6 +8665,8 @@ srccssid=  "00273">
       *                                                                                             
      D lineData        ds                  likeds(lineData_t) inz                                   
      D variables       ds                  likeds(variables_t) inz                                  
+     D inpUsrDefVar    ds                  likeds(inpUsrDefVar_t)                                   
+     D                                     based(pInpUsrDefVar)                                     
       /free                                                                                         
                                                                                                     
          ceertx(%paddr('abnormalEndHandler'): *omit: *omit);                                        
@@ -8600,6 +8762,15 @@ srccssid=  "00273">
                                                                                                     
          variables.prvLibl = i_libl.curLib;                                                         
          variables.prvLibl.usrLibl.numE = 0;                                                        
+                                                                                                    
+         for i = 1 to i_usrDefVars.numElem;                                                         
+            pInpUsrDefVar = %addr(i_usrDefVars) + i_usrDefVars.offsItems(i);                        
+            variables.usrDefVars.numE += 1;                                                         
+            variables.usrDefVars.var(variables.usrDefVars.numE).name =                              
+               inpUsrDefVar.name;                                                                   
+            variables.usrDefVars.var(variables.usrDefVars.numE).value =                             
+               inpUsrDefVar.value;                                                                  
+         endfor;                                                                                    
                                                                                                     
          if (i_chgObjD = '*YES');                                                                   
             cmdChgObjD =                                                                            
@@ -8997,13 +9168,27 @@ srccssid=  "00273">
      D  i_variables                        value  likeds(variables_t)                               
       *                                                                                             
      D cmdString       s                   like(i_cmd)                                              
-     D posOfVar        S                   like(int4_t) inz                                         
+     D posOfVar        s                   like(int4_t) inz                                         
+     D i               s              5i 0                                                          
       *                                                                                             
       *  ... Fehlender Wert für Variable an Position &1 des auszuführenden Befehls.                 
       /COPY QSTRPREPRC,PRZ0023                                                                      
       /free                                                                                         
                                                                                                     
          cmdString = i_cmd;                                                                         
+                                                                                                    
+         // --------------------------------                                                        
+         //  Replace user-defined variables                                                         
+         // --------------------------------                                                        
+                                                                                                    
+         for i = 1 to i_variables.usrDefVars.numE;                                                  
+            replaceVar(i_variables.usrDefVars.var(i).name                                           
+                       : i_variables.usrDefVars.var(i).value: cmdString);                           
+         endfor;                                                                                    
+                                                                                                    
+         // --------------------------------                                                        
+         //  Replace STRPREPRC variables                                                            
+         // --------------------------------                                                        
                                                                                                     
          // Ersetzen Lib         (&LI)                                                              
          if (i_variables.lib <> cNone);                                                             
@@ -9127,6 +9312,12 @@ srccssid=  "00273">
                '&LX': libListToStr(i_variables.prvLibl.usrLibl): cmdString);                        
          endif;                                                                                     
                                                                                                     
+         // Ersetzen Parameter Sonderwert  (*LX)                                                    
+       //  if (i_variables.prvLibl.usrLibl.numE >= 1);                                              
+       //     replaceVar(                                                                           
+       //        '*LX': libListToStr(i_variables.prvLibl.usrLibl): cmdString);                      
+       //  endif;                                                                                   
+                                                                                                    
          // Ersetzen Parameter  (&CL)                                                               
          if (i_variables.libl.curLib <> cNone);                                                     
             replaceVar('&CL': i_variables.libl.curLib: cmdString);                                  
@@ -9136,6 +9327,11 @@ srccssid=  "00273">
          if (i_variables.prvLibl.curLib <> '');                                                     
             replaceVar('&CX': i_variables.prvLibl.curLib: cmdString);                               
          endif;                                                                                     
+                                                                                                    
+         // Ersetzen Parameter Sonderwert  (*CX)                                                    
+       //  if (i_variables.prvLibl.curLib <> '');                                                   
+       //     replaceVar('*CX': i_variables.prvLibl.curLib: cmdString);                             
+       //  endif;                                                                                   
                                                                                                     
          // Prüfen, ob alle Variablen ersetzt worden sind                                           
          posOfVar = %scan('&': cmdString);                                                          
@@ -9371,7 +9567,7 @@ srccssid=  "00273">
      D curLib          s                   like(QWCRTVCA_libName_t)                                 
      D                                     based(pCurLib)                                           
      D usrLibl         s                   like(QWCRTVCA_libName_t)                                 
-     D                                     dim(250) based(pUsrLibl)                                 
+     D                                     dim(DIM_LIBLIST) based(pUsrLibl)                         
       /free                                                                                         
                                                                                                     
                                                                                                     
@@ -11861,9 +12057,13 @@ srccssid=  "00273">
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Wert für Parameter       (&U9)')                                  
                                                                                                     
+             PARM       KWD(USRDEFVAR ) TYPE(USRDEFVAR)    +                                        
+                          MIN(0)                           +                                        
+                          MAX(20)                          +                                        
+                          PMTCTL(*PMTRQS)                  +                                        
+                          PROMPT('Benutzerdefinierte Variablen')                                    
+                                                                                                    
              PARM       KWD(LIBL      ) TYPE(LIBL)         +                                        
-                          DFT(*NONE)                       +                                        
-                          SNGVAL((*NONE))                  +                                        
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Bibliotheksliste')                                                
                                                                                                     
@@ -11894,6 +12094,18 @@ srccssid=  "00273">
                           SNGVAL((*NONE))                  +                                        
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Ausgangspgm. Befehlsausführung')                                  
+                                                                                                    
+ USRDEFVAR:  ELEM         TYPE(*CHAR)                      +                                        
+                          MIN(1)                           +                                        
+                          LEN(10)                          +                                        
+                          EXPR(*YES)                       +                                        
+                          PROMPT('Name')                                                            
+                                                                                                    
+             ELEM         TYPE(*CHAR)                      +                                        
+                          MIN(1)                           +                                        
+                          LEN(100)                         +                                        
+                          EXPR(*YES)                       +                                        
+                          PROMPT('Value')                                                           
                                                                                                     
  LIBL:       ELEM         TYPE(*CHAR)                      +                                        
                           MIN(0)                           +                                        
@@ -12306,9 +12518,13 @@ srccssid=  "00273">
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Value for user-def. par. (&U9)')                                  
                                                                                                     
+             PARM       KWD(USRDEFVAR ) TYPE(USRDEFVAR)    +                                        
+                          MIN(0)                           +                                        
+                          MAX(20)                          +                                        
+                          PMTCTL(*PMTRQS)                  +                                        
+                          PROMPT('User defined variables')                                          
+                                                                                                    
              PARM       KWD(LIBL      ) TYPE(LIBL)         +                                        
-                          DFT(*NONE)                       +                                        
-                          SNGVAL((*NONE))                  +                                        
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Library list')                                                    
                                                                                                     
@@ -12339,6 +12555,18 @@ srccssid=  "00273">
                           SNGVAL((*NONE))                  +                                        
                           PMTCTL(*PMTRQS)                  +                                        
                           PROMPT('Exit Program Command Execution')                                  
+                                                                                                    
+ USRDEFVAR:  ELEM         TYPE(*CHAR)                      +                                        
+                          MIN(1)                           +                                        
+                          LEN(10)                          +                                        
+                          EXPR(*YES)                       +                                        
+                          PROMPT('Name')                                                            
+                                                                                                    
+             ELEM         TYPE(*CHAR)                      +                                        
+                          MIN(1)                           +                                        
+                          LEN(100)                         +                                        
+                          EXPR(*YES)                       +                                        
+                          PROMPT('Value')                                                           
                                                                                                     
  LIBL:       ELEM         TYPE(*CHAR)                      +                                        
                           MIN(0)                           +                                        
