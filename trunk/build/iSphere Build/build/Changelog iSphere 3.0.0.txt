@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.1.0.b009
+-----------------------------
+ • Fixed problem that copying members between two systems did no
+   longer work, when the record length of the target file was
+   shorter than the length of the source file. Problem of
+   SequentialFile class.
+
 Changelog: iSphere 3.1.0.b008
 -----------------------------
  • Added option to reset the "Copy Members" dialog.
