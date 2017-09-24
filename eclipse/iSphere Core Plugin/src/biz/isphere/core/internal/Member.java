@@ -149,12 +149,18 @@ public abstract class Member {
             file.setRecordFormat(format[0]);
             file.open(AS400File.WRITE_ONLY, 1000, AS400File.COMMIT_LOCK_LEVEL_CHANGE);
 
+            int targetDataLength = format[0].getFieldDescription(SRCDTA_INDEX).getLength();
+
             Record record;
             for (SourceLine sourceLine : sourceLines) {
                 record = new Record(format[0]);
                 record.setField(SRCSEQ_INDEX, sourceLine.getSourceSequence());
                 record.setField(SRCDAT_INDEX, sourceLine.getSourceDate());
-                record.setField(SRCDTA_INDEX, sourceLine.getSourceData());
+                if (targetDataLength < sourceLine.getSourceData().length()) {
+                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData().substring(0, targetDataLength));
+                } else {
+                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData());
+                }
                 file.write(record);
             }
 
