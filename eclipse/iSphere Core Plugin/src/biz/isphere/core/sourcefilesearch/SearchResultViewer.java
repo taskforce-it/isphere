@@ -273,7 +273,7 @@ public class SearchResultViewer {
                     menuItemSeparator = new MenuItem(menuTableMembers, SWT.SEPARATOR);
 
                     menuCopySelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
-                    menuCopySelectedMembers.setText("Copy members"); // TODO: fix NLS string
+                    menuCopySelectedMembers.setText(Messages.Menu_Copy_members);
                     menuCopySelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_MEMBERS_TO));
                     menuCopySelectedMembers.addSelectionListener(new SelectionAdapter() {
                         @Override
@@ -281,9 +281,9 @@ public class SearchResultViewer {
                             executeMenuItemCopySelectedMembers();
                         }
                     });
-                    
+
                     menuCompareSelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
-                    menuCompareSelectedMembers.setText("Compare members"); // TODO: fix NLS string
+                    menuCompareSelectedMembers.setText(Messages.Menu_Compare_members);
                     menuCompareSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE));
                     menuCompareSelectedMembers.addSelectionListener(new SelectionAdapter() {
                         @Override
@@ -617,7 +617,7 @@ public class SearchResultViewer {
 
     private void executeMenuItemCopySelectedMembers() {
 
-        CopyMemberService jobDescription = new CopyMemberService(connectionName);
+        CopyMemberService jobDescription = new CopyMemberService(getShell(), connectionName);
 
         for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
             SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
@@ -630,19 +630,20 @@ public class SearchResultViewer {
     }
 
     private void executeMenuItemCompareSelectedMembers() {
-        
+
         try {
-            
+
             List<Member> members = new LinkedList<Member>();
-            
+
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                Member member = IBMiHostContributionsHandler.getMember(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember());
+                Member member = IBMiHostContributionsHandler.getMember(connectionName, _searchResult.getLibrary(), _searchResult.getFile(),
+                    _searchResult.getMember());
                 members.add(member);
-            }            
-            
+            }
+
             IBMiHostContributionsHandler.compareSourceMembers(connectionName, members);
-            
+
         } catch (Exception e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }

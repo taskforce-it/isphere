@@ -102,7 +102,7 @@ public class CopyToCommandHandler extends AbstractHandler implements IHandler {
         if (IBMiConnection != null) {
             String connectionName = IBMiConnection.getConnectionName();
             if (jobDescription == null) {
-                jobDescription = new CopyMemberService(connectionName);
+                jobDescription = new CopyMemberService(shell, connectionName);
             } else {
                 if (!jobDescription.getFromConnectionName().equals(connectionName)) {
                     MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Cannot_copy_source_members_from_different_connections);
