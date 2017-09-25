@@ -15,6 +15,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Shell;
+
 import biz.isphere.core.Messages;
 import biz.isphere.core.file.description.RecordFormatDescription;
 import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
@@ -41,11 +44,13 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
     private boolean hasDataLostError;
 
+    private Shell shell;
     private List<ModifiedListener> modifiedListeners;
     private int copiedCount;
     private boolean isActive;
 
-    public CopyMemberService(String fromConnectionName) {
+    public CopyMemberService(Shell shell, String fromConnectionName) {
+        this.shell = shell;
         this.fromConnectionName = fromConnectionName;
         this.toConnectionName = fromConnectionName;
         this.members = new TreeSet<CopyMemberItem>();
@@ -265,17 +270,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
         try {
 
-            for (CopyMemberItem member : members) {
-                if (member.isCopied()) {
-                    continue;
-                }
+            CopyMembersJob copyMembersJob = new CopyMembersJob();
+            BusyIndicator.showWhile(shell.getDisplay(), copyMembersJob);
 
-                if (!member.performCopyOperation(fromConnectionName, toConnectionName)) {
-                    isError = true;
-                } else {
-                    copiedCount++;
-                }
-            }
+            isError = copyMembersJob.isError();
+            copiedCount = copiedCount + copyMembersJob.getCopiedCount();
 
         } finally {
             endProcess();
@@ -355,5 +354,37 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
     public interface ModifiedListener {
         public void modified(CopyMemberItem item);
+    }
+
+    private class CopyMembersJob implements Runnable {
+
+        private boolean isError;
+        private int copiedCount;
+
+        public void run() {
+
+            isError = false;
+            copiedCount = 0;
+
+            for (CopyMemberItem member : members) {
+                if (member.isCopied()) {
+                    continue;
+                }
+
+                if (!member.performCopyOperation(fromConnectionName, toConnectionName)) {
+                    isError = true;
+                } else {
+                    copiedCount++;
+                }
+            }
+        }
+
+        public boolean isError() {
+            return isError;
+        }
+
+        public int getCopiedCount() {
+            return copiedCount;
+        }
     }
 }

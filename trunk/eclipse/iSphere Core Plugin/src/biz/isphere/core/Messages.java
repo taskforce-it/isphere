@@ -1348,6 +1348,10 @@ public class Messages extends NLS {
 
     public static String Reset;
 
+    public static String Menu_Copy_members;
+
+    public static String Menu_Compare_members;
+
     /*
      * Warning messages
      */
