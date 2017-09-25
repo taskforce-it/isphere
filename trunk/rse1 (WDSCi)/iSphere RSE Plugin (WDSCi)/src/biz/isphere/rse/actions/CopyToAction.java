@@ -146,7 +146,7 @@ public class CopyToAction extends ISeriesSystemBaseAction implements ISystemDyna
         if (iseriesConnection != null) {
             String connectionName = iseriesConnection.getSystemConnection().getAliasName();
             if (jobDescription == null) {
-                jobDescription = new CopyMemberService(connectionName);
+                jobDescription = new CopyMemberService(getShell(), connectionName);
             } else {
                 if (!jobDescription.getFromConnectionName().equals(connectionName)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Cannot_copy_source_members_from_different_connections);
