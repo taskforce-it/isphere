@@ -12,13 +12,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.lpex.comments.lpex.exceptions.FixedFormatNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.MaxLeftMarginReachedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
+import biz.isphere.lpex.comments.preferences.Preferences;
 
 import com.ibm.lpex.core.LpexView;
 
@@ -50,15 +48,8 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
      */
     private boolean validate;
 
-    /**
-     * Preferences of the ILE RPG remote Lpex parser.
-     */
-    private IEclipsePreferences rpglePreferences;
-
     public RPGIndentionDelegate(LpexView view) {
         super(view);
-
-        rpglePreferences = InstanceScope.INSTANCE.getNode("com.ibm.etools.iseries.edit");
     }
 
     public void setValidationMode(boolean enable) {
@@ -82,7 +73,7 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
         StringBuilder buffer = new StringBuilder(text);
 
         int startOfText = findStartOfText(buffer.toString());
-        int endOfInsertion = startOfText + getIndentionLength();
+        int endOfInsertion = startOfText + getCSpecIndention();
 
         if (isCSpecPositionEnabled()) {
             int cSpecOffset = getCSpecPosition() - 1;
@@ -130,7 +121,7 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
             throw new MaxLeftMarginReachedException();
         }
 
-        startOfDeletion = startOfDeletion - getIndentionLength();
+        startOfDeletion = startOfDeletion - getCSpecIndention();
         if (startOfDeletion < minLeftMargin) {
             startOfDeletion = minLeftMargin;
         }
@@ -153,24 +144,15 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
     }
 
     private boolean isCSpecPositionEnabled() {
-
-        boolean isEnabled = rpglePreferences.getBoolean("com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.setpos.cfreespec", false);
-
-        return isEnabled;
+        return Preferences.getInstance().isCSpecPositionEnabled();
     }
 
     private int getCSpecPosition() {
-
-        int position = rpglePreferences.getInt("com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.setpos.cfreespec.value", 8);
-
-        return position;
+        return Preferences.getInstance().getCSpecPosition();
     }
 
-    private int getIndentionLength() {
-        // RPGLE.FORMATTING.length=3
-        int indention = rpglePreferences.getInt("com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.autoindent.S1_Blanks", 2);
-
-        return indention;
+    private int getCSpecIndention() {
+        return Preferences.getInstance().getCSpecIndention();
     }
 
     private boolean isFullyFree() {
