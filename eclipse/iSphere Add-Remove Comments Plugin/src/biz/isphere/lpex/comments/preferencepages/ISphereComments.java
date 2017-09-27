@@ -32,7 +32,8 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
 
     private boolean hasShownWarning;
 
-    private Button btnEnabled;
+    private Button btnCommentsEnabled;
+    private Button btnIndentingEnabled;
 
     public ISphereComments() {
         super();
@@ -62,18 +63,39 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
 
     private void createSectionGlobal(Composite parent) {
 
-        Label labelEnabled = new Label(parent, SWT.NONE);
-        labelEnabled.setLayoutData(createLabelLayoutData());
-        labelEnabled.setText(Messages.Enabled_colon);
-        labelEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines);
+        Label labelCommentsEnabled = new Label(parent, SWT.NONE);
+        labelCommentsEnabled.setLayoutData(createLabelLayoutData());
+        labelCommentsEnabled.setText(Messages.Comments_enabled_colon);
+        labelCommentsEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines);
 
-        btnEnabled = WidgetFactory.createCheckbox(parent);
-        btnEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines);
-        btnEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        btnEnabled.addSelectionListener(new SelectionListener() {
+        btnCommentsEnabled = WidgetFactory.createCheckbox(parent);
+        btnCommentsEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines);
+        btnCommentsEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        btnCommentsEnabled.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
-                if (validateEnabled()) {
+                if (validateCommentsEnabled()) {
+                    checkAllValues();
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        Label labelIndentingEnabled = new Label(parent, SWT.NONE);
+        labelIndentingEnabled.setLayoutData(createLabelLayoutData());
+        labelIndentingEnabled.setText(Messages.Indention_enabled_colon);
+        labelIndentingEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_indenting_and_unindenting_source_lines);
+
+        btnIndentingEnabled = WidgetFactory.createCheckbox(parent);
+        btnIndentingEnabled.setToolTipText(Messages.Tooltip_Enables_options_for_indenting_and_unindenting_source_lines);
+        btnIndentingEnabled.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        btnIndentingEnabled.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                if (validateIndentingEnabled()) {
                     checkAllValues();
                 }
             }
@@ -98,7 +120,7 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
     @Override
     public boolean performOk() {
 
-        if (!hasShownWarning && Preferences.getInstance().isEnabled() != btnEnabled.getSelection()) {
+        if (!hasShownWarning && mustRestartRdi()) {
             DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.LPEX_COMMENT_RESTART_INFORMATION,
                 Messages.You_need_to_restart_the_IDE_to_activate_your_changes);
             hasShownWarning = true;
@@ -108,11 +130,25 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
         return super.performOk();
     }
 
+    private boolean mustRestartRdi() {
+
+        if (Preferences.getInstance().isCommentsEnabled() != btnCommentsEnabled.getSelection()) {
+            return true;
+        }
+
+        if (Preferences.getInstance().isIndentionEnabled() != btnIndentingEnabled.getSelection()) {
+            return true;
+        }
+
+        return false;
+    }
+
     protected void setStoreToValues() {
 
         Preferences preferences = getPreferences();
 
-        preferences.setEnabled(btnEnabled.getSelection());
+        preferences.setCommentsEnabled(btnCommentsEnabled.getSelection());
+        preferences.setIndentionEnabled(btnIndentingEnabled.getSelection());
     }
 
     protected void setScreenToValues() {
@@ -121,7 +157,8 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
 
         Preferences preferences = getPreferences();
 
-        btnEnabled.setSelection(preferences.isEnabled());
+        btnCommentsEnabled.setSelection(preferences.isCommentsEnabled());
+        btnIndentingEnabled.setSelection(preferences.isIndentionEnabled());
 
         checkAllValues();
         setControlsEnablement();
@@ -131,20 +168,30 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
 
         Preferences preferences = getPreferences();
 
-        btnEnabled.setSelection(preferences.getDefaultEnabled());
+        btnCommentsEnabled.setSelection(preferences.getDefaultCommentsEnabled());
+        btnIndentingEnabled.setSelection(preferences.getDefaultIndentionEnabled());
 
         checkAllValues();
         setControlsEnablement();
     }
 
-    private boolean validateEnabled() {
+    private boolean validateCommentsEnabled() {
+
+        return true;
+    }
+
+    private boolean validateIndentingEnabled() {
 
         return true;
     }
 
     private boolean checkAllValues() {
 
-        if (!validateEnabled()) {
+        if (!validateCommentsEnabled()) {
+            return false;
+        }
+
+        if (!validateIndentingEnabled()) {
             return false;
         }
 

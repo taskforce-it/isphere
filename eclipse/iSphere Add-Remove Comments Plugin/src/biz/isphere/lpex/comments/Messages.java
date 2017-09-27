@@ -20,6 +20,9 @@ public class Messages extends NLS {
     public static String Menu_Comment_Lines;
     public static String Menu_Uncomment_Lines;
     public static String Menu_Toggle_Comment_Lines;
+    
+    public static String Menu_Indent_Lines;
+    public static String Menu_Unindent_Lines;
 
     public static String Line_A_has_already_been_commented_The_operation_has_been_canceled;
     public static String Selection_has_already_been_commented_The_operation_has_been_canceled;
@@ -27,11 +30,15 @@ public class Messages extends NLS {
     public static String Selection_is_out_of_range_The_operation_has_been_canceled;
     public static String Member_type_A_not_supported;
     public static String Operation_not_supported_for_member_type_A;
+    public static String Operation_not_supported_for_fixed_format_statements;
     public static String Line_A_is_not_a_comment_The_operation_has_been_canceled;
+    public static String Left_margin_reached_The_operation_has_been_canceled;
     public static String You_need_to_restart_the_IDE_to_activate_your_changes;
 
-    public static String Enabled_colon;
+    public static String Comments_enabled_colon;
     public static String Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines;
+    public static String Indention_enabled_colon;
+    public static String Tooltip_Enables_options_for_indenting_and_unindenting_source_lines;
     
     static {
         // initialize resource bundle

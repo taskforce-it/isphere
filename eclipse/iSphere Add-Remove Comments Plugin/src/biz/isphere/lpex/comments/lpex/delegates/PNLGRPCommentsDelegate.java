@@ -21,13 +21,16 @@ public class PNLGRPCommentsDelegate extends AbstractCommentDelegate implements I
 
     private static final int COMMENT_POS = 1;
 
+    /**
+     * Specifies whether the delegate is in validation mode.
+     */
     private boolean validate;
 
     public PNLGRPCommentsDelegate(LpexView view) {
         super(view);
     }
 
-    public void validate(boolean enable) {
+    public void setValidationMode(boolean enable) {
         this.validate = enable;
     }
 

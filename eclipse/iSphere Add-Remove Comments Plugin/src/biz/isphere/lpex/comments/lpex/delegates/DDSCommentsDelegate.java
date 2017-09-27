@@ -24,13 +24,16 @@ public class DDSCommentsDelegate extends AbstractCommentDelegate implements ICom
 
     private static final String SPEC = "A"; //$NON-NLS-1$
 
+    /**
+     * Specifies whether the delegate is in validation mode.
+     */
     private boolean validate;
 
     public DDSCommentsDelegate(LpexView view) {
         super(view);
     }
 
-    public void validate(boolean enable) {
+    public void setValidationMode(boolean enable) {
         this.validate = enable;
     }
 

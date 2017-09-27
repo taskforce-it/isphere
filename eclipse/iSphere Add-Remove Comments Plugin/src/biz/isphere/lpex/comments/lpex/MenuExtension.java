@@ -6,8 +6,11 @@ import java.util.Map;
 
 import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
+import biz.isphere.lpex.comments.lpex.action.IndentAction;
 import biz.isphere.lpex.comments.lpex.action.ToggleCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
+import biz.isphere.lpex.comments.lpex.action.UnIndentAction;
+import biz.isphere.lpex.comments.preferences.Preferences;
 
 /**
  * This class extends the popup menue of the Lpex editor. It adds the following
@@ -27,9 +30,17 @@ public class MenuExtension extends AbstractLpexMenuExtension {
     protected Map<String, String> getUserActions() {
 
         Map<String, String> actions = new HashMap<String, String>();
-        checkAndAddUserAction(actions, CommentAction.ID, CommentAction.class.getName());
-        checkAndAddUserAction(actions, UnCommentAction.ID, UnCommentAction.class.getName());
-        checkAndAddUserAction(actions, ToggleCommentAction.ID, ToggleCommentAction.class.getName());
+
+        if (isCommentsEnabled()) {
+            checkAndAddUserAction(actions, CommentAction.ID, CommentAction.class.getName());
+            checkAndAddUserAction(actions, UnCommentAction.ID, UnCommentAction.class.getName());
+            checkAndAddUserAction(actions, ToggleCommentAction.ID, ToggleCommentAction.class.getName());
+        }
+
+        if (isIndentingEnabled()) {
+            checkAndAddUserAction(actions, IndentAction.ID, IndentAction.class.getName());
+            checkAndAddUserAction(actions, UnIndentAction.ID, UnIndentAction.class.getName());
+        }
 
         return actions;
     }
@@ -53,9 +64,17 @@ public class MenuExtension extends AbstractLpexMenuExtension {
     protected Map<String, String> getUserKeyActions() {
 
         Map<String, String> actions = new HashMap<String, String>();
-        checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
-        checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY), ToggleCommentAction.ID);
-        checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT), UnCommentAction.ID);
+
+        if (isCommentsEnabled()) {
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT), UnCommentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY), ToggleCommentAction.ID);
+        }
+
+        if (isIndentingEnabled()) {
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.TAB), IndentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
+        }
 
         return actions;
     }
@@ -65,10 +84,20 @@ public class MenuExtension extends AbstractLpexMenuExtension {
 
         ArrayList<String> menuActions = new ArrayList<String>();
 
-        menuActions.add(CommentAction.getLPEXMenuAction());
-        menuActions.add(UnCommentAction.getLPEXMenuAction());
-        menuActions.add(ToggleCommentAction.getLPEXMenuAction());
-        // menuActions.add(null); // Add seperator
+        if (isCommentsEnabled()) {
+            menuActions.add(CommentAction.getLPEXMenuAction());
+            menuActions.add(UnCommentAction.getLPEXMenuAction());
+            menuActions.add(ToggleCommentAction.getLPEXMenuAction());
+        }
+
+        if (isCommentsEnabled() && isIndentingEnabled()) {
+            menuActions.add(null); // Add separator
+        }
+
+        if (isIndentingEnabled()) {
+            menuActions.add(IndentAction.getLPEXMenuAction());
+            menuActions.add(UnIndentAction.getLPEXMenuAction());
+        }
 
         return menuActions;
     }
@@ -82,5 +111,13 @@ public class MenuExtension extends AbstractLpexMenuExtension {
         }
 
         return i;
+    }
+
+    private boolean isCommentsEnabled() {
+        return Preferences.getInstance().isCommentsEnabled();
+    }
+
+    private boolean isIndentingEnabled() {
+        return Preferences.getInstance().isIndentionEnabled();
     }
 }

@@ -10,9 +10,9 @@ package biz.isphere.lpex.comments.lpex.delegates;
 
 import com.ibm.lpex.core.LpexView;
 
-public abstract class AbstractCommentDelegate extends AbstractDelegate {
+public abstract class AbstractIndentionDelegate extends AbstractDelegate {
 
-    public AbstractCommentDelegate(LpexView view) {
+    public AbstractIndentionDelegate(LpexView view) {
         super(view);
     }
 }

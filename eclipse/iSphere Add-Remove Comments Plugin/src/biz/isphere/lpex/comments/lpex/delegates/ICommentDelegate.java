@@ -10,22 +10,23 @@ package biz.isphere.lpex.comments.lpex.delegates;
 
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentNotFoundException;
+import biz.isphere.lpex.comments.lpex.exceptions.FixedFormatNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 public interface ICommentDelegate {
 
-    public void validate(boolean enable);
+    public void setValidationMode(boolean enable);
 
     public boolean isLineComment(String text);
 
     public String comment(String text) throws TextLimitExceededException, CommentExistsException;
 
     public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException,
-        OperationNotSupportedException;
+        OperationNotSupportedException, FixedFormatNotSupportedException;
 
-    public String uncomment(String text) throws OperationNotSupportedException, CommentNotFoundException;
+    public String uncomment(String text) throws OperationNotSupportedException, FixedFormatNotSupportedException, CommentNotFoundException;
 
-    public String uncomment(String text, int startPos, int endPos) throws OperationNotSupportedException;
+    public String uncomment(String text, int startPos, int endPos) throws OperationNotSupportedException, FixedFormatNotSupportedException;
 
 }

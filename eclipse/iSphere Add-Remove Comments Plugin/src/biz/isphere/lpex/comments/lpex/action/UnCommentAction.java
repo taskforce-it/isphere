@@ -11,12 +11,13 @@ package biz.isphere.lpex.comments.lpex.action;
 import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentNotFoundException;
+import biz.isphere.lpex.comments.lpex.exceptions.FixedFormatNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 
 import com.ibm.lpex.core.LpexView;
 
-public class UnCommentAction extends AbstractLpexAction {
+public class UnCommentAction extends AbstractLpexCommentsAction {
 
     public static final String ID = "iSphere.Lpex.UnComment"; //$NON-NLS-1$
 
@@ -39,6 +40,9 @@ public class UnCommentAction extends AbstractLpexAction {
         } catch (CommentNotFoundException e) {
             String message = Messages.bind(Messages.Line_A_is_not_a_comment_The_operation_has_been_canceled, Integer.toString(element));
             displayMessage(view, message);
+        } catch (FixedFormatNotSupportedException e) {
+            String message = Messages.Operation_not_supported_for_fixed_format_statements;
+            displayMessage(view, message);
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
             displayMessage(view, message);
@@ -56,6 +60,9 @@ public class UnCommentAction extends AbstractLpexAction {
             ICommentDelegate delegate = getDelegate(view);
             view.setElementText(line, delegate.uncomment(view.elementText(line), startColumn, endColumn));
 
+        } catch (FixedFormatNotSupportedException e) {
+            String message = Messages.Operation_not_supported_for_fixed_format_statements;
+            displayMessage(view, message);
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
             displayMessage(view, message);

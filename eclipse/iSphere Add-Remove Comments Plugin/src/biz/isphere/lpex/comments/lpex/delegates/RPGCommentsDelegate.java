@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.FixedFormatNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
@@ -43,13 +44,16 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
     private static final Set<String> SPECIFICATIONS = new HashSet<String>(Arrays.asList(new String[] { SPEC_CONTROL, SPEC_FILE, SPEC_DEFINITION,
         SPEC_INPUT, SPEC_CALCULATION, SPEC_OUTPUT, SPEC_PROCEDURE }));
 
+    /**
+     * Specifies whether the delegate is in validation mode.
+     */
     private boolean validate;
 
     public RPGCommentsDelegate(LpexView view) {
         super(view);
     }
 
-    public void validate(boolean enable) {
+    public void setValidationMode(boolean enable) {
         this.validate = enable;
     }
 
@@ -125,13 +129,13 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @parm endPos - end position of the selected text
      */
     public String comment(String text, int startPos, int endPos) throws TextLimitExceededException, CommentExistsException,
-        OperationNotSupportedException {
+    FixedFormatNotSupportedException {
 
         startPos--;
         endPos--;
 
         if (isFixFormat(text)) {
-            throw new OperationNotSupportedException();
+            throw new FixedFormatNotSupportedException();
         }
 
         if (isComment(text, startPos)) {
@@ -160,7 +164,7 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * 
      * @parm text - line to uncomment
      */
-    public String uncomment(String text) throws OperationNotSupportedException {
+    public String uncomment(String text) throws FixedFormatNotSupportedException {
 
         if (!isLineComment(text)) {
             return uncomment(text, getCursorPosition(), getCursorPosition());
@@ -202,13 +206,13 @@ public class RPGCommentsDelegate extends AbstractCommentDelegate implements ICom
      * @parm startPos - start position of the selected text
      * @parm endPos - end position of the selected text
      */
-    public String uncomment(String text, int startPos, int endPos) throws OperationNotSupportedException {
+    public String uncomment(String text, int startPos, int endPos) throws FixedFormatNotSupportedException {
 
         startPos--;
         endPos--;
 
         if (isFixFormat(text)) {
-            throw new OperationNotSupportedException();
+            throw new FixedFormatNotSupportedException();
         }
 
         if (validate) {

@@ -6,13 +6,9 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.lpex.comments.lpex.delegates;
+package biz.isphere.lpex.comments.lpex.exceptions;
 
-import com.ibm.lpex.core.LpexView;
+public class FixedFormatNotSupportedException extends Exception {
 
-public abstract class AbstractCommentDelegate extends AbstractDelegate {
-
-    public AbstractCommentDelegate(LpexView view) {
-        super(view);
-    }
+    private static final long serialVersionUID = 1202448970276749982L;
 }
