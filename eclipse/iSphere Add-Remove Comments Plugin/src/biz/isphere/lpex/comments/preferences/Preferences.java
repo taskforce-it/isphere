@@ -8,7 +8,9 @@
 
 package biz.isphere.lpex.comments.preferences;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Version;
 
 import biz.isphere.base.versioncheck.PluginCheck;
@@ -128,7 +130,7 @@ public final class Preferences {
 
     public boolean getDefaultCommentsEnabled() {
 
-        if (PluginCheck.getPlatformVersion().compareTo(WDSCI70) <= 0) {
+        if (isWDSCiDevelomentEnvironment()) {
             return true;
         }
 
@@ -138,5 +140,75 @@ public final class Preferences {
     public boolean getDefaultIndentionEnabled() {
 
         return true;
+    }
+
+    /*
+     * Others
+     */
+
+    public boolean isCSpecPositionEnabled() {
+
+        IPreferenceStore preferenceStore = getIBMPreferencesStore();
+        String key;
+        if (isWDSCiDevelomentEnvironment()) {
+            key = "com.ibm.etools.iseries.core.preferences.parser.ilerpg.enter.setpos.cfreespec"; //$NON-NLS-1$
+        } else {
+            key = "com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.setpos.cfreespec"; //$NON-NLS-1$
+        }
+
+        boolean enabled = preferenceStore.getBoolean(key);
+
+        return enabled;
+    }
+
+    public int getCSpecPosition() {
+
+        IPreferenceStore preferenceStore = getIBMPreferencesStore();
+        String key;
+        if (isWDSCiDevelomentEnvironment()) {
+            key = "com.ibm.etools.iseries.core.preferences.parser.ilerpg.enter.setpos.cfreespec.value"; //$NON-NLS-1$
+        } else {
+            key = "com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.setpos.cfreespec.value"; //$NON-NLS-1$
+        }
+
+        int position = preferenceStore.getInt(key);
+
+        return position;
+    }
+
+    public int getCSpecIndention() {
+
+        IPreferenceStore preferenceStore = getIBMPreferencesStore();
+        String key;
+        if (isWDSCiDevelomentEnvironment()) {
+            key = "com.ibm.etools.iseries.core.preferences.parser.ilerpg.enter.autoindent.S1_Blanks"; //$NON-NLS-1$
+        } else {
+            key = "com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.autoindent.S1_Blanks"; //$NON-NLS-1$
+        }
+
+        int indention = preferenceStore.getInt(key);
+
+        return indention;
+    }
+
+    private IPreferenceStore getIBMPreferencesStore() {
+
+        if (isWDSCiDevelomentEnvironment()) {
+            return new ScopedPreferenceStore(new InstanceScope(), "com.ibm.etools.iseries.core"); //$NON-NLS-1$
+        } else {
+            return new ScopedPreferenceStore(new InstanceScope(), "com.ibm.etools.iseries.edit"); //$NON-NLS-1$
+        }
+    }
+
+    private boolean isWDSCiDevelomentEnvironment() {
+
+        Version platformVersion = PluginCheck.getPlatformVersion();
+        if (platformVersion.getMajor() <= WDSCI70.getMajor()) {
+            if (platformVersion.getMinor() <= WDSCI70.getMinor()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
