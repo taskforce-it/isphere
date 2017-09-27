@@ -51,15 +51,6 @@ public class ISphereAddRemoveCommentsPlugin extends AbstractUIPlugin {
         plugin = null;
         super.stop(context);
     }
-
-    public boolean isEnabled() {
-        
-        if (menuExtension != null) {
-            return true;
-        }
-        
-        return false;
-    }
     
     public void setLpexMenuExtension(ILpexMenuExtension menuExtension) {
         this.menuExtension = menuExtension;
