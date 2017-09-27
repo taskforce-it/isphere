@@ -18,13 +18,16 @@ public class CLCommentsDelegate extends AbstractCommentDelegate implements IComm
     private static final String START_COMMENT = "/* "; //$NON-NLS-1$ 
     private static final String END_COMMENT = " */"; //$NON-NLS-1$
 
+    /**
+     * Specifies whether the delegate is in validation mode.
+     */
     private boolean validate;
 
     public CLCommentsDelegate(LpexView view) {
         super(view);
     }
 
-    public void validate(boolean enable) {
+    public void setValidationMode(boolean enable) {
         this.validate = enable;
     }
 

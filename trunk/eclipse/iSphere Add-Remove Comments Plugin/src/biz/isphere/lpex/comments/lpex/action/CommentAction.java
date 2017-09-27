@@ -11,13 +11,14 @@ package biz.isphere.lpex.comments.lpex.action;
 import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.CommentExistsException;
+import biz.isphere.lpex.comments.lpex.exceptions.FixedFormatNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.OperationNotSupportedException;
 import biz.isphere.lpex.comments.lpex.exceptions.TextLimitExceededException;
 
 import com.ibm.lpex.core.LpexView;
 
-public class CommentAction extends AbstractLpexAction {
+public class CommentAction extends AbstractLpexCommentsAction {
 
     public static final String ID = "iSphere.Lpex.Comment"; //$NON-NLS-1$
 
@@ -35,9 +36,9 @@ public class CommentAction extends AbstractLpexAction {
             ICommentDelegate delegate = getDelegate(view);
             for (int i = 0; i < 2; i++) {
                 if (i == 0) {
-                    delegate.validate(true);
+                    delegate.setValidationMode(true);
                 } else {
-                    delegate.validate(false);
+                    delegate.setValidationMode(false);
                 }
                 for (element = firstLine; element <= lastLine; element++) {
                     if (isTextLine(view, element)) {
@@ -79,6 +80,9 @@ public class CommentAction extends AbstractLpexAction {
             ICommentDelegate delegate = getDelegate(view);
             view.setElementText(element, delegate.comment(text, startColumn, endColumn));
 
+        } catch (FixedFormatNotSupportedException e) {
+            String message = Messages.Operation_not_supported_for_fixed_format_statements;
+            displayMessage(view, message);
         } catch (OperationNotSupportedException e) {
             String message = Messages.bind(Messages.Operation_not_supported_for_member_type_A, getMemberType());
             displayMessage(view, message);

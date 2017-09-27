@@ -44,7 +44,14 @@ public final class Preferences {
 
     private static final String DOMAIN = ISphereAddRemoveCommentsPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
+    /*
+     * Outdated with iSphere 3.1
+     */
     private static final String ENABLED = DOMAIN + "ENABLED."; //$NON-NLS-1$
+
+    private static final String COMMENTS_ENABLED = DOMAIN + "COMMENTS_ENABLED."; //$NON-NLS-1$
+
+    private static final String INDENTION_ENABLED = DOMAIN + "INDENTION_ENABLED."; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -80,16 +87,24 @@ public final class Preferences {
      * Preferences: GETTER
      */
 
-    public boolean isEnabled() {
-        return preferenceStore.getBoolean(ENABLED);
+    public boolean isCommentsEnabled() {
+        return preferenceStore.getBoolean(COMMENTS_ENABLED);
+    }
+
+    public boolean isIndentionEnabled() {
+        return preferenceStore.getBoolean(INDENTION_ENABLED);
     }
 
     /*
      * Preferences: SETTER
      */
 
-    public void setEnabled(boolean enabled) {
-        preferenceStore.setValue(ENABLED, enabled);
+    public void setCommentsEnabled(boolean enabled) {
+        preferenceStore.setValue(COMMENTS_ENABLED, enabled);
+    }
+
+    public void setIndentionEnabled(boolean enabled) {
+        preferenceStore.setValue(INDENTION_ENABLED, enabled);
     }
 
     /*
@@ -98,19 +113,30 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
 
-        preferenceStore.setDefault(ENABLED, getDefaultEnabled());
+        preferenceStore.setDefault(COMMENTS_ENABLED, getDefaultCommentsEnabled());
+        preferenceStore.setDefault(INDENTION_ENABLED, getDefaultIndentionEnabled());
+
+        /*
+         * Outdated setting
+         */
+        preferenceStore.setDefault(ENABLED, getDefaultCommentsEnabled());
     }
 
     /*
      * Preferences: Default Values
      */
 
-    public boolean getDefaultEnabled() {
+    public boolean getDefaultCommentsEnabled() {
 
         if (PluginCheck.getPlatformVersion().compareTo(WDSCI70) <= 0) {
             return true;
         }
 
         return false;
+    }
+
+    public boolean getDefaultIndentionEnabled() {
+
+        return true;
     }
 }

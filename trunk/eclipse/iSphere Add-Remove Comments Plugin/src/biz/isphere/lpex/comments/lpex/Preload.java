@@ -26,7 +26,7 @@ public class Preload implements LpexPreload {
 
     public void preload() {
 
-        if (!Preferences.getInstance().isEnabled()) {
+        if (!isEnabled()) {
             return;
         }
         
@@ -34,5 +34,14 @@ public class Preload implements LpexPreload {
         menuExtension.initializeLpexEditor();
 
         return;
+    }
+    
+    private boolean isEnabled() {
+        
+        if ( Preferences.getInstance().isCommentsEnabled() || Preferences.getInstance().isIndentionEnabled()){
+            return true;
+        };
+        
+        return false;
     }
 }

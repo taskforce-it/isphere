@@ -8,12 +8,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import biz.isphere.lpex.comments.lpex.delegates.CLCommentsDelegate;
-import biz.isphere.lpex.comments.lpex.delegates.DDSCommentsDelegate;
-import biz.isphere.lpex.comments.lpex.delegates.ICommentDelegate;
-import biz.isphere.lpex.comments.lpex.delegates.PNLGRPCommentsDelegate;
-import biz.isphere.lpex.comments.lpex.delegates.RPGCommentsDelegate;
-import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.internal.Position;
 
 import com.ibm.lpex.core.LpexAction;
@@ -25,39 +19,6 @@ public abstract class AbstractLpexAction implements LpexAction {
 
     public boolean available(LpexView view) {
         return isEditMode(view);
-    }
-
-    public void doAction(LpexView view) {
-
-        try {
-            saveCursorPosition(view);
-
-            Position start;
-            Position end;
-            if (anythingSelected(view)) {
-                start = new Position(view.queryInt("block.topElement"), view.queryInt("block.topPosition")); //$NON-NLS-1$ //$NON-NLS-2$
-                end = new Position(view.queryInt("block.bottomElement"), view.queryInt("block.bottomPosition")); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-                start = new Position(view.queryInt("element"), view.queryInt("position")); //$NON-NLS-1$ //$NON-NLS-2$
-                end = start;
-            }
-
-            // Range of lines
-            if (start.getLine() < end.getLine()) {
-                doLines(view, start.getLine(), end.getLine());
-            } else if (start.getLine() == end.getLine()) {
-                // Single line
-                if (start.getColumn() == end.getColumn()) {
-                    doLines(view, start.getLine(), end.getLine());
-                } else if (start.getColumn() < end.getColumn()) {
-                    // Selection
-                    doSelection(view, start.getLine(), start.getColumn(), end.getColumn());
-                }
-            }
-
-        } finally {
-            restoreCursorPosition(view);
-        }
     }
 
     protected abstract void doLines(LpexView view, int firstLine, int lastLine);
@@ -76,36 +37,6 @@ public abstract class AbstractLpexAction implements LpexAction {
         return view.queryOn("block.anythingSelected"); //$NON-NLS-1$
     }
 
-    protected ICommentDelegate getDelegate(LpexView view) throws MemberTypeNotSupportedException {
-
-        String type = getMemberType();
-        if ("CLP".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new CLCommentsDelegate(view);
-        } else if ("CLLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new CLCommentsDelegate(view);
-        } else if ("RPG".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new RPGCommentsDelegate(view);
-        } else if ("RPGLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new RPGCommentsDelegate(view);
-        } else if ("SQLRPG".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new RPGCommentsDelegate(view);
-        } else if ("SQLRPGLE".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new RPGCommentsDelegate(view);
-        } else if ("PRTF".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new DDSCommentsDelegate(view);
-        } else if ("DSPF".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new DDSCommentsDelegate(view);
-        } else if ("LF".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new DDSCommentsDelegate(view);
-        } else if ("PF".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new DDSCommentsDelegate(view);
-        } else if ("PNLGRP".equalsIgnoreCase(type)) { //$NON-NLS-1$
-            return new PNLGRPCommentsDelegate(view);
-        }
-
-        throw new MemberTypeNotSupportedException();
-    }
-
     protected String getMemberType() {
 
         IEditorInput editorInput = getActiveEditor().getEditorInput();
@@ -119,7 +50,20 @@ public abstract class AbstractLpexAction implements LpexAction {
 
     protected String getElementText(LpexView view, int element) {
         // return the r-trimmed text
-        return view.elementText(element).replaceAll("\\s+$", "");
+        return view.elementText(element).replaceAll("\\s+$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    protected void goStartOfText(LpexView view, int element) {
+
+        String text = view.elementText(element);
+        int length = 0;
+        while (length <= text.length() && " ".equals(text.substring(length, length + 1))) { //$NON-NLS-1$
+            length++;
+        }
+
+        length++;
+
+        view.doCommand("set position " + length); //$NON-NLS-1$
     }
 
     protected int getLineLength(LpexView view) {
@@ -151,12 +95,36 @@ public abstract class AbstractLpexAction implements LpexAction {
         view.doCommand("set messageText " + text); //$NON-NLS-1$
     }
 
-    private void saveCursorPosition(LpexView view) {
+    protected void saveCursorPosition(LpexView view) {
         cursorPosition = new Position(view.queryInt("cursorRow"), view.queryInt("displayPosition")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void restoreCursorPosition(LpexView view) {
+    protected void restoreCursorPosition(LpexView view) {
         view.doCommand("set cursorRow " + cursorPosition.getLine()); //$NON-NLS-1$
         view.doCommand("set position " + cursorPosition.getColumn()); //$NON-NLS-1$
+    }
+
+    protected int getBlockTopElement(LpexView view) {
+        return view.queryInt("block.topElement"); //$NON-NLS-1$
+    }
+
+    protected int getBlockTopPosition(LpexView view) {
+        return view.queryInt("block.topPosition"); //$NON-NLS-1$
+    }
+
+    protected int getBlockBottomElement(LpexView view) {
+        return view.queryInt("block.bottomElement"); //$NON-NLS-1$
+    }
+
+    protected int getBLockBottomPosition(LpexView view) {
+        return view.queryInt("block.bottomPosition"); //$NON-NLS-1$
+    }
+
+    protected int getCurrentElement(LpexView view) {
+        return view.queryInt("element"); //$NON-NLS-1$
+    }
+
+    protected int getCurrentPosition(LpexView view) {
+        return view.queryInt("position"); //$NON-NLS-1$
     }
 }
