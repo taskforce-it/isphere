@@ -30,12 +30,17 @@ import biz.isphere.lpex.comments.preferences.Preferences;
 
 public class ISphereComments extends PreferencePage implements IWorkbenchPreferencePage {
 
+    private boolean hasShownWarning;
+
     private Button btnEnabled;
 
     public ISphereComments() {
         super();
+
         setPreferenceStore(ISphereAddRemoveCommentsPlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
+
+        hasShownWarning = false;
     }
 
     public void init(IWorkbench workbench) {
@@ -93,9 +98,10 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
     @Override
     public boolean performOk() {
 
-        if (ISphereAddRemoveCommentsPlugin.getDefault().isEnabled() != btnEnabled.getSelection()) {
+        if (!hasShownWarning && Preferences.getInstance().isEnabled() != btnEnabled.getSelection()) {
             DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.LPEX_COMMENT_RESTART_INFORMATION,
                 Messages.You_need_to_restart_the_IDE_to_activate_your_changes);
+            hasShownWarning = true;
         }
 
         setStoreToValues();
