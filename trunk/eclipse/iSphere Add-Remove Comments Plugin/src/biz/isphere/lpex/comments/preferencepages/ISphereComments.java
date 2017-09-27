@@ -215,7 +215,7 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
     }
 
     private GridData createLabelLayoutData() {
-        return new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+        return new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     }
 
     private Preferences getPreferences() {
