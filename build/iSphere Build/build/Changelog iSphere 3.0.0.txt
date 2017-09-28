@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.1.0.b010
+-----------------------------
+ • Added options to indent/unindent source lines.
+
 Changelog: iSphere 3.1.0.b009
 -----------------------------
  • Fixed problem that copying members between two systems did no
