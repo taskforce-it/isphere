@@ -2,6 +2,7 @@
 Changelog: iSphere 3.1.0.b010
 -----------------------------
  • Added options to indent/unindent source lines.
+ • Fixed bug in compare editor when called from CMOne.
 
 Changelog: iSphere 3.1.0.b009
 -----------------------------
