@@ -693,16 +693,18 @@ public abstract class CompareDialog extends XDialog {
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
 
-        if (!isEditable() || isIgnoreCase()) {
-            browseButton.setSelection(true);
-        } else {
-            browseButton.setSelection(false);
-        }
+        if (selectEditable) {
+            if (!isEditable() || isIgnoreCase()) {
+                browseButton.setSelection(true);
+            } else {
+                browseButton.setSelection(false);
+            }
 
-        if (isEditable() && !isIgnoreCase()) {
-            editButton.setSelection(true);
-        } else {
-            editButton.setSelection(false);
+            if (isEditable() && !isIgnoreCase()) {
+                editButton.setSelection(true);
+            } else {
+                editButton.setSelection(false);
+            }
         }
 
         if (!isConsiderDate()) {
