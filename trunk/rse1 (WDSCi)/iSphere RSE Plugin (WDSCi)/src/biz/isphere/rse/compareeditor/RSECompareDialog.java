@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
@@ -67,7 +68,8 @@ public class RSECompareDialog extends CompareDialog {
     private boolean rememberScreenValues;
 
     /**
-     * Creates a three-way compare dialog.
+     * Creates a three-way compare dialog.<br>
+     * This constructor is used by CMOne.
      * 
      * @param parentShell - shell the dialog is associated to
      * @param selectEditable - specifies whether or not option "Open for
@@ -76,10 +78,12 @@ public class RSECompareDialog extends CompareDialog {
      * @param rightMember - the right selected member
      * @param ancestorMember - the ancestor member
      */
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember) {
         super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
+        initializeAncestorMember(ancestorMember);
     }
 
     /**
@@ -155,6 +159,13 @@ public class RSECompareDialog extends CompareDialog {
         this.rightLibrary = rightMember.getLibrary();
         this.rightFile = rightMember.getSourceFile();
         this.rightMember = rightMember.getMember();
+    }
+
+    private void initializeAncestorMember(RSEMember ancestorMember) {
+        this.ancestorConnection = ancestorMember.getRSEConnection();
+        this.ancestorLibrary = ancestorMember.getLibrary();
+        this.ancestorFile = ancestorMember.getSourceFile();
+        this.ancestorMember = ancestorMember.getMember();
     }
 
     @Override
@@ -351,7 +362,7 @@ public class RSECompareDialog extends CompareDialog {
 
         }
 
-        if (isThreeWay()) {
+        if (isThreeWay() && hasEditableAncestorMember()) {
 
             ancestorConnection = getCurrentAncestorConnection();
             ancestorLibrary = getCurrentAncestorLibraryName();
