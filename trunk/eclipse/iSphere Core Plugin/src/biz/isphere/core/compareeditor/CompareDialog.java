@@ -55,6 +55,7 @@ public abstract class CompareDialog extends XDialog {
     private Member leftMember;
     private Member rightMember;
     private Member ancestorMember;
+
     private Button editButton;
     private Button browseButton;
     private Button dontIgnoreCaseButton;
@@ -64,6 +65,7 @@ public abstract class CompareDialog extends XDialog {
     private Button twoWayButton;
     private Button threeWayButton;
     private Button okButton;
+
     private boolean editable;
     private boolean considerDate;
     private boolean ignoreCase;
@@ -72,11 +74,14 @@ public abstract class CompareDialog extends XDialog {
     private boolean hasRightMember;
     private boolean hasMultipleRightMembers;
     private boolean hasAncestorMember;
+
     private Image switchImage;
+
     private Text leftConnectionText;
     private Text leftLibraryText;
     private Text leftFileText;
     private Text leftMemberText;
+
     private Text rightConnectionText;
     private Text rightLibraryText;
     private Text rightFileText;
@@ -352,7 +357,10 @@ public abstract class CompareDialog extends XDialog {
         /*
          * -------- Create right and ancestor areas --------
          */
-        if (hasRightMember()) {
+        if (hasAncestorMember()) {
+            createReadOnlyRightArea(rtnGroup);
+            createReadOnlyAncestorArea(rtnGroup);
+        } else if (hasRightMember()) {
             if (!hasMultipleRightMembers()) {
                 createSwitchMemberButton(rtnGroup);
                 createReadOnlyRightArea(rtnGroup);
@@ -561,6 +569,62 @@ public abstract class CompareDialog extends XDialog {
             Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
             rightTimeText.setLayoutData(getGridData());
             rightTimeText.setText(rightMember.getArchiveDate() + " - " + rightMember.getArchiveTime()); //$NON-NLS-1$
+        }
+    }
+
+    private void createReadOnlyAncestorArea(Composite parent) {
+
+        Group ancestorGroup = new Group(parent, SWT.NONE);
+        ancestorGroup.setText(Messages.Ancestor);
+        GridLayout ancestorLayout = new GridLayout(2, false);
+        ancestorGroup.setLayout(ancestorLayout);
+        ancestorGroup.setLayoutData(getGridData());
+
+        Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorConnectionLabel.setText(Messages.Connection_colon);
+
+        Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorConnectionText.setLayoutData(getGridData());
+        ancestorConnectionText.setText(ancestorMember.getConnection());
+
+        Label ancestorLibraryLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorLibraryLabel.setText(Messages.Library_colon);
+        Text ancestorLibraryText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorLibraryText.setLayoutData(getGridData());
+
+        if (ancestorMember.isArchive()) {
+            ancestorLibraryText.setText(ancestorMember.getArchiveLibrary());
+        } else {
+            ancestorLibraryText.setText(ancestorMember.getLibrary());
+        }
+
+        Label ancestorFileLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorFileLabel.setText(Messages.File_colon);
+        Text ancestorFileText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorFileText.setLayoutData(getGridData());
+        if (ancestorMember.isArchive()) {
+            ancestorFileText.setText(ancestorMember.getArchiveFile());
+        } else {
+            ancestorFileText.setText(ancestorMember.getSourceFile());
+        }
+
+        Label ancestorMemberLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorMemberLabel.setText(Messages.Member_colon);
+        Text ancestorMemberText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorMemberText.setLayoutData(getGridData());
+
+        if (ancestorMember.isArchive()) {
+            ancestorMemberText.setText(ancestorMember.getArchiveMember());
+        } else {
+            ancestorMemberText.setText(ancestorMember.getMember());
+        }
+
+        if (ancestorMember.isArchive()) {
+            Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
+            ancestorTimeLabel.setText(Messages.Archive_colon);
+            Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
+            ancestorTimeText.setLayoutData(getGridData());
+            ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime()); //$NON-NLS-1$
         }
     }
 
