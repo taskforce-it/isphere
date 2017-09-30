@@ -291,8 +291,8 @@ public class QueuedMessageFilterStringEditPaneDelegate {
 
     public boolean areFieldsComplete() {
         return ((messageQueueText.getText() != null) && (messageQueueText.getText().trim().length() > 0) && (libraryText.getText() != null)
-            && (libraryText.getText().trim().length() > 0) && (!messageQueueText.getText().equals(ASTERISK)) && (!libraryText.getText().equals(
-            ASTERISK)));
+            && (libraryText.getText().trim().length() > 0) && (!messageQueueText.getText().equals(ASTERISK)) && (!libraryText.isEnabled() || !libraryText
+            .getText().equals(ASTERISK)));
     }
 
     public String getFilterString() {
