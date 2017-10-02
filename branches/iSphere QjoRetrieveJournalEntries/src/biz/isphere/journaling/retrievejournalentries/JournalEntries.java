@@ -820,35 +820,50 @@ public class JournalEntries {
     /**
      * Returns the entry specific data splitted into an array of objects using
      * the current record format of the journaled file.
+     * <p>
+     * The header fields 'Length of entry specific data' and 'Reserved' are
+     * skipped. See section of section 'This journal entry's entry specific
+     * data' of the QjoRetrieveJournalEntries API.
      * 
      * @return array of objects
      */
     public Object[] getEntrySpecificData() {
+
         DynamicRecordFormat recFormat = store.get(getObjectName(), getObjectLibrary());
-        Object[] result = (Object[])getEntrySpecificDataStructure(recFormat).toObject(getOutputData(), entryHeaderStartPos + getDspToThsJrnEntData());
-        Object[] result2 = null;
-        if (result != null && result.length > 2) {
+        Object[] tmpEntrySpecificData = (Object[])getEntrySpecificDataStructure(recFormat).toObject(getOutputData(),
+            entryHeaderStartPos + getDspToThsJrnEntData());
+
+        Object[] entrySpecificData; // without header fields
+        if (tmpEntrySpecificData != null && tmpEntrySpecificData.length > 2) {
             ArrayList<Object> list = new ArrayList<Object>();
-            for (int i = 2; i < result.length; i++) {
-                list.add(result[i]);
+            for (int i = 2; i < tmpEntrySpecificData.length; i++) {
+                list.add(tmpEntrySpecificData[i]);
             }
-            result2 = list.toArray();
+            entrySpecificData = list.toArray();
         } else {
-            result2 = new Object[0];
+            entrySpecificData = new Object[0];
         }
-        return result2;
+
+        return entrySpecificData;
     }
 
     /**
      * Returns the the raw entry specific data.
+     * <p>
+     * The header fields 'Length of entry specific data' and 'Reserved' are
+     * skipped. See section of section 'This journal entry's entry specific
+     * data' of the QjoRetrieveJournalEntries API.
      * 
      * @return raw entry specific data as byte array
      */
     public byte[] getEntrySpecificDataRaw() {
+
         int tLength = getEntrySpecificDataLength();
         Object[] result = (Object[])getEntrySpecificDataStructureRaw(tLength)
             .toObject(getOutputData(), entryHeaderStartPos + getDspToThsJrnEntData());
+
         byte[] result2 = ((byte[])result[2]);
+
         return result2;
     }
 
@@ -1001,7 +1016,8 @@ public class JournalEntries {
     }
 
     /**
-     * Returns this journal entry's entry specific data structure header.
+     * Returns this journal entry's entry specific data structure header as
+     * returned by the QjoRetrieveJournalEntries API.
      * 
      * @return entry specific data structure header
      */
@@ -1015,6 +1031,13 @@ public class JournalEntries {
 
     /**
      * Returns this journal entry's entry specific data structure.
+     * <p>
+     * Format:
+     * <ul>
+     * <li>Length of entry specific data</li>
+     * <li>Reserved</li>
+     * <li>Entry specific data splitted into individual fields</li>
+     * </ul>
      * 
      * @return entry specific data structure
      */
@@ -1028,6 +1051,18 @@ public class JournalEntries {
         return new AS400Structure(tStructure.toArray(new AS400DataType[0]));
     }
 
+    /**
+     * Returns this journal entry's entry specific data structure.
+     * <p>
+     * Format:
+     * <ul>
+     * <li>Length of entry specific data</li>
+     * <li>Reserved</li>
+     * <li>Entry specific byte data</li>
+     * </ul>
+     * 
+     * @return entry specific data structure
+     */
     private AS400Structure getEntrySpecificDataStructureRaw(int aLength) {
         List<AS400DataType> tStructure = new ArrayList<AS400DataType>(getEntrySpecificDataStructureHeaderEntries());
         tStructure.add(new AS400ByteArray(aLength));
@@ -1037,6 +1072,23 @@ public class JournalEntries {
 
     /**
      * Returns this journal entry's entry specific data structure header.
+     * <p>
+     * The following fields of the 'This journal entry's entry specific data' of
+     * format 'RJNE0200' are returned:
+     * <table>
+     * <tr>
+     * <td>
+     * <li/>CHAR(5)</td>
+     * <td>-</td>
+     * <td>Length of entry specific data</td>
+     * </tr>
+     * <tr>
+     * <td>
+     * <li/>CHAR(1)</td>
+     * <td>-</td>
+     * <td>Reserved</td>
+     * </tr>
+     * </table>
      * 
      * @return entry specific data structure header
      */
