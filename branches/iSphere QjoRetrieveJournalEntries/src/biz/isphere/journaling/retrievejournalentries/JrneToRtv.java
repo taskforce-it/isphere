@@ -5,9 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -559,5 +561,24 @@ public class JrneToRtv {
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(date);
         return calendar;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        Collection<RetrieveCriterion> values = selectionCriteria.values();
+        for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+            RetrieveCriterion retrieveCriterion = (RetrieveCriterion)iterator.next();
+
+            if (buffer.length() != 0) {
+                buffer.append(", ");
+            }
+
+            buffer.append(retrieveCriterion.toString());
+        }
+
+        return buffer.toString();
     }
 }
