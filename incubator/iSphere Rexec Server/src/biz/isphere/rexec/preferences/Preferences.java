@@ -136,7 +136,7 @@ public final class Preferences {
      */
 
     public boolean getInitialServerEnabled() {
-        return true;
+        return false;
     }
 
     public int getInitialListenerPort() {
