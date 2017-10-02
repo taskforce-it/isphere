@@ -185,13 +185,20 @@ public class RexecRequestHandler extends Thread {
      * Command:<br>
      * 
      * <pre>
-     *    SETSEP OBJ(ISPHEREDVP/FNDSTR) 
-     *           OBJTYPE(*SRVPGM) 
-     *           MODULE(*ALL) 
-     *           PROC(*ALL) 
-     *           USER(RADDATZ) 
-     *           CNN(iSphere)
+     *    RUNRMTCMD 
+     *      CMD('*CL:SETSEP 
+     *                 OBJ(ISPHEREDVP/FNDSTR) 
+     *                 OBJTYPE(*SRVPGM) 
+     *                 MODULE(*ALL) 
+     *                 PROC(*ALL) 
+     *                 USER(RADDATZ) 
+     *                 CNN(iSphere)') 
+     *      RMTLOCNAME('10.115.14.97' *IP) 
+     *      RMTUSER(JOE)
+     *      RMTPWD(mySecret)
      * </pre>
+     * 
+     * @see iSphere 5250 Emulator RSE Plugin (RDi): SetSEPAsync
      */
     private boolean handleSETSEP(CLCommand clCommand) {
 
@@ -237,15 +244,19 @@ public class RexecRequestHandler extends Thread {
         final String fConnection = connection;
 
         // TODO: set service entry point
+        // TODO: open "IBM i Service Entry Points" view.
         new UIJob("") {
 
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 ServiceEntryPointManager serviceEntryPointManager = IDEALPlugin.getServiceEntryPointManager();
-                boolean rc = serviceEntryPointManager.setServiceEntryPoint(IBMiConnection.getConnection(fConnection), fUser, fLibrary, fObjectType,
-                    fObject, fModule, fProcedure);
+                IBMiConnection connection = IBMiConnection.getConnection(fConnection);
+                boolean rc = serviceEntryPointManager.setServiceEntryPoint(connection, fUser, fLibrary, fObjectType, fObject, fModule, fProcedure);
                 if (rc) {
                     System.out.println("SEP successfully set.");
+                } else {
+                    String message = serviceEntryPointManager.getCurrentMessage(connection.getHostName(), fUser);
+                    System.out.println("ERROR: " + message);
                 }
                 return Status.OK_STATUS;
             }
