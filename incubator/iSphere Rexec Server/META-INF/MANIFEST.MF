@@ -10,7 +10,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.equinox.security,
  biz.isphere.core,
- biz.isphere.base
+ biz.isphere.base,
+ com.ibm.etools.iseries.debug,
+ com.ibm.etools.iseries.subsystems.qsys,
+ org.eclipse.rse.core
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-ClassPath: lib/commons-net-3.4.jar,

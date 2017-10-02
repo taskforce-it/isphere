@@ -16,6 +16,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.progress.UIJob;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.CLCommand;
@@ -24,6 +29,10 @@ import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rexec.Messages;
 import biz.isphere.rexec.preferences.Preferences;
+
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.systems.as400.debug.launchconfig.IDEALPlugin;
+import com.ibm.etools.systems.as400.debug.sep.ServiceEntryPointManager;
 
 /**
  * This class handles the requests that have been received by the Rexec server.
@@ -172,6 +181,18 @@ public class RexecRequestHandler extends Thread {
         }
     }
 
+    /**
+     * Command:<br>
+     * 
+     * <pre>
+     *    SETSEP OBJ(ISPHEREDVP/FNDSTR) 
+     *           OBJTYPE(*SRVPGM) 
+     *           MODULE(*ALL) 
+     *           PROC(*ALL) 
+     *           USER(RADDATZ) 
+     *           CNN(iSphere)
+     * </pre>
+     */
     private boolean handleSETSEP(CLCommand clCommand) {
 
         String object = null;
@@ -179,6 +200,8 @@ public class RexecRequestHandler extends Thread {
         String objectType = null;
         String module = null;
         String procedure = null;
+        String user = null;
+        String connection = null;
 
         CLParameter[] clParameters = clCommand.getParameters();
         for (CLParameter clParameter : clParameters) {
@@ -198,11 +221,36 @@ public class RexecRequestHandler extends Thread {
                 module = clParameter.getValue();
             } else if ("PROC".equals(clParameter.getKeyword())) {
                 procedure = clParameter.getValue();
+            } else if ("USER".equals(clParameter.getKeyword())) {
+                user = clParameter.getValue();
+            } else if ("CNN".equals(clParameter.getKeyword())) {
+                connection = clParameter.getValue();
             }
         }
 
+        final String fObject = object;
+        final String fLibrary = library;
+        final String fObjectType = objectType;
+        final String fModule = module;
+        final String fProcedure = procedure;
+        final String fUser = user;
+        final String fConnection = connection;
+
         // TODO: set service entry point
-        
+        new UIJob("") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                ServiceEntryPointManager serviceEntryPointManager = IDEALPlugin.getServiceEntryPointManager();
+                boolean rc = serviceEntryPointManager.setServiceEntryPoint(IBMiConnection.getConnection(fConnection), fUser, fLibrary, fObjectType,
+                    fObject, fModule, fProcedure);
+                if (rc) {
+                    System.out.println("SEP successfully set.");
+                }
+                return Status.OK_STATUS;
+            }
+        }.schedule();
+
         return false;
     }
 
