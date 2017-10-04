@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
@@ -101,7 +103,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         userText.setTextLimit(10);
 
         Label textUserGeneric = new Label(composite_prompts, SWT.NONE);
-        textUserGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textUserGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // Message Id: *generic*
         Label idLabel = new Label(composite_prompts, SWT.NONE);
@@ -114,7 +116,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         idText.setTextLimit(7);
 
         Label textIdGeneric = new Label(composite_prompts, SWT.NONE);
-        textIdGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textIdGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // Message severity: numeric value
         Label severityLabel = new Label(composite_prompts, SWT.NONE);
@@ -138,7 +140,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobText.setTextLimit(10);
 
         Label textFromJobGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromJobGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textFromJobGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // From job number: *generic*
         Label fromJobNumberLabel = new Label(composite_prompts, SWT.NONE);
@@ -151,7 +153,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromJobNumberText.setTextLimit(6);
 
         Label textFromJobNumberGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromJobNumberGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textFromJobNumberGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // From program: *generic*
         Label fromProgramLabel = new Label(composite_prompts, SWT.NONE);
@@ -164,7 +166,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         fromProgramText.setTextLimit(10);
 
         Label textFromProgramGeneric = new Label(composite_prompts, SWT.NONE);
-        textFromProgramGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textFromProgramGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // Message text: *generic*
         Label textLabel = new Label(composite_prompts, SWT.NONE);
@@ -177,7 +179,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         textText.setTextLimit(255);
 
         Label textTextGeneric = new Label(composite_prompts, SWT.NONE);
-        textTextGeneric.setText("*gen?ric*"); //$NON-NLS-1$
+        textTextGeneric.setText(Messages.Label_Full_generic_string); //$NON-NLS-1$
 
         // Message type: combo box
         Label typeLabel = new Label(composite_prompts, SWT.NONE);
@@ -289,33 +291,88 @@ public class QueuedMessageFilterStringEditPaneDelegate {
         messageTypeCombo.select(messageTypeCombo.indexOf(QueuedMessageHelper.getMessageTypeAnyItem()));
     }
 
+    public String validateInput() {
+
+        String messageQueue = messageQueueText.getText();
+        if (StringHelper.isNullOrEmpty(messageQueue)) {
+            return Messages.Message_queue_is_missing;
+        }
+
+        if (libraryText.isEnabled()) {
+            String library = libraryText.getText();
+            if (StringHelper.isNullOrEmpty(library)) {
+                return Messages.Message_queue_library_is_invalid_or_missing;
+            }
+
+            if (!Validator.getLibraryNameInstance().validate(library)) {
+                return Messages.Message_queue_library_is_invalid_or_missing;
+            }
+        }
+
+        String fromUser = userText.getText();
+        if (StringHelper.isNullOrEmpty(fromUser)) {
+            return Messages.From_user_is_missing;
+        }
+
+        String messageId = idText.getText();
+        if (StringHelper.isNullOrEmpty(messageId)) {
+            return Messages.Message_ID_is_missing;
+        }
+
+        String severity = severityText.getText();
+        if (StringHelper.isNullOrEmpty(severity)) {
+            return Messages.Severity_is_missing;
+        }
+
+        String fromJob = fromJobText.getText();
+        if (StringHelper.isNullOrEmpty(fromJob)) {
+            return Messages.From_job_is_missing;
+        }
+
+        String fromJobNumber = fromJobNumberText.getText();
+        if (StringHelper.isNullOrEmpty(fromJobNumber)) {
+            return Messages.From_job_number_is_missing;
+        }
+
+        String fromProgram = fromProgramText.getText();
+        if (StringHelper.isNullOrEmpty(fromProgram)) {
+            return Messages.From_program_is_missing;
+        }
+
+        String messageText = textText.getText();
+        if (StringHelper.isNullOrEmpty(messageText)) {
+            return Messages.Message_text_is_missing;
+        }
+
+        String messageType = messageTypeCombo.getText();
+        if (StringHelper.isNullOrEmpty(messageType)) {
+            return Messages.Message_type_is_missing;
+        }
+
+        return null;
+    }
+
     public boolean areFieldsComplete() {
-        return ((messageQueueText.getText() != null) && (messageQueueText.getText().trim().length() > 0) && (libraryText.getText() != null)
-            && (libraryText.getText().trim().length() > 0) && (!messageQueueText.getText().equals(ASTERISK)) && (!libraryText.isEnabled() || !libraryText
-            .getText().equals(ASTERISK)));
+
+        if (validateInput() != null) {
+            return false;
+        }
+
+        return true;
     }
 
     public String getFilterString() {
 
         QueuedMessageFilter filter = new QueuedMessageFilter();
 
-        if ((messageQueueText.getText() != null) && (messageQueueText.getText().length() > 0) && (!messageQueueText.getText().equals(ASTERISK))) {
-            filter.setMessageQueue(messageQueueText.getText().toUpperCase());
-        }
+        filter.setMessageQueue(messageQueueText.getText().toUpperCase());
+        filter.setLibrary(libraryText.getText().toUpperCase());
+        filter.setUser(userText.getText().toUpperCase());
+        filter.setId(idText.getText().toUpperCase());
 
-        if ((libraryText.getText() != null) && (libraryText.getText().length() > 0) && (!libraryText.getText().equals(ASTERISK))) {
-            filter.setLibrary(libraryText.getText().toUpperCase());
-        }
-
-        if ((userText.getText() != null) && (userText.getText().length() > 0) && (!userText.getText().equals(ASTERISK))) {
-            filter.setUser(userText.getText().toUpperCase());
-        }
-
-        if ((idText.getText() != null) && (idText.getText().length() > 0) && (!idText.getText().equals(ASTERISK))) {
-            filter.setId(idText.getText().toUpperCase());
-        }
-
-        if ((severityText.getText() != null) && (severityText.getText().length() > 0) && (!severityText.getText().equals(ASTERISK))) {
+        if (severityText.getText().equals(ASTERISK)) {
+            filter.setSeverity(-1);
+        } else {
             int severity = -1;
             try {
                 severity = new Integer(severityText.getText()).intValue();
@@ -324,22 +381,10 @@ public class QueuedMessageFilterStringEditPaneDelegate {
             filter.setSeverity(severity);
         }
 
-        if ((fromJobText.getText() != null) && (fromJobText.getText().length() > 0) && (!fromJobText.getText().equals(ASTERISK))) {
-            filter.setFromJobName(fromJobText.getText().toUpperCase());
-        }
-
-        if ((fromJobNumberText.getText() != null) && (fromJobNumberText.getText().length() > 0) && (!fromJobNumberText.getText().equals(ASTERISK))) {
-            filter.setFromJobNumber(fromJobNumberText.getText());
-        }
-
-        if ((fromProgramText.getText() != null) && (fromProgramText.getText().length() > 0) && (!fromProgramText.getText().equals(ASTERISK))) {
-            filter.setFromProgram(fromProgramText.getText().toUpperCase());
-        }
-
-        if ((textText.getText() != null) && (textText.getText().length() > 0) && (!textText.getText().equals(ASTERISK))) {
-            filter.setText(textText.getText());
-        }
-
+        filter.setFromJobName(fromJobText.getText().toUpperCase());
+        filter.setFromJobNumber(fromJobNumberText.getText());
+        filter.setFromProgram(fromProgramText.getText().toUpperCase());
+        filter.setText(textText.getText());
         filter.setMessageType(QueuedMessageHelper.getMessageTypeFromText(messageTypeCombo.getText()));
 
         return filter.getFilterString();

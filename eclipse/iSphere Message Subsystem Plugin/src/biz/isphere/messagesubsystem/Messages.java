@@ -197,6 +197,24 @@ public class Messages extends NLS {
 
     public static String Please_enter_a_value;
 
+    public static String Message_queue_is_missing;
+
+    public static String Message_queue_library_is_invalid_or_missing;
+
+    public static String From_user_is_missing;
+
+    public static String Message_ID_is_missing;
+
+    public static String Severity_is_missing;
+
+    public static String From_job_is_missing;
+
+    public static String From_job_number_is_missing;
+
+    public static String From_program_is_missing;
+
+    public static String Message_type_is_missing;
+
     public static String Message_queue_A_not_found_in_library_B;
 
     public static String Delivery_mode_colon;
@@ -258,6 +276,8 @@ public class Messages extends NLS {
     public static String Message_Reply_Status_Accepts_Not_Send;
 
     public static String Message_Reply_Status_Not_Accept;
+
+    public static String Label_Full_generic_string;
 
     static {
         // initialize resource bundle
