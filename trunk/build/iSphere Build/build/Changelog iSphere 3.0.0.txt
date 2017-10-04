@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.1.0.b011
+-----------------------------
+ • Added problem when comparing the user input when
+   creating a message filter.
+
 Changelog: iSphere 3.1.0.b010
 -----------------------------
  • Added options to indent/unindent source lines.
