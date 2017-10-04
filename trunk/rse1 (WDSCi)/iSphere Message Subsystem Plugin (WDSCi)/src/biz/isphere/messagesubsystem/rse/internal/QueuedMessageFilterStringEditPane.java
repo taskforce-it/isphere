@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilterStringEditPaneDelegate;
 
+import com.ibm.etools.systems.core.messages.IndicatorException;
 import com.ibm.etools.systems.core.messages.SystemMessage;
 import com.ibm.etools.systems.core.ui.SystemWidgetHelpers;
 import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
@@ -41,22 +42,37 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
     public Control createContents(Composite parent) {
 
         int nbrColumns = 3;
-        Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
+        Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
-        delegate.createContents(composite_prompts);
+        delegate.createContents(composite);
 
         resetFields();
         doInitializeFields();
 
         ModifyListener keyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                validateStringInput();
+                validateInput();
             }
         };
 
         delegate.addModifyListener(keyListener);
 
-        return composite_prompts;
+        return composite;
+    }
+
+    private void validateInput() {
+
+        String message = delegate.validateInput();
+        if (message != null) {
+            try {
+                errorMessage = new SystemMessage("", "", "", SystemMessage.ERROR, message, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            } catch (IndicatorException e) {
+            }
+        } else {
+            errorMessage = null;
+        }
+
+        fireChangeEvent(errorMessage);
     }
 
     @Override
@@ -84,11 +100,21 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
         return delegate.getFilterString();
     }
 
+    /**
+     * Called, when the dialog is first displayed.
+     */
+    @Override
+    public boolean isComplete() {
+        return areFieldsComplete();
+    }
+
     @Override
     public SystemMessage verify() {
-        if (!areFieldsComplete())
+        if (!areFieldsComplete()) {
             return SystemMessageDialog.getExceptionMessage(Display.getCurrent().getActiveShell(), new Exception(
                 Messages.Message_queue_and_library_must_be_specified));
+        }
+
         return null;
     }
 
