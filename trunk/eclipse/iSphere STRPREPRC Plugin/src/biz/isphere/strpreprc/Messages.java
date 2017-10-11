@@ -86,6 +86,8 @@ public class Messages extends NLS {
 
     public static String Export;
 
+    public static String Templates_successfully_exported_to_folder_colon;
+
     public static String Tooltip_Export;
 
     public static String Clear_Cache;
