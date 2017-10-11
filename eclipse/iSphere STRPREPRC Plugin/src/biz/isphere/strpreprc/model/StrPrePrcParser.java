@@ -194,7 +194,7 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         try {
             createTemplates = true;
             produceParameterSequence(getFullCommand(), formatter);
-            return produceHeader(null);
+            return produceHeader(null, memberType);
         } finally {
             createTemplates = false;
         }
@@ -257,7 +257,7 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         }
 
         // Add new header
-        String[] headerLines = produceHeader(formatter);
+        String[] headerLines = produceHeader(formatter, memberType);
 
         for (String line : headerLines) {
             if (insertAtLine <= 0) {

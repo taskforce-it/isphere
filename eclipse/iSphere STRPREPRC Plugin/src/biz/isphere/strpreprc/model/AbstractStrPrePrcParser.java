@@ -127,9 +127,9 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         popTagMode(); // *SCAN
     }
 
-    protected String[] produceHeader(CLFormatter formatter) {
+    protected String[] produceHeader(CLFormatter formatter, String memberType) {
 
-        ensurePreconditions();
+        ensurePreconditions(memberType);
 
         List<String> textLines = new ArrayList<String>();
 
@@ -166,20 +166,40 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         return textLines.toArray(new String[textLines.size()]);
     }
 
-    private void ensurePreconditions() {
+    private void ensurePreconditions(String memberType) {
 
         if (StringHelper.isNullOrEmpty(rightCommentChars)) {
-            rightCommentChars = "*/";
-            rightCommentPosition = 70;
+            if (isCLSource(memberType) || isCommandSource(memberType)) {
+                rightCommentChars = "*/";
+                rightCommentPosition = 70;
+            }
         }
 
         if (StringHelper.isNullOrEmpty(leftCommentChars)) {
             leftCommentChars = "//*";
         }
-        
+
         if (StringHelper.isNullOrEmpty(indent)) {
             indent = "    "; // 4 spaces
         }
+    }
+
+    private boolean isCLSource(String memberType) {
+
+        if (IHeaderTemplates.CLLE.equalsIgnoreCase(memberType) || IHeaderTemplates.CLP.equalsIgnoreCase(memberType)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isCommandSource(String memberType) {
+
+        if (IHeaderTemplates.CMD.equalsIgnoreCase(memberType)) {
+            return true;
+        }
+
+        return false;
     }
 
     private int ensureWidth() {
@@ -510,7 +530,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
         if (start < 0) {
             return "";
         }
-        
+
         int end = trimmed.length();
 
         if (start < startPos) {
@@ -581,7 +601,7 @@ public abstract class AbstractStrPrePrcParser implements StrPrePrc {
     private int getLineCounter() {
         return lineCounter;
     }
-    
+
     private String getIndention(String line, String leftCommentChars) {
 
         int end = line.indexOf(leftCommentChars);

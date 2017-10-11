@@ -28,7 +28,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.preferences.Preferences;
 
-public final class HeaderTemplates {
+public final class HeaderTemplates implements IHeaderTemplates {
 
     private static final String TEMPLATE_FILE_EXTENSION = ".strpreprc";
 
@@ -37,20 +37,6 @@ public final class HeaderTemplates {
     private static final String OBJECT_VARIABLES = "&LI/&OB";
 
     private static final String DEFAULT = "*dft";
-    private static final String SQLRPG = "sqlrpg";
-    private static final String SQLRPGLE = "sqlrpgle";
-    private static final String RPG = "rpg";
-    private static final String RPGLE = "rpgle";
-    private static final String C = "c";
-    private static final String CLP = "clp";
-    private static final String CLLE = "clle";
-    private static final String PNLGRP = "pnlgrp";
-    private static final String DSPF = "dspf";
-    private static final String PRTF = "prtf";
-    private static final String CMD = "cmd";
-    private static final String LF = "lf";
-    private static final String PF = "pf";
-    private static final String SQLSTMT = "sqlstmt";
 
     private Properties defaultCreationCommands;
     private Properties defaultImportantParameters;

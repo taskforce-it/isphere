@@ -105,10 +105,10 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Label labelDefaultSection = new Label(groupAddHeader, SWT.NONE);
         labelDefaultSection.setLayoutData(createLabelLayoutData());
         labelDefaultSection.setText(Messages.Default_section_colon);
-        labelDefaultSection.setToolTipText(Messages.Tooltip_Default_section); 
+        labelDefaultSection.setToolTipText(Messages.Tooltip_Default_section);
 
         comboDefaultSection = WidgetFactory.createReadOnlyCombo(groupAddHeader);
-        comboDefaultSection.setToolTipText(Messages.Tooltip_Default_section); 
+        comboDefaultSection.setToolTipText(Messages.Tooltip_Default_section);
         comboDefaultSection.setLayoutData(createFillLayoutData(2));
         comboDefaultSection.setItems(Preferences.getInstance().getSections());
         comboDefaultSection.addSelectionListener(new SelectionAdapter() {
@@ -122,11 +122,11 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         Label labelUseTemplateFolder = new Label(groupAddHeader, SWT.NONE);
         labelUseTemplateFolder.setLayoutData(createLabelLayoutData());
-        labelUseTemplateFolder.setText(Messages.Use_template_directory_colon); 
+        labelUseTemplateFolder.setText(Messages.Use_template_directory_colon);
         labelUseTemplateFolder.setToolTipText(Messages.Tooltip_Use_template_directory_colon);
 
         checkboxUseTemplateFolder = WidgetFactory.createCheckbox(groupAddHeader);
-        checkboxUseTemplateFolder.setToolTipText(Messages.Tooltip_Use_template_directory_colon); 
+        checkboxUseTemplateFolder.setToolTipText(Messages.Tooltip_Use_template_directory_colon);
         checkboxUseTemplateFolder.setLayoutData(createLayoutData(2));
         checkboxUseTemplateFolder.addSelectionListener(new SelectionListener() {
 
@@ -143,11 +143,11 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
         Label labelTemplatesDirectory = new Label(groupAddHeader, SWT.NONE);
         labelTemplatesDirectory.setLayoutData(createLabelLayoutData());
-        labelTemplatesDirectory.setText(Messages.Templates_directory_colon); 
-        labelTemplatesDirectory.setToolTipText(Messages.Tooltip_Templates_directory_colon); 
+        labelTemplatesDirectory.setText(Messages.Templates_directory_colon);
+        labelTemplatesDirectory.setToolTipText(Messages.Tooltip_Templates_directory_colon);
 
         textTemplateFolder = WidgetFactory.createText(groupAddHeader);
-        textTemplateFolder.setToolTipText(Messages.Tooltip_Templates_directory_colon); 
+        textTemplateFolder.setToolTipText(Messages.Tooltip_Templates_directory_colon);
         GridData sourceFileSearchSaveDirectoryLayoutData = createFillLayoutData(1);
         sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
         textTemplateFolder.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
@@ -195,12 +195,12 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         Group groupEditHeader = new Group(parent, SWT.NONE);
         groupEditHeader.setLayout(new GridLayout(3, false));
         groupEditHeader.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
-        groupEditHeader.setText(Messages.Edit_header); 
+        groupEditHeader.setText(Messages.Edit_header);
 
         Label labelSkipEditDialog = new Label(groupEditHeader, SWT.NONE);
         labelSkipEditDialog.setLayoutData(createLabelLayoutData());
-        labelSkipEditDialog.setText(Messages.Skip_edit_dialog_colon); 
-        labelSkipEditDialog.setToolTipText(Messages.Tooltip_Skip_edit_dialog_colon); 
+        labelSkipEditDialog.setText(Messages.Skip_edit_dialog_colon);
+        labelSkipEditDialog.setToolTipText(Messages.Tooltip_Skip_edit_dialog_colon);
 
         checkboxSkipEditDialog = WidgetFactory.createCheckbox(groupEditHeader);
         checkboxSkipEditDialog.setToolTipText(Messages.Tooltip_Skip_edit_dialog_colon);
@@ -217,19 +217,22 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
 
     private void createSectionExport(Composite parent) {
 
-        buttonExportTemplates = WidgetFactory.createPushButton(parent, Messages.Export); 
+        buttonExportTemplates = WidgetFactory.createPushButton(parent, Messages.Export);
         buttonExportTemplates.setLayoutData(createButtonLayoutData(2));
         buttonExportTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 String errorMessage = HeaderTemplates.getInstance().save(textTemplateFolder.getText());
                 if (!StringHelper.isNullOrEmpty(errorMessage)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
+                } else {
+                    MessageDialog.openInformation(getShell(), Messages.Export, Messages.Templates_successfully_exported_to_folder_colon + "\n\n"
+                        + textTemplateFolder.getText());
                 }
             }
         });
         buttonExportTemplates.setToolTipText(Messages.Tooltip_Export);
 
-        buttonReloadTemplates = WidgetFactory.createPushButton(parent, Messages.Clear_Cache); 
+        buttonReloadTemplates = WidgetFactory.createPushButton(parent, Messages.Clear_Cache);
         buttonReloadTemplates.setLayoutData(createButtonLayoutData(2));
         buttonReloadTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -394,7 +397,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         if (!validateTemplateDirectory()) {
             return false;
         }
-        
+
         if (!validateSkipEditDialog()) {
             return false;
         }
