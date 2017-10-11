@@ -48,6 +48,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
     private Button checkboxSkipEditDialog;
     private Button buttonExportTemplates;
     private Button buttonReloadTemplates;
+    private Label labelTemplatesCount;
 
     public ISphereStrPrePrc() {
         super();
@@ -222,6 +223,7 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         buttonExportTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 String errorMessage = HeaderTemplates.getInstance().save(textTemplateFolder.getText());
+                updateNumberOfCachedTemplates();
                 if (!StringHelper.isNullOrEmpty(errorMessage)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
                 } else {
@@ -233,13 +235,16 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         buttonExportTemplates.setToolTipText(Messages.Tooltip_Export);
 
         buttonReloadTemplates = WidgetFactory.createPushButton(parent, Messages.Clear_Cache);
-        buttonReloadTemplates.setLayoutData(createButtonLayoutData(2));
+        buttonReloadTemplates.setLayoutData(createButtonLayoutData(1));
         buttonReloadTemplates.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 performClearTemplateCache(true);
             }
         });
         buttonReloadTemplates.setToolTipText(Messages.Tooltip_Clear_Cache);
+
+        labelTemplatesCount = new Label(parent, SWT.NONE);
+        updateNumberOfCachedTemplates();
     }
 
     @Override
@@ -323,6 +328,12 @@ public class ISphereStrPrePrc extends PreferencePage implements IWorkbenchPrefer
         if (enforce || isDirty) {
             HeaderTemplates.getInstance().clearTemplatesCache();
         }
+
+        updateNumberOfCachedTemplates();
+    }
+
+    private void updateNumberOfCachedTemplates() {
+        labelTemplatesCount.setText(Messages.bind(Messages.Cached_templates_A, HeaderTemplates.getInstance().getNumberOfTemplates()));
     }
 
     private boolean validateUseParameterSections() {

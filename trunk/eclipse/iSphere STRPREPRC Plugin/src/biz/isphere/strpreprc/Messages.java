@@ -94,6 +94,8 @@ public class Messages extends NLS {
 
     public static String Tooltip_Clear_Cache;
 
+    public static String Cached_templates_A;
+
     public static String Pre_or_post_command_not_found_at_line_A;
 
     public static String RPLVAR_LI;
