@@ -107,7 +107,9 @@ public final class HeaderTemplates implements IHeaderTemplates {
 
         templates = new Properties();
 
-        loadExternalTemplates(preferences.getTemplateDirectory());
+        if (preferences.useTemplateDirectory()) {
+            loadExternalTemplates(preferences.getTemplateDirectory());
+        }
 
         int dftIndent = preferences.getDefaultIndention();
 
@@ -238,6 +240,20 @@ public final class HeaderTemplates implements IHeaderTemplates {
      */
     public void clearTemplatesCache() {
         templates = null;
+    }
+
+    /**
+     * Returns the number of loaded and cached templates.
+     * 
+     * @return number of templates
+     */
+    public int getNumberOfTemplates() {
+
+        if (templates == null) {
+            return 0;
+        }
+
+        return templates.size();
     }
 
     /**
