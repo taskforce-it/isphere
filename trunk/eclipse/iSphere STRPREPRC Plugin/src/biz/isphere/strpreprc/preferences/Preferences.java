@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.strpreprc.ISphereStrPrePrcPlugin;
+import biz.isphere.strpreprc.lpex.MenuExtension;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -70,6 +71,8 @@ public final class Preferences {
     private static final String DEFAULT_SECTION = TEMPLATES + "DEFAULT_SECTION"; //$NON-NLS-1$
 
     private static final String SKIP_EDIT_DIALOG = TEMPLATES + "SKIP_EDIT_DIALOG"; //$NON-NLS-1$
+
+    private static final String USER_KEY_ACTIONS = DOMAIN + "USER_KEY_ACTIONS"; //$NON-NLS-1$
 
     public static final String IMPORTANT = "IMPORTANT";
     public static final String COMPILE = "COMPILE";
@@ -163,6 +166,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SKIP_EDIT_DIALOG);
     }
 
+    public String getUserKeyActions() {
+        return preferenceStore.getString(USER_KEY_ACTIONS);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -215,6 +222,10 @@ public final class Preferences {
         preferenceStore.setValue(SKIP_EDIT_DIALOG, skip);
     }
 
+    public void setUserKeyActions(String userKeyActions) {
+        preferenceStore.setValue(USER_KEY_ACTIONS, userKeyActions);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -233,6 +244,7 @@ public final class Preferences {
         preferenceStore.setDefault(USE_PARAMETER_SECTIONS, getInitialUseParameterSections());
         preferenceStore.setDefault(DEFAULT_SECTION, getInitialDefaultSection());
         preferenceStore.setDefault(SKIP_EDIT_DIALOG, getInitialSkipEditDialog());
+        preferenceStore.setDefault(USER_KEY_ACTIONS, getInitialUserKeyActions());
     }
 
     /*
@@ -295,6 +307,10 @@ public final class Preferences {
 
     public boolean getInitialSkipEditDialog() {
         return false;
+    }
+
+    public String getInitialUserKeyActions() {
+        return MenuExtension.getInitialUserKeyActions();
     }
 
     /*

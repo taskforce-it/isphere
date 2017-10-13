@@ -9,16 +9,23 @@
 package biz.isphere.strpreprc.lpex;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import biz.isphere.strpreprc.ISphereStrPrePrcPlugin;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
+import biz.isphere.core.lpex.menu.model.UserAction;
+import biz.isphere.core.lpex.menu.model.UserKeyAction;
 import biz.isphere.strpreprc.lpex.action.AddPostCompileCommandAction;
 import biz.isphere.strpreprc.lpex.action.AddPreCompileCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditHeaderAction;
 import biz.isphere.strpreprc.lpex.action.RemoveHeaderAction;
-
-import com.ibm.lpex.core.LpexView;
+import biz.isphere.strpreprc.preferences.Preferences;
 
 /**
  * This class extends the popup menue of the Lpex editor. It adds the following
@@ -28,157 +35,46 @@ import com.ibm.lpex.core.LpexView;
  * <li>Remove STRPREPRC header</li>
  * </ul>
  */
-public class MenuExtension {
+public class MenuExtension extends AbstractLpexMenuExtension implements IPropertyChangeListener {
 
     private static final String MENU_NAME = "STRPREPRC";
-    private static final String BEGIN_SUB_MENU = "beginSubmenu"; //$NON-NLS-1$
-    private static final String END_SUB_MENU = "endSubmenu"; //$NON-NLS-1$
-    private static final String SEPARATOR = "separator"; //$NON-NLS-1$
-    private static final String DOUBLE_QUOTES = "\""; //$NON-NLS-1$
-    private static final String SPACE = " "; //$NON-NLS-1$
+    private static final String MARK_ID = "biz.iSphere.STRPREPRC";
 
-    public void initializeLpexEditor() {
-
-        ISphereStrPrePrcPlugin.getDefault().setLpexMenuExtension(this);
-
-        LpexView.doGlobalCommand("set default.updateProfile.userActions "
-            + getLPEXEditorUserActions(LpexView.globalQuery("current.updateProfile.userActions")));
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions "
-            + getLPEXEditorUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions")));
-        LpexView.doGlobalCommand("set default.popup " + getLPEXEditorPopupMenu(LpexView.globalQuery("current.popup")));
+    public MenuExtension() {
+        super(TOP);
     }
 
-    public void uninstall() {
+    protected UserAction[] getUserActions() {
 
-        removeUserActions();
-        removeUserKeyActions();
-        removePopupMenu();
+        List<UserAction> actions = new LinkedList<UserAction>();
+        actions.add(new UserAction(EditHeaderAction.ID, EditHeaderAction.class.getName()));
+        actions.add(new UserAction(RemoveHeaderAction.ID, RemoveHeaderAction.class.getName()));
+        actions.add(new UserAction(AddPreCompileCommandAction.ID, AddPreCompileCommandAction.class.getName()));
+        actions.add(new UserAction(AddPostCompileCommandAction.ID, AddPostCompileCommandAction.class.getName()));
+        actions.add(new UserAction(EditCommandAction.ID, EditCommandAction.class.getName()));
+
+        return actions.toArray(new UserAction[actions.size()]);
     }
 
-    private void removeUserActions() {
-
-        StringBuilder existingActions = new StringBuilder(LpexView.globalQuery("current.updateProfile.userActions"));
-        ArrayList<String> actions = getUserActions();
-
-        int start;
-        for (String action : actions) {
-            if ((start = existingActions.indexOf(action)) >= 0) {
-                int end = start + action.length();
-                existingActions.replace(start, end, "");
-            }
-        }
-
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + existingActions.toString().trim());
+    @Override
+    protected String getMenuName() {
+        return MENU_NAME;
     }
 
-    private void removeUserKeyActions() {
-
-        StringBuilder existingActions = new StringBuilder(LpexView.globalQuery("current.updateProfile.userKeyActions"));
-        ArrayList<String> actions = getUserKeyActions();
-
-        int start;
-        for (String action : actions) {
-            if ((start = existingActions.indexOf(action)) >= 0) {
-                int end = start + action.length();
-                existingActions.replace(start, end, "");
-            }
-        }
-
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + existingActions.toString().trim());
+    protected String getMarkId() {
+        return MARK_ID;
     }
 
-    private void removePopupMenu() {
+    protected UserKeyAction[] getUserKeyActions() {
 
-        String popupMenu = LpexView.globalQuery("current.popup");
-        popupMenu = removeSubMenu(MENU_NAME, popupMenu);
-
-        LpexView.doGlobalCommand("set default.popup " + popupMenu.trim());
-    }
-
-    private String getLPEXEditorUserActions(String existingActions) {
-
-        ArrayList<String> actions = getUserActions();
-
-        StringBuilder newUserActions = new StringBuilder();
-
-        if ((existingActions == null) || (existingActions.equalsIgnoreCase("null"))) {
-            for (String action : actions) {
-                newUserActions.append(action + " ");
-            }
-        }
-
-        else {
-            newUserActions.append(existingActions + " ");
-            for (String action : actions) {
-                if (existingActions.indexOf(action) < 0) {
-                    newUserActions.append(action + " ");
-                }
-            }
-        }
-
-        return newUserActions.toString();
-    }
-
-    private ArrayList<String> getUserActions() {
-
-        ArrayList<String> actions = new ArrayList<String>();
-        actions.add(EditHeaderAction.ID + " " + EditHeaderAction.class.getName());
-        actions.add(RemoveHeaderAction.ID + " " + RemoveHeaderAction.class.getName());
-        actions.add(AddPreCompileCommandAction.ID + " " + AddPreCompileCommandAction.class.getName());
-        actions.add(AddPostCompileCommandAction.ID + " " + AddPostCompileCommandAction.class.getName());
-        actions.add(EditCommandAction.ID + " " + EditCommandAction.class.getName());
+        UserKeyAction[] actions = parseUserKeyActions(Preferences.getInstance().getUserKeyActions());
 
         return actions;
     }
 
-    private String getLPEXEditorUserKeyActions(String existingUserKeyActions) {
+    protected List<String> getMenuActions() {
 
-        ArrayList<String> actions = getUserKeyActions();
-
-        StringBuilder newUserKeyActions = new StringBuilder();
-
-        if ((existingUserKeyActions == null) || (existingUserKeyActions.equalsIgnoreCase("null"))) {
-            for (String action : actions) {
-                newUserKeyActions.append(action + " ");
-            }
-        }
-
-        else {
-            newUserKeyActions.append(existingUserKeyActions + " ");
-            for (String action : actions) {
-                if (existingUserKeyActions.indexOf(action) < 0) {
-                    newUserKeyActions.append(action + " ");
-                }
-            }
-        }
-
-        return newUserKeyActions.toString();
-    }
-
-    private ArrayList<String> getUserKeyActions() {
-
-        ArrayList<String> actions = new ArrayList<String>();
-        // actions.add("c-1" + SPACE + EditHeaderAction.ID);
-        // actions.add("c-2" + SPACE + RemoveHeaderAction.ID);
-
-        return actions;
-    }
-
-    private StringBuilder appendKeyAction(StringBuilder newKeyActions, String keyAction) {
-
-        if (newKeyActions.indexOf(keyAction) < 0) {
-            if (newKeyActions.length() != 0) {
-                newKeyActions.append(" ");
-            }
-            newKeyActions.append(keyAction);
-        }
-
-        return newKeyActions;
-    }
-
-    private String getLPEXEditorPopupMenu(String popupMenu) {
-
-        ArrayList<String> menuActions = new ArrayList<String>();
+        List<String> menuActions = new ArrayList<String>();
 
         menuActions.add(EditHeaderAction.getLPEXMenuAction());
         menuActions.add(RemoveHeaderAction.getLPEXMenuAction());
@@ -187,69 +83,55 @@ public class MenuExtension {
         menuActions.add(AddPostCompileCommandAction.getLPEXMenuAction());
         menuActions.add(EditCommandAction.getLPEXMenuAction());
 
-        popupMenu = removeSubMenu(MENU_NAME, popupMenu);
-        String newMenu = createSubMenu(MENU_NAME, menuActions);
-
-        if (popupMenu != null && popupMenu.contains(newMenu)) {
-            return popupMenu;
-        }
-
-        if (popupMenu != null) {
-            return newMenu + SPACE + popupMenu;
-        }
-
-        return newMenu;
+        return menuActions;
     }
 
-    private String removeSubMenu(String subMenu, String menu) {
+    protected int findStartOfLpexSubMenu(String menu) {
 
-        int start = menu.indexOf(createStartMenuTag(subMenu));
-        if (start < 0) {
-            return menu;
-        }
-
-        String endSubMenu = createEndMenuTag();
-        int end = menu.indexOf(endSubMenu, start);
-        if (end < 0) {
-            return menu;
-        }
-
-        StringBuilder newMenu = new StringBuilder();
-        newMenu.append(menu.substring(0, start));
-        newMenu.append(menu.substring(end + endSubMenu.length()));
-
-        return newMenu.toString();
+        return -1;
     }
 
-    private String createSubMenu(String menu, List<String> menuActions) {
+    @Override
+    protected IPropertyChangeListener getPreferencesChangeListener() {
+        return this;
+    }
 
-        String startMenu = createStartMenuTag(menu);
+    public static String getInitialUserKeyActions() {
 
-        StringBuilder newMenu = new StringBuilder();
-        newMenu.append(startMenu);
-        newMenu.append(SPACE);
-        for (String action : menuActions) {
-            if (action == null) {
-                newMenu.append(createMenuItem(SEPARATOR));
-            } else {
-                newMenu.append(createMenuItem(action));
+        List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
+        //        actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID)); //$NON-NLS-1$
+        //        actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID)); //$NON-NLS-1$
+
+        StringBuilder buffer = new StringBuilder();
+        for (UserKeyAction action : actions) {
+            appendActionToBuffer(buffer, action);
+        }
+
+        return buffer.toString();
+
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+
+        if (!"default.updateProfile.userKeyActions".equals(event.getProperty())) {
+            return;
+        }
+
+        UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
+
+        UserAction[] userActionsList = getUserActions();
+        Set<String> knownActionClasses = new HashSet<String>();
+        for (UserAction action : userActionsList) {
+            knownActionClasses.add(action.getActionId());
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        for (UserKeyAction action : newUserKeyActions) {
+            if (knownActionClasses.contains(action.getActionId())) {
+                appendActionToBuffer(buffer, action);
             }
         }
 
-        newMenu.append(createEndMenuTag());
-
-        return newMenu.toString();
-    }
-
-    private String createStartMenuTag(String subMenu) {
-        return BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
-    }
-
-    private String createMenuItem(String action) {
-        return action + SPACE;
-    }
-
-    private String createEndMenuTag() {
-        return END_SUB_MENU + SPACE + createMenuItem(SEPARATOR);
+        Preferences.getInstance().setUserKeyActions(buffer.toString());
     }
 }

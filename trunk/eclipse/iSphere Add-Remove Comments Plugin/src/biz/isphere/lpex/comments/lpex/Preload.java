@@ -8,6 +8,7 @@
 
 package biz.isphere.lpex.comments.lpex;
 
+import biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin;
 import biz.isphere.lpex.comments.preferences.Preferences;
 
 import com.ibm.lpex.alef.LpexPreload;
@@ -29,19 +30,20 @@ public class Preload implements LpexPreload {
         if (!isEnabled()) {
             return;
         }
-        
+
         MenuExtension menuExtension = new MenuExtension();
-        menuExtension.initializeLpexEditor();
+        menuExtension.initializeLpexEditor(ISphereAddRemoveCommentsPlugin.getDefault());
 
         return;
     }
-    
+
     private boolean isEnabled() {
-        
-        if ( Preferences.getInstance().isCommentsEnabled() || Preferences.getInstance().isIndentionEnabled()){
+
+        if (Preferences.getInstance().isCommentsEnabled() || Preferences.getInstance().isIndentionEnabled()) {
             return true;
-        };
-        
+        }
+        ;
+
         return false;
     }
 }

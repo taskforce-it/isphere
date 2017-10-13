@@ -11,13 +11,14 @@ package biz.isphere.strpreprc;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.strpreprc.lpex.MenuExtension;
+import biz.isphere.core.lpex.menu.ILpexMenuExtension;
+import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.strpreprc.model.HeaderTemplates;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
+public class ISphereStrPrePrcPlugin extends AbstractUIPlugin implements LpexMenuExtensionPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.strpreprc"; //$NON-NLS-1$
@@ -26,7 +27,7 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
     private static ISphereStrPrePrcPlugin plugin;
 
     // The Lpex menu extension
-    private MenuExtension menuExtension;
+    private ILpexMenuExtension menuExtension;
 
     /**
      * The constructor
@@ -64,7 +65,7 @@ public class ISphereStrPrePrcPlugin extends AbstractUIPlugin {
         HeaderTemplates.dispose();
     }
 
-    public void setLpexMenuExtension(MenuExtension menuExtension) {
+    public void setLpexMenuExtension(ILpexMenuExtension menuExtension) {
         this.menuExtension = menuExtension;
     }
 
