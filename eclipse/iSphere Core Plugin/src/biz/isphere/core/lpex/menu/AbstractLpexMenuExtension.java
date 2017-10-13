@@ -76,27 +76,27 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     }
 
     private void doSetLpexViewUserActions(String userActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions);
+        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions); //$NON-NLS-1$
     }
 
     private void doSetLpexViewUserKeyActions(String userKeyActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions);
+        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions); //$NON-NLS-1$
     }
 
     private void doSetLpexViewPopup(String popup) {
-        LpexView.doGlobalCommand("set default.popup " + popup);
+        LpexView.doGlobalCommand("set default.popup " + popup); //$NON-NLS-1$
     }
 
     private UserAction[] getCurrentLpexUserActions() {
-        return parseUserActions(LpexView.globalQuery("current.updateProfile.userActions"));
+        return parseUserActions(LpexView.globalQuery("current.updateProfile.userActions")); //$NON-NLS-1$
     }
 
     private UserKeyAction[] getCurrentLpexUserKeyActions() {
-        return parseUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions"));
+        return parseUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions")); //$NON-NLS-1$
     }
 
     private String getCurrentLpexPopupMenu() {
-        return LpexView.globalQuery("current.popup");
+        return LpexView.globalQuery("current.popup"); //$NON-NLS-1$
     }
 
     protected UserAction[] parseUserActions(String actions) {
@@ -253,7 +253,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
                 newUserActions.add(action);
                 actionKeyStrokes.add(action.getKeyStrokes());
             } else {
-                ISpherePlugin.logError("STRPREPRC plug-in conflict: Lpex user key action exists: " + action.getKeyStrokes(), null);
+                ISpherePlugin.logError("STRPREPRC plug-in conflict: Lpex user key action exists: " + action.getKeyStrokes(), null); //$NON-NLS-1$
             }
         }
 
@@ -292,7 +292,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     }
 
     public static String getInitialUserKeyActions() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     private String getLPEXEditorPopupMenu(String popupMenu) {
@@ -327,11 +327,11 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             String before;
             String after;
             if (position == TOP) {
-                before = "";
+                before = ""; //$NON-NLS-1$
                 after = ACTION_DELIMITER + popupMenu;
             } else {
                 before = popupMenu;
-                after = "";
+                after = ""; //$NON-NLS-1$
             }
 
             StringBuilder newPopupMenu = new StringBuilder(before);

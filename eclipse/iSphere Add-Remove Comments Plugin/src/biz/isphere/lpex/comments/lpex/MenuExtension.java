@@ -31,8 +31,9 @@ import com.ibm.lpex.alef.LpexPlugin;
  */
 public class MenuExtension extends AbstractLpexMenuExtension implements IPropertyChangeListener {
 
+    private static final String PROPERTY_LPEX_USER_KEY_ACTIONS = "default.updateProfile.userKeyActions"; //$NON-NLS-1$
     private static final String MENU_NAME = LpexPlugin.getResourceLpexString(LpexMenu.SOURCE);
-    private static final String MARK_ID = "biz.iSphere.LPEX"; // Messages.Menu_Source;
+    private static final String MARK_ID = "biz.iSphere.LPEX"; //$NON-NLS-1$
 
     public MenuExtension() {
         super(BOTTOM);
@@ -159,7 +160,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public void propertyChange(PropertyChangeEvent event) {
 
-        if (!"default.updateProfile.userKeyActions".equals(event.getProperty())) {
+        if (!PROPERTY_LPEX_USER_KEY_ACTIONS.equals(event.getProperty())) {
             return;
         }
 

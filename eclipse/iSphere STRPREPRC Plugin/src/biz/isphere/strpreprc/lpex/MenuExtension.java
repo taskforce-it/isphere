@@ -37,8 +37,9 @@ import biz.isphere.strpreprc.preferences.Preferences;
  */
 public class MenuExtension extends AbstractLpexMenuExtension implements IPropertyChangeListener {
 
-    private static final String MENU_NAME = "STRPREPRC";
-    private static final String MARK_ID = "biz.iSphere.STRPREPRC";
+    private static final String PROPERTY_LPEX_USER_KEY_ACTIONS = "default.updateProfile.userKeyActions"; //$NON-NLS-1$
+    private static final String MENU_NAME = "STRPREPRC"; //$NON-NLS-1$
+    private static final String MARK_ID = "biz.iSphere.STRPREPRC"; //$NON-NLS-1$
 
     public MenuExtension() {
         super(TOP);
@@ -113,7 +114,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public void propertyChange(PropertyChangeEvent event) {
 
-        if (!"default.updateProfile.userKeyActions".equals(event.getProperty())) {
+        if (!PROPERTY_LPEX_USER_KEY_ACTIONS.equals(event.getProperty())) {
             return;
         }
 
