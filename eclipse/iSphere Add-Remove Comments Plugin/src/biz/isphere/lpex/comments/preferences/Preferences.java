@@ -15,6 +15,7 @@ import org.osgi.framework.Version;
 
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin;
+import biz.isphere.lpex.comments.lpex.MenuExtension;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -54,6 +55,8 @@ public final class Preferences {
     private static final String COMMENTS_ENABLED = DOMAIN + "COMMENTS_ENABLED."; //$NON-NLS-1$
 
     private static final String INDENTION_ENABLED = DOMAIN + "INDENTION_ENABLED."; //$NON-NLS-1$
+
+    private static final String USER_KEY_ACTIONS = DOMAIN + "USER_KEY_ACTIONS"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -97,6 +100,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(INDENTION_ENABLED);
     }
 
+    public String getUserKeyActions() {
+        return preferenceStore.getString(USER_KEY_ACTIONS);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -109,6 +116,10 @@ public final class Preferences {
         preferenceStore.setValue(INDENTION_ENABLED, enabled);
     }
 
+    public void setUserKeyActions(String userKeyActions) {
+        preferenceStore.setValue(USER_KEY_ACTIONS, userKeyActions);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -117,6 +128,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(COMMENTS_ENABLED, getDefaultCommentsEnabled());
         preferenceStore.setDefault(INDENTION_ENABLED, getDefaultIndentionEnabled());
+        preferenceStore.setDefault(USER_KEY_ACTIONS, getInitialUserKeyActions());
 
         /*
          * Outdated setting
@@ -140,6 +152,10 @@ public final class Preferences {
     public boolean getDefaultIndentionEnabled() {
 
         return true;
+    }
+
+    public String getInitialUserKeyActions() {
+        return MenuExtension.getInitialUserKeyActions();
     }
 
     /*

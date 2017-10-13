@@ -1,16 +1,25 @@
 package biz.isphere.lpex.comments.lpex;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import biz.isphere.lpex.comments.Messages;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
+import biz.isphere.core.lpex.menu.model.UserAction;
+import biz.isphere.core.lpex.menu.model.UserKeyAction;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
 import biz.isphere.lpex.comments.lpex.action.IndentAction;
 import biz.isphere.lpex.comments.lpex.action.ToggleCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnIndentAction;
 import biz.isphere.lpex.comments.preferences.Preferences;
+
+import com.ibm.lpex.alef.LpexPlugin;
 
 /**
  * This class extends the popup menue of the Lpex editor. It adds the following
@@ -20,16 +29,19 @@ import biz.isphere.lpex.comments.preferences.Preferences;
  * <li>Remove STRPREPRC header</li>
  * </ul>
  */
-public class MenuExtension extends AbstractLpexMenuExtension {
+public class MenuExtension extends AbstractLpexMenuExtension implements IPropertyChangeListener {
 
-    private static final String MENU_NAME = Messages.Menu_Source;
-    private static final String MARK_END = "MARK-" + MENU_NAME + ".End"; //$NON-NLS-1$ //$NON-NLS-2$
-    private static final String MARK_START = "MARK-" + MENU_NAME + ".Start"; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String MENU_NAME = LpexPlugin.getResourceLpexString(LpexMenu.SOURCE);
+    private static final String MARK_ID = "biz.iSphere.LPEX"; // Messages.Menu_Source;
+
+    public MenuExtension() {
+        super(BOTTOM);
+    }
 
     @Override
-    protected Map<String, String> getUserActions() {
+    protected UserAction[] getUserActions() {
 
-        Map<String, String> actions = new HashMap<String, String>();
+        List<UserAction> actions = new LinkedList<UserAction>();
 
         if (isCommentsEnabled()) {
             checkAndAddUserAction(actions, CommentAction.ID, CommentAction.class.getName());
@@ -42,7 +54,7 @@ public class MenuExtension extends AbstractLpexMenuExtension {
             checkAndAddUserAction(actions, UnIndentAction.ID, UnIndentAction.class.getName());
         }
 
-        return actions;
+        return actions.toArray(new UserAction[actions.size()]);
     }
 
     @Override
@@ -51,19 +63,14 @@ public class MenuExtension extends AbstractLpexMenuExtension {
     }
 
     @Override
-    protected String getMarkStart() {
-        return MARK_START;
+    protected String getMarkId() {
+        return MARK_ID;
     }
 
     @Override
-    protected String getMarkEnd() {
-        return MARK_END;
-    }
+    protected UserKeyAction[] getUserKeyActions() {
 
-    @Override
-    protected Map<String, String> getUserKeyActions() {
-
-        Map<String, String> actions = new HashMap<String, String>();
+        List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
 
         if (isCommentsEnabled()) {
             checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
@@ -76,13 +83,13 @@ public class MenuExtension extends AbstractLpexMenuExtension {
             checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
         }
 
-        return actions;
+        return actions.toArray(new UserKeyAction[actions.size()]);
     }
 
     @Override
-    protected ArrayList<String> getMenuActions() {
+    protected List<String> getMenuActions() {
 
-        ArrayList<String> menuActions = new ArrayList<String>();
+        List<String> menuActions = new ArrayList<String>();
 
         if (isCommentsEnabled()) {
             menuActions.add(CommentAction.getLPEXMenuAction());
@@ -113,11 +120,64 @@ public class MenuExtension extends AbstractLpexMenuExtension {
         return i;
     }
 
-    private boolean isCommentsEnabled() {
+    @Override
+    protected IPropertyChangeListener getPreferencesChangeListener() {
+        return this;
+    }
+
+    public static String getInitialUserKeyActions() {
+
+        List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
+
+        if (isCommentsEnabled()) {
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT), UnCommentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY), ToggleCommentAction.ID);
+        }
+
+        if (isIndentingEnabled()) {
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.TAB), IndentAction.ID);
+            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        for (UserKeyAction action : actions) {
+            appendActionToBuffer(buffer, action);
+        }
+
+        return buffer.toString();
+
+    }
+
+    private static boolean isCommentsEnabled() {
         return Preferences.getInstance().isCommentsEnabled();
     }
 
-    private boolean isIndentingEnabled() {
+    private static boolean isIndentingEnabled() {
         return Preferences.getInstance().isIndentionEnabled();
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+
+        if (!"default.updateProfile.userKeyActions".equals(event.getProperty())) {
+            return;
+        }
+
+        UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
+
+        UserAction[] userActionsList = getUserActions();
+        Set<String> knownActionClasses = new HashSet<String>();
+        for (UserAction action : userActionsList) {
+            knownActionClasses.add(action.getActionId());
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        for (UserKeyAction action : newUserKeyActions) {
+            if (knownActionClasses.contains(action.getActionId())) {
+                appendActionToBuffer(buffer, action);
+            }
+        }
+
+        Preferences.getInstance().setUserKeyActions(buffer.toString());
     }
 }

@@ -8,6 +8,8 @@
 
 package biz.isphere.strpreprc.lpex;
 
+import biz.isphere.strpreprc.ISphereStrPrePrcPlugin;
+
 import com.ibm.lpex.alef.LpexPreload;
 
 /**
@@ -25,7 +27,7 @@ public class Preload implements LpexPreload {
     public void preload() {
 
         MenuExtension menuExtension = new MenuExtension();
-        menuExtension.initializeLpexEditor();
+        menuExtension.initializeLpexEditor(ISphereStrPrePrcPlugin.getDefault());
 
         return;
     }
