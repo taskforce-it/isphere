@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.lpex.comments"
-      label="iSphere Add-Remove Comments (optional)"
+      label="iSphere Lpex Editor Extensions (optional)"
       version="3.1.0.b010"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
    <description url="https://sourceforge.net/projects/isphere/">
-      The &quot;iSphere Add-Remove Comments&quot; feature adds options for commenting
-and uncommenting source lines to the Lpex editor. It is mainly
+      The &quot;iSphere Lpex Editor Extensions&quot; feature adds options for commenting
+and uncommenting source lines to the Lpex editor as well as options for 
+indenting and unindenting source lines. It is mainly
 intended to be used with WDSCi but you can also install it for
 RDi, if you want to get the same actions and behavior for both
 development environments. RDi 8.0+ uses Ctrl+/ and Ctrl+\ for
 commenting and uncommenting source lines, whereas WDSCi 7.0 lacks
-these options.
+these options. Both development environments have no shortcuts for
+indenting and unindenting source lines.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">

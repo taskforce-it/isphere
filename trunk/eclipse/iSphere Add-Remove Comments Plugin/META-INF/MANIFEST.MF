@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Add/Remove Comments
+Bundle-Name: iSphere Lpex Editor Extensions
 Bundle-SymbolicName: biz.isphere.lpex.comments;singleton:=true
 Bundle-Version: 3.1.0.b010
 Bundle-Activator: biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin
