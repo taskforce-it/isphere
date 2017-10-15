@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2017 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.lpex.comments.lpex;
 
 import java.util.ArrayList;
@@ -10,6 +18,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
+import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.core.lpex.menu.model.UserAction;
 import biz.isphere.core.lpex.menu.model.UserKeyAction;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
@@ -37,6 +46,13 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public MenuExtension() {
         super(BOTTOM);
+    }
+
+    @Override
+    public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
+
+        removeOldPopupMenu();
+        super.initializeLpexEditor(plugin);
     }
 
     @Override
@@ -180,5 +196,21 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         }
 
         Preferences.getInstance().setUserKeyActions(buffer.toString());
+    }
+
+    /*
+     * TODO: remove start of start of 2019
+     */
+    private void removeOldPopupMenu() {
+
+        String popupMenu = getCurrentLpexPopupMenu();
+
+        // MARK-Source.Start / MARK-Source.End
+        popupMenu = removeMenuItems(popupMenu, "MARK-Source.Start", "MARK-Source.End"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        // MARK-Quelle.Start / MARK-Quelle.End
+        popupMenu = removeMenuItems(popupMenu, "MARK-Quelle.Start", "MARK-Quelle.End"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        doSetLpexViewPopup(popupMenu);
     }
 }
