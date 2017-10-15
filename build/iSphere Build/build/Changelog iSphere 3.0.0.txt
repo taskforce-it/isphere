@@ -3,6 +3,8 @@ Changelog: iSphere 3.1.0.b011
 -----------------------------
  • Added problem when comparing the user input when
    creating a message filter.
+ • Renamed "Add-Remove Comments" plug-ins and feature 
+   to "Lpex Editor Extensions".
 
 Changelog: iSphere 3.1.0.b010
 -----------------------------
