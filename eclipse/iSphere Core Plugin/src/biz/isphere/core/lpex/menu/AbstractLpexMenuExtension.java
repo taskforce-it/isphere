@@ -27,11 +27,11 @@ import com.ibm.lpex.core.LpexView;
 
 public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
-    private static final String BEGIN_SUB_MENU = "beginSubmenu"; //$NON-NLS-1$
-    private static final String END_SUB_MENU = "endSubmenu"; //$NON-NLS-1$
-    private static final String SEPARATOR = "separator"; //$NON-NLS-1$
-    private static final String DOUBLE_QUOTES = "\""; //$NON-NLS-1$
-    private static final String ACTION_DELIMITER = " "; //$NON-NLS-1$
+    protected static final String BEGIN_SUB_MENU = "beginSubmenu"; //$NON-NLS-1$
+    protected static final String END_SUB_MENU = "endSubmenu"; //$NON-NLS-1$
+    protected static final String SEPARATOR = "separator"; //$NON-NLS-1$
+    protected static final String DOUBLE_QUOTES = "\""; //$NON-NLS-1$
+    protected static final String ACTION_DELIMITER = " "; //$NON-NLS-1$
 
     protected static final int TOP = 1;
     protected static final int BOTTOM = 2;
@@ -50,6 +50,9 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     protected abstract IPropertyChangeListener getPreferencesChangeListener();
 
     public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
+
+        // Just in case RDi crashed before.
+        uninstall();
 
         plugin.setLpexMenuExtension(this);
 
@@ -83,7 +86,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions); //$NON-NLS-1$
     }
 
-    private void doSetLpexViewPopup(String popup) {
+    protected void doSetLpexViewPopup(String popup) {
         LpexView.doGlobalCommand("set default.popup " + popup); //$NON-NLS-1$
     }
 
@@ -95,7 +98,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         return parseUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions")); //$NON-NLS-1$
     }
 
-    private String getCurrentLpexPopupMenu() {
+    protected String getCurrentLpexPopupMenu() {
         return LpexView.globalQuery("current.popup"); //$NON-NLS-1$
     }
 
@@ -361,7 +364,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     protected abstract int findStartOfLpexSubMenu(String menu);
 
-    private String removeMenuItems(String menu, String startMark, String endMark) {
+    protected String removeMenuItems(String menu, String startMark, String endMark) {
 
         int start = menu.indexOf(startMark);
         if (start < 0) {

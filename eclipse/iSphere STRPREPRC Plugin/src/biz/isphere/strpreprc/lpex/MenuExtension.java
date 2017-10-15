@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
+import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.core.lpex.menu.model.UserAction;
 import biz.isphere.core.lpex.menu.model.UserKeyAction;
 import biz.isphere.strpreprc.lpex.action.AddPostCompileCommandAction;
@@ -43,6 +44,13 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public MenuExtension() {
         super(TOP);
+    }
+
+    @Override
+    public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
+
+        removeOldPopupMenu();
+        super.initializeLpexEditor(plugin);
     }
 
     protected UserAction[] getUserActions() {
@@ -134,5 +142,26 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         }
 
         Preferences.getInstance().setUserKeyActions(buffer.toString());
+    }
+
+    /*
+     * TODO: remove start of start of 2019
+     */
+    private void removeOldPopupMenu() {
+
+        final String SPACE = " "; //$NON-NLS-1$
+        final String subMenu = "STRPREPRC"; //$NON-NLS-1$
+
+        String popupMenu = getCurrentLpexPopupMenu();
+
+        // beginSubmenu "STRPREPRC"
+        String startMenu = BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
+
+        // endSubmenu separator
+        String endMenu = END_SUB_MENU + SPACE + SEPARATOR + SPACE;
+
+        popupMenu = removeMenuItems(popupMenu, startMenu, endMenu);
+
+        doSetLpexViewPopup(popupMenu);
     }
 }
