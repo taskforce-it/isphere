@@ -48,7 +48,7 @@ public class Type3DAO extends AbstractTypeDAO {
     }
 
     @Override
-    protected String getSqlStatement() {
+    public String getSqlStatement() {
         return GET_JOURNAL_DATA_3;
     }
 

@@ -30,9 +30,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -54,6 +57,7 @@ import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
+import biz.isphere.journalexplorer.core.widgets.SqlEditor;
 
 /**
  * This widget is a viewer for the journal entries of an output file of the
@@ -66,20 +70,29 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  */
 public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
+    private SelectionListener selectionListener;
     private Composite container;
     private TableViewer tableViewer;
     private String connectionName;
     private File outputFile;
+    private JournalDAO journalDAO;
     private List<JournalEntry> data;
     private Exception dataLoadException;
     private Set<ISelectionChangedListener> selectionChangedListeners;
+    private String whereClause;
 
-    public JournalEntriesViewer(CTabFolder parent, File outputFile) {
+    private boolean showSqlEditor;
+    private SqlEditor sqlEditor;
+
+    public JournalEntriesViewer(CTabFolder parent, File outputFile, SelectionListener selectionListener) {
         super(parent, SWT.NONE);
 
         this.outputFile = outputFile;
+        this.selectionListener = selectionListener;
         this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
+
+        setSqlEditorVisibility(false);
 
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -89,7 +102,8 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
     private void initializeComponents() {
 
-        container.setLayout(new FillLayout());
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         setText(connectionName + ": " + outputFile.getQualifiedName());
         createTableViewer(container);
         container.layout(true);
@@ -138,6 +152,10 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     public void openJournal() throws Exception {
 
         dataLoadException = null;
+        if (isAvailable(sqlEditor)) {
+            whereClause = sqlEditor.getWhereClause().trim();
+            sqlEditor.setFocus();
+        }
 
         Runnable loadJournalDataJob = new Runnable() {
 
@@ -145,8 +163,8 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
                 try {
 
-                    JournalDAO journalDAO = new JournalDAO(outputFile);
-                    data = journalDAO.getJournalData();
+                    journalDAO = new JournalDAO(outputFile);
+                    data = journalDAO.getJournalData(whereClause);
                     container.layout(true);
                     tableViewer.setInput(null);
                     tableViewer.setUseHashlookup(true);
@@ -290,6 +308,55 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
             }
             refreshTable();
             return;
+        }
+    }
+
+    public boolean isSqlEditorVisible() {
+        return showSqlEditor;
+    }
+
+    public void setSqlEditorVisibility(boolean isVisible) {
+        showSqlEditor = isVisible;
+        setSqlEditorEnablement();
+    }
+
+    private void setSqlEditorEnablement() {
+
+        if (showSqlEditor) {
+            createSqlEditor();
+        } else {
+            destroySqlEditor();
+        }
+    }
+
+    private void createSqlEditor() {
+
+        if (!isAvailable(sqlEditor)) {
+            sqlEditor = new SqlEditor(container, SWT.NONE);
+            sqlEditor.addSelectionListener(selectionListener);
+            sqlEditor.setWhereClause(journalDAO.getWhereClause());
+            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+            gd.heightHint = 80;
+            sqlEditor.setLayoutData(gd);
+            container.layout();
+            sqlEditor.setFocus();
+        }
+    }
+
+    private boolean isAvailable(Control control) {
+
+        if (control != null && !control.isDisposed()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void destroySqlEditor() {
+
+        if (sqlEditor != null) {
+            sqlEditor.dispose();
+            container.layout();
         }
     }
 }

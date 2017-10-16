@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,6 +42,7 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
+import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
@@ -52,6 +52,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
+    private EditSqlAction editSqlAction;
     private OpenJournalOutfileAction openJournalOutputFileAction;
     private CompareSideBySideAction compareSideBySideAction;
     private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
@@ -129,6 +130,15 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
+        editSqlAction = new EditSqlAction(getSite().getShell()) {
+            @Override
+            public void postRunAction() {
+                JournalEntriesViewer viewer = getSelectedViewer();
+                viewer.setSqlEditorVisibility(editSqlAction.isChecked());
+                return;
+            }
+        };
+
         compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
 
         toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction();
@@ -158,7 +168,18 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewer(tabs, outputFile);
+            journalEntriesViewer = new JournalEntriesViewer(tabs, outputFile, new SelectionListener() {
+                public void widgetSelected(SelectionEvent event) {
+                    try {
+                        performLoadJournalEntries(getSelectedViewer());
+                    } catch (Exception e) {
+                        MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                    }
+                }
+
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                }
+            });
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
 
@@ -233,6 +254,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(openJournalOutputFileAction);
+        toolBarManager.add(editSqlAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(compareSideBySideAction);
         toolBarManager.add(toggleHighlightUserEntriesAction);
@@ -253,6 +275,14 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      * @param viewer - the selected viewer (tab)
      */
     private void setActionEnablement(JournalEntriesViewer viewer) {
+
+        if (viewer == null || viewer.getInput() == null) {
+            editSqlAction.setEnabled(false);
+            editSqlAction.setChecked(false);
+        } else {
+            editSqlAction.setEnabled(true);
+            editSqlAction.setChecked(viewer.isSqlEditorVisible());
+        }
 
         Collection<MetaTable> joesdParser = MetaDataCache.INSTANCE.getCachedParsers();
         if (joesdParser == null || joesdParser.isEmpty()) {
@@ -329,12 +359,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      */
     public JournalEntriesViewer getCurrentViewer() {
 
-        CTabItem tabItem = tabs.getItem(tabs.getSelectionIndex());
-        if (tabItem instanceof JournalEntriesViewer) {
-            JournalEntriesViewer viewer = (JournalEntriesViewer)tabItem;
-            return viewer;
-        }
-
-        return null;
+        // CTabItem tabItem = tabs.getItem(tabs.getSelectionIndex());
+        // if (tabItem instanceof JournalEntriesViewer) {
+        // JournalEntriesViewer viewer = (JournalEntriesViewer)tabItem;
+        // return viewer;
+        // }
+        //
+        // return null;
+        return getSelectedViewer();
     }
 }
