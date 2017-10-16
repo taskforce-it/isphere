@@ -57,6 +57,7 @@ public class Messages extends NLS {
     public static String SelectEntriesToCompareDialog_ChooseRightRecord;
     public static String SideBySideCompareDialog_SideBySideComparison;
     public static String Number_of_journal_entries_A;
+    public static String SqlEditor_WHERE;
 
     public static String Error_Unknown_data_type;
     public static String Error_No_NULL_indicator_information_available;
@@ -67,6 +68,7 @@ public class Messages extends NLS {
     public static String ColLabel_JournalEntry_Table_A;
 
     public static String ButtonLabel_Reload_All;
+    public static String ButtonLabel_Execute;
 
     public static String Tooltip_OutputFile_Rrn;
     public static String Tooltip_JOENTL;
@@ -113,6 +115,7 @@ public class Messages extends NLS {
     public static String Tooltip_JOFILTYP;
     public static String Tooltip_JOCMTLVL;
     public static String Tooltip_JOESD;
+    public static String Tooltip_SqlEditor_Text;
 
     public static String Colors;
     public static String Enable_coloring;

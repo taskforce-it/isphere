@@ -31,16 +31,11 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
  */
 public class JournalDAO extends DAOBase {
 
-    private File outputFile;
+    private AbstractTypeDAO typeDAO;
+    private String whereClause;
 
     public JournalDAO(File outputFile) throws Exception {
         super(outputFile.getConnectionName());
-        this.outputFile = outputFile;
-    }
-
-    public List<JournalEntry> getJournalData() throws Exception {
-
-        AbstractTypeDAO typeDAO = null;
 
         switch (getOutfileType(outputFile)) {
         case JournalOutputType.TYPE5:
@@ -59,8 +54,23 @@ public class JournalDAO extends DAOBase {
             typeDAO = new Type1DAO(outputFile);
             break;
         }
+    }
 
-        return typeDAO.load();
+    public String getSqlStatement() {
+        return typeDAO.getSqlStatement();
+    }
+
+    public String getWhereClause() {
+        return whereClause;
+    }
+
+    public void setWhereClause(String whereClause) {
+        this.whereClause = whereClause;
+    }
+
+    public List<JournalEntry> getJournalData(String whereClause) throws Exception {
+        setWhereClause(whereClause);
+        return typeDAO.load(getWhereClause());
     }
 
     private int getOutfileType(File outputFile) throws Exception {

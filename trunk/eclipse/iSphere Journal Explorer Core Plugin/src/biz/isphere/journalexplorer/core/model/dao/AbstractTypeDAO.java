@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -35,6 +36,10 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
     }
 
     public List<JournalEntry> load() throws Exception {
+        return load(null);
+    }
+
+    public List<JournalEntry> load(String whereClause) throws Exception {
 
         List<JournalEntry> journalEntries = new ArrayList<JournalEntry>();
 
@@ -44,6 +49,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         try {
 
             String sqlStatement = String.format(getSqlStatement(), outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+            if (!StringHelper.isNullOrEmpty(whereClause)) {
+                sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
+            }
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
             resultSet.setFetchSize(50);
@@ -72,7 +80,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         return journalEntries;
     }
 
-    protected abstract String getSqlStatement();
+    public abstract String getSqlStatement();
 
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
 

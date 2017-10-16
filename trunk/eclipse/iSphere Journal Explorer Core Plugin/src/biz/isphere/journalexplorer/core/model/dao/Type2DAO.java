@@ -48,7 +48,7 @@ public class Type2DAO extends Type1DAO {
     }
 
     @Override
-    protected String getSqlStatement() {
+    public String getSqlStatement() {
         return GET_JOURNAL_DATA_2;
     }
 
