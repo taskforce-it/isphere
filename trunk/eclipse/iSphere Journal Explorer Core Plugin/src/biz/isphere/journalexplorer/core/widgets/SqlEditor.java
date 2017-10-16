@@ -75,7 +75,6 @@ public class SqlEditor extends Composite {
                     keyUpEvent.display = event.display;
                     keyUpEvent.doit = event.doit;
                     keyUpEvent.keyCode = event.keyCode;
-                    keyUpEvent.keyLocation = event.keyLocation;
                     keyUpEvent.stateMask = event.stateMask;
                     keyUpEvent.time = event.time;
                     keyUpEvent.widget = event.widget;
