@@ -43,11 +43,14 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -57,7 +60,6 @@ import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
-import biz.isphere.journalexplorer.core.widgets.SqlEditor;
 
 /**
  * This widget is a viewer for the journal entries of an output file of the
@@ -75,6 +77,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     private TableViewer tableViewer;
     private String connectionName;
     private File outputFile;
+    private MetaTable outputFileMetaData;
     private JournalDAO journalDAO;
     private List<JournalEntry> data;
     private Exception dataLoadException;
@@ -333,6 +336,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
 
         if (!isAvailable(sqlEditor)) {
             sqlEditor = new SqlEditor(container, SWT.NONE);
+            sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(selectionListener);
             sqlEditor.setWhereClause(journalDAO.getWhereClause());
             GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
@@ -352,9 +356,36 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         return false;
     }
 
+    private ContentAssistProposal[] getContentAssistProposals() {
+
+        List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
+
+        MetaTable metaData = getMetaData();
+        for (MetaColumn column : metaData.getColumns()) {
+            proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
+        }
+
+        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    }
+
+    private MetaTable getMetaData() {
+
+        if (outputFileMetaData == null) {
+            try {
+                outputFileMetaData = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
+            } catch (Exception e) {
+                outputFileMetaData = null;
+            }
+        }
+
+        return outputFileMetaData;
+    }
+
     private void destroySqlEditor() {
 
         if (sqlEditor != null) {
+            // Important, must be called to ensure the SqlEditor is removed from
+            // the list of preferences listeners.
             sqlEditor.dispose();
             container.layout();
         }
