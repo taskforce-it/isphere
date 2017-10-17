@@ -9,7 +9,9 @@
 package biz.isphere.core.swt.widgets.contentassist;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
@@ -23,7 +25,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
     private String[] completionProposals;
     private String[] labels;
-    private char autoCompletionChar;
+    private char[] autoCompletionChars;
 
     public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals) {
         this(autoCompletionChar, completionProposals, null);
@@ -31,7 +33,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
     public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals, String[] labels) {
 
-        this.autoCompletionChar = autoCompletionChar;
+        this.autoCompletionChars = getAutoCompletionChars(completionProposals); // autoCompletionChar;
         this.completionProposals = completionProposals;
 
         if (completionProposals != null) {
@@ -87,7 +89,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
      *         no auto activation is desired
      */
     public char[] getCompletionProposalAutoActivationCharacters() {
-        return new char[] { autoCompletionChar };
+        return autoCompletionChars;
     }
 
     /**
@@ -122,31 +124,61 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
         List<ICompletionProposal> completionProposalsList = new ArrayList<ICompletionProposal>();
 
+        String autoCompChar = null;
         int pReplacementOffset = offset;
+        int pReplacementLength = 0;
         if (pReplacementOffset > 0) {
             try {
-                String autoCompChar = viewer.getDocument().get(pReplacementOffset - 1, 1);
+                autoCompChar = viewer.getDocument().get(pReplacementOffset - 1, 1);
                 if (isAutoCompleteChar(autoCompChar)) {
                     pReplacementOffset--;
+                    pReplacementLength += 1;
+                } else {
+                    autoCompChar = null;
                 }
             } catch (BadLocationException e) {
             }
         }
 
         for (int i = 0; i < completionProposals.length; i++) {
-            CompletionProposal proposal = new CompletionProposal(completionProposals[i], pReplacementOffset, 1, completionProposals[i].length(),
-                null, labels[i], null, null);
-            completionProposalsList.add(proposal);
+            if (autoCompChar == null || autoCompChar.toUpperCase().equals(completionProposals[i].substring(0, 1))) {
+                CompletionProposal proposal = new CompletionProposal(completionProposals[i], pReplacementOffset, pReplacementLength,
+                    completionProposals[i].length(), null, labels[i], null, null);
+                completionProposalsList.add(proposal);
+            }
         }
 
         return completionProposalsList.toArray(new ICompletionProposal[completionProposalsList.size()]);
     }
 
     private boolean isAutoCompleteChar(String autoCompChar) {
-        if (!(new String(getCompletionProposalAutoActivationCharacters()).contains(autoCompChar))) {
+        if (new String(getCompletionProposalAutoActivationCharacters()).contains(autoCompChar)) {
             return true;
         }
         return false;
+    }
+
+    private char[] getAutoCompletionChars(String[] completionProposals) {
+
+        Set<String> autoCompletionChars = new HashSet<String>();
+
+        if (completionProposals != null) {
+            for (int i = 0; i < completionProposals.length; i++) {
+                if (completionProposals[i] != null && completionProposals[i].length() > 0) {
+                    String autoCompletionChar = completionProposals[i].substring(0, 1);
+                    autoCompletionChars.add(autoCompletionChar.toLowerCase());
+                    autoCompletionChars.add(autoCompletionChar.toUpperCase());
+                }
+            }
+        }
+
+        String[] strings = autoCompletionChars.toArray(new String[autoCompletionChars.size()]);
+        char[] chars = new char[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            chars[i] = strings[i].charAt(0);
+        }
+
+        return chars;
     }
 
 }
