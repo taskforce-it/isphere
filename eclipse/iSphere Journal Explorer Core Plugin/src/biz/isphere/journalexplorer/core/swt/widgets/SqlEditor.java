@@ -6,26 +6,29 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.widgets;
+package biz.isphere.journalexplorer.core.swt.widgets;
 
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.Messages;
 
 public class SqlEditor extends Composite {
 
-    private Text textSqlEditor;
+    private ContentAssistText textSqlEditor;
     private Button btnExecute;
 
     public SqlEditor(Composite parent, int style) {
@@ -62,12 +65,16 @@ public class SqlEditor extends Composite {
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
 
-        textSqlEditor = WidgetFactory.createMultilineText(this, true, false);
+        textSqlEditor = new ContentAssistText(this);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
-        textSqlEditor.setToolTipText(Messages.Tooltip_SqlEditor_Text);
-        textSqlEditor.addKeyListener(new KeyListener() {
+        // textSqlEditor.setContentAssistProposals(new String[] { "FOO", "BAA",
+        // "FOOBAA" });
+        // textSqlEditor.setContentAssistProposalsLabels(new String[] {
+        // "FOO-Label", "BAA-Label", "FOOBAA-Label" });
 
-            public void keyReleased(KeyEvent event) {
+        textSqlEditor.getTextWidget().setToolTipText(Messages.Tooltip_SqlEditor_Text);
+        textSqlEditor.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+            public void verifyKey(VerifyEvent event) {
                 if (isCtrlEnter(event)) {
                     Event keyUpEvent = new Event();
                     keyUpEvent.character = event.character;
@@ -75,6 +82,7 @@ public class SqlEditor extends Composite {
                     keyUpEvent.display = event.display;
                     keyUpEvent.doit = event.doit;
                     keyUpEvent.keyCode = event.keyCode;
+                    keyUpEvent.keyLocation = event.keyLocation;
                     keyUpEvent.stateMask = event.stateMask;
                     keyUpEvent.time = event.time;
                     keyUpEvent.widget = event.widget;
@@ -83,14 +91,30 @@ public class SqlEditor extends Composite {
                 }
             }
 
-            public void keyPressed(KeyEvent event) {
-                if (isCtrlEnter(event)) {
-                    event.doit = false;
-                }
-            }
-
             private boolean isCtrlEnter(KeyEvent event) {
                 return event.stateMask == SWT.CTRL && event.character == SWT.CR;
+            }
+        });
+
+        textSqlEditor.getTextWidget().addKeyListener(new KeyAdapter() {
+
+            public void keyReleased(KeyEvent e) {
+
+                if (!e.doit) {
+                    return;
+                }
+
+                if (e.stateMask == SWT.CTRL) {
+                    switch (e.character) {
+                    case ' ':
+                        textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+                        break;
+
+                    case '\032':
+                        textSqlEditor.doOperation(ITextOperationTarget.UNDO);
+                    }
+
+                }
             }
         });
 
@@ -104,5 +128,15 @@ public class SqlEditor extends Composite {
 
     public void removeSelectionListener(SelectionListener listener) {
         btnExecute.removeSelectionListener(listener);
+    }
+
+    public void setContentAssistProposals(ContentAssistProposal[] contentAssistProposals) {
+        textSqlEditor.setContentAssistProposals(contentAssistProposals);
+    }
+
+    @Override
+    public void dispose() {
+        textSqlEditor.dispose();
+        super.dispose();
     }
 }
