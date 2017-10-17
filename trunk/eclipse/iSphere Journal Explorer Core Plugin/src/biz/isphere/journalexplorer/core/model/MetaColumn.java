@@ -229,6 +229,28 @@ public class MetaColumn {
         return format;
     }
 
+    public String getFormattedType() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(getType());
+        buffer.append("("); //$NON-NLS-1$
+        buffer.append(getLength());
+        if (isNumeric()) {
+            buffer.append(", "); //$NON-NLS-1$
+            buffer.append(getDecimalPositions());
+        } else if (isDateTime()) {
+            buffer.append(", "); //$NON-NLS-1$
+            buffer.append(getDateTimeFormat());
+            buffer.append(", '"); //$NON-NLS-1$
+            buffer.append(getDateTimeSeparator());
+            buffer.append("'"); //$NON-NLS-1$
+        }
+        buffer.append(")"); //$NON-NLS-1$
+
+        return buffer.toString();
+    }
+
     @Override
     public String toString() {
 
@@ -238,20 +260,7 @@ public class MetaColumn {
 
             buffer.append(getName());
             buffer.append(": "); //$NON-NLS-1$
-            buffer.append(getType());
-            buffer.append("("); //$NON-NLS-1$
-            buffer.append(getLength());
-            if (isNumeric()) {
-                buffer.append(", "); //$NON-NLS-1$
-                buffer.append(getDecimalPositions());
-            } else if (isDateTime()) {
-                buffer.append(", "); //$NON-NLS-1$
-                buffer.append(getDateTimeFormat());
-                buffer.append(", '"); //$NON-NLS-1$
-                buffer.append(getDateTimeSeparator());
-                buffer.append("'"); //$NON-NLS-1$
-            }
-            buffer.append(")"); //$NON-NLS-1$
+            buffer.append(getFormattedType());
 
             return buffer.toString();
 
