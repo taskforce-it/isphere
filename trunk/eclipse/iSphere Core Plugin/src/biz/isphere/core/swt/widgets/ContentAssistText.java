@@ -71,7 +71,7 @@ public class ContentAssistText extends SourceViewer {
     public void setFocus() {
         getControl().setFocus();
     }
-    
+
     @Override
     protected void createControl(Composite parent, int styles) {
         super.createControl(parent, styles);
@@ -81,5 +81,9 @@ public class ContentAssistText extends SourceViewer {
     public void configure(SourceViewerConfiguration configuration) {
         super.unconfigure();
         super.configure(configuration);
+    }
+
+    public boolean isDisposed() {
+        return getTextWidget().isDisposed();
     }
 }
