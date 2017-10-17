@@ -67,11 +67,6 @@ public class SqlEditor extends Composite {
 
         textSqlEditor = new ContentAssistText(this);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
-        // textSqlEditor.setContentAssistProposals(new String[] { "FOO", "BAA",
-        // "FOOBAA" });
-        // textSqlEditor.setContentAssistProposalsLabels(new String[] {
-        // "FOO-Label", "BAA-Label", "FOOBAA-Label" });
-
         textSqlEditor.getTextWidget().setToolTipText(Messages.Tooltip_SqlEditor_Text);
         textSqlEditor.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
             public void verifyKey(VerifyEvent event) {
