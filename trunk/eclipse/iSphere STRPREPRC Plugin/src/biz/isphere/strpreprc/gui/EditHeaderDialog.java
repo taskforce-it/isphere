@@ -126,7 +126,7 @@ public class EditHeaderDialog extends XDialog {
                 if (!e.doit) {
                     return;
                 }
-                if (e.stateMask == 262144) {
+                if (e.stateMask == SWT.CTRL) {
                     switch (e.character) {
                     case ' ':
                         textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
