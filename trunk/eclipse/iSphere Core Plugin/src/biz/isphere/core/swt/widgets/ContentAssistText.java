@@ -25,6 +25,8 @@ public class ContentAssistText extends SourceViewer {
     private String[] completionProposals;
     private String[] labels;
     private ContentAssistEditorConfiguration configuration;
+    private boolean autoActivation;
+    private boolean autoInsert;
 
     public ContentAssistText(Composite parent) {
         this(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
@@ -47,17 +49,25 @@ public class ContentAssistText extends SourceViewer {
 
         this.completionProposals = completionProposals.toArray(new String[completionProposals.size()]);
         this.labels = labels.toArray(new String[labels.size()]);
-        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
+        configure(createContentAssistConfiguration());
     }
 
     public void setContentAssistProposals(String[] completionProposals) {
         this.completionProposals = completionProposals;
-        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
+        configure(createContentAssistConfiguration());
     }
 
     public void setContentAssistProposalsLabels(String[] labels) {
         this.labels = labels;
-        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
+        configure(createContentAssistConfiguration());
+    }
+
+    public void enableAutoActivation(boolean autoActivation) {
+        this.autoActivation = autoActivation;
+    }
+
+    public void enableAutoInsert(boolean autoInsert) {
+        this.autoInsert = autoInsert;
     }
 
     public String getText() {
@@ -94,6 +104,15 @@ public class ContentAssistText extends SourceViewer {
         this.configuration = (ContentAssistEditorConfiguration)configuration;
         super.unconfigure();
         super.configure(configuration);
+    }
+
+    private SourceViewerConfiguration createContentAssistConfiguration() {
+
+        ContentAssistEditorConfiguration configuration = new ContentAssistEditorConfiguration(this.completionProposals, this.labels);
+        configuration.enableAutoActivation(autoActivation);
+        configuration.enableAutoInsert(autoInsert);
+
+        return configuration;
     }
 
     public boolean isDisposed() {

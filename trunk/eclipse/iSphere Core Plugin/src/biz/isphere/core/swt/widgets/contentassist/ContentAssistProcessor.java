@@ -26,6 +26,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
     private String[] completionProposals;
     private String[] labels;
     private char[] autoCompletionChars;
+    private boolean isAutoActivation;
 
     public ContentAssistProcessor(String[] completionProposals) {
         this(completionProposals, null);
@@ -35,6 +36,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
         this.completionProposals = completionProposals;
         this.autoCompletionChars = getAutoCompletionChars(completionProposals);
+        this.isAutoActivation = false;
 
         if (completionProposals != null) {
             this.labels = new String[completionProposals.length];
@@ -46,6 +48,10 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
                 }
             }
         }
+    }
+
+    public void enableAutoActivation(boolean isAutoActivation) {
+        this.isAutoActivation = isAutoActivation;
     }
 
     /**
@@ -129,13 +135,12 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
         int pReplacementLength = 0;
         if (pReplacementOffset > 0) {
             try {
-                while (pReplacementOffset > 0) {
+                while (isAutoActivation && pReplacementOffset > 0) {
                     char charToTest = viewer.getDocument().get(pReplacementOffset - 1, 1).toUpperCase().toCharArray()[0];
-                    if (isEatableChar(charToTest)) {
-                        pReplacementOffset--;
-                        pReplacementLength += 1;
-                        completionProposalPrefix.append(charToTest);
-                    } else {
+                    pReplacementOffset--;
+                    pReplacementLength += 1;
+                    completionProposalPrefix.append(charToTest);
+                    if (isAutoCompletionChar(charToTest)) {
                         break;
                     }
                 }
@@ -147,13 +152,15 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
         collectCompletionProposals(completionProposalsList, pReplacementOffset, pReplacementLength, completionProposalPrefix.toString());
         if (completionProposalsList.size() == 0) {
+            pReplacementOffset = offset;
+            pReplacementLength = 0;
             collectCompletionProposals(completionProposalsList, offset, 0, null);
         }
 
         return completionProposalsList.toArray(new ICompletionProposal[completionProposalsList.size()]);
     }
 
-    public boolean isEatableChar(char charToTest) {
+    public boolean isAutoCompletionChar(char charToTest) {
 
         final String EATABLE_CHARS = new String(autoCompletionChars);
 

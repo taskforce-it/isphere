@@ -610,7 +610,7 @@ public final class WidgetFactory {
      * @return text field with content assistance
      */
     public static ContentAssistText createContentAssistText(Composite parent) {
-        return WidgetFactory.getInstance().produceContentAssistText(parent, SWT.NONE, false);
+        return WidgetFactory.getInstance().produceContentAssistText(parent, SWT.BORDER, false);
     }
 
     /**
@@ -663,7 +663,7 @@ public final class WidgetFactory {
 
     private ContentAssistText produceContentAssistText(Composite parent, int style, boolean autoSelect) {
 
-        ContentAssistText text = new ContentAssistText(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | style);
+        ContentAssistText text = new ContentAssistText(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | style);
 
         if (autoSelect) {
             text.addFocusListener(new SelectAllFocusListener());
