@@ -4,7 +4,7 @@ Changelog: iSphere 3.1.0.b011
  • Added content assistance to SQL editor.
  • Added simple SQL editor for editing the SQL WHERE clause for 
    fetching data into the journal explorer view.
- • Added problem when comparing the user input when
+ • Fixed problem when comparing the user input when
    creating a message filter.
  • Renamed "Add-Remove Comments" plug-ins and feature 
    to "Lpex Editor Extensions".
