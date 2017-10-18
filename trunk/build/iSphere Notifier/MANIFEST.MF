@@ -3,7 +3,7 @@ Bundle-Version: 3.0.6.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Enabled the "Delete" key to delete spooled files of the iSphere Spooled Files subsystem.\nAdded the iSphere specific keys to "KeyMapper" to fix the issue of the hidden fast cursor up/down keys.
-X-Beta-Version: 3.1.0.b010
+X-Beta-Version: 3.1.0.b011
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Fixed bug in compare editor when called from CMOne.\nFixed problem that copying members between two systems did no longer work after b008 under certain conditions.\nCopy Members bug fix. Now preserving date and time values.\nAdded new feature "Journal Explorer".\nAdded menu option "Compare Source Members" to main menu and search result view.\nAdded context menu with option "Display Search Options" to search result tabs.
+X-Beta-Info: Added simple SQL editor for editing the SQL WHERE clause for fetching data into the journal explorer view.\nFixed a minor bug in the message monitor preferences.
