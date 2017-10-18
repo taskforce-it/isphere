@@ -29,7 +29,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
 
    <requires>
       <import feature="biz.isphere.core" version="3.1.0.b011" match="perfect"/>
-      <import feature="org.eclipse.platform" version="4.4.2.v20150204-1700" match="perfect"/>
+      <import feature="org.eclipse.platform" version="4.4.2.v20150204-1700" match="greaterOrEqual"/>
    </requires>
 
    <plugin
