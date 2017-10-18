@@ -69,6 +69,7 @@ public class Messages extends NLS {
 
     public static String ButtonLabel_Reload_All;
     public static String ButtonLabel_Execute;
+    public static String ButtonLabel_AddField;
 
     public static String Tooltip_OutputFile_Rrn;
     public static String Tooltip_JOENTL;

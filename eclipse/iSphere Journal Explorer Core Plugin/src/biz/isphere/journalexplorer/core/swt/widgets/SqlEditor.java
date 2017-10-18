@@ -14,6 +14,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +33,7 @@ import biz.isphere.journalexplorer.core.Messages;
 public class SqlEditor extends Composite {
 
     private ContentAssistText textSqlEditor;
+    private Button btnAddField;
     private Button btnExecute;
 
     public SqlEditor(Composite parent, int style) {
@@ -62,10 +65,42 @@ public class SqlEditor extends Composite {
         layout.marginWidth = 0;
         setLayout(layout);
 
-        Label labelWhere = new Label(this, SWT.NONE);
+        Composite leftPanel = new Composite(this, SWT.NONE);
+        GridLayout leftPanelLayout = new GridLayout(1, false);
+        leftPanelLayout.marginHeight = 0;
+        leftPanelLayout.marginWidth = 0;
+        leftPanel.setLayout(leftPanelLayout);
+        leftPanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        Composite wherePanel = new Composite(leftPanel, SWT.NONE);
+        GridLayout wherePanelLayout = new GridLayout(1, false);
+        wherePanelLayout.marginHeight = 0;
+        wherePanelLayout.marginWidth = 0;
+        wherePanel.setLayout(wherePanelLayout);
+        wherePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        Label labelWhere = new Label(wherePanel, SWT.NONE);
         labelWhere.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
+
+        Composite addFieldPanel = new Composite(leftPanel, SWT.NONE);
+        GridLayout addPanelLayout = new GridLayout(1, false);
+        addPanelLayout.marginHeight = 0;
+        addPanelLayout.marginWidth = 0;
+        addFieldPanel.setLayout(addPanelLayout);
+
+        btnAddField = WidgetFactory.createPushButton(addFieldPanel, Messages.ButtonLabel_AddField);
+        btnAddField.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END));
+        btnAddField.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                textSqlEditor.getTextWidget().setFocus();
+                textSqlEditor.setSelectedRange(1, 0);
+                textSqlEditor.setSelectedRange(0, 0);
+                textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+            }
+        });
 
         textSqlEditor = WidgetFactory.createContentAssistText(this);// ContentAssistText(this);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -108,7 +143,7 @@ public class SqlEditor extends Composite {
                         textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
                         break;
 
-                    case '\032':
+                    case '\032': // Ctrl-z (Undo)
                         textSqlEditor.doOperation(ITextOperationTarget.UNDO);
                     }
 
@@ -116,7 +151,7 @@ public class SqlEditor extends Composite {
             }
         });
 
-        btnExecute = WidgetFactory.createPushButton(this, "&Execute");
+        btnExecute = WidgetFactory.createPushButton(this, Messages.ButtonLabel_Execute);
         btnExecute.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END));
     }
 
