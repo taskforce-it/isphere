@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -25,6 +24,8 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
     private static final String PROPERTY_CONTENT_ASSIST_AUTOACTIVATION_DELAY = "content_assist_autoactivation_delay";
     private String[] completionProposals;
     private String[] labels;
+    private boolean isAutoActivation;
+    private boolean isAutoInsert;
 
     private ContentAssistant assistant;
     private IPreferenceStore javaEditorPreferencesStore;
@@ -42,6 +43,14 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
         javaEditorPreferencesStore.addPropertyChangeListener(this);
     }
 
+    public void enableAutoActivation(boolean autoActivation) {
+        this.isAutoActivation = autoActivation;
+    }
+
+    public void enableAutoInsert(boolean autoInsert) {
+        this.isAutoInsert = autoInsert;
+    }
+
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
         this.assistant = new ContentAssistant();
@@ -50,12 +59,13 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
         // http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Feditors_contentassist.htm
         // https://wiki.eclipse.org/FAQ_How_do_I_add_Content_Assist_to_my_editor%3F
         // http://www.vogella.com/tutorials/EclipseEditors/article.html
-        IContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(completionProposals, labels);
+        ContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(completionProposals, labels);
+        fTemplateProcessor.enableAutoActivation(isAutoActivation);
 
         assistant.setContentAssistProcessor(fTemplateProcessor, IDocument.DEFAULT_CONTENT_TYPE);
         assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-        assistant.enableAutoActivation(true);
-        assistant.enableAutoInsert(true);
+        assistant.enableAutoActivation(isAutoActivation);
+        assistant.enableAutoInsert(isAutoInsert);
         assistant.setAutoActivationDelay(getAutoActivationDelay());
 
         return assistant;
