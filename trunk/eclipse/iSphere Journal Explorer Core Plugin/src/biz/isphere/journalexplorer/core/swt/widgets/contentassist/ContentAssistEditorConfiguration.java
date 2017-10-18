@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,18 +25,16 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
     private static final String PROPERTY_CONTENT_ASSIST_AUTOACTIVATION_DELAY = "content_assist_autoactivation_delay";
     private String[] completionProposals;
     private String[] labels;
-    private char autoCompletionChar;
 
     private ContentAssistant assistant;
     private IPreferenceStore javaEditorPreferencesStore;
 
-    public ContentAssistEditorConfiguration(char autoCompletionChar, String[] completionProposals) {
-        this(autoCompletionChar, completionProposals, null);
+    public ContentAssistEditorConfiguration(String[] completionProposals) {
+        this(completionProposals, null);
     }
 
-    public ContentAssistEditorConfiguration(char autoCompletionChar, String[] completionProposals, String[] labels) {
+    public ContentAssistEditorConfiguration(String[] completionProposals, String[] labels) {
 
-        this.autoCompletionChar = autoCompletionChar;
         this.completionProposals = completionProposals;
         this.labels = labels;
 
@@ -52,7 +50,7 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
         // http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Feditors_contentassist.htm
         // https://wiki.eclipse.org/FAQ_How_do_I_add_Content_Assist_to_my_editor%3F
         // http://www.vogella.com/tutorials/EclipseEditors/article.html
-        IContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(autoCompletionChar, completionProposals, labels);
+        IContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(completionProposals, labels);
 
         assistant.setContentAssistProcessor(fTemplateProcessor, IDocument.DEFAULT_CONTENT_TYPE);
         assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);

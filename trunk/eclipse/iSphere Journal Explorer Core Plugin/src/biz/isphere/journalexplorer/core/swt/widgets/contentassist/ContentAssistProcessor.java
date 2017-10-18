@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,20 +23,18 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class ContentAssistProcessor implements IContentAssistProcessor {
 
-    private final String IBMI_NAME_CHARS = ".#$ABCDEFGHIJKLMNOPQRSTUVWX0123456789";
-
     private String[] completionProposals;
     private String[] labels;
     private char[] autoCompletionChars;
 
-    public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals) {
-        this(autoCompletionChar, completionProposals, null);
+    public ContentAssistProcessor(String[] completionProposals) {
+        this(completionProposals, null);
     }
 
-    public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals, String[] labels) {
+    public ContentAssistProcessor(String[] completionProposals, String[] labels) {
 
-        this.autoCompletionChars = getAutoCompletionChars(completionProposals); // autoCompletionChar;
         this.completionProposals = completionProposals;
+        this.autoCompletionChars = getAutoCompletionChars(completionProposals);
 
         if (completionProposals != null) {
             this.labels = new String[completionProposals.length];
@@ -132,8 +130,8 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
         if (pReplacementOffset > 0) {
             try {
                 while (pReplacementOffset > 0) {
-                    String charToTest = viewer.getDocument().get(pReplacementOffset - 1, 1).toUpperCase();
-                    if (IBMI_NAME_CHARS.indexOf(charToTest) >= 0) {
+                    char charToTest = viewer.getDocument().get(pReplacementOffset - 1, 1).toUpperCase().toCharArray()[0];
+                    if (isEatableChar(charToTest)) {
                         pReplacementOffset--;
                         pReplacementLength += 1;
                         completionProposalPrefix.append(charToTest);
@@ -155,6 +153,17 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
         return completionProposalsList.toArray(new ICompletionProposal[completionProposalsList.size()]);
     }
 
+    public boolean isEatableChar(char charToTest) {
+
+        final String EATABLE_CHARS = ".#$ABCDEFGHIJKLMNOPQRSTUVWX0123456789";
+
+        if (EATABLE_CHARS.indexOf(charToTest) >= 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private void collectCompletionProposals(List<ICompletionProposal> completionProposalsList, int replacementOffset, int replacementLength,
         String completionProposalPrefix) {
 
@@ -167,7 +176,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
         }
     }
 
-    private char[] getAutoCompletionChars(String[] completionProposals) {
+    public char[] getAutoCompletionChars(String[] completionProposals) {
 
         Set<String> autoCompletionChars = new HashSet<String>();
 

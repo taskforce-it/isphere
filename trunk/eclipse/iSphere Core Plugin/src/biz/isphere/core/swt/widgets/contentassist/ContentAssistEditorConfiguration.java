@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,30 +8,38 @@
 
 package biz.isphere.core.swt.widgets.contentassist;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-public class ContentAssistEditorConfiguration extends SourceViewerConfiguration {
+public class ContentAssistEditorConfiguration extends SourceViewerConfiguration implements IPropertyChangeListener {
 
+    private static final String PROPERTY_CONTENT_ASSIST_AUTOACTIVATION_DELAY = "content_assist_autoactivation_delay";
     private String[] completionProposals;
     private String[] labels;
-    private char autoCompletionChar;
 
     private ContentAssistant assistant;
+    private IPreferenceStore javaEditorPreferencesStore;
 
-    public ContentAssistEditorConfiguration(char autoCompletionChar, String[] completionProposals) {
-        this(autoCompletionChar, completionProposals, null);
+    public ContentAssistEditorConfiguration(String[] completionProposals) {
+        this(completionProposals, null);
     }
 
-    public ContentAssistEditorConfiguration(char autoCompletionChar, String[] completionProposals, String[] labels) {
+    public ContentAssistEditorConfiguration(String[] completionProposals, String[] labels) {
 
-        this.autoCompletionChar = autoCompletionChar;
         this.completionProposals = completionProposals;
         this.labels = labels;
+
+        javaEditorPreferencesStore = new ScopedPreferenceStore(new InstanceScope(), "org.eclipse.jdt.ui");
+        javaEditorPreferencesStore.addPropertyChangeListener(this);
     }
 
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
@@ -42,14 +50,39 @@ public class ContentAssistEditorConfiguration extends SourceViewerConfiguration 
         // http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Feditors_contentassist.htm
         // https://wiki.eclipse.org/FAQ_How_do_I_add_Content_Assist_to_my_editor%3F
         // http://www.vogella.com/tutorials/EclipseEditors/article.html
-        IContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(autoCompletionChar, completionProposals, labels);
+        IContentAssistProcessor fTemplateProcessor = new ContentAssistProcessor(completionProposals, labels);
 
         assistant.setContentAssistProcessor(fTemplateProcessor, IDocument.DEFAULT_CONTENT_TYPE);
         assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
         assistant.enableAutoActivation(true);
         assistant.enableAutoInsert(true);
+        assistant.setAutoActivationDelay(getAutoActivationDelay());
 
         return assistant;
     }
 
+    private int getAutoActivationDelay() {
+
+        IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), "org.eclipse.jdt.ui");
+
+        int delay = store.getInt(PROPERTY_CONTENT_ASSIST_AUTOACTIVATION_DELAY);
+        if (delay > 0) {
+            return delay;
+        }
+
+        return 500;
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+
+        if (!PROPERTY_CONTENT_ASSIST_AUTOACTIVATION_DELAY.equals(event.getProperty())) {
+            return;
+        }
+
+        assistant.setAutoActivationDelay(getAutoActivationDelay());
+    }
+
+    public void unistall() {
+        javaEditorPreferencesStore.removePropertyChangeListener(this);
+    }
 }

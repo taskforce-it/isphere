@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *******************************************************************************/
 
 package biz.isphere.core.swt.widgets;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -21,7 +24,7 @@ public class ContentAssistText extends SourceViewer {
 
     private String[] completionProposals;
     private String[] labels;
-    private char autoCompletionChar;
+    private ContentAssistEditorConfiguration configuration;
 
     public ContentAssistText(Composite parent) {
         this(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
@@ -33,19 +36,28 @@ public class ContentAssistText extends SourceViewer {
         setDocument(new Document(""));
     }
 
-    public void setAutoCompletionChar(char autoCompletionChar) {
-        this.autoCompletionChar = autoCompletionChar;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+    public void setContentAssistProposals(ContentAssistProposal[] proposals) {
+
+        List<String> completionProposals = new LinkedList<String>();
+        List<String> labels = new LinkedList<String>();
+        for (ContentAssistProposal proposal : proposals) {
+            completionProposals.add(proposal.getValue());
+            labels.add(proposal.getLabel());
+        }
+
+        this.completionProposals = completionProposals.toArray(new String[completionProposals.size()]);
+        this.labels = labels.toArray(new String[labels.size()]);
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public void setContentAssistProposals(String[] completionProposals) {
         this.completionProposals = completionProposals;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public void setContentAssistProposalsLabels(String[] labels) {
         this.labels = labels;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public String getText() {
@@ -79,11 +91,20 @@ public class ContentAssistText extends SourceViewer {
 
     @Override
     public void configure(SourceViewerConfiguration configuration) {
+        this.configuration = (ContentAssistEditorConfiguration)configuration;
         super.unconfigure();
         super.configure(configuration);
     }
 
     public boolean isDisposed() {
         return getTextWidget().isDisposed();
+    }
+
+    public void dispose() {
+        if (configuration != null) {
+            configuration.unistall();
+            configuration = null;
+        }
+        super.unconfigure();
     }
 }

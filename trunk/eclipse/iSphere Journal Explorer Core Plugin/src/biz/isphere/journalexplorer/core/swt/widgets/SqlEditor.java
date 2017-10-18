@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.Messages;
 
