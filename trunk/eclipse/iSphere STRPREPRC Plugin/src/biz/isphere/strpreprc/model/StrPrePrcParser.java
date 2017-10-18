@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import biz.isphere.core.clcommands.CLCommand;
 import biz.isphere.core.clcommands.CLFormatter;
 import biz.isphere.core.clcommands.CLParameter;
 import biz.isphere.core.clcommands.CLParser;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.preferences.Preferences;
 
@@ -39,6 +40,8 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         Messages.RPLVAR_OB, Messages.RPLVAR_TY, Messages.RPLVAR_SL, Messages.RPLVAR_SF, Messages.RPLVAR_SM, Messages.RPLVAR_TL, Messages.RPLVAR_TO,
         Messages.RPLVAR_TR, Messages.RPLVAR_FL, Messages.RPLVAR_FF, Messages.RPLVAR_FM, Messages.RPLVAR_U0, Messages.RPLVAR_U1, Messages.RPLVAR_U2,
         Messages.RPLVAR_U3, Messages.RPLVAR_U4, Messages.RPLVAR_U5, Messages.RPLVAR_U6, Messages.RPLVAR_U7, Messages.RPLVAR_U8, Messages.RPLVAR_U9 }));
+
+    private static final ContentAssistProposal[] contentAssistProposals = new ContentAssistProposal[REPLACEMENT_VARIABLES_VALUES.size()];
 
     private String memberType;
 
@@ -76,16 +79,35 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
         initializeStore();
     }
 
+    private static void initializeContentAssistProposals() {
+
+        synchronized (contentAssistProposals) {
+            String[] values = REPLACEMENT_VARIABLES_VALUES.toArray(new String[REPLACEMENT_VARIABLES_VALUES.size()]);
+            String[] labels = REPLACEMENT_VARIABLES_HEADERS.toArray(new String[REPLACEMENT_VARIABLES_HEADERS.size()]);
+
+            ContentAssistProposal proposal;
+            for (int i = 0; i < values.length; i++) {
+                if (labels != null && i < labels.length - 1 && labels[i].trim().length() > 0) {
+                    proposal = new ContentAssistProposal(values[i], labels[i]);
+                } else {
+                    proposal = new ContentAssistProposal(values[i]);
+                }
+                contentAssistProposals[i] = proposal;
+            }
+        }
+    }
+
+    public static ContentAssistProposal[] getContentAssistProposals() {
+
+        if (contentAssistProposals[0] == null) {
+            initializeContentAssistProposals();
+        }
+
+        return contentAssistProposals;
+    }
+
     public static boolean isVariable(String variable) {
         return REPLACEMENT_VARIABLES_VALUES.contains(variable);
-    }
-
-    public static String[] getReplacementVariables() {
-        return REPLACEMENT_VARIABLES_VALUES.toArray(new String[REPLACEMENT_VARIABLES_VALUES.size()]);
-    }
-
-    public static String[] getReplacementVariablesHeaders() {
-        return REPLACEMENT_VARIABLES_HEADERS.toArray(new String[REPLACEMENT_VARIABLES_VALUES.size()]);
     }
 
     public String getCommand() {

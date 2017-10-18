@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,10 +103,11 @@ public class EditHeaderDialog extends XDialog {
         labelParameters.setText("Parameters:");
         labelParameters.setLayoutData(new GridData(SWT.DEFAULT, SWT.BEGINNING, false, false));
 
-        textParameters = new ContentAssistText(mainArea);
+        textParameters = WidgetFactory.createContentAssistText(mainArea);
         textParameters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        textParameters.setContentAssistProposals(StrPrePrcParser.getReplacementVariables());
-        textParameters.setContentAssistProposalsLabels(StrPrePrcParser.getReplacementVariablesHeaders());
+        textParameters.enableAutoActivation(true);
+        textParameters.enableAutoInsert(true);
+        textParameters.setContentAssistProposals(StrPrePrcParser.getContentAssistProposals());
 
         Button insertVariable = WidgetFactory.createPushButton(mainArea, "InsertVariable");
         insertVariable.setLayoutData(new GridData(SWT.END, SWT.DEFAULT, false, false, 2, 1));
