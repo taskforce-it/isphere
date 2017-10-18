@@ -25,6 +25,27 @@ import biz.isphere.core.lpex.menu.model.UserKeyAction;
 import com.ibm.lpex.alef.LpexPlugin;
 import com.ibm.lpex.core.LpexView;
 
+// MARK-Source.Start
+// MARK-Source.End
+//
+// beginSubmenu "STRPREPRC"
+// endSubmenu
+//
+// beginSubmenu "STRPREPRC"
+// endSubmenu
+//
+// MARK-biz.Source.Start
+// MARK-biz.Source.End
+//
+// MARK-biz.Quelle.Start
+// MARK-biz.Quelle.End
+//
+// MARK-biz.iSphere.LPEX.Start
+// MARK-biz.iSphere.LPEX.End
+//
+// MARK-biz.iSphere.STRPREPRC.Start
+// MARK-biz.iSphere.STRPREPRC.End
+
 public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     protected static final String BEGIN_SUB_MENU = "beginSubmenu"; //$NON-NLS-1$
