@@ -105,7 +105,6 @@ public class EditHeaderDialog extends XDialog {
 
         textParameters = new ContentAssistText(mainArea);
         textParameters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        textParameters.setAutoCompletionChar('&');
         textParameters.setContentAssistProposals(StrPrePrcParser.getReplacementVariables());
         textParameters.setContentAssistProposalsLabels(StrPrePrcParser.getReplacementVariablesHeaders());
 
@@ -421,5 +420,11 @@ public class EditHeaderDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
+
+    @Override
+    public boolean close() {
+        textParameters.dispose();
+        return super.close();
     }
 }
