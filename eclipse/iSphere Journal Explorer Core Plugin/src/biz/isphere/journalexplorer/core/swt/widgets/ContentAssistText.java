@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ public class ContentAssistText extends SourceViewer {
 
     private String[] completionProposals;
     private String[] labels;
-    private char autoCompletionChar;
     private ContentAssistEditorConfiguration configuration;
 
     public ContentAssistText(Composite parent) {
@@ -35,11 +34,6 @@ public class ContentAssistText extends SourceViewer {
         super(parent, null, null, false, style);
 
         setDocument(new Document(""));
-    }
-
-    public void setAutoCompletionChar(char autoCompletionChar) {
-        this.autoCompletionChar = autoCompletionChar;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
     }
 
     public void setContentAssistProposals(ContentAssistProposal[] proposals) {
@@ -53,17 +47,17 @@ public class ContentAssistText extends SourceViewer {
 
         this.completionProposals = completionProposals.toArray(new String[completionProposals.size()]);
         this.labels = labels.toArray(new String[labels.size()]);
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public void setContentAssistProposals(String[] completionProposals) {
         this.completionProposals = completionProposals;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public void setContentAssistProposalsLabels(String[] labels) {
         this.labels = labels;
-        configure(new ContentAssistEditorConfiguration(this.autoCompletionChar, this.completionProposals, this.labels));
+        configure(new ContentAssistEditorConfiguration(this.completionProposals, this.labels));
     }
 
     public String getText() {

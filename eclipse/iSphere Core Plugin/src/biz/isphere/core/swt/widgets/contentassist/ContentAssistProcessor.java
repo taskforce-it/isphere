@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,19 +27,19 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
     private String[] labels;
     private char[] autoCompletionChars;
 
-    public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals) {
-        this(autoCompletionChar, completionProposals, null);
+    public ContentAssistProcessor(String[] completionProposals) {
+        this(completionProposals, null);
     }
 
-    public ContentAssistProcessor(char autoCompletionChar, String[] completionProposals, String[] labels) {
+    public ContentAssistProcessor(String[] completionProposals, String[] labels) {
 
-        this.autoCompletionChars = getAutoCompletionChars(completionProposals); // autoCompletionChar;
         this.completionProposals = completionProposals;
+        this.autoCompletionChars = getAutoCompletionChars(completionProposals);
 
         if (completionProposals != null) {
             this.labels = new String[completionProposals.length];
             for (int i = 0; i < this.labels.length; i++) {
-                if (labels != null && i < labels.length) {
+                if (labels != null && i < labels.length && labels[i] != null && labels[i].length() > 0) {
                     this.labels[i] = completionProposals[i] + " - " + labels[i];
                 } else {
                     this.labels[i] = completionProposals[i];
@@ -124,41 +124,59 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
         List<ICompletionProposal> completionProposalsList = new ArrayList<ICompletionProposal>();
 
-        String autoCompChar = null;
+        StringBuilder completionProposalPrefix = new StringBuilder();
         int pReplacementOffset = offset;
         int pReplacementLength = 0;
         if (pReplacementOffset > 0) {
             try {
-                autoCompChar = viewer.getDocument().get(pReplacementOffset - 1, 1);
-                if (isAutoCompleteChar(autoCompChar)) {
-                    pReplacementOffset--;
-                    pReplacementLength += 1;
-                } else {
-                    autoCompChar = null;
+                while (pReplacementOffset > 0) {
+                    char charToTest = viewer.getDocument().get(pReplacementOffset - 1, 1).toUpperCase().toCharArray()[0];
+                    if (isEatableChar(charToTest)) {
+                        pReplacementOffset--;
+                        pReplacementLength += 1;
+                        completionProposalPrefix.append(charToTest);
+                    } else {
+                        break;
+                    }
                 }
             } catch (BadLocationException e) {
             }
         }
 
-        for (int i = 0; i < completionProposals.length; i++) {
-            if (autoCompChar == null || autoCompChar.toUpperCase().equals(completionProposals[i].substring(0, 1))) {
-                CompletionProposal proposal = new CompletionProposal(completionProposals[i], pReplacementOffset, pReplacementLength,
-                    completionProposals[i].length(), null, labels[i], null, null);
-                completionProposalsList.add(proposal);
-            }
+        completionProposalPrefix.reverse();
+
+        collectCompletionProposals(completionProposalsList, pReplacementOffset, pReplacementLength, completionProposalPrefix.toString());
+        if (completionProposalsList.size() == 0) {
+            collectCompletionProposals(completionProposalsList, offset, 0, null);
         }
 
         return completionProposalsList.toArray(new ICompletionProposal[completionProposalsList.size()]);
     }
 
-    private boolean isAutoCompleteChar(String autoCompChar) {
-        if (new String(getCompletionProposalAutoActivationCharacters()).contains(autoCompChar)) {
+    public boolean isEatableChar(char charToTest) {
+
+        final String EATABLE_CHARS = new String(autoCompletionChars);
+
+        if (EATABLE_CHARS.indexOf(charToTest) >= 0) {
             return true;
         }
+
         return false;
     }
 
-    private char[] getAutoCompletionChars(String[] completionProposals) {
+    private void collectCompletionProposals(List<ICompletionProposal> completionProposalsList, int replacementOffset, int replacementLength,
+        String completionProposalPrefix) {
+
+        for (int i = 0; i < completionProposals.length; i++) {
+            if (completionProposalPrefix == null || completionProposals[i].startsWith(completionProposalPrefix.toString())) {
+                CompletionProposal proposal = new CompletionProposal(completionProposals[i], replacementOffset, replacementLength,
+                    completionProposals[i].length(), null, labels[i], null, null);
+                completionProposalsList.add(proposal);
+            }
+        }
+    }
+
+    public char[] getAutoCompletionChars(String[] completionProposals) {
 
         Set<String> autoCompletionChars = new HashSet<String>();
 
