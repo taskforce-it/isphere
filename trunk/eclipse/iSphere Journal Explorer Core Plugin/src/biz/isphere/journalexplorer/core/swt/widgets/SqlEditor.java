@@ -104,10 +104,12 @@ public class SqlEditor extends Composite {
 
         textSqlEditor = WidgetFactory.createContentAssistText(this);// ContentAssistText(this);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
+        textSqlEditor.setHint(Messages.Tooltip_SqlEditor_Text);
         textSqlEditor.enableAutoActivation(true);
         textSqlEditor.enableAutoInsert(true);
         textSqlEditor.getTextWidget().setToolTipText(Messages.Tooltip_SqlEditor_Text);
         textSqlEditor.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+
             public void verifyKey(VerifyEvent event) {
                 if (isCtrlEnter(event)) {
                     Event keyUpEvent = new Event();

@@ -50,10 +50,10 @@ public class EditHeaderDialog extends XDialog {
 
     public final static int PROMPT = 901;
 
-    private final static String CONNECTION_NAME = "CONNECTION_NAME";
-    private final static String COMMAND = "COMMAND";
-    private final static String PARAMETERS = "PARAMETERS";
-    private final static String MEMBER_TYPE = "MEMBER_TYPE";
+    private final static String CONNECTION_NAME = "CONNECTION_NAME"; //$NON-NLS-1$
+    private final static String COMMAND = "COMMAND"; //$NON-NLS-1$
+    private final static String PARAMETERS = "PARAMETERS"; //$NON-NLS-1$
+    private final static String MEMBER_TYPE = "MEMBER_TYPE"; //$NON-NLS-1$
 
     private String title;
     private int mode;
@@ -89,27 +89,29 @@ public class EditHeaderDialog extends XDialog {
         mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label labelConnection = new Label(mainArea, SWT.NONE);
-        labelConnection.setText("Connection:");
+        labelConnection.setText(Messages.Connection_colon);
 
         comboConnections = WidgetFactory.createReadOnlyCombo(mainArea);
 
         Label labelCommand = new Label(mainArea, SWT.NONE);
-        labelCommand.setText("Command:");
+        labelCommand.setText(Messages.Command_colon);
 
         textCommand = WidgetFactory.createNameText(mainArea);
         textCommand.setTextLimit(10);
 
         Label labelParameters = new Label(mainArea, SWT.NONE);
-        labelParameters.setText("Parameters:");
+        labelParameters.setText(Messages.Parameters_colon);
         labelParameters.setLayoutData(new GridData(SWT.DEFAULT, SWT.BEGINNING, false, false));
 
         textParameters = WidgetFactory.createContentAssistText(mainArea);
         textParameters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        textParameters.setHint(Messages.Tooltip_Header_Text);
         textParameters.enableAutoActivation(true);
         textParameters.enableAutoInsert(true);
+        textParameters.getTextWidget().setToolTipText(Messages.Tooltip_Header_Text);
         textParameters.setContentAssistProposals(StrPrePrcParser.getContentAssistProposals());
 
-        Button insertVariable = WidgetFactory.createPushButton(mainArea, "InsertVariable");
+        Button insertVariable = WidgetFactory.createPushButton(mainArea, Messages.Label_Insert_Variable);
         insertVariable.setLayoutData(new GridData(SWT.END, SWT.DEFAULT, false, false, 2, 1));
         insertVariable.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -377,7 +379,7 @@ public class EditHeaderDialog extends XDialog {
             if (mode == HEADER) {
                 this.parameters = Preferences.getInstance().getDefaultKeywords();
             } else {
-                this.parameters = "";
+                this.parameters = ""; //$NON-NLS-1$
             }
         }
     }

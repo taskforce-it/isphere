@@ -15,27 +15,81 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.core.swt.widgets.contentassist.ContentAssistEditorConfiguration;
 
-public class ContentAssistText extends SourceViewer {
+public class ContentAssistText {
 
     private String[] completionProposals;
     private String[] labels;
     private ContentAssistEditorConfiguration configuration;
-    private boolean autoActivation;
-    private boolean autoInsert;
+    private boolean isAutoActivation;
+    private boolean isAutoInsert;
+    private boolean isHintDisplayed;
+    private String hint;
+    private Color forgroundColor;
+
+    private SourceViewer sourceViewer;
 
     public ContentAssistText(Composite parent) {
         this(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
     }
 
     public ContentAssistText(Composite parent, int style) {
-        super(parent, null, null, false, style);
+        // super(parent, null, null, false, style);
 
-        setDocument(new Document(""));
+        this.configuration = (ContentAssistEditorConfiguration)configuration;
+
+        this.sourceViewer = new SourceViewer(parent, null, null, false, style);
+        this.sourceViewer.setDocument(new Document());
+        this.sourceViewer.getTextWidget().addFocusListener(new FocusListener() {
+            public void focusLost(FocusEvent paramFocusEvent) {
+                updateHint();
+            }
+
+            public void focusGained(FocusEvent paramFocusEvent) {
+                hideHint();
+            }
+        });
+
+        this.forgroundColor = sourceViewer.getTextWidget().getForeground();
+        this.isHintDisplayed = false;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+        updateHint();
+    }
+
+    private void updateHint() {
+
+        if (hint != null && sourceViewer.getDocument().get().length() == 0) {
+            showHint();
+        } else {
+            hideHint();
+        }
+    }
+
+    private void showHint() {
+
+        sourceViewer.getTextWidget().setText(this.hint);
+        sourceViewer.getTextWidget().setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+        isHintDisplayed = true;
+    }
+
+    private void hideHint() {
+
+        if (isHintDisplayed) {
+            sourceViewer.getTextWidget().setText(""); //$NON-NLS-1$
+            sourceViewer.getTextWidget().setForeground(forgroundColor);
+            isHintDisplayed = false;
+        }
     }
 
     public void setContentAssistProposals(ContentAssistProposal[] proposals) {
@@ -63,60 +117,73 @@ public class ContentAssistText extends SourceViewer {
     }
 
     public void enableAutoActivation(boolean autoActivation) {
-        this.autoActivation = autoActivation;
+        this.isAutoActivation = autoActivation;
     }
 
     public void enableAutoInsert(boolean autoInsert) {
-        this.autoInsert = autoInsert;
+        this.isAutoInsert = autoInsert;
+    }
+
+    public void doOperation(int operation) {
+        sourceViewer.doOperation(operation);
+    }
+
+    public void setSelectedRange(int selectionOffset, int selectionLength) {
+        sourceViewer.setSelectedRange(selectionOffset, selectionLength);
+    }
+
+    public StyledText getTextWidget() {
+        return sourceViewer.getTextWidget();
     }
 
     public String getText() {
-        return getDocument().get();
+
+        if (isHintDisplayed) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return sourceViewer.getDocument().get();
     }
 
     public void setText(String text) {
-        getDocument().set(text);
+        hideHint();
+        sourceViewer.getDocument().set(text);
+        updateHint();
     }
 
     public void setLayoutData(Object layoutData) {
-        getControl().setLayoutData(layoutData);
+        sourceViewer.getControl().setLayoutData(layoutData);
     }
 
     public Object getLayoutData() {
-        return getControl().getLayoutData();
+        return sourceViewer.getControl().getLayoutData();
     }
 
     public void addFocusListener(FocusListener listener) {
-        getControl().addFocusListener(listener);
+        sourceViewer.getControl().addFocusListener(listener);
     }
 
     public void setFocus() {
-        getControl().setFocus();
+        sourceViewer.getControl().setFocus();
     }
 
-    @Override
-    protected void createControl(Composite parent, int styles) {
-        super.createControl(parent, styles);
-    }
-
-    @Override
     public void configure(SourceViewerConfiguration configuration) {
         this.configuration = (ContentAssistEditorConfiguration)configuration;
-        super.unconfigure();
-        super.configure(configuration);
+        sourceViewer.unconfigure();
+        sourceViewer.configure(configuration);
     }
 
     private SourceViewerConfiguration createContentAssistConfiguration() {
 
         ContentAssistEditorConfiguration configuration = new ContentAssistEditorConfiguration(this.completionProposals, this.labels);
-        configuration.enableAutoActivation(autoActivation);
-        configuration.enableAutoInsert(autoInsert);
+        configuration.enableAutoActivation(isAutoActivation);
+        configuration.enableAutoInsert(isAutoInsert);
 
         return configuration;
     }
 
     public boolean isDisposed() {
-        return getTextWidget().isDisposed();
+        return sourceViewer.getTextWidget().isDisposed();
     }
 
     public void dispose() {
@@ -124,6 +191,6 @@ public class ContentAssistText extends SourceViewer {
             configuration.unistall();
             configuration = null;
         }
-        super.unconfigure();
+        sourceViewer.unconfigure();
     }
 }
