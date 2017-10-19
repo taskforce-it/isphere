@@ -142,6 +142,16 @@ public class Messages extends NLS {
 
     public static String RPLVAR_U9;
 
+    public static String Connection_colon;
+
+    public static String Command_colon;
+
+    public static String Parameters_colon;
+
+    public static String Tooltip_Header_Text;
+
+    public static String Label_Insert_Variable;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
