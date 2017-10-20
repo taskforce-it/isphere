@@ -311,7 +311,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         String userKeyAction = shortcut + ACTION_DELIMITER + actionId;
 
         if (existingActions.indexOf(userKeyAction) < 0) {
-            actions.add(new UserKeyAction(shortcut, userKeyAction));
+            actions.add(new UserKeyAction(shortcut, actionId));
         }
     }
 
