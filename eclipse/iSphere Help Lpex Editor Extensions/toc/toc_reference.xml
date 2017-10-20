@@ -10,5 +10,8 @@
     <topic label="Comments" href="html/comments/comments.html" />
     <topic label="Indentions" href="html/comments/indentions.html" />
     <topic label="Preferences" href="html/comments/preferences/preferences.html" />
+    <topic label="Tips and Tricks" >
+    	<topic label="Re-Mapping Enter Key" href="html/comments/tips_and_tricks/remapping_enter_key.html" />
+    </topic>
   </topic>
 </toc> 
