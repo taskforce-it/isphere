@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Comments and Indentions" link_to="../biz.isphere.base.help/toc/toc.xml#reference"> 
-  <topic label="Comments and Indentions"> 
+<toc label="LPEX Editor Extensions" link_to="../biz.isphere.base.help/toc/toc.xml#reference"> 
+  <topic label="LPEX Editor Extensions"> 
   	<!--
   	Add sub topics here:
     <topic label="..." href="html/tasktags/..." />

@@ -31,10 +31,10 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="biz.isphere.lpex.comments.preferencepages.ISphereComments"
+            class="biz.isphere.lpex.comments.preferencepages.ISphereLpexEditorExtensions"
             category="biz.isphere.base.preferencepages.General"
-            name="%Comments"
-            id="biz.isphere.lpex.comments.preferencepages.ISphereComments"/>
+            name="%Lpex_Editor_Extensions"
+            id="biz.isphere.lpex.comments.preferencepages.ISphereLpexEditorExtensions"/>
    </extension>
 
 </plugin>

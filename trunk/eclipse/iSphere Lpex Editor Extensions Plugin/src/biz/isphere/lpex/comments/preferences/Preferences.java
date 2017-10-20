@@ -14,7 +14,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Version;
 
 import biz.isphere.base.versioncheck.PluginCheck;
-import biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin;
+import biz.isphere.lpex.comments.ISphereLpexEditorExtensionsPlugin;
 import biz.isphere.lpex.comments.lpex.MenuExtension;
 
 /**
@@ -45,7 +45,7 @@ public final class Preferences {
      * Preferences keys:
      */
 
-    private static final String DOMAIN = ISphereAddRemoveCommentsPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+    private static final String DOMAIN = ISphereLpexEditorExtensionsPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
     /*
      * Outdated with iSphere 3.1
@@ -70,7 +70,7 @@ public final class Preferences {
     public synchronized static Preferences getInstance() {
         if (instance == null) {
             instance = new Preferences();
-            instance.preferenceStore = ISphereAddRemoveCommentsPlugin.getDefault().getPreferenceStore();
+            instance.preferenceStore = ISphereLpexEditorExtensionsPlugin.getDefault().getPreferenceStore();
         }
         return instance;
     }
