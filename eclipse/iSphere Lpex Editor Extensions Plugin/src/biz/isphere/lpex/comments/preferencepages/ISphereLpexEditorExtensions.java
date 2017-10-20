@@ -24,21 +24,21 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin;
+import biz.isphere.lpex.comments.ISphereLpexEditorExtensionsPlugin;
 import biz.isphere.lpex.comments.Messages;
 import biz.isphere.lpex.comments.preferences.Preferences;
 
-public class ISphereComments extends PreferencePage implements IWorkbenchPreferencePage {
+public class ISphereLpexEditorExtensions extends PreferencePage implements IWorkbenchPreferencePage {
 
     private boolean hasShownWarning;
 
     private Button btnCommentsEnabled;
     private Button btnIndentingEnabled;
 
-    public ISphereComments() {
+    public ISphereLpexEditorExtensions() {
         super();
 
-        setPreferenceStore(ISphereAddRemoveCommentsPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(ISphereLpexEditorExtensionsPlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
 
         hasShownWarning = false;
@@ -153,7 +153,7 @@ public class ISphereComments extends PreferencePage implements IWorkbenchPrefere
 
     protected void setScreenToValues() {
 
-        ISphereAddRemoveCommentsPlugin.getDefault();
+        ISphereLpexEditorExtensionsPlugin.getDefault();
 
         Preferences preferences = getPreferences();
 

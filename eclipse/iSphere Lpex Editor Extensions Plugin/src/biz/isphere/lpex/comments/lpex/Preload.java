@@ -8,7 +8,7 @@
 
 package biz.isphere.lpex.comments.lpex;
 
-import biz.isphere.lpex.comments.ISphereAddRemoveCommentsPlugin;
+import biz.isphere.lpex.comments.ISphereLpexEditorExtensionsPlugin;
 import biz.isphere.lpex.comments.preferences.Preferences;
 
 import com.ibm.lpex.alef.LpexPreload;
@@ -32,7 +32,7 @@ public class Preload implements LpexPreload {
         }
 
         MenuExtension menuExtension = new MenuExtension();
-        menuExtension.initializeLpexEditor(ISphereAddRemoveCommentsPlugin.getDefault());
+        menuExtension.initializeLpexEditor(ISphereLpexEditorExtensionsPlugin.getDefault());
 
         return;
     }

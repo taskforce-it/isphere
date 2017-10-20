@@ -9,13 +9,13 @@ import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereAddRemoveCommentsPlugin extends AbstractUIPlugin implements LpexMenuExtensionPlugin {
+public class ISphereLpexEditorExtensionsPlugin extends AbstractUIPlugin implements LpexMenuExtensionPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.lpex.comments";
 
     // The shared instance
-    private static ISphereAddRemoveCommentsPlugin plugin;
+    private static ISphereLpexEditorExtensionsPlugin plugin;
 
     // The Lpex menu extension
     private ILpexMenuExtension menuExtension;
@@ -23,7 +23,7 @@ public class ISphereAddRemoveCommentsPlugin extends AbstractUIPlugin implements 
     /**
      * The constructor
      */
-    public ISphereAddRemoveCommentsPlugin() {
+    public ISphereLpexEditorExtensionsPlugin() {
         plugin = this;
     }
 
@@ -62,7 +62,7 @@ public class ISphereAddRemoveCommentsPlugin extends AbstractUIPlugin implements 
      * 
      * @return the shared instance
      */
-    public static ISphereAddRemoveCommentsPlugin getDefault() {
+    public static ISphereLpexEditorExtensionsPlugin getDefault() {
         return plugin;
     }
 
