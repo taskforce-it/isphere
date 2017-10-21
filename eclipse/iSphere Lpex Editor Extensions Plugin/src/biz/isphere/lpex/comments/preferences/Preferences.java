@@ -30,6 +30,8 @@ public final class Preferences {
 
     // WDSCi 7.0 = Eclipse 3.2
     private static final Version WDSCI70 = new Version(3, 2, 0);
+    // RDi 9.6 = Eclipse 4.6
+    private static final Version RDI96 = new Version(4, 6, 0);
 
     /**
      * The instance of this Singleton class.
@@ -128,7 +130,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(COMMENTS_ENABLED, getDefaultCommentsEnabled());
         preferenceStore.setDefault(INDENTION_ENABLED, getDefaultIndentionEnabled());
-        preferenceStore.setDefault(USER_KEY_ACTIONS, getInitialUserKeyActions());
+        preferenceStore.setDefault(USER_KEY_ACTIONS, getDefaultUserKeyActions());
 
         /*
          * Outdated setting
@@ -151,10 +153,14 @@ public final class Preferences {
 
     public boolean getDefaultIndentionEnabled() {
 
-        return true;
+        if (!isRDi9_6DevelomentEnvironment()) {
+            return true;
+        }
+        
+        return false;
     }
 
-    public String getInitialUserKeyActions() {
+    public String getDefaultUserKeyActions() {
         return MenuExtension.getInitialUserKeyActions();
     }
 
@@ -199,7 +205,11 @@ public final class Preferences {
         if (isWDSCiDevelomentEnvironment()) {
             key = "com.ibm.etools.iseries.core.preferences.parser.ilerpg.enter.autoindent.S1_Blanks"; //$NON-NLS-1$
         } else {
-            key = "com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.autoindent.S1_Blanks"; //$NON-NLS-1$
+            if (!preferenceStore.contains("RPGLE.FORMATTING.length")) {
+                key = "com.ibm.etools.iseries.edit.preferences.parser.ilerpg.enter.autoindent.S1_Blanks"; //$NON-NLS-1$
+            } else {
+                key = "RPGLE.FORMATTING.length"; //$NON-NLS-1$
+            }
         }
 
         int indention = preferenceStore.getInt(key);
@@ -221,6 +231,18 @@ public final class Preferences {
         Version platformVersion = PluginCheck.getPlatformVersion();
         if (platformVersion.getMajor() <= WDSCI70.getMajor()) {
             if (platformVersion.getMinor() <= WDSCI70.getMinor()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isRDi9_6DevelomentEnvironment() {
+
+        Version platformVersion = PluginCheck.getPlatformVersion();
+        if (platformVersion.getMajor() <= RDI96.getMajor()) {
+            if (platformVersion.getMinor() <= RDI96.getMinor()) {
                 return true;
             }
         }
