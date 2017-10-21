@@ -127,11 +127,13 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
         List<UserAction> actionsList = new LinkedList<UserAction>();
 
-        String[] parts = actions.split(ACTION_DELIMITER);
-        int i = 0;
-        while (i < parts.length - 1) {
-            actionsList.add(new UserAction(parts[i], parts[i + 1]));
-            i = i + 2;
+        if (actions != null) {
+            String[] parts = actions.split(ACTION_DELIMITER);
+            int i = 0;
+            while (i < parts.length - 1) {
+                actionsList.add(new UserAction(parts[i], parts[i + 1]));
+                i = i + 2;
+            }
         }
 
         return actionsList.toArray(new UserAction[actionsList.size()]);
@@ -211,7 +213,9 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     private void removePopupMenu() {
 
         String popupMenu = getCurrentLpexPopupMenu();
-        popupMenu = removeMenuItems(popupMenu, getMarkStart(), getMarkEnd());
+        if (popupMenu != null) {
+            popupMenu = removeMenuItems(popupMenu, getMarkStart(), getMarkEnd());
+        }
 
         doSetLpexViewPopup(popupMenu.trim());
     }
@@ -307,6 +311,9 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     protected static void checkAndAddUserKeyAction(List<UserKeyAction> actions, String shortcut, String actionId) {
 
         String existingActions = LpexView.globalQuery("current.updateProfile.userKeyActions"); //$NON-NLS-1$
+        if (existingActions == null) {
+            return;
+        }
 
         String userKeyAction = shortcut + ACTION_DELIMITER + actionId;
 
@@ -332,7 +339,13 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
         StringBuilder newMenu = new StringBuilder(createMenuItem(getMarkStart()));
 
-        int sourceMenuLocation = findStartOfLpexSubMenu(popupMenu);
+        int sourceMenuLocation;
+        if (popupMenu != null) {
+            sourceMenuLocation = findStartOfLpexSubMenu(popupMenu);
+        } else {
+            sourceMenuLocation = -1;
+        }
+
         if (sourceMenuLocation >= 0) {
             newMenu.append(createMenuItem(SEPARATOR));
             newMenu.append(createMenuItems(menuActions));
