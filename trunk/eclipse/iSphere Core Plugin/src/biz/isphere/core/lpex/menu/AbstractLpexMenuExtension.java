@@ -311,13 +311,10 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     protected static void checkAndAddUserKeyAction(List<UserKeyAction> actions, String shortcut, String actionId) {
 
         String existingActions = LpexView.globalQuery("current.updateProfile.userKeyActions"); //$NON-NLS-1$
-        if (existingActions == null) {
-            return;
-        }
 
         String userKeyAction = shortcut + ACTION_DELIMITER + actionId;
 
-        if (existingActions.indexOf(userKeyAction) < 0) {
+        if (existingActions == null || existingActions.indexOf(userKeyAction) < 0) {
             actions.add(new UserKeyAction(shortcut, actionId));
         }
     }
