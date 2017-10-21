@@ -82,7 +82,7 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
             }
         }
 
-        buffer.insert(startOfText, getIndentiontring(endOfInsertion - startOfText));
+        buffer.insert(startOfText, getIndentionString(endOfInsertion - startOfText));
 
         if (buffer.length() > getLineLength()) {
             throw new TextLimitExceededException();
@@ -138,7 +138,7 @@ public class RPGIndentionDelegate extends AbstractIndentionDelegate implements I
         return buffer.toString();
     }
 
-    private String getIndentiontring(int length) {
+    private String getIndentionString(int length) {
 
         return StringHelper.getFixLength("", length);
     }
