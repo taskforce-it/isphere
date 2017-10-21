@@ -79,6 +79,9 @@ public class LPEXTaskManager {
      * @throws CoreException
      */
     public void removeMarkers() throws CoreException {
+        if (resource==null) {
+            return;
+        }
         IMarker[] tMarkers = null;
         int depth = 2;
         tMarkers = resource.findMarkers(LPEXTask.ID, true, depth);
@@ -106,6 +109,9 @@ public class LPEXTaskManager {
      * @return <code>true</code>, if marker tags are enabled.
      */
     public boolean markerAreEnabled() {
+        if (resource==null){
+            return false;
+        }
         if (!(preferences.isEnabled() && preferences.supportsResource(resource))) {
             return false;
         }
