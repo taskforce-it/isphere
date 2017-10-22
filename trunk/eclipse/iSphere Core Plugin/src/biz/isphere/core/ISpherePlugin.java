@@ -265,6 +265,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_SAVE, getImageDescriptor(IMAGE_SAVE));
         reg.put(IMAGE_SAVE_ALL, getImageDescriptor(IMAGE_SAVE_ALL));
         reg.put(IMAGE_COPY_TO_CLIPBOARD, getImageDescriptor(IMAGE_COPY_TO_CLIPBOARD));
+        reg.put(IMAGE_COPY_LEFT, getImageDescriptor(IMAGE_COPY_LEFT));
+        reg.put(IMAGE_COPY_RIGHT, getImageDescriptor(IMAGE_COPY_RIGHT));
+        reg.put(IMAGE_COPY_NOT_EQUAL, getImageDescriptor(IMAGE_COPY_NOT_EQUAL));
+        reg.put(IMAGE_COPY_EQUAL, getImageDescriptor(IMAGE_COPY_EQUAL));
         reg.put(IMAGE_FILTERED_ITEMS, getImageDescriptor(IMAGE_FILTERED_ITEMS));
         reg.put(IMAGE_COMPARE_MESSAGE_FILES, getImageDescriptor(IMAGE_COMPARE_MESSAGE_FILES));
         reg.put(IMAGE_OPEN, getImageDescriptor(IMAGE_OPEN));
