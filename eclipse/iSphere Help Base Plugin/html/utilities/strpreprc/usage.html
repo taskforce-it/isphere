@@ -46,6 +46,16 @@ Less important parameters are:
 <p>
 All other parameters are just variables that you can use the way you want.
 <p>
+<h2>Compile Command</h2>
+<p>
+If you want to compile your objects with the STRPREPRC utility, you should create a <i>Compile command</i>
+for it. You can do so from the context menu of a source member or an i Project. Select <i>Work with compile commands...</i>
+and <i>New command</i> and enter a label, e.g. <i>STRPREPRC</i>. Then enter the command as:
+<p>
+<div class="codeCommand">STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) OPTION(*EVENTF) CHGOBJD(*NO) LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) USER0(&X)</div> 
+<p>
+<img alt="Add compile command" src="./assets/add_compile_command.png" />
+<p>
 <h2>Command Defaults</h2>
 <p>
 <table>
