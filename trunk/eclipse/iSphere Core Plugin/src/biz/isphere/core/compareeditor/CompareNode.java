@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -37,7 +39,7 @@ import org.eclipse.swt.graphics.Image;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 
-public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent {
+public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
     private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
     private static final String CRLF = "\r\n"; //$NON-NLS-1$
@@ -172,6 +174,15 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             yymmdd = tDateFormatter.format(Calendar.getInstance().getTime());
         }
         return yymmdd;
+    }
+
+    public String getCharset() throws CoreException {
+        
+        if (fResource instanceof IFile) {
+            return ((IFile)fResource).getCharset();
+        }
+        
+        return Charset.defaultCharset().name();
     }
 
 }
