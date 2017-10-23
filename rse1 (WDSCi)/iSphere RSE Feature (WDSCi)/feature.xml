@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for WDSCi 7.0 (recommended)"
-      version="3.1.0.b011"
+      version="3.1.0.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -28,7 +28,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="3.1.0.b011" match="perfect"/>
+      <import feature="biz.isphere.core" version="3.1.0.r" match="perfect"/>
    </requires>
 
    <plugin
