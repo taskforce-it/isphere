@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.0.6.r
-X-Bundle-Update-Library: false
+Bundle-Version: 3.1.0.r
+X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Enabled the "Delete" key to delete spooled files of the iSphere Spooled Files subsystem.\nAdded the iSphere specific keys to "KeyMapper" to fix the issue of the hidden fast cursor up/down keys.
-X-Beta-Version: 3.1.0.b011
+X-Bundle-Info: New: Journal Explorer" plug-in.\nNew: Option to retrieve binder source of a service program.\nNew: Option for comparing source members to the search result view and the main menu.\nNew: Context menu option "Display Search Options" of search result tab.
+X-Beta-Version: 3.1.0.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added simple SQL editor for editing the SQL WHERE clause for fetching data into the journal explorer view.\nFixed a minor bug in the message monitor preferences.
+X-Beta-Info: .
