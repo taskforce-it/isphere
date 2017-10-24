@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.1.1.b001
+-----------------------------
+ • Improved error checking of "Improved error checking of "Send 
+   IBM i Message" dialog.".
+
 Changelog: iSphere 3.1.0.b011
 -----------------------------
  • Added content assistance to SQL editor.
