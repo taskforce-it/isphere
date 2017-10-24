@@ -42,5 +42,6 @@
          <topic label="History" href="html/utilities/strpreprc/history.html" />
       </topic>
    </topic>
+   <topic label="SSL Connection Problems" href="html/ssl_connections/ssl_connections.html" />
    <topic label="Links" href="html/links/links.html" />
 </toc>
