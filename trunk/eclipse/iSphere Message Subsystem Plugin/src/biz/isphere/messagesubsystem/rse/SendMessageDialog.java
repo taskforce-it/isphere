@@ -14,6 +14,8 @@ package biz.isphere.messagesubsystem.rse;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,6 +42,7 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.stringlisteditor.IStringListEditorValidator;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QEZSNDMG;
@@ -47,7 +50,7 @@ import biz.isphere.messagesubsystem.internal.QEZSNDMG;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
 
-public class SendMessageDialog extends XDialog {
+public class SendMessageDialog extends XDialog implements IStringListEditorValidator {
 
     private static final int SEND = 1;
     private static final int FORWARD = 2;
@@ -90,7 +93,7 @@ public class SendMessageDialog extends XDialog {
 
     private String titleText;
     private SendMessageOptions sendMessageOptions;
-    private StringListEditor receipientsEditor;
+    private StringListEditor recipientsEditor;
 
     private String overWriteMessageType;
     private String overWriteMessageText;
@@ -211,6 +214,21 @@ public class SendMessageDialog extends XDialog {
                 }
             }
         });
+        textMessageText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                validateMessageText(textMessageText.getText());
+            }
+        });
+        textMessageText.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent event) {
+                Object source = event.getSource();
+                if (source instanceof Text) {
+                    Text text = (Text)source;
+                    text.setSelection(0, 0);
+                }
+            }
+        });
 
         Label labelRecipientTypes = new Label(mainPanel, SWT.NONE);
         labelRecipientTypes.setLayoutData(createLabelLayoutData());
@@ -248,9 +266,10 @@ public class SendMessageDialog extends XDialog {
 
         new Label(mainPanel, SWT.NONE); // place holder
 
-        receipientsEditor = new StringListEditor(mainPanel, SWT.NONE);
-        receipientsEditor.setTextLimit(10);
-        receipientsEditor.setEnableLowerCase(true);
+        recipientsEditor = new StringListEditor(mainPanel, SWT.NONE);
+        recipientsEditor.setTextLimit(10);
+        recipientsEditor.setEnableLowerCase(true);
+        recipientsEditor.setValidator(this);
 
         labelReplyMessageQueueName = new Label(mainPanel, SWT.NONE);
         labelReplyMessageQueueName.setLayoutData(createLabelLayoutData());
@@ -315,17 +334,6 @@ public class SendMessageDialog extends XDialog {
     }
 
     @Override
-    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
-
-        Button button = super.createButton(parent, id, label, defaultButton);
-        if (defaultButton) {
-            receipientsEditor.setParentDefaultButton(button);
-        }
-
-        return button;
-    }
-
-    @Override
     protected void createButtonsForButtonBar(Composite parent) {
         Button buttonReset = createButton(parent, BUTTON_RESET_ID, Messages.RESET_LABEL, false);
         if (buttonReset != null) {
@@ -352,9 +360,9 @@ public class SendMessageDialog extends XDialog {
     private void setControlEnablement() {
 
         if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
-            receipientsEditor.setEnabled(true);
+            recipientsEditor.setEnabled(true);
         } else {
-            receipientsEditor.setEnabled(false);
+            recipientsEditor.setEnabled(false);
         }
 
         if (QEZSNDMG.TYPE_INQUERY.equals(comboMessageType.getText())) {
@@ -417,7 +425,7 @@ public class SendMessageDialog extends XDialog {
 
         overWriteInitialValues();
 
-        receipientsEditor.clearAll();
+        recipientsEditor.clearAll();
 
         setControlEnablement();
 
@@ -438,49 +446,56 @@ public class SendMessageDialog extends XDialog {
         super.okPressed();
     }
 
+    public boolean validateAddItem(String userProfile) {
+
+        setErrorMessage(null);
+
+        if (recipientsEditor.contains(userProfile)) {
+            setErrorMessage(Messages.bind(Messages.User_profile_A_has_already_been_added_to_the_list, userProfile));
+            recipientsEditor.setFocus();
+            return false;
+        }
+
+        if (!validateUserProfile(userProfile)) {
+            recipientsEditor.setFocus();
+            return false;
+        }
+
+        return true;
+    }
+
     private boolean validateInput() {
 
         setErrorMessage(null);
 
-        if (textMessageText.getText().trim().length() <= 0) {
-            setErrorMessage(Messages.Message_text_is_missing);
+        if (!validateMessageText(textMessageText.getText())) {
             textMessageText.setFocus();
             return false;
         }
 
-        if (!validateRecipient(comboRecipient.getText().trim())) {
+        if (!validateRecipient(comboRecipient.getText())) {
             comboRecipient.setFocus();
             return false;
+        }
+
+        if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
+            String[] recipients = recipientsEditor.getItems();
+            int index = validateRecipients(recipients);
+            if (index >= 0) {
+                if (index < recipientsEditor.getItemCount()) {
+                    recipientsEditor.setFocus(index);
+                } else {
+                    recipientsEditor.setFocus();
+                }
+                return false;
+            }
         }
 
         boolean isALL = false;
         boolean isSysOpr = false;
         if (RECIPIENT_LIST.equals(comboRecipient.getText())) {
-            String[] recipients = receipientsEditor.getItems();
-            if (recipients.length <= 0) {
-                setErrorMessage(Messages.Recipients_are_missing);
-                receipientsEditor.setFocus();
-                return false;
-            }
-
-            for (int i = 0; i < recipients.length; i++) {
-                if (!validateRecipient(recipients[i])) {
-                    receipientsEditor.setFocus(i);
-                    return false;
-                }
-                if (QEZSNDMG.RECIPIENT_ALL.equals(recipients[i])) {
-                    isALL = true;
-                }
-                if (QEZSNDMG.RECIPIENT_SYSOPR.equals(recipients[i])) {
-                    isALL = true;
-                }
-            }
-
-            if (isALL && recipients.length > 1) {
-                setErrorMessage(Messages.bind(Messages.A_must_be_the_only_item_in_the_list, QEZSNDMG.RECIPIENT_ALL));
-                receipientsEditor.setFocus();
-                return false;
-            }
+            isALL = recipientsEditor.contains(QEZSNDMG.RECIPIENT_ALL);
+            isSysOpr = recipientsEditor.contains(QEZSNDMG.RECIPIENT_SYSOPR);
         } else {
             if (QEZSNDMG.RECIPIENT_ALL.equals(comboRecipient.getText())) {
                 isALL = true;
@@ -493,13 +508,13 @@ public class SendMessageDialog extends XDialog {
         if (isALL && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
             setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_ALL,
                 QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
-            receipientsEditor.setFocus();
+            recipientsEditor.setFocus();
             return false;
         }
         if (isSysOpr && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
             setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_SYSOPR,
                 QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
-            receipientsEditor.setFocus();
+            recipientsEditor.setFocus();
             return false;
         }
 
@@ -519,13 +534,30 @@ public class SendMessageDialog extends XDialog {
         return true;
     }
 
+    private boolean validateMessageText(String messageText) {
+
+        if (messageText.trim().length() <= 0) {
+            setErrorMessage(Messages.Message_text_is_missing);
+            return false;
+        }
+
+        setErrorMessage(null);
+
+        return true;
+    }
+
     public boolean validateRecipient(String recipient) {
 
+        recipient = recipient.trim();
+
+        // Validate special values
         if (REPLY_MSGQ_NAME_SENDER.equals(recipient) || QEZSNDMG.RECIPIENT_ALL.equals(recipient) || QEZSNDMG.RECIPIENT_ALLACT.equals(recipient)
             || QEZSNDMG.RECIPIENT_SYSOPR.equals(recipient) || RECIPIENT_LIST.equals(recipient)) {
+            setErrorMessage(null);
             return true;
         }
 
+        // Validate single user profile
         if (recipient.length() <= 0) {
             setErrorMessage(Messages.Recipients_are_missing);
             return false;
@@ -536,9 +568,56 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
-        if (!ISphereHelper.checkUserProfile(system, recipient)) {
+        if (!validateUserProfile(recipient)) {
+            setErrorMessage(Messages.bind(Messages.User_profile_A_does_not_exist, recipient));
             return false;
         }
+
+        setErrorMessage(null);
+
+        return true;
+    }
+
+    public int validateRecipients(String[] recipients) {
+
+        if (recipients.length <= 0) {
+            setErrorMessage(Messages.Recipients_are_missing);
+            return Integer.MAX_VALUE;
+        }
+
+        for (int i = 0; i < recipients.length; i++) {
+            if (!validateUserProfile(recipients[i])) {
+                return i;
+            }
+        }
+
+        setErrorMessage(null);
+
+        return -1;
+    }
+
+    public boolean validateUserProfile(String userProfile) {
+
+        userProfile = userProfile.trim();
+
+        if (userProfile.length() <= 0) {
+            setErrorMessage(Messages.Recipients_are_missing);
+            return false;
+        }
+
+        if (!(QEZSNDMG.RECIPIENT_SYSOPR.equals(userProfile) || QEZSNDMG.RECIPIENT_ALLACT.equals(userProfile))) {
+            if (!nameValidator.validate(userProfile)) {
+                setErrorMessage(Messages.Invalid_recipient);
+                return false;
+            }
+
+            if (!ISphereHelper.checkUserProfile(system, userProfile)) {
+                setErrorMessage(Messages.bind(Messages.User_profile_A_does_not_exist, userProfile));
+                return false;
+            }
+        }
+
+        setErrorMessage(null);
 
         return true;
     }
@@ -557,6 +636,8 @@ public class SendMessageDialog extends XDialog {
         if (!ISphereHelper.checkObject(system, library, messageQueueName, ISeries.MSGQ)) {
             return false;
         }
+
+        setErrorMessage(null);
 
         return true;
     }
@@ -583,6 +664,8 @@ public class SendMessageDialog extends XDialog {
             return false;
         }
 
+        setErrorMessage(null);
+
         return true;
     }
 
@@ -597,7 +680,7 @@ public class SendMessageDialog extends XDialog {
 
         String recipient = comboRecipient.getText().trim();
         if (RECIPIENT_LIST.equals(recipient)) {
-            String[] recipients = receipientsEditor.getItems();
+            String[] recipients = recipientsEditor.getItems();
             sendMessageOptions.setRecipients(recipients);
         } else {
             sendMessageOptions.setRecipients(new String[] { comboRecipient.getText() });
@@ -638,7 +721,7 @@ public class SendMessageDialog extends XDialog {
             }
         }
 
-        receipientsEditor.setItems(recipients);
+        recipientsEditor.setItems(recipients);
 
         comboReplyMessageQueueName.setText(loadValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_NAME)));
         comboReplyMessageQueueLibrary.setText(loadValue(MESSAGE_REPLY_QUEUE_LIBRARY,
@@ -671,7 +754,7 @@ public class SendMessageDialog extends XDialog {
         storeValue(MESSAGE_RECIPIENT_TYPES, comboRecipientTypes.getText());
         storeValue(MESSAGE_RECIPIENT, comboRecipient.getText());
 
-        String[] recipients = receipientsEditor.getItems();
+        String[] recipients = recipientsEditor.getItems();
         storeValue(MESSAGE_RECIPIENTS_COUNT, recipients.length);
         for (int i = 0; i < recipients.length; i++) {
             storeValue(MESSAGE_RECIPIENT_ITEM + i, recipients[i]);
