@@ -279,6 +279,12 @@ public class Messages extends NLS {
 
     public static String Label_Full_generic_string;
 
+    public static String Special_values_are_not_allowed;
+
+    public static String User_profile_A_does_not_exist;
+
+    public static String User_profile_A_has_already_been_added_to_the_list;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

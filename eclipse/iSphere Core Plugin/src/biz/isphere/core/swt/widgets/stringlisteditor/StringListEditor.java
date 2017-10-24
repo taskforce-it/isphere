@@ -66,6 +66,7 @@ public class StringListEditor extends Composite implements SelectionListener {
     private Button removeAllButton;
     private Button moveUpButton;
     private Button moveDownButton;
+    private IStringListEditorValidator validator;
 
     private CellEditor[] cellEditors;
 
@@ -82,8 +83,8 @@ public class StringListEditor extends Composite implements SelectionListener {
         createContentArea(numColumns);
     }
 
-    public void setParentDefaultButton(Button button) {
-        this.parentDefaultButton = button;
+    public void setValidator(IStringListEditorValidator validator) {
+        this.validator = validator;
     }
 
     public void setTextLimit(int limit) {
@@ -103,6 +104,21 @@ public class StringListEditor extends Composite implements SelectionListener {
             textItem.removeVerifyListener(upperCaseOnlyVerifier);
             editorControl.removeVerifyListener(upperCaseOnlyVerifier);
         }
+    }
+
+    public boolean contains(String item) {
+
+        if (item == null) {
+            return false;
+        }
+
+        for (int i = 0; i < itemsList.size(); i++) {
+            if (item.trim().equals(itemsList.get(i).getValue().trim())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void clearAll() {
@@ -254,6 +270,7 @@ public class StringListEditor extends Composite implements SelectionListener {
 
         textItem.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
+                parentDefaultButton = addButton.getParent().getShell().getDefaultButton();
                 if (addButton.isEnabled()) {
                     addButton.getParent().getShell().setDefaultButton(addButton);
                 }
@@ -331,17 +348,19 @@ public class StringListEditor extends Composite implements SelectionListener {
 
         if (e.widget == addButton) {
             String itemToAdd = textItem.getText();
-            itemToAdd = itemToAdd.trim();
+            if (validateAddItem(itemToAdd)) {
+                itemToAdd = itemToAdd.trim();
 
-            if (itemToAdd.length() > 0) {
-                itemToAdd = NlsUtil.toUpperCase(itemToAdd);
-                Item item = new Item(itemToAdd);
-                itemsList.add(item);
-                textItem.setText(""); //$NON-NLS-1$
-                textItem.setFocus();
-                itemsViewer.setInput(itemsList);
-                if (itemsList.size() > 0) {
-                    itemsTable.setTopIndex(itemsList.size());
+                if (itemToAdd.length() > 0) {
+                    itemToAdd = NlsUtil.toUpperCase(itemToAdd);
+                    Item item = new Item(itemToAdd);
+                    itemsList.add(item);
+                    textItem.setText(""); //$NON-NLS-1$
+                    textItem.setFocus();
+                    itemsViewer.setInput(itemsList);
+                    if (itemsList.size() > 0) {
+                        itemsTable.setTopIndex(itemsList.size());
+                    }
                 }
             }
 
@@ -402,6 +421,15 @@ public class StringListEditor extends Composite implements SelectionListener {
         }
 
         setButtonEnablement();
+    }
+
+    private boolean validateAddItem(String item) {
+
+        if (validator == null) {
+            return true;
+        }
+
+        return validator.validateAddItem(item);
     }
 
     private class StringListContentProvider implements IStructuredContentProvider {
