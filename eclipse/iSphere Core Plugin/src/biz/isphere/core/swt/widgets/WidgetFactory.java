@@ -29,6 +29,7 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
+import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 
 /**
  * Factory for creating SWT widgets.
@@ -73,31 +74,30 @@ public final class WidgetFactory {
      * constants that are applicable to the class. Style bits are also inherited
      * from superclasses.
      * 
-     * @param aParent - a shell which will be the parent of the new instance
-     * @param aStyle - the style of dialog to construct
+     * @param parent - a shell which will be the parent of the new instance
+     * @param style - the style of dialog to construct, such as {@link SWT#SAVE}
+     *        or {@link SWT#OPEN}
      */
-    public static IFileDialog getFileDialog(Shell aParent, int aStyle) {
-
-        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
-        IFileDialog dialog = factory.getFileDialog(aParent, SWT.SAVE);
-
-        return dialog;
+    public static IFileDialog getFileDialog(Shell parent, int style) {
+        return WidgetFactory.getInstance().produceFileDialog(parent, style);
     }
 
     /**
      * Produces a color selector control.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return color selector
      */
     public static ColorSelector createColorSelector(Composite parent) {
-        return new ColorSelector(parent);
+        return WidgetFactory.getInstance().produceColorSelector(parent);
     }
 
     /**
      * Produces a separator.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return separator
      */
     public static Label createSeparator(Composite parent) {
@@ -107,22 +107,21 @@ public final class WidgetFactory {
     /**
      * Produces a separator, spanning multiple columns.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param span - number of columns to span
      * @return separator
      */
     public static Label createSeparator(Composite parent, int span) {
-
-        Label separator = WidgetFactory.getInstance().produceSeparator(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-
-        return separator;
+        return WidgetFactory.getInstance().produceSeparator(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
     }
 
     /**
      * Produces a 'name' text field. The field is upper-case only and limited to
      * 10 characters.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return text field
      */
     public static Text createNameText(Composite parent) {
@@ -134,7 +133,8 @@ public final class WidgetFactory {
      * Produces a 'name' text field. The field is upper-case only and limited to
      * 10 characters.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param widthHint - set default text width
      * @return text field
      */
@@ -155,7 +155,8 @@ public final class WidgetFactory {
     /**
      * Produces a single line text field with a border.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return text field
      */
     public static Text createText(Composite parent) {
@@ -165,7 +166,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only single line text field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only text field
      */
     public static Text createReadOnlyText(Composite parent) {
@@ -180,7 +182,8 @@ public final class WidgetFactory {
      * Produces a single line text field with a border. Input is upper-case
      * only.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return text field
      */
     public static Text createUpperCaseText(Composite parent) {
@@ -194,7 +197,8 @@ public final class WidgetFactory {
     /**
      * Produces an upper-case, read-only single line text field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only text field
      */
     public static Text createUpperCaseReadOnlyText(Composite parent) {
@@ -209,7 +213,8 @@ public final class WidgetFactory {
     /**
      * Produces a password field with a border.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return password field
      */
     public static Text createPassword(Composite parent) {
@@ -219,7 +224,8 @@ public final class WidgetFactory {
     /**
      * Produces a label with selectable text.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return label with selectable text
      */
     public static Text createSelectableLabel(Composite parent) {
@@ -234,7 +240,8 @@ public final class WidgetFactory {
      * Produces a multi-line line label with selectable text. If the text does
      * not fit into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return multi-line label with selectable text
      */
     public static Text createSelectableMultilineLabel(Composite parent) {
@@ -257,7 +264,8 @@ public final class WidgetFactory {
      * Produces a multi-line line text field with a border. If the text does not
      * fit into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return multi-line text field
      */
     public static Text createMultilineText(Composite parent) {
@@ -268,7 +276,8 @@ public final class WidgetFactory {
      * Produces a multi-line line text field with a border. If the text does not
      * fit into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param wordWrap - <code>true</code>, to enable word wrap
      * @param autoSelect - <code>true</code>, to select the field content when
      *        entering the field wit the cursor
@@ -288,7 +297,8 @@ public final class WidgetFactory {
      * Produces a read-only multiline line text field. If the text does not fit
      * into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only multi-line text field
      */
     public static Text createReadOnlyMultilineText(Composite parent) {
@@ -303,7 +313,8 @@ public final class WidgetFactory {
      * Produces a read-only multiline line text field. If the text does not fit
      * into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param wordWrap - <code>true</code>, to enable word wrap
      * @param autoSelect - <code>true</code>, to select the field content when
      *        entering the field wit the cursor
@@ -321,7 +332,8 @@ public final class WidgetFactory {
      * Produces an integer text field with a border. Only the character 0-9 are
      * allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return integer text field
      */
     public static Text createIntegerText(Composite parent) {
@@ -332,7 +344,8 @@ public final class WidgetFactory {
      * Produces an integer text field with a border. Only the character 0-9 are
      * allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param hasSign - specifies whether to enable the signs '+' and '-'.
      * @return integer text field
      */
@@ -348,7 +361,8 @@ public final class WidgetFactory {
      * Produces a read-only integer text field. Only the character 0-9 are
      * allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only integer text field
      */
     public static Text createReadOnlyIntegerText(Composite parent) {
@@ -363,7 +377,8 @@ public final class WidgetFactory {
      * Produces a decimal text field with a border. Only the character 0-9 and
      * comma are allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return decimal text field
      */
     public static Text createDecimalText(Composite parent) {
@@ -374,7 +389,8 @@ public final class WidgetFactory {
      * Produces a decimal text field with a border. Only the character 0-9 and
      * comma are allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param hasSign - specifies whether to enable the signs '+' and '-'.
      * @return decimal text field
      */
@@ -390,7 +406,8 @@ public final class WidgetFactory {
      * Produces a read-only decimal text field with a border. Only the character
      * 0-9 and comma are allowed to be entered.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param border - specifies whether or not to add a border
      * @return read-only decimal text field
      */
@@ -405,7 +422,8 @@ public final class WidgetFactory {
     /**
      * Produces a combo field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return combo field
      */
     public static Combo createCombo(Composite parent) {
@@ -415,7 +433,8 @@ public final class WidgetFactory {
     /**
      * Produces an upper-case combo field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return combo field
      */
     public static Combo createUpperCaseCombo(Composite parent) {
@@ -427,7 +446,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only combo field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only combo field
      */
     public static Combo createReadOnlyCombo(Composite parent) {
@@ -437,7 +457,8 @@ public final class WidgetFactory {
     /**
      * Produces a spinner field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return spinner field
      */
     public static Spinner createSpinner(Composite parent) {
@@ -447,7 +468,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only spinner field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only spinner field
      */
     public static Spinner createReadOnlySpinner(Composite parent) {
@@ -457,7 +479,8 @@ public final class WidgetFactory {
     /**
      * Produces a checkbox field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return checkbox field
      */
     public static Button createCheckbox(Composite parent) {
@@ -467,7 +490,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only checkbox field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only checkbox field
      */
     public static Button createReadOnlyCheckbox(Composite parent) {
@@ -481,7 +505,8 @@ public final class WidgetFactory {
     /**
      * Produces a push button.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return push button
      */
     public static Button createPushButton(Composite parent) {
@@ -491,7 +516,8 @@ public final class WidgetFactory {
     /**
      * Produces a push button with a label.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param string - button label
      * @return push button
      */
@@ -504,7 +530,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only push button field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only push button field
      */
     public static Button createReadOnlyPushButton(Composite parent) {
@@ -518,7 +545,8 @@ public final class WidgetFactory {
     /**
      * Produces a toggle button.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return toggle button
      */
     public static Button createToggleButton(Composite parent) {
@@ -528,8 +556,10 @@ public final class WidgetFactory {
     /**
      * Produces a toggle button with a label.
      * 
-     * @param parent - parent composite
-     * @param style - additional style options, such as {@link SWT#FLAT}
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param style - the style of control to construct, such as
+     *        {@link SWT#FLAT}
      * @return toggle button
      */
     public static Button createToggleButton(Composite parent, int style) {
@@ -540,7 +570,8 @@ public final class WidgetFactory {
     /**
      * Produces a toggle button with a label.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param string - button label
      * @return toggle button
      */
@@ -553,9 +584,11 @@ public final class WidgetFactory {
     /**
      * Produces a toggle button with a label.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @param string - button label
-     * @param style - additional style options, such as {@link SWT#FLAT}
+     * @param style - the style of control to construct, such as
+     *        {@link SWT#FLAT}
      * @return toggle button
      */
     public static Button createToggleButton(Composite parent, String label, int style) {
@@ -567,7 +600,8 @@ public final class WidgetFactory {
     /**
      * Produces a radio button field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return radio button field
      */
     public static Button createRadioButton(Composite parent) {
@@ -577,7 +611,8 @@ public final class WidgetFactory {
     /**
      * Produces a read-only radio button field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return read-only radio button field
      */
     public static Button createReadOnlyRadioButton(Composite parent) {
@@ -592,7 +627,8 @@ public final class WidgetFactory {
      * Produces a hex editor composed of two synchronized displays: an
      * hexadecimal and a basic ASCII char display.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return hex editor
      */
     public static HexText createHexText(Composite parent) {
@@ -606,7 +642,8 @@ public final class WidgetFactory {
      * Produces a text field with a border and content assistance. If the text
      * does not fit into the field, a vertical scroll bar is displayed.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return text field with content assistance
      */
     public static ContentAssistText createContentAssistText(Composite parent) {
@@ -616,7 +653,8 @@ public final class WidgetFactory {
     /**
      * Produce a date selector field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return DateTime field configured as a date selector
      */
     public static IDateEdit createDateEdit(Composite parent) {
@@ -626,16 +664,53 @@ public final class WidgetFactory {
     /**
      * Produce a time selector field.
      * 
-     * @param parent - parent composite
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
      * @return DateTime field configured as a time selector
      */
     public static ITimeEdit createTimeEdit(Composite parent) {
         return WidgetFactory.getInstance().produceTimeEdit(parent);
     }
 
+    /**
+     * Produces a StringListEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return editor for editing a list of strings
+     */
+    public static StringListEditor createStringListEditor(Composite parent) {
+        return createStringListEditor(parent, SWT.NONE);
+    }
+
+    /**
+     * Produces a StringListEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param style the style of control to construct
+     * @return editor for editing a list of strings
+     */
+    public static StringListEditor createStringListEditor(Composite parent, int style) {
+        return WidgetFactory.getInstance().produceStringListEditor(parent, style);
+    }
+
     /*
      * Private worker procedures, doing the actual work.
      */
+
+    private IFileDialog produceFileDialog(Shell parent, int style) {
+
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IFileDialog dialog = factory.getFileDialog(parent, style);
+
+        return dialog;
+    }
+
+    private ColorSelector produceColorSelector(Composite parent) {
+        return new ColorSelector(parent);
+    }
+
     private Text produceText(Composite parent, int style, boolean autoSelect) {
 
         Text text = new Text(parent, style | SWT.BORDER);
@@ -738,6 +813,10 @@ public final class WidgetFactory {
         separator.setLayoutData(gridData);
 
         return separator;
+    }
+
+    private StringListEditor produceStringListEditor(Composite parent, int style) {
+        return new StringListEditor(parent, style);
     }
 
     private WidgetFactoryContributionsHandler getWidgetFactoryContributionsHandler() {
