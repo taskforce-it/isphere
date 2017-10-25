@@ -8,7 +8,25 @@
 
 package biz.isphere.core.swt.widgets.stringlisteditor;
 
-public interface IStringListEditorValidator {
+public class ValidationEvent {
 
-    public boolean validateAddItem(String item);
+    public static final int ACTIVATE = 1;
+    public static final int ADD = 2;
+    public static final int CHANGE = 3;
+
+    private int type;
+    public String value;
+
+    public ValidationEvent(int type) {
+        this(type, null);
+    }
+
+    public ValidationEvent(int type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public int getType() {
+        return type;
+    }
 }

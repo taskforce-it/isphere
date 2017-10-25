@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -66,7 +67,7 @@ public class StringListEditor extends Composite implements SelectionListener {
     private Button removeAllButton;
     private Button moveUpButton;
     private Button moveDownButton;
-    private IStringListEditorValidator validator;
+    private IStringValidator validator;
 
     private CellEditor[] cellEditors;
 
@@ -83,7 +84,7 @@ public class StringListEditor extends Composite implements SelectionListener {
         createContentArea(numColumns);
     }
 
-    public void setValidator(IStringListEditorValidator validator) {
+    public void setValidator(IStringValidator validator) {
         this.validator = validator;
     }
 
@@ -311,6 +312,22 @@ public class StringListEditor extends Composite implements SelectionListener {
 
         cellEditors = new CellEditor[1];
         cellEditors[0] = new TextCellEditor(itemsTable);
+        cellEditors[0].setValidator(new ICellEditorValidator() {
+            public String isValid(Object value) {
+                if (validator == null) {
+                    return null;
+                } else {
+                    ValidationEvent event;
+                    if (!cellEditors[0].isActivated()) {
+                        event = new ValidationEvent(ValidationEvent.ACTIVATE, (String)value);
+                    } else {
+                        event = new ValidationEvent(ValidationEvent.CHANGE, (String)value);
+                    }
+                    return validator.isValid(event);
+                }
+            }
+        });
+
         itemsViewer.setCellEditors(cellEditors);
 
         Composite buttonsPanel = new Composite(mainPanel, 0);
@@ -348,7 +365,7 @@ public class StringListEditor extends Composite implements SelectionListener {
 
         if (e.widget == addButton) {
             String itemToAdd = textItem.getText();
-            if (validateAddItem(itemToAdd)) {
+            if (validator != null && validator.isValid(new ValidationEvent(ValidationEvent.ADD, itemToAdd)) == null) {
                 itemToAdd = itemToAdd.trim();
 
                 if (itemToAdd.length() > 0) {
@@ -421,15 +438,6 @@ public class StringListEditor extends Composite implements SelectionListener {
         }
 
         setButtonEnablement();
-    }
-
-    private boolean validateAddItem(String item) {
-
-        if (validator == null) {
-            return true;
-        }
-
-        return validator.validateAddItem(item);
     }
 
     private class StringListContentProvider implements IStructuredContentProvider {

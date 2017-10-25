@@ -42,15 +42,16 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.core.swt.widgets.stringlisteditor.IStringListEditorValidator;
+import biz.isphere.core.swt.widgets.stringlisteditor.IStringValidator;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
+import biz.isphere.core.swt.widgets.stringlisteditor.ValidationEvent;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QEZSNDMG;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QueuedMessage;
 
-public class SendMessageDialog extends XDialog implements IStringListEditorValidator {
+public class SendMessageDialog extends XDialog implements IStringValidator {
 
     private static final int SEND = 1;
     private static final int FORWARD = 2;
@@ -266,7 +267,7 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
 
         new Label(mainPanel, SWT.NONE); // place holder
 
-        recipientsEditor = new StringListEditor(mainPanel, SWT.NONE);
+        recipientsEditor = WidgetFactory.createStringListEditor(mainPanel);
         recipientsEditor.setTextLimit(10);
         recipientsEditor.setEnableLowerCase(true);
         recipientsEditor.setValidator(this);
@@ -446,27 +447,69 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
         super.okPressed();
     }
 
-    public boolean validateAddItem(String userProfile) {
+    public String isValid(ValidationEvent event) {
+
+        if (!(event instanceof ValidationEvent)) {
+            return null;
+        }
+
+        ValidationEvent validationEvent = (ValidationEvent)event;
+
+        if (validationEvent.getType() == ValidationEvent.ADD) {
+            return validateAddItem(validationEvent.value);
+        } else if (validationEvent.getType() == ValidationEvent.CHANGE) {
+            return validateChangeItem(validationEvent.value);
+        } else {
+            return null;
+        }
+    }
+
+    public String validateAddItem(String userProfile) {
+
+        if (recipientsEditor.contains(userProfile)) {
+            String message = Messages.bind(Messages.User_profile_A_has_already_been_added_to_the_list, userProfile);
+            setErrorMessage(message);
+            return message;
+        }
+
+        return validateChangeItem(userProfile);
+    }
+
+    public String validateChangeItem(String userProfile) {
+
+        String message = validateUserProfile(userProfile);
+        if (message != null) {
+            setErrorMessage(message);
+            return message;
+        }
 
         setErrorMessage(null);
 
-        if (recipientsEditor.contains(userProfile)) {
-            setErrorMessage(Messages.bind(Messages.User_profile_A_has_already_been_added_to_the_list, userProfile));
-            recipientsEditor.setFocus();
-            return false;
+        return null;
+    }
+
+    public String validateUserProfile(String userProfile) {
+
+        userProfile = userProfile.trim();
+
+        if (userProfile.length() <= 0) {
+            return Messages.Recipients_are_missing;
         }
 
-        if (!validateUserProfile(userProfile)) {
-            recipientsEditor.setFocus();
-            return false;
+        if (!(QEZSNDMG.RECIPIENT_SYSOPR.equals(userProfile) || QEZSNDMG.RECIPIENT_ALLACT.equals(userProfile))) {
+            if (!nameValidator.validate(userProfile)) {
+                return Messages.Invalid_recipient;
+            }
+
+            if (!ISphereHelper.checkUserProfile(system, userProfile)) {
+                return Messages.bind(Messages.User_profile_A_does_not_exist, userProfile);
+            }
         }
 
-        return true;
+        return null;
     }
 
     private boolean validateInput() {
-
-        setErrorMessage(null);
 
         if (!validateMessageText(textMessageText.getText())) {
             textMessageText.setFocus();
@@ -531,6 +574,8 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
             }
         }
 
+        setErrorMessage(null);
+
         return true;
     }
 
@@ -568,8 +613,9 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
             return false;
         }
 
-        if (!validateUserProfile(recipient)) {
-            setErrorMessage(Messages.bind(Messages.User_profile_A_does_not_exist, recipient));
+        String message = validateUserProfile(recipient);
+        if (message != null) {
+            setErrorMessage(message);
             return false;
         }
 
@@ -585,8 +631,11 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
             return Integer.MAX_VALUE;
         }
 
+        String message;
         for (int i = 0; i < recipients.length; i++) {
-            if (!validateUserProfile(recipients[i])) {
+            message = validateUserProfile(recipients[i]);
+            if (message != null) {
+                setErrorMessage(message);
                 return i;
             }
         }
@@ -594,32 +643,6 @@ public class SendMessageDialog extends XDialog implements IStringListEditorValid
         setErrorMessage(null);
 
         return -1;
-    }
-
-    public boolean validateUserProfile(String userProfile) {
-
-        userProfile = userProfile.trim();
-
-        if (userProfile.length() <= 0) {
-            setErrorMessage(Messages.Recipients_are_missing);
-            return false;
-        }
-
-        if (!(QEZSNDMG.RECIPIENT_SYSOPR.equals(userProfile) || QEZSNDMG.RECIPIENT_ALLACT.equals(userProfile))) {
-            if (!nameValidator.validate(userProfile)) {
-                setErrorMessage(Messages.Invalid_recipient);
-                return false;
-            }
-
-            if (!ISphereHelper.checkUserProfile(system, userProfile)) {
-                setErrorMessage(Messages.bind(Messages.User_profile_A_does_not_exist, userProfile));
-                return false;
-            }
-        }
-
-        setErrorMessage(null);
-
-        return true;
     }
 
     public boolean validateMessageQueueName(String messageQueueName) {
