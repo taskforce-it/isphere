@@ -53,6 +53,7 @@ import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
@@ -295,7 +296,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             SearchResultViewer _searchResultViewer = getSelectedViewer();
             if (_searchResultViewer != null) {
 
-                FilterDialog dialog = new FilterDialog(shell);
+                FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
                 dialog.setFilterPools(creator.getFilterPools(_searchResultViewer.getConnectionName()));
                 if (dialog.open() == Dialog.OK) {
                     if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilterPool(), dialog.getFilter(),

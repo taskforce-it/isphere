@@ -26,7 +26,6 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -40,13 +39,19 @@ public class FilterDialog extends XDialog {
     private String filter = null;
     private String filterPool = null;
 
+    private String filterType;
     private RSEFilterPool[] filterPools;
     private String[] filterPoolNames;
 
-    public FilterDialog(Shell parentShell) {
+    public FilterDialog(Shell parentShell, String filterType) {
         super(parentShell);
 
+        setFilterType(filterType);
         setFilterPools(new RSEFilterPool[0]);
+    }
+
+    public void setFilterType(String filterType) {
+        this.filterType = filterType;
     }
 
     public void setFilterPools(RSEFilterPool[] filterPools) {
@@ -97,6 +102,11 @@ public class FilterDialog extends XDialog {
         return container;
     }
 
+    @Override
+    public void setFocus() {
+        cbFilter.setFocus();
+    }
+
     private void updateFilterNames() {
 
         int index = cbFilterPool.getSelectionIndex();
@@ -107,7 +117,7 @@ public class FilterDialog extends XDialog {
         }
 
         RSEFilterPool filterPool = filterPools[index];
-        String[] filters = filterPool.getFilterNames(RSEFilter.TYPE_MEMBER);
+        String[] filters = filterPool.getFilterNames(filterType);
 
         cbFilter.setItems(filters);
     }
