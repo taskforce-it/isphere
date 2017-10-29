@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2017 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,10 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.messagefilesearch.SearchResult;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
-public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchObjectFilterCreator {
+public class MessageFileSearchObjectFilterCreator extends AbstractFilterCreator implements IMessageFileSearchObjectFilterCreator {
 
-    public boolean createObjectFilter(String connectionName, String filterName, SearchResult[] searchResults) {
+    public boolean createObjectFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults) {
 
         ISeriesObjectFilterString[] filterStrings = new ISeriesObjectFilterString[searchResults.length];
 
@@ -29,16 +28,12 @@ public class MessageFileSearchObjectFilterCreator implements IMessageFileSearchO
             filterString.setObjectType(ISeries.MSGF);
 
             filterStrings[idx] = filterString;
-
         }
 
-        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
-        if (RSEHelper.createObjectFilter(connection, filterName, filterStrings) == null) {
+        if (RSEHelper.createObjectFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
             return false;
         } else {
             return true;
         }
-
     }
-
 }
