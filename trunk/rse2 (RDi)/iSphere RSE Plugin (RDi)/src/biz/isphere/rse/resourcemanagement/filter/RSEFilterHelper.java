@@ -216,4 +216,21 @@ public class RSEFilterHelper {
         }
     }
 
+    public static ISystemFilterPool[] getFilterPools(String connectionName) {
+
+        ISystemFilterPool pools[] = null;
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        ISubSystem subsystem = connection.getQSYSObjectSubSystem();
+        if (subsystem != null) {
+            pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
+        }
+
+        if (pools == null) {
+            pools = new ISystemFilterPool[0];
+        }
+
+        return pools;
+    }
+
 }

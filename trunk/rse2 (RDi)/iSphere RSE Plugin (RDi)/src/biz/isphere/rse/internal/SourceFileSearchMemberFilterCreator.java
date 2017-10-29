@@ -12,11 +12,10 @@ import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
-public class SourceFileSearchMemberFilterCreator implements ISourceFileSearchMemberFilterCreator {
+public class SourceFileSearchMemberFilterCreator extends AbstractFilterCreator implements ISourceFileSearchMemberFilterCreator {
 
-    public boolean createMemberFilter(String connectionName, String filterName, SearchResult[] searchResults) {
+    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults) {
 
         ISeriesMemberFilterString[] filterStrings = new ISeriesMemberFilterString[searchResults.length];
 
@@ -29,16 +28,12 @@ public class SourceFileSearchMemberFilterCreator implements ISourceFileSearchMem
             filterString.setMemberType("*");
 
             filterStrings[idx] = filterString;
-
         }
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
-        if (RSEHelper.createMemberFilter(connection, filterName, filterStrings) == null) {
+        if (RSEHelper.createMemberFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
             return false;
         } else {
             return true;
         }
-
     }
-
 }
