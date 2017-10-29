@@ -30,7 +30,7 @@ public class MessageFileSearchObjectFilterCreator extends AbstractFilterCreator 
             filterStrings[idx] = filterString;
         }
 
-        if (RSEHelper.createObjectFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
+        if (RSEExportToFilterHelper.createOrUpdateObjectFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
             return false;
         } else {
             return true;
