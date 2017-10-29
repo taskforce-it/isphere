@@ -9,9 +9,12 @@
 package biz.isphere.core.internal;
 
 import biz.isphere.core.messagefilesearch.SearchResult;
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 
 public interface IMessageFileSearchObjectFilterCreator {
 
-    public boolean createObjectFilter(String connectionName, String filterName, SearchResult[] searchResults);
+    public boolean createObjectFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults);
+
+    public RSEFilterPool[] getFilterPools(String connectionName);
 
 }

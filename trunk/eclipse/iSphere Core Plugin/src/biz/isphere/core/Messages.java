@@ -98,6 +98,8 @@ public class Messages extends NLS {
 
     public static String File_colon;
 
+    public static String FilterPool_colon;
+
     public static String Filter_colon;
 
     public static String From_column_colon;

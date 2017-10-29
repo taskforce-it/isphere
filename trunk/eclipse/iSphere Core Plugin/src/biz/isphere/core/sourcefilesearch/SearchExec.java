@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -239,7 +240,7 @@ public class SearchExec {
 
                     SearchResultStatement statement = new SearchResultStatement();
                     statement.setStatement(resultSet.getInt("XOSTMT")); //$NON-NLS-1$
-                    statement.setLine(resultSet.getString("XOLINE")); //$NON-NLS-1$
+                    statement.setLine(StringHelper.trimR(resultSet.getString("XOLINE"))); //$NON-NLS-1$
                     alStatements.add(statement);
 
                 }

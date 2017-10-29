@@ -146,7 +146,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     private void createActions() {
 
-        actionExportToObjectFilter = new Action("") {
+        actionExportToObjectFilter = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 exportToObjectFilter();
@@ -156,7 +156,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToObjectFilter.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_OBJECT_FILTER));
         actionExportToObjectFilter.setEnabled(false);
 
-        actionExportToExcel = new Action("") {
+        actionExportToExcel = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 exportToExcel();
@@ -166,7 +166,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToExcel.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EXCEL));
         actionExportToExcel.setEnabled(false);
 
-        actionRemoveTabItem = new Action("") {
+        actionRemoveTabItem = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 removeSelectedTabItem();
@@ -176,7 +176,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS));
         actionRemoveTabItem.setEnabled(false);
 
-        actionRemoveSelectedItems = new Action("") {
+        actionRemoveSelectedItems = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 removeSelectedItem();
@@ -186,7 +186,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionRemoveSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_REMOVE));
         actionRemoveSelectedItems.setEnabled(false);
 
-        actionInvertSelectedItems = new Action("") {
+        actionInvertSelectedItems = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 invertSelection();
@@ -268,7 +268,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         compositeSearchResult.setLayout(new FillLayout());
 
         CTabItem tabItemSearchResult = new CTabItem(tabFolderSearchResults, SWT.CLOSE);
-        tabItemSearchResult.setText(connectionName + "/" + searchString);
+        tabItemSearchResult.setText(connectionName + "/" + searchString); //$NON-NLS-1$
 
         SearchResultViewer _searchResultViewer = new SearchResultViewer(connectionName, searchString, searchResults, searchOptions);
         _searchResultViewer.createContents(compositeSearchResult);
@@ -306,16 +306,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 if (_searchResultViewer != null) {
 
                     FilterDialog dialog = new FilterDialog(shell);
+                    dialog.setFilterPools(creator.getFilterPools(_searchResultViewer.getConnectionName()));
                     if (dialog.open() == Dialog.OK) {
-                        if (!creator.createObjectFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
+                        if (!creator.createObjectFilter(_searchResultViewer.getConnectionName(), dialog.getFilterPool(), dialog.getFilter(),
                             _searchResultViewer.getSearchResults())) {
-
-                            // MessageBox errorBox = new MessageBox(shell,
-                            // SWT.ICON_ERROR);
-                            // errorBox.setText(Messages.E_R_R_O_R);
-                            // errorBox.setMessage(Messages.The_filter_could_not_be_created);
-                            // errorBox.open();
-
                         }
                     }
 
@@ -342,10 +336,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
                 IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
 
-                dialog.setFilterNames(new String[] { "Excel Files", "All Files" });
-                dialog.setFilterExtensions(new String[] { "*.xls", "*.*" });
+                dialog.setFilterNames(new String[] { "Excel Files", "All Files" }); //$NON-NLS-1$
+                dialog.setFilterExtensions(new String[] { "*.xls", "*.*" }); //$NON-NLS-1$
                 dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
-                dialog.setFileName("export.xls");
+                dialog.setFileName("export.xls"); //$NON-NLS-1$
                 dialog.setOverwrite(true);
                 String file = dialog.open();
 

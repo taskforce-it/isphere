@@ -296,8 +296,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             if (_searchResultViewer != null) {
 
                 FilterDialog dialog = new FilterDialog(shell);
+                dialog.setFilterPools(creator.getFilterPools(_searchResultViewer.getConnectionName()));
                 if (dialog.open() == Dialog.OK) {
-                    if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilter(),
+                    if (!creator.createMemberFilter(_searchResultViewer.getConnectionName(), dialog.getFilterPool(), dialog.getFilter(),
                         _searchResultViewer.getSearchResults())) {
                     }
                 }
