@@ -30,7 +30,7 @@ public class SourceFileSearchMemberFilterCreator extends AbstractFilterCreator i
             filterStrings[idx] = filterString;
         }
 
-        if (RSEHelper.createMemberFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
+        if (RSEExportToFilterHelper.createOrUpdateMemberFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
             return false;
         } else {
             return true;
