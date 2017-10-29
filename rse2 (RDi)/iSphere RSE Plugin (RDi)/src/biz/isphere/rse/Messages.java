@@ -122,7 +122,7 @@ public class Messages extends NLS {
 
     public static String No_filter_pool_available;
 
-    public static String A_filter_with_name_A_already_exists;
+    public static String A_filter_with_name_A_already_exists_Do_you_want_to_extend_the_filter;
 
     public static String Failed_to_save_data_to_file_colon_A;
 
