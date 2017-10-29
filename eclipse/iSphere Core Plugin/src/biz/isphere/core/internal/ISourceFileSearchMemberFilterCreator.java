@@ -8,10 +8,12 @@
 
 package biz.isphere.core.internal;
 
+import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 
 public interface ISourceFileSearchMemberFilterCreator {
 
-    public boolean createMemberFilter(String connectionName, String filterName, SearchResult[] searchResults);
+    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults);
 
+    public RSEFilterPool[] getFilterPools(String connectionName);
 }
