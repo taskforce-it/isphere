@@ -110,6 +110,7 @@ public class RSEFilterHelper {
     }
 
     public static RSEFilter[] getFilters(RSEProfile rseProfile) {
+
         ArrayList<RSEFilter> allFilters = new ArrayList<RSEFilter>();
         RSEFilterPool[] filterPools = getFilterPools(rseProfile);
         for (int idx1 = 0; idx1 < filterPools.length; idx1++) {
@@ -118,8 +119,10 @@ public class RSEFilterHelper {
                 allFilters.add(filters[idx2]);
             }
         }
+
         RSEFilter[] _filters = new RSEFilter[allFilters.size()];
         allFilters.toArray(_filters);
+
         return _filters;
     }
 
@@ -215,6 +218,23 @@ public class RSEFilterHelper {
                 }
             }
         }
+    }
+
+    public static SystemFilterPool[] getFilterPools(String connectionName) {
+
+        SystemFilterPool pools[] = null;
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        SubSystem subsystem = connection.getISeriesFileSubSystem();
+        if (subsystem != null) {
+            pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
+        }
+
+        if (pools == null) {
+            pools = new SystemFilterPool[0];
+        }
+
+        return pools;
     }
 
 }
