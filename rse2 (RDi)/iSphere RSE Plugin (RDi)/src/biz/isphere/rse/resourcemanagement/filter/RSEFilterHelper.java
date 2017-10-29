@@ -56,7 +56,7 @@ public class RSEFilterHelper {
 
         List<ISystemFilterPoolReference> filterPools = new LinkedList<ISystemFilterPoolReference>();
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(connectionName);
         ISubSystem subSystem = connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
@@ -70,7 +70,7 @@ public class RSEFilterHelper {
 
         List<ISystemFilter> filters = new LinkedList<ISystemFilter>();
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(connectionName);
         ISubSystem subSystem = connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
@@ -223,7 +223,7 @@ public class RSEFilterHelper {
 
         ISystemFilterPool pools[] = null;
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(connectionName);
         ISubSystem subsystem = connection.getQSYSObjectSubSystem();
         if (subsystem != null) {
             pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
@@ -234,6 +234,25 @@ public class RSEFilterHelper {
         }
 
         return pools;
+    }
+
+    public static ISystemFilterPool getDefaultFilterPool(String connectionName) {
+
+        ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
+        for (ISystemFilterPool filterPool : filterPools) {
+            if (filterPool.isDefault()) {
+                return filterPool;
+            }
+        }
+
+        return null;
+    }
+
+    private static IBMiConnection getConnection(String connectionName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+
+        return connection;
     }
 
 }
