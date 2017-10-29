@@ -56,7 +56,7 @@ public class RSEFilterHelper {
 
         List<SystemFilterPoolReference> filterPools = new LinkedList<SystemFilterPoolReference>();
 
-        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        ISeriesConnection connection = getConnection(connectionName);
         SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, OBJECT_SUBSYSTEM_ID);
         SystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (SystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
@@ -70,7 +70,7 @@ public class RSEFilterHelper {
 
         List<SystemFilter> filters = new LinkedList<SystemFilter>();
 
-        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        ISeriesConnection connection = getConnection(connectionName);
         SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, OBJECT_SUBSYSTEM_ID);
         SystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (SystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
@@ -224,7 +224,7 @@ public class RSEFilterHelper {
 
         SystemFilterPool pools[] = null;
 
-        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        ISeriesConnection connection = getConnection(connectionName);
         SubSystem subsystem = connection.getISeriesFileSubSystem();
         if (subsystem != null) {
             pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
@@ -235,6 +235,26 @@ public class RSEFilterHelper {
         }
 
         return pools;
+    }
+
+    public static SystemFilterPool getDefaultFilterPool(String connectionName) {
+
+        SystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
+        for (SystemFilterPool filterPool : filterPools) {
+            if (filterPool.isDefault()) {
+                return filterPool;
+            }
+        }
+
+        return null;
+    }
+
+    private static ISeriesConnection getConnection(String connectionName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+
+        return connection;
+
     }
 
 }

@@ -30,9 +30,9 @@ import com.ibm.etools.systems.filters.SystemFilterPool;
 import com.ibm.etools.systems.filters.SystemFilterPoolManager;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-public class RSEHelper {
+public class RSEExportToFilterHelper {
 
-    public static SystemFilter createMemberFilter(String connectionName, String filterPoolName, String filterName,
+    public static SystemFilter createOrUpdateMemberFilter(String connectionName, String filterPoolName, String filterName,
         ISeriesMemberFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
@@ -44,7 +44,7 @@ public class RSEHelper {
 
     }
 
-    public static SystemFilter createObjectFilter(String connectionName, String filterPoolName, String filterName,
+    public static SystemFilter createOrUpdateObjectFilter(String connectionName, String filterPoolName, String filterName,
         ISeriesObjectFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
@@ -56,7 +56,7 @@ public class RSEHelper {
 
     }
 
-    public static SystemFilter createLibraryFilter(String connectionName, String filterPoolName, String filterName,
+    public static SystemFilter createOrUpdateLibraryFilter(String connectionName, String filterPoolName, String filterName,
         ISeriesLibraryFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
@@ -91,7 +91,7 @@ public class RSEHelper {
             if (filterPool == null) {
                 RSESelectFilterPoolDialog selectPoolDialog = new RSESelectFilterPoolDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getShell(), pools);
-                selectPoolDialog.setSelectedFilterPool(getDefaultFilterPool(connectionName));
+                selectPoolDialog.setSelectedFilterPool(RSEFilterHelper.getDefaultFilterPool(connectionName));
                 if (selectPoolDialog.open() == Dialog.OK) {
                     filterPool = selectPoolDialog.getSelectedFilterPool();
                 }
@@ -149,18 +149,6 @@ public class RSEHelper {
 
         } catch (Exception e) {
             MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-        }
-
-        return null;
-    }
-
-    private static SystemFilterPool getDefaultFilterPool(String connectionName) {
-
-        SystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
-        for (SystemFilterPool filterPool : filterPools) {
-            if (filterPool.isDefault()) {
-                return filterPool;
-            }
         }
 
         return null;
