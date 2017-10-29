@@ -8,6 +8,9 @@
 
 package biz.isphere.rse.internal;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -102,10 +105,13 @@ public class RSEHelper {
             return null;
         }
 
+        boolean doExtendFilter = false;
         if (filterExists(filterPool, filterName)) {
-            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
-                Messages.bind(Messages.A_filter_with_name_A_already_exists, filterName));
-            return null;
+            doExtendFilter = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.A_filter_with_name_A_already_exists_Do_you_want_to_extend_the_filter, filterName));
+            if (!doExtendFilter) {
+                return null;
+            }
         }
 
         try {
@@ -113,7 +119,32 @@ public class RSEHelper {
             ISubSystem subsystem = getConnection(connectionName).getQSYSObjectSubSystem();
             ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
 
-            return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
+            if (!doExtendFilter) {
+                return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
+            } else {
+
+                ISystemFilter systemFilter = filterPool.getSystemFilter(filterName);
+                boolean isCaseSensitive = systemFilter.areStringsCaseSensitive();
+                String[] existingFiltersStrings = systemFilter.getFilterStrings();
+                if (!isCaseSensitive) {
+                    for (int i = 0; i < existingFiltersStrings.length; i++) {
+                        existingFiltersStrings[i] = existingFiltersStrings[i].toLowerCase();
+                    }
+                }
+
+                Set<String> existingFiltersSet = new HashSet<String>(Arrays.asList(existingFiltersStrings));
+                String tFilterString;
+                for (String filterString : filterStrings) {
+                    if (!isCaseSensitive) {
+                        tFilterString = filterString.toLowerCase();
+                    } else {
+                        tFilterString = filterString;
+                    }
+                    if (!existingFiltersSet.contains(tFilterString)) {
+                        systemFilter.addFilterString(filterString);
+                    }
+                }
+            }
 
         } catch (Exception e) {
             MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
