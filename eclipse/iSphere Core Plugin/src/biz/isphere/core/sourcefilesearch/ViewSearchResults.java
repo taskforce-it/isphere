@@ -523,7 +523,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         String[] filterNames = new String[] {
             "Search file search result (*." + SearchResultManager.FILE_EXTENSION + ")", FileHelper.getAllFilesText() }; //$NON-NLS-1$ //$NON-NLS-2$
-        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION + ";", FileHelper.getAllFilesFilter() }; //$NON-NLS-1$  //$NON-NLS-2$
+        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION, FileHelper.getAllFilesFilter() }; //$NON-NLS-1$  //$NON-NLS-2$
         String filename = Preferences.getInstance().getSourceFileSearchResultsLastUsedFileName();
 
         dialog.setFilterNames(filterNames);
