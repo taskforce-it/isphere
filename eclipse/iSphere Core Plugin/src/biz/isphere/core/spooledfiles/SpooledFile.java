@@ -982,31 +982,36 @@ public class SpooledFile {
 
     public String save(Shell shell, String format) {
 
+        String fileName = replaceVariables(Preferences.getInstance().getSuggestedSpooledFileName(), format);
         String fileDescription = "";
         String fileExtension = "";
         if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
-            fileDescription = "Text Files";
-            fileExtension = ".txt";
+            fileDescription = "Text Files (*.txt)";
+            fileExtension = "*.txt";
+            fileName = fileName + ".txt";
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
-            fileDescription = "HTML Files";
-            fileExtension = ".html";
+            fileDescription = "HTML Files (*.html)";
+            fileExtension = "*.html";
+            fileName = fileName + ".html";
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
-            fileDescription = "PDF Files";
-            fileExtension = ".pdf";
+            fileDescription = "PDF Files (*.pdf)";
+            fileExtension = "*.pdf";
+            fileName = fileName + ".pdf";
         }
 
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
 
-        dialog.setFilterNames(new String[] { fileDescription, "All Files" });
+        dialog.setFilterNames(new String[] { fileDescription, "All Files (*.*)" });
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
-        String suggestedFileName = replaceVariables(Preferences.getInstance().getSuggestedSpooledFileName(), format);
-        dialog.setFileName(suggestedFileName + fileExtension);
+        dialog.setFileName(fileName);
+        System.out.println(fileName);
         dialog.setOverwrite(true);
         String file = dialog.open();
 
         if (file != null) {
+            System.out.println(file);
             storeSaveDirectory(file);
 
             String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
