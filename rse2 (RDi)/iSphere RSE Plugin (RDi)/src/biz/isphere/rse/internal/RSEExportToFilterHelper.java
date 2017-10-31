@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -21,6 +20,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.internal.FilterUpdateType;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 
@@ -33,43 +33,43 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 public class RSEExportToFilterHelper {
 
     public static ISystemFilter createOrUpdateMemberFilter(String connectionName, String filterPoolName, String filterName,
-        ISeriesMemberFilterString[] filterStrings) {
+        FilterUpdateType filterUpdateType, ISeriesMemberFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_MEMBER, filterName, _filterStrings);
+        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_MEMBER, filterName, filterUpdateType, _filterStrings);
 
     }
 
     public static ISystemFilter createOrUpdateObjectFilter(String connectionName, String filterPoolName, String filterName,
-        ISeriesObjectFilterString[] filterStrings) {
+        FilterUpdateType filterUpdateType, ISeriesObjectFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_OBJECT, filterName, _filterStrings);
+        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_OBJECT, filterName, filterUpdateType, _filterStrings);
 
     }
 
     public static ISystemFilter createOrUpdateLibraryFilter(String connectionName, String filterPoolName, String filterName,
-        ISeriesLibraryFilterString[] filterStrings) {
+        FilterUpdateType filterUpdateType, ISeriesLibraryFilterString[] filterStrings) {
 
         Vector<String> _filterStrings = new Vector<String>();
         for (int idx = 0; idx < filterStrings.length; idx++) {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_LIBRARY, filterName, _filterStrings);
+        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_LIBRARY, filterName, filterUpdateType, _filterStrings);
 
     }
 
     private static ISystemFilter createFilter(String connectionName, String filterPoolName, String filterType, String filterName,
-        Vector<String> filterStrings) {
+        FilterUpdateType filterUpdateType, Vector<String> filterStrings) {
 
         ISystemFilterPool filterPool = null;
 
@@ -87,31 +87,12 @@ public class RSEExportToFilterHelper {
                     }
                 }
             }
-
-            if (filterPool == null) {
-                RSESelectFilterPoolDialog selectPoolDialog = new RSESelectFilterPoolDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getShell(), pools);
-                selectPoolDialog.setSelectedFilterPool(RSEFilterHelper.getDefaultFilterPool(connectionName));
-                if (selectPoolDialog.open() == Dialog.OK) {
-                    filterPool = selectPoolDialog.getSelectedFilterPool();
-                }
-            }
-        } else {
-            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
-                Messages.No_filter_pool_available);
         }
 
         if (filterPool == null) {
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                Messages.No_filter_pool_available);
             return null;
-        }
-
-        boolean doExtendFilter = false;
-        if (filterExists(filterPool, filterName)) {
-            doExtendFilter = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
-                Messages.bind(Messages.A_filter_with_name_A_already_exists_Do_you_want_to_extend_the_filter, filterName));
-            if (!doExtendFilter) {
-                return null;
-            }
         }
 
         try {
@@ -119,31 +100,13 @@ public class RSEExportToFilterHelper {
             ISubSystem subsystem = getConnection(connectionName).getQSYSObjectSubSystem();
             ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
 
-            if (!doExtendFilter) {
-                return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
+            if (filterExists(filterPool, filterName)) {
+                if (filterUpdateType == FilterUpdateType.REPLACE) {
+                    removeAllFilterStrings(filterPool, filterName);
+                }
+                updateFilterStrings(dftPoolMgr, filterPool, filterName, filterStrings);
             } else {
-
-                ISystemFilter systemFilter = filterPool.getSystemFilter(filterName);
-                boolean isCaseSensitive = systemFilter.areStringsCaseSensitive();
-                String[] existingFiltersStrings = systemFilter.getFilterStrings();
-                if (!isCaseSensitive) {
-                    for (int i = 0; i < existingFiltersStrings.length; i++) {
-                        existingFiltersStrings[i] = existingFiltersStrings[i].toLowerCase();
-                    }
-                }
-
-                Set<String> existingFiltersSet = new HashSet<String>(Arrays.asList(existingFiltersStrings));
-                String tFilterString;
-                for (String filterString : filterStrings) {
-                    if (!isCaseSensitive) {
-                        tFilterString = filterString.toLowerCase();
-                    } else {
-                        tFilterString = filterString;
-                    }
-                    if (!existingFiltersSet.contains(tFilterString)) {
-                        systemFilter.addFilterString(filterString);
-                    }
-                }
+                return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
             }
 
         } catch (Exception e) {
@@ -151,6 +114,44 @@ public class RSEExportToFilterHelper {
         }
 
         return null;
+    }
+
+    private static void updateFilterStrings(ISystemFilterPoolManager dftPoolMgr, ISystemFilterPool filterPool, String filterName,
+        Vector<String> filterStrings) {
+
+        ISystemFilter systemFilter = filterPool.getSystemFilter(filterName);
+        boolean isCaseSensitive = systemFilter.areStringsCaseSensitive();
+        String[] existingFiltersStrings = systemFilter.getFilterStrings();
+        if (!isCaseSensitive) {
+            for (int i = 0; i < existingFiltersStrings.length; i++) {
+                existingFiltersStrings[i] = existingFiltersStrings[i].toLowerCase();
+            }
+        }
+
+        Set<String> existingFiltersSet = new HashSet<String>(Arrays.asList(existingFiltersStrings));
+        String tFilterString;
+        for (String filterString : filterStrings) {
+            if (!isCaseSensitive) {
+                tFilterString = filterString.toLowerCase();
+            } else {
+                tFilterString = filterString;
+            }
+            if (!existingFiltersSet.contains(tFilterString)) {
+                systemFilter.addFilterString(filterString);
+            }
+        }
+
+        dftPoolMgr.getProvider().filterEventFilterUpdated(filterPool.getSystemFilter(filterName));
+    }
+
+    private static void removeAllFilterStrings(ISystemFilterPool filterPool, String filterName) {
+
+        ISystemFilter filter = filterPool.getSystemFilter(filterName);
+        int count = filter.getFilterStringCount();
+        while (count > 0) {
+            filter.removeFilterString(0);
+            count--;
+        }
     }
 
     private static boolean filterExists(ISystemFilterPool filterPool, String filterName) {
