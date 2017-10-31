@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.internal;
 
+import biz.isphere.core.internal.FilterUpdateType;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 
@@ -15,7 +16,8 @@ import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 
 public class SourceFileSearchMemberFilterCreator extends AbstractFilterCreator implements ISourceFileSearchMemberFilterCreator {
 
-    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults) {
+    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, FilterUpdateType filterUpdateType,
+        SearchResult[] searchResults) {
 
         ISeriesMemberFilterString[] filterStrings = new ISeriesMemberFilterString[searchResults.length];
 
@@ -30,7 +32,7 @@ public class SourceFileSearchMemberFilterCreator extends AbstractFilterCreator i
             filterStrings[idx] = filterString;
         }
 
-        if (RSEExportToFilterHelper.createOrUpdateMemberFilter(connectionName, filterPoolName, filterName, filterStrings) == null) {
+        if (RSEExportToFilterHelper.createOrUpdateMemberFilter(connectionName, filterPoolName, filterName, filterUpdateType, filterStrings) == null) {
             return false;
         } else {
             return true;
