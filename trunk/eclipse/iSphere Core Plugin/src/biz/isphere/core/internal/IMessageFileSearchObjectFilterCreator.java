@@ -13,7 +13,8 @@ import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 
 public interface IMessageFileSearchObjectFilterCreator {
 
-    public boolean createObjectFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults);
+    public boolean createObjectFilter(String connectionName, String filterPoolName, String filterName, FilterUpdateType filterUpdateType,
+        SearchResult[] searchResults);
 
     public RSEFilterPool[] getFilterPools(String connectionName);
 

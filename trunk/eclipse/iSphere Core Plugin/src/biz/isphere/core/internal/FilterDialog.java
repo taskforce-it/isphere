@@ -10,15 +10,20 @@ package biz.isphere.core.internal;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -32,12 +37,17 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 public class FilterDialog extends XDialog {
 
     public static final String FILTER_POOL = "FILTER_POOL"; //$NON-NLS-1$
+    public static final String FILTER_UPDATE_TYPE = "FILTER_UPDATE_TYPE"; //$NON-NLS-1$
 
     private Combo cbFilter;
     private Combo cbFilterPool;
+    private Group gpUpdateType;
+    private Button rbAdd;
+    private Button rbReplace;
 
     private String filter = null;
     private String filterPool = null;
+    private FilterUpdateType filterUpdateType = null;
 
     private String filterType;
     private RSEFilterPool[] filterPools;
@@ -76,7 +86,7 @@ public class FilterDialog extends XDialog {
         labelFilterPool.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
         labelFilterPool.setText(Messages.FilterPool_colon);
 
-        cbFilterPool = WidgetFactory.createCombo(compositeFilter);
+        cbFilterPool = WidgetFactory.createReadOnlyCombo(compositeFilter);
         cbFilterPool.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         cbFilterPool.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -94,12 +104,55 @@ public class FilterDialog extends XDialog {
 
         cbFilter = WidgetFactory.createCombo(compositeFilter);
         cbFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        cbFilter.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                setUpdateTypeEnablement();
+            }
+        });
+
+        new Composite(compositeFilter, SWT.NONE).setVisible(false);
+
+        gpUpdateType = new Group(compositeFilter, SWT.NONE);
+        gpUpdateType.setLayout(new GridLayout(1, false));
+        gpUpdateType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        rbAdd = WidgetFactory.createRadioButton(gpUpdateType);
+        rbAdd.setLayoutData(new GridData());
+        rbAdd.setText(Messages.Add_filter_strings);
+        rbAdd.addSelectionListener(new FilterUpdateTypeSelectionListener());
+
+        rbReplace = WidgetFactory.createRadioButton(gpUpdateType);
+        rbReplace.setLayoutData(new GridData());
+        rbReplace.setText(Messages.Replace_filter_strings);
+        rbReplace.addSelectionListener(new FilterUpdateTypeSelectionListener());
 
         createStatusLine(container);
 
         loadScreenValues();
 
         return container;
+    }
+
+    private void setUpdateTypeEnablement() {
+
+        boolean enabled = false;
+
+        int i = cbFilterPool.getSelectionIndex();
+        if (i >= 0 && i < filterPools.length) {
+
+            RSEFilterPool filterPool = filterPools[i];
+            String filterName = cbFilter.getText();
+
+            for (String filter : filterPool.getFilterNames(null)) {
+                if (filter.equalsIgnoreCase(filterName)) {
+                    enabled = true;
+                }
+            }
+        }
+
+        gpUpdateType.setEnabled(enabled);
+        rbAdd.setEnabled(enabled);
+        rbReplace.setEnabled(enabled);
     }
 
     @Override
@@ -161,6 +214,12 @@ public class FilterDialog extends XDialog {
 
         cbFilter.setText(cbFilter.getText().trim());
 
+        if (getFilterUpdateType() == FilterUpdateType.REPLACE) {
+            if (!confirmReplace(cbFilter.getText())) {
+                return;
+            }
+        }
+
         if (!Validator.validateFile(cbFilter.getText())) {
             setErrorMessage(Messages.The_value_in_field_Filter_is_not_valid);
             cbFilter.setFocus();
@@ -176,12 +235,27 @@ public class FilterDialog extends XDialog {
 
     }
 
+    private boolean confirmReplace(String filterName) {
+
+        if (MessageDialog.openQuestion(getShell(), Messages.Question,
+            Messages.bind(Messages.Are_you_sure_to_replace_all_filter_strings_of_filter_A, filterName))) {
+            return true;
+        }
+
+        return false;
+    }
+
     public String getFilterPool() {
         return filterPool;
     }
 
     public String getFilter() {
         return filter;
+    }
+
+    public FilterUpdateType getFilterUpdateType() {
+
+        return filterUpdateType;
     }
 
     private void loadScreenValues() {
@@ -198,12 +272,30 @@ public class FilterDialog extends XDialog {
 
         cbFilterPool.select(index);
 
+        String filterUpdateTypeString = getDialogBoundsSettings().get(FILTER_UPDATE_TYPE);
+        if (FilterUpdateType.REPLACE.name().equalsIgnoreCase(filterUpdateTypeString)) {
+            rbReplace.setSelection(true);
+            filterUpdateType = FilterUpdateType.REPLACE;
+        } else if (FilterUpdateType.ADD.name().equalsIgnoreCase(filterUpdateTypeString)) {
+            rbAdd.setSelection(true);
+            filterUpdateType = FilterUpdateType.ADD;
+        } else {
+            rbAdd.setSelection(true);
+            filterUpdateType = FilterUpdateType.ADD;
+        }
+
         updateFilterNames();
     }
 
     private void storeScreenValues() {
 
         getDialogBoundsSettings().put(FILTER_POOL, filterPool);
+
+        if (rbReplace.getSelection()) {
+            getDialogBoundsSettings().put(FILTER_UPDATE_TYPE, FilterUpdateType.REPLACE.name());
+        } else if (rbAdd.getSelection()) {
+            getDialogBoundsSettings().put(FILTER_UPDATE_TYPE, FilterUpdateType.ADD.name());
+        }
     }
 
     /**
@@ -229,5 +321,21 @@ public class FilterDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
+
+    private class FilterUpdateTypeSelectionListener implements SelectionListener {
+        public void widgetSelected(SelectionEvent event) {
+            if (rbAdd.getSelection()) {
+                filterUpdateType = FilterUpdateType.ADD;
+            } else if (rbReplace.getSelection()) {
+                filterUpdateType = FilterUpdateType.REPLACE;
+            } else {
+                filterUpdateType = null;
+            }
+        }
+
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetSelected(event);
+        }
     }
 }

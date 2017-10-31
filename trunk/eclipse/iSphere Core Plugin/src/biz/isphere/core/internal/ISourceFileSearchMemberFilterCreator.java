@@ -13,7 +13,8 @@ import biz.isphere.core.sourcefilesearch.SearchResult;
 
 public interface ISourceFileSearchMemberFilterCreator {
 
-    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, SearchResult[] searchResults);
+    public boolean createMemberFilter(String connectionName, String filterPoolName, String filterName, FilterUpdateType filterUpdateType,
+        SearchResult[] searchResults);
 
     public RSEFilterPool[] getFilterPools(String connectionName);
 }
