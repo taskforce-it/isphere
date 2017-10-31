@@ -1354,6 +1354,12 @@ public class Messages extends NLS {
 
     public static String Menu_Compare_members;
 
+    public static String Add_filter_strings;
+
+    public static String Replace_filter_strings;
+
+    public static String Are_you_sure_to_replace_all_filter_strings_of_filter_A;
+
     /*
      * Warning messages
      */

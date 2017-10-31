@@ -310,7 +310,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     dialog.setFilterPools(creator.getFilterPools(_searchResultViewer.getConnectionName()));
                     if (dialog.open() == Dialog.OK) {
                         if (!creator.createObjectFilter(_searchResultViewer.getConnectionName(), dialog.getFilterPool(), dialog.getFilter(),
-                            _searchResultViewer.getSearchResults())) {
+                            dialog.getFilterUpdateType(), _searchResultViewer.getSearchResults())) {
                         }
                     }
 
