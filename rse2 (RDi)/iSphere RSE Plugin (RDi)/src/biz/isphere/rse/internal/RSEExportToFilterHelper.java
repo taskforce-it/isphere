@@ -97,7 +97,7 @@ public class RSEExportToFilterHelper {
 
         try {
 
-            ISubSystem subsystem = getConnection(connectionName).getQSYSObjectSubSystem();
+            ISubSystem subsystem = getSubSystem(getConnection(connectionName));
             ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
 
             if (filterExists(filterPool, filterName)) {
@@ -171,6 +171,10 @@ public class RSEExportToFilterHelper {
         IBMiConnection connection = IBMiConnection.getConnection(connectionName);
 
         return connection;
+    }
+
+    private static ISubSystem getSubSystem(IBMiConnection connection) {
+        return connection.getQSYSObjectSubSystem();
     }
 
 }
