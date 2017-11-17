@@ -1,0 +1,18 @@
+<dialog>
+  <name>TSTDTAARA3</name>
+  <description>Under construction</description>
+  <widgets>
+    <entry>
+      <string>1</string>
+      <boolean>
+        <label>Boolean value</label>
+        <offset>0</offset>
+        <length>1</length>
+        <sequence>1</sequence>
+      </boolean>
+    </entry>
+  </widgets>
+  <referencedBy/>
+  <columns>1</columns>
+  <key>94b1f18a-690d-44e9-8147-4f34badc434c</key>
+</dialog>
