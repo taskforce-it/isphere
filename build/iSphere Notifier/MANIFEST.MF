@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.1.1.r
+Bundle-Version: 3.1.2.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Changed: Enhanced the "export to filter" options of the search result views to extend existing filters.\nFixed problem that the "Save" dialog did not display existing files when saving a spooled file.
+X-Bundle-Info: Bugfix: Fixed CCSID issue in iSphere Compare Editor
 X-Beta-Version: 3.1.1.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
