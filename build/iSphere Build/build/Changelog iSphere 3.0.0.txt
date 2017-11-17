@@ -1,6 +1,10 @@
 
-Changelog: iSphere 3.1.1.b001
------------------------------
+Changelog: iSphere 3.1.1.r
+--------------------------
+ • Fixed CCSID issue in iSphere Compare Editor. 
+
+Changelog: iSphere 3.1.1.r
+--------------------------
  • Fixed problem that the "Save" dialog did not display existing 
    files when saving a spooled file.
  • Enhanced the "export to filter" options of the search result
