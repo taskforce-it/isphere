@@ -10,12 +10,10 @@ package biz.isphere.core.compareeditor;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -103,7 +101,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 File file = fResource.getLocation().toFile();
                 tempFile = new File(file.getPath() + "_temp"); //$NON-NLS-1$
                 BufferedReader in = new BufferedReader(new FileReader(file));
-                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
+                PrintWriter out = new PrintWriter(tempFile, UTF_8);
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
                     String newString = StringHelper.trimR(new String(oldString.getBytes(), UTF_8)).substring(column); //$NON-NLS-1$
@@ -177,11 +175,11 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     }
 
     public String getCharset() throws CoreException {
-        
+
         if (fResource instanceof IFile) {
             return ((IFile)fResource).getCharset();
         }
-        
+
         return Charset.defaultCharset().name();
     }
 
