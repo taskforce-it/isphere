@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Job Log Explorer</title>
+</head>
+
+<body>
+<h1>Job Log Explorer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/joblogexplorer.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The Job Log Explorer is used for analyzing job logs. It lets you view and filter the job log messages 
+quick and easily. You can open it from the context menus of:
+<ul>
+<li><a href="#opening_job_log_of_remote_job">Jobs of the <i>Jobs</i> subsystem</a></li>
+<li><a href="#opening_spooled_file_job_log">QPJOBLOG spooled files</a></li>
+<li><a href="#opening_local_file_job_log">Local files</a></li>
+</ul> 
+<p>
+Messages can be colored depending on their severity to get your attention and there is a 
+special <i>Job Log Explorer</i> perspective available.
+<p>
+<img src="assets/joblogexplorer_editor.png" align="middle">
+<p>
+Use the drop down combo boxes and the text field at the top of the editor to adjust your filters. Then 
+press the [Apply filters] button to apply the filters to the job log. Each search argument can be negated
+with a preceding exclamation mark (!): 
+<p>
+<img src="assets/negated_search_argument.png" align="middle">
+<p>
+You may also select specific message, which are displayed regardless of the filter settings. Click the
+checkbox icon next to a job log message to select or deselect a message.
+<p>
+The text field can also be used for searching the messages for a given text. Today, the search
+does not include the <i>second level text</i>.
+<p>
+<img src="assets/text_field.png" align="middle">
+<p>
+The Eclipse <i>Properties</i> view displays the properties of the job log:
+<p>
+<img src="assets/joblogexplorer_properties.png" align="middle">
+<p>
+<a id="opening_job_log_of_remote_job"></a>
+<h2>Opening Job Log of Remote Job</h2>
+<p>
+Go to the <i>Jobs</i> subsystem and start the Job log Explorer from the context menu of a 
+remote job:
+<p>
+<img src="assets/open_remote_job.png" align="middle">
+<p>
+<a id="opening_spooled_file_job_log"></a>
+<h2>Opening Spooled File Job Log</h2>
+<p>
+Go to the <i>iSphere Spooled Files</i> subsystem and start the Job log Explorer from the context menu of a 
+QPJOBLOG spooled file:
+<p>
+<img src="assets/open_spooled_file.png" align="middle">
+<p>
+<a id="opening_local_file_job_log"></a>
+<h2>Opening Local File Job Log</h2>
+<p>
+Go to the <i>Local</i> subsystem and start the Job log Explorer from the context menu of a 
+given local file:
+<p>
+<img src="assets/open_local_file.png" align="middle">
+<p>
+The file name must not necessarily start with QPJOBLOG. If the job log parser cannot not recognize the
+format, an error message is displayed: 
+<p>
+<img src="assets/error_invalid_format.png" align="middle">
+<p>
+<a id="opening_local_file_job_log"></a>
+<h2>Exporting Job Log to Excel</h2>
+<p>
+The messages that are currently displayed in the table view can be exported to Excel. Click the
+<i>Export to Excel</i> icon of the toolbar to open the export dialog:
+<p>
+<img src="assets/export_to_excel.png" align="middle">
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

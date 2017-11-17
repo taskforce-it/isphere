@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Troubleshooting SSL Connection Problems</title>
+</head>
+<body>
+	<h1>Troubleshooting SSL Connection Problems</h1>
+	<p>
+	<ul>
+	<li><a href="#symptoms">Symptoms</a></li>
+	<li><a href="#solution">Solution</a></li>
+	</ul>
+	<p>
+	If you cannot connect to the Eclipse Marketplace or if checking for iSphere updates does not work, you may
+	have to install the IBM <i>unrestricted JCE policy files</i>.
+	<p>
+	If you cannot establish a 5250 SSL with RDP 8.0 or WDSCi 7.0, please refer to: <a href="/help/topic/biz.isphere.tn5250j.help/html/5250emulator/ssl_sessions/ssl_sessions.html?cp=4_4_0_2">Enabling SSL Sessions</a> 
+	<p>
+	<a id="#symptoms"></a>
+	<h2>Symptoms</h2>
+	<p>
+	<h3>Eclipse Marketplace</h3>
+	<p>
+	Attempts to connect to the Eclipse Marketplace end with the following error:
+	<p>
+		<img src="assets/marketplace_error_message.png" align="middle">
+	<p>
+	The error logs shows the following log entry:
+	<p>
+		<img src="assets/marketplace_error_log_entry.png" align="middle">
+	<p>
+	<p>
+	<h3>Checking for iSphere Updates</h3>
+	<p>
+	Attempts to check for iSphere Updates end with the following error:
+	<p>
+		<img src="assets/isphere_error_message.png" align="middle">
+	<p>
+	The error logs shows the following log entry:
+	<p>
+		<img src="assets/isphere_error_log_entry.png" align="middle">
+	<p>
+	<a id="#solution"></a>
+	<h2>Solution</h2>
+	<p>
+	Download and install the <a target="unrestricted_zip" href="https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk"><i>unrestricted.zip</i></a>
+	file from the IBM web page <a target="unrestricted_zip" href="https://www.ibm.com/support/knowledgecenter/en/SS8JFY_7.5.0/com.ibm.lmt75.doc/com.ibm.license.mgmt.security.doc/lmt_scr_downloading_installing_jce_policyfiles.html"><i>Downloading and installing the unrestricted JCE policy files</i></a>.
+	<p>
+	Make sure to download the current version <i>"Java 7 SR4, Java 8 GA, and all later releases"</i>, because RDi 9.1 or higher uses at least
+	<b>Java 1.7 SR 8</b> or higher:
+	<p>
+		<img src="assets/ibm_offering.png" align="middle">
+	<p>
+	<table>
+		<tr>
+			<td class="info">Note: You need an IBM ID to login for downloading the file. The IBM ID is free of charge and does not hurt.</td>
+		</tr>
+	</table>
+	<p>
+	Then copy the content of the zip file into the <i>security</i> folder of RDi:
+	<p>
+    <pre class="codeIndent">[IBM]\SDP\jdk\jre\lib\security\</pre>	
+	<p>
+	The path might be different on your PC.
+	<p>
+	Example from a test PC:
+	<p>
+		<img src="assets/example.png" align="middle">
+	<p>
+	If you do not want to modify the original Java installation, you can copy the <i>[IBM]\SDP\jdk\</i> to another location and
+	add the following parameter to your <i>eclipse.ini</i> file or your Windows shortcut, for example:
+	<p>
+	<div class="codeIndent">-vm c:\workspaces\jdk_with_security_patch\jre\bin\javaw.exe</div>
+	<p>
+	The <span style="color: #ff0000">red</span> files have been replaced with the files from the zip archive.
+	<p>
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

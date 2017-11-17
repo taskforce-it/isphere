@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Indentions</title>
+</head>
+
+<body>
+<h1>Indentions</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/indentions.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The "Comments" plug-in provides keyboard shortcuts for the Lpex editor for commenting and 
+uncommenting source lines. It is also possible to toggle a source line from commented to 
+uncommented and vice versa. The provided keyboard shortcuts are 
+<p>
+<table>
+<tr><td nowrap>Ctrl+Tab</td><td style="padding-left: 40px;">Indent source line</td></tr>
+<tr><td nowrap>Ctrl+Shift+Tab</td><td style="padding-left: 40px;">Unindent source line</td></tr>
+</table>
+<p>
+You can also select the required function from the context menu:
+<p>
+<img src="assets/LPEX_indentions_context_menu.png" align="middle">
+<p>
+The supported source types are:
+<p>
+<ul>
+<li>RPG</li>
+<li>RPGLE</li>
+<li>SQLRPG</li>
+<li>SQLRPGLE</li>
+</ul>
+<p>
+The amount of spaces for indenting/unindenting a source line is retrieved from option <i>Automatic indent, Blanks (1-20):</i>
+of the <i>ILE RPG</i> IBM i Parsers preference page for older IDEs.
+<p>
+For newer IDEs, such as RDi 9.5, that value is retrieved from option <i>Number of spaces to indent by, Blanks (1-20):</i> of 
+the <i>ILE RPG Formatter</i> page.  
+<p>
+When option <i>Set free form C-Specification cursor position</i> is enabled (same preference page), the
+position specified there is used as a tabulator when indenting/unindenting source lines.
+<p>
+<h2>Indenting A Source Line</h2>
+Put the cursor on the source line that you want to indent and press the keyboard shortcut or
+select the requested option from the context menu.
+<p>
+<h2>Changing Multiple Source Lines</h2>
+Select the source lines that you want to indent and press the keyboard shortcut or
+select the requested option from the context menu. For example you can select lines
+123-124 like this:
+<p>
+<img src="assets/indention_multiple_lines_selection.png" align="middle">
+<p>
+The result looks like that:
+<p>
+<img src="assets/indention_multiple_lines_indented.png" align="middle">
+<p>
+It is not required to select the complete source lines. Just start somewhere in the first line
+to change and span the selection to the last line. Then select the requested action.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
