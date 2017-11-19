@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED                                                                    
      >                                                                                              
      ]>                                                                                             
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/22/2017">                  
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate="11/19/2017">                  
 <install_instructions><![CDATA[                                                                     
      *----------------------------------------------------------------      ------                  
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr                 
@@ -3029,13 +3029,13 @@ srclen  =  "00112"
 srccssid=  "00273">                                                                                 
 <copysrc><![CDATA[                                                                                  
       /if not defined(COPYRIGHT_DSPEC)                                                              
-     h COPYRIGHT('V1.15 - 22.09.2017 - mailto: thomas.raddatz@tools400.de')                         
+     h COPYRIGHT('V1.15.1 - 19.11.2017 - mailto: thomas.raddatz@tools400.de')                       
       /eof                                                                                          
       /endif                                                                                        
      d STRPREPRC_VERSION...                                                                         
-     d                 C                   '1.15'                                                   
+     d                 C                   '1.15.1'                                                 
      d STRPREPRC_DATE...                                                                            
-     d                 C                   '22.09.2017'                                             
+     d                 C                   '19.11.2017'                                             
       *                                                                                             
 ]]>  </copysrc>                                                                                     
 </mbr>                                                                                              
@@ -4885,6 +4885,20 @@ srccssid=  "00273">
 .*                                                                     *                            
 .*  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *                            
 .*                                                                     *                            
+.*  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        *                            
+.*                            command.                                 *                            
+.*                                                                     *                            
+.*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     *                            
+.*                            2048 to 8192.                            *                            
+.*                                                                     *                            
+.*  20.09.2017  Th.Raddatz    Added parameter USELIBL to let STRPREPRC *                            
+.*                            run the XCRTSQLOBJ command of CMOne      *                            
+.*                            for source members without a STRPREPRC   *                            
+.*                            header.                                  *                            
+.*                                                                     *                            
+.*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *                            
+.*                            command.                                 *                            
+.*                                                                     *                            
 .*=====================================================================*                            
 .* >>PRE-COMPILER<<                                                    *                            
 .*                                                                     *                            
@@ -6230,6 +6244,20 @@ srccssid=  "00273">
 .*  18.06.2015  Th.Raddatz    Renamed parameter EVENTF to OPTION.      *                            
 .*                                                                     *                            
 .*  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *                            
+.*                                                                     *                            
+.*  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        *                            
+.*                            command.                                 *                            
+.*                                                                     *                            
+.*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     *                            
+.*                            2048 to 8192.                            *                            
+.*                                                                     *                            
+.*  20.09.2017  Th.Raddatz    Added parameter USELIBL to let STRPREPRC *                            
+.*                            run the XCRTSQLOBJ command of CMOne      *                            
+.*                            for source members without a STRPREPRC   *                            
+.*                            header.                                  *                            
+.*                                                                     *                            
+.*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *                            
+.*                            command.                                 *                            
 .*                                                                     *                            
 .*=====================================================================*                            
 .* >>PRE-COMPILER<<                                                    *                            
@@ -7624,8 +7652,18 @@ srccssid=  "00273">
      /*  14.07.2015  Th.Raddatz    Fixed problem, that parameter &XMSGFLIB  */                      
      /*                            was not properly initialized.            */                      
      /*                                                                     */                      
+     /*  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        */                      
+     /*                            command.                                 */                      
+     /*                                                                     */                      
      /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
      /*                            2048 to 8192.                            */                      
+     /*                                                                     */                      
+     /*  20.09.2017  Th.Raddatz    Added parameter USELIBL to let STRPREPRC */                      
+     /*                            run the XCRTSQLOBJ command of CMOne      */                      
+     /*                            for source members without a STRPREPRC   */                      
+     /*                            header.                                  */                      
+     /*                                                                     */                      
+     /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */                      
      /*                                                                     */                      
      /* =================================================================== */                      
      /* >>PRE-COMPILER<<                                                    */                      
@@ -8034,6 +8072,12 @@ srccssid=  "00273">
       *                            better names.                            *                       
       *                                                                     *                       
       *  21.09.2017  Th.Raddatz    Fixed parameter length of replaceVar().  *                       
+      *                                                                     *                       
+      *  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *                       
+      *                            command.                                 *                       
+      *                                                                     *                       
+      *  19.11.2017  Th.Raddatz    Fixed bug in restoreLibraryList() to     *                       
+      *                            restore the library list.                *                       
       *                                                                     *                       
       * =================================================================== *                       
       * >>PRE-COMPILER<<                                                    *                       
@@ -9133,7 +9177,7 @@ srccssid=  "00273">
          if (g_startUpLiblList <> currentLiblList);                                                 
             liblStr = libListToStr(g_startUpLiblList.usrLibl);                                      
             cmdString = 'CHGLIBL +                                                                  
-                         LIBL(' + libListToStr(liblStr) + ') +                                      
+                         LIBL(' + liblStr + ') +                                                    
                          CURLIB(' + g_startUpLiblList.curLib + ')';                                 
             executeCmd(cFalse: cmdString);                                                          
             appendToJobLog('Library list restored to:');                                            
@@ -11767,8 +11811,16 @@ srccssid=  "00273">
      /*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                      
      /*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                      
      /*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                      
+     /*  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        */                      
+     /*                            command.                                 */                      
      /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
      /*                            2048 to 8192.                            */                      
+     /*  20.09.2017  Th.Raddatz    Added parameter USELIBL to let STRPREPRC */                      
+     /*                            run the XCRTSQLOBJ command of CMOne      */                      
+     /*                            for source members without a STRPREPRC   */                      
+     /*                            header.                                  */                      
+     /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */                      
+     /*                            command.                                 */                      
      /*                                                                     */                      
      /* =================================================================== */                      
      /* >>PRE-COMPILER<<                                                    */                      
@@ -12228,8 +12280,16 @@ srccssid=  "00273">
      /*  23.01.2007  Th.Raddatz    Added parameter TAGSREQ(...) to command. */                      
      /*  09.04.2015  Hildebrandt   Added parameter EXICMDEXC to command.    */                      
      /*  16.05.2015  Th.Raddatz    Added parameter EVENTF to command.       */                      
+     /*  15.09.2017  Th.Raddatz    Added parameter LIBL to STRPREPRC        */                      
+     /*                            command.                                 */                      
      /*  16.09.2017  Th.Raddatz    Changed length of parameter CMD from     */                      
      /*                            2048 to 8192.                            */                      
+     /*  20.09.2017  Th.Raddatz    Added parameter USELIBL to let STRPREPRC */                      
+     /*                            run the XCRTSQLOBJ command of CMOne      */                      
+     /*                            for source members without a STRPREPRC   */                      
+     /*                            header.                                  */                      
+     /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */                      
+     /*                            command.                                 */                      
      /*                                                                     */                      
      /* =================================================================== */                      
      /* >>PRE-COMPILER<<                                                    */                      
