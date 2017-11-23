@@ -49,7 +49,10 @@ import com.ibm.etools.iseries.util.NlsUtil;
  */
 public class StringListEditor extends Composite implements SelectionListener {
 
-    private static final String[] COLUMN_PROPERTIES = { "ITEM" }; //$NON-NLS-1$
+    private static final int COLUMN_ITEM = 0;
+
+    private static final String COLUMN_PROPERTY_ITEM = "ITEM"; //$NON-NLS-1$
+    private static final String[] COLUMN_PROPERTIES = { COLUMN_PROPERTY_ITEM }; //$NON-NLS-1$
 
     private Shell shell;
     private Button parentDefaultButton;
@@ -90,14 +93,14 @@ public class StringListEditor extends Composite implements SelectionListener {
 
     public void setTextLimit(int limit) {
         textItem.setTextLimit(limit);
-        Text editorControl = (Text)cellEditors[0].getControl();
+        Text editorControl = (Text)cellEditors[COLUMN_ITEM].getControl();
         editorControl.setTextLimit(limit);
     }
 
     public void setEnableLowerCase(boolean enable) {
         this.enableLowerCase = enable;
 
-        Text editorControl = (Text)cellEditors[0].getControl();
+        Text editorControl = (Text)cellEditors[COLUMN_ITEM].getControl();
         if (this.enableLowerCase) {
             textItem.addVerifyListener(upperCaseOnlyVerifier);
             editorControl.addVerifyListener(upperCaseOnlyVerifier);
@@ -311,14 +314,14 @@ public class StringListEditor extends Composite implements SelectionListener {
         itemsViewer.setInput(null);
 
         cellEditors = new CellEditor[1];
-        cellEditors[0] = new TextCellEditor(itemsTable);
-        cellEditors[0].setValidator(new ICellEditorValidator() {
+        cellEditors[COLUMN_ITEM] = new TextCellEditor(itemsTable);
+        cellEditors[COLUMN_ITEM].setValidator(new ICellEditorValidator() {
             public String isValid(Object value) {
                 if (validator == null) {
                     return null;
                 } else {
                     ValidationEvent event;
-                    if (!cellEditors[0].isActivated()) {
+                    if (!cellEditors[COLUMN_ITEM].isActivated()) {
                         event = new ValidationEvent(ValidationEvent.ACTIVATE, (String)value);
                     } else {
                         event = new ValidationEvent(ValidationEvent.CHANGE, (String)value);
