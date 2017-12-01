@@ -62,6 +62,7 @@
 		<copy todir="${build.upload.dir}">
 			<fileset dir="${build.template.dir}/upload">
 				<exclude name="**/.svn" />
+				<exclude name="**/sample_menu.js" />
 			</fileset>
 		</copy>
 
