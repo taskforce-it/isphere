@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.1.2.r
+Bundle-Version: 3.1.3.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Bugfix: Fixed CCSID issue in iSphere Compare Editor
+X-Bundle-Info: Bugfix: Fixed CCSID issue in iSphere Compare Editor when saving a member to the host.
 X-Beta-Version: 3.1.1.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
