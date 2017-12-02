@@ -76,7 +76,7 @@ public class XDialog extends Dialog {
 
     @Override
     protected Control createContents(Composite parent) {
-        Control control= super.createContents(parent);
+        Control control = super.createContents(parent);
         setFocus();
         return control;
     }
