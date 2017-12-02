@@ -1,5 +1,10 @@
 
-Changelog: iSphere 3.1.1.r
+Changelog: iSphere 3.1.3.r
+--------------------------
+ • Fixed CCSID issue in iSphere Compare Editor, when saving a 
+   source member to the host. 
+
+Changelog: iSphere 3.1.2.r
 --------------------------
  • Fixed CCSID issue in iSphere Compare Editor. 
 
