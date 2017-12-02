@@ -131,7 +131,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         byte[] bytes = getContent();
         ByteArrayInputStream is = null;
         try {
-            String contents = new String(bytes);
+            String contents = new String(bytes, UTF_8);
             StringBuffer updatedContents = new StringBuffer();
             BufferedReader in = new BufferedReader(new StringReader(contents));
             String s;
@@ -141,9 +141,10 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                     seq = seq + 100;
                 else if (seq < 999999) seq++;
                 String sequence = Integer.toString(seq);
-                while (sequence.length() < 6)
+                while (sequence.length() < 6) {
                     sequence = "0" + sequence; //$NON-NLS-1$
-                String newStr = new String(s.getBytes(UTF_8)); //$NON-NLS-1$
+                }
+                String newStr = new String(s.getBytes(UTF_8));
                 if (hasDate) {
                     updatedContents.append(sequence + newStr + CRLF);
                 } else {
