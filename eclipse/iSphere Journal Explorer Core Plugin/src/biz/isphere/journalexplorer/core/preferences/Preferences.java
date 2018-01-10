@@ -121,6 +121,11 @@ public final class Preferences implements ColumnsDAO {
         return journalEntryAppearanceAttributes.toArray(new JournalEntryAppearanceAttributes[journalEntryAppearanceAttributes.size()]);
     }
 
+    public String getJournalEntryCcsid() {
+
+        return "IBM037"; //$NON-NLS-1$
+    }
+
     /*
      * Preferences: SETTER
      */

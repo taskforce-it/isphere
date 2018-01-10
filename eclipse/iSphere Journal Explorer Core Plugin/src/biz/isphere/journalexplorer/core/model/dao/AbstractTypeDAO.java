@@ -17,6 +17,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
@@ -106,6 +107,10 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         journalEntry.setStringSpecificData(resultSet.getString(JOESD));
 
         return journalEntry;
+    }
+
+    protected String getJournalEntryCcsid() {
+        return Preferences.getInstance().getJournalEntryCcsid();
     }
 
 }
