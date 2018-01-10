@@ -3,6 +3,10 @@ Changelog: iSphere 3.1.4.r
 --------------------------
  • Fixed StringIndexOutOfBoundsException in JournalEntryLabelProvider 
    when opening an output file with entry specific data less than 200.
+ • Moved character set id for converting journal data to preferences.
+ • Caught NullPointerException but could not yet figure out the root 
+   cause. (See discussion 'Journal explorer' at 
+   https://sourceforge.net/p/isphere/discussion/general/thread/618cf696/)
 
 Changelog: iSphere 3.1.3.r
 --------------------------
