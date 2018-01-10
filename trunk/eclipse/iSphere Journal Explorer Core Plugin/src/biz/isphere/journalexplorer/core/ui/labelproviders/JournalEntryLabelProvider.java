@@ -206,12 +206,11 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
         case JOCMTLVL:
             return Integer.toString(journal.getCommitmentCycle());
         case JOESD:
-            // For displaying purposes, replace the null ending character
-            // for a blank.
+            // For displaying purposes, replace 0x00 with blanks.
             // Otherwise, the string was truncate by JFace
             String stringSpecificData = journal.getStringSpecificData();
-            if (stringSpecificData.indexOf('\0') >= 0) {
-                return stringSpecificData.replace('\0', ' ').substring(1, 200);
+            if (stringSpecificData.lastIndexOf('\0') >= 0) {
+                return stringSpecificData.replace('\0', ' ').substring(1, Math.min(200, stringSpecificData.length()));
             } else {
                 return stringSpecificData;
             }
