@@ -33,6 +33,11 @@ import biz.isphere.core.internal.MessageDialogAsync;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
+/**
+ * This class is used when RDi is the host application.
+ * 
+ * @see: {@link CompareInputWithSaveNeededHandling}
+ */
 public class CompareInput extends CompareEditorInput implements IFileEditorInput {
 
     public static class MyDiffNode extends DiffNode {

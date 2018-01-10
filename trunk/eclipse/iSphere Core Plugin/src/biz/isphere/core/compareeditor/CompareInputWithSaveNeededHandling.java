@@ -13,6 +13,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.core.internal.Member;
 
+/**
+ * This class is used when WDSCi is the host application.
+ * 
+ * @see: {@link CompareInput}
+ */
 public class CompareInputWithSaveNeededHandling extends CompareInput {
 
     private boolean isSaveNeeded = false;
