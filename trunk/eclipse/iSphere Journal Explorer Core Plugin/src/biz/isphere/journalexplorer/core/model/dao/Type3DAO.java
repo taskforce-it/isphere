@@ -65,7 +65,7 @@ public class Type3DAO extends AbstractTypeDAO {
         // For TYPE3+ output files it is returned as a timestamp value.
         journalEntry.setDate(resultSet.getDate(JOTSTP));
         journalEntry.setTime(resultSet.getTime(JOTSTP));
-        journalEntry.setNullIndicators(new String(resultSet.getBytes(JONVI), "IBM37").getBytes());
+        journalEntry.setNullIndicators(new String(resultSet.getBytes(JONVI), getJournalEntryCcsid()).getBytes());
 
         return journalEntry;
     }
