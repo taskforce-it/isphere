@@ -185,8 +185,10 @@ public class CompareAction {
                 }
 
                 if (ISpherePlugin.isSaveNeededHandling()) {
+                    // executed when WDSCi is the host application
                     fInput = new CompareInputWithSaveNeededHandling(cc, ancestorMember, leftMember, rightMember);
                 } else {
+                    // executed when RDi is the host application
                     fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
                 }
 
