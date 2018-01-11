@@ -101,6 +101,15 @@ public class JournalEntry {
         return MetaDataCache.INSTANCE.retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI);
     }
 
+    public boolean isRecordEntryType() {
+
+        if (JournalEntryType.find(entryType) != null) {
+            return true;
+        }
+
+        return false;
+    }
+
     // //////////////////////////////////////////////////////////
     // / Getters / Setters
     // //////////////////////////////////////////////////////////

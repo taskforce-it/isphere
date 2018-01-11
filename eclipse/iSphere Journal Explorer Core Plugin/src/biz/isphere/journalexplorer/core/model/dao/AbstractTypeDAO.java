@@ -69,7 +69,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                     journalEntries.add(populateJournalEntry(resultSet, journalEntry));
 
-                    MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                    if (journalEntry.isRecordEntryType()) {
+                        MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                    }
                 }
             }
 
