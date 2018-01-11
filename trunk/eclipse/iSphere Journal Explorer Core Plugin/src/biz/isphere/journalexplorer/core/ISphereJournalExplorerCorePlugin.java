@@ -42,6 +42,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_LOADED_OV = "loaded_ov.gif";
     public static final String IMAGE_CHECKED_OV = "checked_ov.gif";
     public static final String IMAGE_DIRTY_OV = "dirty_ov.gif";
+    public static final String IMAGE_NULL_OV = "null_ov.gif";
     public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
 

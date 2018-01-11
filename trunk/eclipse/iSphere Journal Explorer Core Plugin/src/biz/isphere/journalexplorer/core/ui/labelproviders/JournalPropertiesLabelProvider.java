@@ -29,23 +29,26 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
     private final int PROPERTY_COLUMN = 0;
     private final int VALUE_COLUMN = 1;
 
-    public void addListener(ILabelProviderListener arg0) {
+    public void addListener(ILabelProviderListener listener) {
     }
 
     public void dispose() {
     }
 
-    public boolean isLabelProperty(Object arg0, String arg1) {
+    public boolean isLabelProperty(Object object, String property) {
         return false;
     }
 
-    public void removeListener(ILabelProviderListener arg0) {
+    public void removeListener(ILabelProviderListener listener) {
     }
 
     public Image getColumnImage(Object object, int columnIndex) {
         if (object instanceof JournalProperty && columnIndex == VALUE_COLUMN) {
-            if (((JournalProperty)object).isErrorParsing()) {
+            JournalProperty journalProperty = (JournalProperty)object;
+            if (journalProperty.isErrorParsing()) {
                 return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_WARNING_OV);
+            } else if (((JournalProperty)object).isNullValue()) {
+                return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_NULL_OV);
             } else {
                 return null;
             }
@@ -97,7 +100,7 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
         return null;
     }
 
-    public Color getForeground(Object arg0, int arg1) {
+    public Color getForeground(Object object, int columnIndex) {
         return null;
     }
 

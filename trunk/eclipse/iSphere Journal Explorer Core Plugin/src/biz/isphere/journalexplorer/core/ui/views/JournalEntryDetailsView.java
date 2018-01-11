@@ -177,25 +177,33 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
                 input.add(new JournalProperties(journalEntry));
 
-                MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
-                MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
-
                 List<String> messages = new LinkedList<String>();
 
-                if (metatable.hasNullableFields()) {
-                    if (!journalEntry.hasNullIndicatorTable()) {
-                        messages.add(Messages.Error_No_NULL_indicator_information_available);
-                    } else if (metatable.getLastNullableFieldIndex() > journalEntry.getNullTableLength()) {
-                        messages.add(Messages.Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields);
+                if (journalEntry.isRecordEntryType()) {
+                    MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+
+                    if (metatable.hasNullableFields()) {
+                        if (!journalEntry.hasNullIndicatorTable()) {
+                            messages.add(Messages.Error_No_NULL_indicator_information_available);
+                        } else if (metatable.getLastNullableFieldIndex() > journalEntry.getNullTableLength()) {
+                            messages.add(Messages.Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields);
+                        }
                     }
+
+                    int joesdLength = journalEntry.getSpecificData().length;
+                    int recordLength = metatable.getRecordLength();
+                    if (joesdLength < recordLength) {
+                        messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,
+                            recordLength));
+                    }
+                } else {
+
+                    messages.add(Messages.bind(Messages.Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation,
+                        journalEntry.getOutFileLibrary(), journalEntry.getOutFileName()));
+
                 }
 
-                int joesdLength = journalEntry.getSpecificData().length;
-                int recordLength = metatable.getRecordLength();
-                if (joesdLength < recordLength) {
-                    messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,
-                        recordLength));
-                }
+                MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
 
                 if (messages.size() > 0) {
                     StringBuilder dialogMessage = new StringBuilder();

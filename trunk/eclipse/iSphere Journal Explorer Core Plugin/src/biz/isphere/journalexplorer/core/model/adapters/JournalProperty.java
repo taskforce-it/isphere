@@ -19,11 +19,16 @@ public class JournalProperty implements Comparable<JournalProperty> {
     public boolean highlighted;
 
     private boolean errorParsing;
+    private boolean nullValue;
 
     public JournalProperty(String name, Object value, Object parent) {
+
         this.name = name;
         this.value = value;
         this.parent = parent;
+
+        setErrorParsing(false);
+        setNullValue(false);
     }
 
     public int compareTo(JournalProperty comparable) {
@@ -45,4 +50,11 @@ public class JournalProperty implements Comparable<JournalProperty> {
         return errorParsing;
     }
 
+    public void setNullValue(boolean nullValue) {
+        this.nullValue = nullValue;
+    }
+
+    public boolean isNullValue() {
+        return nullValue;
+    }
 }

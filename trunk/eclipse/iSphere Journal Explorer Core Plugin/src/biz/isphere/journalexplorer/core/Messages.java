@@ -63,6 +63,8 @@ public class Messages extends NLS {
     public static String Error_No_NULL_indicator_information_available;
     public static String Error_Field_JONVI_is_too_short_to_store_the_NULL_indicators_of_all_fields;
     public static String Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B;
+    public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
+    public static String Error_No_record_level_operation;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;

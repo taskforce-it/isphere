@@ -72,34 +72,46 @@ public class JOESDProperty extends JournalProperty {
 
         String columnName;
 
-        metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+        if (!journalEntry.isRecordEntryType()) {
 
-        parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
+            metatable = null;
 
-        for (MetaColumn column : metatable.getColumns()) {
-            columnName = column.getName().trim();
-            if (column.getText() != null && column.getText().trim().length() != 0) {
-                columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
+            value = Messages.Error_No_record_level_operation;
+            setErrorParsing(true);
+
+        } else {
+
+            metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+
+            parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
+
+            for (MetaColumn column : metatable.getColumns()) {
+                columnName = column.getName().trim();
+                if (column.getText() != null && column.getText().trim().length() != 0) {
+                    columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
+                }
+
+                if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificData().length) {
+                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_not_available, this);
+                    journalProperty.setErrorParsing(true);
+                    specificProperties.add(journalProperty);
+                } else if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
+                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_null, this);
+                    journalProperty.setNullValue(true);
+                    specificProperties.add(journalProperty);
+                } else if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
+                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);
+                    journalProperty.setErrorParsing(true);
+                    specificProperties.add(journalProperty);
+                } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
+                    JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this);
+                    specificProperties.add(journalProperty);
+                } else {
+                    JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this);
+                    specificProperties.add(journalProperty);
+                }
             }
 
-            if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificData().length) {
-                JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_not_available, this);
-                journalProperty.setErrorParsing(true);
-                specificProperties.add(journalProperty);
-            } else if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
-                JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_null, this);
-                specificProperties.add(journalProperty);
-            } else if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
-                JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);
-                journalProperty.setErrorParsing(true);
-                specificProperties.add(journalProperty);
-            } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
-                JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this);
-                specificProperties.add(journalProperty);
-            } else {
-                JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this);
-                specificProperties.add(journalProperty);
-            }
         }
     }
 

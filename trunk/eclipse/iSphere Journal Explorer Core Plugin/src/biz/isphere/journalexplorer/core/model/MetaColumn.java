@@ -63,11 +63,9 @@ public class MetaColumn {
     private boolean isNumeric;
     private boolean isDateTime;
 
-    public MetaColumn(int index) {
-        this.index = index;
-    }
-
     public MetaColumn(int index, RVFD0100 fieldDescription) throws Exception {
+
+        this.index = index;
 
         setFieldName(fieldDescription.getFieldName());
         setType(fieldDescription.getSqlDataType());
