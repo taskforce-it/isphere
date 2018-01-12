@@ -79,6 +79,8 @@ public class StartSourceMemberCompareEditorAction implements LpexAction {
                                         members.add(member);
                                         IBMiHostContributionsHandler.compareSourceMembers(connectionName, members, false);
 
+                                        return;
+                                        
                                     } else {
 
                                         MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(
@@ -92,8 +94,6 @@ public class StartSourceMemberCompareEditorAction implements LpexAction {
                     }
                 }
             }
-
-            return;
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Unexpected error when attempting to start the iSphere compare editor ***", e); //$NON-NLS-1$
