@@ -3,6 +3,19 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere Lpex popup menu extension
+      	  ==========================================
+      	-->
+
+   <extension
+         point="com.ibm.lpex.preload">
+      <preload
+            class="biz.isphere.rse.lpex.Preload">
+      </preload>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
       	    iSphere RDi Contributions
       	  ==========================================
       	-->

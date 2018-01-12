@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,19 +40,27 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
         return null;
     }
 
+    public void handleReadOnlySourceCompare(RSEMember[] selectedMembers) {
+        handleSourceCompareInternally(selectedMembers, false);
+    }
+
     public void handleSourceCompare(RSEMember[] selectedMembers) {
+        handleSourceCompareInternally(selectedMembers, true);
+    }
+
+    private void handleSourceCompareInternally(RSEMember[] selectedMembers, boolean selectEditable) {
 
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         RSECompareDialog dialog;
         if (selectedMembers.length > 2) {
-            dialog = new RSECompareDialog(shell, true, selectedMembers);
+            dialog = new RSECompareDialog(shell, selectEditable, selectedMembers);
         } else if (selectedMembers.length == 2) {
-            dialog = new RSECompareDialog(shell, true, selectedMembers[0], selectedMembers[1]);
+            dialog = new RSECompareDialog(shell, selectEditable, selectedMembers[0], selectedMembers[1]);
         } else if (selectedMembers.length == 1) {
-            dialog = new RSECompareDialog(shell, true, selectedMembers[0]);
+            dialog = new RSECompareDialog(shell, selectEditable, selectedMembers[0]);
         } else {
-            dialog = new RSECompareDialog(shell, true);
+            dialog = new RSECompareDialog(shell, selectEditable);
         }
 
         if (dialog.open() == Dialog.OK) {
