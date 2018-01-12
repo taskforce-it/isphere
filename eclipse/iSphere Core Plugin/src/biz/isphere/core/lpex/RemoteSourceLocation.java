@@ -35,6 +35,14 @@ public class RemoteSourceLocation {
         int offset = 0;
         StringBuilder buffer = new StringBuilder();
 
+        /*
+         * WDSCi does not include the host name in the result of
+         * LpexView.query("sourceName")
+         */
+        if (lpexSourceName.indexOf(":") < 0) {
+            step = LIBRARY;
+        }
+
         while (offset < lpexSourceName.length() && step != DONE) {
 
             String str = lpexSourceName.substring(offset, offset + 1);
