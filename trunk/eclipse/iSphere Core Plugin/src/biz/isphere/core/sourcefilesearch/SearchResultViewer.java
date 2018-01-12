@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -642,7 +642,7 @@ public class SearchResultViewer {
                 members.add(member);
             }
 
-            IBMiHostContributionsHandler.compareSourceMembers(connectionName, members);
+            IBMiHostContributionsHandler.compareSourceMembers(connectionName, members, isEditMode);
 
         } catch (Exception e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
