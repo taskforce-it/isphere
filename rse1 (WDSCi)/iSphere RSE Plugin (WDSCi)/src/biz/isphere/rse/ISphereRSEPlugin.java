@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2018 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,8 @@ import org.osgi.framework.BundleContext;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.core.lpex.menu.ILpexMenuExtension;
+import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
@@ -38,10 +40,13 @@ import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
 import com.ibm.etools.systems.core.SystemPlugin;
 
-public class ISphereRSEPlugin extends AbstractUIPlugin {
+public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtensionPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.rse"; //$NON-NLS-1$
+
+    // The Lpex menu extension
+    private ILpexMenuExtension menuExtension;
 
     // The shared instance
     private static ISphereRSEPlugin plugin;
@@ -75,13 +80,22 @@ public class ISphereRSEPlugin extends AbstractUIPlugin {
 
     @Override
     public void stop(BundleContext context) throws Exception {
+
+        if (menuExtension != null) {
+            menuExtension.uninstall();
+        }
+
         super.stop(context);
 
         ConnectionManager.dispose();
-        
+
         for (IViewManager viewManager : viewManagers.values()) {
             viewManager.dispose();
         }
+    }
+
+    public void setLpexMenuExtension(ILpexMenuExtension menuExtension) {
+        this.menuExtension = menuExtension;
     }
 
     public static ISphereRSEPlugin getDefault() {
