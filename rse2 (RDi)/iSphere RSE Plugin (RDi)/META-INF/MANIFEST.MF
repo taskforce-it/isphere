@@ -31,6 +31,7 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.projects.core,
  com.ibm.etools.iseries.subsystems.ifs,
  com.ibm.etools.iseries.connectorservice,
+ com.ibm.lpex,
  biz.isphere.core,
  biz.isphere.adapter,
  biz.isphere.base

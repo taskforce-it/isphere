@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,5 +165,5 @@ public interface IIBMiHostContributions {
      * @param members - members that are compared
      * @throws Exception
      */
-    public void compareSourceMembers(String connectionName, List<Member> members) throws Exception;
+    public void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception;
 }

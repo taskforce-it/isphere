@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1354,11 +1354,17 @@ public class Messages extends NLS {
 
     public static String Menu_Compare_members;
 
+    public static String Menu_Compare;
+
     public static String Add_filter_strings;
 
     public static String Replace_filter_strings;
 
     public static String Are_you_sure_to_replace_all_filter_strings_of_filter_A;
+
+    public static String Unable_to_start_source_member_compare_Could_not_find_editor_with_source_member_A;
+
+    public static String Source_member_contains_unsaved_changes_Save_member_A;
 
     /*
      * Warning messages

@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.1.5.r
+--------------------------
+ • Added menu option to start source compare from the context menu of
+   the Lpex editor (Source -> Compare...).
+ • Changed compare editor to honor the state of the view/edit button
+   of the "iSphere Source File Search" view.
+
 Changelog: iSphere 3.1.4.r
 --------------------------
  • Fixed StringIndexOutOfBoundsException in JournalEntryLabelProvider 
