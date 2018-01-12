@@ -80,7 +80,7 @@ public class StartSourceMemberCompareEditorAction implements LpexAction {
                                         IBMiHostContributionsHandler.compareSourceMembers(connectionName, members, false);
 
                                         return;
-                                        
+
                                     } else {
 
                                         MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(
@@ -105,8 +105,12 @@ public class StartSourceMemberCompareEditorAction implements LpexAction {
     }
 
     public boolean available(LpexView view) {
-        // return (view.currentElement() != 0) && (!view.queryOn("readonly"));
-        return true;
+
+        if (view.query("sourceName") != null) {
+            return true;
+        }
+
+        return false;
     }
 
     public static String getLPEXMenuAction() {
