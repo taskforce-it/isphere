@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.action;
+package biz.isphere.core.lpex.actions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import com.ibm.lpex.core.LpexView;
  * This action adds or changes the creation command of an existing (change) or
  * non-existing (add) STRPREPRC header.
  */
-public class StartSourceMemberCompareEditorAction implements LpexAction {
+public class CompareEditorLpexAction implements LpexAction {
 
     public static final String ID = "iSphere.Core.CompareSourceMember";
 
@@ -114,6 +114,6 @@ public class StartSourceMemberCompareEditorAction implements LpexAction {
     }
 
     public static String getLPEXMenuAction() {
-        return "\"" + Messages.Menu_Compare + "\" " + StartSourceMemberCompareEditorAction.ID; //$NON-NLS-1$ //$NON-NLS-2$
+        return "\"" + Messages.Menu_Compare + "\" " + CompareEditorLpexAction.ID; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import biz.isphere.core.lpex.action.StartSourceMemberCompareEditorAction;
+import biz.isphere.core.lpex.actions.CompareEditorLpexAction;
 import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.core.lpex.menu.LpexMenu;
 import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
@@ -57,7 +57,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     protected UserAction[] getUserActions() {
 
         List<UserAction> actions = new LinkedList<UserAction>();
-        actions.add(new UserAction(StartSourceMemberCompareEditorAction.ID, StartSourceMemberCompareEditorAction.class.getName()));
+        actions.add(new UserAction(CompareEditorLpexAction.ID, CompareEditorLpexAction.class.getName()));
         // actions.add(new UserAction(RemoveHeaderAction.ID,
         // RemoveHeaderAction.class.getName()));
         // actions.add(new UserAction(AddPreCompileCommandAction.ID,
@@ -92,7 +92,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         List<String> menuActions = new ArrayList<String>();
 
-        menuActions.add(StartSourceMemberCompareEditorAction.getLPEXMenuAction());
+        menuActions.add(CompareEditorLpexAction.getLPEXMenuAction());
         // menuActions.add(RemoveHeaderAction.getLPEXMenuAction());
         // menuActions.add(null);
         // menuActions.add(AddPreCompileCommandAction.getLPEXMenuAction());
