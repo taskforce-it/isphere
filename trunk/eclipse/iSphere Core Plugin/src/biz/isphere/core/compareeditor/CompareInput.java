@@ -148,9 +148,9 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         fResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
         if (dropSequenceNumbersAndDates) {
-            return new CompareNode(fResource, false, ignoreCase, false);
+            return new CompareNode(fResource, false, ignoreCase, false, member.hasSequenceNumbersAndDateFields());
         } else {
-            return new CompareNode(fResource, considerDate, ignoreCase, hasCompareFilters);
+            return new CompareNode(fResource, considerDate, ignoreCase, hasCompareFilters, member.hasSequenceNumbersAndDateFields());
         }
     }
 
