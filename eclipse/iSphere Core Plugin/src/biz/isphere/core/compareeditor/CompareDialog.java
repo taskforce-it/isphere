@@ -51,6 +51,7 @@ public abstract class CompareDialog extends XDialog {
     public static final String CONSIDER_DATE_PROPERTY = "CONSIDER_DATE_PROPERTY"; //$NON-NLS-1$
     private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY"; //$NON-NLS-1$
 
+    private boolean dateOptionsEditable;
     private boolean selectEditable;
     private Member leftMember;
     private Member rightMember;
@@ -195,6 +196,12 @@ public abstract class CompareDialog extends XDialog {
             hasAncestorMember = true;
             isThreeWay = true;
         }
+
+        dateOptionsEditable = true;
+    }
+
+    public void setDateOptionsEnabled(boolean enabled) {
+        this.dateOptionsEditable = enabled;
     }
 
     @Override
@@ -237,9 +244,6 @@ public abstract class CompareDialog extends XDialog {
             browseButton = WidgetFactory.createRadioButton(editableGroup);
             browseButton.setText(Messages.Open_for_browse);
             browseButton.setLayoutData(getGridData());
-            // if (!editable || ignoreCase) {
-            // browseButton.setSelection(true);
-            // }
 
             editButton = WidgetFactory.createRadioButton(editableGroup);
             editButton.setText(Messages.Open_for_edit);
@@ -252,30 +256,25 @@ public abstract class CompareDialog extends XDialog {
                     }
                 }
             });
-            // if (editable && !ignoreCase) {
-            // editButton.setSelection(true);
-            // }
 
         }
 
-        Composite considerDateGroup = new Composite(modeGroup, SWT.NONE);
-        GridLayout considerDateLayout = new GridLayout(2, true);
-        considerDateGroup.setLayout(considerDateLayout);
-        considerDateGroup.setLayoutData(getGridData());
+        if (dateOptionsEditable) {
 
-        dontConsiderDateButton = WidgetFactory.createRadioButton(considerDateGroup);
-        dontConsiderDateButton.setText(Messages.Don_t_consider_date);
-        dontConsiderDateButton.setLayoutData(getGridData());
-        // if (!considerDate) {
-        // dontConsiderDateButton.setSelection(true);
-        // }
+            Composite considerDateGroup = new Composite(modeGroup, SWT.NONE);
+            GridLayout considerDateLayout = new GridLayout(2, true);
+            considerDateGroup.setLayout(considerDateLayout);
+            considerDateGroup.setLayoutData(getGridData());
 
-        considerDateButton = WidgetFactory.createRadioButton(considerDateGroup);
-        considerDateButton.setText(Messages.Consider_date);
-        considerDateButton.setLayoutData(getGridData());
-        // if (considerDate) {
-        // considerDateButton.setSelection(true);
-        // }
+            dontConsiderDateButton = WidgetFactory.createRadioButton(considerDateGroup);
+            dontConsiderDateButton.setText(Messages.Don_t_consider_date);
+            dontConsiderDateButton.setLayoutData(getGridData());
+
+            considerDateButton = WidgetFactory.createRadioButton(considerDateGroup);
+            considerDateButton.setText(Messages.Consider_date);
+            considerDateButton.setLayoutData(getGridData());
+
+        }
 
         Composite ignoreCaseGroup = new Composite(modeGroup, SWT.NONE);
         GridLayout ignoreCaseLayout = new GridLayout(2, true);
@@ -285,9 +284,6 @@ public abstract class CompareDialog extends XDialog {
         dontIgnoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         dontIgnoreCaseButton.setText(Messages.Don_t_ignore_case);
         dontIgnoreCaseButton.setLayoutData(getGridData());
-        // if (!ignoreCase) {
-        // dontIgnoreCaseButton.setSelection(true);
-        // }
 
         ignoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         ignoreCaseButton.setText(Messages.Ignore_case);
@@ -302,9 +298,6 @@ public abstract class CompareDialog extends XDialog {
                 }
             }
         });
-        // if (ignoreCase) {
-        // ignoreCaseButton.setSelection(true);
-        // }
 
         if (!hasRightMember()) {
 
@@ -424,13 +417,21 @@ public abstract class CompareDialog extends XDialog {
 
     @Override
     protected void okPressed() {
+
         if (selectEditable) {
             editable = editButton.getSelection();
         } else {
             editable = false;
         }
-        considerDate = considerDateButton.getSelection();
+
+        if (dateOptionsEditable) {
+            considerDate = considerDateButton.getSelection();
+        } else {
+            considerDate = false;
+        }
+
         ignoreCase = ignoreCaseButton.getSelection();
+
         if (!hasRightMember()) {
             isThreeWay = threeWayButton.getSelection();
         }
@@ -707,12 +708,14 @@ public abstract class CompareDialog extends XDialog {
             }
         }
 
-        if (!isConsiderDate()) {
-            dontConsiderDateButton.setSelection(true);
-            considerDateButton.setSelection(false);
-        } else {
-            dontConsiderDateButton.setSelection(false);
-            considerDateButton.setSelection(true);
+        if (dateOptionsEditable) {
+            if (!isConsiderDate()) {
+                dontConsiderDateButton.setSelection(true);
+                considerDateButton.setSelection(false);
+            } else {
+                dontConsiderDateButton.setSelection(false);
+                considerDateButton.setSelection(true);
+            }
         }
 
         if (!isIgnoreCase()) {
@@ -729,7 +732,11 @@ public abstract class CompareDialog extends XDialog {
         if (selectEditable) {
             getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
         }
-        getDialogBoundsSettings().put(CONSIDER_DATE_PROPERTY, considerDate);
+
+        if (dateOptionsEditable) {
+            getDialogBoundsSettings().put(CONSIDER_DATE_PROPERTY, considerDate);
+        }
+
         getDialogBoundsSettings().put(IGNORE_CASE_PROPERTY, ignoreCase);
     }
 

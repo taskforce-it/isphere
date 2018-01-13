@@ -28,6 +28,7 @@ import org.eclipse.ui.IFileEditorInput;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
 
@@ -55,6 +56,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     private boolean threeWay;
     private boolean considerDate;
     private boolean ignoreCase;
+    private boolean dropSequenceNumbersAndDates;
     private boolean hasCompareFilters;
     private Member ancestorMember;
     private Member leftMember;
@@ -70,6 +72,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         this.threeWay = config.isThreeWay();
         this.considerDate = config.isConsiderDate();
         this.ignoreCase = config.isIgnoreCase();
+        this.dropSequenceNumbersAndDates = config.dropSequenceNumbersAndDateFields();
         this.hasCompareFilters = config.hasCompareFilters();
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
@@ -91,21 +94,15 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             monitor.beginTask(Messages.Downloading_source_members, IProgressMonitor.UNKNOWN);
 
             if (threeWay) {
-                ancestorMember.download(monitor);
-                IResource fAncestorResource = ancestorMember.getLocalResource();
-                fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                fAncestor = new CompareNode(fAncestorResource, considerDate, ignoreCase, hasCompareFilters);
+                downloadMember(monitor, ancestorMember);
+                fAncestor = produceCompareNode(monitor, ancestorMember);
             }
 
-            leftMember.download(monitor);
-            IResource fLeftResource = leftMember.getLocalResource();
-            fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fLeft = new CompareNode(fLeftResource, considerDate, ignoreCase, hasCompareFilters);
+            downloadMember(monitor, leftMember);
+            fLeft = produceCompareNode(monitor, leftMember);
 
-            rightMember.download(monitor);
-            IResource fRightResource = rightMember.getLocalResource();
-            fRightResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            fRight = new CompareNode(fRightResource, considerDate, ignoreCase, hasCompareFilters);
+            downloadMember(monitor, rightMember);
+            fRight = produceCompareNode(monitor, rightMember);
 
             monitor.beginTask(Messages.Comparing_source_members, IProgressMonitor.UNKNOWN);
             CompareDifferencer d;
@@ -143,6 +140,28 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         } finally {
             monitor.done();
         }
+    }
+
+    private CompareNode produceCompareNode(IProgressMonitor monitor, Member member) throws CoreException {
+
+        IResource fResource = member.getLocalResource();
+        fResource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+        if (dropSequenceNumbersAndDates) {
+            return new CompareNode(fResource, false, ignoreCase, false);
+        } else {
+            return new CompareNode(fResource, considerDate, ignoreCase, hasCompareFilters);
+        }
+    }
+
+    private void downloadMember(IProgressMonitor monitor, Member member) throws Exception {
+
+        if (member instanceof IProjectMember) {
+            // Do not try to download i Project members
+            return;
+        }
+
+        member.download(monitor);
     }
 
     public void cleanup() {

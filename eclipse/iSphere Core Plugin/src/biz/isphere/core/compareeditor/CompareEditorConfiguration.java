@@ -24,6 +24,8 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     private static String THREE_WAY = "biz.isphere.core.compareeditor.threeWay"; //$NON-NLS-1$
 
+    private static String SEQUENCE_NUMBERS_AND_DATE_FIELDS = "biz.isphere.core.compareeditor.sequenceNumbersAndDates"; //$NON-NLS-1$
+
     private boolean hasCompareFilters;
 
     public CompareEditorConfiguration() {
@@ -56,6 +58,14 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     public boolean isThreeWay() {
         return ((Boolean)getProperty(THREE_WAY)).booleanValue();
+    }
+
+    public void setDropSequenceNumbersAndDateFields(boolean dropped) {
+        setProperty(SEQUENCE_NUMBERS_AND_DATE_FIELDS, dropped);
+    }
+
+    public boolean dropSequenceNumbersAndDateFields() {
+        return ((Boolean)getProperty(SEQUENCE_NUMBERS_AND_DATE_FIELDS)).booleanValue();
     }
 
     public void setThreeWay(boolean aThreeWay) {
