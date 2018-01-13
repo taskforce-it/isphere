@@ -298,18 +298,44 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns the connection name of a given editor.
+     * Returns the connection name of a given i Project.
      * 
      * @param projectName - name of an i Project
      * @return name of the connection the file has been loaded from
      */
     public String getConnectionName(String projectName) {
 
+        AbstractISeriesProject iSeriesProject = findISeriesProject(projectName);
+        if (iSeriesProject == null) {
+            return null;
+        }
+
+        return iSeriesProject.getConnectionName();
+    }
+
+    /**
+     * Returns the name of the associated library of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the associated library
+     */
+    public String getLibraryName(String projectName) {
+
+        AbstractISeriesProject iSeriesProject = findISeriesProject(projectName);
+        if (iSeriesProject == null) {
+            return null;
+        }
+
+        return iSeriesProject.getAssociatedLibraryName();
+    }
+
+    private AbstractISeriesProject findISeriesProject(String projectName) {
+
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         for (IProject project : projects) {
             if (project.getName().equals(projectName)) {
                 AbstractISeriesProject iSeriesProject = ((AbstractISeriesProject)ISeriesModelUtil.findISeriesResource(project));
-                return iSeriesProject.getConnectionName();
+                return iSeriesProject;
             }
         }
 
