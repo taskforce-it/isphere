@@ -129,6 +129,12 @@ public class IBMiHostContributionsHandler {
         return factory.getSystem(editor);
     }
 
+    /**
+     * Returns the connection name of a given editor.
+     * 
+     * @param editor - that shows a remote file
+     * @return name of the connection the file has been loaded from
+     */
     public static String getConnectionName(IEditorPart editor) {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -138,6 +144,23 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.getConnectionName(editor);
+    }
+
+    /**
+     * Returns the connection name of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the connection the file has been loaded from
+     */
+    public static String getConnectionName(String projectName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getConnectionName(projectName);
     }
 
     public static String[] getConnectionNames() {

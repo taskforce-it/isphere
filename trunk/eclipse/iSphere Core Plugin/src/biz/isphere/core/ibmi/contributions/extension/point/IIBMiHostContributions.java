@@ -115,6 +115,14 @@ public interface IIBMiHostContributions {
     public String getConnectionName(IEditorPart editor);
 
     /**
+     * Returns the connection name of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the connection the file has been loaded from
+     */
+    public String getConnectionName(String projectName);
+
+    /**
      * returns a list of configured connections.
      * 
      * @return names of configured connections

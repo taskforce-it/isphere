@@ -49,16 +49,21 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     private File tempFile;
     private String yymmdd;
 
-    public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase, boolean hasCompareFilters) {
+    public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase, boolean useCompareFilters) {
 
         this.fResource = fResource;
         this.ignoreCase = ignoreCase;
 
-        if (considerDate || hasCompareFilters) {
-            column = 6;
-            hasDate = true;
+        if (hasDateAndSequenceColumns(this.fResource)) {
+            if (considerDate || useCompareFilters) {
+                column = 6;
+                hasDate = true;
+            } else {
+                column = 12;
+                hasDate = false;
+            }
         } else {
-            column = 12;
+            column = 0;
             hasDate = false;
         }
 
@@ -182,6 +187,44 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         }
 
         return Charset.defaultCharset().name();
+    }
+
+    private boolean hasDateAndSequenceColumns(IResource fResource) {
+
+        File file = fResource.getLocation().toFile();
+
+        BufferedReader in = null;
+
+        try {
+
+            in = new BufferedReader(new FileReader(file));
+
+            int count = 10;
+            String line;
+            String pattern = "^[0-9]{12}.*"; //$NON-NLS-1$
+            while ((line = in.readLine()) != null && count > 0) {
+
+                line = StringHelper.trimR(line);
+                if (line.length() < 12) {
+                    return false;
+                }
+
+                if (!line.matches(pattern)) {
+                    return false;
+                }
+
+                count--;
+            }
+
+        } catch (Throwable e) {
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+            }
+        }
+
+        return true;
     }
 
 }

@@ -91,6 +91,10 @@ public abstract class Member {
 
     public abstract String getMemberLockedMessages(ISeriesHostObjectLock lock);
 
+    public boolean hasSequenceNumbersAndDateFields() {
+        return true;
+    }
+
     public void openStream() throws Exception {
     }
 
