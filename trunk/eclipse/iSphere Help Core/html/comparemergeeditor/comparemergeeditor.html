@@ -13,16 +13,22 @@
 		physical file members. The results of the compare are shown in left
 		and right panes and you can easily copy some or all of the differences
 		from the right pane to the left pane.
+	<p>
+	<ul>
+	<li><a href="#comparing_remote_members">Comparing Remote Members</a></li>
+	<li><a href="#selecting_multiple_members_at_once">Selecting Multiple Members at Once</a></li>
+	<li><a href="#starting_the_compare_editor_from_an_lpex_editor">Starting The Compare Editor From an Lpex Editor</a></li>
+	<li><a href="#comparing_i_project_members">Comparing i Project Members</a></li>
+	</ul>
+	<p>
+	<a id="#comparing_remote_members" />
+	<h2>Comparing Remote Members</h2>
 	<p>To compare/merge source physical file members:
 	<p>
 	<ul>
 		<li>In the Remote Systems Explorer open the context menu (right
 			click) of a source physical file member. This is the source file that
 			will be opened in the left pane.</li>
-		<li>It is also possible to launch the compare editor from the context
-		    menu of an Lpex editor. Open the context menu and select 
-		    "Source -> Compare..." to do so. There is no "Edit" option when then
-		    compare editor is started from there.</li>
 		<li>Select menu item "iSphere Compare Editor".</li>
 	</ul>
 	<p>
@@ -106,6 +112,7 @@
 	<p>
 		<img src="assets/ignore_date_option.png" align="middle">
 	<p>
+	<a id="#selecting_multiple_members_at_once" />
 	<h2>Selecting Multiple Members at Once</h2>
 	<p>
 	<h3>Two Members</h3>
@@ -155,6 +162,26 @@
 				Eclipse support.</td>
 		</tr>
 	</table>
+	<p>
+	<a id="#starting_the_compare_editor_from_an_lpex_editor" />
+	<h2>Starting The Compare Editor From an Lpex Editor</h2>
+	<p>The iSphere compare editor can be started from the context menu of a Lpex 
+	   editor. Select <i>Source -> Compare...</i> to do so. Please notice that:
+	<p>
+	<ul>
+	<li>There is no edit option when the compare editor is started from an Lpex editor.</li>
+	</ul>
+	<p>
+	<a id="#comparing_i_project_members" />
+	<h2>Comparing i Project Member</h2>
+	<p>When the iSphere compare editor is started from an Lpex editor with a source member loaded
+	   from an i Project, then the following additional rules are enforced:
+	<p>
+	<ul>
+	<li>There is no edit option for i Project members.</li>
+	<li>When the i Project member does not have sequence numbers and date fields, the <i>Consider date</i> option 
+	    is not available and sequence numbers and last changed dates are not displayed at all.</li>
+	</ul>
 	<p>
 		<iframe src="../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
