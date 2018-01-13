@@ -17,13 +17,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.etools.iseries.core.api.ISeriesConnection;
-import com.ibm.etools.iseries.core.api.ISeriesMember;
-
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
+import biz.isphere.core.internal.IProjectMember;
+import biz.isphere.core.internal.Member;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
+
+import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.iseries.core.api.ISeriesMember;
 
 public class CompareSourceMembersHandler extends AbstractHandler implements IHandler {
 
@@ -40,15 +42,15 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
         return null;
     }
 
-    public void handleReadOnlySourceCompare(RSEMember[] selectedMembers) {
+    public void handleReadOnlySourceCompare(Member[] selectedMembers) {
         handleSourceCompareInternally(selectedMembers, false);
     }
 
-    public void handleSourceCompare(RSEMember[] selectedMembers) {
+    public void handleSourceCompare(Member[] selectedMembers) {
         handleSourceCompareInternally(selectedMembers, true);
     }
 
-    private void handleSourceCompareInternally(RSEMember[] selectedMembers, boolean selectEditable) {
+    private void handleSourceCompareInternally(Member[] selectedMembers, boolean selectEditable) {
 
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
@@ -62,6 +64,8 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
         } else {
             dialog = new RSECompareDialog(shell, selectEditable);
         }
+
+        dialog.setDateOptionsEnabled(hasSequenceNumbersAndDateFields(selectedMembers));
 
         if (dialog.open() == Dialog.OK) {
 
@@ -81,13 +85,14 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
             cc.setConsiderDate(considerDate);
             cc.setIgnoreCase(ignoreCase);
             cc.setThreeWay(threeWay);
+            cc.setDropSequenceNumbersAndDateFields(!hasSequenceNumbersAndDateFields(selectedMembers));
 
             if (selectedMembers.length > 2) {
                 RSEMember dialogRightMember = dialog.getRightRSEMember();
                 String rightConnection = dialogRightMember.getConnection();
                 String rightLibrary = dialogRightMember.getLibrary();
                 String rightSourceFile = dialogRightMember.getSourceFile();
-                for (RSEMember rseSelectedMember : selectedMembers) {
+                for (Member rseSelectedMember : selectedMembers) {
                     String rightMember = rseSelectedMember.getMember();
                     RSEMember rseRightMember = getMember(rightConnection, rightLibrary, rightSourceFile, rightMember);
                     if (!rseRightMember.exists()) {
@@ -101,12 +106,33 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
                     }
                 }
             } else {
-                RSEMember rseLeftMember = dialog.getLeftRSEMember();
-                RSEMember rseRightMember = dialog.getRightRSEMember();
+                Member rseLeftMember;
+                if (selectedMembers.length == 1 && selectedMembers[0] instanceof IProjectMember) {
+                    // Do not update the i Project member. The member is
+                    // read-only in the dialog and there is no "switch" button
+                    // in the dialog for switching the left and right members.
+                    // We need to keep the i Project member because of the path
+                    // to the local resource in the i Project.
+                    rseLeftMember = selectedMembers[0];
+                } else {
+                    rseLeftMember = dialog.getLeftRSEMember();
+                }
+                Member rseRightMember = dialog.getRightRSEMember();
                 CompareAction action = new CompareAction(cc, rseAncestorMember, rseLeftMember, rseRightMember, null);
                 action.run();
             }
         }
+    }
+
+    private boolean hasSequenceNumbersAndDateFields(Member[] selectedMembers) {
+
+        for (Member member : selectedMembers) {
+            if (!member.hasSequenceNumbersAndDateFields()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private RSEMember getMember(String connectionName, String libraryName, String sourceFileName, String memberName) {
