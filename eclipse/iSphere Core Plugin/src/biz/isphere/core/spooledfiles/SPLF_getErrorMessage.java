@@ -43,9 +43,9 @@ public class SPLF_getErrorMessage {
 
         } catch (PcmlException e) {
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_getErrorMessage failed. ***");
+            // Xystem.out.println("*** Call to SPLF_getErrorMessage failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_getErrorMessage failed. See messages above ***", e);
         }

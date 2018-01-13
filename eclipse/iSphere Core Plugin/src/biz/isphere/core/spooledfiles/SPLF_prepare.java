@@ -47,9 +47,9 @@ public class SPLF_prepare {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_prepare failed. ***");
+            // Xystem.out.println("*** Call to SPLF_prepare failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_prepare failed. See messages above ***", null);
         }

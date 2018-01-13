@@ -50,9 +50,9 @@ public class FNDSTR_clear {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to FNDSTR_clear failed. ***");
+            // Xystem.out.println("*** Call to FNDSTR_clear failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to FNDSTR_clear failed. See messages above ***", e);
         }

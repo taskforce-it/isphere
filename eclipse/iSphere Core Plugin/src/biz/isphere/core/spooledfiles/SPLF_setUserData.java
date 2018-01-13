@@ -50,9 +50,9 @@ public class SPLF_setUserData {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_setUserData failed. ***");
+            // Xystem.out.println("*** Call to SPLF_setUserData failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_setUserData failed. See messages above ***", e);
         }

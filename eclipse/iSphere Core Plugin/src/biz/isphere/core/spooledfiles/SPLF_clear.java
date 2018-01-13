@@ -49,9 +49,9 @@ public class SPLF_clear {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_clear failed. ***");
+            // Xystem.out.println("*** Call to SPLF_clear failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_clear failed. See messages above ***", null);
         }

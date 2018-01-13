@@ -49,9 +49,9 @@ public class SPLF_setUser {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_setUser failed. ***");
+            // Xystem.out.println("*** Call to SPLF_setUser failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_setUser failed. See messages above ***", e);
         }

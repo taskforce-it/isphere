@@ -53,9 +53,9 @@ public class SPLF_setDateTime {
 
             errno = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to SPLF_setDateTime failed. ***");
+            // Xystem.out.println("*** Call to SPLF_setDateTime failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to SPLF_setDateTime failed. See messages above ***", e);
         }

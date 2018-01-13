@@ -50,9 +50,9 @@ public class XFNDSTR_getNumberOfSearchElements {
 
             numberOfSearchElements = -1;
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to XFNDSTR_getNumberOfSearchElements failed. ***");
+            // Xystem.out.println("*** Call to XFNDSTR_getNumberOfSearchElements failed. ***");
             // return null;
             ISpherePlugin.logError("*** Call to XFNDSTR_getNumberOfSearchElements failed. See messages above ***", e);
         }
