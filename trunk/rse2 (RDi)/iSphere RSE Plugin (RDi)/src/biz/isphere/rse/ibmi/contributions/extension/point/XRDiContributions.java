@@ -11,10 +11,11 @@ package biz.isphere.rse.ibmi.contributions.extension.point;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -39,6 +40,8 @@ import biz.isphere.rse.internal.RSEMember;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
+import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
 import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
@@ -295,6 +298,25 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Returns the connection name of a given editor.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the connection the file has been loaded from
+     */
+    public String getConnectionName(String projectName) {
+
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        for (IProject project : projects) {
+            if (project.getName().equals(projectName)) {
+                AbstractISeriesProject iSeriesProject = ((AbstractISeriesProject)ISeriesModelUtil.findISeriesResource(project));
+                return iSeriesProject.getConnectionName();
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns a list of configured connections.
      * 
      * @return names of configured connections
@@ -407,20 +429,12 @@ public class XRDiContributions implements IIBMiHostContributions {
 
     public void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception {
 
-        List<RSEMember> rseMembers = new LinkedList<RSEMember>();
-
-        for (Member member : members) {
-            if (member instanceof RSEMember) {
-                rseMembers.add((RSEMember)member);
-            }
-        }
-
         CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
 
         if (enableEditMode) {
-            handler.handleSourceCompare(rseMembers.toArray(new RSEMember[rseMembers.size()]));
+            handler.handleSourceCompare(members.toArray(new Member[members.size()]));
         } else {
-            handler.handleReadOnlySourceCompare(rseMembers.toArray(new RSEMember[rseMembers.size()]));
+            handler.handleReadOnlySourceCompare(members.toArray(new Member[members.size()]));
         }
     }
 }

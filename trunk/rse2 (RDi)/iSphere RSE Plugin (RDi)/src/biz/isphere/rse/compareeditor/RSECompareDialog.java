@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class RSECompareDialog extends CompareDialog {
      * @param selectedMembers - the selected members that go to the left side of
      *        the compare dialog
      */
-    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember[] selectedMembers) {
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, Member[] selectedMembers) {
         super(parentShell, selectEditable, selectedMembers);
         initializeLeftMember(selectedMembers[0]);
         initializeRightMember(selectedMembers[0]);
@@ -110,7 +110,7 @@ public class RSECompareDialog extends CompareDialog {
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      */
-    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
@@ -124,7 +124,7 @@ public class RSECompareDialog extends CompareDialog {
      *        "Open for browse/edit" is displayed
      * @param leftMember - the left selected member
      */
-    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember) {
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell, selectEditable, leftMember);
         initializeLeftMember(leftMember);
     }
@@ -147,25 +147,35 @@ public class RSECompareDialog extends CompareDialog {
         rememberScreenValues = true;
     }
 
-    private void initializeLeftMember(RSEMember leftMember) {
-        this.leftConnection = leftMember.getRSEConnection();
+    private void initializeLeftMember(Member leftMember) {
+        this.leftConnection = getConnection(leftMember);
         this.leftLibrary = leftMember.getLibrary();
         this.leftFile = leftMember.getSourceFile();
         this.leftMember = leftMember.getMember();
     }
 
-    private void initializeRightMember(RSEMember rightMember) {
-        this.rightConnection = rightMember.getRSEConnection();
+    private void initializeRightMember(Member rightMember) {
+        this.rightConnection = getConnection(rightMember);
         this.rightLibrary = rightMember.getLibrary();
         this.rightFile = rightMember.getSourceFile();
         this.rightMember = rightMember.getMember();
     }
 
-    private void initializeAncestorMember(RSEMember ancestorMember) {
-        this.ancestorConnection = ancestorMember.getRSEConnection();
+    private void initializeAncestorMember(Member ancestorMember) {
+        this.ancestorConnection = getConnection(ancestorMember);
         this.ancestorLibrary = ancestorMember.getLibrary();
         this.ancestorFile = ancestorMember.getSourceFile();
         this.ancestorMember = ancestorMember.getMember();
+    }
+
+    private IBMiConnection getConnection(Member member) {
+
+        if (member instanceof RSEMember) {
+            return ((RSEMember)member).getRSEConnection();
+        } else {
+            return IBMiConnection.getConnection(member.getConnection());
+        }
+
     }
 
     @Override
