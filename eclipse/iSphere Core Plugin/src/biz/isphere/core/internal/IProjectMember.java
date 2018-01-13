@@ -273,19 +273,19 @@ public class IProjectMember extends Member {
 
     private UnsupportedOperationException produceUnsupportedOperationException() {
 
-        String methodName = null;
+        String methodName = "*N"; //$NON-NLS-1$
         StackTraceElement[] e = Thread.currentThread().getStackTrace();
 
         boolean doNext = false;
         for (StackTraceElement s : e) {
             methodName = s.getMethodName();
             if (doNext) {
-                System.out.println(methodName);
+                break;
             }
-            doNext = methodName.equals("produceUnsupportedOperationException");
+            doNext = methodName.equals("produceUnsupportedOperationException"); //$NON-NLS-1$
         }
 
-        return new UnsupportedOperationException(Messages.bind("Operation {0} is not supported for i Project members", methodName));
+        return new UnsupportedOperationException(Messages.bind("Operation {0}() is not supported for i Project members", methodName)); //$NON-NLS-1$
     }
 
     @Override
