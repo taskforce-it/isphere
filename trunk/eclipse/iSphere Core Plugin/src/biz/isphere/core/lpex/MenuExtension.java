@@ -46,12 +46,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     @Override
     public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
-
-        System.out.println("Loading CORE Lpex editor menu extension ...");
-
         super.initializeLpexEditor(plugin);
-
-        System.out.println("... finished loading CORE Lpex editor menu extension.");
     }
 
     protected UserAction[] getUserActions() {

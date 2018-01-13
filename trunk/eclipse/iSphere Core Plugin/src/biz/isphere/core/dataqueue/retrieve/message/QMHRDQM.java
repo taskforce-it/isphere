@@ -85,7 +85,7 @@ public class QMHRDQM extends APIProgramCallDocument {
 
         AS400Message[] msgList = getMessageList();
         for (int j = 0; j < msgList.length; j++) {
-            // System.out.println(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
+            // Xystem.out.println(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
         }
 
         return null;
@@ -139,7 +139,7 @@ public class QMHRDQM extends APIProgramCallDocument {
 
         AS400Message[] msgList = getMessageList();
         for (int j = 0; j < msgList.length; j++) {
-            // System.out.println(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
+            // Xystem.out.println(msgList[j].getID() + " - " + msgList[j].getText()); //$NON-NLS-1$
         }
 
         return null;

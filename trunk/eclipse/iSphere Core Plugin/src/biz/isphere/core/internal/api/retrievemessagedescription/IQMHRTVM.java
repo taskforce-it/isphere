@@ -149,17 +149,17 @@ public class IQMHRTVM extends APIProgramCallDocument {
                 result = retrieveMessageDescriptions(IQMHRTVM.RETRIEVE_NEXT, result.getLastMessageIdReturned(), ALL_MESSAGES, bufferSize);
             }
 
-            // System.out.println("mSecs for " + messageFile +
+            // Xystem.out.println("mSecs for " + messageFile +
             // " and buffer size " + (bufferSize / 1024) + "KB: "
             // + (System.currentTimeMillis() - startTime));
-            // System.out.println("Loaded " + messages.size() +
+            // Xystem.out.println("Loaded " + messages.size() +
             // " messages. Called the API " + numCalls + " times.");
 
         } catch (Exception e) {
 
-            // System.out.println(e.getLocalizedMessage());
+            // Xystem.out.println(e.getLocalizedMessage());
             // e.printStackTrace();
-            // System.out.println("*** Call to QMHRTVM failed. ***");
+            // Xystem.out.println("*** Call to QMHRTVM failed. ***");
             // return null;
             ISpherePlugin.logError("Failed calling the iSphere IQMHRTVM API.", e);
 

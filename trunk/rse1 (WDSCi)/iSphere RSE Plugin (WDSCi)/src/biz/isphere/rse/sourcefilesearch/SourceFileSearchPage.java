@@ -966,7 +966,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void debugPrint(String message) {
-        // System.out.println(message);
+        // Xystem.out.println(message);
     }
 
     private class TargetModifyListener implements ModifyListener {
