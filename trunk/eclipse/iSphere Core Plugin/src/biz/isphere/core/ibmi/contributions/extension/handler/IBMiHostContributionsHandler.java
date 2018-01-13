@@ -163,6 +163,23 @@ public class IBMiHostContributionsHandler {
         return factory.getConnectionName(projectName);
     }
 
+    /**
+     * Returns the name of the associated library of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the associated library
+     */
+    public static String getLibraryName(String projectName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getLibraryName(projectName);
+    }
+
     public static String[] getConnectionNames() {
 
         IIBMiHostContributions factory = getContributionsFactory();

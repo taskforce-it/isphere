@@ -8,12 +8,9 @@
 
 package biz.isphere.core.lpex;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
-import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
-import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 public class LocalSourceLocation {
 
@@ -93,17 +90,7 @@ public class LocalSourceLocation {
     }
 
     private String getLibraryName(String projectName) {
-
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-        for (IProject project : projects) {
-            if (project.getName().equals(projectName)) {
-                AbstractISeriesProject iSeriesProject = ((AbstractISeriesProject)ISeriesModelUtil.findISeriesResource(project));
-                // iSeriesProject.getConnectionName();
-                return iSeriesProject.getAssociatedLibraryName();
-            }
-        }
-
-        return null;
+        return IBMiHostContributionsHandler.getLibraryName(projectName);
     }
 
     public String getProjectName() {

@@ -123,6 +123,14 @@ public interface IIBMiHostContributions {
     public String getConnectionName(String projectName);
 
     /**
+     * Returns the name of the associated library of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the associated library
+     */
+    public String getLibraryName(String projectName);
+
+    /**
      * returns a list of configured connections.
      * 
      * @return names of configured connections
