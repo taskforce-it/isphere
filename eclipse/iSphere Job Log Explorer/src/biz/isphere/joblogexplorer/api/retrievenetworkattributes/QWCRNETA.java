@@ -81,7 +81,7 @@ public class QWCRNETA extends APIProgramCallDocument {
             }
 
             if (!execute(createParameterList(keys))) {
-                System.out.println(getErrorMessage());
+                // Xystem.out.println(getErrorMessage());
                 return false;
             }
 

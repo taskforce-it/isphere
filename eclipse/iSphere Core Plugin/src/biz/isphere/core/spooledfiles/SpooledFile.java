@@ -414,8 +414,8 @@ public class SpooledFile {
         } catch (Exception e) {
         }
         if (message == null) {
-            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error,
-                Messages.bind(Messages.No_Messages, new String[] { file, Integer.toString(fileNumber) }));
+            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, Messages.bind(Messages.No_Messages, new String[] { file,
+                Integer.toString(fileNumber) }));
             // Messages.getString("No_Messages").replaceAll("&1",
             // file).replaceAll("&2", Integer.toString(fileNumber)));
         } else {
@@ -1006,12 +1006,12 @@ public class SpooledFile {
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
         dialog.setFileName(fileName);
-        System.out.println(fileName);
+        // Xystem.out.println(fileName);
         dialog.setOverwrite(true);
         String file = dialog.open();
 
         if (file != null) {
-            System.out.println(file);
+            // Xystem.out.println(file);
             storeSaveDirectory(file);
 
             String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
@@ -1089,11 +1089,8 @@ public class SpooledFile {
 
         SpooledFile other = (SpooledFile)obj;
         // @formatter:off
-        if (!getFile().equals(other.getFile()) 
-            || !(getFileNumber() == other.getFileNumber()) 
-            || !getJobName().equals(other.getJobName())
-            || !getJobUser().equals(other.getJobUser())
-            || !getJobNumber().equals(other.getJobNumber()) 
+        if (!getFile().equals(other.getFile()) || !(getFileNumber() == other.getFileNumber()) || !getJobName().equals(other.getJobName())
+            || !getJobUser().equals(other.getJobUser()) || !getJobNumber().equals(other.getJobNumber())
             || !getJobSystem().equals(other.getJobSystem())) {
             return false;
         }
