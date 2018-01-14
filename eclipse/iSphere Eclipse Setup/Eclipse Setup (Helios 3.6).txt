@@ -20,7 +20,15 @@ Eclipse Plug-ins:
 -----------------
 
 Install the "iSphere Ant Plugin", which is required to build the iSphere
-project.
+project from:
+
+   plug-ins\iSphere_Ant_Contribution.zip
+
+Install the "Java Scoped Template Variables Plugin", which is required 
+if you work on the iSphere and Rapid Fire plug-in in the same workspace 
+project from:
+
+   plug-ins\Java_Scoped_Template_Variables.zip
 
 For WDSCi set the Ant home diretory to:
 
@@ -74,6 +82,10 @@ c) Preferences - Java -> Code Style -> Formatter
 d) Preferences - Java -> Code Style -> Code Templates
 
    Import: Preferences_Java_CodeStyle_Code_Template (iSphere)_3.6.xml
+   
+   or, if the "Java Scoped Template Variables" plug-in has been installed:
+   
+   Import: Preferences_Java_CodeStyle_Code_Template (iSphere with Java Scoped Template Variables Plugin)_3.6.xml
 
 e) Preferences - Java -> Editor -> Save Actions:
 
@@ -84,7 +96,7 @@ e) Preferences - Java -> Editor -> Save Actions:
 
    Disable: Additional actions
 
-f) For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
+f) For RDi and WDSCi add classpath variable IBM_SHARED_PLUGINS to the Java build path:
 
    Preferences - Java - Build path - Classpath variables
    
@@ -121,8 +133,8 @@ e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
 
-Useful LPEX Editor Settings:
-----------------------------
+Useful LPEX Editor Settings (no more required for RDi 9.6+):
+------------------------------------------------------------
 
 a) Map the [Enter] key to "splittLine":
      - From the RDp toolbar select Window > Preferences
