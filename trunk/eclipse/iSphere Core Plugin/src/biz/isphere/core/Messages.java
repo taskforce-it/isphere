@@ -1366,6 +1366,10 @@ public class Messages extends NLS {
 
     public static String Source_member_contains_unsaved_changes_Save_member_A;
 
+    public static String Format_resource_dates;
+
+    public static String Tooltip_Format_resource_dates;
+
     /*
      * Warning messages
      */

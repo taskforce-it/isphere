@@ -8,12 +8,16 @@
 
 package biz.isphere.messagesubsystem.rse;
 
+import java.util.Date;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+import biz.isphere.core.internal.DateTimeHelper;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
 
@@ -136,7 +140,12 @@ public class QueuedMessageResourceAdapterDelegate {
             }
 
             if (propKey.equals(KEY_DATE)) {
-                return queuedMessage.getDate().getTime();
+                Date timestamp = queuedMessage.getDate().getTime();
+                if (Preferences.getInstance().isFormatResourceDates()) {
+                    return DateTimeHelper.getTimestampFormatted(timestamp);
+                } else {
+                    return timestamp;
+                }
             }
 
             if (propKey.equals(KEY_JOB)) {

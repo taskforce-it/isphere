@@ -33,6 +33,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
     private Combo textDateFormat;
     private Combo textTimeFormat;
+    private Button chkboxFormatResourceDates;
     private Text textAutoRefreshDelay;
     private Text textAutoRefreshThreshold;
     private Button chkboxResetWarnings;
@@ -92,6 +93,13 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         textTimeFormat.setToolTipText(Messages.Tooltip_Specifies_the_format_for_displaying_time_values);
         textTimeFormat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         textTimeFormat.setItems(Preferences.getInstance().getTimeFormatLabels());
+
+        chkboxFormatResourceDates = WidgetFactory.createCheckbox(groupDateAndTimeFormats);
+        chkboxFormatResourceDates.setToolTipText(Messages.Tooltip_Format_resource_dates);
+        chkboxFormatResourceDates.setText(Messages.Format_resource_dates);
+        GridData gd = new GridData();
+        gd.horizontalSpan = 2;
+        chkboxFormatResourceDates.setLayoutData(gd);
 
         // Auto refresh delay
         Group groupAutoRefreshDelay = new Group(main, SWT.NONE);
@@ -153,6 +161,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         preferences.setDateFormatLabel(textDateFormat.getText());
         preferences.setTimeFormatLabel(textTimeFormat.getText());
+        preferences.setFormatResourceDates(chkboxFormatResourceDates.getSelection());
         preferences.setAutoRefreshDelay(IntHelper.tryParseInt(textAutoRefreshDelay.getText(), preferences.getDefaultAutoRefreshDelay()));
         preferences.setAutoRefreshThreshold(IntHelper.tryParseInt(textAutoRefreshThreshold.getText(), preferences.getDefaultAutoRefreshThreshold()));
 
@@ -172,6 +181,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         textDateFormat.setText(preferences.getDateFormatLabel());
         textTimeFormat.setText(preferences.getTimeFormatLabel());
+        chkboxFormatResourceDates.setSelection(preferences.isFormatResourceDates());
         textAutoRefreshDelay.setText(Integer.toString(preferences.getAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);
@@ -186,6 +196,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
 
         textDateFormat.setText(preferences.getDefaultDateFormatLabel());
         textTimeFormat.setText(preferences.getDefaultTimeFormatLabel());
+        chkboxFormatResourceDates.setSelection(preferences.getDefaultFormatResourceDates());
         textAutoRefreshDelay.setText(Integer.toString(preferences.getDefaultAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getDefaultAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);

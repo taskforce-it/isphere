@@ -183,6 +183,8 @@ public final class Preferences {
 
     private static final String APPEARANCE_TIME_FORMAT = APPEARANCE + "TIME_FORMAT"; //$NON-NLS-1$
 
+    private static final String APPEARANCE_FORMAT_RESOURCE_DATES = APPEARANCE + "FORMAT_RESOURCE_DATES"; //$NON-NLS-1$
+
     private static final String APPEARANCE_DATE_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
 
     private static final String APPEARANCE_TIME_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
@@ -480,6 +482,10 @@ public final class Preferences {
         return preferenceStore.getString(APPEARANCE_TIME_FORMAT);
     }
 
+    public boolean isFormatResourceDates() {
+        return preferenceStore.getBoolean(APPEARANCE_FORMAT_RESOURCE_DATES);
+    }
+
     public int getAutoRefreshDelay() {
         return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_DELAY);
     }
@@ -688,6 +694,10 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_TIME_FORMAT, dateFormatLabel);
     }
 
+    public void setFormatResourceDates(boolean format) {
+        preferenceStore.setValue(APPEARANCE_FORMAT_RESOURCE_DATES, format);
+    }
+
     public void setAutoRefreshDelay(int delayMillis) {
         preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_DELAY, delayMillis);
     }
@@ -773,6 +783,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
+        preferenceStore.setDefault(APPEARANCE_FORMAT_RESOURCE_DATES, getDefaultFormatResourceDates());
 
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
@@ -1182,6 +1193,10 @@ public final class Preferences {
         return APPEARANCE_TIME_FORMAT_LOCALE;
     }
 
+    public boolean getDefaultFormatResourceDates() {
+        return false;
+    }
+
     public int getDefaultAutoRefreshDelay() {
         return 400;
     }
@@ -1270,6 +1285,7 @@ public final class Preferences {
         dateFormats.put(getDefaultDateFormatLabel(), null);
         dateFormats.put("de (dd.mm.yyyy)", "dd.MM.yyyy");
         dateFormats.put("us (mm/dd/yyyy)", "MM/dd/yyyy");
+        dateFormats.put("iso (yyyy.mm.dd)", "yyyy.MM.dd");
 
         return dateFormats;
     }
@@ -1333,6 +1349,7 @@ public final class Preferences {
         timeFormats.put(getDefaultDateFormatLabel(), null);
         timeFormats.put("de (hh:mm:ss)", "HH:mm:ss"); //$NON-NLS-1$
         timeFormats.put("us (hh:mm:ss AM/PM)", "KK:mm:ss a"); //$NON-NLS-1$
+        timeFormats.put("iso (hh.mm.ss)", "HH.mm.ss");
 
         return timeFormats;
     }
