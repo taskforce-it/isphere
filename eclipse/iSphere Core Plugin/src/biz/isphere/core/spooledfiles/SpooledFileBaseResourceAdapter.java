@@ -158,7 +158,7 @@ public class SpooledFileBaseResourceAdapter {
         if (Preferences.getInstance().isFormatResourceDates()) {
             return splf.getCreationTimeFormatted();
         } else {
-            return splf.getCreationTime();
+            return splf.getCreationTimeAsDate();
         }
     }
 
@@ -166,7 +166,7 @@ public class SpooledFileBaseResourceAdapter {
         if (Preferences.getInstance().isFormatResourceDates()) {
             return splf.getCreationDateFormatted();
         } else {
-            return splf.getCreationDate();
+            return splf.getCreationDateAsDate();
         }
     }
 
