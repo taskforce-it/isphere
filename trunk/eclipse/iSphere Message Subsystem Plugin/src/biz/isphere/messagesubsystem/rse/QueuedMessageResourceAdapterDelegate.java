@@ -34,7 +34,7 @@ public class QueuedMessageResourceAdapterDelegate {
     private static final String KEY_FROM = "from"; //$NON-NLS-1$
 
     private static final String QUEUED_MESSAGE_RESOURCE = "Queued message resource"; //$NON-NLS-1$
-    
+
     public String getType() {
         return QUEUED_MESSAGE_RESOURCE;
     }
@@ -136,7 +136,7 @@ public class QueuedMessageResourceAdapterDelegate {
             }
 
             if (propKey.equals(KEY_DATE)) {
-                return queuedMessage.getDate().getTime().toString();
+                return queuedMessage.getDate().getTime();
             }
 
             if (propKey.equals(KEY_JOB)) {
