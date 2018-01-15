@@ -36,6 +36,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.BrowserEditor;
 import biz.isphere.core.internal.BrowserEditorInput;
 import biz.isphere.core.internal.DateTimeHelper;
@@ -98,18 +99,19 @@ public class SpooledFile {
 
     private Date creationDate;
 
-    private String creationDateStrVal;
+    private String creationDate_cyymmdd;
+
+    private Date creationTime;
+
+    private String creationTime_hhmmss;
 
     /* Lazy loaded and cached! Do not access directly */
     private String creationDateFormatted;
 
-    private Date creationTime;
-
-    private String creationTimeStrVal;
-
     /* Lazy loaded and cached! Do not access directly */
     private String creationTimeFormatted;
 
+    /* Lazy loaded and cached! Do not access directly */
     private Date creationTimestamp;
 
     private String status;
@@ -145,10 +147,10 @@ public class SpooledFile {
         jobNumber = "";
         jobSystem = "";
         creationDate = null;
-        creationDateStrVal = "";
+        creationDate_cyymmdd = "";
         creationDateFormatted = null;
         creationTime = null;
-        creationTimeStrVal = "";
+        creationTime_hhmmss = "";
         creationTimeFormatted = null;
         creationTimestamp = null;
         status = "";
@@ -220,23 +222,52 @@ public class SpooledFile {
         this.jobSystem = jobSystem;
     }
 
-    private String getCreationDateAsCYYMMDD() {
-        return creationDateStrVal; // Format: Cyymmdd
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    private String getCreationDate() {
+        return creationDate_cyymmdd;
     }
 
-    public Date getCreationDate() {
+    public Date getCreationDateAsDate() {
         return creationDate;
     }
 
-    private String getCreationTimeAsHHMMSS() {
-        return creationTimeStrVal; // Format: Hhmmss
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    public void setCreationDate(String creationDate) {
+
+        this.creationDate_cyymmdd = creationDate;
+
+        this.creationDate = IBMiHelper.cyymmddToDate(this.creationDate_cyymmdd);
+
+        this.creationDateFormatted = null; // Lazy loaded
+        this.creationTimestamp = null; // Lazy loaded
     }
 
-    public Date getCreationTime() {
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    private String getCreationTime() {
+        return creationTime_hhmmss;
+    }
+
+    public Date getCreationTimeAsDate() {
         return creationTime;
     }
 
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    public void setCreationTime(String creationTime) {
+
+        this.creationTime_hhmmss = creationTime;
+
+        this.creationTime = IBMiHelper.hhmmssToTime(this.creationTime_hhmmss);
+
+        this.creationTimeFormatted = null; // Lazy loaded
+        this.creationTimestamp = null; // Lazy loaded
+    }
+
     public Date getCreationTimestamp() {
+
+        if (creationTimestamp == null) {
+            creationTimestamp = DateTimeHelper.combineDateTime(this.creationDate, this.creationTime);
+        }
+
         return creationTimestamp;
     }
 
@@ -245,13 +276,12 @@ public class SpooledFile {
         this.creationDate = date;
         this.creationTime = time;
 
-        this.creationDateStrVal = IBMiHelper.dateToCyymmdd(this.creationDate, "");
-        this.creationTimeStrVal = IBMiHelper.timeToHhmmss(this.creationTime, "");
+        this.creationDate_cyymmdd = IBMiHelper.dateToCyymmdd(this.creationDate, "");
+        this.creationTime_hhmmss = IBMiHelper.timeToHhmmss(this.creationTime, "");
 
         this.creationDateFormatted = null; // Lazy loaded
         this.creationTimeFormatted = null; // Lazy loaded
-
-        this.creationTimestamp = DateTimeHelper.combineDateTime(this.creationDate, this.creationTime);
+        this.creationTimestamp = null; // Lazy loaded
     }
 
     public String getStatus() {
@@ -343,8 +373,8 @@ public class SpooledFile {
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
-        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, getCreationDateAsCYYMMDD(),
-            getCreationTimeAsHHMMSS());
+        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, getCreationDate(),
+            getCreationTime());
     }
 
     public String hold() {
@@ -977,7 +1007,7 @@ public class SpooledFile {
 
     private String getAbsoluteNameInternal(String delimiter) {
         return file + delimiter + fileNumber + delimiter + jobName + delimiter + jobUser + delimiter + jobNumber + delimiter + jobSystem + delimiter
-            + getCreationDateAsCYYMMDD() + delimiter + getCreationTimeAsHHMMSS();
+            + getCreationDate() + delimiter + getCreationTime();
     }
 
     public String save(Shell shell, String format) {
