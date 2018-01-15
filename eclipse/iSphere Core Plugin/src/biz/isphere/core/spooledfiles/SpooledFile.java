@@ -1089,8 +1089,11 @@ public class SpooledFile {
 
         SpooledFile other = (SpooledFile)obj;
         // @formatter:off
-        if (!getFile().equals(other.getFile()) || !(getFileNumber() == other.getFileNumber()) || !getJobName().equals(other.getJobName())
-            || !getJobUser().equals(other.getJobUser()) || !getJobNumber().equals(other.getJobNumber())
+        if (!getFile().equals(other.getFile()) 
+            || !(getFileNumber() == other.getFileNumber()) 
+            || !getJobName().equals(other.getJobName())
+            || !getJobUser().equals(other.getJobUser())
+            || !getJobNumber().equals(other.getJobNumber()) 
             || !getJobSystem().equals(other.getJobSystem())) {
             return false;
         }
