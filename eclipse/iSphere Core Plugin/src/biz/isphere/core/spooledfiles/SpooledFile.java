@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Time;
-import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -39,6 +38,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.BrowserEditor;
 import biz.isphere.core.internal.BrowserEditorInput;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.ReadOnlyEditor;
@@ -96,15 +96,21 @@ public class SpooledFile {
 
     private String jobSystem;
 
-    private String creationDate;
+    private Date creationDate;
+
+    private String creationDateStrVal;
 
     /* Lazy loaded and cached! Do not access directly */
     private String creationDateFormatted;
 
-    private String creationTime;
+    private Date creationTime;
+
+    private String creationTimeStrVal;
 
     /* Lazy loaded and cached! Do not access directly */
     private String creationTimeFormatted;
+
+    private Date creationTimestamp;
 
     private String status;
 
@@ -126,10 +132,6 @@ public class SpooledFile {
 
     private Object data;
 
-    private DateFormat dateFormatter;
-
-    private DateFormat timeFormatter;
-
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
 
     private String connectionName;
@@ -142,10 +144,13 @@ public class SpooledFile {
         jobUser = "";
         jobNumber = "";
         jobSystem = "";
-        creationDate = "";
+        creationDate = null;
+        creationDateStrVal = "";
         creationDateFormatted = null;
-        creationTime = "";
+        creationTime = null;
+        creationTimeStrVal = "";
         creationTimeFormatted = null;
+        creationTimestamp = null;
         status = "";
         outputQueue = "";
         outputQueueLibrary = "";
@@ -157,9 +162,6 @@ public class SpooledFile {
         currentPage = 0;
         data = null;
         toolboxSpooledFile = null;
-
-        dateFormatter = Preferences.getInstance().getDateFormatter();
-        timeFormatter = Preferences.getInstance().getTimeFormatter();
     }
 
     public AS400 getAS400() {
@@ -218,35 +220,38 @@ public class SpooledFile {
         this.jobSystem = jobSystem;
     }
 
-    public String getCreationDate() {
+    private String getCreationDateAsCYYMMDD() {
+        return creationDateStrVal; // Format: Cyymmdd
+    }
+
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-        this.creationDateFormatted = null;
+    private String getCreationTimeAsHHMMSS() {
+        return creationTimeStrVal; // Format: Hhmmss
     }
 
-    private void setCreationDate(Date creationDate) {
-        setCreationDate(IBMiHelper.dateToCyymmdd(creationDate, ""));
-    }
-
-    public String getCreationTime() {
+    public Date getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(String creationTime) {
-        this.creationTime = creationTime;
-        this.creationTimeFormatted = null;
-    }
-
-    private void setCreationTime(Time creationTime) {
-        setCreationTime(IBMiHelper.timeToHhmmss(creationTime, ""));
+    public Date getCreationTimestamp() {
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(Date date, Time time) {
-        setCreationDate(date);
-        setCreationTime(time);
+
+        this.creationDate = date;
+        this.creationTime = time;
+
+        this.creationDateStrVal = IBMiHelper.dateToCyymmdd(this.creationDate, "");
+        this.creationTimeStrVal = IBMiHelper.timeToHhmmss(this.creationTime, "");
+
+        this.creationDateFormatted = null; // Lazy loaded
+        this.creationTimeFormatted = null; // Lazy loaded
+
+        this.creationTimestamp = DateTimeHelper.combineDateTime(this.creationDate, this.creationTime);
     }
 
     public String getStatus() {
@@ -338,8 +343,8 @@ public class SpooledFile {
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
-        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, getCreationDate(),
-            getCreationTime());
+        return new com.ibm.as400.access.SpooledFile(as400, file, fileNumber, jobName, jobUser, jobNumber, jobSystem, getCreationDateAsCYYMMDD(),
+            getCreationTimeAsHHMMSS());
     }
 
     public String hold() {
@@ -414,8 +419,8 @@ public class SpooledFile {
         } catch (Exception e) {
         }
         if (message == null) {
-            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error, Messages.bind(Messages.No_Messages, new String[] { file,
-                Integer.toString(fileNumber) }));
+            MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Error,
+                Messages.bind(Messages.No_Messages, new String[] { file, Integer.toString(fileNumber) }));
             // Messages.getString("No_Messages").replaceAll("&1",
             // file).replaceAll("&2", Integer.toString(fileNumber)));
         } else {
@@ -529,12 +534,7 @@ public class SpooledFile {
                 return "";
             }
 
-            Date date = IBMiHelper.cyymmddToDate(creationDate);
-            if (date == null) {
-                creationDateFormatted = "";
-            } else {
-                creationDateFormatted = dateFormatter.format(date);
-            }
+            creationDateFormatted = DateTimeHelper.getDateFormatted(this.creationDate);
         }
         return creationDateFormatted;
     }
@@ -553,18 +553,18 @@ public class SpooledFile {
                 return "";
             }
 
-            Date time = IBMiHelper.hhmmssToTime(creationTime);
-            if (time == null) {
-                creationDateFormatted = "";
-            } else {
-                creationTimeFormatted = timeFormatter.format(time);
-            }
+            creationTimeFormatted = DateTimeHelper.getTimeFormatted(this.creationTime);
         }
         return creationTimeFormatted;
     }
 
+    /**
+     * Return the formatted timestamp the spooled file was created.
+     * 
+     * @return timestamp the spooled file was created
+     */
     public String getCreationTimestampFormatted() {
-        return getCreationDateFormatted() + "   " + getCreationTimeFormatted();
+        return DateTimeHelper.getTimestampFormatted(creationTimestamp);
     }
 
     public void asyncOpen(final String format, final Shell shell) {
@@ -977,7 +977,7 @@ public class SpooledFile {
 
     private String getAbsoluteNameInternal(String delimiter) {
         return file + delimiter + fileNumber + delimiter + jobName + delimiter + jobUser + delimiter + jobNumber + delimiter + jobSystem + delimiter
-            + getCreationDate() + delimiter + getCreationTime();
+            + getCreationDateAsCYYMMDD() + delimiter + getCreationTimeAsHHMMSS();
     }
 
     public String save(Shell shell, String format) {

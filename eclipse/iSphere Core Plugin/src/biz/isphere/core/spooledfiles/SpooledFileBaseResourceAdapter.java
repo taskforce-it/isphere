@@ -20,6 +20,24 @@ import biz.isphere.core.preferences.Preferences;
 
 public class SpooledFileBaseResourceAdapter {
 
+    private static final String FILE = "File";
+    private static final String FILE_NUMBER = "File_number";
+    private static final String JOB_NAME = "Job_name";
+    private static final String JOB_USER = "Job_user";
+    private static final String JOB_NUMBER = "Job_number";
+    private static final String JOB_SYSTEM = "Job_system";
+    private static final String CREATION_DATE = "Creation_date";
+    private static final String CREATION_TIME = "Creation_time";
+    private static final String STATUS = "Status";
+    private static final String OUTPUT_QUEUE = "Output_queue";
+    private static final String OUTPUT_PRIORITY = "Output_priority";
+    private static final String USER_DATA = "User_data";
+    private static final String FORM_TYPE = "Form_type";
+    private static final String COPIES = "Copies";
+    private static final String PAGES = "Pages";
+    private static final String CURRENT_PAGE = "Current_page";
+    private static final String CREATION_TIMESTAMP = "Creation_timestamp";
+
     public ImageDescriptor getImageDescriptor(SpooledFile splf) {
         return ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE);
     }
@@ -28,8 +46,8 @@ public class SpooledFileBaseResourceAdapter {
 
         String defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
-//        splf.asyncOpen(defaultFormat, Display.getCurrent().getActiveShell());
-//        return true;
+        // splf.asyncOpen(defaultFormat, Display.getCurrent().getActiveShell());
+        // return true;
         String message = splf.open(defaultFormat);
         if (message == null) {
             return true;
@@ -60,80 +78,104 @@ public class SpooledFileBaseResourceAdapter {
 
         PropertyDescriptor[] ourPDs = new PropertyDescriptor[17];
 
-        ourPDs[0] = new PropertyDescriptor("File", Messages.File);
+        ourPDs[0] = new PropertyDescriptor(FILE, Messages.File);
         ourPDs[0].setDescription(Messages.File);
 
-        ourPDs[1] = new PropertyDescriptor("File_number", Messages.File_number);
+        ourPDs[1] = new PropertyDescriptor(FILE_NUMBER, Messages.File_number);
         ourPDs[1].setDescription(Messages.File_number);
 
-        ourPDs[2] = new PropertyDescriptor("Job_name", Messages.Job_name);
+        ourPDs[2] = new PropertyDescriptor(JOB_NAME, Messages.Job_name);
         ourPDs[2].setDescription(Messages.Job_name);
 
-        ourPDs[3] = new PropertyDescriptor("Job_user", Messages.Job_user);
+        ourPDs[3] = new PropertyDescriptor(JOB_USER, Messages.Job_user);
         ourPDs[3].setDescription(Messages.Job_user);
 
-        ourPDs[4] = new PropertyDescriptor("Job_number", Messages.Job_number);
+        ourPDs[4] = new PropertyDescriptor(JOB_NUMBER, Messages.Job_number);
         ourPDs[4].setDescription(Messages.Job_number);
 
-        ourPDs[5] = new PropertyDescriptor("Job_system", Messages.Job_system);
+        ourPDs[5] = new PropertyDescriptor(JOB_SYSTEM, Messages.Job_system);
         ourPDs[5].setDescription(Messages.Job_system);
 
-        ourPDs[6] = new PropertyDescriptor("Creation_date", Messages.Creation_date);
+        ourPDs[6] = new PropertyDescriptor(CREATION_DATE, Messages.Creation_date);
         ourPDs[6].setDescription(Messages.Creation_date);
 
-        ourPDs[7] = new PropertyDescriptor("Creation_time", Messages.Creation_time);
+        ourPDs[7] = new PropertyDescriptor(CREATION_TIME, Messages.Creation_time);
         ourPDs[7].setDescription(Messages.Creation_time);
 
-        ourPDs[8] = new PropertyDescriptor("Status", Messages.Status);
+        ourPDs[8] = new PropertyDescriptor(STATUS, Messages.Status);
         ourPDs[8].setDescription(Messages.Status);
 
-        ourPDs[9] = new PropertyDescriptor("Output_queue", Messages.Output_queue);
+        ourPDs[9] = new PropertyDescriptor(OUTPUT_QUEUE, Messages.Output_queue);
         ourPDs[9].setDescription(Messages.Output_queue);
 
-        ourPDs[10] = new PropertyDescriptor("Output_priority", Messages.Output_priority);
+        ourPDs[10] = new PropertyDescriptor(OUTPUT_PRIORITY, Messages.Output_priority);
         ourPDs[10].setDescription(Messages.Output_priority);
 
-        ourPDs[11] = new PropertyDescriptor("User_data", Messages.User_data);
+        ourPDs[11] = new PropertyDescriptor(USER_DATA, Messages.User_data);
         ourPDs[11].setDescription(Messages.User_data);
 
-        ourPDs[12] = new PropertyDescriptor("Form_type", Messages.Form_type);
+        ourPDs[12] = new PropertyDescriptor(FORM_TYPE, Messages.Form_type);
         ourPDs[12].setDescription(Messages.Form_type);
 
-        ourPDs[13] = new PropertyDescriptor("Copies", Messages.Copies);
+        ourPDs[13] = new PropertyDescriptor(COPIES, Messages.Copies);
         ourPDs[13].setDescription(Messages.Copies);
 
-        ourPDs[14] = new PropertyDescriptor("pages", Messages.Pages);
+        ourPDs[14] = new PropertyDescriptor(PAGES, Messages.Pages);
         ourPDs[14].setDescription(Messages.Pages);
 
-        ourPDs[15] = new PropertyDescriptor("Current_page", Messages.Current_page);
+        ourPDs[15] = new PropertyDescriptor(CURRENT_PAGE, Messages.Current_page);
         ourPDs[15].setDescription(Messages.Current_page);
 
-        ourPDs[16] = new PropertyDescriptor("Creation_timestamp", Messages.Creation_timestamp);
-        ourPDs[16].setDescription("Creation_timestamp");
+        ourPDs[16] = new PropertyDescriptor(CREATION_TIMESTAMP, Messages.Creation_timestamp);
+        ourPDs[16].setDescription(Messages.Creation_timestamp);
 
         return ourPDs;
 
     }
 
     public Object internalGetPropertyValue(SpooledFile splf, Object propKey) {
-        if ("File".equals(propKey)) return splf.getFile();
-        if ("File_number".equals(propKey)) return new Integer(splf.getFileNumber()); // Integer.toString(splf.getFileNumber());
-        if ("Job_name".equals(propKey)) return splf.getJobName();
-        if ("Job_user".equals(propKey)) return splf.getJobUser();
-        if ("Job_number".equals(propKey)) return new Integer(splf.getJobNumber()); // splf.getJobNumber();
-        if ("Job_system".equals(propKey)) return splf.getJobSystem();
-        if ("Creation_date".equals(propKey)) return splf.getCreationDateFormatted();
-        if ("Creation_time".equals(propKey)) return splf.getCreationTimeFormatted();
-        if ("Status".equals(propKey)) return splf.getStatus();
-        if ("Output_queue".equals(propKey)) return splf.getOutputQueueFormatted();
-        if ("Output_priority".equals(propKey)) return splf.getOutputPriority();
-        if ("User_data".equals(propKey)) return splf.getUserData();
-        if ("Form_type".equals(propKey)) return splf.getFormType();
-        if ("Copies".equals(propKey)) return new Integer(splf.getCopies());
-        if ("pages".equals(propKey)) return new Integer(splf.getPages());
-        if ("Current_page".equals(propKey)) return new Integer(splf.getCurrentPage());
-        if ("Creation_timestamp".equals(propKey)) return splf.getCreationTimestampFormatted();
+        if (FILE.equals(propKey)) return splf.getFile();
+        if (FILE_NUMBER.equals(propKey)) return new Integer(splf.getFileNumber()); // Integer.toString(splf.getFileNumber());
+        if (JOB_NAME.equals(propKey)) return splf.getJobName();
+        if (JOB_USER.equals(propKey)) return splf.getJobUser();
+        if (JOB_NUMBER.equals(propKey)) return new Integer(splf.getJobNumber()); // splf.getJobNumber();
+        if (JOB_SYSTEM.equals(propKey)) return splf.getJobSystem();
+        if (CREATION_DATE.equals(propKey)) return getCreationDateProperty(splf);
+        if (CREATION_TIME.equals(propKey)) return getCreationTimeProperty(splf);
+        if (STATUS.equals(propKey)) return splf.getStatus();
+        if (OUTPUT_QUEUE.equals(propKey)) return splf.getOutputQueueFormatted();
+        if (OUTPUT_PRIORITY.equals(propKey)) return splf.getOutputPriority();
+        if (USER_DATA.equals(propKey)) return splf.getUserData();
+        if (FORM_TYPE.equals(propKey)) return splf.getFormType();
+        if (COPIES.equals(propKey)) return new Integer(splf.getCopies());
+        if (PAGES.equals(propKey)) return new Integer(splf.getPages());
+        if (CURRENT_PAGE.equals(propKey)) return new Integer(splf.getCurrentPage());
+        if (CREATION_TIMESTAMP.equals(propKey)) return getCreationTimestampProperty(splf);
         return null;
+    }
+
+    private Object getCreationTimeProperty(SpooledFile splf) {
+        if (Preferences.getInstance().isFormatResourceDates()) {
+            return splf.getCreationTimeFormatted();
+        } else {
+            return splf.getCreationTime();
+        }
+    }
+
+    private Object getCreationDateProperty(SpooledFile splf) {
+        if (Preferences.getInstance().isFormatResourceDates()) {
+            return splf.getCreationDateFormatted();
+        } else {
+            return splf.getCreationDate();
+        }
+    }
+
+    private Object getCreationTimestampProperty(SpooledFile splf) {
+        if (Preferences.getInstance().isFormatResourceDates()) {
+            return splf.getCreationTimestampFormatted();
+        } else {
+            return splf.getCreationTimestamp();
+        }
     }
 
     public String getAbsoluteParentName(SpooledFile splf) {
