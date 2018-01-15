@@ -66,6 +66,11 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
     }
 
     @Override
+    public boolean supportsNestedFilters() {
+        return false;
+    }
+
+    @Override
     protected IAction[] getNewFilterPoolFilterActions(SystemFilterPool selectedPool, Shell shell) {
         SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);
         filterAction.setWizardPageTitle(Messages.Spooled_File_Filter);
@@ -125,7 +130,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     @Override
     public boolean showGenericShowInTableOnFilter() {
-        return false;
+        return true;
     }
 
 }
