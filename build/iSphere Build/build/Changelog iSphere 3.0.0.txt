@@ -1,6 +1,11 @@
 
 Changelog: iSphere 3.1.5.b002
 -----------------------------
+ • Fixed problem, that the iSphere spooled file filter sometimes shows "%1"
+   without any meaningful message. (Problem with Kerberos authentication)
+ • Change the iSphere error logger to open the Eclipse error log when it
+   has to log an error.
+ • Added preferences switch "Appearance - Open Eclipse error log on error".      
  • Added appearance option "Format resource date and time", which controls,
    whether date and time values of spooled files or messages are formatted
    and displayed as strings. That could be useful in certain cases, but

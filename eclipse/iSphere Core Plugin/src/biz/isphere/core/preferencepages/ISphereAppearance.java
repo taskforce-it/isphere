@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@ package biz.isphere.core.preferencepages;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,6 +39,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
     private Text textAutoRefreshDelay;
     private Text textAutoRefreshThreshold;
     private Button chkboxResetWarnings;
+    private Button chkboxShowErrorLog;
     private Label labelResetWarnings;
 
     public ISphereAppearance() {
@@ -127,6 +130,12 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         textAutoRefreshThreshold.setToolTipText(Messages.Tooltip_Threshold_items);
         textAutoRefreshThreshold.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
+        // Show error log on error
+        chkboxShowErrorLog = WidgetFactory.createCheckbox(main);
+        chkboxShowErrorLog.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
+        chkboxShowErrorLog.setToolTipText(Messages.bind(Messages.Tooltip_Show_error_log, Messages.Do_not_show_this_message_again));
+        chkboxShowErrorLog.setText(Messages.Show_error_log);
+
         // Reset warnings
         chkboxResetWarnings = WidgetFactory.createCheckbox(main);
         chkboxResetWarnings.setToolTipText(Messages.bind(Messages.Tooltip_Reset_warning_messages, Messages.Do_not_show_this_message_again));
@@ -134,6 +143,17 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         labelResetWarnings = new Label(main, SWT.NONE);
         labelResetWarnings.setToolTipText(Messages.bind(Messages.Tooltip_Reset_warning_messages, Messages.Do_not_show_this_message_again));
         labelResetWarnings.setText(Messages.Reset_warning_messages);
+        labelResetWarnings.addMouseListener(new MouseListener() {
+            public void mouseUp(MouseEvent arg0) {
+                chkboxResetWarnings.setSelection(!chkboxResetWarnings.getSelection());
+            }
+
+            public void mouseDown(MouseEvent arg0) {
+            }
+
+            public void mouseDoubleClick(MouseEvent arg0) {
+            }
+        });
     }
 
     @Override
@@ -171,6 +191,8 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
             labelResetWarnings.setEnabled(false);
             chkboxResetWarnings.setEnabled(false);
         }
+
+        preferences.setShowErrorLog(chkboxShowErrorLog.getSelection());
     }
 
     protected void setScreenToValues() {
@@ -185,6 +207,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         textAutoRefreshDelay.setText(Integer.toString(preferences.getAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);
+        chkboxShowErrorLog.setSelection(preferences.isShowErrorLog());
 
         checkAllValues();
         setControlsEnablement();
@@ -200,6 +223,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         textAutoRefreshDelay.setText(Integer.toString(preferences.getDefaultAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getDefaultAutoRefreshThreshold()));
         chkboxResetWarnings.setSelection(false);
+        chkboxResetWarnings.setSelection(preferences.getDefaultShowErrorLog());
 
         checkAllValues();
         setControlsEnablement();
