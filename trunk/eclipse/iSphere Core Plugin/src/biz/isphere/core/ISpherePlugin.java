@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
@@ -354,6 +358,46 @@ public class ISpherePlugin extends AbstractUIPlugin {
             return;
         }
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
+        showErrorLog(false);
+    }
+
+    public static void showErrorLog() {
+        showErrorLog(true);
+    }
+
+    private static void showErrorLog(final boolean logError) {
+
+        if (!Preferences.getInstance().isShowErrorLog()) {
+            return;
+        }
+
+        UIJob job = new UIJob("") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+
+                try {
+
+                    final String ERROR_LOG_VIEW = "org.eclipse.pde.runtime.LogView"; // $NON-NLS-1$
+
+                    IWorkbenchPage activePage = getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if (activePage != null) {
+                        if (activePage.findView(ERROR_LOG_VIEW) == null) {
+                            activePage.showView(ERROR_LOG_VIEW);
+                        }
+                    }
+
+                } catch (Throwable e) {
+                    if (logError) {
+                        logError("*** Could not open error log view ***", e); //$NON-NLS-1$
+                    }
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+
+        job.schedule();
     }
 
     public static boolean isSearchArgumentsListEditor() {

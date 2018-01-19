@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@ package biz.isphere.rse.spooledfiles;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
@@ -25,6 +25,8 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
@@ -47,7 +49,7 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
 
         spooledFileSubsystemAttributes = new SpooledFileSubSystemAttributes(this);
     }
-    
+
     @Override
     protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
@@ -62,8 +64,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
             }
         } catch (Exception e) {
             handleError(e);
-            SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012");
-            msg.makeSubstitution(e.getMessage());
+            SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012"); //$NON-NLS-1$
+            msg.makeSubstitution(ExceptionHelper.getLocalizedMessage(e));
             SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
             return new Object[] { msgObj };
         }
@@ -101,10 +103,18 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     }
 
     public Connection getToolboxJDBCConnection() {
+
         Connection jdbcConnection = null;
+
+        IHost host = null;
+        String connectionName = null;
+
         try {
-            jdbcConnection = IBMiConnection.getConnection(getHost()).getJDBCConnection(null, false);
-        } catch (SQLException e) {
+            host = getHost();
+            connectionName = host.getAliasName();
+            jdbcConnection = IBMiConnection.getConnection(host).getJDBCConnection(null, false);
+        } catch (Throwable e) {
+            ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", connectionName), e); //$NON-NLS-1$
         }
         return jdbcConnection;
     }
@@ -116,6 +126,7 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
      */
 
     private void handleError(Exception e) {
+        ISpherePlugin.logError("*** Could not retrieve list of spooled files from host ***", e); //$NON-NLS-1$
     }
 
     private void refreshFilter() {

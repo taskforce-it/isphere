@@ -1174,6 +1174,10 @@ public class Messages extends NLS {
 
     public static String Tooltip_Reset_warning_messages;
 
+    public static String Show_error_log;
+
+    public static String Tooltip_Show_error_log;
+
     public static String Spooled_file_name;
 
     public static String ASTERISK_generic_ASTERISK;

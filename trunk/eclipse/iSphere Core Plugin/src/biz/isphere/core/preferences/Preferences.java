@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,6 +194,8 @@ public final class Preferences {
     private static final String APPEARANCE_AUTO_REFRESH_DELAY = APPEARANCE_AUTO_REFRESH + "DELAY"; //$NON-NLS-1$
 
     private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
+
+    private static final String APPEARANCE_SHOW_ERROR_LOG = APPEARANCE_AUTO_REFRESH + "APPEARANCE_SHOW_ERROR_LOG"; //$NON-NLS-1$
 
     private static final String DECORATION = DOMAIN + "DECORATION."; //$NON-NLS-1$
 
@@ -494,6 +496,10 @@ public final class Preferences {
         return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_THRESHOLD);
     }
 
+    public boolean isShowErrorLog() {
+        return preferenceStore.getBoolean(APPEARANCE_SHOW_ERROR_LOG);
+    }
+
     public boolean isObjectDecorationExtension() {
         return preferenceStore.getBoolean(DECORATION_OBJECT_EXTENSION);
     }
@@ -706,6 +712,10 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_THRESHOLD, threshold);
     }
 
+    public void setShowErrorLog(boolean show) {
+        preferenceStore.setValue(APPEARANCE_SHOW_ERROR_LOG, show);
+    }
+
     public void setObjectDecorationExtension(boolean enabled) {
         preferenceStore.setValue(DECORATION_OBJECT_EXTENSION, enabled);
     }
@@ -787,6 +797,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
+        preferenceStore.setDefault(APPEARANCE_SHOW_ERROR_LOG, getDefaultShowErrorLog());
 
         preferenceStore.setDefault(DECORATION_OBJECT_EXTENSION, getDefaultObjectDecorationExtension());
         preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
@@ -1203,6 +1214,10 @@ public final class Preferences {
 
     public int getDefaultAutoRefreshThreshold() {
         return 5000;
+    }
+
+    public boolean getDefaultShowErrorLog() {
+        return true;
     }
 
     public boolean getDefaultObjectDecorationExtension() {
