@@ -223,7 +223,7 @@ public class SpooledFile {
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
-    private String getCreationDate() {
+    public String getCreationDate() {
         return creationDate_cyymmdd;
     }
 
@@ -243,7 +243,7 @@ public class SpooledFile {
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
-    private String getCreationTime() {
+    public String getCreationTime() {
         return creationTime_hhmmss;
     }
 
