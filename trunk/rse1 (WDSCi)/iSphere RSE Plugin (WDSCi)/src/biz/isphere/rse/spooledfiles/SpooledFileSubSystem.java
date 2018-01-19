@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2018 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@
 package biz.isphere.rse.spooledfiles;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
@@ -77,7 +79,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
         } catch (Exception e) {
             handleError(e);
             SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
-            msg.makeSubstitution(e.getMessage());
+            msg.makeSubstitution(ExceptionHelper.getLocalizedMessage(e));
             SystemMessageObject msgObj = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
             return new Object[] { msgObj };
         }
@@ -124,12 +126,20 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
     }
 
     public Connection getToolboxJDBCConnection() {
-        ISeriesSystemToolbox system = (ISeriesSystemToolbox)getSystem();
+
+        Connection jdbcConnection = null;
+
+        SystemConnection host = null;
+        String connectionName = null;
+
         try {
-            return system.getJDBCConnection(null, false);
-        } catch (SQLException e) {
-            return null;
+            host = getSystemConnection();
+            connectionName = host.getAliasName();
+            jdbcConnection = ISeriesConnection.getConnection(host).getJDBCConnection(null, false);
+        } catch (Throwable e) {
+            ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", connectionName), e);
         }
+        return jdbcConnection;
     }
 
     public void setShell(Shell shell) {
@@ -145,6 +155,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
     }
 
     private void handleError(Exception e) {
+        ISpherePlugin.logError("*** Could not retrieve list of spooled files from host ***", e);
     }
 
     private void refreshFilter() {
@@ -167,7 +178,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
     public void setVendorAttribute(String key, String value) {
         super.setVendorAttribute(SpooledFileSubSystemAttributes.VENDOR_ID, key, value);
     }
-    
+
     public boolean commit() {
         // Not needed for WDSCi.
         return true;
