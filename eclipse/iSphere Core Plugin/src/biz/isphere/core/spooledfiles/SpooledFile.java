@@ -594,7 +594,7 @@ public class SpooledFile {
      * @return timestamp the spooled file was created
      */
     public String getCreationTimestampFormatted() {
-        return DateTimeHelper.getTimestampFormatted(creationTimestamp);
+        return DateTimeHelper.getTimestampFormatted(getCreationTimestamp());
     }
 
     public void asyncOpen(final String format, final Shell shell) {
