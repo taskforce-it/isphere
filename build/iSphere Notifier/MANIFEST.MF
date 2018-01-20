@@ -3,7 +3,7 @@ Bundle-Version: 3.1.4.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Bugfix: Fixed a few issues of the Journal Explorer plug-in.
-X-Beta-Version: 3.1.5.b002
+X-Beta-Version: 3.1.5.b003
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Improved error logging for the iSphere Spooled File subsystem. Fixed problem that spooled files were not properly sorted by date in table view.
+X-Beta-Info: Fixed NullPointerException when retrieving a list of spooled files.
