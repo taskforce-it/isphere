@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Journal Explorer for RDi 8.0+
 Bundle-SymbolicName: biz.isphere.journalexplorer.rse
-Bundle-Version: 3.1.5.b002
+Bundle-Version: 3.1.5.b003
 Bundle-Activator: biz.isphere.journalexplorer.rse.ISphereJournalExplorerRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
