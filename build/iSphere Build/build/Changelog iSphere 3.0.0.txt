@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.1.5.b003
+-----------------------------
+ • Fixed NullPointerException in method replaceVariables() of class
+   SpooledFile.
+
 Changelog: iSphere 3.1.5.b002
 -----------------------------
  • Fixed problem, that the iSphere spooled file filter sometimes shows "%1"
