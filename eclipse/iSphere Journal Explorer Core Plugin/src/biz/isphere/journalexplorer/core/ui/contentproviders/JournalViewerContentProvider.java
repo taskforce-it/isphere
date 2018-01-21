@@ -11,17 +11,15 @@
 
 package biz.isphere.journalexplorer.core.ui.contentproviders;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 
 public class JournalViewerContentProvider implements ILazyContentProvider {
 
-    private ArrayList<JournalEntry> elements;
+    private JournalEntries inputData;
     private TableViewer viewer;
 
     public JournalViewerContentProvider(TableViewer viewer) {
@@ -35,27 +33,22 @@ public class JournalViewerContentProvider implements ILazyContentProvider {
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         if (newInput != null) {
-            elements = (ArrayList<JournalEntry>)newInput;
+            inputData = (JournalEntries)newInput;
         } else {
-            elements = null;
+            inputData = null;
         }
     }
 
     public void updateElement(int index) {
 
-        if (getInput() == null || getInput().length < index + 1) {
+        if (getInput() == null || getInput().size() < index + 1) {
             return;
         }
 
-        viewer.replace(elements.get(index), index);
+        viewer.replace(inputData.getItem(index), index);
     }
 
-    public JournalEntry[] getInput() {
-
-        if (elements != null) {
-            return elements.toArray(new JournalEntry[elements.size()]);
-        } else {
-            return null;
-        }
+    public JournalEntries getInput() {
+        return inputData;
     }
 }

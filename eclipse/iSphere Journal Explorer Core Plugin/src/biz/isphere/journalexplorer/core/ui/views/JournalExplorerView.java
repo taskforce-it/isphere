@@ -34,12 +34,17 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.dao.IStatusListener;
+import biz.isphere.journalexplorer.core.model.dao.StatusEvent;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
@@ -97,7 +102,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                 if (event.item instanceof JournalEntriesViewer) {
                     cleanupClosedTab((JournalEntriesViewer)event.item);
                     setActionEnablement(null);
-                    updateStatusLine();
+                    clearStatusLine();
                 }
 
             }
@@ -179,7 +184,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
                 public void widgetDefaultSelected(SelectionEvent arg0) {
                 }
+            }, new IStatusListener() {
+
+                public void updateStatus(StatusEvent event) {
+                    updateStatusLine(event);
+                }
             });
+
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
 
@@ -225,25 +236,60 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         viewer.openJournal();
         updateStatusLine();
+
+        if (viewer != null) {
+            JournalEntries journalEntries = viewer.getInput();
+            if (journalEntries != null) {
+                int numItems = journalEntries.size();
+                int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
+                if (journalEntries.isOverflow()) {
+                    DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED,
+                        Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItems));
+                }
+            }
+        }
+    }
+
+    private void clearStatusLine() {
+
+        IActionBars bars = getViewSite().getActionBars();
+        bars.getStatusLineManager().setMessage(""); //$NON-NLS-1$
+    }
+
+    private void updateStatusLine(StatusEvent event) {
+
+        IActionBars bars = getViewSite().getActionBars();
+        bars.getStatusLineManager().setMessage(Messages.bind(Messages.Number_of_journal_entries_A, event.getNumItems()));
+        bars.getStatusLineManager().update(true);
     }
 
     private void updateStatusLine() {
 
         int numItems = -1;
+        int numItemsAvailable = -1;
 
         JournalEntriesViewer viewer = getSelectedViewer();
         if (viewer != null) {
-            JournalEntry[] journalEntries = viewer.getInput();
+            JournalEntries journalEntries = viewer.getInput();
             if (journalEntries != null) {
-                numItems = journalEntries.length;
+                numItems = journalEntries.size();
+                if (journalEntries.isOverflow()) {
+                    numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
+                }
             }
         }
 
         IActionBars bars = getViewSite().getActionBars();
         if (numItems >= 0) {
-            bars.getStatusLineManager().setMessage(Messages.bind(Messages.Number_of_journal_entries_A, Integer.valueOf(numItems)));
+            String message;
+            if (numItems < numItemsAvailable) {
+                message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
+            } else {
+                message = Messages.bind(Messages.Number_of_journal_entries_A, numItems);
+            }
+            bars.getStatusLineManager().setMessage(message);
         } else {
-            bars.getStatusLineManager().setMessage(""); //$NON-NLS-1$
+            clearStatusLine();
         }
     }
 
@@ -295,9 +341,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         StructuredSelection selection = new StructuredSelection(new JournalEntry[0]);
         if (viewer != null) {
 
-            JournalEntry[] journalEntries = viewer.getInput();
+            JournalEntries journalEntries = viewer.getInput();
             if (journalEntries != null) {
-                numEntries = journalEntries.length;
+                numEntries = journalEntries.size();
             }
 
             selection = viewer.getSelection();

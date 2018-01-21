@@ -65,6 +65,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
 
         keys.add(WARNING_COMPARE_FILTERS_NOT_INSTALLED);
         keys.add(WARNING_REMOVE_STRPREPRC_SECTIONS);
+        keys.add(WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED);
         keys.add(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION);
         keys.add(CONFIRM_REMOVE_STRPREPRC_HEADER);
         keys.add(TOO_MANY_SPOOLED_FILES_WARNING);
@@ -79,6 +80,7 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         Preferences preferences = Preferences.getInstance();
         preferences.setShowWarningMessage(WARNING_COMPARE_FILTERS_NOT_INSTALLED, true);
         preferences.setShowWarningMessage(WARNING_REMOVE_STRPREPRC_SECTIONS, true);
+        preferences.setShowWarningMessage(WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED, true);
         preferences.setShowWarningMessage(INFORMATION_DATA_SPACE_FIND_REPLACE_INFORMATION, true);
         preferences.setShowWarningMessage(CONFIRM_REMOVE_STRPREPRC_HEADER, true);
         preferences.setShowWarningMessage(TOO_MANY_SPOOLED_FILES_WARNING, true);
