@@ -15,6 +15,7 @@ public interface DoNotAskMeAgain {
      */
     public static final String WARNING_COMPARE_FILTERS_NOT_INSTALLED = "COMPARE_FILTERS_NOT_INSTALLED"; //$NON-NLS-1$
     public static final String WARNING_REMOVE_STRPREPRC_SECTIONS = "REMOVE_STRPREPRC_SECTIONS"; //$NON-NLS-1$
+    public static final String WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED = "NOT_ALL_JOURNAL_ENTRIES_LOADED"; //$NON-NLS-1$
 
     /*
      * Informational message keys

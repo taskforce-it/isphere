@@ -57,6 +57,7 @@ public class Messages extends NLS {
     public static String SelectEntriesToCompareDialog_ChooseRightRecord;
     public static String SideBySideCompareDialog_SideBySideComparison;
     public static String Number_of_journal_entries_A;
+    public static String Number_of_journal_entries_A_of_B;
     public static String SqlEditor_WHERE;
 
     public static String Error_Unknown_data_type;
@@ -65,6 +66,8 @@ public class Messages extends NLS {
     public static String Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B;
     public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
     public static String Error_No_record_level_operation;
+
+    public static String Warning_Not_all_journal_entries_loaded;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;
@@ -125,6 +128,9 @@ public class Messages extends NLS {
     public static String Enable_coloring_tooltip;
     public static String Clear_Colors;
     public static String File_A_B_does_not_exist;
+
+    public static String Sql_Properties;
+    public static String Maximum_number_of_rows_to_fetch;
 
     public static String ColumnHeading_ColumnName;
     public static String ColumnHeading_Description;

@@ -10,11 +10,12 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -36,13 +37,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         this.outputFile = outputFile;
     }
 
-    public List<JournalEntry> load() throws Exception {
-        return load(null);
-    }
+    public JournalEntries load(String whereClause, IStatusListener statusListener) throws Exception {
 
-    public List<JournalEntry> load(String whereClause) throws Exception {
-
-        List<JournalEntry> journalEntries = new ArrayList<JournalEntry>();
+        JournalEntries journalEntries = new JournalEntries();
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -53,6 +50,14 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             if (!StringHelper.isNullOrEmpty(whereClause)) {
                 sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
             }
+
+            int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+            if (maxNumRows >= 0) {
+                sqlStatement = sqlStatement + " FETCH FIRST " + (maxNumRows + 1) + " ROWS ONLY"; //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                maxNumRows = Integer.MAX_VALUE;
+            }
+
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
             resultSet.setFetchSize(50);
@@ -60,17 +65,29 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             if (resultSet != null) {
 
                 JournalEntry journalEntry = null;
+                StatusEvent statusEvent = new StatusEvent(outputFile);
 
                 while (resultSet.next()) {
 
-                    journalEntry = new JournalEntry(outputFile);
-                    journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
-                    journalEntry.setOutFileName(outputFile.getOutFileName());
+                    if (journalEntries.size() >= maxNumRows) {
+                        handleOverflowError(journalEntries);
+                    } else {
+                        journalEntry = new JournalEntry(outputFile);
+                        journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
+                        journalEntry.setOutFileName(outputFile.getOutFileName());
 
-                    journalEntries.add(populateJournalEntry(resultSet, journalEntry));
+                        journalEntries.add(populateJournalEntry(resultSet, journalEntry));
 
-                    if (journalEntry.isRecordEntryType()) {
-                        MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                        if (statusListener != null) {
+                            if (journalEntries.size() % 100 == 0) {
+                                statusEvent.setNumItems(journalEntries.size());
+                                statusListener.updateStatus(statusEvent);
+                            }
+                        }
+
+                        if (journalEntry.isRecordEntryType()) {
+                            MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                        }
                     }
                 }
             }
@@ -81,6 +98,41 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         }
 
         return journalEntries;
+    }
+
+    private void handleOverflowError(JournalEntries journalEntries) {
+
+        String sqlCountStatement = getSqlCountStatement(outputFile);
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            preparedStatement = prepareStatement(sqlCountStatement);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                journalEntries.setOverflow(true, resultSet.getInt(1));
+            } else {
+                journalEntries.setOverflow(true, Integer.MAX_VALUE);
+            }
+
+        } catch (SQLException e) {
+            ISpherePlugin.logError("*** Could not execute SQL statement: '" + sqlCountStatement + "' ***", e);
+        } finally {
+            try {
+                super.destroy(preparedStatement);
+                super.destroy(resultSet);
+            } catch (Throwable e) {
+            }
+        }
+    }
+
+    private String getSqlCountStatement(File outputFile) {
+
+        String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+
+        return sqlStatement;
     }
 
     public abstract String getSqlStatement();

@@ -11,10 +11,8 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
-import java.util.List;
-
 import biz.isphere.journalexplorer.core.model.File;
-import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 
@@ -33,6 +31,7 @@ public class JournalDAO extends DAOBase {
 
     private AbstractTypeDAO typeDAO;
     private String whereClause;
+    private IStatusListener listener;
 
     public JournalDAO(File outputFile) throws Exception {
         super(outputFile.getConnectionName());
@@ -56,6 +55,10 @@ public class JournalDAO extends DAOBase {
         }
     }
 
+    public void setStatusListener(IStatusListener listener) {
+        this.listener = listener;
+    }
+
     public String getSqlStatement() {
         return typeDAO.getSqlStatement();
     }
@@ -68,9 +71,9 @@ public class JournalDAO extends DAOBase {
         this.whereClause = whereClause;
     }
 
-    public List<JournalEntry> getJournalData(String whereClause) throws Exception {
+    public JournalEntries getJournalData(String whereClause) throws Exception {
         setWhereClause(whereClause);
-        return typeDAO.load(getWhereClause());
+        return typeDAO.load(getWhereClause(), listener);
     }
 
     private int getOutfileType(File outputFile) throws Exception {

@@ -59,6 +59,10 @@ public final class Preferences implements ColumnsDAO {
 
     private static final String COLOR_NULL = "[null]"; //$NON-NLS-1$
 
+    public static final String SQL = DOMAIN + "SQL."; //$NON-NLS-1$
+
+    public static final String MAX_NUM_ROWS_TO_FETCH = SQL + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -126,6 +130,10 @@ public final class Preferences implements ColumnsDAO {
         return "IBM037"; //$NON-NLS-1$
     }
 
+    public int getMaximumNumberOfRowsToFetch() {
+        return preferenceStore.getInt(MAX_NUM_ROWS_TO_FETCH);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -145,6 +153,10 @@ public final class Preferences implements ColumnsDAO {
             preferenceStore.setValue(getColumnOrderKey(i), columnName);
             preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
         }
+    }
+
+    public void setMaximumNumberOfRowsToFetch(int maxNumRows) {
+        preferenceStore.setValue(MAX_NUM_ROWS_TO_FETCH, maxNumRows);
     }
 
     /*
@@ -237,6 +249,8 @@ public final class Preferences implements ColumnsDAO {
             preferenceStore.setDefault(getColumnOrderKey(i), columnName);
             preferenceStore.setDefault(getColorKey(columnName), serializeColor(getInitialColumnColor(columnName)));
         }
+
+        preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
     }
 
     /*
@@ -323,6 +337,10 @@ public final class Preferences implements ColumnsDAO {
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOESD.name()));
 
         return sortedNames.toArray(new JournalEntryAppearanceAttributes[sortedNames.size()]);
+    }
+
+    public int getInitialMaximumNumberOfRowsToFetch() {
+        return 1000;
     }
 
     private JournalEntryAppearanceAttributes createAppearanceAttributes(String columnName) {

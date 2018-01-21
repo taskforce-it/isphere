@@ -43,10 +43,12 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.dao.IStatusListener;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -73,13 +75,14 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private SelectionListener selectionListener;
+    private IStatusListener statusListener;
     private Composite container;
     private TableViewer tableViewer;
     private String connectionName;
     private File outputFile;
     private MetaTable outputFileMetaData;
     private JournalDAO journalDAO;
-    private List<JournalEntry> data;
+    private JournalEntries data;
     private Exception dataLoadException;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private String whereClause;
@@ -87,11 +90,12 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
     private boolean showSqlEditor;
     private SqlEditor sqlEditor;
 
-    public JournalEntriesViewer(CTabFolder parent, File outputFile, SelectionListener selectionListener) {
+    public JournalEntriesViewer(CTabFolder parent, File outputFile, SelectionListener selectionListener, IStatusListener statusListener) {
         super(parent, SWT.NONE);
 
         this.outputFile = outputFile;
         this.selectionListener = selectionListener;
+        this.statusListener = statusListener;
         this.connectionName = outputFile.getConnectionName();
         this.container = new Composite(parent, SWT.NONE);
 
@@ -167,6 +171,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
                 try {
 
                     journalDAO = new JournalDAO(outputFile);
+                    journalDAO.setStatusListener(statusListener);
                     data = journalDAO.getJournalData(whereClause);
                     container.layout(true);
                     tableViewer.setInput(null);
@@ -259,7 +264,7 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
         return selectedItems.toArray(new JournalEntry[selectedItems.size()]);
     }
 
-    public JournalEntry[] getInput() {
+    public JournalEntries getInput() {
 
         JournalViewerContentProvider contentProvider = (JournalViewerContentProvider)tableViewer.getContentProvider();
         return contentProvider.getInput();
