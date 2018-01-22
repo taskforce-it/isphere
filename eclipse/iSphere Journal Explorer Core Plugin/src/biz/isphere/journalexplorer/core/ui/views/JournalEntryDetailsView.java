@@ -190,7 +190,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                         }
                     }
 
-                    int joesdLength = journalEntry.getSpecificData().length;
+                    int joesdLength = journalEntry.getSpecificDataLength();
                     int recordLength = metatable.getRecordLength();
                     if (joesdLength < recordLength) {
                         messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,

@@ -91,7 +91,7 @@ public class JOESDProperty extends JournalProperty {
                     columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
                 }
 
-                if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificData().length) {
+                if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificDataLength()) {
                     JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_not_available, this);
                     journalProperty.setErrorParsing(true);
                     specificProperties.add(journalProperty);
