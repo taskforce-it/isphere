@@ -1004,8 +1004,8 @@ public class JournalEntry {
      * 
      * @return value of field 'JOESD'.
      */
-    public byte[] getSpecificData() {
-        return specificData;
+    public int getSpecificDataLength() {
+        return specificData.length;
     }
 
     public byte[] getSpecificData(int recordLength) {
