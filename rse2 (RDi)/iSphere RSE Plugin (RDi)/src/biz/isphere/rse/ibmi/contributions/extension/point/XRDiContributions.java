@@ -408,7 +408,7 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @return Connection
      */
     public Connection getJdbcConnection(String connectionName) {
-        return getJdbcConnection(null, connectionName);
+        return getJdbcConnectionWithProperties(null, connectionName, null);
     }
 
     /**
