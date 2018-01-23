@@ -92,6 +92,8 @@ public class XRDiContributions implements IIBMiHostContributions {
                 Method methodIsKerberosChosen = kerberosPreferencePage.getMethod("isKerberosChosen"); //$NON-NLS-1$
                 isKerberosAuthentication = (Boolean)methodIsKerberosChosen.invoke(null);
             }
+        } catch (ClassNotFoundException e) {
+            isKerberosAuthentication = false;
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Error on calling method 'isKerberosAuthentication' ***", e); //$NON-NLS-1$
         }
