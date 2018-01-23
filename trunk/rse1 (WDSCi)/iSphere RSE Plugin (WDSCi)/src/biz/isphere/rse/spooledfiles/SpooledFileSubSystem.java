@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
@@ -135,7 +136,7 @@ public class SpooledFileSubSystem extends DefaultSubSystemImpl implements IISeri
         try {
             host = getSystemConnection();
             connectionName = host.getAliasName();
-            jdbcConnection = ISeriesConnection.getConnection(host).getJDBCConnection(null, false);
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
         } catch (Throwable e) {
             ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", connectionName), e);
         }

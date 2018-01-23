@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ibm.etools.iseries.core,
  com.ibm.etools.systems.core,
+ biz.isphere.core,
  biz.isphere.journalexplorer.base
 Eclipse-LazyStart: true
 Import-Package: com.ibm.as400.access

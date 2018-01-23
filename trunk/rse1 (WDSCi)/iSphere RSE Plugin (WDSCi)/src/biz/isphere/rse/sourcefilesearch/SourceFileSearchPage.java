@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.sourcefilesearch;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -45,6 +46,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
@@ -763,7 +765,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 }
             }
 
-            new SearchExec().execute(tConnection.getConnectionName(), tConnection.getJDBCConnection(null, false), searchOptions,
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
+            
+            new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions,
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {

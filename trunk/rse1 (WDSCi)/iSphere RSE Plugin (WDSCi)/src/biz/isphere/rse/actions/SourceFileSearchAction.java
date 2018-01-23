@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.sourcefilesearch.SearchDialog;
@@ -210,7 +211,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
         Connection jdbcConnection = null;
         try {
             as400 = _connection.getAS400ToolboxObject(shell);
-            jdbcConnection = _connection.getJDBCConnection(null, false);
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(_connection.getConnectionName());
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
         }
