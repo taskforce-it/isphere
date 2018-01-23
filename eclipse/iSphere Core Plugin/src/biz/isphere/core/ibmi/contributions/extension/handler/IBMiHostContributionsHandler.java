@@ -10,6 +10,7 @@ package biz.isphere.core.ibmi.contributions.extension.handler;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -17,16 +18,18 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-
 public class IBMiHostContributionsHandler {
 
     private static final String EXTENSION_ID = "biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions"; //$NON-NLS-1$
+
+    private static IIBMiHostContributions factory;
 
     public static boolean hasContribution() {
 
@@ -35,6 +38,17 @@ public class IBMiHostContributionsHandler {
         }
 
         return true;
+    }
+
+    public static boolean isKerberosAuthentication() {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isKerberosAuthentication();
     }
 
     public static String executeCommand(String connectionName, String command) {
@@ -108,6 +122,10 @@ public class IBMiHostContributionsHandler {
     }
 
     public static AS400 getSystem(String connectionName) {
+        return getSystem(null, connectionName);
+    }
+
+    public static AS400 getSystem(String profileName, String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -115,7 +133,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.getSystem(connectionName);
+        return factory.getSystem(profileName, connectionName);
     }
 
     public static AS400 getSystem(IEditorPart editor) {
@@ -192,6 +210,18 @@ public class IBMiHostContributionsHandler {
     }
 
     public static Connection getJdbcConnection(String connectionName) {
+        return getJdbcConnection(null, connectionName, null);
+    }
+
+    public static Connection getJdbcConnection(String connectionName, Properties properties) {
+        return getJdbcConnection(null, connectionName, properties);
+    }
+
+    public static Connection getJdbcConnection(String profileName, String connectionName) {
+        return getJdbcConnection(profileName, connectionName, null);
+    }
+
+    public static Connection getJdbcConnection(String profileName, String connectionName, Properties properties) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -199,7 +229,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.getJdbcConnection(connectionName);
+        return factory.getJdbcConnection(profileName, connectionName);
     }
 
     /**
@@ -249,20 +279,23 @@ public class IBMiHostContributionsHandler {
      */
     private static IIBMiHostContributions getContributionsFactory() {
 
-        IIBMiHostContributions factory = null;
+        if (factory == null) {
 
-        IExtensionRegistry tRegistry = Platform.getExtensionRegistry();
-        IConfigurationElement[] configElements = tRegistry.getConfigurationElementsFor(EXTENSION_ID);
+            IExtensionRegistry tRegistry = Platform.getExtensionRegistry();
+            IConfigurationElement[] configElements = tRegistry.getConfigurationElementsFor(EXTENSION_ID);
 
-        if (configElements != null && configElements.length > 0) {
-            try {
-                final Object tempDialog = configElements[0].createExecutableExtension("class");
-                if (tempDialog instanceof IIBMiHostContributions) {
-                    factory = (IIBMiHostContributions)tempDialog;
+            if (configElements != null && configElements.length > 0) {
+                try {
+                    final Object tempDialog = configElements[0].createExecutableExtension("class");
+                    if (tempDialog instanceof IIBMiHostContributions) {
+                        factory = (IIBMiHostContributions)tempDialog;
+                    }
+                } catch (CoreException e) {
                 }
-            } catch (CoreException e) {
             }
+
         }
+
         return factory;
     }
 

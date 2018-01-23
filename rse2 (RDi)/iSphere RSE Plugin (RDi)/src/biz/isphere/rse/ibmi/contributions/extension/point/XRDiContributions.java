@@ -8,10 +8,17 @@
 
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -23,6 +30,20 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400JDBCDriver;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
+import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
+import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.systems.editor.IRemoteResourceProperties;
+import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -37,19 +58,6 @@ import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
-import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
-import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.systems.editor.IRemoteResourceProperties;
-import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
-
 /**
  * This class connects to the
  * <i>biz.isphere.core.ibmi.contributions.extension.point
@@ -59,6 +67,36 @@ import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
  * @author Thomas Raddatz
  */
 public class XRDiContributions implements IIBMiHostContributions {
+
+    private Map<String, Connection> jdbcConnections;
+
+    public XRDiContributions() {
+        this.jdbcConnections = new HashMap<String, Connection>();
+    }
+
+    /**
+     * Returns <i>true</i> when Kerberos authentication is enabled on the
+     * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
+     * 
+     * @return <i>true</i>, if Kerberos authentication is selected, else
+     *         <i>false</i>
+     */
+    public boolean isKerberosAuthentication() {
+
+        boolean isKerberosAuthentication = false;
+
+        try {
+            Class<?> kerberosPreferencePage = Class.forName("com.ibm.etools.iseries.connectorservice.ui.KerberosPreferencePage");
+            if (kerberosPreferencePage != null) {
+                Method methodIsKerberosChosen = kerberosPreferencePage.getMethod("isKerberosChosen"); //$NON-NLS-1$
+                isKerberosAuthentication = (Boolean)methodIsKerberosChosen.invoke(null);
+            }
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Error on calling method 'isKerberosAuthentication' ***", e); //$NON-NLS-1$
+        }
+
+        return isKerberosAuthentication;
+    }
 
     /**
      * Executes a given command for a given connection.
@@ -370,30 +408,175 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @return Connection
      */
     public Connection getJdbcConnection(String connectionName) {
-
         return getJdbcConnection(null, connectionName);
     }
 
     /**
      * Returns a JDBC connection for a given profile and connection name.
      * 
-     * @parm profile - Profile that is searched for the JDBC connection
+     * @param profile - Profile that is searched for the JDBC connection
      * @param connectionName - Name of the connection, the JDBC connection is
      *        returned for
      * @return Connection
      */
     public Connection getJdbcConnection(String profile, String connectionName) {
+        return getJdbcConnectionWithProperties(profile, connectionName, null);
+    }
+
+    /**
+     * Returns a JDBC connection for a given profile and connection name.
+     * 
+     * @param profile - Profile that is searched for the JDBC connection
+     * @param connectionName - Name of the connection, the JDBC connection is
+     *        returned for
+     * @param properties - JDBC connection properties
+     * @return Connection
+     */
+    private Connection getJdbcConnectionWithProperties(String profile, String connectionName, Properties properties) {
 
         IBMiConnection connection = getConnection(profile, connectionName);
         if (connection == null) {
             return null;
         }
 
+        if (properties == null) {
+            properties = new Properties();
+            properties.put("prompt", "false");
+            properties.put("big decimal", "false");
+        }
+
+        Connection jdbcConnection = null;
+
+        if (isISphereJdbcConnectionManager()) {
+            if (isKerberosAuthentication()) {
+                jdbcConnection = getKerberosJdbcConnection(connection, properties);
+            } else if (isISphereJdbcConnectionManager()) {
+                jdbcConnection = getISphereJdbcConnection(connection, properties);
+            }
+        } else {
+            jdbcConnection = getStandardIBMiJdbcConnection(connection, properties);
+        }
+
+        return jdbcConnection;
+    }
+
+    private boolean isISphereJdbcConnectionManager() {
+        return Preferences.getInstance().isISphereJdbcConnectionManager();
+    }
+
+    private Connection getISphereJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
+        return getKerberosJdbcConnection(ibmiConnection, properties);
+    }
+
+    private Connection getKerberosJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
+
+        Connection jdbcConnection = getJdbcConnectionFromCache(ibmiConnection, properties);
+        if (jdbcConnection == null) {
+            jdbcConnection = produceJDBCConnection(ibmiConnection, properties);
+        }
+
+        return jdbcConnection;
+    }
+
+    private Connection getStandardIBMiJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
+
+        Connection jdbcConnection = null;
+
         try {
-            return connection.getJDBCConnection(null, false);
+
+            jdbcConnection = ibmiConnection.getJDBCConnection(null, false);
+
         } catch (Throwable e) {
             return null;
         }
+
+        return jdbcConnection;
+    }
+
+    private Connection produceJDBCConnection(IBMiConnection ibmiConnection, Properties properties) {
+
+        Connection jdbcConnection = null;
+        AS400JDBCDriver as400JDBCDriver = null;
+
+        try {
+
+            try {
+
+                as400JDBCDriver = (AS400JDBCDriver)DriverManager.getDriver("jdbc:as400");
+
+            } catch (SQLException e) {
+
+                as400JDBCDriver = new AS400JDBCDriver();
+                DriverManager.registerDriver(as400JDBCDriver);
+
+            }
+
+            AS400 system = ibmiConnection.getAS400ToolboxObject();
+            jdbcConnection = as400JDBCDriver.connect(system, properties, null);
+
+            addConnectionToCache(ibmiConnection, properties, jdbcConnection);
+
+        } catch (Throwable e) {
+        }
+
+        return jdbcConnection;
+    }
+
+    private Connection getJdbcConnectionFromCache(IBMiConnection ibmiConnection, Properties properties) {
+
+        String connectionKey = getConnectionKey(ibmiConnection, properties);
+
+        Connection jdbcConnection = jdbcConnections.get(connectionKey);
+        if (jdbcConnection == null) {
+            return null;
+        }
+
+        try {
+
+            if (jdbcConnection.isClosed()) {
+                jdbcConnection = null;
+            }
+
+            if (!jdbcConnection.isValid(30)) {
+                jdbcConnection.close();
+                jdbcConnection = null;
+            }
+
+        } catch (SQLException e) {
+            jdbcConnection = null;
+        }
+
+        if (jdbcConnection == null) {
+            jdbcConnections.remove(connectionKey);
+        }
+
+        return jdbcConnection;
+    }
+
+    private void addConnectionToCache(IBMiConnection ibmiConnection, Properties properties, Connection jdbcConnection) {
+        jdbcConnections.put(getConnectionKey(ibmiConnection, properties), jdbcConnection);
+    }
+
+    private String getConnectionKey(IBMiConnection ibmiConnection, Properties properties) {
+        return ibmiConnection.getHostName() + "|" + propertiesAsString(properties); //$NON-NLS-1$
+    }
+
+    private String propertiesAsString(Properties properties) {
+
+        StringBuilder buffer = new StringBuilder();
+
+        for (Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey() instanceof String) {
+                if (entry.getValue() instanceof String) {
+                    buffer.append((String)entry.getKey());
+                    buffer.append("="); //$NON-NLS-1$
+                    buffer.append((String)entry.getValue());
+                    buffer.append(";"); //$NON-NLS-1$
+                }
+            }
+        }
+
+        return buffer.toString();
     }
 
     /**

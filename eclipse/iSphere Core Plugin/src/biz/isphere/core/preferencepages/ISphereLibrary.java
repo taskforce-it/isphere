@@ -25,10 +25,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import com.ibm.as400.access.AS400;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -41,8 +44,6 @@ import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-import com.ibm.as400.access.AS400;
-
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
     private String iSphereLibrary;
@@ -54,6 +55,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     private Label textISphereLibraryVersion;
     private Button buttonUpdateISphereLibraryVersion;
     private Button buttonTransfer;
+    private Button chkboxUseISphereJdbc;
 
     private boolean updateISphereLibraryVersion;
 
@@ -62,7 +64,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
-        
+
         this.updateISphereLibraryVersion = false;
     }
 
@@ -158,9 +160,24 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
+        createJdbcSection(container);
+
         setScreenToValues();
 
         return container;
+    }
+
+    private void createJdbcSection(Composite parent) {
+
+        Group groupJdbcProperties = new Group(parent, SWT.NONE);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.horizontalSpan = 3;
+        groupJdbcProperties.setLayoutData(gridData);
+        groupJdbcProperties.setLayout(new GridLayout(1, false));
+        groupJdbcProperties.setText(Messages.JDBC_Properties);
+
+        chkboxUseISphereJdbc = WidgetFactory.createCheckbox(groupJdbcProperties, Messages.Use_iSphere_connection_manager);
+        chkboxUseISphereJdbc.setToolTipText(Messages.Tooltip_Use_iSphere_connection_manager);
     }
 
     @Override
@@ -182,20 +199,21 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void setControlEnablement() {
-        
+
         if (updateISphereLibraryVersion) {
             buttonUpdateISphereLibraryVersion.setEnabled(false);
         } else {
             buttonUpdateISphereLibraryVersion.setEnabled(true);
         }
     }
-    
+
     protected void setStoreToValues() {
 
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
-        Preferences.getInstance().setFtpPortNumber(
-            IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance()
+            .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
 
     }
 
@@ -205,6 +223,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
+        chkboxUseISphereJdbc.setSelection(Preferences.getInstance().isISphereJdbcConnectionManager());
 
         setScreenValues();
     }
@@ -214,6 +233,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
+        chkboxUseISphereJdbc.setSelection(Preferences.getInstance().getDefaultUseISphereJdbcConnectionManager());
 
         setScreenValues();
     }

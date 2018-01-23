@@ -13,15 +13,19 @@ package biz.isphere.journalexplorer.rse.shared.model.dao;
 
 import java.sql.Connection;
 
-import biz.isphere.journalexplorer.rse.Messages;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Date;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.journalexplorer.rse.Messages;
+
 public abstract class AbstractDAOBase {
-    // protected static final String properties = "thread used=false; extendeddynamic=true; package criteria=select; package cache=true;"; //$NON-NLS-1$
-    protected static final String properties = "translate hex=binary; prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
+    // protected static final String properties = "thread used=false;
+    // extendeddynamic=true; package criteria=select; package cache=true;";
+    // //$NON-NLS-1$
+    // protected static final String properties = "translate hex=binary;
+    // prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
 
     protected IBMiConnection ibmiConnection;
     private Connection connection;
@@ -49,7 +53,11 @@ public abstract class AbstractDAOBase {
             dateSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
             timeSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getTimeSeparator();
 
-            connection = ibmiConnection.getJDBCConnection(properties, true);
+            // Properties properties = new Properties();
+            // properties.put("translate hex", "binary");
+            // properties.put("prompt", "false");
+
+            connection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
             connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));

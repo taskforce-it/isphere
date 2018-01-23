@@ -205,6 +205,10 @@ public final class Preferences {
 
     private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
 
+    private static final String JDBC = DOMAIN + "JDBC."; //$NON-NLS-1$
+
+    private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -403,7 +407,7 @@ public final class Preferences {
                 filename = null;
             } else {
                 if (file.isDirectory()) {
-                    filename = filename + SOURCE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+                    filename = filename + SOURCE_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
                 }
             }
         } else {
@@ -411,7 +415,7 @@ public final class Preferences {
         }
 
         if (filename == null) {
-            return getDefaultSourceFileSearchResultsSaveDirectory() + SOURCE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+            return getDefaultSourceFileSearchResultsSaveDirectory() + SOURCE_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
         }
 
         return filename;
@@ -450,7 +454,7 @@ public final class Preferences {
                 filename = null;
             } else {
                 if (file.isDirectory()) {
-                    filename = filename + MESSAGE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+                    filename = filename + MESSAGE_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
                 }
             }
         } else {
@@ -458,7 +462,7 @@ public final class Preferences {
         }
 
         if (filename == null) {
-            return getDefaultMessageFileSearchResultsSaveDirectory() + MESSAGE_FILE_SEARCH_FILE_NAME; //$NON-NLS-1$
+            return getDefaultMessageFileSearchResultsSaveDirectory() + MESSAGE_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
         }
 
         return filename;
@@ -510,6 +514,15 @@ public final class Preferences {
 
     public boolean isDataMemberDecorationExtension() {
         return preferenceStore.getBoolean(DECORATION_DATA_MEMBER_EXTENSION);
+    }
+
+    public boolean isISphereJdbcConnectionManager() {
+        return preferenceStore.getBoolean(JDBC_USE_ISPHERE_MANAGER);
+    }
+
+    public boolean isKerberosAuthentication() {
+
+        return IBMiHostContributionsHandler.isKerberosAuthentication();
     }
 
     /*
@@ -728,6 +741,10 @@ public final class Preferences {
         preferenceStore.setValue(DECORATION_DATA_MEMBER_EXTENSION, enabled);
     }
 
+    public void setUseISphereJdbcConnectionManager(boolean enabled) {
+        preferenceStore.setValue(JDBC_USE_ISPHERE_MANAGER, enabled);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -802,6 +819,8 @@ public final class Preferences {
         preferenceStore.setDefault(DECORATION_OBJECT_EXTENSION, getDefaultObjectDecorationExtension());
         preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
         preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());
+
+        preferenceStore.setDefault(JDBC_USE_ISPHERE_MANAGER, getDefaultUseISphereJdbcConnectionManager());
     }
 
     /*
@@ -1232,6 +1251,10 @@ public final class Preferences {
         return false;
     }
 
+    public boolean getDefaultUseISphereJdbcConnectionManager() {
+        return false;
+    }
+
     /**
      * Returns an arrays of maximum lengths values for retrieving data queue
      * entries.
@@ -1381,9 +1404,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put("*QUALIFIED",
+            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

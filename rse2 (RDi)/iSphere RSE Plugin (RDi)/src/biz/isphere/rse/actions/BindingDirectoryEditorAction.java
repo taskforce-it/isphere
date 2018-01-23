@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
+
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.ibmi.contributions.extension.point.XRDiContributions;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
@@ -51,10 +51,8 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
                     String objectType = qsysRemoteObject.getType();
                     String description = qsysRemoteObject.getDescription();
 
-                    XRDiContributions rdiContributions = new XRDiContributions();
-
-                    AS400 as400 = rdiContributions.getSystem(profile, connectionName);
-                    Connection jdbcConnection = rdiContributions.getJdbcConnection(profile, connectionName);
+                    AS400 as400 = IBMiHostContributionsHandler.getSystem(profile, connectionName);
+                    Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(profile, connectionName);
                     if (as400 != null && jdbcConnection != null) {
 
                         RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);

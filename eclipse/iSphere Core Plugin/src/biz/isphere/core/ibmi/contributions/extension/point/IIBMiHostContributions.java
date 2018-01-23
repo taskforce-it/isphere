@@ -13,13 +13,22 @@ import java.util.List;
 
 import org.eclipse.ui.IEditorPart;
 
-import biz.isphere.core.clcommands.ICLPrompter;
-import biz.isphere.core.internal.Member;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 
+import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.core.internal.Member;
+
 public interface IIBMiHostContributions {
+
+    /**
+     * Returns <i>true</i> when Kerberos authentication is enabled on the
+     * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
+     * 
+     * @return <i>true</i>, if Kerberos authentication is selected, else
+     *         <i>false</i>
+     */
+    public boolean isKerberosAuthentication();
 
     /**
      * Executes a given command for a given connection.
