@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.sourcefilesearch;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,12 +44,18 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
@@ -62,11 +69,6 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -575,8 +577,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             betweenColumnsButton.setSelection(true);
             processBetweenColumnsButtonSelected();
         }
-        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN))); //$NON-NLS-1$
-        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN))); //$NON-NLS-1$
+        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN))); // $NON-NLS-1$
+        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN))); // $NON-NLS-1$
     }
 
     /**
@@ -765,7 +767,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 }
             }
 
-            new SearchExec().execute(tConnection.getConnectionName(), tConnection.getJDBCConnection(null, false), searchOptions,
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
+
+            new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions,
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
@@ -858,7 +862,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         endColumnText.setEnabled(true);
 
         if (StringHelper.isNullOrEmpty(startColumnText.getText())) {
-            startColumnText.setText(Integer.toString(DEFAULT_START_COLUMN)); //$NON-NLS-1$
+            startColumnText.setText(Integer.toString(DEFAULT_START_COLUMN)); // $NON-NLS-1$
         }
 
         if (StringHelper.isNullOrEmpty(endColumnText.getText())) {

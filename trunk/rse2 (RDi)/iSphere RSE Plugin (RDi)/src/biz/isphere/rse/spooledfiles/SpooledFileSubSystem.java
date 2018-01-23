@@ -25,19 +25,20 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 
+import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFileSubSystemAttributes;
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
 import biz.isphere.rse.connection.ConnectionManager;
-
-import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem, ISpooledFileSubSystem {
 
@@ -51,8 +52,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     }
 
     @Override
-    protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException,
-        InterruptedException {
+    protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
+        throws InvocationTargetException, InterruptedException {
         SpooledFileResource[] spooledFileResources;
         try {
             SpooledFile[] spooledFiles = base.internalResolveFilterString(RSEUIPlugin.getActiveWorkbenchShell(), getConnectionName(),
@@ -73,8 +74,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     }
 
     @Override
-    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
-        InterruptedException {
+    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
+        throws InvocationTargetException, InterruptedException {
         return internalResolveFilterString(filterString, monitor);
     }
 
@@ -112,7 +113,7 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
         try {
             host = getHost();
             connectionName = host.getAliasName();
-            jdbcConnection = IBMiConnection.getConnection(host).getJDBCConnection(null, false);
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
         } catch (Throwable e) {
             ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", connectionName), e); //$NON-NLS-1$
         }

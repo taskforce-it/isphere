@@ -1374,6 +1374,12 @@ public class Messages extends NLS {
 
     public static String Tooltip_Format_resource_dates;
 
+    public static String JDBC_Properties;
+
+    public static String Use_iSphere_connection_manager;
+
+    public static String Tooltip_Use_iSphere_connection_manager;
+
     /*
      * Warning messages
      */

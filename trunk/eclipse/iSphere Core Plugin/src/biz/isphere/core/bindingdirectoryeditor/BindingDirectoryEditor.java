@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class BindingDirectoryEditor extends EditorPart {
         container.setLayout(new FillLayout());
 
         BindingDirectoryEntryViewer _bindingDirectoryEntryViewer = new BindingDirectoryEntryViewer(input.getLevel(), input.getAS400(),
-            input.getJDBCConnection(), input.getConnection(), input.getObjectLibrary(), input.getBindingDirectory(), input.getMode());
+            input.getJdbcConnection(), input.getConnection(), input.getObjectLibrary(), input.getBindingDirectory(), input.getMode());
 
         _bindingDirectoryEntryViewer.createContents(container);
 

@@ -484,7 +484,18 @@ public final class WidgetFactory {
      * @return checkbox field
      */
     public static Button createCheckbox(Composite parent) {
-        return WidgetFactory.getInstance().produceCheckboxField(parent);
+        return WidgetFactory.getInstance().produceCheckboxField(parent, null);
+    }
+
+    /**
+     * Produces a checkbox field with a label.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return checkbox field
+     */
+    public static Button createCheckbox(Composite parent, String label) {
+        return WidgetFactory.getInstance().produceCheckboxField(parent, label);
     }
 
     /**
@@ -761,9 +772,13 @@ public final class WidgetFactory {
         return spinner;
     }
 
-    private Button produceCheckboxField(Composite parent) {
+    private Button produceCheckboxField(Composite parent, String label) {
 
         Button checkBox = new Button(parent, SWT.CHECK);
+
+        if (label != null) {
+            checkBox.setText(label);
+        }
 
         return checkBox;
     }
