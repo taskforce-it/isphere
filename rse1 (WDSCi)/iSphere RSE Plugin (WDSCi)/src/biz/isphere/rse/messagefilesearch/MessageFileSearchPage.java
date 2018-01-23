@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.messagefilesearch;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -47,6 +48,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
@@ -814,8 +816,10 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
             searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
 
-            new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), tConnection.getJDBCConnection(null,
-                false), searchOptions, new ArrayList<SearchElement>(searchElements.values()), postRun);
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
+            
+            new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), jdbcConnection, searchOptions,
+                new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);

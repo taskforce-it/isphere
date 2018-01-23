@@ -13,6 +13,7 @@ package biz.isphere.journalexplorer.rse.shared.model.dao;
 
 import java.sql.Connection;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.journalexplorer.rse.Messages;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 
@@ -21,7 +22,7 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 
 public abstract class AbstractDAOBase {
     // protected static final String properties = "thread used=false; extendeddynamic=true; package criteria=select; package cache=true;"; //$NON-NLS-1$
-    protected static final String properties = "translate hex=binary; prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
+//    protected static final String properties = "translate hex=binary; prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
 
     protected ISeriesConnection ibmiConnection;
     private Connection connection;
@@ -49,7 +50,7 @@ public abstract class AbstractDAOBase {
             dateSeparator = ibmiConnection.getServerJob(null).getDateSeparator();
             timeSeparator = ibmiConnection.getServerJob(null).getTimeSeparator();
 
-            connection = ibmiConnection.getJDBCConnection(properties, true); //$NON-NLS-1$
+            connection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
             connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
