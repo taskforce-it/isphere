@@ -537,9 +537,7 @@ public class XRDiContributions implements IIBMiHostContributions {
 
             if (jdbcConnection.isClosed()) {
                 jdbcConnection = null;
-            }
-
-            if (!jdbcConnection.isValid(30)) {
+            } else if (!jdbcConnection.isValid(30)) {
                 jdbcConnection.close();
                 jdbcConnection = null;
             }
