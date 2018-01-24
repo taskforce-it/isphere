@@ -10,14 +10,11 @@ package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
@@ -32,7 +29,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
@@ -68,10 +64,10 @@ import biz.isphere.rse.internal.RSEMember;
  */
 public class XRDiContributions implements IIBMiHostContributions {
 
-    private Map<String, Connection> jdbcConnections;
+    private Map<String, JdbcConnectionManager> jdbcConnectionManagers;
 
     public XRDiContributions() {
-        this.jdbcConnections = new HashMap<String, Connection>();
+        this.jdbcConnectionManagers = new HashMap<String, JdbcConnectionManager>();
     }
 
     /**
@@ -441,142 +437,32 @@ public class XRDiContributions implements IIBMiHostContributions {
             return null;
         }
 
+        JdbcConnectionManager manager = getJdbcConnectionManager(connection);
+        if (manager == null) {
+            manager = registerJdbcConnectionManager(connection);
+        }
+
         if (properties == null) {
             properties = new Properties();
-            properties.put("prompt", "false");
-            properties.put("big decimal", "false");
+            properties.put("prompt", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            properties.put("big decimal", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        Connection jdbcConnection = null;
-
-        if (isISphereJdbcConnectionManager()) {
-            if (isKerberosAuthentication()) {
-                jdbcConnection = getKerberosJdbcConnection(connection, properties);
-            } else if (isISphereJdbcConnectionManager()) {
-                jdbcConnection = getISphereJdbcConnection(connection, properties);
-            }
-        } else {
-            jdbcConnection = getStandardIBMiJdbcConnection(connection, properties);
-        }
+        Connection jdbcConnection = manager.getJdbcConnection(properties);
 
         return jdbcConnection;
     }
 
-    private boolean isISphereJdbcConnectionManager() {
-        return Preferences.getInstance().isISphereJdbcConnectionManager();
+    private JdbcConnectionManager getJdbcConnectionManager(IBMiConnection connection) {
+        return jdbcConnectionManagers.get(connection.getConnectionName());
     }
 
-    private Connection getISphereJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
-        return getKerberosJdbcConnection(ibmiConnection, properties);
-    }
+    private JdbcConnectionManager registerJdbcConnectionManager(IBMiConnection connection) {
 
-    private Connection getKerberosJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
+        JdbcConnectionManager jdbcConnectionManager = new JdbcConnectionManager(connection);
+        jdbcConnectionManagers.put(connection.getConnectionName(), jdbcConnectionManager);
 
-        Connection jdbcConnection = getJdbcConnectionFromCache(ibmiConnection, properties);
-        if (jdbcConnection == null) {
-            jdbcConnection = produceJDBCConnection(ibmiConnection, properties);
-        }
-
-        return jdbcConnection;
-    }
-
-    private Connection getStandardIBMiJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
-
-        Connection jdbcConnection = null;
-
-        try {
-
-            jdbcConnection = ibmiConnection.getJDBCConnection(null, false);
-
-        } catch (Throwable e) {
-            return null;
-        }
-
-        return jdbcConnection;
-    }
-
-    private Connection produceJDBCConnection(IBMiConnection ibmiConnection, Properties properties) {
-
-        Connection jdbcConnection = null;
-        AS400JDBCDriver as400JDBCDriver = null;
-
-        try {
-
-            try {
-
-                as400JDBCDriver = (AS400JDBCDriver)DriverManager.getDriver("jdbc:as400");
-
-            } catch (SQLException e) {
-
-                as400JDBCDriver = new AS400JDBCDriver();
-                DriverManager.registerDriver(as400JDBCDriver);
-
-            }
-
-            AS400 system = ibmiConnection.getAS400ToolboxObject();
-            jdbcConnection = as400JDBCDriver.connect(system, properties, null);
-
-            addConnectionToCache(ibmiConnection, properties, jdbcConnection);
-
-        } catch (Throwable e) {
-        }
-
-        return jdbcConnection;
-    }
-
-    private Connection getJdbcConnectionFromCache(IBMiConnection ibmiConnection, Properties properties) {
-
-        String connectionKey = getConnectionKey(ibmiConnection, properties);
-
-        Connection jdbcConnection = jdbcConnections.get(connectionKey);
-        if (jdbcConnection == null) {
-            return null;
-        }
-
-        try {
-
-            if (jdbcConnection.isClosed()) {
-                jdbcConnection = null;
-            } else if (!jdbcConnection.isValid(30)) {
-                jdbcConnection.close();
-                jdbcConnection = null;
-            }
-
-        } catch (SQLException e) {
-            jdbcConnection = null;
-        }
-
-        if (jdbcConnection == null) {
-            jdbcConnections.remove(connectionKey);
-        }
-
-        return jdbcConnection;
-    }
-
-    private void addConnectionToCache(IBMiConnection ibmiConnection, Properties properties, Connection jdbcConnection) {
-        jdbcConnections.put(getConnectionKey(ibmiConnection, properties), jdbcConnection);
-    }
-
-    private String getConnectionKey(IBMiConnection ibmiConnection, Properties properties) {
-        return ibmiConnection.getHostName() + "|" + propertiesAsString(properties); //$NON-NLS-1$
-    }
-
-    private String propertiesAsString(Properties properties) {
-
-        StringBuilder buffer = new StringBuilder();
-
-        for (Entry<Object, Object> entry : properties.entrySet()) {
-            if (entry.getKey() instanceof String) {
-                if (entry.getValue() instanceof String) {
-                    buffer.append((String)entry.getKey());
-                    buffer.append("="); //$NON-NLS-1$
-                    buffer.append((String)entry.getValue());
-                    buffer.append(";"); //$NON-NLS-1$
-                }
-            }
-        }
-
-        return buffer.toString();
+        return jdbcConnectionManager;
     }
 
     /**
