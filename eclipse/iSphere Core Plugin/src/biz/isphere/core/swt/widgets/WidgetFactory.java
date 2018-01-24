@@ -11,10 +11,13 @@ package biz.isphere.core.swt.widgets;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
@@ -114,6 +117,16 @@ public final class WidgetFactory {
      */
     public static Label createSeparator(Composite parent, int span) {
         return WidgetFactory.getInstance().produceSeparator(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+    }
+
+    /**
+     * Produces a line filler.
+     * 
+     * @param parent - composite control which will be the parent of the new
+     *        instance (cannot be null)
+     */
+    public static Control createLineFiller(Composite parent) {
+        return WidgetFactory.getInstance().produceLineFiller(parent, SWT.DEFAULT);
     }
 
     /**
@@ -832,6 +845,25 @@ public final class WidgetFactory {
 
     private StringListEditor produceStringListEditor(Composite parent, int style) {
         return new StringListEditor(parent, style);
+    }
+
+    private Control produceLineFiller(Composite parent, int height) {
+
+        Label filler = new Label(parent, SWT.NONE);
+        filler.setSize(height, 1);
+
+        Layout layout = parent.getLayout();
+        if (layout instanceof GridLayout) {
+            GridLayout gridLayout = (GridLayout)layout;
+            GridData gd = new GridData();
+            gd.horizontalSpan = gridLayout.numColumns;
+            if (height != SWT.DEFAULT) {
+                gd.heightHint = height;
+            }
+            filler.setLayoutData(gd);
+        }
+
+        return filler;
     }
 
     private WidgetFactoryContributionsHandler getWidgetFactoryContributionsHandler() {

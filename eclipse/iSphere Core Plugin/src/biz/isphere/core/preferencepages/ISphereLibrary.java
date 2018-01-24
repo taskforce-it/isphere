@@ -31,8 +31,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -43,6 +41,8 @@ import biz.isphere.core.internal.Validator;
 import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+
+import com.ibm.as400.access.AS400;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -160,6 +160,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
+        WidgetFactory.createLineFiller(container);
         createJdbcSection(container);
 
         setScreenToValues();
@@ -211,8 +212,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
-        Preferences.getInstance()
-            .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance().setFtpPortNumber(
+            IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
 
     }
