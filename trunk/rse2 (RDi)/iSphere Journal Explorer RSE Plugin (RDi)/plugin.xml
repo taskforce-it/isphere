@@ -31,7 +31,7 @@
                 enablesFor="1"
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
-                icon="icons/display_journal_entries.gif"
+                icon="icons/display_journal_entries2.gif"
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
